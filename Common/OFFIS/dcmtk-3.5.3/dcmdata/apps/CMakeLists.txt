@@ -4,7 +4,7 @@ IF(WITH_LIBXML)
 ENDIF(WITH_LIBXML)
 
 # declare directories containing used libraries
-LINK_DIRECTORIES(${dcmdata_BINARY_DIR} ${ofstd_BINARY_DIR})
+LINK_DIRECTORIES(${dcmdata_BINARY_DIR}/libsrc ${ofstd_BINARY_DIR}/libsrc)
 IF(WITH_ZLIB)
   LINK_DIRECTORIES(${WITH_ZLIBINC}/lib)
 ENDIF(WITH_ZLIB)
