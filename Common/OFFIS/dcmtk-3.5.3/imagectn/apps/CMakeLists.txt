@@ -1,5 +1,5 @@
 # declare directories containing used libraries
-LINK_DIRECTORIES(${imagectn_BINARY_DIR} ${ofstd_BINARY_DIR} ${dcmdata_BINARY_DIR} ${dcmnet_BINARY_DIR})
+LINK_DIRECTORIES(${imagectn_BINARY_DIR}/libsrc ${ofstd_BINARY_DIR}/libsrc ${dcmdata_BINARY_DIR}/libsrc ${dcmnet_BINARY_DIR}/libsrc)
 IF(WITH_ZLIB)
   LINK_DIRECTORIES(${WITH_ZLIBINC}/lib)
 ENDIF(WITH_ZLIB)
