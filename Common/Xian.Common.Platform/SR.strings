@@ -1,0 +1,13 @@
+#! accessor_class_accessibility = public
+[strings]
+ExceptionNotAPlugin = Assembly not a plugin
+ExceptionDuplicatePluginFound = Duplicate plugin found
+ExceptionMoreThanOneModelPluginFound = More than one model plugin found
+ExceptionPluginDirectoryNotFound = Plugin directory could not be found
+ExceptionNoPluginsFound = No plugins could be found
+ExceptionPluginWarning = There was a problem loading one or more plugins. Please check log.
+ExceptionUnableToLoadPlugins = Unable to load any plugins.  Please check log.
+ExceptionPluginCouldNotBeFound = Plugin could not be found.  Unable to start plugin.
+
+ExceptionArgumentNotPositive = Value must be greater than zero
+ExceptionArgumentNegative = Value must be non-negative
