@@ -32,7 +32,7 @@ namespace Xian.Common.Platform
 				Type pluginType = GetPluginType(asm);
 
 				if (pluginType == null)
-					throw new PluginException(SR.ExceptionNotAPlugin);
+					throw new PluginException(SR.ExceptionNotAPlugin(path));
 
 				Plugin plugin = (Plugin) Activator.CreateInstance(pluginType);
 
@@ -69,7 +69,7 @@ namespace Xian.Common.Platform
 			bool exists = m_PluginList.Contains(plugin);
 
 			if (exists)
-				throw new PluginException(SR.ExceptionDuplicatePluginFound);
+				throw new PluginException(SR.ExceptionDuplicatePluginFound(plugin.Name));
 
 			if (plugin.Type == Plugin.PluginType.Model)
 			{

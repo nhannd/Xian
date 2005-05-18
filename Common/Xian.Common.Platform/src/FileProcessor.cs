@@ -39,8 +39,7 @@ namespace Xian.Common.Platform
 			}
 			else
 			{
-				string str = String.Format("Path not found: {0}", path);
-				throw new DirectoryNotFoundException(str);
+				throw new DirectoryNotFoundException(SR.ExceptionPathDoesNotExist(path));
 			}
 		}
 

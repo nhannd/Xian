@@ -211,7 +211,7 @@ namespace Xian.Common.Platform
 		private void StartPlugin(Plugin plugin)
 		{
 			if (plugin == null)
-				throw new PluginErrorException(SR.ExceptionPluginCouldNotBeFound);
+				throw new PluginErrorException(SR.ExceptionPluginCouldNotBeFound(plugin.Name));
 
 			if (!plugin.Started)
 				plugin.Start();
