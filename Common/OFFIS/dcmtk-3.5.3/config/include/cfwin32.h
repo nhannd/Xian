@@ -101,6 +101,10 @@
 /* Define if bool is a built-in type */
 #define HAVE_CXX_BOOL 1
 
+// NY (2005-01-27):
+/* Define if std::string is a built-in type */
+#define HAVE_STD_STRING 1
+
 /* Define if volatile is a known keyword */
 #define HAVE_CXX_VOLATILE 1
 
