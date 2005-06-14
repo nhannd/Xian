@@ -105,7 +105,36 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SR.strings"
+                    BuildAction = "None"
+                    Generator = "StringResourceTool"
+                    LastGenOutput = "SR.cs"
+                />
+                <File
+                    RelPath = "SR.cs"
+                    DependentUpon = "SR.strings"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                    DesignTime = "True"
+                    AutoGen = "True"
+                />
+                <File
+                    RelPath = "SR.resx"
+                    DependentUpon = "SR.strings"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "src_helper\Dcm.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src_helper\Dicom.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src_helper\Exceptions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
