@@ -525,7 +525,9 @@ struct T_DIMSE_N_CreateRSP {
 	/* AttributeList provided as argument to DIMSE functions *//* U */
 	unsigned int	opts; /* which optional items are set */
 #define O_NCREATE_AFFECTEDSOPCLASSUID		0x0001
-#define O_NCREATE_AFFECTEDSOPINSTANCEUID	0x0002
+
+// NY (2005-01-28): Already defined above in T_DIMSE_N_CreateRQ
+//#define O_NCREATE_AFFECTEDSOPINSTANCEUID	0x0002
 } ;
 
 /* N-DELETE */
