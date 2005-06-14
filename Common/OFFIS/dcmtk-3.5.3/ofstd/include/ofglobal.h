@@ -125,6 +125,8 @@ private:
   OFMutex theMutex;
 #endif
 
+// NY (2005-01-27)
+#ifndef SWIG
   /** unimplemented private default constructor */
   OFGlobal();
 
@@ -133,7 +135,7 @@ private:
 
   /** unimplemented private assignment operator */
   const OFGlobal<T>& operator=(const OFGlobal<T>& arg);
-
+#endif
 };
 
 
