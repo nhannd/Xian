@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;..\OFFIS\dcmtk-3.5.3\config\include&quot;;&quot;..\OFFIS\dcmtk-3.5.3\ofstd\include&quot;;&quot;..\OFFIS\dcmtk-3.5.3\dcmdata\include&quot;;&quot;..\OFFIS\dcmtk-3.5.3\dcmnet\include&quot;"
-				PreprocessorDefinitions="_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;DCMTK_EXPORTS"
+				PreprocessorDefinitions="_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;DCMTK_EXPORTS;HAVE_STD_STRING;HAVE_CXX_BOOL"
 				RuntimeLibrary="0"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -88,11 +88,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib netapi32.lib ofstd.lib dcmdata.lib dcmnet.lib zlib_d.lib"
+				AdditionalDependencies="ws2_32.lib netapi32.lib ofstd.lib dcmdata.lib dcmnet.lib zlib_o.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;..\OFFIS\dcmtk-3.5.3\ofstd\libsrc\$(IntDir)&quot;;&quot;..\OFFIS\dcmtk-3.5.3\dcmdata\libsrc\$(IntDir)&quot;;&quot;..\OFFIS\dcmtk-3.5.3\dcmnet\libsrc\$(IntDir)&quot;;&quot;..\OFFIS\zlib-1.2.1\lib&quot;"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -203,7 +203,7 @@ echo on
 					Name="VCCustomBuildTool"
 					CommandLine="echo Invoking SWIG...
 echo on
-%SWIG%\swig.exe -c++ -csharp -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\OFFIS\dcmtk-3.5.3\config\include -I..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -namespace Xian.DICOM -outdir ..\Xian.Common.DICOM\src_proxy -dllimport $(TargetFileName) $(InputFileName)
+%SWIG%\swig.exe -c++ -csharp -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\OFFIS\dcmtk-3.5.3\config\include -I..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -namespace Xian.Common.DICOM -outdir ..\Xian.Common.DICOM\src_proxy -dllimport $(TargetFileName) $(InputFileName)
 @@echo off
 "
 					Outputs="$(InputName)_wrap.cxx"/>
