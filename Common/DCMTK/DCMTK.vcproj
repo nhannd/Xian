@@ -105,7 +105,8 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="del /Q ..\Xian.Common.DICOM\src_proxy\*.*"/>
+				CommandLine="del /Q ..\Xian.Common.DICOM\src_proxy\*.*"
+				ExcludedFromBuild="TRUE"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
