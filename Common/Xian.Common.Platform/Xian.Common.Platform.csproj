@@ -80,35 +80,34 @@
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "Microsoft.Practices.EnterpriseLibrary.Common"
-                    AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Common"
-                    HintPath = "..\..\..\..\..\Program Files\Microsoft Enterprise Library\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll"
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "refs\nunit.framework.dll"
                 />
                 <Reference
-                    Name = "Microsoft.Practices.EnterpriseLibrary.Logging"
-                    AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Logging"
-                    HintPath = "..\..\..\..\..\Program Files\Microsoft Enterprise Library\bin\Microsoft.Practices.EnterpriseLibrary.Logging.dll"
+                    Name = "Microsoft.Practices.EnterpriseLibrary.Common"
+                    AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Common"
+                    HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.Common.dll"
                 />
                 <Reference
                     Name = "Microsoft.Practices.EnterpriseLibrary.Configuration"
                     AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Configuration"
-                    HintPath = "..\..\..\..\..\Program Files\Microsoft Enterprise Library\bin\Microsoft.Practices.EnterpriseLibrary.Configuration.dll"
+                    HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.Configuration.dll"
                 />
                 <Reference
                     Name = "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling"
                     AssemblyName = "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling"
-                    HintPath = "..\..\..\..\..\Program Files\Microsoft Enterprise Library\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll"
+                    HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll"
                 />
                 <Reference
                     Name = "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging"
                     AssemblyName = "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging"
-                    HintPath = "..\..\..\..\..\Program Files\Microsoft Enterprise Library\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll"
+                    HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.framework.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
+                    Name = "Microsoft.Practices.EnterpriseLibrary.Logging"
+                    AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Logging"
+                    HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.Logging.dll"
                 />
             </References>
         </Build>
