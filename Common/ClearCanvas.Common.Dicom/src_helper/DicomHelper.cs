@@ -5,7 +5,7 @@ namespace ClearCanvas.Common.Dicom
 	/// <summary>
 	/// Summary description for Dicom.
 	/// </summary>
-	public class Dicom
+	public class DicomHelper
 	{
 		public static void CheckReturnValue(OFCondition status, DcmTagKey tag, out bool tagExists)
 		{

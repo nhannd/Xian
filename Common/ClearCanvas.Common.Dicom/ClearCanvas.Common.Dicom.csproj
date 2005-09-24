@@ -128,7 +128,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "src_helper\Dicom.cs"
+                    RelPath = "src_helper\DicomHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
