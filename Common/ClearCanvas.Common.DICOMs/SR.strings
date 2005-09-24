@@ -1,5 +1,0 @@
-#! accessor_class_accessibility = public
-[strings]
-ExceptionNullReference(string variable) = {0} is null
-ExceptionDICOMTag(string tag, string msg) = Tag: {0} - {1}
-ExceptionDICOMFile(string filename, string msg) = File: {0} - {1}
