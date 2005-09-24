@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "ClearCanvas.Common.DICOM"
+                AssemblyName = "ClearCanvas.Common.Dicom"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,8 +17,8 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy ..\..\..\DCMTK\$(ConfigurationName)\DCMTK.dll ."
-                RootNamespace = "ClearCanvas.Common.DICOM"
+                PostBuildEvent = "copy ..\..\..\ClearCanvas.Dcmtk\$(ConfigurationName)\ClearCanvas.Dcmtk.dll ."
+                RootNamespace = "ClearCanvas.Common.Dicom"
                 RunPostBuildEvent = "OnOutputUpdated"
                 StartupObject = ""
             >

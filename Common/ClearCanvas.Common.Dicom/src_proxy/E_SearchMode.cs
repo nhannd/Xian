@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-namespace ClearCanvas.Common.DICOM {
+namespace ClearCanvas.Common.Dicom {
 
 public enum E_SearchMode {
   ESM_fromHere = 0,

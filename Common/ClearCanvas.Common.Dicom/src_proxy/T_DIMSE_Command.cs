@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-namespace ClearCanvas.Common.DICOM {
+namespace ClearCanvas.Common.Dicom {
 
 public enum T_DIMSE_Command {
   DIMSE_NOTHING = 0x0000,

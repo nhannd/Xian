@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-namespace ClearCanvas.Common.DICOM {
+namespace ClearCanvas.Common.Dicom {
 
 public enum T_ASC_RejectParametersReason {
   ASC_REASON_SU_NOREASON = 0x0101,

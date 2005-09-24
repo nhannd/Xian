@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-namespace ClearCanvas.Common.DICOM {
+namespace ClearCanvas.Common.Dicom {
 
 public enum T_DIMSE_Priority {
   DIMSE_PRIORITY_LOW = 0x0002,

@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-namespace ClearCanvas.Common.DICOM {
+namespace ClearCanvas.Common.Dicom {
 
 using System;
 using System.Text;

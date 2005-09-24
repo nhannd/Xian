@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using NUnit.Framework;
-using ClearCanvas.Common.DICOM;
+using ClearCanvas.Common.Dicom;
 
-namespace ClearCanvas.DICOM.Tests
+namespace ClearCanvas.Dicom.Tests
 {
 	/// <summary>
 	/// Summary description for Test_DCMTKcs.

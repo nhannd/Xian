@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common.DICOM
+namespace ClearCanvas.Common.Dicom
 {
 	/// <summary>
 	/// Summary description for Dicom.
