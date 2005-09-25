@@ -95,9 +95,9 @@ namespace ClearCanvas.Common.Platform
 			StartPlugin(Plugin.PluginType.Model);
 		}
 
-		public void StartMainUIPlugin()
+		public void StartViewPlugin()
 		{
-			StartPlugin(Plugin.PluginType.MainUI);
+			StartPlugin(Plugin.PluginType.View);
 		}
 
 		public Object[] CreatePluginExtensions(Type type)

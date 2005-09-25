@@ -98,7 +98,7 @@ namespace ClearCanvas.Common.Platform
 		public static void StartApp()
 		{
 			PluginManager.StartModelPlugin();
-			PluginManager.StartMainUIPlugin();
+			PluginManager.StartViewPlugin();
 		}
 
 		public static Plugin GetPlugin(string name)

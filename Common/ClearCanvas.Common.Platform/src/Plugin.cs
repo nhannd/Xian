@@ -25,7 +25,7 @@ namespace ClearCanvas.Common.Platform
 		public enum PluginType
 		{
 			Model,
-			MainUI,
+			View,
 			Other
 		}
 
