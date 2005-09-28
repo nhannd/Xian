@@ -14,14 +14,12 @@ namespace ClearCanvas.Common.Platform
 		// Private attributes
 		private ArrayList m_PluginList = new ArrayList();
 		private bool m_FoundModelPlugin = false;
-		private bool m_Warning = false;
 
 		// Constructor
 		public PluginLoader() {	}
 
 		// Properties
 		public ArrayList PluginList { get {	return m_PluginList; } }
-		public bool Warning { get { return m_Warning; } }
 
 		// Public methods
 		public void LoadPlugin(string path)
@@ -44,7 +42,6 @@ namespace ClearCanvas.Common.Platform
 			}
 			catch (Exception e)
 			{
-				m_Warning = true;
 
 				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
 

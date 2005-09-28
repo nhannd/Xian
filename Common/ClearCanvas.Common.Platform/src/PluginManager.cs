@@ -49,11 +49,10 @@ namespace ClearCanvas.Common.Platform
 			if (!RootPluginDirectoryExists())
 				throw new PluginErrorException(SR.ExceptionPluginDirectoryNotFound);
 
-			bool warning;
 			ArrayList pluginFileList;
-			FindPlugins(m_PluginDir, out pluginFileList, out warning);
-			LoadFoundPlugins(pluginFileList, out warning);
-			Validate(warning);
+			FindPlugins(m_PluginDir, out pluginFileList);
+			LoadFoundPlugins(pluginFileList);
+			Validate();
 		}
 
 		public void LoadPlugins(ArrayList pluginFileList)
@@ -61,9 +60,8 @@ namespace ClearCanvas.Common.Platform
 			if (!RootPluginDirectoryExists())
 				throw new PluginErrorException(SR.ExceptionPluginDirectoryNotFound);
 
-			bool warning = false;
-			LoadFoundPlugins(pluginFileList, out warning);
-			Validate(warning);
+			LoadFoundPlugins(pluginFileList);
+			Validate();
 		}
 
 		public Plugin GetPlugin(string name)
@@ -118,7 +116,7 @@ namespace ClearCanvas.Common.Platform
 			return Directory.Exists(m_PluginDir);
 		}
 
-		private void FindPlugins(string path, out ArrayList pluginFileList, out bool warning)
+		private void FindPlugins(string path, out ArrayList pluginFileList)
 		{
 			AppDomain domain = null;
 			pluginFileList = null;
@@ -141,12 +139,9 @@ namespace ClearCanvas.Common.Platform
 
 				// Get the list of legitimate plugin DLLs
 				pluginFileList = finder.PluginFileList;
-				warning = finder.Warning;
 			}
 			catch (Exception e)
 			{
-				warning = true;
-
 				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
 
 				if (rethrow)
@@ -163,7 +158,7 @@ namespace ClearCanvas.Common.Platform
 			}
 		}
 
-		private void LoadFoundPlugins(ArrayList pluginFileList, out bool warning)
+		private void LoadFoundPlugins(ArrayList pluginFileList)
 		{
 			PluginLoader loader = new PluginLoader();
 
@@ -172,10 +167,9 @@ namespace ClearCanvas.Common.Platform
 				loader.LoadPlugin(pluginFile);				
 
 			m_PluginList = loader.PluginList;
-			warning = loader.Warning;
 		}
 
-		private void Validate(bool warning)
+		private void Validate()
 		{
 			if (m_PluginList.Count > 0)
 				m_PluginsLoaded = true;
@@ -183,11 +177,6 @@ namespace ClearCanvas.Common.Platform
 			// If no plugins could be loaded, throw a fatal exception
 			if (!m_PluginsLoaded)
 				throw new PluginErrorException(SR.ExceptionUnableToLoadPlugins);
-
-			// If some plugins could be loaded, but some problems occurred in the process,
-			// throw a non-fatal exception.
-			if (warning)
-				throw new PluginWarningException(SR.ExceptionPluginWarning);
 		}
 
 		private Plugin GetPlugin(Plugin.PluginType type)

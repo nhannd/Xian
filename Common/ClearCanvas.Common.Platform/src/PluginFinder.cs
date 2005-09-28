@@ -12,14 +12,12 @@ namespace ClearCanvas.Common.Platform
 	{
 		// Private attributes
 		private ArrayList m_PluginFileList = new ArrayList();
-		private bool m_Warning = false;
 
 		// Constructor
 		public PluginFinder() { }
 
 		// Properties
 		public ArrayList PluginFileList { get {	return m_PluginFileList; } }
-		public bool Warning { get { return m_Warning; } }
 
 		// Public methods
 		public void FindPlugin(string path)
@@ -31,10 +29,15 @@ namespace ClearCanvas.Common.Platform
 				if (IsPlugin(asm))
 					m_PluginFileList.Add(path);
 			}
+			catch (BadImageFormatException e)
+			{
+				// Encountered an unmanaged DLL in the plugin directory; this is okay
+				// but we'll log it anyway
+				string str = String.Format("Found unmanaged DLL: {0}", e.FileName);
+				Platform.Log(str);
+			}
 			catch (Exception e)
 			{
-				m_Warning = true;
-
 				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
 
 				if (rethrow)
