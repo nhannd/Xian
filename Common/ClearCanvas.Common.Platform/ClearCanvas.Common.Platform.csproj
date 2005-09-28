@@ -193,6 +193,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\PluginProgressEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src_tests\FileProcessorTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

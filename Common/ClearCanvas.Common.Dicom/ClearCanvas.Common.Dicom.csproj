@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy ..\..\..\ClearCanvas.Dcmtk\$(ConfigurationName)\ClearCanvas.Dcmtk.dll ."
+                PostBuildEvent = ""
                 RootNamespace = "ClearCanvas.Common.Dicom"
                 RunPostBuildEvent = "OnOutputUpdated"
                 StartupObject = ""
