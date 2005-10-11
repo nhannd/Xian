@@ -8,12 +8,10 @@ namespace ClearCanvas.Common.Platform
 	public class PluginProgressEventArgs : EventArgs
 	{
 		string m_Message;
-		bool m_Complete;
 
-		public PluginProgressEventArgs(string message, bool complete)
+		public PluginProgressEventArgs(string message)
 		{
 			m_Message = message;
-			m_Complete = complete;
 		}
 
 		public string Message
@@ -25,18 +23,6 @@ namespace ClearCanvas.Common.Platform
 			set
 			{
 				m_Message = value;
-			}
-		}
-
-		public bool Complete
-		{
-			get
-			{
-				return m_Complete;
-			}
-			set
-			{
-				m_Complete = value;
 			}
 		}
 	}

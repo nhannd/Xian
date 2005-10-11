@@ -137,7 +137,7 @@ namespace ClearCanvas.Common.Platform
 
 			try
 			{
-				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs("Finding plugins...", false));
+				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs("Finding plugins..."));
 
 				// Create a secondary AppDomain where we can load all the DLLs in the plugin directory
 				domain = AppDomain.CreateDomain("Secondary");
@@ -184,10 +184,8 @@ namespace ClearCanvas.Common.Platform
 				loader.LoadPlugin(pluginFile);
 				string pluginName = Path.GetFileName(pluginFile);
 				string msg = String.Format("Loading plugin {0}", pluginName);
-				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs(msg, false));
+				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs(msg));
 			}
-
-			EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs("Load complete", true));
 
 			m_PluginList = loader.PluginList;
 		}
