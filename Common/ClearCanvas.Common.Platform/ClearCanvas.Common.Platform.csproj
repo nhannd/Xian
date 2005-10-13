@@ -109,6 +109,11 @@
                     AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Logging"
                     HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.Logging.dll"
                 />
+                <Reference
+                    Name = "Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink"
+                    AssemblyName = "Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink"
+                    HintPath = "refs\Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink.dll"
+                />
             </References>
         </Build>
         <Files>
