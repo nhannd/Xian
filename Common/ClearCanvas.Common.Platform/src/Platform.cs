@@ -157,6 +157,15 @@ namespace ClearCanvas.Common.Platform
 			ArgumentValidation.CheckForNullReference(variable, variableName);
 		}
 
+		public static void CheckForInvalidCast(object variable, string variableName, string properTypeName)
+		{
+			if (variable == null)
+			{
+				string str = String.Format("{0} must be of type {1}", variableName, properTypeName);
+				throw new InvalidCastException(str);
+			}
+		}
+
 		public static void CheckForInvalidNullNameReference(string name, string messageName)
 		{
 			ArgumentValidation.CheckForInvalidNullNameReference(name, messageName);
