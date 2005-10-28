@@ -45,7 +45,7 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 %typemap(in) std::string&
 %{ 
 	if (!$input) 
-		SWIG_CSharpThrowException(SWIG_CSharpNullReferenceException, "null string");
+		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null string", 0);
 
 	std::string $1_str;
 	$1 = &$1_str;
@@ -62,7 +62,7 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 %}
 
 
-%typemap(csimports) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) "\nusing System;\nusing System.Text;\n"
+%typemap(csimports) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) "\nusing System;\nusing System.Text;\nusing System.Runtime.InteropServices;\n"
 
 %pragma(csharp) moduleimports=%{
 using System;

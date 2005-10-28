@@ -157,15 +157,6 @@ namespace ClearCanvas.Common.Platform
 			ArgumentValidation.CheckForNullReference(variable, variableName);
 		}
 
-		public static void CheckForInvalidCast(object variable, string variableName, string properTypeName)
-		{
-			if (variable == null)
-			{
-				string str = String.Format("{0} must be of type {1}", variableName, properTypeName);
-				throw new InvalidCastException(str);
-			}
-		}
-
 		public static void CheckForInvalidNullNameReference(string name, string messageName)
 		{
 			ArgumentValidation.CheckForInvalidNullNameReference(name, messageName);
@@ -179,6 +170,12 @@ namespace ClearCanvas.Common.Platform
 		public static void CheckEnumeration(Type enumType, object variable, string variableName)
 		{
 			ArgumentValidation.CheckEnumeration(enumType, variable, variableName);
+		}
+
+		public static void CheckForInvalidCast(object variable, string variableName, string properTypeName)
+		{
+			if (variable == null)
+				throw new InvalidCastException(SR.ExceptionInvalidCast(variableName, properTypeName));
 		}
 
 		public static void CheckPositive(int n, string variableName)
@@ -203,6 +200,24 @@ namespace ClearCanvas.Common.Platform
 		{
 			if (n < 0)
 				throw new ArgumentException(SR.ExceptionArgumentNegative, variableName);
+		}
+
+		public static void CheckArgumentRange(int argumentValue, int min, int max, string variableName)
+		{
+			if (argumentValue < min || argumentValue > max)
+				throw new ArgumentOutOfRangeException(SR.ExceptionArgumentOutOfRange(argumentValue, min, max, variableName));
+		}
+
+		public static void CheckIndexRange(int index, int min, int max, object obj)
+		{
+			if (index < min || index > max)
+				throw new ArgumentOutOfRangeException(SR.ExceptionIndexOutOfRange(index, min, max, obj.GetType().Name));
+		}
+
+		public static void CheckMemberIsSet(object variable, string variableName)
+		{
+			if (variable == null)
+				throw new InvalidOperationException(SR.ExceptionMemberNotSet(variableName));
 		}
 	}
 }

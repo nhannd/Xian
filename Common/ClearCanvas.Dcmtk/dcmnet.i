@@ -47,7 +47,7 @@
 %wrapper
 %{
 
-DllExport void SWIGSTDCALL CSharp_set_T_ASC_Association_parameters(void * jarg1, void * jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_set_T_ASC_Association_parameters(void * jarg1, void * jarg2) {
 	T_ASC_Association *arg1 = (T_ASC_Association *) 0 ;
 	T_ASC_Parameters *arg2 = (T_ASC_Parameters *) 0 ;
 	
@@ -58,7 +58,7 @@ DllExport void SWIGSTDCALL CSharp_set_T_ASC_Association_parameters(void * jarg1,
 }
 
 
-DllExport void * SWIGSTDCALL CSharp_get_T_ASC_Association_parameters(void * jarg1) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_get_T_ASC_Association_parameters(void * jarg1) {
 	void * jresult = 0 ;
 	T_ASC_Association *arg1 = (T_ASC_Association *) 0 ;
 	T_ASC_Parameters *result;
