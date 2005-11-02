@@ -1,25 +1,16 @@
-///////////////////////////////////////////////////////////
-//
-//  PluginManager.cs
-//
-//  Created on:      08-Feb-2005 10:35:54 PM
-//
-//  Original author: Norman Young
-//
-///////////////////////////////////////////////////////////
-
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	public class PluginManager 
 	{
 		// Private attributes
-		private ArrayList m_PluginList = new ArrayList();
+		private PluginList m_PluginList = new PluginList();
 		private bool m_PluginsLoaded = false;
 		private string m_PluginDir;
 		private event EventHandler m_PluginProgressEvent;
@@ -27,17 +18,20 @@ namespace ClearCanvas.Common.Platform
 		// Constructor
 		public PluginManager(string pluginDir)
 		{
+			Platform.CheckForNullReference(pluginDir, "pluginDir");
+			Platform.CheckForEmptyString(pluginDir, "pluginDir");
+
 			m_PluginDir = pluginDir;
 		}
 
 		// Properties
 		public bool PluginsLoaded {	get { return m_PluginsLoaded; }	}
 
-		public int Count
+		public int NumberOfPlugins
 		{
 			get
 			{
-				return m_PluginList.Count;
+				return m_PluginList.NumberOfPlugins;
 			}
 		}
 
@@ -57,22 +51,24 @@ namespace ClearCanvas.Common.Platform
 		// Public methods
 		public void LoadPlugins()
 		{
-			if (PluginsLoaded)
+			if (this.PluginsLoaded)
 				return;
 
 			if (!RootPluginDirectoryExists())
-				throw new PluginErrorException(SR.ExceptionPluginDirectoryNotFound);
+				throw new PluginException(SR.ExceptionPluginDirectoryNotFound);
 
-			ArrayList pluginFileList;
+			StringCollection pluginFileList;
 			FindPlugins(m_PluginDir, out pluginFileList);
 			LoadFoundPlugins(pluginFileList);
 			Validate();
 		}
 
-		public void LoadPlugins(ArrayList pluginFileList)
+		public void LoadPlugins(StringCollection pluginFileList)
 		{
+			Platform.CheckForNullReference(pluginFileList, "pluginFileList");
+
 			if (!RootPluginDirectoryExists())
-				throw new PluginErrorException(SR.ExceptionPluginDirectoryNotFound);
+				throw new PluginException(SR.ExceptionPluginDirectoryNotFound);
 
 			LoadFoundPlugins(pluginFileList);
 			Validate();
@@ -99,6 +95,10 @@ namespace ClearCanvas.Common.Platform
 
 			LoadPlugins();
 			Plugin plugin = GetPlugin(name);
+
+			if (plugin == null)
+				throw new PluginException();
+
 			StartPlugin(plugin);
 		}
 
@@ -130,8 +130,11 @@ namespace ClearCanvas.Common.Platform
 			return Directory.Exists(m_PluginDir);
 		}
 
-		private void FindPlugins(string path, out ArrayList pluginFileList)
+		private void FindPlugins(string path, out StringCollection pluginFileList)
 		{
+			Platform.CheckForNullReference(path, "path");
+			Platform.CheckForEmptyString(path, "path");
+
 			AppDomain domain = null;
 			pluginFileList = null;
 
@@ -145,7 +148,7 @@ namespace ClearCanvas.Common.Platform
 				Assembly asm = Assembly.GetExecutingAssembly();
 
 				// Instantiate the finder in the secondary domain
-				PluginFinder finder = (PluginFinder) domain.CreateInstanceAndUnwrap(asm.FullName, "ClearCanvas.Common.Platform.PluginFinder");
+				PluginFinder finder = domain.CreateInstanceAndUnwrap(asm.FullName, "ClearCanvas.Common.PluginFinder") as PluginFinder;
 
 				// Assign the FileProcessor's delegate to the finder
 				FileProcessor.ProcessFile del = new FileProcessor.ProcessFile(finder.FindPlugin);
@@ -170,12 +173,14 @@ namespace ClearCanvas.Common.Platform
 					AppDomain.Unload(domain);
 
 				if (pluginFileList == null || pluginFileList.Count == 0)
-					throw new PluginWarningException(SR.ExceptionNoPluginsFound);
+					throw new PluginException(SR.ExceptionNoPluginsFound);
 			}
 		}
 
-		private void LoadFoundPlugins(ArrayList pluginFileList)
+		private void LoadFoundPlugins(StringCollection pluginFileList)
 		{
+			Platform.CheckForNullReference(pluginFileList, "pluginFileList");
+
 			PluginLoader loader = new PluginLoader();
 
 			// Load the legitimate plugins into the primary AppDomain
@@ -183,8 +188,7 @@ namespace ClearCanvas.Common.Platform
 			{
 				loader.LoadPlugin(pluginFile);
 				string pluginName = Path.GetFileName(pluginFile);
-				string msg = String.Format("Loading plugin {0}", pluginName);
-				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs(msg));
+				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs(SR.LoadingPlugin(pluginName)));
 			}
 
 			m_PluginList = loader.PluginList;
@@ -192,16 +196,18 @@ namespace ClearCanvas.Common.Platform
 
 		private void Validate()
 		{
-			if (m_PluginList.Count > 0)
+			if (m_PluginList.NumberOfPlugins > 0)
 				m_PluginsLoaded = true;
 
 			// If no plugins could be loaded, throw a fatal exception
 			if (!m_PluginsLoaded)
-				throw new PluginErrorException(SR.ExceptionUnableToLoadPlugins);
+				throw new PluginException(SR.ExceptionUnableToLoadPlugins);
 		}
 
 		private Plugin GetPlugin(Plugin.PluginType type)
 		{
+			Platform.CheckForNullReference(type, "type");
+
 			foreach (Plugin plugin in m_PluginList)
 			{
 				if (type == plugin.Type)
@@ -213,15 +219,20 @@ namespace ClearCanvas.Common.Platform
 
 		private void StartPlugin(Plugin.PluginType type)
 		{
+			Platform.CheckForNullReference(type, "type");
+
 			LoadPlugins();
 			Plugin plugin = GetPlugin(type);
+
+			if (plugin == null)
+				throw new PluginException();
+
 			StartPlugin(plugin);
 		}
 
 		private void StartPlugin(Plugin plugin)
 		{
-			if (plugin == null)
-				throw new PluginErrorException(SR.ExceptionPluginCouldNotBeFound(plugin.Name));
+			Platform.CheckForNullReference(plugin, "plugin");
 
 			if (!plugin.Started)
 				plugin.Start();

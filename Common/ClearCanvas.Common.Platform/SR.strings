@@ -1,5 +1,7 @@
 #! accessor_class_accessibility = public
 [strings]
+
+# Plugin exception messages
 ExceptionPathDoesNotExist(string path) = {0} does not exist
 ExceptionNotAPlugin(string path) = Assembly {0} is not a plugin
 ExceptionDuplicatePluginFound(string name) = Duplicate plugin {0} found
@@ -10,9 +12,16 @@ ExceptionPluginWarning = There was a problem loading one or more plugins. Please
 ExceptionUnableToLoadPlugins = Unable to load any plugins.  Please check log.
 ExceptionPluginCouldNotBeFound(string name) = Plugin {0} could not be found.  Unable to start plugin.
 
+# Generic helper exception messages
 ExceptionInvalidCast(string variableName, string properTypeName) = {0} must be of type {1}.
 ExceptionArgumentNotPositive = Value must be greater than zero.
 ExceptionArgumentNegative = Value must be non-negative.
 ExceptionArgumentOutOfRange(int argumentValue, int min, int max, string variableName) = {3} = {0} is invalid. {3} must be >= {1} and <= {2}.
 ExceptionIndexOutOfRange(int index, int min, int max, string className) = {3}[{0}] is invalid.  Index must be >= {1} and <= {2}.
 ExceptionMemberNotSet(string variableName) = {0} has not been set.  Object state is invalid.
+ExceptionMemberNotSetVerbose(string variableName, string detailedMessage) = {0} has not been set.  {1}
+
+LogFoundUnmanagedDLL(string filename) = Found unmanaged DLL: {0}
+LogPluginLoaded(string filename) = Loaded plugin: {0}
+
+LoadingPlugin(string filename) = Loading plugin {0}

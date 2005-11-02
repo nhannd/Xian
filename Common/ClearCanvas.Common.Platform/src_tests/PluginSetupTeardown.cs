@@ -3,8 +3,9 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Specialized;
 
-namespace ClearCanvas.Common.Platform.Tests
+namespace ClearCanvas.Common.Tests
 {
 	/// <summary>
 	/// Summary description for PluginSetupTeardown.
@@ -35,7 +36,7 @@ namespace ClearCanvas.Common.Platform.Tests
 			CopyConfigFiles();
 
 			// Form list of plugin paths. Load plugins from where they're built
-			ArrayList pluginFileList = new ArrayList();
+			StringCollection pluginFileList = new StringCollection();
 			pluginFileList.Add(m_ClearCanvasViewerCorePath);
 			pluginFileList.Add(m_ClearCanvasViewerUIPath);
 
@@ -58,7 +59,7 @@ namespace ClearCanvas.Common.Platform.Tests
 			m_ConfigFile3Path = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingconfiguration.config";
 			m_ConfigFile4Path = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingdistributorconfiguration.config";
 
-			m_ClearCanvasCommonPlatformPath = m_ProjectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common.Platform\bin\Debug\ClearCanvas.Common.Platform.dll";
+			m_ClearCanvasCommonPlatformPath = m_ProjectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
 			m_ClearCanvasViewerCorePath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
 			m_ClearCanvasViewerUIPath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
 		}

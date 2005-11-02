@@ -88,6 +88,26 @@
     <comment>.
  Parameters: 0 - variableName (string) </comment>
   </data>
+  <data name="ExceptionMemberNotSetVerbose">
+    <value>{0} has not been set.  {1}</value>
+    <comment>.
+ Parameters: 0 - variableName (string), 1 - detailedMessage (string) </comment>
+  </data>
+  <data name="LogFoundUnmanagedDLL">
+    <value>Found unmanaged DLL: {0}</value>
+    <comment>.
+ Parameters: 0 - filename (string) </comment>
+  </data>
+  <data name="LogPluginLoaded">
+    <value>Loaded plugin: {0}</value>
+    <comment>.
+ Parameters: 0 - filename (string) </comment>
+  </data>
+  <data name="LoadingPlugin">
+    <value>Loading plugin {0}</value>
+    <comment>.
+ Parameters: 0 - filename (string) </comment>
+  </data>
   <resheader name="ResMimeType">
     <value>text/microsoft-resx</value>
   </resheader>

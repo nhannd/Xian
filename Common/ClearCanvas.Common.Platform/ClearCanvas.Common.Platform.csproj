@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = ""
-                RootNamespace = "ClearCanvas.Common.Platform"
+                RootNamespace = "ClearCanvas.Common"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -184,6 +184,11 @@
                 />
                 <File
                     RelPath = "src\PluginFinder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\PluginList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

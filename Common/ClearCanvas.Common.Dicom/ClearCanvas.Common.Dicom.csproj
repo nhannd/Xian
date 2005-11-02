@@ -94,6 +94,11 @@
                     AssemblyName = "nunit.framework"
                     HintPath = "..\ClearCanvas.Common.Platform\refs\nunit.framework.dll"
                 />
+                <Reference
+                    Name = "ClearCanvas.Common.Platform"
+                    Project = "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>

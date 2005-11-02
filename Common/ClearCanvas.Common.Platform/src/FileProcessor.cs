@@ -1,20 +1,10 @@
-///////////////////////////////////////////////////////////
-//
-//  FileProcessor.cs
-//
-//  Created on:      09-Feb-2005 12:00:00 PM
-//
-//  Original author: Norman Young
-//
-///////////////////////////////////////////////////////////
-
 using System;
 using System.IO;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	/// <summary>
-	/// Summary description for RecursiveFileProcessor.
+	/// Summary description for FileProcessor.
 	/// </summary>
 	public class FileProcessor
 	{
@@ -32,7 +22,7 @@ namespace ClearCanvas.Common.Platform
 			{
 				ProcessDirectory(path, searchPattern, proc, recursive);
 			}
-				// If the path is a file, just process the file
+			// If the path is a file, just process the file
 			else if (File.Exists(path))
 			{
 				proc(path);

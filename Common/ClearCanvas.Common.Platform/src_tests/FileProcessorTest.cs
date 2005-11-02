@@ -12,12 +12,12 @@
 
 using System;
 using System.IO;
-using ClearCanvas.Common.Platform;
+using ClearCanvas.Common;
 using NUnit.Framework;
 //using MbUnit.Core.Framework;
 //using MbUnit.Framework;
 
-namespace ClearCanvas.Common.Platform.Tests
+namespace ClearCanvas.Common.Tests
 {
 	/// <summary>
 	/// Summary description for FileProcessorTest.

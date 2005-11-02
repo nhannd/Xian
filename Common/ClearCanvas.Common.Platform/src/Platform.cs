@@ -1,13 +1,3 @@
-///////////////////////////////////////////////////////////
-//
-//  Platform.cs
-//
-//  Created on:      08-Feb-2005 10:35:54 PM
-//
-//  Original author: Norman Young
-//
-///////////////////////////////////////////////////////////
-
 using System;
 using System.IO;
 using System.Reflection;
@@ -17,7 +7,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	public enum LogCategory
 	{
@@ -218,6 +208,12 @@ namespace ClearCanvas.Common.Platform
 		{
 			if (variable == null)
 				throw new InvalidOperationException(SR.ExceptionMemberNotSet(variableName));
+		}
+
+		public static void CheckMemberIsSet(object variable, string variableName, string detailedMessage)
+		{
+			if (variable == null)
+				throw new InvalidOperationException(SR.ExceptionMemberNotSetVerbose(variableName, detailedMessage));
 		}
 	}
 }

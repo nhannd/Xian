@@ -1,7 +1,6 @@
 using System;
 
-
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// Summary description for PluginException.

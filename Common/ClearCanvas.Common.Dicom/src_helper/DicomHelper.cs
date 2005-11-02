@@ -1,4 +1,5 @@
 using System;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Common.Dicom
 {
@@ -9,11 +10,8 @@ namespace ClearCanvas.Common.Dicom
 	{
 		public static void CheckReturnValue(OFCondition status, DcmTagKey tag, out bool tagExists)
 		{
-			if (status == null)
-				throw new NullReferenceException(SR.ExceptionNullReference("status"));
-
-			if (tag == null)
-				throw new NullReferenceException(SR.ExceptionNullReference("tag"));
+			Platform.CheckForNullReference(status, "status");
+			Platform.CheckForNullReference(tag, "tag");
 
 			if (status.bad())
 			{
@@ -33,11 +31,8 @@ namespace ClearCanvas.Common.Dicom
 
 		public static void CheckReturnValue(OFCondition status, string filename)
 		{
-			if (status == null)
-				throw new NullReferenceException(SR.ExceptionNullReference("status"));
-
-			if (filename == null)
-				throw new NullReferenceException(SR.ExceptionNullReference("filename"));
+			Platform.CheckForNullReference(status, "status");
+			Platform.CheckForNullReference(filename, "filename");
 
 			if (status.bad())
 				throw new DicomException(SR.ExceptionDICOMFile(filename, status.text()));

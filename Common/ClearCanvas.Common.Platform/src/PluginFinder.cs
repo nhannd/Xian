@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.IO;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// Summary description for PluginFinder.
@@ -11,17 +12,20 @@ namespace ClearCanvas.Common.Platform
 	internal class PluginFinder : MarshalByRefObject
 	{
 		// Private attributes
-		private ArrayList m_PluginFileList = new ArrayList();
+		private StringCollection m_PluginFileList = new StringCollection();
 
 		// Constructor
 		public PluginFinder() { }
 
 		// Properties
-		public ArrayList PluginFileList { get {	return m_PluginFileList; } }
+		public StringCollection PluginFileList { get {	return m_PluginFileList; } }
 
 		// Public methods
 		public void FindPlugin(string path)
 		{
+			Platform.CheckForNullReference(path, "path");
+			Platform.CheckForEmptyString(path, "path");
+
 			try
 			{
 				Assembly asm = LoadAssembly(path);
@@ -33,8 +37,7 @@ namespace ClearCanvas.Common.Platform
 			{
 				// Encountered an unmanaged DLL in the plugin directory; this is okay
 				// but we'll log it anyway
-				string str = String.Format("Found unmanaged DLL: {0}", e.FileName);
-				Platform.Log(str);
+				Platform.Log(SR.LogFoundUnmanagedDLL(e.FileName));
 			}
 			catch (Exception e)
 			{
@@ -48,6 +51,9 @@ namespace ClearCanvas.Common.Platform
 		// Private methods
 		private Assembly LoadAssembly(string path)
 		{
+			Platform.CheckForNullReference(path, "path");
+			Platform.CheckForEmptyString(path, "path");
+
 			AppDomain domain = AppDomain.CurrentDomain;
 
 			// Set the AppDomain's relative search path
@@ -61,8 +67,10 @@ namespace ClearCanvas.Common.Platform
 			return domain.Load(assemblyName);
 		}
 
-		bool IsPlugin(Assembly asm)
+		private bool IsPlugin(Assembly asm)
 		{
+			Platform.CheckForNullReference(asm, "asm");
+
 			foreach (Type type in asm.GetExportedTypes())
 			{
 				if (typeof(Plugin).IsAssignableFrom(type))

@@ -4,7 +4,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// Summary description for PluginLoader.
@@ -12,18 +12,21 @@ namespace ClearCanvas.Common.Platform
 	internal class PluginLoader 
 	{
 		// Private attributes
-		private ArrayList m_PluginList = new ArrayList();
+		private PluginList m_PluginList = new PluginList();
 		private bool m_FoundModelPlugin = false;
 
 		// Constructor
 		public PluginLoader() {	}
 
 		// Properties
-		public ArrayList PluginList { get {	return m_PluginList; } }
+		public PluginList PluginList { get { return m_PluginList; } }
 
 		// Public methods
 		public void LoadPlugin(string path)
 		{
+			Platform.CheckForNullReference(path, "path");
+			Platform.CheckForEmptyString(path, "path");
+
 			try
 			{
 				Assembly asm = Assembly.LoadFrom(path);
@@ -32,17 +35,15 @@ namespace ClearCanvas.Common.Platform
 				if (pluginType == null)
 					throw new PluginException(SR.ExceptionNotAPlugin(path));
 
-				Plugin plugin = (Plugin) Activator.CreateInstance(pluginType);
+				Plugin plugin = Activator.CreateInstance(pluginType) as Plugin;
 
 				ValidatePlugin(plugin);
-				m_PluginList.Add(plugin);
+				m_PluginList.AddPlugin(plugin);
 
-				string str = String.Format("Loaded plugin: {0}", path);
-				Platform.Log(str);
+				Platform.Log(SR.LogPluginLoaded(path));
 			}
 			catch (Exception e)
 			{
-
 				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
 
 				if (rethrow)
@@ -52,6 +53,8 @@ namespace ClearCanvas.Common.Platform
 
 		private Type GetPluginType(Assembly asm)
 		{
+			Platform.CheckForNullReference(asm, "asm");
+
 			foreach (Type type in asm.GetExportedTypes())
 			{
 				if (typeof(Plugin).IsAssignableFrom(type))
@@ -63,6 +66,8 @@ namespace ClearCanvas.Common.Platform
 
 		private void ValidatePlugin(Plugin plugin)
 		{
+			Platform.CheckForNullReference(plugin, "path");
+
 			bool exists = m_PluginList.Contains(plugin);
 
 			if (exists)

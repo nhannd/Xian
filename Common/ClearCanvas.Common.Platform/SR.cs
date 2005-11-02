@@ -3,7 +3,7 @@
 // from information in SR.strings.
 // DO NOT MODIFY THIS FILE'S CONTENTS, THEY WILL BE OVERWRITTEN
 // 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	using System;
 	using System.Resources;
@@ -121,6 +121,26 @@ namespace ClearCanvas.Common.Platform
 			return Keys.GetString(Keys.ExceptionMemberNotSet, variableName);
 		}
 		
+		public static string ExceptionMemberNotSetVerbose(string variableName, string detailedMessage)
+		{
+			return Keys.GetString(Keys.ExceptionMemberNotSetVerbose, variableName, detailedMessage);
+		}
+		
+		public static string LogFoundUnmanagedDLL(string filename)
+		{
+			return Keys.GetString(Keys.LogFoundUnmanagedDLL, filename);
+		}
+		
+		public static string LogPluginLoaded(string filename)
+		{
+			return Keys.GetString(Keys.LogPluginLoaded, filename);
+		}
+		
+		public static string LoadingPlugin(string filename)
+		{
+			return Keys.GetString(Keys.LoadingPlugin, filename);
+		}
+		
 		public class Keys
 		{
 			
@@ -157,6 +177,14 @@ namespace ClearCanvas.Common.Platform
 			public const string ExceptionIndexOutOfRange = "ExceptionIndexOutOfRange";
 			
 			public const string ExceptionMemberNotSet = "ExceptionMemberNotSet";
+			
+			public const string ExceptionMemberNotSetVerbose = "ExceptionMemberNotSetVerbose";
+			
+			public const string LogFoundUnmanagedDLL = "LogFoundUnmanagedDLL";
+			
+			public const string LogPluginLoaded = "LogPluginLoaded";
+			
+			public const string LoadingPlugin = "LoadingPlugin";
 			
 			public static CultureInfo Culture
 			{

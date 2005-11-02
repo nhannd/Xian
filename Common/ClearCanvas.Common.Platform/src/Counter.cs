@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	public class Counter 
 	{

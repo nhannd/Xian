@@ -1,19 +1,9 @@
-///////////////////////////////////////////////////////////
-//
-//  Plugin.cs
-//
-//  Created on:      08-Feb-2005 10:35:55 PM
-//
-//  Original author: Norman Young
-//
-///////////////////////////////////////////////////////////
-
 using System;
 using System.Resources;
 using System.Reflection;
 using System.Collections;
 
-namespace ClearCanvas.Common.Platform
+namespace ClearCanvas.Common
 {
 	public abstract class Plugin 
 	{
@@ -137,36 +127,3 @@ namespace ClearCanvas.Common.Platform
 		}
 	}
 }
-
-/* Plugin Template
-
-	using ClearCanvas.Common.Platform;
-
-	public class HelpPlugin : Plugin
-	{
-		private static HelpPlugin m_Me;
-
-		public HelpPlugin()
-		{
-			m_Me = this;
-			Initialize(this);
-		}
-
-		// Properties
-		public static HelpPlugin Me { get { return m_Me; } }
-		public override string Name	{ get {	return this.GetType().Namespace; } }
-		public override Plugin.PluginType Type { get { return Plugin.PluginType.Other; } }
-
-		// Public methods
-		public override void Start()
-		{
-			base.Start();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
-		}
-	}
-
-*/
