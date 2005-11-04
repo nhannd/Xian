@@ -19,9 +19,6 @@ using NUnit.Framework;
 
 namespace ClearCanvas.Common.Tests
 {
-	/// <summary>
-	/// Summary description for FileProcessorTest.
-	/// </summary>
 	[TestFixture]
 	public class FileProcessorTest
 	{

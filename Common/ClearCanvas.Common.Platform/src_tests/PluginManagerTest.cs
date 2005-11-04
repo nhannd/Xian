@@ -11,9 +11,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Common.Tests
 {
-	/// <summary>
-	/// Summary description for PluginManagerTest.
-	/// </summary>
 	[TestFixture]
 	public class PluginManagerTest
 	{
@@ -80,7 +77,7 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(PluginWarningException))]
+		[ExpectedException(typeof(PluginException))]
 		public void LoadPlugins_DuplicatePluginsInDirectory()
 		{
 			Assert.Fail("Test not written yet");
@@ -93,21 +90,21 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(PluginErrorException))]
+		[ExpectedException(typeof(PluginException))]
 		public void LoadPlugins_NoPluginsInDirectory()
 		{
 			Assert.Fail("Test not written yet");
 		}
 
 		[Test]
-		[ExpectedException(typeof(PluginWarningException))]
+		[ExpectedException(typeof(PluginException))]
 		public void LoadPlugins_MoreThanOneModelPlugin()
 		{
 			Assert.Fail("Test not written yet");
 		}
 
 		[Test]
-		[ExpectedException(typeof(PluginWarningException))]
+		[ExpectedException(typeof(PluginException))]
 		public void LoadPlugins_DuplicatePluginName()
 		{
 			Assert.Fail("Test not written yet");

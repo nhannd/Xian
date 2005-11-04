@@ -11,7 +11,8 @@ namespace ClearCanvas.Common
 		public PluginException(string message) : base(message) {}
 		public PluginException(string message, Exception inner) : base(message, inner) {}
 	}
-
+	
+/*
 	public class PluginErrorException : PluginException
 	{
 		public PluginErrorException() {}
@@ -32,4 +33,5 @@ namespace ClearCanvas.Common
 		public DuplicateObjectFoundException(string message) : base(message) {}
 		public DuplicateObjectFoundException(string message, Exception inner) : base(message, inner) {}
 	}
+*/
 }

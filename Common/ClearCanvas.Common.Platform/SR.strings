@@ -2,15 +2,16 @@
 [strings]
 
 # Plugin exception messages
-ExceptionPathDoesNotExist(string path) = {0} does not exist
-ExceptionNotAPlugin(string path) = Assembly {0} is not a plugin
-ExceptionDuplicatePluginFound(string name) = Duplicate plugin {0} found
-ExceptionMoreThanOneModelPluginFound = More than one model plugin found
-ExceptionPluginDirectoryNotFound = Plugin directory could not be found
-ExceptionNoPluginsFound = No plugins could be found
+ExceptionPathDoesNotExist(string path) = {0} does not exist.
+ExceptionNotAPlugin(string path) = Assembly {0} is not a plugin.
+ExceptionDuplicatePluginFound(string name) = Duplicate plugin {0} found.
+ExceptionMoreThanOneModelPluginFound = More than one model plugin found.
+ExceptionPluginDirectoryNotFound = Plugin directory could not be found.
+ExceptionNoPluginsFound = No plugins could be found.
 ExceptionPluginWarning = There was a problem loading one or more plugins. Please check log.
 ExceptionUnableToLoadPlugins = Unable to load any plugins.  Please check log.
 ExceptionPluginCouldNotBeFound(string name) = Plugin {0} could not be found.  Unable to start plugin.
+ExceptionNoPluginsLoaded = No plugins have been loaded.
 
 # Generic helper exception messages
 ExceptionInvalidCast(string variableName, string properTypeName) = {0} must be of type {1}.

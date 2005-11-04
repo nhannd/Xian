@@ -7,9 +7,6 @@ using System.Collections.Specialized;
 
 namespace ClearCanvas.Common.Tests
 {
-	/// <summary>
-	/// Summary description for PluginSetupTeardown.
-	/// </summary>
 	public class PluginSetupTeardown
 	{
 		private static string m_ProjectPath;

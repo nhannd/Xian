@@ -65,6 +65,14 @@ namespace ClearCanvas.Common
 			}
 		}
 		
+		public static string ExceptionNoPluginsLoaded
+		{
+			get
+			{
+				return Keys.GetString(Keys.ExceptionNoPluginsLoaded);
+			}
+		}
+		
 		public static string ExceptionArgumentNotPositive
 		{
 			get
@@ -165,6 +173,8 @@ namespace ClearCanvas.Common
 			public const string ExceptionUnableToLoadPlugins = "ExceptionUnableToLoadPlugins";
 			
 			public const string ExceptionPluginCouldNotBeFound = "ExceptionPluginCouldNotBeFound";
+			
+			public const string ExceptionNoPluginsLoaded = "ExceptionNoPluginsLoaded";
 			
 			public const string ExceptionInvalidCast = "ExceptionInvalidCast";
 			

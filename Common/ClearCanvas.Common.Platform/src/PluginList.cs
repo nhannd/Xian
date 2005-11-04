@@ -6,7 +6,7 @@ namespace ClearCanvas.Common
 	/// <summary>
 	/// Summary description for PluginList.
 	/// </summary>
-	public class PluginList : IEnumerable
+	internal class PluginList : IEnumerable
 	{
 		private ArrayList m_PluginList = new ArrayList();
 
