@@ -26,7 +26,7 @@ namespace ClearCanvas.Common
 		long startCount = 0;
 
 		/// <summary>
-		/// Initializes a new instance of the <b>Counter</b> class.
+		/// Initializes a new instance of the <see cref="Counter"/> class.
 		/// </summary>
 		public Counter()
 		{
@@ -61,8 +61,9 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Number of seconds elapsed between start and stop.
+		/// Gets the number of seconds elapsed between start and stop.
 		/// </summary>
+		/// <value>The number of seconds elapsed between start and stop.</value>
 		public float Seconds
 		{
 			get

@@ -33,8 +33,9 @@ namespace ClearCanvas.Common
 		// Properties
 
 		/// <summary>
-		/// Gets a reference to the one and only PluginManager.
+		/// Gets the one and only <see cref="PluginManager"/>.
 		/// </summary>
+		/// <value>The <see cref="PluginManager"/>.</value>
 		public static PluginManager PluginManager 
 		{
 			get
@@ -53,8 +54,9 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Gets or sets the installation directory.
+		/// Gets or sets ClearCanvas' installation directory.
 		/// </summary>
+		/// <value>ClearCanvas' fully qualified installation directory.</value>
 		public static string InstallDir
 		{
 			get
@@ -73,6 +75,7 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets or sets the plugin directory.
 		/// </summary>
+		/// <value>The fully qualified plugin directory.</value>
 		public static string PluginDir
 		{
 			get
@@ -84,6 +87,7 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets or sets the study directory.
 		/// </summary>
+		/// <value>The fully qualified study directory.</value>
 		public static string StudyDir
 		{
 			get
@@ -95,6 +99,7 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets or sets the log directory.
 		/// </summary>
+		/// <value>The fully qualified log directory.</value>
 		public static string LogDir
 		{
 			get

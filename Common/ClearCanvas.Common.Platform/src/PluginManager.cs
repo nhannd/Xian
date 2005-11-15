@@ -41,7 +41,7 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Gets whether any plugins have been loaded.
+		/// Gets a value indicating whether any plugins have been loaded.
 		/// </summary>
 		/// <value><b>true</b> if at least one plugin has been loaded. <b>false</b>
 		/// if no plugins have been loaded.</value>

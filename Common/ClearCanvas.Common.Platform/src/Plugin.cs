@@ -48,6 +48,7 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the name of the plugin.
 		/// </summary>
+		/// <value>The plugin name.</value>
 		/// <remarks>
 		/// By convention, the name of the plugin is the fully qualified
 		/// name of the <see cref="Plugin"/> derived class.
@@ -57,11 +58,13 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the plugin type.
 		/// </summary>
+		/// <value>The plugin type.</value>
 		public abstract Plugin.PluginType Type { get; }
 
 		/// <summary>
-		/// Gets whether the plugin has been started.
+		/// Gets a value indicating whether the plugin has been started.
 		/// </summary>
+		/// <value><b>true</b> if the plugin has been started; <b>false</b> otherwise.</value>
 		public bool Started { get { return m_Started; }	}
 
 		/// <summary>
