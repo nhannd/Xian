@@ -20,12 +20,15 @@ FIND_PATH(WITH_ZLIBINC "include/zlib.h" ${dcmtk_SOURCE_DIR}/../zlib-1.2.1)
 
 # set certain project wide flags
 SET(CMAKE_C_FLAGS "" CACHE STRING "Flags for C compiler." FORCE)
-SET(CMAKE_C_FLAGS_DEBUG "/nologo /MTd /W3 /GX /Z7 /Od /GR- /YX" CACHE STRING "Win32 Debug Options C Code" FORCE)
-SET(CMAKE_C_FLAGS_RELEASE "/nologo /MT /W3 /GX /O2 /GR- /YX" CACHE STRING "Win32 Release Options C Code" FORCE)
+SET(CMAKE_C_FLAGS_DEBUG "/nologo /MTd /W3 /EHa /Z7 /Od /GR-" CACHE STRING "Win32 Debug Options C Code" FORCE)
+SET(CMAKE_C_FLAGS_RELEASE "/nologo /MT /W3 /EHa /O2 /GR-" CACHE STRING "Win32 Release Options C Code" FORCE)
 SET(CMAKE_CXX_FLAGS "" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-SET(CMAKE_CXX_FLAGS_DEBUG "/nologo /MTd /W3 /GX /Z7 /Od /GR- /YX" CACHE STRING "Win32 Debug Options C++ Code" FORCE)
-SET(CMAKE_CXX_FLAGS_RELEASE "/nologo /MT /W3 /GX /O2 /GR- /YX" CACHE STRING "Win32 Release Options C++ Code" FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG "/nologo /MTd /W3 /EHsc /Z7 /Od /GR-" CACHE STRING "Win32 Debug Options C++ Code" FORCE)
+SET(CMAKE_CXX_FLAGS_RELEASE "/nologo /MT /W3 /EHsc /O2 /GR-" CACHE STRING "Win32 Release Options C++ Code" FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS "/INCREMENTAL:NO" CACHE STRING "Win32 Linker Flags" FORCE)
+
+# set Studio 8 CRT deprecation flag
+ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
 
 # set _REENTRANT flag
 ADD_DEFINITIONS(-D_REENTRANT)

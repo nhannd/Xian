@@ -1589,7 +1589,7 @@ storeSCPCallback(
 
         // update global variables outputFileNameArray 
         // (might be used in executeOnReception() and renameOnEndOfStudy)
-        char *tmpstr6 = strrchr( fileName.c_str(), PATH_SEPARATOR );
+        const char *tmpstr6 = strrchr( fileName.c_str(), PATH_SEPARATOR );
         outputFileNameArray.push_back(++tmpstr6);
       }
 

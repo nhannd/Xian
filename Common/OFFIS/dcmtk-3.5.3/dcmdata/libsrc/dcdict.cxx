@@ -244,7 +244,7 @@ parseVMField(char* vmField, int& vmMin, int& vmMax)
 static int
 splitFields(const char* line, char* fields[], int maxFields, char splitChar)
 {
-    char* p;
+    const char* p;
     int foundFields = 0;
     int len;
 
