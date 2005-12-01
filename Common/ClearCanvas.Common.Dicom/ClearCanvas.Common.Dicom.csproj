@@ -1,1054 +1,680 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "ClearCanvas.Common.Dicom"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "ClearCanvas.Common.Dicom"
-                RunPostBuildEvent = "OnOutputUpdated"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\ClearCanvas.Common.Platform\refs\nunit.framework.dll"
-                />
-                <Reference
-                    Name = "ClearCanvas.Common.Platform"
-                    Project = "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SR.strings"
-                    BuildAction = "None"
-                    Generator = "StringResourceTool"
-                    LastGenOutput = "SR.cs"
-                />
-                <File
-                    RelPath = "SR.cs"
-                    DependentUpon = "SR.strings"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                    DesignTime = "True"
-                    AutoGen = "True"
-                />
-                <File
-                    RelPath = "SR.resx"
-                    DependentUpon = "SR.strings"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "src_helper\Dcm.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_helper\DicomHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_helper\Exceptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmAgeString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmApplicationEntity.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmAssociationConfiguration.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmAssociationConfigurationFile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmAttributeTag.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmByteString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmCharString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmCodeString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmConsumer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDataDictionary.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDataset.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDateTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDecimalString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDicomDir.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDictEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDictEntryList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDictEntryListConstIterator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDictEntryListIterator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmDictRangeRestriction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmEVR.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmFileFormat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmFloatingPointDouble.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmFloatingPointSingle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmHashDict.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmHashDictIterator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmInputFilter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmInputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmInputStreamFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmIntegerString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmLongString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmLongText.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmMetaInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmOtherByteOtherWord.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmOtherFloat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmOutputFilter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmOutputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmOverlayData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmPersonName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmPixelData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmPixelSequence.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmProducer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmRepresentationEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmRepresentationParameter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmSequenceOfItems.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmShortString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmShortText.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmSignedLong.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmSignedShort.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmTag.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmTagKey.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DCMTK.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DCMTKPINVOKE.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DCMTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmUniqueIdentifier.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmUnlimitedText.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmUnsignedLong.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmUnsignedLongOffset.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmUnsignedShort.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmVR.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DcmXfer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\DimseCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_ByteOrder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_EncodingType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_GrpLenEncoding.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_JPEGEncapsulated.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_PaddingEncoding.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_SearchMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_StreamCompression.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_TransferState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_TransferSyntax.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\E_VRType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\GlobalDcmDataDictionary.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\ItemOffset.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\LST_HEAD.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFConditionBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFConditionConst.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFConditionString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFDate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFDateTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFListBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFListLinkBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFStatus.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\OFTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_a_64_1__char.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DcmDirectoryRecord.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DcmOffsetList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DcmPixelItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DcmStack.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DcmTransportLayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DUL_ASSOCIATESERVICEPARAMETERS.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DUL_ASSOCIATIONKEY.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DUL_BLOCKOPTIONS.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DUL_ModeCallback.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DUL_NETWORKKEY.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_DUL_PRESENTATIONCONTEXTID.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_bool_p_T_DIMSE_C_FindRQ_p_DcmDataset_int_p_T_DIMSE_C_FindRSP_p_p_DcmDataset_p_p_DcmDataset__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_bool_p_T_DIMSE_C_GetRQ_p_DcmDataset_int_p_T_DIMSE_C_GetRSP_p_p_DcmDataset_p_p_DcmDataset__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_bool_p_T_DIMSE_C_MoveRQ_p_DcmDataset_int_p_T_DIMSE_C_MoveRSP_p_p_DcmDataset_p_p_DcmDataset__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_p_T_ASC_Network_p_p_T_ASC_Association__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_C_FindRQ_int_p_T_DIMSE_C_FindRSP_p_DcmDataset__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_C_GetRQ_int_p_T_DIMSE_C_GetRSP__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_C_MoveRQ_int_p_T_DIMSE_C_MoveRSP__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_StoreProgress_p_T_DIMSE_C_StoreRQ__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_StoreProgress_p_T_DIMSE_C_StoreRQ_p_char_p_p_DcmDataset_p_T_DIMSE_C_StoreRSP_p_p_DcmDataset__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_f_p_void_unsigned_long__void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_FILE.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_OFConsole.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_OFGlobalTbool_t.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_OFGlobalTint_t.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_OFGlobalTunsigned_long_t.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_OFIteratorTDcmDictEntry_p_t.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_ostream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_char.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmDataset.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmOutputFileStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmPixelItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmPixelSequence.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_DcmSequenceOfItems.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_LST_HEAD.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_SOPClassExtendedNegotiationSubItemList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_T_ASC_Association.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_T_ASC_Network.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_T_ASC_Parameters.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_p_void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_size_t.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_SOPClassExtendedNegotiationSubItemList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_unsigned_char.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_unsigned_long.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\SWIGTYPE_p_void.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_Association.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_Network.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_NetworkRole.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_P_ResultReason.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_Parameters.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_PresentationContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_RejectParameters.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_RejectParametersReason.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_RejectParametersResult.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_RejectParametersSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_ASC_SC_ROLE.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_BlockingMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_CancelRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_EchoRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_EchoRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_FindRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_FindRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_GetRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_GetRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_MoveRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_MoveRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_StoreRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_C_StoreRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_Command.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_DataSetType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_DetectedCancelParameters.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_Message.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_Message_msg.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_ActionRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_ActionRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_CreateRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_CreateRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_DeleteRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_DeleteRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_EventReportRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_EventReportRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_GetRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_GetRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_SetRQ.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_N_SetRSP.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_Priority.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_StoreProgress.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_proxy\T_DIMSE_StoreProgressState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "src_tests\DcmDataTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ClearCanvas.Common.Dicom</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ClearCanvas.Common.Dicom</RootNamespace>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\ClearCanvas.Common.Platform\refs\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SR.cs">
+      <DependentUpon>SR.strings</DependentUpon>
+      <SubType>Code</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="src_helper\Dcm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_helper\DicomHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_helper\Exceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmAgeString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmApplicationEntity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmAssociationConfiguration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmAssociationConfigurationFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmAttributeTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmByteString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmCharString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmCodeString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmConsumer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDataDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDataset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDateTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDecimalString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDicomDir.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDictEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDictEntryList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDictEntryListConstIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDictEntryListIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmDictRangeRestriction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmEVR.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmFileFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmFloatingPointDouble.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmFloatingPointSingle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmHashDict.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmHashDictIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmInputFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmInputStreamFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmIntegerString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmLongString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmLongText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmMetaInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmOtherByteOtherWord.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmOtherFloat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmOutputFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmOverlayData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmPersonName.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmPixelData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmPixelSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmProducer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmRepresentationEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmRepresentationParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmSequenceOfItems.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmShortString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmShortText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmSignedLong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmSignedShort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmTagKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DCMTK.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DCMTKPINVOKE.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DCMTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmUniqueIdentifier.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmUnlimitedText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmUnsignedLong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmUnsignedLongOffset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmUnsignedShort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmVR.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DcmXfer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\DimseCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_ByteOrder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_EncodingType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_GrpLenEncoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_JPEGEncapsulated.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_PaddingEncoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_SearchMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_StreamCompression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_TransferState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_TransferSyntax.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\E_VRType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\GlobalDcmDataDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\ItemOffset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\LST_HEAD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFConditionBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFConditionConst.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFConditionString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFDateTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFListBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFListLinkBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\OFTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_a_64_1__char.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DcmDirectoryRecord.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DcmOffsetList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DcmPixelItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DcmStack.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DcmTransportLayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DUL_ASSOCIATESERVICEPARAMETERS.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DUL_ASSOCIATIONKEY.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DUL_BLOCKOPTIONS.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DUL_ModeCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DUL_NETWORKKEY.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_DUL_PRESENTATIONCONTEXTID.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_FILE.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_bool_p_T_DIMSE_C_FindRQ_p_DcmDataset_int_p_T_DIMSE_C_FindRSP_p_p_DcmDataset_p_p_DcmDataset__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_bool_p_T_DIMSE_C_GetRQ_p_DcmDataset_int_p_T_DIMSE_C_GetRSP_p_p_DcmDataset_p_p_DcmDataset__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_bool_p_T_DIMSE_C_MoveRQ_p_DcmDataset_int_p_T_DIMSE_C_MoveRSP_p_p_DcmDataset_p_p_DcmDataset__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_p_T_ASC_Network_p_p_T_ASC_Association__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_C_FindRQ_int_p_T_DIMSE_C_FindRSP_p_DcmDataset__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_C_GetRQ_int_p_T_DIMSE_C_GetRSP__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_C_MoveRQ_int_p_T_DIMSE_C_MoveRSP__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_StoreProgress_p_T_DIMSE_C_StoreRQ_p_char_p_p_DcmDataset_p_T_DIMSE_C_StoreRSP_p_p_DcmDataset__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_p_T_DIMSE_StoreProgress_p_T_DIMSE_C_StoreRQ__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_f_p_void_unsigned_long__void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_OFConsole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_OFGlobalTbool_t.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_OFGlobalTint_t.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_OFGlobalTunsigned_long_t.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_OFIteratorTDcmDictEntry_p_t.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_ostream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_char.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmDataset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmOutputFileStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmPixelItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmPixelSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_DcmSequenceOfItems.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_LST_HEAD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_SOPClassExtendedNegotiationSubItemList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_T_ASC_Association.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_T_ASC_Network.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_T_ASC_Parameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_p_void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_size_t.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_SOPClassExtendedNegotiationSubItemList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_unsigned_char.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_unsigned_long.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\SWIGTYPE_p_void.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_Association.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_Network.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_NetworkRole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_Parameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_PresentationContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_P_ResultReason.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_RejectParameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_RejectParametersReason.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_RejectParametersResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_RejectParametersSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_ASC_SC_ROLE.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_BlockingMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_Command.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_CancelRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_EchoRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_EchoRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_FindRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_FindRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_GetRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_GetRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_MoveRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_MoveRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_StoreRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_C_StoreRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_DataSetType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_DetectedCancelParameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_Message.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_Message_msg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_ActionRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_ActionRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_CreateRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_CreateRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_DeleteRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_DeleteRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_EventReportRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_EventReportRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_GetRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_GetRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_SetRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_N_SetRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_Priority.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_StoreProgress.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_proxy\T_DIMSE_StoreProgressState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src_tests\DcmDataTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="SR.strings">
+      <Generator>StringResourceTool</Generator>
+      <LastGenOutput>SR.cs</LastGenOutput>
+    </None>
+    <EmbeddedResource Include="SR.resx">
+      <DependentUpon>SR.strings</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClearCanvas.Common.Platform\ClearCanvas.Common.Platform.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common.Platform</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
