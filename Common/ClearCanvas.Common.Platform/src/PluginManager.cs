@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
@@ -212,14 +213,14 @@ namespace ClearCanvas.Common
 		/// that is passed in as the <paramref name="type"/>.
 		/// </remarks>
 		/// <seealso cref="IExtensionPoint"/>
-		public Object[] CreatePluginExtensions(Type type)
+		public IExtensionPoint[] CreatePluginExtensions(Type type)
 		{
 			Platform.CheckForNullReference(type, "type");
 			
 			if (m_PluginList.NumberOfPlugins == 0)
 				throw new InvalidOperationException(SR.ExceptionNoPluginsLoaded);
 
-			ArrayList extensionList = new ArrayList();
+			List<IExtensionPoint> extensionList = new List<IExtensionPoint>();
 
 			foreach (Plugin plugin in m_PluginList)
 				extensionList.AddRange(plugin.CreateExtensions(type));

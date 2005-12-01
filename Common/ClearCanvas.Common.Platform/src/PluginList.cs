@@ -1,14 +1,15 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// Summary description for PluginList.
 	/// </summary>
-	internal class PluginList : IEnumerable
+	internal class PluginList : IEnumerable<Plugin>
 	{
-		private ArrayList m_PluginList = new ArrayList();
+		private List<Plugin> m_PluginList = new List<Plugin>();
 
 		public PluginList()
 		{
@@ -46,9 +47,19 @@ namespace ClearCanvas.Common
 			return m_PluginList.Contains(plugin);
 		}
 
+
+		#region IEnumerable<Plugin> Members
+
+		public IEnumerator<Plugin> GetEnumerator()
+		{
+			return m_PluginList.GetEnumerator();
+		}
+
+		#endregion
+
 		#region IEnumerable Members
 
-		public IEnumerator GetEnumerator()
+		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return m_PluginList.GetEnumerator();
 		}

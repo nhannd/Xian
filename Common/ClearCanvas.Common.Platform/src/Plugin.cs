@@ -1,7 +1,7 @@
 using System;
 using System.Resources;
 using System.Reflection;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Common
 {
@@ -19,7 +19,7 @@ namespace ClearCanvas.Common
 	{
 		// Private attributes
 		private bool m_Started = false;
-		private ArrayList m_ExtensionTypeList = new ArrayList();
+		private List<Type> m_ExtensionTypeList = new List<Type>();
 		private Plugin m_PluginSubclass;
 
 		/// <summary>
@@ -123,22 +123,22 @@ namespace ClearCanvas.Common
 		/// </summary>
 		/// <param name="type">The type of object to instantiate. Typically an interface
 		/// or base class defined in the host plugin.</param>
-		/// <returns>An array of objects of the specified type.</returns>
+		/// <returns>
+		/// An array of <see cref="IExtensionPoint"/> objects of the specified type.
+		/// </returns>
 		/// <remarks>
 		/// <see cref="PluginManager.CreatePluginExtensions"/> calls this method across
 		/// all plugins.
 		/// </remarks>
 		/// <seealso cref="PluginManager.CreatePluginExtensions"/>
-		public Object[] CreateExtensions(Type type)
+		public IExtensionPoint[] CreateExtensions(Type type)
 		{
 			Platform.CheckForNullReference(type, "type");
 
-			ArrayList extensionList = new ArrayList();
+			List<IExtensionPoint> extensionList = new List<IExtensionPoint>();
 
-			foreach (Object obj in m_ExtensionTypeList)
+			foreach (Type extensionType in m_ExtensionTypeList)
 			{
-				Type extensionType = (Type) obj;
-
 				if (type.IsAssignableFrom(extensionType))
 				{
 					if (!Started)
