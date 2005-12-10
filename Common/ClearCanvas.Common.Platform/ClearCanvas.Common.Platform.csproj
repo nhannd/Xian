@@ -96,9 +96,9 @@
       <Name>Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink</Name>
       <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <Name>nunit.framework</Name>
-      <HintPath>refs\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\NUnit 2.2.3\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -106,6 +106,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -130,6 +131,7 @@
     <Compile Include="src\FileProcessor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\FloatComparer.cs" />
     <Compile Include="src\IExtensionPoint.cs">
       <SubType>Code</SubType>
     </Compile>
