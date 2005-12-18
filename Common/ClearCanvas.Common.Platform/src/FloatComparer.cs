@@ -1,3 +1,5 @@
+// Code taken directly and unmodified from http://www.windojitsu.com/code/floatcomparer.html
+
 using System;
 using System.Collections.Generic;
 using System.Text;
