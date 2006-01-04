@@ -29,7 +29,7 @@ namespace ClearCanvas.Common
 			}
 			else
 			{
-				throw new DirectoryNotFoundException(SR.ExceptionPathDoesNotExist(path));
+				throw new DirectoryNotFoundException(String.Format(SR.ExceptionPathDoesNotExist, path));
 			}
 		}
 

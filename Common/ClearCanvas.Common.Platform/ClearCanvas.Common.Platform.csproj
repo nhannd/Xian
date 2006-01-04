@@ -115,7 +115,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SR.cs" />
     <Compile Include="src\Attributes.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -167,14 +166,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SR.strings" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SR.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Content Include="SR.txt" />
+    <Compile Include="SR.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\ClearCanvas.Strings.targets"/>
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>

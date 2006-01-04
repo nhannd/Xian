@@ -33,14 +33,14 @@ namespace ClearCanvas.Common
 				Type pluginType = GetPluginType(asm);
 
 				if (pluginType == null)
-					throw new PluginException(SR.ExceptionNotAPlugin(path));
+					throw new PluginException(String.Format(SR.ExceptionNotAPlugin, path));
 
 				Plugin plugin = Activator.CreateInstance(pluginType) as Plugin;
 
 				ValidatePlugin(plugin);
 				m_PluginList.AddPlugin(plugin);
 
-				Platform.Log(SR.LogPluginLoaded(path));
+				Platform.Log(String.Format(SR.LogPluginLoaded, path));
 			}
 			catch (Exception e)
 			{
@@ -71,7 +71,7 @@ namespace ClearCanvas.Common
 			bool exists = m_PluginList.Contains(plugin);
 
 			if (exists)
-				throw new PluginException(SR.ExceptionDuplicatePluginFound(plugin.Name));
+				throw new PluginException(String.Format(SR.ExceptionDuplicatePluginFound, plugin.Name));
 
 			if (plugin.Type == Plugin.PluginType.Model)
 			{

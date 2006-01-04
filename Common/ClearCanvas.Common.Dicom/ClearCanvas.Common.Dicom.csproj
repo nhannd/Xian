@@ -98,12 +98,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SR.cs">
-      <DependentUpon>SR.strings</DependentUpon>
-      <SubType>Code</SubType>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Include="src_helper\Dcm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -656,13 +650,6 @@
     <Compile Include="src_tests\DcmDataTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="SR.strings">
-      <Generator>StringResourceTool</Generator>
-      <LastGenOutput>SR.cs</LastGenOutput>
-    </None>
-    <EmbeddedResource Include="SR.resx">
-      <DependentUpon>SR.strings</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClearCanvas.Common.Platform\ClearCanvas.Common.Platform.csproj">
@@ -670,7 +657,12 @@
       <Name>ClearCanvas.Common.Platform</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="SR.txt" />
+    <Compile Include="SR.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\ClearCanvas.Strings.targets"/>
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>

@@ -1,0 +1,20 @@
+﻿ExceptionPathDoesNotExist={0} does not exist.
+ExceptionNotAPlugin=Assembly {0} is not a plugin.
+ExceptionDuplicatePluginFound=Duplicate plugin {0} found.
+ExceptionMoreThanOneModelPluginFound=More than one model plugin found.
+ExceptionPluginDirectoryNotFound=Plugin directory could not be found.
+ExceptionNoPluginsFound=No plugins could be found.
+ExceptionPluginWarning=There was a problem loading one or more plugins. Please check log.
+ExceptionUnableToLoadPlugins=Unable to load any plugins.  Please check log.
+ExceptionPluginCouldNotBeFound=Plugin {0} could not be found.  Unable to start plugin.
+ExceptionNoPluginsLoaded=No plugins have been loaded.
+ExceptionInvalidCast={0} must be of type {1}.
+ExceptionArgumentNotPositive=Value must be greater than zero.
+ExceptionArgumentNegative=Value must be non-negative.
+ExceptionArgumentOutOfRange={3} = {0} is invalid. {3} must be >= {1} and <= {2}.
+ExceptionIndexOutOfRange={3}[{0}] is invalid.  Index must be >= {1} and <= {2}.
+ExceptionMemberNotSet={0} has not been set.  Object state is invalid.
+ExceptionMemberNotSetVerbose={0} has not been set.  {1}
+LogFoundUnmanagedDLL=Found unmanaged DLL: {0}
+LogPluginLoaded=Loaded plugin: {0}
+LoadingPlugin=Loading plugin {0}

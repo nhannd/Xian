@@ -292,7 +292,7 @@ namespace ClearCanvas.Common
 			{
 				loader.LoadPlugin(pluginFile);
 				string pluginName = Path.GetFileName(pluginFile);
-				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs(SR.LoadingPlugin(pluginName)));
+				EventsHelper.Fire(m_PluginProgressEvent, this, new PluginProgressEventArgs(String.Format(SR.LoadingPlugin, pluginName)));
 			}
 
 			m_PluginList = loader.PluginList;

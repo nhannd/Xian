@@ -255,7 +255,7 @@ namespace ClearCanvas.Common
 			Platform.CheckForNullReference(castTypeName, "castTypeName");
 
 			if (castOutput == null)
-				throw new InvalidCastException(SR.ExceptionInvalidCast(castInputName, castTypeName));
+				throw new InvalidCastException(String.Format(SR.ExceptionInvalidCast, castInputName, castTypeName));
 		}
 
 		/// <summary>
@@ -334,7 +334,7 @@ namespace ClearCanvas.Common
 			Platform.CheckForNullReference(variableName, "variableName");
 
 			if (argumentValue < min || argumentValue > max)
-				throw new ArgumentOutOfRangeException(SR.ExceptionArgumentOutOfRange(argumentValue, min, max, variableName));
+				throw new ArgumentOutOfRangeException(String.Format(SR.ExceptionArgumentOutOfRange, argumentValue, min, max, variableName));
 		}
 
 		/// <summary>
@@ -353,7 +353,7 @@ namespace ClearCanvas.Common
 			Platform.CheckForNullReference(obj, "obj");
 
 			if (index < min || index > max)
-				throw new IndexOutOfRangeException(SR.ExceptionIndexOutOfRange(index, min, max, obj.GetType().Name));
+				throw new IndexOutOfRangeException(String.Format(SR.ExceptionIndexOutOfRange, index, min, max, obj.GetType().Name));
 		}
 
 		/// <summary>
@@ -371,7 +371,7 @@ namespace ClearCanvas.Common
 			Platform.CheckForNullReference(variableName, "variableName");
 
 			if (variable == null)
-				throw new InvalidOperationException(SR.ExceptionMemberNotSet(variableName));
+				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSet, variableName));
 		}
 
 		/// <summary>
@@ -392,7 +392,7 @@ namespace ClearCanvas.Common
 			Platform.CheckForNullReference(detailedMessage, "detailedMessage");
 
 			if (variable == null)
-				throw new InvalidOperationException(SR.ExceptionMemberNotSetVerbose(variableName, detailedMessage));
+				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
 	}
 }
