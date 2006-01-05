@@ -29,7 +29,7 @@ namespace ClearCanvas.Common
 	{
 		private PluginList m_PluginList = new PluginList();
 		private string m_PluginDir;
-		private event EventHandler m_PluginProgressEvent;
+		private event EventHandler<PluginProgressEventArgs> m_PluginProgressEvent;
 
 		// Constructor is internal, since we only ever one instance of it and that
 		// one instance is created through the Platform class.
@@ -69,16 +69,10 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Occurs when a plugin is loaded.
 		/// </summary>
-		public event EventHandler PluginProgress
+		public event EventHandler<PluginProgressEventArgs> PluginProgress
 		{
-			add
-			{
-				m_PluginProgressEvent += value;
-			}
-			remove
-			{
-				m_PluginProgressEvent -= value;
-			}
+			add { m_PluginProgressEvent += value; }
+			remove { m_PluginProgressEvent -= value; }
 		}
 
 		/// <summary>
