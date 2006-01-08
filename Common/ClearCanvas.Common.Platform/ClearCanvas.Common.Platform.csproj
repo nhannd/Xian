@@ -1,180 +1,188 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
-    <AssemblyName>ClearCanvas.Common.Platform</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <DefaultClientScript>JScript</DefaultClientScript>
-    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-    <DefaultTargetSchema>IE50</DefaultTargetSchema>
-    <DelaySign>false</DelaySign>
-    <OutputType>Library</OutputType>
-    <RootNamespace>ClearCanvas.Common</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE;UNIT_TESTS</DefineConstants>
-    <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
-      <Name>Microsoft.Practices.EnterpriseLibrary.Common</Name>
-      <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration">
-      <Name>Microsoft.Practices.EnterpriseLibrary.Configuration</Name>
-      <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling">
-      <Name>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling</Name>
-      <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging">
-      <Name>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging</Name>
-      <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging">
-      <Name>Microsoft.Practices.EnterpriseLibrary.Logging</Name>
-      <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink">
-      <Name>Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink</Name>
-      <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\NUnit 2.2.3\bin\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System">
-      <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Attributes.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Counter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\EventsHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Exceptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\FileProcessor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\FloatComparer.cs" />
-    <Compile Include="src\IExtensionPoint.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Platform.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Plugin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\PluginFinder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\PluginList.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\PluginLoader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\PluginManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\PluginProgressEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src_tests\FileProcessorTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src_tests\PluginManagerTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src_tests\PluginSetupTeardown.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SR.txt" />
-    <Compile Include="SR.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\ClearCanvas.Strings.targets"/>
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+    <PropertyGroup>
+        <ProjectType>Local</ProjectType>
+        <ProductVersion>8.0.50727</ProductVersion>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</ProjectGuid>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ApplicationIcon/>
+        <AssemblyKeyContainerName/>
+        <AssemblyName>ClearCanvas.Common.Platform</AssemblyName>
+        <AssemblyOriginatorKeyFile/>
+        <DefaultClientScript>JScript</DefaultClientScript>
+        <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+        <DefaultTargetSchema>IE50</DefaultTargetSchema>
+        <DelaySign>false</DelaySign>
+        <OutputType>Library</OutputType>
+        <RootNamespace>ClearCanvas.Common</RootNamespace>
+        <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+        <StartupObject/>
+        <FileUpgradeFlags/>
+        <UpgradeBackupLocation/>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <OutputPath>bin\Debug\</OutputPath>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <BaseAddress>285212672</BaseAddress>
+        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+        <ConfigurationOverrideFile/>
+        <DefineConstants>DEBUG;TRACE;UNIT_TESTS</DefineConstants>
+        <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
+        <DebugSymbols>true</DebugSymbols>
+        <FileAlignment>4096</FileAlignment>
+        <NoStdLib>false</NoStdLib>
+        <NoWarn/>
+        <Optimize>false</Optimize>
+        <RegisterForComInterop>false</RegisterForComInterop>
+        <RemoveIntegerChecks>false</RemoveIntegerChecks>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <WarningLevel>4</WarningLevel>
+        <DebugType>full</DebugType>
+        <ErrorReport>prompt</ErrorReport>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <OutputPath>bin\Release\</OutputPath>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <BaseAddress>285212672</BaseAddress>
+        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+        <ConfigurationOverrideFile/>
+        <DefineConstants>TRACE</DefineConstants>
+        <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
+        <DebugSymbols>false</DebugSymbols>
+        <FileAlignment>4096</FileAlignment>
+        <NoStdLib>false</NoStdLib>
+        <NoWarn/>
+        <Optimize>true</Optimize>
+        <RegisterForComInterop>false</RegisterForComInterop>
+        <RemoveIntegerChecks>false</RemoveIntegerChecks>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <WarningLevel>4</WarningLevel>
+        <DebugType>none</DebugType>
+        <ErrorReport>prompt</ErrorReport>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mono|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <OutputPath>bin\Debug Mono\</OutputPath>
+        <DefineConstants>TRACE;DEBUG;MONO;UNIT_TESTS</DefineConstants>
+        <BaseAddress>285212672</BaseAddress>
+        <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
+        <DebugType>full</DebugType>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Mono|AnyCPU' ">
+        <OutputPath>bin\Release Mono\</OutputPath>
+        <DefineConstants>TRACE;MONO</DefineConstants>
+        <BaseAddress>285212672</BaseAddress>
+        <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
+        <Optimize>true</Optimize>
+        <DebugType/>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
+            <Name>Microsoft.Practices.EnterpriseLibrary.Common</Name>
+            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration">
+            <Name>Microsoft.Practices.EnterpriseLibrary.Configuration</Name>
+            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Configuration.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling">
+            <Name>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling</Name>
+            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging">
+            <Name>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging</Name>
+            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging">
+            <Name>Microsoft.Practices.EnterpriseLibrary.Logging</Name>
+            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink">
+            <Name>Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink</Name>
+            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink.dll</HintPath>
+        </Reference>
+        <Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\..\Program Files\NUnit 2.2.3\bin\nunit.framework.dll</HintPath>
+        </Reference>
+        <Reference Include="System">
+            <Name>System</Name>
+        </Reference>
+        <Reference Include="System.Data">
+            <Name>System.Data</Name>
+        </Reference>
+        <Reference Include="System.Drawing"/>
+        <Reference Include="System.Xml">
+            <Name>System.XML</Name>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup/>
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="SR.cs"/>
+        <EmbeddedResource Include="SR.resx"/>
+        <Content Include="SR.txt"/>
+        <Compile Include="src_tests\FileProcessorTest.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src_tests\PluginManagerTest.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src_tests\PluginSetupTeardown.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\Attributes.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\Counter.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\EventsHelper.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\Exceptions.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\FileProcessor.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\FloatComparer.cs"/>
+        <Compile Include="src\IExtensionPoint.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\Platform.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\Plugin.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\PluginFinder.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\PluginList.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\PluginLoader.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\PluginManager.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="src\PluginProgressEventArgs.cs">
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets"/>
+    <Import Project="..\ClearCanvas.Strings.targets"/>
+    <PropertyGroup>
+        <PreBuildEvent/>
+        <PostBuildEvent/>
+    </PropertyGroup>
 </Project>
