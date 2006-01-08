@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearCanvas.Dicom.Network</RootNamespace>
-    <AssemblyName>ccnetwork</AssemblyName>
+    <AssemblyName>ClearCanvas.Dicom.Network</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,13 +28,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Common.Platform, Version=1.0.2176.25737, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.Common.Platform, Version=1.0.2176.25738, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Common\ClearCanvas.Common.Platform\bin\Release\ClearCanvas.Common.Platform.dll</HintPath>
+      <HintPath>..\..\Common\ClearCanvas.Common.Platform\bin\Debug\ClearCanvas.Common.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="sdcmnet, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.Dicom.Network.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\OFFIS\dcmtk-3.5.3\dcmnet\SWIG_Wrapper\csharp\sdcmnet.dll</HintPath>
+      <HintPath>OffisWrapper\csharp\Debug\ClearCanvas.Dicom.Network.OffisWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

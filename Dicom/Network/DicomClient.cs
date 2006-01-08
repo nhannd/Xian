@@ -1,12 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net.Sockets;
-using ClearCanvas.Common;
-using ClearCanvas.Dicom.Network.OffisWrapper;
-
 namespace ClearCanvas.Dicom.Network
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Net.Sockets;
+    using ClearCanvas.Common;
+    using ClearCanvas.Dicom.Network.OffisWrapper;
+
+    //// Custom C# Exception
+    //public class DicomRuntimeApplicationException : System.ApplicationException
+    //{
+    //    public DicomRuntimeApplicationException(string message)
+    //        : base(message)
+    //    {
+    //    }
+    //}
+
     public delegate void SopInstanceReceiveDelegate(object source, System.EventArgs e);
     public delegate void SeriesCompleteDelegate(object source, System.EventArgs e);
     public delegate void StudyCompleteDelegate(object source, System.EventArgs e);
