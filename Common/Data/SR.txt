@@ -1,3 +1,0 @@
-﻿ExceptionNullReference={0} is null
-ExceptionDICOMTag=Tag: {0} - {1}
-ExceptionDICOMFile=File: {0} - {1}
