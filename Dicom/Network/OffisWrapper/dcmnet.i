@@ -1,16 +1,16 @@
 %module dcmnet
 
 %{
-#include "../include/assoc.h"
-#include "../include/dimse.h"
-#include "../../ofstd/include/ofcond.h"
+#include "assoc.h"
+#include "dimse.h"
+#include "ofcond.h"
 %}
 
 #define params parameters
 #define base baseclass
 
-%include "../../ofstd/include/ofcond.h"
-%include "../include/dicom.h"
+%include "ofcond.h"
+%include "dicom.h"
 
 /////////////////////////////////////////////////////////////////////////
 //
