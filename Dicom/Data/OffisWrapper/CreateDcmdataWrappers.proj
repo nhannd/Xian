@@ -1,9 +1,9 @@
-<Project DefaultTargets="GenerateSwigWrappers" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="BuildSwigWrappers" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Appname>CreateDcmdataWrappers</Appname>
 		<SwigOutputCsharpDir>csharp</SwigOutputCsharpDir>
-		<CppCompilerOutputDir>cppwrapper/$(Configuration)</CppCompilerOutputDir>
+    <CppCompilerOutputDir>cppwrapper/$(Configuration)</CppCompilerOutputDir>
 		<SwigOutputNamespace>ClearCanvas.Dicom.Data.OffisWrapper</SwigOutputNamespace>
 		<CppCompiler>cl.exe</CppCompiler>
 		<SwigCompiler>swig.exe</SwigCompiler>
@@ -35,16 +35,17 @@
 		<SwigInterfaceFile Include="dcmdata.i" />
 		<SwigCppOutputFile Include="@(SwigInterfaceFile->'%(filename)_wrap.cxx')" />
 		<CppWrapperLibraryFile Include="@(SwigInterfaceFile->'%(filename).dll')" />
-		<AllSwigOutputFiles Include="$(SwigOutputCsharpDir)\*.*" />
 	</ItemGroup> 
-	<Target Name="GenerateSwigWrappers">
+	<Target Name="GenerateSwigWrappers"> 
 		<MakeDir Directories="$(SwigOutputCsharpDir)" Condition="!Exists('$(SwigOutputCsharpDir')" />
 		<MakeDir Directories="$(CppCompilerOutputDir)" Condition="!Exists('$(CppCompilerOutputDir)')" />
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
-		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('$(SwigOutputCsharpDir)')" />
+		<Delete Files="$(SwigOutputCsharpDir)\*.*" Condition="Exists('$(SwigOutputCsharpDir)')" />
 		<Exec Command="%SWIG%\swig.exe -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I&quot;$(VCInstallDir)\include&quot; -outdir $(SwigOutputCsharpDir) -Wall -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" />
-		<Exec Command="cl.exe $(CppCompilerParameters) $(CppCompileDebugParameters) $(CppCompilerIncludeParameters) @(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj') /Fd$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb') /Fp$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).idb')" />
-		<Exec Command="link.exe $(CppLinkerParameters) $(CppLinkerDebugParameters) /OUT:$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).dll') $(CppLinkerObjectFiles) $(CppLinkerZlibFile) $(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj')" />
-		<Csc Sources="@(AllSwigOutputFiles)" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
 	</Target>
+  <Target Name="BuildSwigWrappers" DependsOnTargets="GenerateSwigWrappers">
+    <Exec Command="cl.exe $(CppCompilerParameters) $(CppCompileDebugParameters) $(CppCompilerIncludeParameters) @(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj') /Fd$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb') /Fp$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).idb')" />
+    <Exec Command="link.exe $(CppLinkerParameters) $(CppLinkerDebugParameters) /OUT:$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).dll') $(CppLinkerObjectFiles) $(CppLinkerZlibFile) $(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj')" />
+    <Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
+  </Target>
 </Project>
