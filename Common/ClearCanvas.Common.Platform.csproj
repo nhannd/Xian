@@ -8,7 +8,7 @@
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
         <ApplicationIcon/>
         <AssemblyKeyContainerName/>
-        <AssemblyName>ClearCanvas.Common.Platform</AssemblyName>
+        <AssemblyName>ClearCanvas.Common</AssemblyName>
         <AssemblyOriginatorKeyFile/>
         <DefaultClientScript>JScript</DefaultClientScript>
         <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
@@ -129,58 +129,58 @@
         <Compile Include="SR.cs"/>
         <EmbeddedResource Include="SR.resx"/>
         <Content Include="SR.txt"/>
-        <Compile Include="src_tests\FileProcessorTest.cs">
+        <Compile Include="Tests\FileProcessorTest.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src_tests\PluginManagerTest.cs">
+        <Compile Include="Tests\PluginManagerTest.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src_tests\PluginSetupTeardown.cs">
+        <Compile Include="Tests\PluginSetupTeardown.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\Attributes.cs">
+        <Compile Include="Attributes.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\Counter.cs">
+        <Compile Include="Counter.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\EventsHelper.cs">
+        <Compile Include="EventsHelper.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\Exceptions.cs">
+        <Compile Include="Exceptions.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\FileProcessor.cs">
+        <Compile Include="FileProcessor.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\FloatComparer.cs"/>
-        <Compile Include="src\IExtensionPoint.cs">
+        <Compile Include="FloatComparer.cs"/>
+        <Compile Include="IExtensionPoint.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\Platform.cs">
+        <Compile Include="Platform.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\Plugin.cs">
+        <Compile Include="Plugin.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\PluginFinder.cs">
+        <Compile Include="PluginFinder.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\PluginList.cs">
+        <Compile Include="PluginList.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\PluginLoader.cs">
+        <Compile Include="PluginLoader.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\PluginManager.cs">
+        <Compile Include="PluginManager.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Include="src\PluginProgressEventArgs.cs">
+        <Compile Include="PluginProgressEventArgs.cs">
             <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
     <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets"/>
-    <Import Project="..\ClearCanvas.Strings.targets"/>
+    <Import Project="ClearCanvas.Strings.targets"/>
     <PropertyGroup>
         <PreBuildEvent/>
         <PostBuildEvent/>
