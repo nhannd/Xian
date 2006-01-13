@@ -41,7 +41,7 @@
 		<MakeDir Directories="$(CppCompilerOutputDir)" Condition="!Exists('$(CppCompilerOutputDir)')" />
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('$(SwigOutputCsharpDir)')" />
-		<Exec Command="%SWIG%\swig.exe -csharp -c++ -I..\..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -outdir $(SwigOutputCsharpDir) -Wall -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" />
+		<Exec Command="..\..\..\Swig\swig.exe -csharp -c++ -I..\..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -outdir $(SwigOutputCsharpDir) -Wall -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" />
 	</Target>
   <Target Name="BuildSwigWrappers" DependsOnTargets="GenerateSwigWrappers">
     <Exec Command="cl.exe $(CppCompilerParameters) $(CppCompileDebugParameters) $(CppCompilerIncludeParameters) @(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj') /Fd$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb') /Fp$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).idb')" />
