@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Dicom.Data {
+namespace ClearCanvas.Dicom.Network {
     using System;
     
     
@@ -20,6 +20,7 @@ namespace ClearCanvas.Dicom.Data {
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class SR {
         
@@ -27,6 +28,7 @@ namespace ClearCanvas.Dicom.Data {
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal SR() {
         }
         
@@ -37,7 +39,7 @@ namespace ClearCanvas.Dicom.Data {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Dicom.Data.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Dicom.Network.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -55,33 +57,6 @@ namespace ClearCanvas.Dicom.Data {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to File: {0} - {1}.
-        /// </summary>
-        public static string ExceptionDICOMFile {
-            get {
-                return ResourceManager.GetString("ExceptionDICOMFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tag: {0} - {1}.
-        /// </summary>
-        public static string ExceptionDICOMTag {
-            get {
-                return ResourceManager.GetString("ExceptionDICOMTag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} is null.
-        /// </summary>
-        public static string ExceptionNullReference {
-            get {
-                return ResourceManager.GetString("ExceptionNullReference", resourceCulture);
             }
         }
     }

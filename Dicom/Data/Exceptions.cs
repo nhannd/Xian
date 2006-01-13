@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common.Dicom
+namespace ClearCanvas.Dicom.Data
 {
 	/// <summary>
 	/// Summary description for DICOMException.

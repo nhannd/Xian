@@ -1,7 +1,8 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Data.OffisWrapper;
 
-namespace ClearCanvas.Common.Dicom
+namespace ClearCanvas.Dicom.Data
 {
 	/// <summary>
 	/// Summary description for Dicom.

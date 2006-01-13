@@ -1,4 +1,4 @@
-%module DCMTK
+%module DcmData
 
 %{
 #pragma warning (disable:4267)

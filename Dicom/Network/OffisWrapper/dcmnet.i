@@ -1,4 +1,4 @@
-%module dcmnet
+%module DcmNet
 
 %{
 #include "assoc.h"

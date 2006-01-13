@@ -1,11 +1,9 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Windows.Forms;
 using NUnit.Framework;
-using ClearCanvas.Common.Dicom;
+using ClearCanvas.Dicom.Data;
+using ClearCanvas.Dicom.Data.OffisWrapper;
 
 namespace ClearCanvas.Dicom.Tests
 {
@@ -28,7 +26,7 @@ namespace ClearCanvas.Dicom.Tests
 		{
 			string fileName = "CT.dcm";
 			m_FileFormat = new DcmFileFormat();
-			OFCondition cond = m_FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, DCMTK.DCM_MaxReadLength, false);
+			OFCondition cond = m_FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, DcmData.DCM_MaxReadLength, false);
 
 			Assert.IsTrue(cond.good());
 
@@ -51,7 +49,7 @@ namespace ClearCanvas.Dicom.Tests
 				strGroupElement = tag.toString();
 				strTagName = tag.getTagName();
 
-				DcmElement elem = DCMTK.castToDcmElement(obj);
+				DcmElement elem = DcmData.castToDcmElement(obj);
 
 				//StringBuilder buffer = new StringBuilder(256);
 
@@ -97,7 +95,7 @@ namespace ClearCanvas.Dicom.Tests
 			m_DataSet.findAndGetUint16Array(dcm.PixelData, ref pPixelData);
 			
 			int stride = columns * bitsAllocated / 8;
-			Bitmap bmp = new Bitmap(columns, rows, stride, PixelFormat.Format16bppRgb565, pPixelData);
+//			Bitmap bmp = new Bitmap(columns, rows, stride, PixelFormat.Format16bppRgb565, pPixelData);
 
 //			ColorPalette pal = bmp.Palette;
 
@@ -110,7 +108,7 @@ namespace ClearCanvas.Dicom.Tests
 */
 //			bmp.Palette = pal;
 
-			bmp.Save("C:\\test.jpg", ImageFormat.Jpeg);
+//			bmp.Save("C:\\test.jpg", ImageFormat.Jpeg);
 		}
 	}
 }
