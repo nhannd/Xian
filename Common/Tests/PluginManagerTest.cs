@@ -4,8 +4,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
-//using MbUnit.Core.Framework;
-//using MbUnit.Framework;
 using NUnit.Framework;
 using ClearCanvas.Common;
 

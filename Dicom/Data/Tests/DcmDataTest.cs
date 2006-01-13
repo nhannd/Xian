@@ -1,3 +1,5 @@
+#if UNIT_TESTS
+
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -112,3 +114,5 @@ namespace ClearCanvas.Dicom.Tests
 		}
 	}
 }
+
+#endif

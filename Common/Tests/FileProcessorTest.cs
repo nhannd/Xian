@@ -1,21 +1,9 @@
-///////////////////////////////////////////////////////////
-//
-//  FileProcessorTest.cs
-//
-//  Created on:      09-Feb-2005 12:00:00 PM
-//
-//  Original author: Norman Young
-//
-///////////////////////////////////////////////////////////
-
 #if	UNIT_TESTS
 
 using System;
 using System.IO;
 using ClearCanvas.Common;
 using NUnit.Framework;
-//using MbUnit.Core.Framework;
-//using MbUnit.Framework;
 
 namespace ClearCanvas.Common.Tests
 {
