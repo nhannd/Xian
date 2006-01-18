@@ -114,9 +114,7 @@
   <ItemGroup>
     <Compile Include="AETitle.cs" />
     <Compile Include="ApplicationEntity.cs" />
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="DicomClient.cs" />
     <Compile Include="DicomException.cs" />
     <Compile Include="HostName.cs" />
