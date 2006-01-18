@@ -80,17 +80,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Common, Version=1.0.2208.21682, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="ClearCanvas.Dicom.Data, Version=1.0.2208.23304, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Data\bin\Debug\ClearCanvas.Dicom.Data.dll</HintPath>
-    </Reference>
     <Reference Include="ClearCanvas.Dicom.Data.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Data\bin\Debug\ClearCanvas.Dicom.Data.OffisWrapper.dll</HintPath>
+      <HintPath>Data\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.Data.OffisWrapper.dll</HintPath>
     </Reference>
     <Reference Include="ClearCanvas.Dicom.Network.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -142,6 +134,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Uid.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />
