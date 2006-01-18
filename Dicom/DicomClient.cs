@@ -35,6 +35,8 @@ namespace ClearCanvas.Dicom.Network
 
         public DicomClient(ApplicationEntity ownAEParameters)
         {
+            // this is a temporary hack to initialize the sockets layer
+            // I haven't been able to find how to properly do this
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
                 ProtocolType.Tcp);
 
@@ -49,7 +51,8 @@ namespace ClearCanvas.Dicom.Network
                 T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, ae.AE, ae.Host, ae.Port);
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
                 association.SendCEcho(_cEchoRepeats);
-                
+
+                return true;
             }
             catch (DicomRuntimeApplicationException e)
             {

@@ -133,6 +133,7 @@
     <Compile Include="Tests\DcmDataTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\DcmNetTest.cs" />
     <Compile Include="Uid.cs" />
   </ItemGroup>
   <ItemGroup>
