@@ -4,43 +4,56 @@ namespace ClearCanvas.Dicom.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Text;
     using ClearCanvas.Dicom.Network;
     using NUnit.Framework;
 
     [TestFixture]
     public class DcmNetTest
-    {
+    {   
+        private Process _dicomServer = null;
+
         [TestFixtureSetUp]
         public void Init()
         {
             // check to see if OFFIS storescp.exe exists
-            const string debugProgramLocation = "..\\Offis\\dcmtk-3.5.3\\dcmnet\\apps\\debug\\storescp.exe";
-            const string releaseProgramLocation = "..\\Offis\\dcmtk-3.5.3\\dcmnet\\apps\\release\\storescp.exe";
-            string programToRun = null;
+            string programToRun = "C:\\Windows\\storescp.exe";
+            string arguments = " -v 104";
 
-            if (!System.IO.File.Exists(debugProgramLocation))
-            {   
-                if (!System.IO.File.Exists(releaseProgramLocation))
-                {
-                    throw new Exception("Could not find the DICOM server program to run tests against");
-                }
-               
-                programToRun = releaseProgramLocation;
-            }
-            else
+            if (!System.IO.File.Exists(programToRun))
+                throw new Exception("Could not find the DICOM server program to run tests against");
+            
+            /* Note: I haven't figured out how to determine whether the dcmnet.dll 
+             * dependency is somewhere that NUnit can access and properly load into
+             * memory
+             * 
+            // check to see if the dependent C++ library file exists
+            string dependentLibraryFile = "\\dcmnet.dll";
+            if (!System.IO.File.Exists(dependentLibraryFile))
+                throw new Exception("Could not find the dependent C++ library");
+             */
+
+            try
             {
-                programToRun = debugProgramLocation;
-            }
+                ProcessStartInfo startInfo = new ProcessStartInfo(programToRun);
+                startInfo.Arguments = arguments;
 
-            // build the command line then run
-            programToRun += "-v 104";
-            System.Diagnostics.Process.Start(programToRun);
+                _dicomServer = Process.Start(startInfo);
+            }
+            catch (System.Exception e)
+            {
+                throw new Exception("Could not start the DICOM server", e);
+            }
         }
 
         [TestFixtureTearDown]
         public void Dispose()
         {
+            if (null != _dicomServer)
+            {
+                _dicomServer.Kill();
+            }
         }
 
         [Test]
