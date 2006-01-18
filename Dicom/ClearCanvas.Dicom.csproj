@@ -8,14 +8,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon />
     <AssemblyKeyContainerName />
-    <AssemblyName>ClearCanvas.Dicom.Data</AssemblyName>
+    <AssemblyName>ClearCanvas.Dicom</AssemblyName>
     <AssemblyOriginatorKeyFile />
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>ClearCanvas.Dicom.Data</RootNamespace>
+    <RootNamespace>ClearCanvas.Dicom</RootNamespace>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <StartupObject />
     <FileUpgradeFlags />
@@ -80,13 +80,21 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Common, Version=1.0.2203.25722, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.Common, Version=1.0.2208.21682, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+      <HintPath>..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Dicom.Data, Version=1.0.2208.23304, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Data\bin\Debug\ClearCanvas.Dicom.Data.dll</HintPath>
     </Reference>
     <Reference Include="ClearCanvas.Dicom.Data.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>OffisWrapper\csharp\Debug\ClearCanvas.Dicom.Data.OffisWrapper.dll</HintPath>
+      <HintPath>Data\bin\Debug\ClearCanvas.Dicom.Data.OffisWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Dicom.Network.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Network\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.Network.OffisWrapper.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <SpecificVersion>False</SpecificVersion>
@@ -104,9 +112,21 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="AETitle.cs" />
+    <Compile Include="ApplicationEntity.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DicomClient.cs" />
+    <Compile Include="DicomException.cs" />
+    <Compile Include="HostName.cs" />
+    <Compile Include="ListeningPort.cs" />
+    <Compile Include="PatientID.cs" />
+    <Compile Include="PatientsName.cs" />
+    <Compile Include="QueryResult.cs" />
+    <Compile Include="QueryResultReceivedEventArgs.cs" />
+    <Compile Include="SeriesCompletedEventArgs.cs" />
+    <Compile Include="SopInstanceReceivedEventArgs.cs" />
     <Compile Include="SR.cs" />
     <EmbeddedResource Include="SR.resx" />
     <Content Include="SR.txt" />
@@ -119,12 +139,14 @@
     <Compile Include="Exceptions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="StudyCompletedEventArgs.cs" />
     <Compile Include="Tests\DcmDataTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Uid.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
+  <Import Project="..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>
     <PreBuildEvent />
     <PostBuildEvent />

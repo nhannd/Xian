@@ -1,15 +1,15 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Network")]
+[assembly: AssemblyTitle("ClearCanvas.Dicom")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Network")]
+[assembly: AssemblyProduct("ClearCanvas.Dicom")]
 [assembly: AssemblyCopyright("Copyright ©  2005")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

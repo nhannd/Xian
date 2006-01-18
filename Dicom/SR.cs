@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Dicom.Network {
+namespace ClearCanvas.Dicom {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Dicom.Network {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Dicom.Network.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Dicom.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,33 @@ namespace ClearCanvas.Dicom.Network {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File: {0} - {1}.
+        /// </summary>
+        public static string ExceptionDICOMFile {
+            get {
+                return ResourceManager.GetString("ExceptionDICOMFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag: {0} - {1}.
+        /// </summary>
+        public static string ExceptionDICOMTag {
+            get {
+                return ResourceManager.GetString("ExceptionDICOMTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is null.
+        /// </summary>
+        public static string ExceptionNullReference {
+            get {
+                return ResourceManager.GetString("ExceptionNullReference", resourceCulture);
             }
         }
     }
