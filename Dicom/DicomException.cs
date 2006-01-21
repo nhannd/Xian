@@ -17,4 +17,17 @@ namespace ClearCanvas.Dicom.Exceptions
         {
         }
     }
+
+    public class NetworkDicomException : DicomException
+    {
+        public NetworkDicomException(string message)
+            : base(message)
+        {
+        }
+
+        public NetworkDicomException(string message, System.Exception exception)
+            : base(message, exception)
+        {
+        }
+    }
 }

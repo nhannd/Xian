@@ -4,6 +4,7 @@
 #include "assoc.h"
 #include "dimse.h"
 #include "ofcond.h"
+#include "cond.h"
 %}
 
 #define params parameters
@@ -11,6 +12,7 @@
 
 %include "ofcond.h"
 %include "dicom.h"
+%include "cond.h"
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -21,10 +23,23 @@
 /////////////////////////////////////////////////////////////////////////
 %insert(runtime) %{
 
+#include "ofcond.h"
+
+class dicom_runtime_error : public std::runtime_error
+{
+public:
+	dicom_runtime_error(OFCondition condition, const string& message)
+	: runtime_error(message), _condition(condition)
+	{
+	}
+
+	OFCondition _condition;
+};
+
 // Code to handle throwing of C# DicomRuntimeApplicationException from C/C++ code.
 // The equivalent delegate to the callback, CSharpExceptionCallback_t, is DicomRuntimeExceptionDelegate
 // and the equivalent dicomRuntimeExceptionCallback instance is dicomRuntimeDelegate
-typedef void (SWIGSTDCALL* CSharpExceptionCallback_t)(const char *);
+typedef void (SWIGSTDCALL* CSharpExceptionCallback_t)(OFCondition *, const char *);
 CSharpExceptionCallback_t dicomRuntimeExceptionCallback = NULL;
 
 extern "C" SWIGEXPORT
@@ -34,8 +49,8 @@ void SWIGSTDCALL DicomRuntimeExceptionRegisterCallback(CSharpExceptionCallback_t
 
 // Note that SWIG detects any method calls named starting with
 // SWIG_CSharpSetPendingException for warning 845
-static void SWIG_CSharpSetPendingExceptionDicomRuntime(const char *msg) {
-	dicomRuntimeExceptionCallback(msg);
+static void SWIG_CSharpSetPendingExceptionDicomRuntime(OFCondition* pcondition, const char* message) {
+	dicomRuntimeExceptionCallback(pcondition, message);
 }
 
 // custom define to change "parameters" variable names back to params in C++ world
@@ -48,9 +63,29 @@ using System.Runtime.InteropServices;
 
 // Custom C# Exception
 public class DicomRuntimeApplicationException : System.ApplicationException {
-  public DicomRuntimeApplicationException(string message) 
-    : base(message) {
-  }
+	public DicomRuntimeApplicationException(OFCondition condition, string message)
+	: base(message)
+	{
+		_condition = condition;
+	}
+
+	public System.UInt16 Module
+	{
+		get
+		{
+			return _condition.module();
+		}
+	}
+
+	public System.UInt16 Code
+	{
+		get
+		{
+			return _condition.code();
+		}
+	}
+
+	private OFCondition _condition = null;
 }
 %}
 
@@ -59,16 +94,16 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 	class DicomRuntimeExceptionHelper 
 	{
 		// C# delegate for the C/C++ dicomRuntimeExceptionCallback
-		public delegate void DicomRuntimeExceptionDelegate(string message);
+		public delegate void DicomRuntimeExceptionDelegate(IntPtr pcondition, string message);
 		static DicomRuntimeExceptionDelegate dicomRuntimeDelegate = new DicomRuntimeExceptionDelegate(SetPendingDicomRuntimeException);
 
 		[DllImport("$dllimport", EntryPoint="DicomRuntimeExceptionRegisterCallback")]
 		public static extern
 		void DicomRuntimeExceptionRegisterCallback(DicomRuntimeExceptionDelegate dicomRuntimeCallback);
 
-		static void SetPendingDicomRuntimeException(string message) 
+		static void SetPendingDicomRuntimeException(IntPtr pcondition, string message) 
 		{
-			SWIGPendingException.Set(new DicomRuntimeApplicationException(message));
+			SWIGPendingException.Set(new DicomRuntimeApplicationException(new OFCondition(pcondition, true), message));
 		}
 
 		static DicomRuntimeExceptionHelper() 
@@ -80,9 +115,10 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 
 %}
 
-%typemap(throws, canthrow=1) std::runtime_error {
-	  SWIG_CSharpSetPendingExceptionDicomRuntime($1.what());
-	  return $null;
+%typemap(throws, canthrow=1) dicom_runtime_error {
+	OFCondition* pcondition = new OFCondition($1._condition);
+	SWIG_CSharpSetPendingExceptionDicomRuntime(pcondition, $1.what());
+	return $null;
 }
 /////////////////////////////////////////////////////////////////////////
 //
@@ -128,7 +164,7 @@ struct T_ASC_Network
 %extend(canthrow=1) T_ASC_Network {
 	T_ASC_Network(T_ASC_NetworkRole role,
 					int acceptorPort,
-					int timeout) throw (std::runtime_error)
+					int timeout) throw (dicom_runtime_error)
 	{
 		T_ASC_Network* pNetwork = 0;
 		OFCondition result = ASC_initializeNetwork(role, 
@@ -139,14 +175,14 @@ struct T_ASC_Network
 		if (result.bad())
 		{
 			string msg = string("T_ASC_Network ctor: ") + result.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(result, msg);
 		}
 		
 		return pNetwork;
 	}
 
 	T_ASC_Association* CreateAssociation(T_ASC_Parameters* associationParameters)
-		throw (std::runtime_error)
+		throw (dicom_runtime_error)
 	{
 		T_ASC_Association* pAssociation = 0;
 		OFCondition result = ASC_requestAssociation(self, 
@@ -221,12 +257,12 @@ struct T_ASC_Network
 					break;
 				}
 				
-				throw std::runtime_error(msg);
+				throw dicom_runtime_error(result, msg);
 			} 
 			else 
 			{
 				string msg = string("Association request failed: ") + result.text();
-				throw std::runtime_error(msg);
+				throw dicom_runtime_error(result, msg);
 			}
 			
 		}
@@ -235,10 +271,15 @@ struct T_ASC_Network
 		{
 			// clean up the allocated association before throwing exception
 			ASC_destroyAssociation(&pAssociation);
-			throw std::runtime_error("T_ASC_Network.CreateAssociation: No acceptable Presentation Contexts");
+			throw dicom_runtime_error(result, "T_ASC_Network.CreateAssociation: No acceptable Presentation Contexts");
 		}
 
 		return pAssociation;
+	}
+
+	void DestroyAssociation(T_ASC_Parameters* associationParameters)
+	{
+
 	}
 
 	~T_ASC_Network() 
@@ -277,20 +318,20 @@ struct T_ASC_Parameters
 };
 
 %extend(canthrow=1) T_ASC_Parameters {
-	T_ASC_Parameters(int maxReceivePDULength,
+	T_ASC_Parameters(int maxReceivePduLength,
 	const char* ourAETitle,
 	const char* peerAETitle,
-	const char* peerHostname,
-	int peerPort) throw (std::runtime_error)
+	const char* peerHostName,
+	int peerPort) throw (dicom_runtime_error)
 	{
 		T_ASC_Parameters* pParameters = 0;
 		OFCondition result = ASC_createAssociationParameters(&pParameters,
-			maxReceivePDULength);
+			maxReceivePduLength);
 
 		if (result.bad())
 		{
 			string msg = string("ASC_createAssociationParameters: ") + result.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(result, msg);
 		}
 
 		result = ASC_setAPTitles(pParameters, ourAETitle, peerAETitle, NULL);
@@ -298,7 +339,7 @@ struct T_ASC_Parameters
 		if (result.bad())
 		{
 			string msg = string("ASC_setAPTitles: ") + result.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(result, msg);
 		}
 		
 		// we will use an unsecured transport layer at this point (False)
@@ -307,63 +348,68 @@ struct T_ASC_Parameters
 		if (result.bad())
 		{
 			string msg = string("ASC_setTransportLayerType: ") + result.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(result, msg);
 		}
 
 		DIC_NODENAME localHost;
 		DIC_NODENAME peerHost;
 
 		gethostname(localHost, sizeof(localHost) - 1);
-		sprintf(peerHost, "%s:%d", peerHostname, (int) peerPort);
+		sprintf(peerHost, "%s:%d", peerHostName, (int) peerPort);
 		result = ASC_setPresentationAddresses(pParameters, localHost, peerHost);
 
 		if (result.bad())
 		{
 			string msg = string("ASC_setPresentationAddresses: ") + result.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(result, msg);
 		}
 
+		return pParameters;
+	}
+
+	void ConfigureForVerification()
+	{
 		static const char* transferSyntaxes[] = {
-			UID_LittleEndianImplicitTransferSyntax, /* default xfer syntax first */
 			UID_LittleEndianExplicitTransferSyntax,
 			UID_BigEndianExplicitTransferSyntax,
-			UID_JPEGProcess1TransferSyntax,
-			UID_JPEGProcess2_4TransferSyntax,
-			UID_JPEGProcess3_5TransferSyntax,
-			UID_JPEGProcess6_8TransferSyntax,
-			UID_JPEGProcess7_9TransferSyntax,
-			UID_JPEGProcess10_12TransferSyntax,
-			UID_JPEGProcess11_13TransferSyntax,
-			UID_JPEGProcess14TransferSyntax,
-			UID_JPEGProcess15TransferSyntax,
-			UID_JPEGProcess16_18TransferSyntax,
-			UID_JPEGProcess17_19TransferSyntax,
-			UID_JPEGProcess20_22TransferSyntax,
-			UID_JPEGProcess21_23TransferSyntax,
-			UID_JPEGProcess24_26TransferSyntax,
-			UID_JPEGProcess25_27TransferSyntax,
-			UID_JPEGProcess28TransferSyntax,
-			UID_JPEGProcess29TransferSyntax,
-			UID_JPEGProcess14SV1TransferSyntax,
-			UID_RLELosslessTransferSyntax,
-			UID_JPEGLSLosslessTransferSyntax,
-			UID_JPEGLSLossyTransferSyntax,
-			UID_DeflatedExplicitVRLittleEndianTransferSyntax,
-			UID_JPEG2000LosslessOnlyTransferSyntax,
-			UID_JPEG2000TransferSyntax,
-			UID_MPEG2MainProfileAtMainLevelTransferSyntax
+			UID_LittleEndianImplicitTransferSyntax, 
 		};
 
-		result = ASC_addPresentationContext(pParameters, 1, UID_VerificationSOPClass,
-                 transferSyntaxes, 1);
+		OFCondition result = ASC_addPresentationContext(
+			self, 
+			1,
+			UID_VerificationSOPClass, 
+			transferSyntaxes, 
+			DIM_OF(transferSyntaxes));
 
 		if (result.bad())
 		{
 			string msg = string("ASC_addPresentationContext: ") + result.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(result, msg);
 		}
 
-		return pParameters;
+	}
+
+	void ConfigureForStudyRootQuery()
+	{
+		const char* transferSyntaxes[] = {
+			UID_LittleEndianExplicitTransferSyntax,
+			UID_BigEndianExplicitTransferSyntax,
+			UID_LittleEndianImplicitTransferSyntax
+		};
+
+		OFCondition result = ASC_addPresentationContext(
+			self, 
+			1,
+			UID_FINDStudyRootQueryRetrieveInformationModel,
+			transferSyntaxes, 
+			DIM_OF(transferSyntaxes));
+
+		if (result.bad())
+		{
+			string msg = string("ASC_addPresentationContext: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
 	}
 
 	~T_ASC_Parameters() 
@@ -395,7 +441,7 @@ struct T_ASC_Association
 
 %extend(canthrow=1) T_ASC_Association {
 
-	bool SendCEcho(int numberOfCEchoRepeats) throw (std::runtime_error)
+	bool SendCEcho(int numberOfCEchoRepeats) throw (dicom_runtime_error)
 	{
 		OFCondition cond = EC_Normal;
 		unsigned long n = numberOfCEchoRepeats;
@@ -421,7 +467,7 @@ struct T_ASC_Association
 		if (cond != EC_Normal && cond.bad())
 		{
 			string msg = string("SendCEcho: ") + cond.text();
-			throw std::runtime_error(msg);
+			throw dicom_runtime_error(cond, msg);
 		}
 
 		return true;

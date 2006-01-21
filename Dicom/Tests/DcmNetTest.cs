@@ -70,6 +70,48 @@ namespace ClearCanvas.Dicom.Tests
 
             Assert.IsTrue(successVerify);
         }
+
+        [Test]
+        public void QueryByPatientID()
+        {
+            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("CCNETTEST"), new ListeningPort(110));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintonmacg5"),
+                new AETitle("OSIRIX"), new ListeningPort(4096));
+
+            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+
+            if (!dicomClient.Verify(serverAE))
+                throw new Exception("Target server is not running");
+
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientID("1001002"), new PatientsName("FOSTER*"));
+
+            Assert.IsTrue(results.Count == 1);
+
+            foreach (QueryResult qr in results)
+            {
+                
+                foreach (DicomTag dcmTag in qr.DicomTags)
+                {
+
+                }
+            }
+        }
+
+        [Test]
+        public void QueryByAccessionNumber()
+        {
+        }
+
+        [Test]
+        public void QueryByStudyInstanceUid()
+        {
+        }
+
+        [Test]
+        public void QueryByMultipleKeys()
+        {
+        }
     }
 }
 
