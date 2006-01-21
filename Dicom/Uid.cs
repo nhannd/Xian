@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
     public class Uid : System.IComparable
     {
         private string m_Uid;
