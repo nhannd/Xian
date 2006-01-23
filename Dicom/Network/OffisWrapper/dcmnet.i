@@ -277,11 +277,6 @@ struct T_ASC_Network
 		return pAssociation;
 	}
 
-	void DestroyAssociation(T_ASC_Parameters* associationParameters)
-	{
-
-	}
-
 	~T_ASC_Network() 
 	{
 		ASC_dropNetwork(&self);
@@ -467,6 +462,24 @@ struct T_ASC_Association
 		if (cond != EC_Normal && cond.bad())
 		{
 			string msg = string("SendCEcho: ") + cond.text();
+
+			if (cond != DUL_PEERABORTEDASSOCIATION)
+				ASC_abortAssociation(self);
+			
+			throw dicom_runtime_error(cond, msg);
+		}
+
+		return true;
+	}
+
+	bool Release() throw (dicom_runtime_error)
+	{
+		OFCondition cond = EC_Normal;
+		cond = ASC_releaseAssociation(self);
+
+		if (cond != EC_Normal && cond.bad())
+		{
+			string msg = string("Release: ") + cond.text();
 			throw dicom_runtime_error(cond, msg);
 		}
 

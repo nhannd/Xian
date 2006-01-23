@@ -8,6 +8,7 @@ namespace ClearCanvas.Dicom.Tests
     using System.Text;
     using ClearCanvas.Dicom.Network;
     using NUnit.Framework;
+using ClearCanvas.Dicom.Exceptions;
 
     [TestFixture]
     public class DcmNetTest
@@ -69,6 +70,36 @@ namespace ClearCanvas.Dicom.Tests
             bool successVerify = dicomClient.Verify(serverAE);
 
             Assert.IsTrue(successVerify);
+        }
+
+        [Test]
+        [ExpectedException(typeof(NetworkDicomException))]
+        public void VerifyCausesRejection()
+        {
+            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("CCNETTEST"), new ListeningPort(110));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("WRONGAE"), new ListeningPort(104));
+
+            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+
+            bool successVerify = dicomClient.Verify(serverAE);
+            Assert.IsFalse(successVerify);
+        }
+
+        [Test]
+        [ExpectedException(typeof(NetworkDicomException))]
+        public void VerifyCausesException()
+        {
+            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("CCNETTEST"), new ListeningPort(110));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("192.168.0.101"),
+                new AETitle("WRONGAE"), new ListeningPort(104));
+
+            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+
+            bool successVerify = dicomClient.Verify(serverAE);
+            Assert.IsFalse(successVerify);
         }
 
         [Test]

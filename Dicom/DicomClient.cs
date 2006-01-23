@@ -36,15 +36,14 @@ namespace ClearCanvas.Dicom.Network
 
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
                 association.SendCEcho(_cEchoRepeats);
+                association.Release();
 
                 return true;
             }
             catch (DicomRuntimeApplicationException e)
-            {
-                
+            {                
+                throw new NetworkDicomException(OffisConditionParser.GetTextString(ae, e), e);
             }
-
-            return false;
         }
 
         public ReadOnlyQueryResultCollection Query(ApplicationEntity ae, PatientID patientID, PatientsName patientsName)

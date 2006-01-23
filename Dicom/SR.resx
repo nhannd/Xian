@@ -126,4 +126,146 @@
   <data name="ExceptionDICOMFile" xml:space="preserve">
     <value>File: {0} - {1}</value>
   </data>
+  <data name="ExceptionDecodingBadModuleNumber" xml:space="preserve">
+    <value>The module number provided from the OFFIS toolkit is unexpected and cannot be dealt with in this version of the software.</value>
+  </data>
+  <data name="ExceptionOffisAssociationBadPresentationContextID" xml:space="preserve">
+    <value>Bad presentation context ID</value>
+  </data>
+  <data name="ExceptionOffisAssociationMissingTransferSyntax" xml:space="preserve">
+    <value>Missing transfer syntax</value>
+  </data>
+  <data name="ExceptionOffisAssociationNullKey" xml:space="preserve">
+    <value>User passed in a NULL key</value>
+  </data>
+  <data name="ExceptionOffisAssociationShutdownApplication" xml:space="preserve">
+    <value>Application shutdown requested</value>
+  </data>
+  <data name="ExceptionOffisDimseBadCommandType" xml:space="preserve">
+    <value>Bad command type</value>
+  </data>
+  <data name="ExceptionOffisDimseBadData" xml:space="preserve">
+    <value>Inappropriate data for message</value>
+  </data>
+  <data name="ExceptionOffisDimseBadMessage" xml:space="preserve">
+    <value>Badly formed message</value>
+  </data>
+  <data name="ExceptionOffisDimseIllegalAssociation" xml:space="preserve">
+    <value>Caller passed in an illegal association</value>
+  </data>
+  <data name="ExceptionOffisDimseNoDataAvailable" xml:space="preserve">
+    <value>No data available (timeout occurred in non-blocking mode)</value>
+  </data>
+  <data name="ExceptionOffisDimseNoDataDictionary" xml:space="preserve">
+    <value>Data dictionary missing</value>
+  </data>
+  <data name="ExceptionOffisDimseNoValidPresentationContextID" xml:space="preserve">
+    <value>No valid Presentation Context ID</value>
+  </data>
+  <data name="ExceptionOffisDimseNullKey" xml:space="preserve">
+    <value>Caller passed in a NULL key</value>
+  </data>
+  <data name="ExceptionOffisDimseOutOfResources" xml:space="preserve">
+    <value>Out of resources</value>
+  </data>
+  <data name="ExceptionOffisDimseParseFailed" xml:space="preserve">
+    <value>Failed to parse received message</value>
+  </data>
+  <data name="ExceptionOffisDimseReadPDVFailed" xml:space="preserve">
+    <value>Read PDV failed</value>
+  </data>
+  <data name="ExceptionOffisDimseReceiveFailed" xml:space="preserve">
+    <value>Failed to receive message</value>
+  </data>
+  <data name="ExceptionOffisDimseSendFailed" xml:space="preserve">
+    <value>Failed to send message</value>
+  </data>
+  <data name="ExceptionOffisDimseUnexpectedPDVType" xml:space="preserve">
+    <value>Unexpected PDV type</value>
+  </data>
+  <data name="ExceptionOffisDulAssociationRejected" xml:space="preserve">
+    <value>Association rejected</value>
+  </data>
+  <data name="ExceptionOffisDulIllegalAccept" xml:space="preserve">
+    <value>Attempt to accept by requestor</value>
+  </data>
+  <data name="ExceptionOffisDulIllegalKey" xml:space="preserve">
+    <value>Illegal key</value>
+  </data>
+  <data name="ExceptionOffisDulIllegalPdu" xml:space="preserve">
+    <value>Illegal or ill-formed PDU</value>
+  </data>
+  <data name="ExceptionOffisDulIllegalPduLength" xml:space="preserve">
+    <value>Illegal PDU length</value>
+  </data>
+  <data name="ExceptionOffisDulIllegalRequest" xml:space="preserve">
+    <value>Attempt to request by acceptor</value>
+  </data>
+  <data name="ExceptionOffisDulIncorrectBufferLength" xml:space="preserve">
+    <value>Incorrect buffer space allocated for data</value>
+  </data>
+  <data name="ExceptionOffisDulInsufficientBufferLength" xml:space="preserve">
+    <value>Insufficient buffer space allocated for data</value>
+  </data>
+  <data name="ExceptionOffisDulListError" xml:space="preserve">
+    <value>List error</value>
+  </data>
+  <data name="ExceptionOffisDulNetworkClosed" xml:space="preserve">
+    <value>Network closed</value>
+  </data>
+  <data name="ExceptionOffisDulNoAssociationRequest" xml:space="preserve">
+    <value>No requests for associations for this server</value>
+  </data>
+  <data name="ExceptionOffisDulNoPdvs" xml:space="preserve">
+    <value>No PDVs available in current buffer</value>
+  </data>
+  <data name="ExceptionOffisDulNullKey" xml:space="preserve">
+    <value>NULL key passed to routine</value>
+  </data>
+  <data name="ExceptionOffisDulPCTranslationFailure" xml:space="preserve">
+    <value>Presentation Context translation failure</value>
+  </data>
+  <data name="ExceptionOffisDulPDataPduArrived" xml:space="preserve">
+    <value>P-Data PDU arrived</value>
+  </data>
+  <data name="ExceptionOffisDulPeerAbortedAssociation" xml:space="preserve">
+    <value>Peer aborted association (or never connected)</value>
+  </data>
+  <data name="ExceptionOffisDulPeerRequestedRelease" xml:space="preserve">
+    <value>Peer requested release</value>
+  </data>
+  <data name="ExceptionOffisDulReadTimeout" xml:space="preserve">
+    <value>Network read timeout</value>
+  </data>
+  <data name="ExceptionOffisDulRequestAssociationFailed" xml:space="preserve">
+    <value>Failed to establish association</value>
+  </data>
+  <data name="ExceptionOffisDulUnexpectedPdu" xml:space="preserve">
+    <value>Received unexpected PDU</value>
+  </data>
+  <data name="ExceptionOffisDulUnsupportedPeerProtocol" xml:space="preserve">
+    <value>Unsupported peer protocol</value>
+  </data>
+  <data name="ExceptionOffisDulWrongDataType" xml:space="preserve">
+    <value>Wrong data type specified for request</value>
+  </data>
+  <data name="ExceptionOffisFormatNetwork" xml:space="preserve">
+    <value>- {0} - {1} @ {2} {3} (Error 0x{4:x4})</value>
+    <comment>0 - module name, 1 is error text in english, 2 is the AE Title, 3 is the hostname:port string, 4 is error code in hex</comment>
+  </data>
+  <data name="ExceptionOffisModuleAssociation" xml:space="preserve">
+    <value>Association</value>
+    <comment>English text indicating error occurred in the Association Module</comment>
+  </data>
+  <data name="ExceptionOffisModuleDimse" xml:space="preserve">
+    <value>DIMSE</value>
+    <comment>English text indicating error occured in the DIMSE Module</comment>
+  </data>
+  <data name="ExceptionOffisModuleDul" xml:space="preserve">
+    <value>DICOM Upper Layer</value>
+    <comment>English text indicating error occurred in the DUL Module</comment>
+  </data>
+  <data name="ExceptionOffisUnknownError" xml:space="preserve">
+    <value>An unknown error occurred in the OFFIS DICOM subsystem</value>
+  </data>
 </root>
