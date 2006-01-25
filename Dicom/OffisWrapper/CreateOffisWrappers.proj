@@ -33,8 +33,8 @@
 	</Choose>
 	<ItemGroup>
 		<SwigInterfaceFile Include="dcmdata.i" />
-		<SwigCppOutputFile Include="@(SwigInterfaceFile->'%(filename)_wrap.cxx')" />
-		<CppWrapperLibraryFile Include="@(SwigInterfaceFile->'%(filename).dll')" />
+		<SwigCppOutputFile Include="Offis_Wrapper.cxx" />
+		<CppWrapperLibraryFile Include="OffisDcm.dll" />
 		<AllSwigOutputFiles Include="$(SwigOutputCsharpDir)\*.cs" Condition="Exists('$(SwigOutputCsharpDir)')" />
 	</ItemGroup> 
 	<Target Name="GenerateSwigWrappers">
@@ -42,7 +42,7 @@
 		<MakeDir Directories="$(CppCompilerOutputDir)" Condition="!Exists('$(CppCompilerOutputDir)')" />
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('$(SwigOutputCsharpDir)')" />
-		<Exec Command="..\..\Swig\swig.exe -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -outdir $(SwigOutputCsharpDir) -Wall -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" /> 
+		<Exec Command="..\..\Swig\swig.exe -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -outdir $(SwigOutputCsharpDir) -Wall -o @(SwigCppOutputFile) -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" /> 
 	</Target>
 	<Target Name="BuildSwigWrappers" DependsOnTargets="GenerateSwigWrappers">
 		<Exec Command="cl.exe $(CppCompilerParameters) $(CppCompileDebugParameters) $(CppCompilerIncludeParameters) @(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj') /Fd$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb') /Fp$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).idb')" />
