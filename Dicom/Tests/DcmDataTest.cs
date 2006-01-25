@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using ClearCanvas.Dicom.Data;
-using ClearCanvas.Dicom.Data.OffisWrapper;
+using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.Dicom.Tests
 {
@@ -28,7 +28,7 @@ namespace ClearCanvas.Dicom.Tests
 		{
 			string fileName = "CT.dcm";
 			m_FileFormat = new DcmFileFormat();
-			OFCondition cond = m_FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, DcmData.DCM_MaxReadLength, false);
+			OFCondition cond = m_FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
 
 			Assert.IsTrue(cond.good());
 
@@ -51,7 +51,7 @@ namespace ClearCanvas.Dicom.Tests
 				strGroupElement = tag.toString();
 				strTagName = tag.getTagName();
 
-				DcmElement elem = DcmData.castToDcmElement(obj);
+				DcmElement elem = OffisDcm.castToDcmElement(obj);
 
 				//StringBuilder buffer = new StringBuilder(256);
 

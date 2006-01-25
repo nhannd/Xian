@@ -5,7 +5,6 @@
 #pragma warning (disable:4800)
 %}
 
-%include "dcmnet.i"
 %include "typemaps.i"
 %include "dcm_typemaps.i"
 %include "std_string.i"
@@ -136,7 +135,6 @@ DcmElement* castToDcmElement(DcmObject* pObj)
 %ignore getCurrentRepresentationKey;
 %ignore normalizeString;
 
-
 // various headers
 %include "dctypes.h"
 %include "dcswap.h"
@@ -206,3 +204,5 @@ DcmElement* castToDcmElement(DcmObject* pObj)
 %include "dcvrfl.h"
 %include "dcvrfd.h"
 %include "dcvrof.h"
+
+%include "dcmnet.i"

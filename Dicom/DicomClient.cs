@@ -5,8 +5,9 @@ namespace ClearCanvas.Dicom.Network
     using System.Text;
     using System.Net.Sockets;
     using ClearCanvas.Common;
-    using ClearCanvas.Dicom.Network.OffisWrapper;
+    using ClearCanvas.Dicom.OffisWrapper;
     using ClearCanvas.Dicom.Exceptions;
+    using ClearCanvas.Dicom.Data;
 
     public class DicomClient
     {
@@ -56,7 +57,21 @@ namespace ClearCanvas.Dicom.Network
                 associationParameters.ConfigureForStudyRootQuery();
 
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
-               
+
+                /*
+                ClearCanvas.Dicom.OffisWrapper.DcmDataset cFindDataset = new DcmDataset();
+                ClearCanvas.Dicom.OffisWrapper.DcmElement patientIDElement = new DcmElement(dcm.PatientID);
+                ClearCanvas.Dicom.OffisWrapper.DcmElement queryRetrieveLevel = new DcmElement(dcm.QueryRetrieveLevel);
+                ClearCanvas.Dicom.OffisWrapper.DcmElement a = new DcmElement();
+                
+
+                patientIDElement.putString("*");
+                queryRetrieveLevel.putString("STUDY");
+                cFindDataset.insert(patientIDElement);
+                cFindDataset.insert(queryRetrieveLevel);
+                
+                association.SendCFindStudyRootquery(cFindDataset);
+                */
                 return null;
             }
             catch (DicomRuntimeApplicationException e)

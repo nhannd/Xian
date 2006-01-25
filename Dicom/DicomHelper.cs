@@ -1,6 +1,6 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Data.OffisWrapper;
+using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.Dicom.Data
 {

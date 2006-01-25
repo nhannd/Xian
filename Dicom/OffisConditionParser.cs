@@ -4,7 +4,7 @@ namespace ClearCanvas.Dicom.Network
     using System.Collections.Generic;
     using System.Text;
     using ClearCanvas.Dicom.Exceptions;
-    using ClearCanvas.Dicom.Network.OffisWrapper;
+    using ClearCanvas.Dicom.OffisWrapper;
 
     internal class OffisConditionParser
     {
