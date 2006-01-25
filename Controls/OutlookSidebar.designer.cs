@@ -1,4 +1,4 @@
-namespace ClearCanvas.Controls.Sidebar
+namespace ClearCanvas.Controls
 {
 	partial class OutlookSidebar
 	{
@@ -31,12 +31,12 @@ namespace ClearCanvas.Controls.Sidebar
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OutlookSidebar));
 			this._stackStripSplitter = new System.Windows.Forms.SplitContainer();
 			this._userPanel = new System.Windows.Forms.Panel();
-			this._subHeaderStrip = new ClearCanvas.Controls.Sidebar.HeaderStrip();
+			this._subHeaderStrip = new ClearCanvas.Controls.HeaderStrip();
 			this._subHeaderStripLabel = new System.Windows.Forms.ToolStripLabel();
-			this._mainHeaderStrip = new ClearCanvas.Controls.Sidebar.HeaderStrip();
+			this._mainHeaderStrip = new ClearCanvas.Controls.HeaderStrip();
 			this._mainHeaderStripLabel = new System.Windows.Forms.ToolStripLabel();
-			this._stackStrip = new ClearCanvas.Controls.Sidebar.StackStrip();
-			this._overflowStrip = new ClearCanvas.Controls.Sidebar.BaseStackStrip();
+			this._stackStrip = new ClearCanvas.Controls.StackStrip();
+			this._overflowStrip = new ClearCanvas.Controls.BaseStackStrip();
 			this._toolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
 			this._addorRemoveButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._stackStripSplitter.Panel1.SuspendLayout();
@@ -67,7 +67,7 @@ namespace ClearCanvas.Controls.Sidebar
 			this._stackStripSplitter.Panel2.Controls.Add(this._stackStrip);
 			this._stackStripSplitter.Panel2.Controls.Add(this._overflowStrip);
 			this._stackStripSplitter.Size = new System.Drawing.Size(312, 629);
-			this._stackStripSplitter.SplitterDistance = 318;
+			this._stackStripSplitter.SplitterDistance = 315;
 			this._stackStripSplitter.SplitterWidth = 7;
 			this._stackStripSplitter.TabIndex = 0;
 			this._stackStripSplitter.TabStop = false;
@@ -80,7 +80,7 @@ namespace ClearCanvas.Controls.Sidebar
 			this._userPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._userPanel.Location = new System.Drawing.Point(0, 44);
 			this._userPanel.Name = "_userPanel";
-			this._userPanel.Size = new System.Drawing.Size(312, 274);
+			this._userPanel.Size = new System.Drawing.Size(312, 271);
 			this._userPanel.TabIndex = 2;
 			// 
 			// _subHeaderStrip
@@ -89,7 +89,7 @@ namespace ClearCanvas.Controls.Sidebar
 			this._subHeaderStrip.Font = new System.Drawing.Font("Tahoma", 9.75F);
 			this._subHeaderStrip.ForeColor = System.Drawing.Color.Black;
 			this._subHeaderStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this._subHeaderStrip.HeaderStyle = ClearCanvas.Controls.Sidebar.AreaHeaderStyle.Small;
+			this._subHeaderStrip.HeaderStyle = ClearCanvas.Controls.AreaHeaderStyle.Small;
 			this._subHeaderStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._subHeaderStripLabel});
 			this._subHeaderStrip.Location = new System.Drawing.Point(0, 25);
@@ -134,7 +134,7 @@ namespace ClearCanvas.Controls.Sidebar
 			this._stackStrip.Location = new System.Drawing.Point(0, 0);
 			this._stackStrip.Name = "_stackStrip";
 			this._stackStrip.Padding = new System.Windows.Forms.Padding(0);
-			this._stackStrip.Size = new System.Drawing.Size(312, 272);
+			this._stackStrip.Size = new System.Drawing.Size(312, 275);
 			this._stackStrip.TabIndex = 0;
 			this._stackStrip.Tag = "Read";
 			this._stackStrip.Text = "stackStrip1";
@@ -147,7 +147,7 @@ namespace ClearCanvas.Controls.Sidebar
 			this._overflowStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._overflowStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._toolStripDropDownButton});
-			this._overflowStrip.Location = new System.Drawing.Point(0, 272);
+			this._overflowStrip.Location = new System.Drawing.Point(0, 275);
 			this._overflowStrip.Name = "_overflowStrip";
 			this._overflowStrip.Size = new System.Drawing.Size(312, 32);
 			this._overflowStrip.TabIndex = 1;

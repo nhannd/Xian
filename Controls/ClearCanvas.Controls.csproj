@@ -28,6 +28,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClearCanvas.Common, Version=1.0.2211.20907, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Workstation.Model, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Workstation\Model\bin\Debug\ClearCanvas.Workstation.Model.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -36,29 +44,65 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sidebar\BaseStackStrip.cs">
+    <Compile Include="BaseStackStrip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Sidebar\HeaderStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Sidebar\OutlookSidebar.cs">
+    <Compile Include="DetailViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sidebar\OutlookSidebar.designer.cs">
+    <Compile Include="DetailViewControl.designer.cs">
+      <DependentUpon>DetailViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HeaderStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OutlookSidebar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OutlookSidebar.designer.cs">
       <DependentUpon>OutlookSidebar.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sidebar\StackStrip.cs">
+    <Compile Include="StackStrip.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StudyGridView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StudyGridView.Designer.cs">
+      <DependentUpon>StudyGridView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StudySearchForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StudySearchForm.Designer.cs">
+      <DependentUpon>StudySearchForm.cs</DependentUpon>
     </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sidebar\OutlookSidebar.resx">
+    <EmbeddedResource Include="DetailViewControl.resx">
+      <DependentUpon>DetailViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OutlookSidebar.resx">
       <DependentUpon>OutlookSidebar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="StudyGridView.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StudyGridView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StudySearchForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StudySearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Workstation\Layout\Basic\ClearCanvas.Workstation.Layout.Basic.csproj">
+      <Project>{EA38C1F1-C4BD-4ED7-9B60-C95DF22D6A72}</Project>
+      <Name>ClearCanvas.Workstation.Layout.Basic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

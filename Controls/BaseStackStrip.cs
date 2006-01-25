@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 
-namespace ClearCanvas.Controls.Sidebar
+namespace ClearCanvas.Controls
 {
 	[ToolboxItem(false)]
 	public class BaseStackStrip : ToolStrip

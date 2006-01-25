@@ -10,7 +10,7 @@ using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Windows.Forms.Design;
 
-namespace ClearCanvas.Controls.Sidebar
+namespace ClearCanvas.Controls
 {
 	[Designer(typeof(ParentControlDesigner))]
 	public partial class OutlookSidebar : UserControl

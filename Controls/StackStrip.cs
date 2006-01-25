@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 
-namespace ClearCanvas.Controls.Sidebar
+namespace ClearCanvas.Controls
 {
 	public class StackStrip : BaseStackStrip
 	{
