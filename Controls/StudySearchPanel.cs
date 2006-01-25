@@ -7,13 +7,19 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Controls;
 
-namespace ClearCanvas.Workstation.Dashboard.Local
+namespace ClearCanvas.Controls
 {
 	public partial class StudySearchPanel : UserControl
 	{
 		public StudySearchPanel()
 		{
 			InitializeComponent();
+		}
+
+		public string HeaderText
+		{
+			get { return _headerStripLabel.Text; }
+			set { _headerStripLabel.Text = value; }
 		}
 
 		public StudySearchForm StudySearchForm
@@ -25,6 +31,5 @@ namespace ClearCanvas.Workstation.Dashboard.Local
 		{
 			get { return _studyGridView; }
 		}
-
 	}
 }

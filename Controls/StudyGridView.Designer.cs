@@ -65,6 +65,7 @@ namespace ClearCanvas.Controls
 			this._dataGridView.Name = "_dataGridView";
 			this._dataGridView.ReadOnly = true;
 			this._dataGridView.RowHeadersVisible = false;
+			this._dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this._dataGridView.Size = new System.Drawing.Size(540, 203);
 			this._dataGridView.TabIndex = 0;
 			// 
@@ -80,6 +81,7 @@ namespace ClearCanvas.Controls
 			// 
 			// _tableLayoutPanel
 			// 
+			this._tableLayoutPanel.AutoScroll = true;
 			this._tableLayoutPanel.ColumnCount = 1;
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanel.Controls.Add(this._toolStrip, 0, 0);

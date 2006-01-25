@@ -15,12 +15,6 @@ namespace ClearCanvas.Controls
 			InitializeComponent();
 		}
 
-		public string HeaderText
-		{
-			get { return _headerStrip.Text; }
-			set { _headerStrip.Text = value; }
-		}
-
 		public string PatientID
 		{
 			get { return _patientID.Text; }

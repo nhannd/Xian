@@ -41,7 +41,6 @@ namespace ClearCanvas.Controls
 			this._studyDescription = new System.Windows.Forms.TextBox();
 			this._studyDateLabel = new System.Windows.Forms.Label();
 			this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-			this._headerStrip = new ClearCanvas.Controls.HeaderStrip();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -66,7 +65,7 @@ namespace ClearCanvas.Controls
 			this._tableLayoutPanel.Controls.Add(this._studyDateLabel, 0, 2);
 			this._tableLayoutPanel.Controls.Add(this.dateTimePicker1, 1, 2);
 			this._tableLayoutPanel.Controls.Add(this._searchButton, 3, 3);
-			this._tableLayoutPanel.Location = new System.Drawing.Point(17, 43);
+			this._tableLayoutPanel.Location = new System.Drawing.Point(13, 18);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
 			this._tableLayoutPanel.RowCount = 4;
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -184,18 +183,6 @@ namespace ClearCanvas.Controls
 			this.dateTimePicker1.Size = new System.Drawing.Size(141, 20);
 			this.dateTimePicker1.TabIndex = 8;
 			// 
-			// _headerStrip
-			// 
-			this._headerStrip.AutoSize = false;
-			this._headerStrip.Font = new System.Drawing.Font("Arial", 13.5F, System.Drawing.FontStyle.Bold);
-			this._headerStrip.ForeColor = System.Drawing.Color.White;
-			this._headerStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this._headerStrip.Location = new System.Drawing.Point(0, 0);
-			this._headerStrip.Name = "_headerStrip";
-			this._headerStrip.Size = new System.Drawing.Size(527, 25);
-			this._headerStrip.TabIndex = 2;
-			this._headerStrip.Text = "headerStrip1";
-			// 
 			// _searchButton
 			// 
 			this._searchButton.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -210,10 +197,9 @@ namespace ClearCanvas.Controls
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._headerStrip);
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Name = "StudySearchForm";
-			this.Size = new System.Drawing.Size(527, 191);
+			this.Size = new System.Drawing.Size(494, 159);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this._tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -232,7 +218,6 @@ namespace ClearCanvas.Controls
 		private System.Windows.Forms.TextBox _studyDescription;
 		private System.Windows.Forms.Label _patientIDLabel;
 		private System.Windows.Forms.Label _accessionNumberLabel;
-		private HeaderStrip _headerStrip;
 		private System.Windows.Forms.Label _studyDateLabel;
 		private System.Windows.Forms.DateTimePicker dateTimePicker1;
 		private System.Windows.Forms.TextBox _accessionNumber;

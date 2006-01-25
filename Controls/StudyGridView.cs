@@ -13,7 +13,6 @@ namespace ClearCanvas.Controls
 		public StudyGridView()
 		{
 			InitializeComponent();
-			AddColumns();
 		}
 
 		public DataGridView DataGridView
@@ -26,9 +25,13 @@ namespace ClearCanvas.Controls
 			get { return _toolStrip; }
 		}
 
-		private void AddColumns()
+		public void AddColumn(string columnHeaderText)
 		{
+			DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
+			column.HeaderText = columnHeaderText;
+			column.Name = columnHeaderText;
 
+			this.DataGridView.Columns.Add(column);
 		}
 	}
 }
