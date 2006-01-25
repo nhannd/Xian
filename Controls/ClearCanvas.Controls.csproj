@@ -47,12 +47,6 @@
     <Compile Include="BaseStackStrip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DetailViewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DetailViewControl.designer.cs">
-      <DependentUpon>DetailViewControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="HeaderStrip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -78,13 +72,15 @@
     <Compile Include="StudySearchForm.Designer.cs">
       <DependentUpon>StudySearchForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="StudySearchPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StudySearchPanel.designer.cs">
+      <DependentUpon>StudySearchPanel.cs</DependentUpon>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DetailViewControl.resx">
-      <DependentUpon>DetailViewControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="OutlookSidebar.resx">
       <DependentUpon>OutlookSidebar.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -96,6 +92,10 @@
     <EmbeddedResource Include="StudySearchForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudySearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StudySearchPanel.resx">
+      <DependentUpon>StudySearchPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

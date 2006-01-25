@@ -1,6 +1,6 @@
 namespace ClearCanvas.Workstation.Dashboard.Local
 {
-	partial class DetailViewControl
+	partial class StudySearchPanel
 	{
 		/// <summary> 
 		/// Required designer variable.

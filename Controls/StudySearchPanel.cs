@@ -9,9 +9,9 @@ using ClearCanvas.Controls;
 
 namespace ClearCanvas.Workstation.Dashboard.Local
 {
-	public partial class DetailViewControl : UserControl
+	public partial class StudySearchPanel : UserControl
 	{
-		public DetailViewControl()
+		public StudySearchPanel()
 		{
 			InitializeComponent();
 		}
