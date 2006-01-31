@@ -1,6 +1,12 @@
+##################################################################
+#
+# Declaration of variables
+# 
+##################################################################
 Configuration = Debug
 SwigOutputCsharpDir = csharp
-CppCompilerOutputDir = cppwrapper\$(Configuration)
+CppCompilerOutputDirRoot = cppwrapper
+CppCompilerOutputDir = $(CppCompilerOutputDirRoot)\$(Configuration)
 CppCompiler = cl.exe
 SwigCompiler = swig.exe
 SwigOutputNamespace = ClearCanvas.Dicom.OffisWrapper
@@ -30,9 +36,7 @@ ifeq ($(Configuration), Debug)
 	CscEmitDebugInformation = +
 else
 	CppCompilerDebugParameters = /O2 /MT
-	CppLinkerParameters = /LIBPATH:"..\..\OFFIS\dcmtk-3.5.3\ofstd\libsrc\release" \
-	/LIBPATH:"..\..\OFFIS\dcmtk-3.5.3\dcmdata\libsrc\release" \ 
-	/LIBPATH:"..\..\OFFIS\dcmtk-3.5.3\dcmnet\libsrc\release" \
+	CppLinkerParameters = /LIBPATH:"..\..\OFFIS\dcmtk-3.5.3\ofstd\libsrc\release" /LIBPATH:"..\..\OFFIS\dcmtk-3.5.3\dcmdata\libsrc\release" /LIBPATH:"..\..\OFFIS\dcmtk-3.5.3\dcmnet\libsrc\release" \
 	/LIBPATH:"..\..\OFFIS\zlib-1.2.1\lib" /DLL 
 	CppLinkerDebugParameters = 
 	CppLinkerZlibFile = zlib_o.lib
@@ -40,14 +44,17 @@ else
 endif
 SwigInterfaceFile = dcmdata.i
 SwigCppOutputFile = Offis_Wrapper.cxx
-CppWrapperLibraryFile = OffisDcm.dll
-GenerateSwigWrappers : Offis_Wrapper.cxx
+VPATH = $(CppCompilerOutputDir):$(SwigOutputCSharpDir)\$(Configuration)
+
+##################################################################
+#
+# Declaration of rules
+# 
+##################################################################
+
 Offis_Wrapper.cxx : dcmdata.i dcmnet.i dcm_typemaps.i ofstd.i
 	if exist $(SwigOutputCsharpDir). (rmdir $(SwigOutputCsharpDir) /s /q) 
 	if not exist $(SwigOutputCsharpDir). (md $(SwigOutputCsharpDir))
-	if exist $(CppCompilerOutputDir). (rmdir $(CppCompilerOutputDir) /s /q)
-	if not exist $(CppCompilerOutputDir). (md $(CppCompilerOutputDir))
-	if not exist $(SwigOutputCsharpDir)\$(Configuration) (md $(SwigOutputCsharpDir)\$(Configuration))
 	../../swig/swig.exe -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL \
 	-I../../OFFIS/dcmtk-3.5.3/config/include \
 	-I../../OFFIS/dcmtk-3.5.3/ofstd/include \
@@ -56,15 +63,21 @@ Offis_Wrapper.cxx : dcmdata.i dcmnet.i dcm_typemaps.i ofstd.i
 	-outdir $(SwigOutputCsharpDir) -Wall -makedefault -o $(SwigCppOutputFile) \
 	-namespace $(SwigOutputNamespace) $(SwigInterfaceFile)
 
-BuildSwigWrappers : Offis_Wrapper.cxx 
+OffisDcm.dll : Offis_Wrapper.cxx 
+	if exist $(CppCompilerOutputDirRoot). (rmdir $(CppCompilerOutputDirRoot) /s /q)
+	if not exist $(CppCompilerOutputDirRoot). (md $(CppCompilerOutputDirRoot))
+	if not exist $(CppCompilerOutputDir). (md $(CppCompilerOutputDir))
 	cl.exe $(CppCompilerParameters) $(CppCompilerDebugParameters) $(CppCompilerIncludeParameters) \
-	$(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/OffisDcm.obj \
-	/Fd$(CppCompilerOutputDir)/OffisDcm.pdb /Fp$(CppCompierOutputDir)/OffisDcm.idb
+	$(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)\OffisDcm.obj \
+	/Fd$(CppCompilerOutputDir)\OffisDcm.pdb /Fp$(CppCompierOutputDir)\OffisDcm.idb
 	link.exe $(CppLinkerParameters) $(CppLinkerDebugParameters) \
-	/OUT:$(CppCompilerOutputDir)/OffisDcm.dll $(CppLinkerObjectFiles) $(CppLinkerZlibFile) \
-	$(CppCompilerOutputDir)/OffisDcm.obj
+	/OUT:$(CppCompilerOutputDir)\OffisDcm.dll $(CppLinkerObjectFiles) $(CppLinkerZlibFile) \
+	$(CppCompilerOutputDir)\OffisDcm.obj
+
+$(SwigOutputNamespace).dll : Offis_Wrapper.cxx
+	if not exist $(SwigOutputCsharpDir)\$(Configuration) (md $(SwigOutputCsharpDir)\$(Configuration))
 	csc.exe /out:$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll \
 	/target:library /debug$(CscEmitDebugInformation) \
 	$(SwigOutputCsharpDir)\\*.cs
 
-all: GenerateSwigWrappers BuildSwigWrappers
+all: $(SwigOutputNamespace).dll OffisDcm.dll
