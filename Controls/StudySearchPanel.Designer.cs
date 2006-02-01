@@ -28,37 +28,14 @@ namespace ClearCanvas.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._studyGridView = new ClearCanvas.Controls.StudyGridView();
-			this._studySearchForm = new ClearCanvas.Controls.StudySearchForm();
 			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._headerStrip = new ClearCanvas.Controls.HeaderStrip();
 			this._headerStripLabel = new System.Windows.Forms.ToolStripLabel();
+			this._studyGridView = new ClearCanvas.Controls.StudyGridView();
+			this._studySearchForm = new ClearCanvas.Controls.StudySearchForm();
 			this._tableLayoutPanel.SuspendLayout();
 			this._headerStrip.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// _studyGridView
-			// 
-			this._studyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._studyGridView.Location = new System.Drawing.Point(0, 215);
-			this._studyGridView.Margin = new System.Windows.Forms.Padding(0);
-			this._studyGridView.Name = "_studyGridView";
-			this._studyGridView.Size = new System.Drawing.Size(613, 261);
-			this._studyGridView.TabIndex = 1;
-			// 
-			// _studySearchForm
-			// 
-			this._studySearchForm.AccessionNumber = "";
-			this._studySearchForm.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._studySearchForm.FirstName = "";
-			this._studySearchForm.LastName = "";
-			this._studySearchForm.Location = new System.Drawing.Point(0, 27);
-			this._studySearchForm.Margin = new System.Windows.Forms.Padding(0);
-			this._studySearchForm.Name = "_studySearchForm";
-			this._studySearchForm.PatientID = "";
-			this._studySearchForm.Size = new System.Drawing.Size(613, 188);
-			this._studySearchForm.StudyDescription = "";
-			this._studySearchForm.TabIndex = 0;
 			// 
 			// _tableLayoutPanel
 			// 
@@ -74,7 +51,7 @@ namespace ClearCanvas.Controls
 			this._tableLayoutPanel.RowCount = 3;
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanel.Size = new System.Drawing.Size(613, 448);
 			this._tableLayoutPanel.TabIndex = 2;
 			// 
@@ -96,6 +73,29 @@ namespace ClearCanvas.Controls
 			// 
 			this._headerStripLabel.Name = "_headerStripLabel";
 			this._headerStripLabel.Size = new System.Drawing.Size(0, 24);
+			// 
+			// _studyGridView
+			// 
+			this._studyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._studyGridView.Location = new System.Drawing.Point(0, 215);
+			this._studyGridView.Margin = new System.Windows.Forms.Padding(0);
+			this._studyGridView.Name = "_studyGridView";
+			this._studyGridView.Size = new System.Drawing.Size(613, 233);
+			this._studyGridView.TabIndex = 1;
+			// 
+			// _studySearchForm
+			// 
+			this._studySearchForm.AccessionNumber = "";
+			this._studySearchForm.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._studySearchForm.FirstName = "";
+			this._studySearchForm.LastName = "";
+			this._studySearchForm.Location = new System.Drawing.Point(0, 27);
+			this._studySearchForm.Margin = new System.Windows.Forms.Padding(0);
+			this._studySearchForm.Name = "_studySearchForm";
+			this._studySearchForm.PatientID = "";
+			this._studySearchForm.Size = new System.Drawing.Size(613, 188);
+			this._studySearchForm.StudyDescription = "";
+			this._studySearchForm.TabIndex = 0;
 			// 
 			// StudySearchPanel
 			// 

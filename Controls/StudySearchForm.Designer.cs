@@ -198,6 +198,7 @@ namespace ClearCanvas.Controls
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._tableLayoutPanel);
+			this.MinimumSize = new System.Drawing.Size(494, 159);
 			this.Name = "StudySearchForm";
 			this.Size = new System.Drawing.Size(494, 159);
 			this._tableLayoutPanel.ResumeLayout(false);
