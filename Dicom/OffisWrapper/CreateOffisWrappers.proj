@@ -1,4 +1,4 @@
-<Project DefaultTargets="BuildSwigWrappers" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="BuildSwigCppWrappers;BuildSwigCsharpWrappers" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Appname>CreateOffisWrappers</Appname>
@@ -6,9 +6,11 @@
 		<CppCompilerOutputDir>cppwrapper/$(Configuration)</CppCompilerOutputDir>
 		<SwigOutputNamespace>ClearCanvas.Dicom.OffisWrapper</SwigOutputNamespace>
 		<CppCompiler>cl.exe</CppCompiler>
-		<SwigCompiler>swig.exe</SwigCompiler>
+		<CppLinker>link.exe</CppLinker>
+		<SwigCompiler>..\..\swig\swig.exe</SwigCompiler>
 		<CppCompilerParameters>/EHsc /TP /D "WIN32" /D "_WINDOWS" /D "_CRT_SECURE_NO_DEPRECATE" /D "SWIG" /D "WITH_LIBPNG" /D "WITH_LIBTIFF" /D "WITH_ZLIB" /D "_WINDLL" /D "MBCS" /D "HAVE_STD_STRING" /D "HAVE_CXX_BOOL" /c</CppCompilerParameters>
 		<CppCompilerIncludeParameters>/I "..\..\OFFIS\dcmtk-3.5.3\config\include" /I "..\..\OFFIS\dcmtk-3.5.3\dcmnet\include" /I "..\..\OFFIS\dcmtk-3.5.3\ofstd\include" /I "..\..\OFFIS\dcmtk-3.5.3\dcmdata\include" /I "..\..\OFFIS\dcmtk-3.5.3\zlib-1.2.1\include"</CppCompilerIncludeParameters>
+		<SwigParameters>-csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -Wall -makedefault -Fmicrosoft</SwigParameters>
 		<CppLinkerObjectFiles>ofstd.lib dcmdata.lib dcmnet.lib ws2_32.lib netapi32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib</CppLinkerObjectFiles>
 	</PropertyGroup>
 	<Choose>
@@ -33,20 +35,31 @@
 	</Choose>
 	<ItemGroup>
 		<SwigInterfaceFile Include="dcmdata.i" />
+		<SwigOtherInterfaceFiles Include="dcmnet.i;dcm_typemaps.i;ofstd.i" />
 		<SwigCppOutputFile Include="Offis_Wrapper.cxx" />
 		<CppWrapperLibraryFile Include="OffisDcm.dll" />
 		<AllSwigOutputFiles Include="$(SwigOutputCsharpDir)\*.cs" Condition="Exists('$(SwigOutputCsharpDir)')" />
+		<SwigCppLibraryOutputFile Include="$(CppCompilerOutputDir)\$(CppWrapperLibraryFile)" />
 	</ItemGroup> 
-	<Target Name="GenerateSwigWrappers">
+	<Target Name="GenerateSwigWrappers"
+		Inputs="@(SwigInterfaceFile); @(SwigOtherInterfaceFiles)"
+		Outputs="@(SwigCppOutputFile); @(AllSwigOutputFiles)">
 		<MakeDir Directories="$(SwigOutputCsharpDir)" Condition="!Exists('$(SwigOutputCsharpDir')" />
-		<MakeDir Directories="$(CppCompilerOutputDir)" Condition="!Exists('$(CppCompilerOutputDir)')" />
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('$(SwigOutputCsharpDir)')" />
-		<Exec Command="..\..\Swig\swig.exe -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -I..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -outdir $(SwigOutputCsharpDir) -Wall -o @(SwigCppOutputFile) -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" /> 
+		<Exec Command="$(SwigCompiler) $(SwigParameters) -outdir $(SwigOutputCsharpDir) -o @(SwigCppOutputFile) -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" />
 	</Target>
-	<Target Name="BuildSwigWrappers" DependsOnTargets="GenerateSwigWrappers">
-		<Exec Command="cl.exe $(CppCompilerParameters) $(CppCompileDebugParameters) $(CppCompilerIncludeParameters) @(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj') /Fd$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb') /Fp$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).idb')" />
-		<Exec Command="link.exe $(CppLinkerParameters) $(CppLinkerDebugParameters) /OUT:$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).dll') $(CppLinkerObjectFiles) $(CppLinkerZlibFile) $(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj')" />
+	<Target Name="BuildSwigCppWrappers" DependsOnTargets="GenerateSwigWrappers"
+		Inputs="@(SwigCppOutputFile)"
+		Outputs="@(SwigCppLibraryOutputFile)">
+		<MakeDir Directories="$(CppCompilerOutputDir)" Condition="!Exists('$(CppCompilerOutputDir)')" />
+		<Delete Files="$(CppCompilerOutputDir)\*.*" Condition="Exists('$(CppCompilerOutputDir)')" />
+		<Exec Command="$(CppCompiler) $(CppCompilerParameters) $(CppCompileDebugParameters) $(CppCompilerIncludeParameters) @(SwigCppOutputFile) /Fo$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj') /Fd$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb') /Fp$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).idb')" />
+		<Exec Command="$(CppLinker) $(CppLinkerParameters) $(CppLinkerDebugParameters) /OUT:$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).dll') $(CppLinkerObjectFiles) $(CppLinkerZlibFile) $(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj')" />
+	</Target>
+	<Target Name="BuildSwigCsharpWrappers" DependsOnTargets="GenerateSwigWrappers"
+		Inputs="@(AllswigOutputFiles)"
+		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll">
 		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
 	</Target>
 </Project>
