@@ -107,15 +107,15 @@ using ClearCanvas.Dicom.Exceptions;
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(110));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintonmacg5"),
-                new AETitle("OSIRIX"), new ListeningPort(4096));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
-            if (!dicomClient.Verify(serverAE))
-                throw new Exception("Target server is not running");
+            //if (!dicomClient.Verify(serverAE))
+            //    throw new Exception("Target server is not running");
 
-            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientID("1001002"), new PatientsName("FOSTER*"));
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientID("*"), new PatientsName("*"));
 
             Assert.IsTrue(results.Count == 1);
 

@@ -42,7 +42,6 @@ ExceptionOffisDulRequestAssociationFailed=Failed to establish association
 ExceptionOffisDulUnexpectedPdu=Received unexpected PDU
 ExceptionOffisDulUnsupportedPeerProtocol=Unsupported peer protocol
 ExceptionOffisDulWrongDataType=Wrong data type specified for request
-# 0 - module name, 1 is error text in english, 2 is the AE Title, 3 is the hostname:port string, 4 is error code in hex
 ExceptionOffisFormatNetwork=- {0} - {1} @ {2} {3} (Error 0x{4:x4})
 ExceptionOffisModuleAssociation=Association
 ExceptionOffisModuleDimse=DIMSE

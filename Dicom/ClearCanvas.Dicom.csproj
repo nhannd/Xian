@@ -111,6 +111,7 @@
     <Compile Include="ListeningPort.cs" />
     <Compile Include="PatientID.cs" />
     <Compile Include="PatientsName.cs" />
+    <Compile Include="QueryCompletedEventArgs.cs" />
     <Compile Include="QueryResult.cs" />
     <Compile Include="QueryResultCollection.cs" />
     <Compile Include="QueryResultReceivedEventArgs.cs" />
@@ -131,6 +132,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DcmNetTest.cs" />
+    <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="Uid.cs" />
   </ItemGroup>
   <ItemGroup>

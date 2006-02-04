@@ -5,6 +5,46 @@
 #pragma warning (disable:4800)
 %}
 
+%define CONTROLOWNER_DERIVED(type, construct_arg_type)
+%typemap(csbody_derived) type %{
+  private HandleRef swigCPtr;
+
+  internal type ## (IntPtr cPtr, bool cMemoryOwn) : base(OffisDcmPINVOKE. ## type ## Upcast(cPtr), cMemoryOwn) {
+    swigCPtr = new HandleRef(this, cPtr);
+  }
+
+  internal static HandleRef getCPtr( ## type obj) {
+    return (obj == null) ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+  }
+
+  public type ## ( ## construct_arg_type  tag, bool cMemoryOwn) : this(OffisDcmPINVOKE.new_ ## type ## __SWIG_1( ## construct_arg_type ## .getCPtr(tag)), cMemoryOwn) {
+    if (OffisDcmPINVOKE.SWIGPendingException.Pending) throw OffisDcmPINVOKE.SWIGPendingException.Retrieve();
+  }
+
+%}
+%enddef
+
+CONTROLOWNER_DERIVED(DcmCodeString, DcmTag)
+CONTROLOWNER_DERIVED(DcmLongString, DcmTag)
+CONTROLOWNER_DERIVED(DcmShortString, DcmTag)
+CONTROLOWNER_DERIVED(DcmPersonName, DcmTag)
+CONTROLOWNER_DERIVED(DcmDate, DcmTag)
+CONTROLOWNER_DERIVED(DcmTime, DcmTag)
+CONTROLOWNER_DERIVED(DcmUniqueIdentifier, DcmTag)
+
+%typemap(csbody_derived) DcmDataset %{
+  private HandleRef swigCPtr;
+
+  public $csclassname(IntPtr cPtr, bool cMemoryOwn) : base(OffisDcmPINVOKE.$csclassnameUpcast(cPtr), cMemoryOwn) {
+    swigCPtr = new HandleRef(this, cPtr);
+  }
+
+  public static HandleRef getCPtr($csclassname obj) {
+    return (obj == null) ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+  }
+%}
+
+%include "osconfig.h"
 %include "typemaps.i"
 %include "dcm_typemaps.i"
 %include "std_string.i"
@@ -38,6 +78,8 @@
 %apply double *&OUTPUT_ARRAY {Float64 *&};
 
 %include "ofstd.i"
+
+#include "osconfig.h"
 
 %{
 // various headers
@@ -134,6 +176,8 @@ DcmElement* castToDcmElement(DcmObject* pObj)
 %ignore getOriginalRepresentationKey;
 %ignore getCurrentRepresentationKey;
 %ignore normalizeString;
+
+%rename(__assign__) DcmElement::operator=;
 
 // various headers
 %include "dctypes.h"

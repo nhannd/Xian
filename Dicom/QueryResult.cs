@@ -31,6 +31,7 @@ namespace ClearCanvas.Dicom.Network
 
         void IDictionary<DicomTag, string>.Add(DicomTag key, string value)
         {
+
             throw new Exception("The method or operation is not implemented.");
         }
 

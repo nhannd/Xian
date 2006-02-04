@@ -4,6 +4,7 @@ namespace ClearCanvas.Dicom.Network
     using System.Collections.Generic;
     using System.Text;
     using System.Net.Sockets;
+    using System.Runtime.InteropServices;
     using ClearCanvas.Common;
     using ClearCanvas.Dicom.OffisWrapper;
     using ClearCanvas.Dicom.Exceptions;
@@ -15,6 +16,7 @@ namespace ClearCanvas.Dicom.Network
         public event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
         public event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
         public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceivedEvent;
+        public event EventHandler<QueryCompletedEventArgs> QueryCompletedEvent;
 
         public DicomClient(ApplicationEntity ownAEParameters)
         {
@@ -58,26 +60,42 @@ namespace ClearCanvas.Dicom.Network
 
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
 
-                /*
-                ClearCanvas.Dicom.OffisWrapper.DcmDataset cFindDataset = new DcmDataset();
-                ClearCanvas.Dicom.OffisWrapper.DcmElement patientIDElement = new DcmElement(dcm.PatientID);
-                ClearCanvas.Dicom.OffisWrapper.DcmElement queryRetrieveLevel = new DcmElement(dcm.QueryRetrieveLevel);
-                ClearCanvas.Dicom.OffisWrapper.DcmElement a = new DcmElement();
-                
+                DcmDataset cFindDataset = new DcmDataset();
+                DcmLongString patientIDElement = new DcmLongString(new DcmTag(dcm.PatientID), false);
+                DcmPersonName patientsNameElement = new DcmPersonName(new DcmTag(dcm.PatientsName), false);
+                DcmCodeString queryRetrieveLevel = new DcmCodeString(new DcmTag(dcm.QueryRetrieveLevel), false);
 
-                patientIDElement.putString("*");
+                // other tags we want to retrieve
+                DcmCodeString modalitesInStudy = new DcmCodeString(new DcmTag(dcm.ModalitiesInStudy), false);
+                DcmLongString studyDescription = new DcmLongString(new DcmTag(dcm.StudyDescription), false);
+                DcmDate studyDate = new DcmDate(new DcmTag(dcm.StudyDate), false);
+                DcmTime studyTime = new DcmTime(new DcmTag(dcm.StudyTime), false);
+                DcmShortString accessionNumber = new DcmShortString(new DcmTag(dcm.AccessionNumber), false);
+                DcmUniqueIdentifier studyInstanceUid = new DcmUniqueIdentifier(new DcmTag(dcm.StudyInstanceUID), false);
+
+                // set the required keys
+                patientIDElement.putString(patientID.ToString());
+                patientsNameElement.putString(patientsName.ToString());
                 queryRetrieveLevel.putString("STUDY");
+
+                // put the elements into the C-FIND request
                 cFindDataset.insert(patientIDElement);
+                cFindDataset.insert(patientsNameElement);
                 cFindDataset.insert(queryRetrieveLevel);
-                
-                association.SendCFindStudyRootquery(cFindDataset);
-                */
+                cFindDataset.insert(modalitesInStudy);
+                cFindDataset.insert(studyDescription);
+                cFindDataset.insert(studyDate);
+                cFindDataset.insert(studyTime);
+                cFindDataset.insert(accessionNumber);
+                cFindDataset.insert(studyInstanceUid);
+
+                association.SendCFindStudyRootQuery(cFindDataset);
+            
                 return null;
             }
             catch (DicomRuntimeApplicationException e)
             {
-                Console.WriteLine("Caught the exception");
-                throw e;
+                throw new NetworkDicomException(OffisConditionParser.GetTextString(ae, e), e);
             }
         }
 
@@ -119,9 +137,64 @@ namespace ClearCanvas.Dicom.Network
             EventsHelper.Fire(QueryResultReceivedEvent, this, e);
         }
 
+        protected void OnQueryCompletedEvent(QueryCompletedEventArgs e)
+        {
+            EventsHelper.Fire(QueryCompletedEvent, this, e);
+        }
+
+        class QueryCallbackHelper
+        {
+
+            public delegate void QueryCallbackHelperDelegate(IntPtr callbackData,
+                                                             IntPtr request,
+                                                             int responseCount,
+                                                             IntPtr response,
+                                                             IntPtr responseIdentifiers);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterQueryCallbackHelper_OffisDcm")]
+            public static extern void RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr callbackData,
+                                        IntPtr request,
+                                        int responseCount,
+                                        IntPtr response,
+                                        IntPtr responseIdentifiers)
+            {
+                T_DIMSE_C_FindRQ outboundRequest = new T_DIMSE_C_FindRQ(request, false);
+                T_DIMSE_C_FindRSP inboundResponse = new T_DIMSE_C_FindRSP(response, false);
+                DcmDataset responseData = new DcmDataset(responseIdentifiers, false);
+
+                if (DICOM_PENDING_STATUS(inboundResponse.DimseStatus) &&
+                    DICOM_SUCCESS_STATUS(inboundResponse.DimseStatus))
+                {
+
+                }
+            }
+
+            public QueryCallbackHelper()
+            {
+                queryCallbackHelperDelegate = new QueryCallbackHelperDelegate(DefaultCallback);
+                RegisterQueryCallbackHelper_OffisDcm(queryCallbackHelperDelegate);
+            }
+
+            private QueryCallbackHelperDelegate queryCallbackHelperDelegate = null; 
+        }
+
+        private QueryCallbackHelper queryCallbackHelper = new QueryCallbackHelper();
+
+        private QueryResultList _QueryResults;
         private ApplicationEntity _myOwnAE;
         private int _timeout = 500;
         private int _defaultPDUSize = 16384;
         private int _cEchoRepeats = 7;
+
+        private const UInt16 STATUS_Success = 0x0000;
+        private const UInt16 STATUS_Pending = 0xff00;
+        private const UInt16 STATUS_Warning = 0xb000;
+
+        private static bool DICOM_PENDING_STATUS(UInt16 status) { return (((status)&STATUS_Pending) == 0xff00); }
+        private static bool DICOM_WARNING_STATUS(UInt16 status) { return (((status)&STATUS_Warning) == 0xb000); }
+        private static bool DICOM_SUCCESS_STATUS(UInt16 status) { return ( (status) == STATUS_Success ); }
+
     }
 }

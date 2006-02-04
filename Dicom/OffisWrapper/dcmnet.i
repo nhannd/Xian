@@ -19,6 +19,47 @@
 %include "dicom.h"
 %include "cond.h"
 
+/* 
+ * General Status Codes 
+ */
+#define STATUS_Success	0x0000
+#define STATUS_Pending	0xff00
+
+#define DICOM_PENDING_STATUS(status) (((status)&0xff00) == 0xff00)
+#define DICOM_WARNING_STATUS(status) (((status)&0xf000) == 0xb000)
+
+/////////////////////////////////////////////////////////////////////////
+//
+// SECTION: typemaps to make certain members of proxy classes public
+//
+/////////////////////////////////////////////////////////////////////////
+%define CONTROLACCESSPUBLIC(type)
+%typemap(csbody) type %{
+  private HandleRef swigCPtr;
+  protected bool swigCMemOwn;
+
+  public type ## (IntPtr cPtr, bool cMemoryOwn) 
+  {
+    swigCMemOwn = cMemoryOwn;
+    swigCPtr = new HandleRef(this, cPtr);
+  }
+
+  public static HandleRef getCPtr( ## type obj) 
+  {
+    return (obj == null) ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+  }
+%}
+%enddef
+
+CONTROLACCESSPUBLIC(T_DIMSE_C_FindRSP)
+CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
+
+/////////////////////////////////////////////////////////////////////////
+//
+// END OF SECTION
+//
+/////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////
 //
 // SECTION: Custom Exception
@@ -141,15 +182,6 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 %{
 
 //-------------------------------------------
-// This enum will indicate which C# delegate
-// the event should be routed to
-//-------------------------------------------
-enum CSharpRouteToDelegate
-{
-	RouteToQueryResultReceivedEvent
-};
-
-//-------------------------------------------
 // This struct will hold information about
 // a particular association that will be
 // passed into the find function. When the
@@ -160,7 +192,6 @@ enum CSharpRouteToDelegate
 typedef struct {
     T_ASC_Association *assoc;
     T_ASC_PresentationContextID presId;
-	CSharpRouteToDelegate routeTo;
 } MyCallbackInfo;
 
 //-------------------------------------------
@@ -169,6 +200,22 @@ typedef struct {
 // translate it into a fashion that it can
 // be understood by the C# code
 //-------------------------------------------
+
+typedef void (SWIGSTDCALL* QueryCallbackHelperCallback)(void *, 
+														T_DIMSE_C_FindRQ *,
+														int,
+														T_DIMSE_C_FindRSP *,
+														DcmDataset *);
+static QueryCallbackHelperCallback CSharpQueryCallbackHelperCallback = NULL;
+
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHelperCallback callback) {
+	CSharpQueryCallbackHelperCallback = callback;
+}
+
 static void CFindProgressCallback(
         void *callbackData,
         T_DIMSE_C_FindRQ *request,
@@ -177,77 +224,17 @@ static void CFindProgressCallback(
         DcmDataset *responseIdentifiers
         )
 {
-
+	char buffer[265];
+	sprintf(buffer, "c:\\temp\\cfindrsp_%d.dcm", responseCount);
+	responseIdentifiers->saveFile(buffer);
+	CSharpQueryCallbackHelperCallback(callbackData,
+										request,
+										responseCount,
+										rsp,
+										responseIdentifiers);
 }
 
-/*
-typedef void (CALLBACK* DISTRIBUTETODELEGATES)(char *);
-DISTRIBUTETODELEGATES distributeToDelegatesHolder;
 
-extern "C" DllExport void RegisterDicomNetworkDelegate(DISTRIBUTETODELEGATES proc)
-{
-	distributeToDelegatesHolder = proc;	
-}
-*/
-
-%}
-
-//-------------------------------------------
-// This struct will hold information about
-// a particular association that will be
-// passed into the find function. When the
-// find function calls the progress callback
-// this data will be made available to the
-// callback to deal with appropriately
-//-------------------------------------------
-typedef struct {
-    T_ASC_Association *assoc;
-    T_ASC_PresentationContextID presId;
-	CSharpRouteToDelegate routeTo;
-} MyCallbackInfo;
-
-//-------------------------------------------
-// This enum will indicate which C# delegate
-// the event should be routed to
-//-------------------------------------------
-enum CSharpRouteToDelegate
-{
-	RouteToQueryResultReceivedEvent
-};
-
-
-%pragma(csharp) imclasscode=%{
-	// this is needed so a usable function pointer is given to c++ */
-	public delegate void DistributeToDelegates(MyCallbackInfo callbackInfo);
-
-	// c# has to find the registration function, c++ implementation see below
-
-	[DllImport("$dllimport", EntryPoint="RegisterDicomNetworkDelegate")]
-	public static extern void RegisterDicomNetworkDelegate(DistributeToDelegates proc);
-
-	// this is my function in c# to be called by c++ 
-	static void DoDistributeToDelegates(MyCallbackInfo callbackInfo) 
-	{
-		// distribute to the correct delegate
-		//throw new Exception(msg);
-	}
-
-	// the delegate has to be kept somewhere otherwise GC collects it
-	static DistributeToDelegates distributeToDelegatesHolder;
-
-	// this is the registration code in c# 
-	static void RegisterDicomNetworkDelegatePINVOKE() 
-	{
-		distributeToDelegatesHolder = DoDistributeToDelegates;
-		try 
-		{
-			RegisterDicomNetworkDelegate(distributeToDelegatesHolder);
-		}
-		catch(Exception ex) 
-		{
-			Console.WriteLine("exception: " + ex);
-		}
-	}
 %}
 
 /////////////////////////////////////////////////////////////////////////
@@ -539,7 +526,8 @@ struct T_ASC_Parameters
 
 	~T_ASC_Parameters() 
 	{
-		ASC_destroyAssociationParameters(&self);
+		if (NULL != self)
+			ASC_destroyAssociationParameters(&self);
 	}
 }
 
@@ -602,7 +590,7 @@ struct T_ASC_Association
 		return true;
 	}
 
-	bool SendCFindStudyRootquery(DcmDataset* cFindDataset) throw (dicom_runtime_error)
+	bool SendCFindStudyRootQuery(DcmDataset* cFindDataset) throw (dicom_runtime_error)
 	{
 		DIC_US msgId = self->nextMsgID++;
 		T_ASC_PresentationContextID presId;
@@ -626,7 +614,6 @@ struct T_ASC_Association
 		// prepare the callback 
 		callbackData.assoc = self;
 		callbackData.presId = presId;
-		callbackData.routeTo = RouteToQueryResultReceivedEvent;
 
 		// finally conduct transmission of data
 		OFCondition cond = DIMSE_findUser(self, presId, &req, cFindDataset,
@@ -790,6 +777,24 @@ DIMSE_receiveCommand(T_ASC_Association *association,
 			 T_DIMSE_Message *msg, 
 			 DcmDataset **statusDetail,
 			 DcmDataset **commandSet=NULL);
+
+struct T_DIMSE_C_FindRQ {
+	DIC_US          MessageID;				/* M */
+	DIC_UI          AffectedSOPClassUID;			/* M */
+	T_DIMSE_Priority Priority;				/* M */
+	T_DIMSE_DataSetType DataSetType;			/* M */
+	/* Identifier provided as argument to DIMSE functions *//* M */
+};
+
+struct T_DIMSE_C_FindRSP {
+	DIC_US          MessageIDBeingRespondedTo;		/* M */
+	DIC_UI          AffectedSOPClassUID;			/* U(=) */
+	T_DIMSE_DataSetType DataSetType;			/* M */
+	DIC_US          DimseStatus;				/* M */
+	/* Identifier provided as argument to DIMSE functions *//* C */
+	unsigned int	opts; /* which optional items are set */
+#define O_FIND_AFFECTEDSOPCLASSUID		0x0001
+};
 
 //
 // Types that need to be declared

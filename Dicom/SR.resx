@@ -263,7 +263,7 @@
   </data>
   <data name="ExceptionOffisModuleDul" xml:space="preserve">
     <value>DICOM Upper Layer</value>
-    <comment>English text indicating error occurred in the DUL Module</comment>
+    <comment>English text indicating error occurred in the DUL Module TEST</comment>
   </data>
   <data name="ExceptionOffisUnknownError" xml:space="preserve">
     <value>An unknown error occurred in the OFFIS DICOM subsystem</value>
