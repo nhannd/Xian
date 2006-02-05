@@ -8,32 +8,39 @@ namespace ClearCanvas.Dicom.Network
     public class QueryResultList : IList<QueryResult>
     {
 
+        private List<QueryResult> _internalList = new List<QueryResult>();
+
+        public void Add(QueryResult item)
+        {
+            (this as ICollection<QueryResult>).Add(item);
+        }
+
         #region IList<QueryResult> Members
 
         public int IndexOf(QueryResult item)
         {
-            throw new Exception("The method or operation is not implemented.");
+            return _internalList.IndexOf(item);
         }
 
         public void Insert(int index, QueryResult item)
         {
-            throw new Exception("The method or operation is not implemented.");
+            _internalList.Insert(index, item);
         }
 
         public void RemoveAt(int index)
         {
-            throw new Exception("The method or operation is not implemented.");
+            _internalList.RemoveAt(index);
         }
 
         public QueryResult this[int index]
         {
             get
             {
-                throw new Exception("The method or operation is not implemented.");
+                return _internalList[index];
             }
             set
             {
-                throw new Exception("The method or operation is not implemented.");
+                _internalList[index] = value;
             }
         }
 
@@ -43,37 +50,37 @@ namespace ClearCanvas.Dicom.Network
 
         void ICollection<QueryResult>.Add(QueryResult item)
         {
-            throw new Exception("The method or operation is not implemented.");
+            (_internalList as ICollection<QueryResult>).Add(item);
         }
 
         void ICollection<QueryResult>.Clear()
         {
-            throw new Exception("The method or operation is not implemented.");
+            (_internalList as ICollection<QueryResult>).Clear();
         }
 
         bool ICollection<QueryResult>.Contains(QueryResult item)
         {
-            throw new Exception("The method or operation is not implemented.");
+            return (_internalList as ICollection<QueryResult>).Contains(item);
         }
 
         void ICollection<QueryResult>.CopyTo(QueryResult[] array, int arrayIndex)
         {
-            throw new Exception("The method or operation is not implemented.");
+            (_internalList as ICollection<QueryResult>).CopyTo(array, arrayIndex);
         }
 
         int ICollection<QueryResult>.Count
         {
-            get { throw new Exception("The method or operation is not implemented."); }
+            get { return (_internalList as ICollection<QueryResult>).Count; }
         }
 
         bool ICollection<QueryResult>.IsReadOnly
         {
-            get { throw new Exception("The method or operation is not implemented."); }
+            get { return (_internalList as ICollection<QueryResult>).IsReadOnly; }
         }
 
         bool ICollection<QueryResult>.Remove(QueryResult item)
         {
-            throw new Exception("The method or operation is not implemented.");
+            return (_internalList as ICollection<QueryResult>).Remove(item);
         }
 
         #endregion
@@ -82,7 +89,7 @@ namespace ClearCanvas.Dicom.Network
 
         IEnumerator<QueryResult> IEnumerable<QueryResult>.GetEnumerator()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return _internalList.GetEnumerator();
         }
 
         #endregion
@@ -91,7 +98,7 @@ namespace ClearCanvas.Dicom.Network
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return (_internalList as ICollection<QueryResult>).GetEnumerator();
         }
 
         #endregion

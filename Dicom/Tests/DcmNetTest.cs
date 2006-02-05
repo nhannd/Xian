@@ -117,14 +117,13 @@ using ClearCanvas.Dicom.Exceptions;
 
             ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientID("*"), new PatientsName("*"));
 
-            Assert.IsTrue(results.Count == 1);
+            Assert.IsTrue(results.Count == 2);
 
             foreach (QueryResult qr in results)
-            {
-                
-                foreach (DicomTag dcmTag in qr.DicomTags)
+            {   
+                foreach (DicomTag dicomTag in qr.DicomTags)
                 {
-
+                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
                 }
             }
         }

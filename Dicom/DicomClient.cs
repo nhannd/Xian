@@ -26,6 +26,9 @@ namespace ClearCanvas.Dicom.Network
                 ProtocolType.Tcp);
 
             _myOwnAE = ownAEParameters;
+
+            _queryCallbackHelper = new QueryCallbackHelper(this);
+            _queryResults = new QueryResultList();
         }
 
         public bool Verify(ApplicationEntity ae)
@@ -38,10 +41,15 @@ namespace ClearCanvas.Dicom.Network
                 associationParameters.ConfigureForVerification();
 
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
-                association.SendCEcho(_cEchoRepeats);
-                association.Release();
-
-                return true;
+                if (association.SendCEcho(_cEchoRepeats))
+                {
+                    association.Release();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (DicomRuntimeApplicationException e)
             {                
@@ -61,6 +69,8 @@ namespace ClearCanvas.Dicom.Network
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
 
                 DcmDataset cFindDataset = new DcmDataset();
+
+                
                 DcmLongString patientIDElement = new DcmLongString(new DcmTag(dcm.PatientID), false);
                 DcmPersonName patientsNameElement = new DcmPersonName(new DcmTag(dcm.PatientsName), false);
                 DcmCodeString queryRetrieveLevel = new DcmCodeString(new DcmTag(dcm.QueryRetrieveLevel), false);
@@ -79,6 +89,7 @@ namespace ClearCanvas.Dicom.Network
                 queryRetrieveLevel.putString("STUDY");
 
                 // put the elements into the C-FIND request
+
                 cFindDataset.insert(patientIDElement);
                 cFindDataset.insert(patientsNameElement);
                 cFindDataset.insert(queryRetrieveLevel);
@@ -88,10 +99,25 @@ namespace ClearCanvas.Dicom.Network
                 cFindDataset.insert(studyTime);
                 cFindDataset.insert(accessionNumber);
                 cFindDataset.insert(studyInstanceUid);
+                
+                /*
+                // set the query keys
+                cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientID.ToString());
+                cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), patientsName.ToString());
+                cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "STUDY");
 
-                association.SendCFindStudyRootQuery(cFindDataset);
-            
-                return null;
+                // set the other tags we want to retrieve
+                cFindDataset.putAndInsertString(new DcmTag(dcm.ModalitiesInStudy), "");
+                cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDescription), "");
+                cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDate), "");
+                cFindDataset.putAndInsertString(new DcmTag(dcm.StudyTime), "");
+                cFindDataset.putAndInsertString(new DcmTag(dcm.AccessionNumber), "");
+                cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), "");
+                */
+                if (association.SendCFindStudyRootQuery(cFindDataset))
+                    return new ReadOnlyQueryResultCollection(_queryResults);
+                else
+                    return null;
             }
             catch (DicomRuntimeApplicationException e)
             {
@@ -144,6 +170,12 @@ namespace ClearCanvas.Dicom.Network
 
         class QueryCallbackHelper
         {
+            public QueryCallbackHelper(DicomClient parent)
+            {
+                _parent = parent;
+                _queryCallbackHelperDelegate = new QueryCallbackHelperDelegate(DefaultCallback);
+                RegisterQueryCallbackHelper_OffisDcm(_queryCallbackHelperDelegate);
+            }
 
             public delegate void QueryCallbackHelperDelegate(IntPtr callbackData,
                                                              IntPtr request,
@@ -164,25 +196,41 @@ namespace ClearCanvas.Dicom.Network
                 T_DIMSE_C_FindRSP inboundResponse = new T_DIMSE_C_FindRSP(response, false);
                 DcmDataset responseData = new DcmDataset(responseIdentifiers, false);
 
-                if (DICOM_PENDING_STATUS(inboundResponse.DimseStatus) &&
+                if (DICOM_PENDING_STATUS(inboundResponse.DimseStatus) ||
                     DICOM_SUCCESS_STATUS(inboundResponse.DimseStatus))
                 {
+                    QueryResult queryResult = null;
+                    DcmObject item = responseData.nextInContainer(null);
+                    bool tagAvailable = (item != null);
 
+                    // there actually is a result
+                    if (tagAvailable)
+                    {
+                        queryResult = new QueryResult();
+
+                        while (tagAvailable)
+                        {
+                            DcmElement element = OffisDcm.castToDcmElement(item);
+                            if (null != element)
+                            {
+                                queryResult.Add(new DicomTag(element.getGTag(), element.getETag()), element.ToString());
+                            }
+
+                            item = responseData.nextInContainer(item);
+                            tagAvailable = (item != null);
+                        }
+
+                        _parent._queryResults.Add(queryResult);
+                    }
                 }
             }
 
-            public QueryCallbackHelper()
-            {
-                queryCallbackHelperDelegate = new QueryCallbackHelperDelegate(DefaultCallback);
-                RegisterQueryCallbackHelper_OffisDcm(queryCallbackHelperDelegate);
-            }
-
-            private QueryCallbackHelperDelegate queryCallbackHelperDelegate = null; 
+            private QueryCallbackHelperDelegate _queryCallbackHelperDelegate = null;
+            private DicomClient _parent = null;
         }
 
-        private QueryCallbackHelper queryCallbackHelper = new QueryCallbackHelper();
-
-        private QueryResultList _QueryResults;
+        private QueryCallbackHelper _queryCallbackHelper = null;
+        private QueryResultList _queryResults = null;
         private ApplicationEntity _myOwnAE;
         private int _timeout = 500;
         private int _defaultPDUSize = 16384;

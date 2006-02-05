@@ -19,20 +19,21 @@
 %include "dicom.h"
 %include "cond.h"
 
-/* 
- * General Status Codes 
- */
-#define STATUS_Success	0x0000
-#define STATUS_Pending	0xff00
-
-#define DICOM_PENDING_STATUS(status) (((status)&0xff00) == 0xff00)
-#define DICOM_WARNING_STATUS(status) (((status)&0xf000) == 0xb000)
-
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 //
-// SECTION: typemaps to make certain members of proxy classes public
+// MACRO: Change the access modifiers of the constructors 
+// so that the creator of the object can manually specify
+// cMemoryOwn. This is useful when we manually marshal
+// DcmDataset pointers into the C# world; we can 
+// simply construct a C# DcmDataset proxy object and give
+// the constructor the C-pointer of the real object
+// and at the same time, set cMemoryOwn appropriately.
+// For example, in the query progress callback, the
+// underly C++ DcmDataset object exists only on the stack
+// and will be deallocated once the callback returns.
+// 
+// This macro is for base types, rather than derived types
 //
-/////////////////////////////////////////////////////////////////////////
 %define CONTROLACCESSPUBLIC(type)
 %typemap(csbody) type %{
   private HandleRef swigCPtr;
@@ -56,17 +57,10 @@ CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
 
 /////////////////////////////////////////////////////////////////////////
 //
-// END OF SECTION
-//
-/////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////
-//
 // SECTION: Custom Exception
 // The following section implements the support for a custom exception
 // to be thrown from the C++ code and caught in the C# code
 //
-/////////////////////////////////////////////////////////////////////////
 %insert(runtime) %{
 
 #include "ofcond.h"
@@ -166,11 +160,6 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 	SWIG_CSharpSetPendingExceptionDicomRuntime(pcondition, $1.what());
 	return $null;
 }
-/////////////////////////////////////////////////////////////////////////
-//
-// END OF SECTION: Custom Exception
-//
-/////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -178,7 +167,6 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 // The following section implements the support for a delegate in C#
 // that will be called as a progress callback from the C++ wrapper
 //
-/////////////////////////////////////////////////////////////////////////
 %{
 
 //-------------------------------------------
@@ -239,15 +227,8 @@ static void CFindProgressCallback(
 
 /////////////////////////////////////////////////////////////////////////
 //
-// END OF SECTION: Delegate callbacks
-//
-/////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////
-//
 // SECTION: Extension of the T_ASC_Network class
 //
-/////////////////////////////////////////////////////////////////////////
 struct T_ASC_Network
 {
     T_ASC_NetworkRole   role;
@@ -399,17 +380,11 @@ struct T_ASC_Network
 		ASC_dropNetwork(&self);
 	}
 }
-/////////////////////////////////////////////////////////////////////////
-//
-// END OF SECTION: Extension of the T_ASC_Network class
-//
-/////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////
 //
 // SECTION: Extension of the T_ASC_Parameters class
 //
-/////////////////////////////////////////////////////////////////////////
 struct T_ASC_Parameters
 {
     DIC_UI ourImplementationClassUID;
@@ -533,15 +508,8 @@ struct T_ASC_Parameters
 
 /////////////////////////////////////////////////////////////////////////
 //
-// END OF SECTION: Extension of the T_ASC_Parameters class
-//
-/////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////
-//
 // SECTION: Extension of the T_ASC_Association class
 //
-/////////////////////////////////////////////////////////////////////////
 struct T_ASC_Association
 {
     DUL_ASSOCIATIONKEY *DULassociation;
@@ -621,8 +589,55 @@ struct T_ASC_Association
 						  DIMSE_BLOCKING, 0,
 						  &rsp, &statusDetail);
 
+		if (cond == EC_Normal)
+		{
+			return true;
+		}
+		else if (cond == DUL_PEERREQUESTEDRELEASE)
+		{
+			ASC_abortAssociation(self);
 
-		return false;
+			string msg = string("SendCFindStudyRootQuery: Protocol error, peer requested release (association aborted); ") + cond.text();
+			throw dicom_runtime_error(cond, msg);
+		}
+		else if (cond == DUL_PEERABORTEDASSOCIATION)
+		{
+			// right now we don't do anything special
+			// but in the future, this could be logged
+			return false;
+		}
+		else // some other abnormal condition
+		{
+			return false;
+		}
+		
+		/* This was in the original findscu.cxx code and may become
+		 * helpful when we do more logging so I'm keeping it here for now
+
+		if (cond == EC_Normal) {
+			if (opt_verbose) {
+				DIMSE_printCFindRSP(stdout, &rsp);
+			} else {
+				if (rsp.DimseStatus != STATUS_Success) {
+					printf("Response: %s\n", DU_cfindStatusString(rsp.DimseStatus));
+				}
+			}
+		} else {
+			if (fname) {
+				errmsg("Find Failed, file: %s:", fname);
+			} else {
+				errmsg("Find Failed, query keys:");
+				dcmff.getDataset()->print(COUT);
+			}
+			DimseCondition::dump(cond);
+		}
+
+		if (statusDetail != NULL) {
+			printf("  Status Detail:\n");
+			statusDetail->print(COUT);
+			delete statusDetail;
+		}
+		*/
 	}
 
 	bool Release() throw (dicom_runtime_error)
@@ -647,10 +662,8 @@ struct T_ASC_Association
 
 /////////////////////////////////////////////////////////////////////////
 //
-// END OF SECTION: Extension of the T_ASC_Association class
+// Specific references to types for SWIG to wrap
 //
-/////////////////////////////////////////////////////////////////////////
-
 enum T_ASC_RejectParametersResult
 { 
     ASC_RESULT_REJECTEDPERMANENT			= 1, 
@@ -693,12 +706,11 @@ enum T_ASC_NetworkRole
     NET_ACCEPTORREQUESTOR	/* User and Provider */
 };
 
-
+////////////////////////////////////////////////////////////////////
 //
-// Association functions
+// Specific references to functions for SWIG to wrap
+// that are Association-oriented
 //
-
-
 OFCondition 
 ASC_setAPTitles(
 	T_ASC_Parameters * params,
@@ -759,8 +771,10 @@ ASC_dropSCPAssociation(T_ASC_Association * association);
 OFCondition 
 ASC_destroyAssociation(T_ASC_Association ** association);
 
+////////////////////////////////////////////////////////////////////
 //
-// DIMSE functions
+// Specific references to functions for SWIG to wrap
+// that are DIMSE-oriented
 //
 void DIMSE_printCEchoRQ(FILE * f, T_DIMSE_C_EchoRQ * req);
 
@@ -796,28 +810,3 @@ struct T_DIMSE_C_FindRSP {
 #define O_FIND_AFFECTEDSOPCLASSUID		0x0001
 };
 
-//
-// Types that need to be declared
-// 
-
-// T_DIMSE_Message;
-// T_ASC_PresentationContextID;
-// DcmDataset;
-// OFString;
-// T_ASC_Network;
-// T_ASC_Association;
-// OFCondition;
-// T_ASC_RejectParameters;
-// ASC_acceptContextsWithPreferredTransferSyntaxes();
-
-//
-// Others
-//
-// DIMSE_NODATAAVAILABLE;
-// DIMSE_BLOCKING;
-// DIMSE_NONBLOCKING;
-// NET_ACCEPTOR;
-// UID_VerificationSOPClass;
-// ASC_RESULT_REJECTEDPERMANENT;
-// ASC_SOURCE_SERVICEUSER;
-// ASC_REASON_SU_NOREASON;

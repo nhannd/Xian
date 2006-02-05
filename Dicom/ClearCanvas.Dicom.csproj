@@ -28,7 +28,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
     <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
-    <DocumentationFile />
+    <DocumentationFile>ClearCanvas.Dicom.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -48,7 +48,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile />
+    <DocumentationFile>ClearCanvas.Dicom.xml</DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -69,6 +69,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>ClearCanvas.Dicom.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Mono|AnyCPU' ">
     <OutputPath>bin\Release Mono\</OutputPath>
@@ -78,6 +79,7 @@
     <DebugType />
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>ClearCanvas.Dicom.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -128,10 +130,8 @@
     </Compile>
     <Compile Include="SR.cs" />
     <Compile Include="StudyCompletedEventArgs.cs" />
-    <Compile Include="DcmDataTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DcmNetTest.cs" />
+    <Compile Include="Tests\DcmDataTest.cs" />
+    <Compile Include="Tests\DcmNetTest.cs" />
     <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="Uid.cs" />
   </ItemGroup>
@@ -140,9 +140,6 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

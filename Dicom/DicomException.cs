@@ -5,6 +5,9 @@ namespace ClearCanvas.Dicom.Exceptions
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Application-level exceptions that are routed from lower-level DICOM library calls
+    /// </summary>
     public class DicomException : System.ApplicationException
     {
         public DicomException(string message)

@@ -5,6 +5,21 @@
 #pragma warning (disable:4800)
 %}
 
+////////////////////////////////////////////////////////////
+//
+// MACRO: Add a constructor to a derived type that allows 
+// it to be constructed with a boolean indicating whether
+// or not the destructor should call the underlying C++
+// delete to deallocate the object, i.e. manually set
+// the cMemoryOwn field at construction time.
+//
+// type is the type that we want to add the method to,
+// arg_type is the type of an internal field that is
+// used during construction. For example, for 
+// DcmCodeString, the arg_type is DcmTag since a
+// DcmTag object is passed in to define the Group 
+// and Element of the Code String that will be created.
+//
 %define CONTROLOWNER_DERIVED(type, construct_arg_type)
 %typemap(csbody_derived) type %{
   private HandleRef swigCPtr;
@@ -32,18 +47,65 @@ CONTROLOWNER_DERIVED(DcmDate, DcmTag)
 CONTROLOWNER_DERIVED(DcmTime, DcmTag)
 CONTROLOWNER_DERIVED(DcmUniqueIdentifier, DcmTag)
 
-%typemap(csbody_derived) DcmDataset %{
+/////////////////////////////////////////////////////////
+//
+// MACRO: Change the access modifiers of the constructors 
+// so that the creator of the object can manually specify
+// cMemoryOwn. This is useful when we manually marshal
+// DcmDataset pointers into the C# world; we can 
+// simply construct a C# DcmDataset proxy object and give
+// the constructor the C-pointer of the real object
+// and at the same time, set cMemoryOwn appropriately.
+// For example, in the query progress callback, the
+// underly C++ DcmDataset object exists only on the stack
+// and will be deallocated once the callback returns.
+//
+%define CONTROLACCESSPUBLIC_DERIVED(type)
+%typemap(csbody_derived) type %{
   private HandleRef swigCPtr;
 
-  public $csclassname(IntPtr cPtr, bool cMemoryOwn) : base(OffisDcmPINVOKE.$csclassnameUpcast(cPtr), cMemoryOwn) {
+  public type ## (IntPtr cPtr, bool cMemoryOwn) 
+  	: base(OffisDcmPINVOKE. ## type ## Upcast(cPtr), cMemoryOwn) {
     swigCPtr = new HandleRef(this, cPtr);
   }
 
-  public static HandleRef getCPtr($csclassname obj) {
+  public static HandleRef getCPtr( ## type  obj) {
     return (obj == null) ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
   }
 %}
+%enddef
 
+CONTROLACCESSPUBLIC_DERIVED(DcmDataset)
+
+//////////////////////////////////////////////////////////
+//
+// Typemap to override the ToString function of 
+// DcmElement to return a reference to the string object
+//
+%typemap(csbody_derived) DcmElement %{
+	private HandleRef swigCPtr;
+
+	internal DcmElement(IntPtr cPtr, bool cMemoryOwn) 
+		: base(OffisDcmPINVOKE.DcmElementUpcast(cPtr), cMemoryOwn) {
+		swigCPtr = new HandleRef(this, cPtr);
+	}
+
+	internal static HandleRef getCPtr(DcmElement obj) {
+		return (obj == null) ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+	}
+
+	public override string ToString()
+	{
+		StringBuilder buffer = new StringBuilder(256);
+		getOFStringArray(buffer);
+		return buffer.ToString();
+	}
+%}
+
+//////////////////////////////////////////////////////////
+//
+// Rest of interface file
+//
 %include "osconfig.h"
 %include "typemaps.i"
 %include "dcm_typemaps.i"

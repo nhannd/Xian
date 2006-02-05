@@ -7,7 +7,7 @@ namespace ClearCanvas.Dicom
     public class DicomTag
     {
         public DicomTag(UInt16 group, UInt16 element)
-            : this((UInt32) ((group << 16) & element))
+            : this((UInt32) ((group << 16) | element))
         {
         }
 
@@ -38,9 +38,18 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        public override int GetHashCode()
+        public override Int32 GetHashCode()
         {
             return ((Int32) _ID);
+        }
+
+        public override System.String ToString()
+        {
+            // TODO: use the DICOM data dictionary to get a string description of the tag
+            // instead of just providing the group and element numbers
+            StringBuilder buffer = new StringBuilder();
+            buffer.AppendFormat("(0x{0:x4},0x{1:x4})", Group, Element);
+            return buffer.ToString();
         }
 
         public static DicomTag CommandGroupLength { get { return new DicomTag(0x0000, 0x0000); } }
