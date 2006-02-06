@@ -64,6 +64,7 @@ CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
 %insert(runtime) %{
 
 #include "ofcond.h"
+#include <stdexcept>
 
 class dicom_runtime_error : public std::runtime_error
 {
@@ -72,6 +73,8 @@ public:
 	: runtime_error(message), _condition(condition)
 	{
 	}
+
+	~dicom_runtime_error() throw();
 
 	OFCondition _condition;
 };
