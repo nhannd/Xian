@@ -6,10 +6,15 @@ namespace ClearCanvas.Dicom
 
     public class Uid : System.IComparable
     {
-        private string m_Uid;
+        private string _uid;
         public Uid(string constructionUid)
         {
-            m_Uid = constructionUid;
+            _uid = constructionUid;
+        }
+
+        public override string ToString()
+        {
+            return _uid;
         }
 
         #region IComparable Members
@@ -19,7 +24,7 @@ namespace ClearCanvas.Dicom
             if (obj is Uid)
             {
                 Uid otherUid = (Uid)obj;
-                if (this.m_Uid == otherUid.m_Uid)
+                if (this._uid == otherUid._uid)
                     return 0;
                 else
                     return -1;

@@ -7,6 +7,16 @@ namespace ClearCanvas.Dicom.Network
 
     public class QueryResultReceivedEventArgs : EventArgs
     {
+        public QueryResultReceivedEventArgs(QueryResult result)
+        {
+            _result = result;
+        }
 
+        public QueryResult GetResult()
+        {
+            return _result;
+        }
+
+        private QueryResult _result = null;
     }
 }

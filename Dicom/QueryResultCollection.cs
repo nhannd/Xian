@@ -15,6 +15,11 @@ namespace ClearCanvas.Dicom.Network
             (this as ICollection<QueryResult>).Add(item);
         }
 
+        public void Clear()
+        {
+            (this as ICollection<QueryResult>).Clear();
+        }
+
         #region IList<QueryResult> Members
 
         public int IndexOf(QueryResult item)

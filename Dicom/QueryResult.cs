@@ -57,15 +57,20 @@ namespace ClearCanvas.Dicom.Network
             get { return (this as IDictionary<DicomTag, string>).Keys; }
         }
 
-        public void Add(DicomTag key, string value)
+        internal void Add(DicomTag key, string value)
         {
             (this as IDictionary<DicomTag, string>).Add(key, value);
         }
 
-        public string this[DicomTag key]
+        internal string this[DicomTag key]
         {
             get { return (this as IDictionary<DicomTag, string>)[key]; }
             set { (this as IDictionary<DicomTag, string>)[key] = value; }
+        }
+
+        internal void Clear()
+        {
+            (this as ICollection<KeyValuePair<DicomTag, string>>).Clear();
         }
 
         public override string ToString()

@@ -215,11 +215,15 @@ static void CFindProgressCallback(
 	char buffer[265];
 	sprintf(buffer, "c:\\temp\\cfindrsp_%d.dcm", responseCount);
 	responseIdentifiers->saveFile(buffer);
-	CSharpQueryCallbackHelperCallback(callbackData,
-										request,
-										responseCount,
-										rsp,
-										responseIdentifiers);
+
+	if (NULL != CSharpQueryCallbackHelperCallback)
+	{
+		CSharpQueryCallbackHelperCallback(callbackData,
+											request,
+											responseCount,
+											rsp,
+											responseIdentifiers);
+	}
 }
 
 
