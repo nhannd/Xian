@@ -20,6 +20,7 @@ namespace ClearCanvas.Dicom {
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class SR {
         
@@ -27,6 +28,7 @@ namespace ClearCanvas.Dicom {
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal SR() {
         }
         
@@ -68,6 +70,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The connection timeout value must be between 1 and 32767.
+        /// </summary>
+        public static string ExceptionDicomConnectionTimeoutOutOfRange {
+            get {
+                return ResourceManager.GetString("ExceptionDicomConnectionTimeoutOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File: {0} - {1}.
         /// </summary>
         public static string ExceptionDICOMFile {
@@ -86,7 +97,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified directory where incoming DICOM objects should be saved does not exist: {0}.
+        ///   Looks up a localized string similar to The specified directory where incoming DICOM objects should be saved does not exist - {0}.
         /// </summary>
         public static string ExceptionDicomSaveDirectoryDoesNotExist {
             get {

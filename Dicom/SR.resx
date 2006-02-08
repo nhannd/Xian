@@ -269,11 +269,14 @@
     <value>An unknown error occurred in the OFFIS DICOM subsystem</value>
   </data>
   <data name="ExceptionDicomSaveDirectoryDoesNotExist" xml:space="preserve">
-    <value>The specified directory where incoming DICOM objects should be saved does not exist: {0}</value>
+    <value>The specified directory where incoming DICOM objects should be saved does not exist - {0}</value>
     <comment>0 - path of save directory</comment>
   </data>
   <data name="ExceptionDicomNullDataset" xml:space="preserve">
     <value>The passed in dataset is null</value>
     <comment>Currently used in the client calls to affect a Retrieve</comment>
+  </data>
+  <data name="ExceptionDicomConnectionTimeoutOutOfRange" xml:space="preserve">
+    <value>The connection timeout value must be between 1 and 32767</value>
   </data>
 </root>
