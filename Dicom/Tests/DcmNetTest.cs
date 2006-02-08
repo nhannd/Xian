@@ -203,7 +203,7 @@ using ClearCanvas.Dicom.Exceptions;
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), "C:\\temp");
+            dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), "C:\\nonexistent");
         }
 
         #region Non-test utility methods

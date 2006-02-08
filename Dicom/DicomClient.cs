@@ -9,7 +9,7 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.OffisWrapper;
     using ClearCanvas.Dicom.Exceptions;
     using ClearCanvas.Dicom.Data;
-    using ClearCanvas.Dicom;
+    using MySR = ClearCanvas.Dicom.SR;
 
     public class DicomClient
     {
@@ -30,6 +30,13 @@ namespace ClearCanvas.Dicom.Network
 
             _queryCallbackHelper = new QueryCallbackHelper(this);
             _queryResults = new QueryResultList();
+        }
+
+        public void SetConnectionTimeout(Int16 timeout)
+        {
+            if (timeout < 1)
+                throw new System.ArgumentOutOfRangeException(MySR.ExceptionDicomConnectionTimeoutOutOfRange, "timeout");
+            OffisDcm.SetConnectionTimeout(timeout);
         }
 
         public bool Verify(ApplicationEntity ae)
@@ -162,7 +169,7 @@ namespace ClearCanvas.Dicom.Network
             if (!System.IO.Directory.Exists(normalizedSaveDirectory.ToString()))
             {
                 StringBuilder message = new StringBuilder();
-                message.AppendFormat(ClearCanvas.Dicom.SR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedSaveDirectory.ToString());
+                message.AppendFormat(MySR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedSaveDirectory.ToString());
 
                 throw new System.ArgumentException(message.ToString(), "saveDirectory");
             }
@@ -182,7 +189,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                OffisDcm.SetConnectionTimeout(600);
+                SetConnectionTimeout(600);
 
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, _timeout);
 
