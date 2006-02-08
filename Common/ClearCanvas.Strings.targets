@@ -1,5 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Target Name="BeforeBuild">
+	<Target Name="BeforeBuild"
+		Inputs="SR.resx"
+		Outputs="SR.cs; SR.txt; $(RootNamespace).SR.resources">
 		<GenerateResource  
 		Sources="SR.resx"
 		OutputResources="$(RootNamespace).SR.resources;"
