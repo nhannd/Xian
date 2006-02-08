@@ -13,6 +13,8 @@
 		Sources="SR.resx"
 		OutputResources="SR.txt"
 		/>
-		<Exec Command="..\Utilities\sed -i &quot;/System.Diagnostics/d&quot; SR.cs" />
+    <!--
+    <Exec Command="..\Utilities\sed -i &quot;/System.Diagnostics/d&quot; SR.cs" />
+    -->
 	</Target>
 </Project>
