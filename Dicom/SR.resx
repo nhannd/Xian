@@ -279,4 +279,8 @@
   <data name="ExceptionDicomConnectionTimeoutOutOfRange" xml:space="preserve">
     <value>The connection timeout value must be between 1 and 32767</value>
   </data>
+  <data name="ExceptionDicomPatientLevelQueryInvalid" xml:space="preserve">
+    <value>PATIENT level query using the Study Root Query/Retrieve Information model is invalid</value>
+    <comment> </comment>
+  </data>
 </root>

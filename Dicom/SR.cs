@@ -97,6 +97,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PATIENT level query using the Study Root Query/Retrieve Information model is invalid.
+        /// </summary>
+        public static string ExceptionDicomPatientLevelQueryInvalid {
+            get {
+                return ResourceManager.GetString("ExceptionDicomPatientLevelQueryInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified directory where incoming DICOM objects should be saved does not exist - {0}.
         /// </summary>
         public static string ExceptionDicomSaveDirectoryDoesNotExist {

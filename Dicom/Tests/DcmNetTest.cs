@@ -196,14 +196,14 @@ using ClearCanvas.Dicom.Exceptions;
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(4000));
             ApplicationEntity serverAE = new ApplicationEntity(new HostName("192.168.0.100"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+                new AETitle("CLINTONDESK"), new ListeningPort(4006));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), "C:\\nonexistent");
+            dicomClient.Retrieve(serverAE, new Uid("1.2.840.113619.2.5.1762583153.215519.978957063.78"), "C:\\temp\\Patient2");
         }
 
         #region Non-test utility methods

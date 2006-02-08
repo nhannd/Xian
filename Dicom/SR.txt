@@ -50,3 +50,4 @@ ExceptionOffisUnknownError=An unknown error occurred in the OFFIS DICOM subsyste
 ExceptionDicomSaveDirectoryDoesNotExist=The specified directory where incoming DICOM objects should be saved does not exist - {0}
 ExceptionDicomNullDataset=The passed in dataset is null
 ExceptionDicomConnectionTimeoutOutOfRange=The connection timeout value must be between 1 and 32767
+ExceptionDicomPatientLevelQueryInvalid=PATIENT level query using the Study Root Query/Retrieve Information model is invalid

@@ -28,6 +28,10 @@ namespace ClearCanvas.Dicom.Network
 
             _myOwnAE = ownAEParameters;
 
+            // since we want the QueryCallbackHelper object to be able to 
+            // modifier data that is instance-related in nature, i.e. 
+            // query results, we need to make the callback install itself
+            // when this instance is created. This is not thread-safe
             _queryCallbackHelper = new QueryCallbackHelper(this);
             _queryResults = new QueryResultList();
         }
@@ -70,7 +74,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeQueryState();
 
             DcmDataset cFindDataset = new DcmDataset();
-            CreateStandardCFindDataset(ref cFindDataset);
+            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query keys
             cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientID.ToString());
@@ -86,7 +90,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeQueryState();
 
             DcmDataset cFindDataset = new DcmDataset();
-            CreateStandardCFindDataset(ref cFindDataset);
+            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query for study instance uid
             cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
@@ -94,62 +98,6 @@ namespace ClearCanvas.Dicom.Network
             ReadOnlyQueryResultCollection results = Query(ae, cFindDataset);
             FireConditionalQueryCompletedEvent(results);
             return results;
-        }
-
-        protected ReadOnlyQueryResultCollection Query(ApplicationEntity ae, DcmDataset cFindDataset)
-        {
-            try
-            {
-                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
-
-                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, ae.AE, ae.Host, ae.Port);
-                associationParameters.ConfigureForStudyRootQuery();
-
-                T_ASC_Association association = network.CreateAssociation(associationParameters);
-
-                if (association.SendCFindStudyRootQuery(cFindDataset))
-                {
-                    association.Release();
-                    return new ReadOnlyQueryResultCollection(_queryResults);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (DicomRuntimeApplicationException e)
-            {
-                throw new NetworkDicomException(OffisConditionParser.GetTextString(ae, e), e);
-            }
-        }
-
-        protected void CreateStandardCFindDataset(ref DcmDataset cFindDataset)
-        {
-            // set the Query Retrieve Level
-            cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "STUDY");
-
-            // set the other tags we want to retrieve
-            cFindDataset.putAndInsertString(new DcmTag(dcm.ModalitiesInStudy), "");
-            cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDescription), "");
-            cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDate), "");
-            cFindDataset.putAndInsertString(new DcmTag(dcm.StudyTime), "");
-            cFindDataset.putAndInsertString(new DcmTag(dcm.AccessionNumber), "");
-            cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), "");
-            cFindDataset.putAndInsertString(new DcmTag(dcm.SpecificCharacterSet), "");
-        }
-
-        protected void InitializeQueryState()
-        {
-            _queryResults.Clear();
-        }
-
-        protected void FireConditionalQueryCompletedEvent(ReadOnlyQueryResultCollection results)
-        {
-            if (null != results)
-            {
-                QueryCompletedEventArgs args = new QueryCompletedEventArgs(results);
-                OnQueryCompletedEvent(args);
-            }
         }
 
         public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
@@ -173,16 +121,27 @@ namespace ClearCanvas.Dicom.Network
 
                 throw new System.ArgumentException(message.ToString(), "saveDirectory");
             }
-            
+
             DcmDataset cMoveDataset = new DcmDataset();
 
             // set the specific query for study instance uid
+            InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Study);
             cMoveDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
             Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
-            
+
             // fire event to indicate successful retrieval
             return;
+        }
+
+        #region Protected members
+
+        protected enum QRLevel
+        {
+            Patient,
+            Study,
+            Series,
+            CompositeObjectInstance
         }
 
         protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory)
@@ -200,7 +159,7 @@ namespace ClearCanvas.Dicom.Network
 
                 if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory))
                     association.Release();
-                
+
                 return;
             }
             catch (DicomRuntimeApplicationException e)
@@ -209,8 +168,150 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// The low-level version of Query that just takes in a dataset that has been properly 
+        /// initialized and set to use tags that are appropriate
+        /// </summary>
+        /// <param name="ae"></param>
+        /// <param name="cFindDataset"></param>
+        /// <returns></returns>
+        protected ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, DcmDataset cFindDataset)
+        {
+            try
+            {
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
+
+                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+                associationParameters.ConfigureForStudyRootQuery();
+
+                T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                if (association.SendCFindStudyRootQuery(cFindDataset))
+                {
+                    association.Release();
+                    return new ReadOnlyQueryResultCollection(_queryResults);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (DicomRuntimeApplicationException e)
+            {
+                throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a dataset with the required tags to ensure the C-FIND will work
+        /// </summary>
+        /// <param name="cMoveDataset">Dataset to be filled with certain required tags</param>
+        /// <param name="level">Query/Retrieve level</param>
+        protected void InitializeStandardCFindDataset(ref DcmDataset cFindDataset, QRLevel level)
+        {
+            switch (level)
+            {
+                case QRLevel.Patient:
+                    throw new System.ArgumentOutOfRangeException(MySR.ExceptionDicomPatientLevelQueryInvalid, "level");
+               
+                case QRLevel.Study:
+                    // set the Query Retrieve Level
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "STUDY");
+
+                    // set the other tags we want to retrieve
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDate), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyTime), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.AccessionNumber), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.ModalitiesInStudy), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDescription), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.SpecificCharacterSet), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsBirthDate), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.NumberOfStudyRelatedSeries), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.NumberOfStudyRelatedInstances), "");
+                    break;
+                case QRLevel.Series:
+                    // set the Query Retrieve Level
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "SERIES");
+
+                    // set the other tags we want to retrieve
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.Modality), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.SeriesInstanceUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.NumberOfSeriesRelatedInstances), "");
+                    break;
+                case QRLevel.CompositeObjectInstance:
+                    // set the Query Retrieve Level
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "IMAGE");
+
+                    // set the other tags we want to retrieve
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.SOPClassUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(dcm.SOPInstanceUID), "");
+                    break;
+            }
+        }
+        
+        /// <summary>
+        /// Initializes a dataset with the required tags to ensure the C-MOVE will work
+        /// </summary>
+        /// <param name="cMoveDataset">Dataset to be filled with certain required tags</param>
+        /// <param name="level">Query/Retrieve level</param>
+        protected void InitializeStandardCMoveDataset(ref DcmDataset cMoveDataset, QRLevel level)
+        {
+            switch (level)
+            {
+                case QRLevel.Patient:
+                    throw new System.ArgumentOutOfRangeException(MySR.ExceptionDicomPatientLevelQueryInvalid, "level");
+                    
+                case QRLevel.Study:
+                    // set the Query Retrieve Level
+                    cMoveDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "STUDY");
+                    // set the other tags we want to retrieve
+                    cMoveDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), "");
+                    break;
+                case QRLevel.Series:
+                    // set the Query Retrieve Level
+                    cMoveDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "SERIES");
+                    // set the other tags we want to retrieve
+                    cMoveDataset.putAndInsertString(new DcmTag(dcm.SeriesInstanceUID), "");
+                    break;
+                case QRLevel.CompositeObjectInstance:
+                    // set the Query Retrieve Level
+                    cMoveDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "IMAGE");
+                    // set the other tags we want to retrieve
+                    cMoveDataset.putAndInsertString(new DcmTag(dcm.SOPInstanceUID), "");
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Resets the contents of the query result collection, typically done before
+        /// any query operations are invoked to ensure that the collection is empty
+        /// </summary>
+        protected void InitializeQueryState()
+        {
+            _queryResults.Clear();
+        }
+
+        /// <summary>
+        /// Invoke the event firing helper if the query operation resulted in query results
+        /// i.e. the query was successful
+        /// </summary>
+        /// <param name="results">Collection of query results or null if no results
+        /// were returned</param>
+        protected void FireConditionalQueryCompletedEvent(ReadOnlyQueryResultCollection results)
+        {
+            if (null != results)
+            {
+                QueryCompletedEventArgs args = new QueryCompletedEventArgs(results);
+                OnQueryCompletedEvent(args);
+            }
+        }
+
         protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)
         {
+            
             EventsHelper.Fire(SopInstanceReceivedEvent, this, e);
         }
 
@@ -302,6 +403,8 @@ namespace ClearCanvas.Dicom.Network
             private QueryCallbackHelperDelegate _queryCallbackHelperDelegate = null;
             private DicomClient _parent = null;
         }
+
+        #endregion
 
         #region Private members
         private QueryCallbackHelper _queryCallbackHelper = null;
