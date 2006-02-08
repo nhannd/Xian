@@ -47,3 +47,5 @@ ExceptionOffisModuleAssociation=Association
 ExceptionOffisModuleDimse=DIMSE
 ExceptionOffisModuleDul=DICOM Upper Layer
 ExceptionOffisUnknownError=An unknown error occurred in the OFFIS DICOM subsystem
+ExceptionDicomSaveDirectoryDoesNotExist=The specified directory where incoming DICOM objects should be saved does not exist: {0}
+ExceptionDicomNullDataset=The passed in dataset is null

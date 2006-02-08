@@ -5,6 +5,7 @@
 #include "dimse.h"
 #include "ofcond.h"
 #include "cond.h"
+#include "diutil.h"
 %}
 
 #ifndef params
@@ -74,7 +75,9 @@ public:
 	{
 	}
 
-	~dicom_runtime_error() throw();
+	~dicom_runtime_error() throw()
+	{
+	}
 
 	OFCondition _condition;
 };
@@ -164,6 +167,18 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 	return $null;
 }
 
+%inline
+%{
+//-------------------------------------------
+// Helper function to set the connection
+// timeout in the OFFIS tk
+//-------------------------------------------
+void SetConnectionTimeout(int newTimeout)
+{
+	dcmConnectionTimeout.set((Sint32) newTimeout);
+}
+%}
+
 /////////////////////////////////////////////////////////////////////////
 //
 // SECTION: Delegate callbacks
@@ -180,10 +195,17 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 // this data will be made available to the
 // callback to deal with appropriately
 //-------------------------------------------
-typedef struct {
+struct MyCallbackInfo {
     T_ASC_Association *assoc;
     T_ASC_PresentationContextID presId;
-} MyCallbackInfo;
+};
+
+struct StoreCallbackData
+{
+  char* imageFileName;
+  DcmFileFormat* dcmff;
+  T_ASC_Association* assoc;
+};
 
 //-------------------------------------------
 // This is the C++ callback function that
@@ -229,6 +251,242 @@ static void CFindProgressCallback(
 	}
 }
 
+static void CMoveProgressCallback(void *callbackData, 
+		T_DIMSE_C_MoveRQ *request,
+    	int responseCount, 
+		T_DIMSE_C_MoveRSP *response)
+{
+    OFCondition cond = EC_Normal;
+    MyCallbackInfo *myCallbackData;
+
+    myCallbackData = (MyCallbackInfo*)callbackData;
+}
+
+static void StoreSCPCallback(
+    /* in */
+    void *callbackData,
+    T_DIMSE_StoreProgress *progress,    /* progress state */
+    T_DIMSE_C_StoreRQ *req,             /* original store request */
+    char *imageFileName, DcmDataset **imageDataSet, /* being received into */
+    /* out */
+    T_DIMSE_C_StoreRSP *rsp,            /* final store response */
+    DcmDataset **statusDetail)
+{
+    DIC_UI sopClass;
+    DIC_UI sopInstance;
+
+	if (progress->state == DIMSE_StoreEnd)
+	{
+		*statusDetail = NULL;    /* no status detail */
+
+		/* could save the image somewhere else, put it in database, etc */
+		/*
+		* An appropriate status code is already set in the resp structure, it need not be success.
+		* For example, if the caller has already detected an out of resources problem then the
+		* status will reflect this.  The callback function is still called to allow cleanup.
+		*/
+		// rsp->DimseStatus = STATUS_Success;
+
+		if ((imageDataSet)&&(*imageDataSet))
+		{
+			StoreCallbackData *cbdata = (StoreCallbackData*) callbackData;
+			const char* fileName = cbdata->imageFileName;
+
+			E_TransferSyntax xfer = (*imageDataSet)->getOriginalXfer();
+
+			OFCondition cond = cbdata->dcmff->saveFile(fileName, xfer, EET_ExplicitLength, EGL_recalcGL,
+				EPD_withoutPadding, (Uint32)0, (Uint32)0, false);
+			if (cond.bad())
+			{
+				rsp->DimseStatus = STATUS_STORE_Refused_OutOfResources;
+			}
+
+			/* should really check the image to make sure it is consistent,
+			* that its sopClass and sopInstance correspond with those in
+			* the request.
+			*/
+			if ((rsp->DimseStatus == STATUS_Success))
+			{
+				/* which SOP class and SOP instance ? */
+				if (! DU_findSOPClassAndInstanceInDataSet(*imageDataSet, sopClass, sopInstance, true))
+				{
+					rsp->DimseStatus = STATUS_STORE_Error_CannotUnderstand;
+				}
+				else if (strcmp(sopClass, req->AffectedSOPClassUID) != 0)
+				{
+					rsp->DimseStatus = STATUS_STORE_Error_DataSetDoesNotMatchSOPClass;
+				}
+				else if (strcmp(sopInstance, req->AffectedSOPInstanceUID) != 0)
+				{
+					rsp->DimseStatus = STATUS_STORE_Error_DataSetDoesNotMatchSOPClass;
+				}
+			}
+		}
+	}
+    return;
+}
+
+static OFCondition StoreScp(
+	T_ASC_Association *assoc,
+	T_DIMSE_Message *msg,
+	T_ASC_PresentationContextID presID,
+	const char* saveDirectoryPath)
+{
+	OFCondition cond = EC_Normal;
+	T_DIMSE_C_StoreRQ *req;
+	char imageFileName[2048];
+
+	req = &msg->msg.CStoreRQ;
+
+	sprintf(imageFileName, "%s%s.%s",
+		saveDirectoryPath,
+		dcmSOPClassUIDToModality(req->AffectedSOPClassUID),
+		req->AffectedSOPInstanceUID);
+
+	StoreCallbackData callbackData;
+	callbackData.assoc = assoc;
+	callbackData.imageFileName = imageFileName;
+	DcmFileFormat dcmff;
+	callbackData.dcmff = &dcmff;
+
+	DcmDataset *dset = dcmff.getDataset();
+
+	cond = DIMSE_storeProvider(assoc, presID, req, (char *)NULL, true,
+		&dset, StoreSCPCallback, (void*)&callbackData, DIMSE_BLOCKING, 0);
+
+	if (cond.bad())
+		if (strcmp(imageFileName, NULL_DEVICE_NAME) != 0) _unlink(imageFileName);
+
+    return cond;
+}
+
+static OFCondition EchoScp(
+	T_ASC_Association * assoc,
+	T_DIMSE_Message * msg,
+	T_ASC_PresentationContextID presID)
+{
+	/* the echo succeeded !! */
+	OFCondition cond = DIMSE_sendEchoResponse(assoc, presID, &msg->msg.CEchoRQ, STATUS_Success, NULL);
+
+	return cond;
+}
+
+static OFCondition AcceptSubAssociation(T_ASC_Network * aNet, T_ASC_Association ** assoc)
+{
+    const char* knownAbstractSyntaxes[] = {
+        UID_VerificationSOPClass
+    };
+    const char* transferSyntaxes[] = { NULL, NULL, NULL, NULL };
+    int numTransferSyntaxes;
+
+    OFCondition cond = ASC_receiveAssociation(aNet, assoc, ASC_DEFAULTMAXPDU);
+    if (cond.good())
+    {
+		if (gLocalByteOrder == EBO_LittleEndian)  /* defined in dcxfer.h */
+		{
+			transferSyntaxes[0] = UID_LittleEndianExplicitTransferSyntax;
+			transferSyntaxes[1] = UID_BigEndianExplicitTransferSyntax;
+		} 
+		else 
+		{
+			transferSyntaxes[0] = UID_BigEndianExplicitTransferSyntax;
+			transferSyntaxes[1] = UID_LittleEndianExplicitTransferSyntax;
+		}
+
+		transferSyntaxes[2] = UID_LittleEndianImplicitTransferSyntax;
+		numTransferSyntaxes = 3;
+
+        /* accept the Verification SOP Class if presented */
+        cond = ASC_acceptContextsWithPreferredTransferSyntaxes(
+            (*assoc)->params,
+            knownAbstractSyntaxes, DIM_OF(knownAbstractSyntaxes),
+            transferSyntaxes, numTransferSyntaxes);
+
+        if (cond.good())
+        {
+            /* the array of Storage SOP Class UIDs comes from dcuid.h */
+            cond = ASC_acceptContextsWithPreferredTransferSyntaxes(
+                (*assoc)->params,
+                dcmStorageSOPClassUIDs, numberOfDcmStorageSOPClassUIDs,
+                transferSyntaxes, numTransferSyntaxes);
+        }
+    }
+	
+    if (cond.good()) cond = ASC_acknowledgeAssociation(*assoc);
+    if (cond.bad()) 
+	{
+        ASC_dropAssociation(*assoc);
+        ASC_destroyAssociation(assoc);
+    }
+    return cond;
+}
+
+static OFCondition SubOpScp(T_ASC_Association **subAssoc, const char* saveDirectoryPath)
+{
+    T_DIMSE_Message     msg;
+    T_ASC_PresentationContextID presID;
+
+    if (!ASC_dataWaiting(*subAssoc, 0)) /* just in case */
+        return DIMSE_NODATAAVAILABLE;
+
+    OFCondition cond = DIMSE_receiveCommand(*subAssoc, DIMSE_BLOCKING, 0, &presID,
+            &msg, NULL);
+
+    if (cond == EC_Normal) {
+        switch (msg.CommandField) {
+        case DIMSE_C_STORE_RQ:
+            cond = StoreScp(*subAssoc, &msg, presID, saveDirectoryPath);
+            break;
+        case DIMSE_C_ECHO_RQ:
+            cond = EchoScp(*subAssoc, &msg, presID);
+            break;
+        default:
+            cond = DIMSE_BADCOMMANDTYPE;
+            break;
+        }
+    }
+    /* clean up on association termination */
+    if (cond == DUL_PEERREQUESTEDRELEASE)
+    {
+        cond = ASC_acknowledgeRelease(*subAssoc);
+        ASC_dropSCPAssociation(*subAssoc);
+        ASC_destroyAssociation(subAssoc);
+        return cond;
+    }
+    else if (cond == DUL_PEERABORTEDASSOCIATION)
+    {
+    }
+    else if (cond != EC_Normal)
+    {
+        /* some kind of error so abort the association */
+        cond = ASC_abortAssociation(*subAssoc);
+    }
+
+    if (cond != EC_Normal)
+    {
+        ASC_dropAssociation(*subAssoc);
+        ASC_destroyAssociation(subAssoc);
+    }
+    return cond;
+}
+
+static void
+CStoreSubOpCallback(void * subOpCallbackData,
+        T_ASC_Network *aNet, T_ASC_Association **subAssoc)
+{
+
+    if (aNet == NULL) return;   /* help no net ! */
+
+	const char* saveDirectoryPath = (const char*) subOpCallbackData;
+
+    if (*subAssoc == NULL) {
+        /* negotiate association */
+        AcceptSubAssociation(aNet, subAssoc);
+    } else {
+        /* be a service class provider */
+        SubOpScp(subAssoc, saveDirectoryPath);
+    }
+}
 
 %}
 
@@ -506,6 +764,36 @@ struct T_ASC_Parameters
 		}
 	}
 
+	void ConfigureForCMoveStudyRootQuery()
+	{
+		const char* transferSyntaxes[] = { NULL, NULL, NULL };
+		int numTransferSyntaxes = 0;
+
+        if (gLocalByteOrder == EBO_LittleEndian)  /* defined in dcxfer.h */
+        {
+            transferSyntaxes[0] = UID_LittleEndianExplicitTransferSyntax;
+            transferSyntaxes[1] = UID_BigEndianExplicitTransferSyntax;
+        } else {
+            transferSyntaxes[0] = UID_BigEndianExplicitTransferSyntax;
+            transferSyntaxes[1] = UID_LittleEndianExplicitTransferSyntax;
+        }
+        transferSyntaxes[2] = UID_LittleEndianImplicitTransferSyntax;
+        numTransferSyntaxes = 3;
+
+		OFCondition result = ASC_addPresentationContext(
+			self, 
+			1,
+			UID_MOVEStudyRootQueryRetrieveInformationModel,
+			transferSyntaxes, 
+			DIM_OF(transferSyntaxes));
+
+		if (result.bad())
+		{
+			string msg = string("ASC_addPresentationContext: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
+	}
+
 	~T_ASC_Parameters() 
 	{
 		if (NULL != self)
@@ -645,6 +933,62 @@ struct T_ASC_Association
 			delete statusDetail;
 		}
 		*/
+	}
+
+	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, const char* saveDirectory) throw (dicom_runtime_error)
+	{
+		T_ASC_PresentationContextID presId;
+		T_DIMSE_C_MoveRQ    req;
+		T_DIMSE_C_MoveRSP   rsp;
+		DIC_US              msgId = self->nextMsgID++;
+		const char          *sopClass;
+		DcmDataset          *rspIds = NULL;
+		DcmDataset          *statusDetail = NULL;
+		MyCallbackInfo      callbackData;
+
+		/* which presentation context should be used */
+		sopClass = UID_MOVEStudyRootQueryRetrieveInformationModel;
+		presId = ASC_findAcceptedPresentationContextID(self, sopClass);
+		if (presId == 0) 
+			throw dicom_runtime_error(DIMSE_NOVALIDPRESENTATIONCONTEXTID, "SendCMoveStudyRootQuery: No presentation context");
+
+		callbackData.assoc = self;
+		callbackData.presId = presId;
+
+		req.MessageID = msgId;
+		strcpy(req.AffectedSOPClassUID, sopClass);
+		req.Priority = DIMSE_PRIORITY_MEDIUM;
+		req.DataSetType = DIMSE_DATASET_PRESENT;
+		ASC_getAPTitles(self->params, req.MoveDestination, NULL, NULL);
+
+		OFCondition cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
+			CMoveProgressCallback, &callbackData, DIMSE_BLOCKING, 0,
+			network, CStoreSubOpCallback, (void*) saveDirectory,
+			&rsp, &statusDetail, &rspIds);
+
+		if (rspIds != NULL) delete rspIds;
+
+		if (cond == EC_Normal)
+		{
+			return true;
+		}
+		else if (cond == DUL_PEERREQUESTEDRELEASE)
+		{
+			ASC_abortAssociation(self);
+
+			string msg = string("SendCFindStudyRootQuery: Protocol error, peer requested release (association aborted); ") + cond.text();
+			throw dicom_runtime_error(cond, msg);
+		}
+		else if (cond == DUL_PEERABORTEDASSOCIATION)
+		{
+			// right now we don't do anything special
+			// but in the future, this could be logged
+			return false;
+		}
+		else // some other abnormal condition
+		{
+			return false;
+		}
 	}
 
 	bool Release() throw (dicom_runtime_error)

@@ -9,6 +9,7 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.OffisWrapper;
     using ClearCanvas.Dicom.Exceptions;
     using ClearCanvas.Dicom.Data;
+    using ClearCanvas.Dicom;
 
     public class DicomClient
     {
@@ -144,9 +145,61 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
-        public void Retrieve(ApplicationEntity ae, Uid uid, System.String path)
+        public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
         {
-            OnSopInstanceReceivedEvent(new SopInstanceReceivedEventArgs());
+            // make sure that the path passed in has a trailing backslash 
+            StringBuilder normalizedSaveDirectory = new StringBuilder();
+            if (saveDirectory.EndsWith("\\"))
+            {
+                normalizedSaveDirectory.Append(saveDirectory);
+            }
+            else
+            {
+                normalizedSaveDirectory.AppendFormat("{0}\\", saveDirectory);
+            }
+
+            // contract check: existence of saveDirectory
+            if (!System.IO.Directory.Exists(normalizedSaveDirectory.ToString()))
+            {
+                StringBuilder message = new StringBuilder();
+                message.AppendFormat(ClearCanvas.Dicom.SR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedSaveDirectory.ToString());
+
+                throw new System.ArgumentException(message.ToString(), "saveDirectory");
+            }
+            
+            DcmDataset cMoveDataset = new DcmDataset();
+
+            // set the specific query for study instance uid
+            cMoveDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
+
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
+            
+            // fire event to indicate successful retrieval
+            return;
+        }
+
+        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory)
+        {
+            try
+            {
+                OffisDcm.SetConnectionTimeout(600);
+
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, _timeout);
+
+                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+                associationParameters.ConfigureForCMoveStudyRootQuery();
+
+                T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory))
+                    association.Release();
+                
+                return;
+            }
+            catch (DicomRuntimeApplicationException e)
+            {
+                throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
+            }
         }
 
         protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)
