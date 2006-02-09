@@ -6,5 +6,17 @@ namespace ClearCanvas.Dicom.Network
 
     public class SopInstanceReceivedEventArgs : EventArgs
     {
+        public SopInstanceReceivedEventArgs(string fileName)
+        {
+            _sopFileName = fileName;
+        }
+
+        public System.String GetSopFileName()
+        {
+            return _sopFileName;
+        }
+
+        private string _sopFileName = null;
+
     }
 }

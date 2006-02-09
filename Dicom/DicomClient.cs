@@ -14,10 +14,10 @@ namespace ClearCanvas.Dicom.Network
     public class DicomClient
     {
         public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceivedEvent;
-        public event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
-        public event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
         public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceivedEvent;
         public event EventHandler<QueryCompletedEventArgs> QueryCompletedEvent;
+        private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
+        private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
 
         public DicomClient(ApplicationEntity ownAEParameters)
         {
@@ -33,6 +33,10 @@ namespace ClearCanvas.Dicom.Network
             // query results, we need to make the callback install itself
             // when this instance is created. This is not thread-safe
             _queryCallbackHelper = new QueryCallbackHelper(this);
+
+            // same goes for the store callback helper
+            _storeCallbackHelper = new StoreCallbackHelper(this);
+
             _queryResults = new QueryResultList();
         }
 
@@ -172,9 +176,9 @@ namespace ClearCanvas.Dicom.Network
         /// The low-level version of Query that just takes in a dataset that has been properly 
         /// initialized and set to use tags that are appropriate
         /// </summary>
-        /// <param name="ae"></param>
-        /// <param name="cFindDataset"></param>
-        /// <returns></returns>
+        /// <param name="serverAE">The application entity that will serve our Query request</param>
+        /// <param name="cFindDataset">The dataset containing the parameters for this Query</param>
+        /// <returns>A collection of matching results from the server in response to our Query </returns>
         protected ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, DcmDataset cFindDataset)
         {
             try
@@ -205,7 +209,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Initializes a dataset with the required tags to ensure the C-FIND will work
         /// </summary>
-        /// <param name="cMoveDataset">Dataset to be filled with certain required tags</param>
+        /// <param name="cFindDataset">Dataset to be filled with certain required tags</param>
         /// <param name="level">Query/Retrieve level</param>
         protected void InitializeStandardCFindDataset(ref DcmDataset cFindDataset, QRLevel level)
         {
@@ -404,10 +408,49 @@ namespace ClearCanvas.Dicom.Network
             private DicomClient _parent = null;
         }
 
+        class StoreCallbackHelper
+        {
+            public StoreCallbackHelper(DicomClient parent)
+            {
+                _parent = parent;
+                _storeCallbackHelperDelegate = new StoreCallbackHelperDelegate(DefaultCallback);
+                RegisterStoreCallbackHelper_OffisDcm(_storeCallbackHelperDelegate);
+            }
+
+            ~StoreCallbackHelper()
+            {
+                RegisterStoreCallbackHelper_OffisDcm(null);
+            }
+
+            public delegate void StoreCallbackHelperDelegate(IntPtr interopStoreCallbackInfo);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterStoreCallbackHelper_OffisDcm")]
+            public static extern void RegisterStoreCallbackHelper_OffisDcm(StoreCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr interopStoreCallbackInfo)
+            {
+                InteropStoreCallbackInfo callbackInfo = new InteropStoreCallbackInfo(interopStoreCallbackInfo, false);
+                string fileName = callbackInfo.FileName;
+                DcmDataset imageDataset = callbackInfo.ImageDataset;
+
+                // make a copy of the string, since the string passed in is 
+                // allocated on the stack and will be gone very soon
+                StringBuilder fileNameString = new StringBuilder();
+                fileNameString.Append(fileName);
+
+                SopInstanceReceivedEventArgs args = new SopInstanceReceivedEventArgs(fileNameString.ToString());
+                _parent.OnSopInstanceReceivedEvent(args);
+            }
+
+            private StoreCallbackHelperDelegate _storeCallbackHelperDelegate = null;
+            private DicomClient _parent = null;
+        }
+
         #endregion
 
         #region Private members
         private QueryCallbackHelper _queryCallbackHelper = null;
+        private StoreCallbackHelper _storeCallbackHelper = null;
         private QueryResultList _queryResults = null;
         private ApplicationEntity _myOwnAE;
         private int _timeout = 500;

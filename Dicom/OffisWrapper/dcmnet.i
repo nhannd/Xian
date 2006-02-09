@@ -55,6 +55,7 @@
 
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRSP)
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
+CONTROLACCESSPUBLIC(InteropStoreCallbackInfo)
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -177,6 +178,13 @@ void SetConnectionTimeout(int newTimeout)
 {
 	dcmConnectionTimeout.set((Sint32) newTimeout);
 }
+
+struct InteropStoreCallbackInfo
+{
+	const char* FileName;
+	DcmDataset* ImageDataset;
+};
+
 %}
 
 /////////////////////////////////////////////////////////////////////////
@@ -187,6 +195,9 @@ void SetConnectionTimeout(int newTimeout)
 //
 %{
 
+//----------------------------------------------------------------------
+//                                                 Callback structs
+//                                                 ---------------------
 //-------------------------------------------
 // This struct will hold information about
 // a particular association that will be
@@ -195,7 +206,7 @@ void SetConnectionTimeout(int newTimeout)
 // this data will be made available to the
 // callback to deal with appropriately
 //-------------------------------------------
-struct MyCallbackInfo {
+struct QueryRetrieveCallbackInfo {
     T_ASC_Association *assoc;
     T_ASC_PresentationContextID presId;
 };
@@ -229,6 +240,17 @@ SWIGEXPORT void SWIGSTDCALL RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHe
 	CSharpQueryCallbackHelperCallback = callback;
 }
 
+typedef void (SWIGSTDCALL* StoreCallbackHelperCallback)(InteropStoreCallbackInfo*);
+static StoreCallbackHelperCallback CSharpStoreCallbackHelperCallback = NULL;
+
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterStoreCallbackHelper_OffisDcm(StoreCallbackHelperCallback callback) {
+	CSharpStoreCallbackHelperCallback = callback;
+}
+
 static void CFindProgressCallback(
         void *callbackData,
         T_DIMSE_C_FindRQ *request,
@@ -237,10 +259,6 @@ static void CFindProgressCallback(
         DcmDataset *responseIdentifiers
         )
 {
-	char buffer[265];
-	sprintf(buffer, "c:\\temp\\cfindrsp_%d.dcm", responseCount);
-	responseIdentifiers->saveFile(buffer);
-
 	if (NULL != CSharpQueryCallbackHelperCallback)
 	{
 		CSharpQueryCallbackHelperCallback(callbackData,
@@ -257,12 +275,12 @@ static void CMoveProgressCallback(void *callbackData,
 		T_DIMSE_C_MoveRSP *response)
 {
     OFCondition cond = EC_Normal;
-    MyCallbackInfo *myCallbackData;
+    QueryRetrieveCallbackInfo *myCallbackData;
 
-    myCallbackData = (MyCallbackInfo*)callbackData;
+    myCallbackData = (QueryRetrieveCallbackInfo*)callbackData;
 }
 
-static void StoreSCPCallback(
+static void StoreScpCallback(
     /* in */
     void *callbackData,
     T_DIMSE_StoreProgress *progress,    /* progress state */
@@ -296,6 +314,7 @@ static void StoreSCPCallback(
 
 			OFCondition cond = cbdata->dcmff->saveFile(fileName, xfer, EET_ExplicitLength, EGL_recalcGL,
 				EPD_withoutPadding, (Uint32)0, (Uint32)0, false);
+
 			if (cond.bad())
 			{
 				rsp->DimseStatus = STATUS_STORE_Refused_OutOfResources;
@@ -321,6 +340,19 @@ static void StoreSCPCallback(
 					rsp->DimseStatus = STATUS_STORE_Error_DataSetDoesNotMatchSOPClass;
 				}
 			}
+
+			// should fire off image received event
+			if (NULL != CSharpStoreCallbackHelperCallback)
+			{
+				InteropStoreCallbackInfo info;
+
+				// prepare the transmission of data 
+				bzero((char*)&info, sizeof(info));
+				info.FileName = fileName;
+				info.ImageDataset = (*imageDataSet);
+
+				CSharpStoreCallbackHelperCallback(&info);
+			}
 		}
 	}
     return;
@@ -338,7 +370,7 @@ static OFCondition StoreScp(
 
 	req = &msg->msg.CStoreRQ;
 
-	sprintf(imageFileName, "%s%s.%s",
+	sprintf(imageFileName, "%s%s.%s.dcm",
 		saveDirectoryPath,
 		dcmSOPClassUIDToModality(req->AffectedSOPClassUID),
 		req->AffectedSOPInstanceUID);
@@ -352,7 +384,7 @@ static OFCondition StoreScp(
 	DcmDataset *dset = dcmff.getDataset();
 
 	cond = DIMSE_storeProvider(assoc, presID, req, (char *)NULL, true,
-		&dset, StoreSCPCallback, (void*)&callbackData, DIMSE_BLOCKING, 0);
+		&dset, StoreScpCallback, (void*)&callbackData, DIMSE_BLOCKING, 0);
 
 	if (cond.bad())
 		if (strcmp(imageFileName, NULL_DEVICE_NAME) != 0) _unlink(imageFileName);
@@ -860,7 +892,7 @@ struct T_ASC_Association
 		T_DIMSE_C_FindRQ req;
 		T_DIMSE_C_FindRSP rsp;
 		DcmDataset *statusDetail = NULL;
-		MyCallbackInfo callbackData;
+		QueryRetrieveCallbackInfo callbackData;
 
 		presId = ASC_findAcceptedPresentationContextID(self, UID_FINDStudyRootQueryRetrieveInformationModel);
 
@@ -944,7 +976,7 @@ struct T_ASC_Association
 		const char          *sopClass;
 		DcmDataset          *rspIds = NULL;
 		DcmDataset          *statusDetail = NULL;
-		MyCallbackInfo      callbackData;
+		QueryRetrieveCallbackInfo      callbackData;
 
 		/* which presentation context should be used */
 		sopClass = UID_MOVEStudyRootQueryRetrieveInformationModel;
