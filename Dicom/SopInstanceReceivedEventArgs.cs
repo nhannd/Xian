@@ -16,7 +16,7 @@ namespace ClearCanvas.Dicom.Network
             return _sopFileName;
         }
 
-        private string _sopFileName = null;
+        private string _sopFileName;
 
     }
 }

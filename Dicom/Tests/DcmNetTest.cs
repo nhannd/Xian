@@ -103,7 +103,7 @@ using ClearCanvas.Dicom.Exceptions;
         }
 
         [Test]
-        public void QueryByPatientID()
+        public void QueryByPatientId()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(110));
@@ -115,11 +115,11 @@ using ClearCanvas.Dicom.Exceptions;
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientID("*"), new PatientsName("*"));
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId("*"), new PatientsName("*"));
 
             Assert.IsTrue(results.Count > 0);
 
-            foreach (QueryResult qr in results)
+            foreach (QueryResultDictionary qr in results)
             {   
                 foreach (DicomTag dicomTag in qr.DicomTags)
                 {
@@ -129,7 +129,7 @@ using ClearCanvas.Dicom.Exceptions;
         }
 
         [Test]
-        public void QueryByPatientIDWithEvent()
+        public void QueryByPatientIdWithEvent()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(110));
@@ -144,7 +144,7 @@ using ClearCanvas.Dicom.Exceptions;
             dicomClient.QueryResultReceivedEvent += QueryResultReceivedEventHandler;
             dicomClient.QueryCompletedEvent += QueryCompletedEventHandler;
 
-            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientID("*"), new PatientsName("*"));
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId("*"), new PatientsName("*"));
 
             dicomClient.QueryResultReceivedEvent -= QueryResultReceivedEventHandler;
             dicomClient.QueryCompletedEvent -= QueryCompletedEventHandler;
@@ -175,7 +175,7 @@ using ClearCanvas.Dicom.Exceptions;
             ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new Uid("1.2.840.113619.2.30.1.1762295590.1623.978668949.886"));
             Assert.IsTrue(results.Count > 0);
 
-            foreach (QueryResult qr in results)
+            foreach (QueryResultDictionary qr in results)
             {   
                 foreach (DicomTag dicomTag in qr.DicomTags)
                 {
@@ -230,7 +230,7 @@ using ClearCanvas.Dicom.Exceptions;
         public static void QueryCompletedEventHandler(object source, QueryCompletedEventArgs args)
         {
             Console.WriteLine("Beg of QueryCompletedEventHandler-------------");
-            foreach (QueryResult qr in args.GetResults())
+            foreach (QueryResultDictionary qr in args.GetResults())
             {
                 foreach (DicomTag dicomTag in qr.DicomTags)
                 {

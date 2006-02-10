@@ -4,25 +4,25 @@ namespace ClearCanvas.Dicom
     using System.Collections.Generic;
     using System.Text;
 
-    public struct PatientID
+    public struct PatientId
     {
-        private string _patientID;
+        private string _patientId;
 
-        public PatientID(string patientID)
+        public PatientId(string patientId)
         {
             // validate the input
-            if (null == patientID)
-                throw new System.ArgumentNullException("patientID", "The patientID cannot be set to null");
+            if (null == patientId)
+                throw new System.ArgumentNullException("patientId", SR.ExceptionGeneralPatientsNameNull);
 
-            if (0 == patientID.Length)
-                throw new System.ArgumentOutOfRangeException("patientID", "The patientID cannot be zero-length");
+            if (0 == patientId.Length)
+                throw new System.ArgumentOutOfRangeException("patientId", SR.ExceptionGeneralPatientsNameZeroLength);
 
-            _patientID = patientID;
+            _patientId = patientId;
         }
 
         public override string ToString()
         {
-            return _patientID;
+            return _patientId;
         }
     }
 }

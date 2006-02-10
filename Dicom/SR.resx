@@ -129,7 +129,7 @@
   <data name="ExceptionDecodingBadModuleNumber" xml:space="preserve">
     <value>The module number provided from the OFFIS toolkit is unexpected and cannot be dealt with in this version of the software.</value>
   </data>
-  <data name="ExceptionOffisAssociationBadPresentationContextID" xml:space="preserve">
+  <data name="ExceptionOffisAssociationBadPresentationContextId" xml:space="preserve">
     <value>Bad presentation context ID</value>
   </data>
   <data name="ExceptionOffisAssociationMissingTransferSyntax" xml:space="preserve">
@@ -159,7 +159,7 @@
   <data name="ExceptionOffisDimseNoDataDictionary" xml:space="preserve">
     <value>Data dictionary missing</value>
   </data>
-  <data name="ExceptionOffisDimseNoValidPresentationContextID" xml:space="preserve">
+  <data name="ExceptionOffisDimseNoValidPresentationContextId" xml:space="preserve">
     <value>No valid Presentation Context ID</value>
   </data>
   <data name="ExceptionOffisDimseNullKey" xml:space="preserve">
@@ -281,6 +281,41 @@
   </data>
   <data name="ExceptionDicomPatientLevelQueryInvalid" xml:space="preserve">
     <value>PATIENT level query using the Study Root Query/Retrieve Information model is invalid</value>
-    <comment> </comment>
+  </data>
+  <data name="ExceptionDicomCannotHandleNonDcmNetModules" xml:space="preserve">
+    <value>The OFFIS error parser cannot handle errors from modules other than DcmNet</value>
+  </data>
+  <data name="ExceptionDicomListeningPortOutOfRange" xml:space="preserve">
+    <value>The listeningPort must be greater than zero and less than System.Int32.MaxValue</value>
+  </data>
+  <data name="ExceptionDicomSaveDirectoryNull" xml:space="preserve">
+    <value>The directory where inbound DICOM objects are stored cannot be null</value>
+  </data>
+  <data name="ExceptionGeneralPatientsNameNull" xml:space="preserve">
+    <value>Patient's Name cannot be null</value>
+  </data>
+  <data name="ExceptionGeneralPatientsNameZeroLength" xml:space="preserve">
+    <value>Patient's Name cannot be zero-length</value>
+  </data>
+  <data name="ExceptionGeneralUidCompareToTypeIncorrect" xml:space="preserve">
+    <value>The argument to CompareTo for the type Uid is not itself of type Uid</value>
+  </data>
+  <data name="ExceptionDicomAETitleNull" xml:space="preserve">
+    <value>The AE Title cannot be null</value>
+  </data>
+  <data name="ExceptionDicomHostnameNull" xml:space="preserve">
+    <value>The hostname cannot be null</value>
+  </data>
+  <data name="ExceptionDicomHostnameZeroLength" xml:space="preserve">
+    <value>The hostname cannot be zero-length</value>
+  </data>
+  <data name="ExceptionDicomAETitleZeroLength" xml:space="preserve">
+    <value>The AE Title cannot be zero-length</value>
+  </data>
+  <data name="ExceptionDicomFindDatasetNull" xml:space="preserve">
+    <value>The find dataset cannot be null</value>
+  </data>
+  <data name="ExceptionDicomMoveDatasetNull" xml:space="preserve">
+    <value>The move dataset cannot be null</value>
   </data>
 </root>

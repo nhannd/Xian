@@ -12,10 +12,10 @@ namespace ClearCanvas.Dicom.Network
         {
             // validate the input
             if (null == hostName)
-                throw new System.ArgumentNullException("hostName", "The hostname cannot be set to null");
+                throw new System.ArgumentNullException("hostName", SR.ExceptionDicomHostnameNull);
 
             if (0 == hostName.Length)
-                throw new System.ArgumentOutOfRangeException("hostName", "The hostname cannot be zero-length");
+                throw new System.ArgumentOutOfRangeException("hostName", SR.ExceptionDicomHostnameZeroLength);
 
             // todo: if input is an ip address, ensure that the format is correct
 

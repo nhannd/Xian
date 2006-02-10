@@ -16,9 +16,6 @@ namespace ClearCanvas.Dicom.Network
             {
                 return _hostname.ToString();
             }
-            private set
-            {
-            }
         }
 
         public string AE
@@ -27,9 +24,6 @@ namespace ClearCanvas.Dicom.Network
             {
                 return _aeTitle.ToString();
             }
-            private set
-            {
-            }
         }
 
         public System.Int32 Port
@@ -37,9 +31,6 @@ namespace ClearCanvas.Dicom.Network
             get
             {
                 return _listeningPort.ToInt32();
-            }
-            private set
-            {
             }
         }
 

@@ -10,16 +10,16 @@ namespace ClearCanvas.Dicom.Network
     /// Since QueryResult implements IDictionary, it's possible to use an enumerator to extract
     /// every single tag in the result, as well as provide a key to extract a particular tag.
     /// </summary>
-    public class QueryResult : IDictionary<DicomTag, string>
+    public class QueryResultDictionary : IDictionary<DicomTag, string>
     {
         public Uid StudyInstanceUid
         {
             get { return new Uid(_internalDictionary[DicomTag.StudyInstanceUID]); }
         }
 
-        public PatientID PatientID
+        public PatientId PatientId
         {
-            get { return new PatientID(_internalDictionary[DicomTag.PatientID]); }
+            get { return new PatientId(_internalDictionary[DicomTag.PatientID]); }
         }
 
         public PatientsName PatientsName
@@ -77,10 +77,8 @@ namespace ClearCanvas.Dicom.Network
         {
             if (null != StudyDescription)
                 return StudyDescription;
-            else if (null != StudyInstanceUid)
+            else 
                 return StudyInstanceUid.ToString();
-            else
-                return null;
         }
 
         private Dictionary<DicomTag, string> _internalDictionary = new Dictionary<DicomTag,string>();

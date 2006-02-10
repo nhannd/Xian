@@ -40,10 +40,10 @@ namespace ClearCanvas.Dicom.Network
             _queryResults = new QueryResultList();
         }
 
-        public void SetConnectionTimeout(Int16 timeout)
+        public static void SetConnectionTimeout(Int16 timeout)
         {
             if (timeout < 1)
-                throw new System.ArgumentOutOfRangeException(MySR.ExceptionDicomConnectionTimeoutOutOfRange, "timeout");
+                throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
             OffisDcm.SetConnectionTimeout(timeout);
         }
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity ae, PatientID patientID, PatientsName patientsName)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity ae, PatientId patientID, PatientsName patientsName)
         {
             InitializeQueryState();
 
@@ -85,7 +85,7 @@ namespace ClearCanvas.Dicom.Network
             cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), patientsName.ToString());
 
             ReadOnlyQueryResultCollection results = Query(ae, cFindDataset);
-            FireConditionalQueryCompletedEvent(results);
+            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
@@ -100,12 +100,15 @@ namespace ClearCanvas.Dicom.Network
             cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
             ReadOnlyQueryResultCollection results = Query(ae, cFindDataset);
-            FireConditionalQueryCompletedEvent(results);
+            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
         public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
         {
+			if (null == saveDirectory)
+				throw new System.ArgumentNullException("saveDirectory", MySR.ExceptionDicomSaveDirectoryNull);
+
             // make sure that the path passed in has a trailing backslash 
             StringBuilder normalizedSaveDirectory = new StringBuilder();
             if (saveDirectory.EndsWith("\\"))
@@ -211,12 +214,14 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         /// <param name="cFindDataset">Dataset to be filled with certain required tags</param>
         /// <param name="level">Query/Retrieve level</param>
-        protected void InitializeStandardCFindDataset(ref DcmDataset cFindDataset, QRLevel level)
+        protected static void InitializeStandardCFindDataset(ref DcmDataset cFindDataset, QRLevel level)
         {
+            if (null == cFindDataset)
+                throw new System.ArgumentNullException("level", MySR.ExceptionDicomFindDatasetNull);
             switch (level)
             {
                 case QRLevel.Patient:
-                    throw new System.ArgumentOutOfRangeException(MySR.ExceptionDicomPatientLevelQueryInvalid, "level");
+                    throw new System.ArgumentOutOfRangeException("level", MySR.ExceptionDicomPatientLevelQueryInvalid);
                
                 case QRLevel.Study:
                     // set the Query Retrieve Level
@@ -261,12 +266,15 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         /// <param name="cMoveDataset">Dataset to be filled with certain required tags</param>
         /// <param name="level">Query/Retrieve level</param>
-        protected void InitializeStandardCMoveDataset(ref DcmDataset cMoveDataset, QRLevel level)
+        protected static void InitializeStandardCMoveDataset(ref DcmDataset cMoveDataset, QRLevel level)
         {
+            if (null == cMoveDataset)
+                throw new System.ArgumentNullException("cMoveDataset", MySR.ExceptionDicomMoveDatasetNull);
+
             switch (level)
             {
                 case QRLevel.Patient:
-                    throw new System.ArgumentOutOfRangeException(MySR.ExceptionDicomPatientLevelQueryInvalid, "level");
+                    throw new System.ArgumentOutOfRangeException("level", MySR.ExceptionDicomPatientLevelQueryInvalid);
                     
                 case QRLevel.Study:
                     // set the Query Retrieve Level
@@ -304,7 +312,7 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         /// <param name="results">Collection of query results or null if no results
         /// were returned</param>
-        protected void FireConditionalQueryCompletedEvent(ReadOnlyQueryResultCollection results)
+        protected void TriggerConditionalQueryCompletedEvent(ReadOnlyQueryResultCollection results)
         {
             if (null != results)
             {
@@ -375,14 +383,14 @@ namespace ClearCanvas.Dicom.Network
                 if (DICOM_PENDING_STATUS(inboundResponse.DimseStatus) ||
                     DICOM_SUCCESS_STATUS(inboundResponse.DimseStatus))
                 {
-                    QueryResult queryResult = null;
+                    QueryResultDictionary queryResult = null;
                     DcmObject item = responseData.nextInContainer(null);
                     bool tagAvailable = (item != null);
 
                     // there actually is a result
                     if (tagAvailable)
                     {
-                        queryResult = new QueryResult();
+                        queryResult = new QueryResultDictionary();
 
                         while (tagAvailable)
                         {
@@ -404,8 +412,8 @@ namespace ClearCanvas.Dicom.Network
                 }
             }
 
-            private QueryCallbackHelperDelegate _queryCallbackHelperDelegate = null;
-            private DicomClient _parent = null;
+            private QueryCallbackHelperDelegate _queryCallbackHelperDelegate;
+            private DicomClient _parent;
         }
 
         class StoreCallbackHelper
@@ -442,16 +450,16 @@ namespace ClearCanvas.Dicom.Network
                 _parent.OnSopInstanceReceivedEvent(args);
             }
 
-            private StoreCallbackHelperDelegate _storeCallbackHelperDelegate = null;
-            private DicomClient _parent = null;
+            private StoreCallbackHelperDelegate _storeCallbackHelperDelegate;
+            private DicomClient _parent;
         }
 
         #endregion
 
         #region Private members
-        private QueryCallbackHelper _queryCallbackHelper = null;
-        private StoreCallbackHelper _storeCallbackHelper = null;
-        private QueryResultList _queryResults = null;
+        private QueryCallbackHelper _queryCallbackHelper;
+        private StoreCallbackHelper _storeCallbackHelper;
+        private QueryResultList _queryResults;
         private ApplicationEntity _myOwnAE;
         private int _timeout = 500;
         private int _defaultPDUSize = 16384;

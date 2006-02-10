@@ -13,14 +13,14 @@ namespace ClearCanvas.Dicom
 
         protected DicomTag(UInt32 id)
         {
-            _ID = id;
+            _id = id;
         }
 
         public UInt16 Group
         {
             get
             {
-                return ((UInt16) ((_ID & 0xffff0000) >> 16));
+                return ((UInt16) ((_id & 0xffff0000) >> 16));
             }
             set
             {
@@ -31,7 +31,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                return ((UInt16) (_ID & 0x0000ffff));
+                return ((UInt16) (_id & 0x0000ffff));
             }
             set
             {
@@ -40,7 +40,7 @@ namespace ClearCanvas.Dicom
 
         public override Int32 GetHashCode()
         {
-            return ((Int32) _ID);
+            return ((Int32) _id);
         }
 
         public override System.String ToString()
@@ -2183,6 +2183,6 @@ namespace ClearCanvas.Dicom
         public static DicomTag ACR_NEMA_2C_OverlayCodeTableLocation { get { return new DicomTag(0x6000, 0x0803); } } /* (0x6000-0x60ff,0x0803) */
         public static DicomTag ACR_NEMA_2C_OverlayBitsForCodeWord { get { return new DicomTag(0x6000, 0x0804); } } /* (0x6000-0x60ff,0x0804) */
 
-        private UInt32 _ID = 0;
+        private UInt32 _id = 0;
     }
 }

@@ -12,10 +12,10 @@ namespace ClearCanvas.Dicom.Network
         {
             // validate the input
             if (null == aeTitle)
-                throw new System.ArgumentNullException("aeTitle", "The AE Title cannot be set to null");
+                throw new System.ArgumentNullException("aeTitle", SR.ExceptionDicomAETitleNull);
 
             if (0 == aeTitle.Length)
-                throw new System.ArgumentOutOfRangeException("aeTitle", "The AE Title cannot be zero-length");
+                throw new System.ArgumentOutOfRangeException("aeTitle", SR.ExceptionDicomAETitleZeroLength);
 
             _aeTitle = aeTitle;
         }

@@ -12,7 +12,7 @@ namespace ClearCanvas.Dicom.Network
         {
             // validate the input
             if (listeningPort < 1 || listeningPort > System.Int32.MaxValue)
-                throw new System.ArgumentOutOfRangeException("listeningPort", "The listeningPort must be greater than zero and less than System.Int32.MaxValue");
+                throw new System.ArgumentOutOfRangeException("listeningPort", SR.ExceptionDicomListeningPortOutOfRange);
 
             _listeningPort = listeningPort;
         }

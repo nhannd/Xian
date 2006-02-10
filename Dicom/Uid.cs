@@ -4,7 +4,7 @@ namespace ClearCanvas.Dicom
     using System.Collections.Generic;
     using System.Text;
 
-    public class Uid : System.IComparable
+    public struct Uid// : System.IComparable
     {
         private string _uid;
         public Uid(string constructionUid)
@@ -17,22 +17,22 @@ namespace ClearCanvas.Dicom
             return _uid;
         }
 
-        #region IComparable Members
+        //#region IComparable Members
 
-        public int CompareTo(object obj)
-        {
-            if (obj is Uid)
-            {
-                Uid otherUid = (Uid)obj;
-                if (this._uid == otherUid._uid)
-                    return 0;
-                else
-                    return -1;
-            }
+        //public int CompareTo(object obj)
+        //{
+        //    Uid otherUid = obj as Uid;
+        //    if (null != otherUid)
+        //    {
+        //        if (this._uid == otherUid._uid)
+        //            return 0;
+        //        else
+        //            return 1;
+        //    }
 
-            throw new Exception("CompareTo object is not of type Uid");
-        }
+        //    throw new System.ArgumentException(SR.ExceptionGeneralUidCompareToTypeIncorrect, "obj");
+        //}
 
-        #endregion
+        //#endregion
     }
 }

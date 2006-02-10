@@ -8,6 +8,8 @@ namespace ClearCanvas.Dicom.Network
 
     internal class OffisConditionParser
     {
+        private OffisConditionParser() { }
+
         internal static string GetTextString(ApplicationEntity ae, DicomRuntimeApplicationException e)
         {
             UInt16 module = e.Module; // module in the OFFIS library 0x06 is dcmnet
@@ -16,7 +18,7 @@ namespace ClearCanvas.Dicom.Network
             UInt16 subcode = (UInt16)(code & 0x00ff);
 
             if (0x06 != module)
-                throw new System.ArgumentOutOfRangeException("Encountered a non-dcmnet module error condition in the network error condition parser");
+                throw new System.ArgumentOutOfRangeException("e.Module", SR.ExceptionDicomCannotHandleNonDcmNetModules);
 
             StringBuilder exceptionMessage = new StringBuilder(256);
 
@@ -31,7 +33,7 @@ namespace ClearCanvas.Dicom.Network
                     switch (subcode)
                     {
                         case 0x01:
-                            errorText = SR.ExceptionOffisAssociationBadPresentationContextID;
+                            errorText = SR.ExceptionOffisAssociationBadPresentationContextId;
                             break;
                         case 0x05:
                             errorText = SR.ExceptionOffisAssociationMissingTransferSyntax;
@@ -43,7 +45,7 @@ namespace ClearCanvas.Dicom.Network
                             errorText = SR.ExceptionOffisAssociationShutdownApplication;
                             break;
                         default:
-                            throw new System.Exception(SR.ExceptionOffisUnknownError);
+                            throw new NetworkDicomException(SR.ExceptionOffisUnknownError);
                     }
                     break;
                 case 0x0200:
@@ -67,7 +69,7 @@ namespace ClearCanvas.Dicom.Network
                             errorText = SR.ExceptionOffisDimseNoDataAvailable;
                             break;
                         case 0x08:
-                            errorText = SR.ExceptionOffisDimseNoValidPresentationContextID;
+                            errorText = SR.ExceptionOffisDimseNoValidPresentationContextId;
                             break;
                         case 0x09:
                             errorText = SR.ExceptionOffisDimseNullKey;
@@ -94,7 +96,7 @@ namespace ClearCanvas.Dicom.Network
                             errorText = SR.ExceptionOffisDimseNoDataDictionary;
                             break;
                         default:
-                            throw new System.Exception(SR.ExceptionOffisUnknownError);
+                            throw new GeneralDicomException(SR.ExceptionOffisUnknownError);
                     }
 
                     break;
@@ -170,7 +172,7 @@ namespace ClearCanvas.Dicom.Network
                             errorText = SR.ExceptionOffisDulWrongDataType;
                             break;
                         default:
-                            throw new System.Exception(SR.ExceptionOffisUnknownError);
+                            throw new GeneralDicomException(SR.ExceptionOffisUnknownError);
                     }
 
                     break;

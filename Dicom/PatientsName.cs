@@ -12,10 +12,10 @@ namespace ClearCanvas.Dicom
         {
             // validate the input
             if (null == patientsName)
-                throw new System.ArgumentNullException("patientsName", "The patientsName cannot be set to null");
+                throw new System.ArgumentNullException("patientsName", SR.ExceptionGeneralPatientsNameNull);
 
             if (0 == patientsName.Length)
-                throw new System.ArgumentOutOfRangeException("patientsName", "The patientsName cannot be zero-length");
+                throw new System.ArgumentOutOfRangeException("patientsName", SR.ExceptionGeneralPatientsNameZeroLength);
 
             _patientsName = patientsName;
         }

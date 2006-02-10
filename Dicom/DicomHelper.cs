@@ -38,5 +38,7 @@ namespace ClearCanvas.Dicom.Data
 			if (status.bad())
 				throw new DicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
 		}
+
+        private DicomHelper() { }
 	}
 }

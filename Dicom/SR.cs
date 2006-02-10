@@ -70,6 +70,33 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The AE Title cannot be null.
+        /// </summary>
+        public static string ExceptionDicomAETitleNull {
+            get {
+                return ResourceManager.GetString("ExceptionDicomAETitleNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The AE Title cannot be zero-length.
+        /// </summary>
+        public static string ExceptionDicomAETitleZeroLength {
+            get {
+                return ResourceManager.GetString("ExceptionDicomAETitleZeroLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The OFFIS error parser cannot handle errors from modules other than DcmNet.
+        /// </summary>
+        public static string ExceptionDicomCannotHandleNonDcmNetModules {
+            get {
+                return ResourceManager.GetString("ExceptionDicomCannotHandleNonDcmNetModules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The connection timeout value must be between 1 and 32767.
         /// </summary>
         public static string ExceptionDicomConnectionTimeoutOutOfRange {
@@ -84,6 +111,51 @@ namespace ClearCanvas.Dicom {
         public static string ExceptionDICOMFile {
             get {
                 return ResourceManager.GetString("ExceptionDICOMFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The find dataset cannot be null.
+        /// </summary>
+        public static string ExceptionDicomFindDatasetNull {
+            get {
+                return ResourceManager.GetString("ExceptionDicomFindDatasetNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The hostname cannot be null.
+        /// </summary>
+        public static string ExceptionDicomHostnameNull {
+            get {
+                return ResourceManager.GetString("ExceptionDicomHostnameNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The hostname cannot be zero-length.
+        /// </summary>
+        public static string ExceptionDicomHostnameZeroLength {
+            get {
+                return ResourceManager.GetString("ExceptionDicomHostnameZeroLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The listeningPort must be greater than zero and less than System.Int32.MaxValue.
+        /// </summary>
+        public static string ExceptionDicomListeningPortOutOfRange {
+            get {
+                return ResourceManager.GetString("ExceptionDicomListeningPortOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The move dataset cannot be null.
+        /// </summary>
+        public static string ExceptionDicomMoveDatasetNull {
+            get {
+                return ResourceManager.GetString("ExceptionDicomMoveDatasetNull", resourceCulture);
             }
         }
         
@@ -115,11 +187,47 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The directory where inbound DICOM objects are stored cannot be null.
+        /// </summary>
+        public static string ExceptionDicomSaveDirectoryNull {
+            get {
+                return ResourceManager.GetString("ExceptionDicomSaveDirectoryNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tag: {0} - {1}.
         /// </summary>
         public static string ExceptionDICOMTag {
             get {
                 return ResourceManager.GetString("ExceptionDICOMTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Name cannot be null.
+        /// </summary>
+        public static string ExceptionGeneralPatientsNameNull {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralPatientsNameNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Name cannot be zero-length.
+        /// </summary>
+        public static string ExceptionGeneralPatientsNameZeroLength {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralPatientsNameZeroLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The argument to CompareTo for the type Uid is not itself of type Uid.
+        /// </summary>
+        public static string ExceptionGeneralUidCompareToTypeIncorrect {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralUidCompareToTypeIncorrect", resourceCulture);
             }
         }
         
@@ -135,9 +243,9 @@ namespace ClearCanvas.Dicom {
         /// <summary>
         ///   Looks up a localized string similar to Bad presentation context ID.
         /// </summary>
-        public static string ExceptionOffisAssociationBadPresentationContextID {
+        public static string ExceptionOffisAssociationBadPresentationContextId {
             get {
-                return ResourceManager.GetString("ExceptionOffisAssociationBadPresentationContextID", resourceCulture);
+                return ResourceManager.GetString("ExceptionOffisAssociationBadPresentationContextId", resourceCulture);
             }
         }
         
@@ -225,9 +333,9 @@ namespace ClearCanvas.Dicom {
         /// <summary>
         ///   Looks up a localized string similar to No valid Presentation Context ID.
         /// </summary>
-        public static string ExceptionOffisDimseNoValidPresentationContextID {
+        public static string ExceptionOffisDimseNoValidPresentationContextId {
             get {
-                return ResourceManager.GetString("ExceptionOffisDimseNoValidPresentationContextID", resourceCulture);
+                return ResourceManager.GetString("ExceptionOffisDimseNoValidPresentationContextId", resourceCulture);
             }
         }
         

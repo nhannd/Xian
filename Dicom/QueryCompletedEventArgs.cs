@@ -18,6 +18,6 @@ namespace ClearCanvas.Dicom
             return _results;
         }
 
-        private ReadOnlyQueryResultCollection _results = null;
+        private ReadOnlyQueryResultCollection _results;
     }
 }
