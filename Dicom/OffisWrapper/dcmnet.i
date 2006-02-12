@@ -526,12 +526,19 @@ CStoreSubOpCallback(void * subOpCallbackData,
 //
 // SECTION: Extension of the T_ASC_Network class
 //
-struct T_ASC_Network
-{
-    T_ASC_NetworkRole   role;
-    int             	acceptorPort;
-    DUL_NETWORKKEY      *network;
-};
+%typemap(csin) T_ASC_Parameters *associationParameters "getCPtrAndAddReference($csinput)"
+
+%typemap(cscode) T_ASC_Network %{
+	// Ensure that the GC doesn't collect any 
+	// T_ASC_Parameters set from C#
+	// as the underlying C++ class stores a shallow copy
+	private T_ASC_Parameters parametersReference;
+	private HandleRef getCPtrAndAddReference(T_ASC_Parameters associationParameters) {
+		parametersReference = associationParameters;
+		return T_ASC_Parameters.getCPtr(associationParameters);
+	}
+%}
+
 
 %typemap(csvarin) T_ASC_NetworkRole role %{
 	set {
@@ -556,7 +563,15 @@ struct T_ASC_Network
 	}
 %}
 
+struct T_ASC_Network
+{
+    T_ASC_NetworkRole   role;
+    int             	acceptorPort;
+    DUL_NETWORKKEY      *network;
+};
+
 %extend(canthrow=1) T_ASC_Network {
+
 	T_ASC_Network(T_ASC_NetworkRole role,
 					int acceptorPort,
 					int timeout) throw (dicom_runtime_error)
@@ -702,6 +717,7 @@ struct T_ASC_Parameters
 };
 
 %extend(canthrow=1) T_ASC_Parameters {
+
 	T_ASC_Parameters(int maxReceivePduLength,
 	const char* ourAETitle,
 	const char* peerAETitle,
@@ -837,6 +853,31 @@ struct T_ASC_Parameters
 //
 // SECTION: Extension of the T_ASC_Association class
 //
+%typemap(csin) DcmDataset *cFindDataset "getCPtrAndAddReferenceFind($csinput)"
+%typemap(csin) DcmDataset *cMoveDataset "getCPtrAndAddReferenceMove($csinput)"
+%typemap(csin) T_ASC_Network *network "getCPtrAndAddReferenceNetwork($csinput)"
+
+%typemap(cscode) T_ASC_Association %{
+	// Ensure that the GC doesn't collect any 
+	// DcmDataset set from C#
+	// as the underlying C++ class stores a shallow copy
+	private DcmDataset findReference;
+	private DcmDataset moveReference;
+	private T_ASC_Network networkReference;
+	private HandleRef getCPtrAndAddReferenceFind(DcmDataset cFindDataset) {
+		findReference = cFindDataset;
+		return DcmDataset.getCPtr(cFindDataset);
+	}
+	private HandleRef getCPtrAndAddReferenceMove(DcmDataset cMoveDataset) {
+		moveReference = cMoveDataset;
+		return DcmDataset.getCPtr(cMoveDataset);
+	}
+	private HandleRef getCPtrAndAddReferenceNetwork(T_ASC_Network network) {
+		networkReference = network;
+		return T_ASC_Network.getCPtr(network);
+	}
+%}
+
 struct T_ASC_Association
 {
     DUL_ASSOCIATIONKEY *DULassociation;
@@ -846,6 +887,8 @@ struct T_ASC_Association
     unsigned long sendPDVLength;	/* max length of PDV to send out */
     unsigned char *sendPDVBuffer;	/* buffer of size sendPDVLength */
 };
+
+%typemap(csin) T_ASC_Network *network;
 
 %extend(canthrow=1) T_ASC_Association {
 
