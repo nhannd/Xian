@@ -318,4 +318,16 @@
   <data name="ExceptionDicomMoveDatasetNull" xml:space="preserve">
     <value>The move dataset cannot be null</value>
   </data>
+  <data name="ExceptionGeneralAccessionNull" xml:space="preserve">
+    <value>The Accession Number cannot be null</value>
+  </data>
+  <data name="ExceptionGeneralAccessionZeroLength" xml:space="preserve">
+    <value>The Accession Number cannot be zero-length</value>
+  </data>
+  <data name="ExceptionGeneralUidNull" xml:space="preserve">
+    <value>The UID cannot be null</value>
+  </data>
+  <data name="ExceptionGeneralUidZeroLength" xml:space="preserve">
+    <value>The UID cannot be zero-length</value>
+  </data>
 </root>

@@ -63,3 +63,7 @@ ExceptionDicomHostnameZeroLength=The hostname cannot be zero-length
 ExceptionDicomAETitleZeroLength=The AE Title cannot be zero-length
 ExceptionDicomFindDatasetNull=The find dataset cannot be null
 ExceptionDicomMoveDatasetNull=The move dataset cannot be null
+ExceptionGeneralAccessionNull=The Accession Number cannot be null
+ExceptionGeneralAccessionZeroLength=The Accession Number cannot be zero-length
+ExceptionGeneralUidNull=The UID cannot be null
+ExceptionGeneralUidZeroLength=The UID cannot be zero-length

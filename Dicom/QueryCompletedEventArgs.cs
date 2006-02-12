@@ -1,10 +1,9 @@
 
-namespace ClearCanvas.Dicom
+namespace ClearCanvas.Dicom.Network
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using ClearCanvas.Dicom.Network;
 
     public class QueryCompletedEventArgs : EventArgs
     {

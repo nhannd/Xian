@@ -73,7 +73,7 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity ae, PatientId patientID, PatientsName patientsName)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName)
         {
             InitializeQueryState();
 
@@ -81,15 +81,15 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query keys
-            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientID.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientId.ToString());
             cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), patientsName.ToString());
 
-            ReadOnlyQueryResultCollection results = Query(ae, cFindDataset);
+            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
             TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity ae, Uid studyInstanceUid)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, Uid studyInstanceUid)
         {
             InitializeQueryState();
 
@@ -99,7 +99,24 @@ namespace ClearCanvas.Dicom.Network
             // set the specific query for study instance uid
             cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
-            ReadOnlyQueryResultCollection results = Query(ae, cFindDataset);
+            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
+            TriggerConditionalQueryCompletedEvent(results);
+            return results;
+        }
+
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName, Accession accession)
+        {
+            InitializeQueryState();
+
+            DcmDataset cFindDataset = new DcmDataset();
+            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
+
+            // set the specific query keys
+            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientId.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), patientsName.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(dcm.AccessionNumber), accession.ToString());
+
+            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
             TriggerConditionalQueryCompletedEvent(results);
             return results;
         }

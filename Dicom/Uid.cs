@@ -9,6 +9,13 @@ namespace ClearCanvas.Dicom
         private string _uid;
         public Uid(string constructionUid)
         {
+            // validate the input
+            if (null == constructionUid)
+                throw new System.ArgumentNullException("constructionUid", SR.ExceptionGeneralUidNull);
+
+            if (0 == constructionUid.Length)
+                throw new System.ArgumentOutOfRangeException("constructionUid", SR.ExceptionGeneralUidZeroLength);
+
             _uid = constructionUid;
         }
 

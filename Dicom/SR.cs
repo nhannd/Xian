@@ -205,6 +205,24 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Accession Number cannot be null.
+        /// </summary>
+        public static string ExceptionGeneralAccessionNull {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralAccessionNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Accession Number cannot be zero-length.
+        /// </summary>
+        public static string ExceptionGeneralAccessionZeroLength {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralAccessionZeroLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient&apos;s Name cannot be null.
         /// </summary>
         public static string ExceptionGeneralPatientsNameNull {
@@ -228,6 +246,24 @@ namespace ClearCanvas.Dicom {
         public static string ExceptionGeneralUidCompareToTypeIncorrect {
             get {
                 return ResourceManager.GetString("ExceptionGeneralUidCompareToTypeIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The UID cannot be null.
+        /// </summary>
+        public static string ExceptionGeneralUidNull {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralUidNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The UID cannot be zero-length.
+        /// </summary>
+        public static string ExceptionGeneralUidZeroLength {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralUidZeroLength", resourceCulture);
             }
         }
         

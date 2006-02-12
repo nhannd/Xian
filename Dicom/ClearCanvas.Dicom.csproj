@@ -52,7 +52,7 @@
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn />
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Accession.cs" />
     <Compile Include="AETitle.cs" />
     <Compile Include="ApplicationEntity.cs" />
     <Compile Include="DicomTag.cs" />
