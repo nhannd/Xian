@@ -45,7 +45,6 @@
 		Inputs="@(SwigInterfaceFile); @(SwigOtherInterfaceFiles)"
 		Outputs="@(SwigCppOutputFile); @(AllSwigOutputFiles)">
 		<MakeDir Directories="$(SwigOutputCsharpDir)" Condition="!Exists('$(SwigOutputCsharpDir')" />
-		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('$(SwigOutputCsharpDir)')" />
 		<Exec Command="$(SwigCompiler) $(SwigParameters) -outdir $(SwigOutputCsharpDir) -o @(SwigCppOutputFile) -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" />
 	</Target>
@@ -60,6 +59,7 @@
 	<Target Name="BuildSwigCsharpWrappers" DependsOnTargets="GenerateSwigWrappers"
 		Inputs="@(AllswigOutputFiles)"
 		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll">
+		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
 	</Target>
 </Project>

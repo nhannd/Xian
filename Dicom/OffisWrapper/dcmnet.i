@@ -179,6 +179,29 @@ void SetConnectionTimeout(int newTimeout)
 	dcmConnectionTimeout.set((Sint32) newTimeout);
 }
 
+//-------------------------------------------
+// Helper function to initialize Winsock
+//-------------------------------------------
+void InitializeSockets()
+{
+#ifdef HAVE_WINSOCK_H
+    WSAData winSockData;
+    /* we need at least version 1.1 */
+    WORD winSockVersionNeeded = MAKEWORD( 1, 1 );
+    WSAStartup(winSockVersionNeeded, &winSockData);
+#endif
+}
+
+//-------------------------------------------
+// Helper function to cleanup Winsock
+//-------------------------------------------
+void DeinitializeSockets()
+{
+#ifdef HAVE_WINSOCK_H
+    WSACleanup();
+#endif
+}
+
 struct InteropStoreCallbackInfo
 {
 	const char* FileName;
