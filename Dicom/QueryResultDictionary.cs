@@ -84,15 +84,15 @@ namespace ClearCanvas.Dicom.Network
             get { return (this as IDictionary<DicomTag, string>).Keys; }
         }
 
-        internal void Add(DicomTag key, string value)
-        {
-            (this as IDictionary<DicomTag, string>).Add(key, value);
-        }
-
-        internal string this[DicomTag key]
+        public string this[DicomTag key]
         {
             get { return (this as IDictionary<DicomTag, string>)[key]; }
             set { (this as IDictionary<DicomTag, string>)[key] = value; }
+        }
+
+        internal void Add(DicomTag key, string value)
+        {
+            (this as IDictionary<DicomTag, string>).Add(key, value);
         }
 
         internal void Clear()
