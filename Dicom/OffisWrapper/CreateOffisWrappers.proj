@@ -3,7 +3,7 @@
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Appname>CreateOffisWrappers</Appname>
 		<SwigOutputCsharpDir>csharp</SwigOutputCsharpDir>
-		<CppCompilerOutputDir>cppwrapper/$(Configuration)</CppCompilerOutputDir>
+		<CppCompilerOutputDir>cppwrapper\$(Configuration)</CppCompilerOutputDir>
 		<SwigOutputNamespace>ClearCanvas.Dicom.OffisWrapper</SwigOutputNamespace>
 		<CppCompiler>cl.exe</CppCompiler>
 		<CppLinker>link.exe</CppLinker>
@@ -37,9 +37,9 @@
 		<SwigInterfaceFile Include="dcmdata.i" />
 		<SwigOtherInterfaceFiles Include="dcmnet.i;dcm_typemaps.i;ofstd.i" />
 		<SwigCppOutputFile Include="Offis_Wrapper.cxx" />
-		<CppWrapperLibraryFile Include="OffisDcm.dll" />
+		<CppWrapperLibraryFile Include="$(CppCompilerOutputDir)\OffisDcm.dll" />
 		<AllSwigOutputFiles Include="$(SwigOutputCsharpDir)\*.cs" Condition="Exists('$(SwigOutputCsharpDir)')" />
-		<SwigCppLibraryOutputFile Include="$(CppCompilerOutputDir)\$(CppWrapperLibraryFile)" />
+		<SwigCppLibraryOutputFile Include="@(CppWrapperLibraryFile)" />
 	</ItemGroup> 
 	<Target Name="GenerateSwigWrappers"
 		Inputs="@(SwigInterfaceFile); @(SwigOtherInterfaceFiles)"
