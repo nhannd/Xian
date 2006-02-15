@@ -12,46 +12,73 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
     public class QueryResultDictionary : IDictionary<DicomTag, string>
     {
+        /// <summary>
+        /// Gets the Study Instance UID as a Uid object.
+        /// </summary>
         public Uid StudyInstanceUid
         {
             get { return new Uid(_internalDictionary[DicomTag.StudyInstanceUID]); }
         }
 
+        /// <summary>
+        /// Gets the Patient ID as a PatientId object.
+        /// </summary>
         public PatientId PatientId
         {
             get { return new PatientId(_internalDictionary[DicomTag.PatientID]); }
         }
 
+        /// <summary>
+        /// Gets Patient's Name as a PatientsName object.
+        /// </summary>
         public PatientsName PatientsName
         {
             get { return new PatientsName(_internalDictionary[DicomTag.PatientsName]); }
         }
 
+        /// <summary>
+        /// Gets Modalities In Study as a string.
+        /// </summary>
         public string ModalitiesInStudy
         {
             get { return _internalDictionary[DicomTag.ModalitiesInStudy]; }
         }
 
+        /// <summary>
+        /// Gets Study Description as a string.
+        /// </summary>
         public string StudyDescription
         {
             get { return _internalDictionary[DicomTag.StudyDescription]; }
         }
 
+        /// <summary>
+        /// Gets Study Date as a string.
+        /// </summary>
         public string StudyDate
         {
             get { return _internalDictionary[DicomTag.StudyDate]; }
         }
 
+        /// <summary>
+        /// Gets Study Time as a string.
+        /// </summary>
         public string StudyTime
         {
             get { return _internalDictionary[DicomTag.StudyTime]; }
         }
 
+        /// <summary>
+        /// Gets Accession Number as a string.
+        /// </summary>
         public string AccessionNumber
         {
             get { return _internalDictionary[DicomTag.AccessionNumber]; }
         }
 
+        /// <summary>
+        /// Gets the whole collection of DICOM tags in this query result.
+        /// </summary>
         public ICollection<DicomTag> DicomTags
         {
             get { return (this as IDictionary<DicomTag, string>).Keys; }
@@ -73,6 +100,10 @@ namespace ClearCanvas.Dicom.Network
             (this as ICollection<KeyValuePair<DicomTag, string>>).Clear();
         }
 
+        /// <summary>
+        /// Returns string representation of this query result.
+        /// </summary>
+        /// <returns>Study Description if that is available, otherwise the Study Instance UID.</returns>
         public override string ToString()
         {
             if (null != StudyDescription)

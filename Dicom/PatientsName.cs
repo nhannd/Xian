@@ -4,10 +4,16 @@ namespace ClearCanvas.Dicom
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Encapsulates the DICOM Patient's Name.
+    /// </summary>
     public struct PatientsName
     {
-        private string _patientsName;
 
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="patientsName">The Patient's Name as a string.</param>
         public PatientsName(string patientsName)
         {
             // validate the input
@@ -20,9 +26,15 @@ namespace ClearCanvas.Dicom
             _patientsName = patientsName;
         }
 
+        /// <summary>
+        /// Gets the Patient's Name as a string.
+        /// </summary>
+        /// <returns>A string representation of the Patient's Name.</returns>
         public override string  ToString()
         {
             return _patientsName;
         }
+
+        private string _patientsName;
     }
 }

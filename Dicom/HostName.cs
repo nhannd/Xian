@@ -4,10 +4,15 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Encapsulation of a hostname.
+    /// </summary>
     public struct HostName
     {
-        private string _hostName;
-
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="hostName">The Hostname as a string.</param>
         public HostName(string hostName)
         {
             // validate the input
@@ -25,9 +30,15 @@ namespace ClearCanvas.Dicom.Network
             _hostName = hostName;
         }
 
+        /// <summary>
+        /// Gets the Hostname as a string.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return _hostName;
         }
+
+        private string _hostName;
     }
 }

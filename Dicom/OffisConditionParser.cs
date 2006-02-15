@@ -6,6 +6,10 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.Exceptions;
     using ClearCanvas.Dicom.OffisWrapper;
 
+    /// <summary>
+    /// Parses the condition code returned from the OFFIS library and determines a proper error message 
+    /// as represented by a string.
+    /// </summary>
     internal class OffisConditionParser
     {
         private OffisConditionParser() { }

@@ -4,10 +4,15 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Encapsulation of the AE Title DICOM tag.
+    /// </summary>
     public struct AETitle
     {
-        private string _aeTitle;
-
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="aeTitle">The AE Title as a string.</param>
         public AETitle(string aeTitle)
         {
             // validate the input
@@ -20,9 +25,15 @@ namespace ClearCanvas.Dicom.Network
             _aeTitle = aeTitle;
         }
 
+        /// <summary>
+        /// Retrieves the AE Title.
+        /// </summary>
+        /// <returns>The AE Title as a string.</returns>
         public override string ToString()
         {
             return _aeTitle;
         }
+
+        private string _aeTitle;
     }
 }

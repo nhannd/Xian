@@ -4,11 +4,16 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Encapsulation of a listening port number.
+    /// </summary>
     public struct ListeningPort
     {
-        private System.Int32 _listeningPort;
-
-        public ListeningPort(int listeningPort)
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="listeningPort">The listening port as a 32-bit integer.</param>
+        public ListeningPort(Int32 listeningPort)
         {
             // validate the input
             if (listeningPort < 1 || listeningPort > System.Int32.MaxValue)
@@ -17,9 +22,15 @@ namespace ClearCanvas.Dicom.Network
             _listeningPort = listeningPort;
         }
 
+        /// <summary>
+        /// Gets the listening port as a 32-bit integer.
+        /// </summary>
+        /// <returns>The listening port as a 32-bit integer.</returns>
         public System.Int32 ToInt32()
         {
             return _listeningPort;
         }
+
+        private System.Int32 _listeningPort;
     }
 }

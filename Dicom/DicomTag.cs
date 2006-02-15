@@ -4,18 +4,33 @@ namespace ClearCanvas.Dicom
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Describes a DICOM tag.
+    /// </summary>
     public class DicomTag
     {
+        /// <summary>
+        /// Constructor with discrete Group and Element.
+        /// </summary>
+        /// <param name="group">Group Number of tag.</param>
+        /// <param name="element">Element Number of tag.</param>
         public DicomTag(UInt16 group, UInt16 element)
             : this((UInt32) ((group << 16) | element))
         {
         }
 
+        /// <summary>
+        /// Constructor with Group and Element represented as a 32-bit integer.
+        /// </summary>
+        /// <param name="id">The 32-bit representation of the Group and Element.</param>
         protected DicomTag(UInt32 id)
         {
             _id = id;
         }
 
+        /// <summary>
+        /// Gets the Group Number of the tag as a 16-bit integer.
+        /// </summary>
         public UInt16 Group
         {
             get
@@ -27,6 +42,9 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Gets the Element Number of the tag as a 16-bit integer.
+        /// </summary>
         public UInt16 Element
         {
             get
@@ -38,11 +56,20 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Provides a hash code that's more natural by using the
+        /// Group and Element number of the tag.
+        /// </summary>
+        /// <returns>The Group and Element number as a 32-bit integer.</returns>
         public override Int32 GetHashCode()
         {
             return ((Int32) _id);
         }
 
+        /// <summary>
+        /// Provides a human-readable representation of the tag.
+        /// </summary>
+        /// <returns>The string representation of the Group and Element.</returns>
         public override System.String ToString()
         {
             // TODO: use the DICOM data dictionary to get a string description of the tag

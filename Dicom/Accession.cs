@@ -5,10 +5,16 @@ namespace ClearCanvas.Dicom
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Encapsulation of the Accession Number DICOM tag.
+    /// </summary>
     public struct Accession
     {
-        private string _accession;
 
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="accession">The Accession Number as a string.</param>
         public Accession(string accession)
         {
             // validate the input
@@ -21,9 +27,15 @@ namespace ClearCanvas.Dicom
             _accession = accession;
         }
 
+        /// <summary>
+        /// Retrieves the Accession Number.
+        /// </summary>
+        /// <returns>Accession Number as a string.</returns>
         public override string ToString()
         {
             return _accession;
         }
+
+        private string _accession;
     }
 }

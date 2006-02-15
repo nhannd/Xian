@@ -5,20 +5,30 @@ namespace ClearCanvas.Dicom.Network
     using System.Collections.ObjectModel;
     using System.Text;
 
+    /// <summary>
+    /// List of C-FIND query results. Each result represents the data
+    /// from a particular C-FIND Response.
+    /// </summary>
     public class QueryResultList : IList<QueryResultDictionary>
     {
-
-        private List<QueryResultDictionary> _internalList = new List<QueryResultDictionary>();
-
+        /// <summary>
+        /// Add a new result item into the list.
+        /// </summary>
+        /// <param name="item">A result item.</param>
         public void Add(QueryResultDictionary item)
         {
             (this as ICollection<QueryResultDictionary>).Add(item);
         }
 
+        /// <summary>
+        /// Remove all results.
+        /// </summary>
         public void Clear()
         {
             (this as ICollection<QueryResultDictionary>).Clear();
         }
+
+        private List<QueryResultDictionary> _internalList = new List<QueryResultDictionary>();
 
         #region IList<QueryResult> Members
 
@@ -110,6 +120,9 @@ namespace ClearCanvas.Dicom.Network
 
     }
 
+    /// <summary>
+    /// A read-only encapsulation of a QueryResultList.
+    /// </summary>
     public class ReadOnlyQueryResultCollection : ReadOnlyCollection<QueryResultDictionary>
     {
         public ReadOnlyQueryResultCollection(QueryResultList queryResults) : base(queryResults)

@@ -11,20 +11,39 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.Data;
     using MySR = ClearCanvas.Dicom.SR;
 
+    /// <summary>
+    /// Main entry point for DICOM networking functionality. Allows the client to 
+    /// perform C-ECHO, C-FIND and C-MOVE commands. Both C-FIND and C-MOVE 
+    /// implement the Study Root Query/Retrieve Information Model.
+    /// </summary>
     public class DicomClient
     {
+        /// <summary>
+        /// Fires when a new SOP Instance has arrived and has been successfully
+        /// written to the local filesystem.
+        /// </summary>
         public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceivedEvent;
+        /// <summary>
+        /// Fires when a C-FIND result is received.
+        /// </summary>
         public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceivedEvent;
+        /// <summary>
+        /// Fires when the C-FIND query has completed and all results received.
+        /// </summary>
         public event EventHandler<QueryCompletedEventArgs> QueryCompletedEvent;
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
         private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
 
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="ownAEParameters">The AE parameters of the DICOM client. That is,
+        /// the user's AE parameters that will be passed to the server as the source
+        /// of the DICOM commands, and will also become the destination for the receiving
+        /// of DICOM data.</param>
         public DicomClient(ApplicationEntity ownAEParameters)
         {
-            // this is a temporary hack to initialize the sockets layer
-            // I haven't been able to find how to properly do this
-            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
-                ProtocolType.Tcp);
+            InitializeSockets();
 
             _myOwnAE = ownAEParameters;
 
@@ -40,6 +59,16 @@ namespace ClearCanvas.Dicom.Network
             _queryResults = new QueryResultList();
         }
 
+        ~DicomClient()
+        {
+            DeinitializeSockets();
+        }
+
+        /// <summary>
+        /// Set the overall connection timeout period in the underlying OFFIS DICOM
+        /// library.
+        /// </summary>
+        /// <param name="timeout">Timeout period in seconds.</param>
         public static void SetConnectionTimeout(Int16 timeout)
         {
             if (timeout < 1)
@@ -47,13 +76,22 @@ namespace ClearCanvas.Dicom.Network
             OffisDcm.SetConnectionTimeout(timeout);
         }
 
-        public bool Verify(ApplicationEntity ae)
+        /// <summary>
+        /// Verifies that a remote AE has an operational DICOM implementation using
+        /// C-ECHO. Note that a successful verify does not necessarily mean that
+        /// the remote AE will be able to perform any particular service, since 
+        /// the implementation at this time verifies support for the Verification
+        /// Service Class only.
+        /// </summary>
+        /// <param name="serverAE">The AE parameters of the remote AE server.</param>
+        /// <returns></returns>
+        public bool Verify(ApplicationEntity serverAE)
         {
             try
             {
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
 
-                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, ae.AE, ae.Host, ae.Port);
+                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
                 associationParameters.ConfigureForVerification();
 
                 T_ASC_Association association = network.CreateAssociation(associationParameters);
@@ -69,10 +107,34 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (DicomRuntimeApplicationException e)
             {                
-                throw new NetworkDicomException(OffisConditionParser.GetTextString(ae, e), e);
+                throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
             }
         }
 
+        /// <summary>
+        /// Query the remote AE to determine what studies the server contains using a C-FIND.
+        /// This implementation uses the Study Root Query/Retrieve Information Model.
+        /// </summary>
+        /// <overloads>There are currently three overloads of this function.
+        /// </overloads>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="patientId">Key for searching: the relevant Patient ID</param>
+        /// <param name="patientsName">Key for searching: the relevant Patient's Name</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
+        /// <example>
+        /// <code>
+        /// ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+        ///     new AETitle("CCNETTEST"), new ListeningPort(110));
+        /// ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintondesk"),
+        ///     new AETitle("CONQUESTSRV1"), new ListeningPort(104));
+        ///
+        /// DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+        ///
+        /// bool successVerify = dicomClient.Verify(serverAE);
+        /// </code>
+        /// </example>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName)
         {
             InitializeQueryState();
@@ -89,6 +151,14 @@ namespace ClearCanvas.Dicom.Network
             return results;
         }
 
+        /// <summary>
+        /// Overload of the Query method that accepts a Study Instance UID.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="studyInstanceUid">Key for searching: the relevant study's Study Instance UID.</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, Uid studyInstanceUid)
         {
             InitializeQueryState();
@@ -103,7 +173,17 @@ namespace ClearCanvas.Dicom.Network
             TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
-
+        
+        /// <summary>
+        /// Overload of the Query method that accepts Patient ID, Patient's Name and Accession Number.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="patientId">Key for searching: The relevant Patient ID.</param>
+        /// <param name="patientsName">Key for searching: The relevant Patient's Name.</param>
+        /// <param name="accession">Key for searching: The relevant Accession Number.</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName, Accession accession)
         {
             InitializeQueryState();
@@ -121,6 +201,33 @@ namespace ClearCanvas.Dicom.Network
             return results;
         }
 
+        /// <summary>
+        /// Performs a DICOM retrieve using C-MOVE with the Study Root Query/Retrieve Information Model.
+        /// A DICOM listener will automatically be created to receive the incoming DICOM data. The listener's
+        /// AE parameters are defined by the ApplicationEntity used in the construction of the 
+        /// <see cref="DicomClient">DicomClient</see>.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the server who will provided the C-MOVE service.</param>
+        /// <param name="studyInstanceUid">Study Instance UID of the study to be retrieved.</param>
+        /// <param name="saveDirectory">A path to a directory on the local filesystem that will receive
+        /// the incoming DICOM data objects.</param>
+        /// <example>
+        /// <code>
+        /// ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+        ///     new AETitle("CCNETTEST"), new ListeningPort(4000));
+        /// ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+        ///     new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+        ///
+        /// DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+        ///
+        /// if (!dicomClient.Verify(serverAE))
+        ///     throw new Exception("Target server is not running");
+        ///
+        /// dicomClient.SopInstanceReceivedEvent += SopInstanceReceivedEventHandler;
+        /// dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), "C:\\temp\\");
+        /// dicomClient.SopInstanceReceivedEvent -= SopInstanceReceivedEventHandler;
+        /// </code>
+        /// </example>
         public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
         {
 			if (null == saveDirectory)
@@ -160,14 +267,42 @@ namespace ClearCanvas.Dicom.Network
 
         #region Protected members
 
+        /// <summary>
+        /// Specifies the query level to be executed on a C-FIND (<see cref="Query">Query</see>) or C-MOVE
+        /// (<see cref="Retrieve">Retrieve</see>) commands.
+        /// </summary>
         protected enum QRLevel
         {
+            /// <summary>
+            /// Query at the Patient level, will return for example Patient's Name, Patient's Birthdate,
+            /// one result per patient that matches search keys.
+            /// </summary>
             Patient,
+            /// <summary>
+            /// Query at the Study level, will return for example, Study Date, Study Description, 
+            /// one result per study that matches search keys.
+            /// </summary>
             Study,
+            /// <summary>
+            /// Query at the Series level, will return for example, Modality, Series Description,
+            /// one result per series that matches search keys.
+            /// </summary>
             Series,
+            /// <summary>
+            /// Query at the Composite Object Instance level, will return for example Bits Allocated, 
+            /// Planar Configuration, one result per SOP Instance that matches search keys.
+            /// </summary>
             CompositeObjectInstance
         }
 
+        /// <summary>
+        /// The low-level version of Retrieve that just takes in a dataset that has already been
+        /// properly initialized with the appropriate tags for the C-MOVE command.
+        /// </summary>
+        /// <param name="serverAE">The application entity that will serve our Retrieve request.</param>
+        /// <param name="cMoveDataset">The dataset containing the parameters for this Retrieve.</param>
+        /// <param name="saveDirectory">The path on the local filesystem that will store the
+        /// DICOM objects that are received.</param>
         protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory)
         {
             try
@@ -194,11 +329,11 @@ namespace ClearCanvas.Dicom.Network
 
         /// <summary>
         /// The low-level version of Query that just takes in a dataset that has been properly 
-        /// initialized and set to use tags that are appropriate
+        /// initialized and set to use tags that are appropriate for the C-FIND command.
         /// </summary>
-        /// <param name="serverAE">The application entity that will serve our Query request</param>
-        /// <param name="cFindDataset">The dataset containing the parameters for this Query</param>
-        /// <returns>A collection of matching results from the server in response to our Query </returns>
+        /// <param name="serverAE">The application entity that will serve our Query request.</param>
+        /// <param name="cFindDataset">The dataset containing the parameters for this Query.</param>
+        /// <returns>A read-only collection of matching results from the server in response to our Query.</returns>
         protected ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, DcmDataset cFindDataset)
         {
             try
@@ -227,7 +362,7 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Initializes a dataset with the required tags to ensure the C-FIND will work
+        /// Initializes a dataset with the required tags to ensure the C-FIND will work.
         /// </summary>
         /// <param name="cFindDataset">Dataset to be filled with certain required tags</param>
         /// <param name="level">Query/Retrieve level</param>
@@ -279,7 +414,7 @@ namespace ClearCanvas.Dicom.Network
         }
         
         /// <summary>
-        /// Initializes a dataset with the required tags to ensure the C-MOVE will work
+        /// Initializes a dataset with the required tags to ensure the C-MOVE will work.
         /// </summary>
         /// <param name="cMoveDataset">Dataset to be filled with certain required tags</param>
         /// <param name="level">Query/Retrieve level</param>
@@ -316,7 +451,7 @@ namespace ClearCanvas.Dicom.Network
 
         /// <summary>
         /// Resets the contents of the query result collection, typically done before
-        /// any query operations are invoked to ensure that the collection is empty
+        /// any query operations are invoked to ensure that the collection is empty.
         /// </summary>
         protected void InitializeQueryState()
         {
@@ -325,9 +460,9 @@ namespace ClearCanvas.Dicom.Network
 
         /// <summary>
         /// Invoke the event firing helper if the query operation resulted in query results
-        /// i.e. the query was successful
+        /// i.e. the query was successful.
         /// </summary>
-        /// <param name="results">Collection of query results or null if no results
+        /// <param name="results">Collection of query results or null if no results.
         /// were returned</param>
         protected void TriggerConditionalQueryCompletedEvent(ReadOnlyQueryResultCollection results)
         {
@@ -336,6 +471,24 @@ namespace ClearCanvas.Dicom.Network
                 QueryCompletedEventArgs args = new QueryCompletedEventArgs(results);
                 OnQueryCompletedEvent(args);
             }
+        }
+
+        /// <summary>
+        /// Initialize the Winsock library in Windows. In 
+        /// non-Windows platforms, this function does nothing via a compiler define.
+        /// </summary>
+        protected void InitializeSockets()
+        {
+            OffisDcm.InitializeSockets();
+        }
+        
+        /// <summary>
+        /// Deinitialize the Winsock library in Windows. In
+        /// non-Windows platforms, this function does nothing.
+        /// </summary>
+        protected void DeinitializeSockets()
+        {
+            OffisDcm.DeinitializeSockets();
         }
 
         protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)

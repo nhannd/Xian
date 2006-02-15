@@ -4,12 +4,14 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Describes the network parameters that define an Application Entity.
+    /// </summary>
     public struct ApplicationEntity
     {
-        private HostName _hostname;
-        private AETitle _aeTitle;
-        private ListeningPort _listeningPort;
-
+        /// <summary>
+        /// Gets the Hostname as a string.
+        /// </summary>
         public string Host
         {
             get
@@ -18,6 +20,9 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// Gets the AE Title as a string.
+        /// </summary>
         public string AE
         {
             get
@@ -26,6 +31,9 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// Gets the listening port as a string.
+        /// </summary>
         public System.Int32 Port
         {
             get
@@ -34,11 +42,21 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="hostname">The Hostname or IP address.</param>
+        /// <param name="aeTitle">The AE Title.</param>
+        /// <param name="listenPort">The listening port of the Application Entity.</param>
         public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort)
         {
             _hostname = hostname;
             _aeTitle = aeTitle;
             _listeningPort = listenPort;
         }
+
+        private HostName _hostname;
+        private AETitle _aeTitle;
+        private ListeningPort _listeningPort;
     }
 }
