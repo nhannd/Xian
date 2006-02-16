@@ -42,6 +42,13 @@ namespace ClearCanvas.Common
 
 				Platform.Log(String.Format(SR.LogPluginLoaded, path));
 			}
+			catch (FileNotFoundException e)
+			{
+				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
+
+				if (rethrow)
+					throw;
+			}
 			catch (Exception e)
 			{
 				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");

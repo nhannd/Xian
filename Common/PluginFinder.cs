@@ -39,6 +39,13 @@ namespace ClearCanvas.Common
 				// but we'll log it anyway
 				Platform.Log(String.Format(SR.LogFoundUnmanagedDLL, e.FileName));
 			}
+			catch (FileNotFoundException e)
+			{
+				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
+
+				if (rethrow)
+					throw;
+			}
 			catch (Exception e)
 			{
 				bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
