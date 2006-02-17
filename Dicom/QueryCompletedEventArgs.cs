@@ -24,9 +24,9 @@ namespace ClearCanvas.Dicom.Network
         /// Retrieves the results from the query.
         /// </summary>
         /// <returns>A read-only collection containing every result from the C-FIND query.</returns>
-        public ReadOnlyQueryResultCollection GetResults()
+        public ReadOnlyQueryResultCollection Results
         {
-            return _results;
+            get { return _results; }
         }
 
         private ReadOnlyQueryResultCollection _results;

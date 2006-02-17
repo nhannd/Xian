@@ -112,41 +112,79 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Query the remote AE to determine what studies the server contains using a C-FIND.
-        /// This implementation uses the Study Root Query/Retrieve Information Model.
+        /// This variation on the function takes Patient ID and Patient's Name.
         /// </summary>
-        /// <overloads>There are currently three overloads of this function.
+        /// <overloads>There are currently seven overloads of this function. Query the 
+        /// remote AE to determine what studies the server contains using a C-FIND. This 
+        /// implementation uses the Study Root Query/Retrieve Information Model.
+        /// <example>
+        /// <code>
+        ///ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+        ///    new AETitle("CCNETTEST"), new ListeningPort(110));
+        ///ApplicationEntity serverAE = new ApplicationEntity(new HostName("192.168.0.100"),
+        ///    new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+        ///
+        ///DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+        ///
+        ///if (!dicomClient.Verify(serverAE))
+        ///    throw new Exception("Target server is not running");
+        ///
+        ///ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId("*"), new PatientsName("*"));
+        ///
+        ///Assert.IsTrue(results.Count > 0);
+        ///
+        ///foreach (QueryResult qr in results)
+        ///{   
+        ///    foreach (DicomTag dicomTag in qr.DicomTags)
+        ///    {
+        ///        Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+        ///    }
+        ///
+        ///    Console.WriteLine("Patient's Name: {0}", qr.PatientsName);
+        ///    Console.WriteLine("Patien ID: {0}", qr.PatientId);
+        ///}
+        /// </code>
+        /// </example>
         /// </overloads>
         /// <param name="serverAE">AE parameters of the remote AE server.</param>
-        /// <param name="patientId">Key for searching: the relevant Patient ID</param>
-        /// <param name="patientsName">Key for searching: the relevant Patient's Name</param>
+        /// <param name="patientId">Key for searching: the relevant Patient ID.</param>
+        /// <param name="patientsName">Key for searching: the relevant Patient's Name.</param>
         /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
         /// Each C-FIND result is represented by one item in the collection, and it is possible to 
         /// enumerate over all the items.</returns>
-        /// <example>
-        /// <code>
-        /// ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-        ///     new AETitle("CCNETTEST"), new ListeningPort(110));
-        /// ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintondesk"),
-        ///     new AETitle("CONQUESTSRV1"), new ListeningPort(104));
-        ///
-        /// DicomClient dicomClient = new DicomClient(myOwnAEParameters);
-        ///
-        /// bool successVerify = dicomClient.Verify(serverAE);
-        /// </code>
-        /// </example>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName)
         {
-            InitializeQueryState();
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, patientsName, new Accession("*"));
+            TriggerConditionalQueryCompletedEvent(results);
+            return results;
+        }
 
-            DcmDataset cFindDataset = new DcmDataset();
-            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
+        /// <summary>
+        /// This variation on the function takes Patient ID.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="patientId">Key for searching: the relevant Patient ID.</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId)
+        {
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName("*"));
+            TriggerConditionalQueryCompletedEvent(results);
+            return results;
+        }
 
-            // set the specific query keys
-            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientId.ToString());
-            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), patientsName.ToString());
-
-            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
+        /// <summary>
+        /// This variation on the function takes Patient's Name.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="patientsName">Key for searching: the relevant Patient's Name.</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName)
+        {
+            ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId("*"), patientsName);
             TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
@@ -173,7 +211,39 @@ namespace ClearCanvas.Dicom.Network
             TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
-        
+
+        /// <summary>
+        /// Overload of the Query method that accepts Patient ID and Accession Number.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="patientId">Key for searching: The relevant Patient ID.</param>
+        /// <param name="accession">Key for searching: The relevant Accession Number.</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, Accession accession)
+        {
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName("*"), accession);
+            TriggerConditionalQueryCompletedEvent(results);
+            return results;
+        }
+
+        /// <summary>
+        /// Overload of the Query method that accepts Patient's Name and Accession Number.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the remote AE server.</param>
+        /// <param name="patientsName">Key for searching: The relevant Patient's Name.</param>
+        /// <param name="accession">Key for searching: The relevant Accession Number.</param>
+        /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
+        /// Each C-FIND result is represented by one item in the collection, and it is possible to 
+        /// enumerate over all the items.</returns>
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName, Accession accession)
+        {
+            ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId("*"), patientsName, accession);
+            TriggerConditionalQueryCompletedEvent(results);
+            return results;
+        }
+
         /// <summary>
         /// Overload of the Query method that accepts Patient ID, Patient's Name and Accession Number.
         /// </summary>
@@ -553,14 +623,14 @@ namespace ClearCanvas.Dicom.Network
                 if (DICOM_PENDING_STATUS(inboundResponse.DimseStatus) ||
                     DICOM_SUCCESS_STATUS(inboundResponse.DimseStatus))
                 {
-                    QueryResultDictionary queryResult = null;
+                    QueryResult queryResult = null;
                     DcmObject item = responseData.nextInContainer(null);
                     bool tagAvailable = (item != null);
 
                     // there actually is a result
                     if (tagAvailable)
                     {
-                        queryResult = new QueryResultDictionary();
+                        queryResult = new QueryResult();
 
                         while (tagAvailable)
                         {

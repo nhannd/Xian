@@ -15,7 +15,7 @@ namespace ClearCanvas.Dicom.Network
         /// Mandatory constructor.
         /// </summary>
         /// <param name="result">The new result.</param>
-        public QueryResultReceivedEventArgs(QueryResultDictionary result)
+        public QueryResultReceivedEventArgs(QueryResult result)
         {
             _result = result;
         }
@@ -24,11 +24,11 @@ namespace ClearCanvas.Dicom.Network
         /// Gets the query result object.
         /// </summary>
         /// <returns>The result object.</returns>
-        public QueryResultDictionary GetResult()
+        public QueryResult Result
         {
-            return _result;
+            get { return _result; }
         }
 
-        private QueryResultDictionary _result;
+        private QueryResult _result;
     }
 }

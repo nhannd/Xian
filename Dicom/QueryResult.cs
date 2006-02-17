@@ -10,7 +10,7 @@ namespace ClearCanvas.Dicom.Network
     /// Since QueryResult implements IDictionary, it's possible to use an enumerator to extract
     /// every single tag in the result, as well as provide a key to extract a particular tag.
     /// </summary>
-    public class QueryResultDictionary : IDictionary<DicomTag, string>
+    public class QueryResult : IDictionary<DicomTag, string>
     {
         /// <summary>
         /// Gets the Study Instance UID as a Uid object.

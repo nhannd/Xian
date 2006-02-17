@@ -119,12 +119,14 @@ using ClearCanvas.Dicom.Exceptions;
 
             Assert.IsTrue(results.Count > 0);
 
-            foreach (QueryResultDictionary qr in results)
+            foreach (QueryResult qr in results)
             {   
                 foreach (DicomTag dicomTag in qr.DicomTags)
                 {
                     Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
                 }
+                Console.WriteLine("Patient's Name: {0}", qr.PatientsName);
+                Console.WriteLine("Patient ID: {0}", qr.PatientId);
             }
         }
 
@@ -175,7 +177,7 @@ using ClearCanvas.Dicom.Exceptions;
             ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new Uid("1.2.840.113619.2.30.1.1762295590.1623.978668949.886"));
             Assert.IsTrue(results.Count > 0);
 
-            foreach (QueryResultDictionary qr in results)
+            foreach (QueryResult qr in results)
             {   
                 foreach (DicomTag dicomTag in qr.DicomTags)
                 {
@@ -195,7 +197,7 @@ using ClearCanvas.Dicom.Exceptions;
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(4000));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintondesk"),
                 new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
@@ -213,16 +215,16 @@ using ClearCanvas.Dicom.Exceptions;
         public static void SopInstanceReceivedEventHandler(object source, SopInstanceReceivedEventArgs args)
         {
             Console.WriteLine("Beg of SopInstanceResultReceivedEventHandler-------------");
-            Console.WriteLine("       File name of SOP: {0}", args.GetSopFileName());
+            Console.WriteLine("       File name of SOP: {0}", args.SopFileName);
             Console.WriteLine("End of SopInstanceResultReceivedEventHandler-------------");
         }
 
         public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)
         {
             Console.WriteLine("Beg of QueryResultReceivedEventHandler-------------");
-            foreach (DicomTag tag in args.GetResult().DicomTags)
+            foreach (DicomTag tag in args.Result.DicomTags)
             {
-                Console.WriteLine("{0} - {1}", tag.ToString(), args.GetResult()[tag]);
+                Console.WriteLine("{0} - {1}", tag.ToString(), args.Result[tag]);
             }
             Console.WriteLine("End of QueryResultReceivedEventHandler-------------");
         }
@@ -230,7 +232,7 @@ using ClearCanvas.Dicom.Exceptions;
         public static void QueryCompletedEventHandler(object source, QueryCompletedEventArgs args)
         {
             Console.WriteLine("Beg of QueryCompletedEventHandler-------------");
-            foreach (QueryResultDictionary qr in args.GetResults())
+            foreach (QueryResult qr in args.Results)
             {
                 foreach (DicomTag dicomTag in qr.DicomTags)
                 {

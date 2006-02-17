@@ -23,9 +23,9 @@ namespace ClearCanvas.Dicom.Network
         /// Gets the path and file name of the newly stored SOP Instance.
         /// </summary>
         /// <returns>Path and file name of stored SOP Instance.</returns>
-        public System.String GetSopFileName()
+        public System.String SopFileName
         {
-            return _sopFileName;
+            get { return _sopFileName; }
         }
 
         private string _sopFileName;

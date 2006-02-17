@@ -114,7 +114,7 @@
     <Compile Include="ListeningPort.cs" />
     <Compile Include="PatientID.cs" />
     <Compile Include="PatientsName.cs" />
-    <Compile Include="QueryResultDictionary.cs" />
+    <Compile Include="QueryResult.cs" />
     <Compile Include="SR.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

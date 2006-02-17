@@ -9,15 +9,15 @@ namespace ClearCanvas.Dicom.Network
     /// List of C-FIND query results. Each result represents the data
     /// from a particular C-FIND Response.
     /// </summary>
-    public class QueryResultList : IList<QueryResultDictionary>
+    public class QueryResultList : IList<QueryResult>
     {
         /// <summary>
         /// Add a new result item into the list.
         /// </summary>
         /// <param name="item">A result item.</param>
-        public void Add(QueryResultDictionary item)
+        public void Add(QueryResult item)
         {
-            (this as ICollection<QueryResultDictionary>).Add(item);
+            (this as ICollection<QueryResult>).Add(item);
         }
 
         /// <summary>
@@ -25,19 +25,19 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         public void Clear()
         {
-            (this as ICollection<QueryResultDictionary>).Clear();
+            (this as ICollection<QueryResult>).Clear();
         }
 
-        private List<QueryResultDictionary> _internalList = new List<QueryResultDictionary>();
+        private List<QueryResult> _internalList = new List<QueryResult>();
 
         #region IList<QueryResult> Members
 
-        public int IndexOf(QueryResultDictionary item)
+        public int IndexOf(QueryResult item)
         {
             return _internalList.IndexOf(item);
         }
 
-        public void Insert(int index, QueryResultDictionary item)
+        public void Insert(int index, QueryResult item)
         {
             _internalList.Insert(index, item);
         }
@@ -47,7 +47,7 @@ namespace ClearCanvas.Dicom.Network
             _internalList.RemoveAt(index);
         }
 
-        public QueryResultDictionary this[int index]
+        public QueryResult this[int index]
         {
             get
             {
@@ -63,46 +63,46 @@ namespace ClearCanvas.Dicom.Network
  
         #region ICollection<QueryResult> Members
 
-        void ICollection<QueryResultDictionary>.Add(QueryResultDictionary item)
+        void ICollection<QueryResult>.Add(QueryResult item)
         {
-            (_internalList as ICollection<QueryResultDictionary>).Add(item);
+            (_internalList as ICollection<QueryResult>).Add(item);
         }
 
-        void ICollection<QueryResultDictionary>.Clear()
+        void ICollection<QueryResult>.Clear()
         {
-            (_internalList as ICollection<QueryResultDictionary>).Clear();
+            (_internalList as ICollection<QueryResult>).Clear();
         }
 
-        bool ICollection<QueryResultDictionary>.Contains(QueryResultDictionary item)
+        bool ICollection<QueryResult>.Contains(QueryResult item)
         {
-            return (_internalList as ICollection<QueryResultDictionary>).Contains(item);
+            return (_internalList as ICollection<QueryResult>).Contains(item);
         }
 
-        void ICollection<QueryResultDictionary>.CopyTo(QueryResultDictionary[] array, int arrayIndex)
+        void ICollection<QueryResult>.CopyTo(QueryResult[] array, int arrayIndex)
         {
-            (_internalList as ICollection<QueryResultDictionary>).CopyTo(array, arrayIndex);
+            (_internalList as ICollection<QueryResult>).CopyTo(array, arrayIndex);
         }
 
-        int ICollection<QueryResultDictionary>.Count
+        int ICollection<QueryResult>.Count
         {
-            get { return (_internalList as ICollection<QueryResultDictionary>).Count; }
+            get { return (_internalList as ICollection<QueryResult>).Count; }
         }
 
-        bool ICollection<QueryResultDictionary>.IsReadOnly
+        bool ICollection<QueryResult>.IsReadOnly
         {
-            get { return (_internalList as ICollection<QueryResultDictionary>).IsReadOnly; }
+            get { return (_internalList as ICollection<QueryResult>).IsReadOnly; }
         }
 
-        bool ICollection<QueryResultDictionary>.Remove(QueryResultDictionary item)
+        bool ICollection<QueryResult>.Remove(QueryResult item)
         {
-            return (_internalList as ICollection<QueryResultDictionary>).Remove(item);
+            return (_internalList as ICollection<QueryResult>).Remove(item);
         }
 
         #endregion
 
         #region IEnumerable<QueryResult> Members
 
-        IEnumerator<QueryResultDictionary> IEnumerable<QueryResultDictionary>.GetEnumerator()
+        IEnumerator<QueryResult> IEnumerable<QueryResult>.GetEnumerator()
         {
             return _internalList.GetEnumerator();
         }
@@ -113,7 +113,7 @@ namespace ClearCanvas.Dicom.Network
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return (_internalList as ICollection<QueryResultDictionary>).GetEnumerator();
+            return (_internalList as ICollection<QueryResult>).GetEnumerator();
         }
 
         #endregion
@@ -123,7 +123,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// A read-only encapsulation of a QueryResultList.
     /// </summary>
-    public class ReadOnlyQueryResultCollection : ReadOnlyCollection<QueryResultDictionary>
+    public class ReadOnlyQueryResultCollection : ReadOnlyCollection<QueryResult>
     {
         public ReadOnlyQueryResultCollection(QueryResultList queryResults) : base(queryResults)
         {

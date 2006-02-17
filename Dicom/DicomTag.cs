@@ -63,7 +63,7 @@ namespace ClearCanvas.Dicom
         /// <returns>The Group and Element number as a 32-bit integer.</returns>
         public override Int32 GetHashCode()
         {
-            return ((Int32) _id);
+            return ((Int32)_id);
         }
 
         /// <summary>
@@ -77,6 +77,15 @@ namespace ClearCanvas.Dicom
             StringBuilder buffer = new StringBuilder();
             buffer.AppendFormat("(0x{0:x4},0x{1:x4})", Group, Element);
             return buffer.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            DicomTag otherTag = obj as DicomTag;
+            if (null == otherTag)
+                return false;
+
+            return (otherTag.GetHashCode() == this.GetHashCode());
         }
 
         public static DicomTag CommandGroupLength { get { return new DicomTag(0x0000, 0x0000); } }
