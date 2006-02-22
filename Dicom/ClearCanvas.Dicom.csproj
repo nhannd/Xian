@@ -105,7 +105,9 @@
     <Compile Include="Accession.cs" />
     <Compile Include="AETitle.cs" />
     <Compile Include="ApplicationEntity.cs" />
+    <Compile Include="DicomImage.cs" />
     <Compile Include="DicomTag.cs" />
+    <Compile Include="FileDicomImage.cs" />
     <Compile Include="OffisConditionParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DicomClient.cs" />
@@ -129,9 +131,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DicomHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Exceptions.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="StudyCompletedEventArgs.cs" />

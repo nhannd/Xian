@@ -205,7 +205,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query for study instance uid
-            cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
             ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
             TriggerConditionalQueryCompletedEvent(results);
@@ -262,9 +262,9 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query keys
-            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), patientId.ToString());
-            cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), patientsName.ToString());
-            cFindDataset.putAndInsertString(new DcmTag(dcm.AccessionNumber), accession.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientID), patientId.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientsName), patientsName.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.AccessionNumber), accession.ToString());
 
             ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
             TriggerConditionalQueryCompletedEvent(results);
@@ -327,7 +327,7 @@ namespace ClearCanvas.Dicom.Network
 
             // set the specific query for study instance uid
             InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Study);
-            cMoveDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), studyInstanceUid.ToString());
+            cMoveDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
             Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
 
@@ -447,38 +447,38 @@ namespace ClearCanvas.Dicom.Network
                
                 case QRLevel.Study:
                     // set the Query Retrieve Level
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "STUDY");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
 
                     // set the other tags we want to retrieve
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDate), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyTime), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.AccessionNumber), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsName), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.PatientID), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.ModalitiesInStudy), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.StudyDescription), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.SpecificCharacterSet), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.PatientsBirthDate), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.NumberOfStudyRelatedSeries), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.NumberOfStudyRelatedInstances), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyDate), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyTime), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.AccessionNumber), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientsName), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyDescription), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.SpecificCharacterSet), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientsBirthDate), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.NumberOfStudyRelatedSeries), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.NumberOfStudyRelatedInstances), "");
                     break;
                 case QRLevel.Series:
                     // set the Query Retrieve Level
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "SERIES");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "SERIES");
 
                     // set the other tags we want to retrieve
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.Modality), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.SeriesInstanceUID), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.NumberOfSeriesRelatedInstances), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.Modality), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.NumberOfSeriesRelatedInstances), "");
                     break;
                 case QRLevel.CompositeObjectInstance:
                     // set the Query Retrieve Level
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "IMAGE");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "IMAGE");
 
                     // set the other tags we want to retrieve
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.SOPClassUID), "");
-                    cFindDataset.putAndInsertString(new DcmTag(dcm.SOPInstanceUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.SOPClassUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.SOPInstanceUID), "");
                     break;
             }
         }
@@ -500,21 +500,21 @@ namespace ClearCanvas.Dicom.Network
                     
                 case QRLevel.Study:
                     // set the Query Retrieve Level
-                    cMoveDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "STUDY");
+                    cMoveDataset.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
                     // set the other tags we want to retrieve
-                    cMoveDataset.putAndInsertString(new DcmTag(dcm.StudyInstanceUID), "");
+                    cMoveDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), "");
                     break;
                 case QRLevel.Series:
                     // set the Query Retrieve Level
-                    cMoveDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "SERIES");
+                    cMoveDataset.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "SERIES");
                     // set the other tags we want to retrieve
-                    cMoveDataset.putAndInsertString(new DcmTag(dcm.SeriesInstanceUID), "");
+                    cMoveDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), "");
                     break;
                 case QRLevel.CompositeObjectInstance:
                     // set the Query Retrieve Level
-                    cMoveDataset.putAndInsertString(new DcmTag(dcm.QueryRetrieveLevel), "IMAGE");
+                    cMoveDataset.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "IMAGE");
                     // set the other tags we want to retrieve
-                    cMoveDataset.putAndInsertString(new DcmTag(dcm.SOPInstanceUID), "");
+                    cMoveDataset.putAndInsertString(new DcmTag(Dcm.SOPInstanceUID), "");
                     break;
             }
         }

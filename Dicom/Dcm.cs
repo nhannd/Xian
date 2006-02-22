@@ -1,14 +1,14 @@
 using System;
 using ClearCanvas.Dicom.OffisWrapper;
 
-namespace ClearCanvas.Dicom.Data
+namespace ClearCanvas.Dicom
 {
 	/// <summary>
 	/// Summary description for Dcm.
 	/// </summary>
-	public class dcm
+	public class Dcm
 	{
-		public dcm() {}
+		public Dcm() {}
 
 		public static DcmTagKey CommandGroupLength                   { get { return new DcmTagKey(0x0000, 0x0000); } }
 		public static DcmTagKey ACR_NEMA_CommandGroupLengthToEnd     { get { return new DcmTagKey(0x0000, 0x0001); } }

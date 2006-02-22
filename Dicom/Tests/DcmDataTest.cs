@@ -84,17 +84,17 @@ namespace ClearCanvas.Dicom.Tests
 		public void GetPixelData()
 		{
 			ushort rows, columns, bitsAllocated, bitsStored;
-			m_DataSet.findAndGetUint16(dcm.Rows, out rows);
-			m_DataSet.findAndGetUint16(dcm.Columns, out columns);
-			m_DataSet.findAndGetUint16(dcm.BitsAllocated, out bitsAllocated);
-			m_DataSet.findAndGetUint16(dcm.BitsStored, out bitsStored);
+			m_DataSet.findAndGetUint16(Dcm.Rows, out rows);
+			m_DataSet.findAndGetUint16(Dcm.Columns, out columns);
+			m_DataSet.findAndGetUint16(Dcm.BitsAllocated, out bitsAllocated);
+			m_DataSet.findAndGetUint16(Dcm.BitsStored, out bitsStored);
 
 			StringBuilder buf = new StringBuilder(64);
-			m_DataSet.findAndGetOFString(dcm.PhotometricInterpretation, buf);
+			m_DataSet.findAndGetOFString(Dcm.PhotometricInterpretation, buf);
 			string photometricInterpretation = buf.ToString();
 
 			IntPtr pPixelData = IntPtr.Zero;
-			m_DataSet.findAndGetUint16Array(dcm.PixelData, ref pPixelData);
+			m_DataSet.findAndGetUint16Array(Dcm.PixelData, ref pPixelData);
 			
 			int stride = columns * bitsAllocated / 8;
 //			Bitmap bmp = new Bitmap(columns, rows, stride, PixelFormat.Format16bppRgb565, pPixelData);

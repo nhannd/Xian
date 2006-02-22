@@ -1,8 +1,9 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Dicom.Exceptions;
 
-namespace ClearCanvas.Dicom.Data
+namespace ClearCanvas.Dicom
 {
 	/// <summary>
 	/// Summary description for Dicom.
