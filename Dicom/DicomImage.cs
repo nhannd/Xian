@@ -20,7 +20,6 @@ namespace ClearCanvas.Dicom.Data
 		private byte[] _pixelData;
 
 		private int _sizeInBytes;
-		private int _stride;
 
 		private DcmDataset _dataset;
 		private bool _isLoaded = false;
@@ -120,24 +119,6 @@ namespace ClearCanvas.Dicom.Data
 			} 
 		}
 
-		public int SizeInBytes 
-		{ 
-			get 
-			{ 
-				Load();
-				return _sizeInBytes; 
-			} 
-		}
-
-		public int Stride 
-		{ 
-			get 
-			{ 
-				Load();
-				return _stride; 
-			}
-		}
-
 		public byte[] GetPixelData()
 		{
 			Load();
@@ -155,9 +136,11 @@ namespace ClearCanvas.Dicom.Data
 				bool tagExists;
 				DicomHelper.CheckReturnValue(status, Dcm.PixelData, out tagExists);
 
-				// Eventually need to check for transfer syntax and decompress here if necessary
-				_pixelData = new byte[_sizeInBytes];
-				Marshal.Copy(pUnmanagedPixelData, _pixelData, 0, _sizeInBytes);
+				// TODO: Eventually need to check for transfer syntax and decompress here if necessary
+
+				int sizeInBytes = (int)(this.Rows * this.Columns * this.SamplesPerPixel * this.BitsAllocated / 8);
+				_pixelData = new byte[sizeInBytes];
+				Marshal.Copy(pUnmanagedPixelData, _pixelData, 0, sizeInBytes);
 				
 				// We don't need the unmanaged pixel data anymore since we've already
 				// made a copy so just get rid of it to free up some memory
@@ -214,7 +197,6 @@ namespace ClearCanvas.Dicom.Data
 		protected virtual void Load()
 		{
 			RetrieveImageParameters();
-			CalculateOtherImageParameters();
 		}
 
 		protected virtual void Unload()
@@ -257,18 +239,6 @@ namespace ClearCanvas.Dicom.Data
 			status = _dataset.findAndGetOFString(Dcm.PhotometricInterpretation, buf);
 			DicomHelper.CheckReturnValue(status, Dcm.PhotometricInterpretation, out tagExists);
 			_photometricInterpretation = buf.ToString();
-		}
-
-		private void CalculateOtherImageParameters()
-		{
-			_sizeInBytes = (int) (_rows * _columns * _samplesPerPixel * _bitsAllocated / 8);
-
-			// If we're not on a 4-byte boundary, round up to the next multiple of 4
-			// using integer division
-			if (_columns % 4 != 0)
-				_stride = _columns / 4 * 4 + 4;
-			else
-				_stride = _columns;
 		}
 	}
 }
