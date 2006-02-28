@@ -99,12 +99,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Workstation\Layout\Basic\ClearCanvas.Workstation.Layout.Basic.csproj">
-      <Project>{EA38C1F1-C4BD-4ED7-9B60-C95DF22D6A72}</Project>
-      <Name>ClearCanvas.Workstation.Layout.Basic</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
