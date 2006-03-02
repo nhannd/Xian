@@ -61,17 +61,26 @@ namespace ClearCanvas.Common
 			Platform.CheckForNullReference(path, "path");
 			Platform.CheckForEmptyString(path, "path");
 
-			AppDomain domain = AppDomain.CurrentDomain;
+            // The following block of code did not work under Mono, presumably
+            // because Mono expects a fully qualified assembly name
 
-			// Set the AppDomain's relative search path
-			string baseDir = domain.BaseDirectory;
-			string pathDir = Path.GetDirectoryName(path);
-			string relDir = pathDir.Replace(baseDir, "");
-			domain.AppendPrivatePath(relDir);
+            /*
+            AppDomain domain = AppDomain.CurrentDomain;
 
-			// Assembly name = filename without extension
-			string assemblyName = Path.GetFileNameWithoutExtension(path);
-			return domain.Load(assemblyName);
+            // Set the AppDomain's relative search path
+            string baseDir = domain.BaseDirectory;
+            string pathDir = Path.GetDirectoryName(path);
+            string relDir = pathDir.Replace(baseDir, "");
+            domain.AppendPrivatePath(relDir);
+
+            // Assembly name = filename without extension
+            string assemblyName = Path.GetFileNameWithoutExtension(path);
+
+            return domain.Load(assemblyName);
+            */
+
+            // However, the same effect can be accomplished with this single line of code
+            return Assembly.LoadFrom(path);
 		}
 
 		private bool IsPlugin(Assembly asm)

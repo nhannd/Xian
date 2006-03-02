@@ -2,10 +2,13 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+
+#if !MONO
 using Microsoft.Practices.EnterpriseLibrary.Common;
 using Microsoft.Practices.EnterpriseLibrary.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+#endif
 
 namespace ClearCanvas.Common
 {
@@ -18,9 +21,9 @@ namespace ClearCanvas.Common
 	}
 
 	/// <summary>
-	/// A collection of useful utility functions.  
+	/// A collection of useful utility functions.
 	/// </summary>
-	public class Platform 
+	public class Platform
 	{
 		// Private attributes
 		private static string m_InstallDir = null;
@@ -36,7 +39,7 @@ namespace ClearCanvas.Common
 		/// Gets the one and only <see cref="PluginManager"/>.
 		/// </summary>
 		/// <value>The <see cref="PluginManager"/>.</value>
-		public static PluginManager PluginManager 
+		public static PluginManager PluginManager
 		{
 			get
 			{
@@ -52,7 +55,30 @@ namespace ClearCanvas.Common
 				return m_PluginManager;
 			}
 		}
+		
+		public static bool IsWin32Platform
+		{
+			get
+			{
+				PlatformID id = Environment.OSVersion.Platform;
+				return (id == PlatformID.Win32NT || id == PlatformID.Win32Windows || id == PlatformID.Win32S || id == PlatformID.WinCE);
+			}
+		}
+		
+		public static bool IsUnixPlatform
+		{
+			get
+			{
+				PlatformID id = Environment.OSVersion.Platform;
+				return (id == PlatformID.Unix);
+			}
+		}
 
+        public static char PathSeparator
+        {
+            get { return IsWin32Platform ? '\\' : '/'; }
+        }
+		
 		/// <summary>
 		/// Gets or sets ClearCanvas' installation directory.
 		/// </summary>
@@ -80,7 +106,7 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-				return InstallDir + "\\" + m_PluginDir;
+                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, m_PluginDir);
 			}
 		}
 
@@ -92,7 +118,7 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-				return InstallDir + "\\" + m_StudyDir;
+                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, m_StudyDir);
 			}
 		}
 
@@ -104,7 +130,7 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-				return InstallDir + "\\" + m_LogDir;
+                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, m_LogDir);
 			}
 		}
 
@@ -113,10 +139,10 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Starts the application.
 		/// </summary>
-		/// <remarks> 
+		/// <remarks>
 		/// A ClearCanvas based application is started by calling this convenience method from
 		/// a bootstrap executable of some kind.  Calling this method results in the loading
-		/// of all plugins and starting of the model and view plugins (in that order).  
+		/// of all plugins and starting of the model and view plugins (in that order).
 		/// </remarks>
 		public static void StartApp()
 		{
@@ -130,7 +156,7 @@ namespace ClearCanvas.Common
 		/// <param name="message"></param>
 		public static void Log(object message)
 		{
-			Logger.Write(message);
+			LogHelper(message, null);
 		}
 
 		/// <summary>
@@ -140,7 +166,7 @@ namespace ClearCanvas.Common
 		/// <param name="category"></param>
 		public static void Log(object message, string category)
 		{
-			Logger.Write(message, category);
+			LogHelper(message, category);
 		}
 
 		public static void Log(object message, LogCategory category)
@@ -162,9 +188,36 @@ namespace ClearCanvas.Common
 					str = "Fatal";
 					break;
 			}
-
-			Logger.Write(message, str);
+			
+			LogHelper(message, str);
 		}
+		
+		private static void LogHelper(object message, string category)
+		{
+#if MONO
+			if(category == null)
+			{
+				Console.WriteLine(message);
+			}
+			else
+			{
+				Console.WriteLine(string.Format("{0}: {1}", category, message));
+			}
+#else
+			if(category == null)
+			{
+				Logger.Write(message);
+				
+			}
+			else
+			{
+				Logger.Write(message, category);
+				
+			}
+#endif
+		}
+		
+		
 
 		/// <summary>
 		/// Handles a caught exception.
@@ -181,7 +234,12 @@ namespace ClearCanvas.Common
 		/// </remarks>
 		public static bool HandleException(Exception ex, string policy)
 		{
+#if MONO
+			Log(ex);
+			return true;
+#else
 			return ExceptionPolicy.HandleException(ex, policy);
+#endif
 		}
 
 		/// <summary>
@@ -189,12 +247,15 @@ namespace ClearCanvas.Common
 		/// </summary>
 		/// <param name="variable">The string to check.</param>
 		/// <param name="variableName">The variable name of the string to checked.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or or <paramref name="variableName"/> 
+		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or or <paramref name="variableName"/>
 		/// is <b>null</b>.</exception>
 		/// <exception cref="ArgumentException"><paramref name="variable"/> is zero length.</exception>
 		public static void CheckForEmptyString(string variable, string variableName)
 		{
+#if MONO
+#else
 			ArgumentValidation.CheckForEmptyString(variable, variableName);
+#endif
 		}
 
 		/// <summary>
@@ -204,11 +265,14 @@ namespace ClearCanvas.Common
 		/// <param name="variableName">The variable name of the object reference to check.</param>
 		/// <remarks>Use for checking if an input argument is <b>null</b>.  To check if a member variable
 		/// is <b>null</b> (i.e., to see if an object is in a valid state), use <see cref="CheckMemberIsSet"/> instead.</remarks>
-		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or <paramref name="variableName"/> 
+		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or <paramref name="variableName"/>
 		/// is <b>null</b>.</exception>
 		public static void CheckForNullReference(object variable, string variableName)
 		{
+#if MONO
+#else
 			ArgumentValidation.CheckForNullReference(variable, variableName);
+#endif
 		}
 
 		/// <summary>
@@ -216,12 +280,15 @@ namespace ClearCanvas.Common
 		/// </summary>
 		/// <param name="variable">The object to check.</param>
 		/// <param name="type">The variable name of the object to check.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or <paramref name="type"/> 
+		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or <paramref name="type"/>
 		/// is <b>null</b>.</exception>
 		/// <exception cref="ArgumentException"><paramref name="type"/> is not the expected type.</exception>
 		public static void CheckExpectedType(object variable, Type type)
 		{
+#if MONO
+#else
 			ArgumentValidation.CheckExpectedType(variable, type);
+#endif
 		}
 
 		/// <summary>
@@ -239,7 +306,7 @@ namespace ClearCanvas.Common
 		/// OverlayLayer overlay = layer as OverlayLayer;
 		/// // No exception thrown
 		/// Platform.CheckForInvalidCast(overlay, "layer", "OverlayLayer");
-		/// 
+		///
 		/// ImageLayer image = layer as ImageLayer;
 		/// // InvalidCastException thrown
 		/// Platform.CheckForInvalidCast(image, "layer", "ImageLayer");
@@ -379,7 +446,7 @@ namespace ClearCanvas.Common
 		/// </summary>
 		/// <param name="variable">Field or property to be checked.</param>
 		/// <param name="variableName">Name of field or property to be checked.</param>
-		/// <param name="detailedMessage">A more detailed and informative message describing 
+		/// <param name="detailedMessage">A more detailed and informative message describing
 		/// why the object is in an invalid state.</param>
 		/// <remarks>Use this method in your classes to verify that the object
 		/// is not in an invalid state by checking that various fields and/or properties
