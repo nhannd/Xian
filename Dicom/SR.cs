@@ -221,6 +221,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The object passed is is not of the right type for Equals comparison..
+        /// </summary>
+        public static string ExceptionGeneralEqualsWrongType {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralEqualsWrongType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient&apos;s Name cannot be null.
         /// </summary>
         public static string ExceptionGeneralPatientsNameNull {

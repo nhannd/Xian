@@ -330,4 +330,7 @@
   <data name="ExceptionGeneralUidZeroLength" xml:space="preserve">
     <value>The UID cannot be zero-length</value>
   </data>
+  <data name="ExceptionGeneralEqualsWrongType" xml:space="preserve">
+    <value>The object passed is is not of the right type for Equals comparison.</value>
+  </data>
 </root>

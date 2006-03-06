@@ -23,7 +23,7 @@ namespace ClearCanvas.Dicom
         /// Constructor with Group and Element represented as a 32-bit integer.
         /// </summary>
         /// <param name="id">The 32-bit representation of the Group and Element.</param>
-        protected DicomTag(UInt32 id)
+        public DicomTag(UInt32 id)
         {
             _id = id;
         }

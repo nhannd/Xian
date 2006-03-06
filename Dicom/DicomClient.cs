@@ -2,14 +2,17 @@ namespace ClearCanvas.Dicom.Network
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Runtime.InteropServices;    
+    using System.Transactions;
     using System.Text;
-    using System.Net.Sockets;
-    using System.Runtime.InteropServices;
     using ClearCanvas.Common;
     using ClearCanvas.Dicom.OffisWrapper;
     using ClearCanvas.Dicom.Exceptions;
     using ClearCanvas.Dicom.Data;
     using MySR = ClearCanvas.Dicom.SR;
+    using ClearCanvas.Dicom.DataStore;
 
     /// <summary>
     /// Main entry point for DICOM networking functionality. Allows the client to 
@@ -22,7 +25,7 @@ namespace ClearCanvas.Dicom.Network
         /// Fires when a new SOP Instance has arrived and has been successfully
         /// written to the local filesystem.
         /// </summary>
-        public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceivedEvent;
+        private event EventHandler<SopInstanceReceivedEventArgs> _sopInstanceReceivedEvent;
         /// <summary>
         /// Fires when a C-FIND result is received.
         /// </summary>
@@ -34,6 +37,17 @@ namespace ClearCanvas.Dicom.Network
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
         private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
 
+        public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceivedEvent
+        {
+            add
+            {
+                _sopInstanceReceivedEvent += value;
+            }
+            remove
+            {
+                _sopInstanceReceivedEvent -= value;
+            }
+        }
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -564,7 +578,7 @@ namespace ClearCanvas.Dicom.Network
         protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)
         {
             
-            EventsHelper.Fire(SopInstanceReceivedEvent, this, e);
+            EventsHelper.Fire(_sopInstanceReceivedEvent, this, e);
         }
 
         protected void OnStudyCompletedEvent(StudyCompletedEventArgs e)

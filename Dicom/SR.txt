@@ -67,3 +67,4 @@ ExceptionGeneralAccessionNull=The Accession Number cannot be null
 ExceptionGeneralAccessionZeroLength=The Accession Number cannot be zero-length
 ExceptionGeneralUidNull=The UID cannot be null
 ExceptionGeneralUidZeroLength=The UID cannot be zero-length
+ExceptionGeneralEqualsWrongType=The object passed is is not of the right type for Equals comparison.

@@ -8,7 +8,8 @@ namespace ClearCanvas.Dicom.Tests
     using System.Text;
     using ClearCanvas.Dicom.Network;
     using NUnit.Framework;
-using ClearCanvas.Dicom.Exceptions;
+    using ClearCanvas.Dicom.Exceptions;
+    using ClearCanvas.Dicom.DataStore;
 
     [TestFixture]
     public class DcmNetTest
@@ -106,8 +107,8 @@ using ClearCanvas.Dicom.Exceptions;
         public void QueryByPatientId()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(110));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("192.168.0.100"),
+                new AETitle("CCNETTEST"), new ListeningPort(4000));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintondesk"),
                 new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
@@ -217,6 +218,11 @@ using ClearCanvas.Dicom.Exceptions;
             Console.WriteLine("Beg of SopInstanceResultReceivedEventHandler-------------");
             Console.WriteLine("       File name of SOP: {0}", args.SopFileName);
             Console.WriteLine("End of SopInstanceResultReceivedEventHandler-------------");
+
+            DatabaseConnector connector = new DatabaseConnector("Data Source=CLINTONLAPTOP\\SQLEXPRESS;Initial Catalog=ripp_version5;User ID=sa;Password=root");
+            connector.StartImageInsertion();
+            connector.InsertSopInstance(args.SopFileName);
+            connector.StopImageInsertion();
         }
 
         public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)
