@@ -410,7 +410,7 @@ static OFCondition StoreScp(
 		&dset, StoreScpCallback, (void*)&callbackData, DIMSE_BLOCKING, 0);
 
 	if (cond.bad())
-		if (strcmp(imageFileName, NULL_DEVICE_NAME) != 0) _unlink(imageFileName);
+		if (strcmp(imageFileName, NULL_DEVICE_NAME) != 0) unlink(imageFileName);
 
     return cond;
 }
