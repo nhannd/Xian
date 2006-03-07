@@ -60,11 +60,6 @@ namespace ClearCanvas.Dicom.DataStore
             _connection = new SqlConnection(connectionString);
         }
 
-        public DatabaseConnector(SqlConnection connection)
-        {
-            _connection = connection;
-        }
-
         public void StartImageInsertion()
         {
             _connection.Open();
