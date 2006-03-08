@@ -24,14 +24,13 @@ namespace ClearCanvas.Dicom.DataStore.Tests
         [Test]
         public void TestDicomMappingTable()
         {
-            //DicomMappingTable table = new DicomMappingTable(new ConnectionString("Data Source=CLINTONLAPTOP\\SQLEXPRESS;Initial Catalog=ripp_version5;User ID=sa;Password=root"));
-            DicomMappingTable table = new DicomMappingTable(_connection);
+            DicomMappingTable table = new DicomMappingTable(new ConnectionString(_connectionString));
 
             Assert.IsTrue(table.GetColumn(new TagName("StudyInstanceUid")).Path.ToString() == "(0020,000d)");
             Assert.IsTrue(table.GetColumn(new TagName("PatientId")).Path.ToString() == "(0010,0020)");
             Assert.IsTrue(table.GetColumn(new Path("(0008,0060)")).TagName.ToString() == "Modality");
-            Assert.IsTrue(table.GetColumn(new Path("(0008,1032)\\(0008,0102)")).TagName.ToString() == "ProcedureCodeSequence.CodingSchemeDesignator");
-            Assert.IsTrue(table.GetColumn(new TagName("ProcedureCodeSequence.CodeValue")).Path.ToString() == "(0008,1032)\\(0008,0100)");
+            Assert.IsTrue(table.GetColumn(new Path("(0008,1032)\\(0008,0102)")).TagName.ToString() == "ProcedureCodeSequenceCodingSchemeDesignator");
+            Assert.IsTrue(table.GetColumn(new TagName("ProcedureCodeSequenceCodeValue")).Path.ToString() == "(0008,1032)\\(0008,0100)");
         }
 
         [Test]
@@ -51,12 +50,12 @@ namespace ClearCanvas.Dicom.DataStore.Tests
         [Test]
         public void TestDatabaseConnector()
         {
-            DatabaseConnector connector = new DatabaseConnector(_connectionString);
-            connector.StartImageInsertion();
+            DatabaseConnector connector = new DatabaseConnector(new ConnectionString(_connectionString));
+            connector.SetupConnector();
             //connector.InsertSopInstance("c:\\temp\\CT.1.2.840.113619.2.30.1.1762295590.1623.978668950.168.dcm");
             //connector.InsertSopInstance("c:\\temp\\movescu_2.cap");
             connector.InsertSopInstance("C:\\DICOM\\9493\\94912\\949226.DCM");
-            connector.StopImageInsertion();
+            connector.TeardownConnector();
         }
 
         [Test]
@@ -79,10 +78,10 @@ namespace ClearCanvas.Dicom.DataStore.Tests
         protected void NewImageEventHandler(Object source, SopInstanceReceivedEventArgs args)
         {
             DateTime start = DateTime.Now;
-            DatabaseConnector db = new DatabaseConnector(_connectionString);
-            db.StartImageInsertion();
+            DatabaseConnector db = new DatabaseConnector(new ConnectionString(_connectionString));
+            db.SetupConnector();
             db.InsertSopInstance(args.SopFileName);
-            db.StopImageInsertion();
+            db.TeardownConnector();
             DateTime stop = DateTime.Now;
             TimeSpan duration = stop-start;
 

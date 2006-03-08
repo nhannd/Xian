@@ -62,9 +62,9 @@ namespace ClearCanvas.Dicom.Tests
         public void Verify()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(110));
+                new AETitle("CCNETTEST"), new ListeningPort(4000));
             ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintondesk"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(104));
+                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
@@ -78,9 +78,9 @@ namespace ClearCanvas.Dicom.Tests
         public void VerifyCausesRejection()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(110));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("WRONGAE"), new ListeningPort(104));
+                new AETitle("CCNETTEST"), new ListeningPort(4000));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("clintondesk"),
+                new AETitle("WRONGAE"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
@@ -93,9 +93,9 @@ namespace ClearCanvas.Dicom.Tests
         public void VerifyCausesException()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(110));
+                new AETitle("CCNETTEST"), new ListeningPort(4000));
             ApplicationEntity serverAE = new ApplicationEntity(new HostName("192.168.0.101"),
-                new AETitle("WRONGAE"), new ListeningPort(104));
+                new AETitle("WRONGAE"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
@@ -219,10 +219,10 @@ namespace ClearCanvas.Dicom.Tests
             Console.WriteLine("       File name of SOP: {0}", args.SopFileName);
             Console.WriteLine("End of SopInstanceResultReceivedEventHandler-------------");
 
-            DatabaseConnector connector = new DatabaseConnector("Data Source=CLINTONLAPTOP\\SQLEXPRESS;Initial Catalog=ripp_version5;User ID=sa;Password=root");
-            connector.StartImageInsertion();
+            DatabaseConnector connector = new DatabaseConnector(new ConnectionString("Data Source=CLINTONLAPTOP\\SQLEXPRESS;Initial Catalog=ripp_version5;User ID=sa;Password=root"));
+            connector.SetupConnector();
             connector.InsertSopInstance(args.SopFileName);
-            connector.StopImageInsertion();
+            connector.TeardownConnector();
         }
 
         public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)

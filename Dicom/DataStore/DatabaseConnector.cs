@@ -55,13 +55,18 @@ namespace ClearCanvas.Dicom.DataStore
     /// </example>
     public class DatabaseConnector
     {
-        public DatabaseConnector(String connectionString)
+        public DatabaseConnector(ConnectionString connectionString)
         {
-            _connection = new SqlConnection(connectionString);
+            _connection = new SqlConnection(connectionString.ToString());
+            _state = ConnectorState.Constructed;
         }
 
-        public void StartImageInsertion()
+        public void SetupConnector()
         {
+            // TODO
+            if (ConnectorState.Constructed != _state)
+                throw new System.InvalidOperationException("Cannot invoke this operation when Connector instance is not in the 'Constructed' state");
+
             _connection.Open();
             _dicomMappingTable = new DicomMappingTable(_connection);
 
@@ -87,10 +92,16 @@ namespace ClearCanvas.Dicom.DataStore
             // TODO:
             if (_dataSet.Tables.Count < 4)
                 throw new System.Exception("Too few tables");
+
+            _state = ConnectorState.ReadyForOperations;
         }
 
-        public void StopImageInsertion()
+        public void TeardownConnector()
         {
+            // TODO
+            if (ConnectorState.ReadyForOperations != _state)
+                throw new System.InvalidOperationException("Cannot invoke this operation while the Connector instance is not in the 'ReadyForOperations' state");
+
             _connection.Close();
             _connection.Dispose();
             _dataSet.Dispose();
@@ -98,10 +109,15 @@ namespace ClearCanvas.Dicom.DataStore
             _seriesAdapter.Dispose();
             _studyAdapter.Dispose();
             _patientAdapter.Dispose();
+            _state = ConnectorState.CeasedOperations;
         }
 
         public void InsertSopInstance(String fileName)
         {
+            // TODO
+            if (ConnectorState.ReadyForOperations != _state)
+                throw new System.InvalidOperationException("Cannot invoke this operation while the Connector instance is not in the 'ReadyForOperations' state");
+
             DcmFileFormat file = new DcmFileFormat();
             OFCondition condition = file.loadFile(fileName);
             if (!condition.good())
@@ -121,7 +137,9 @@ namespace ClearCanvas.Dicom.DataStore
             GC.KeepAlive(file);
         }
 
-        public void InsertSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, params String[] additionalColumnValues)
+        #region Protected Members
+
+        protected void InsertSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, params String[] additionalColumnValues)
         {
             // check assumptions
             // TODO
@@ -352,6 +370,30 @@ namespace ClearCanvas.Dicom.DataStore
             return arrayString;
         }
 
+#endregion
+
+        #region Private Members
+
+        /// <summary>
+        /// Encapsulates the states that this type instance can be in
+        /// Certain operations are not valid when the instance is in a given state
+        /// S0: Unconstructed
+        /// S1: Constructed
+        /// S2: ReadyForOperations
+        /// S3: CeasedOperations
+        /// Instance construction: S0->S1
+        /// SetupConnector(): S1->S2
+        /// TeardownConnector(): S2->S3
+        /// Once the instance is in S3, no other operation is valid
+        /// </summary>
+        private enum ConnectorState
+        {
+            Unconstructed,
+            Constructed,
+            ReadyForOperations,
+            CeasedOperations
+        }
+
         private SqlConnection _connection;
         private DataSet _dataSet;
         private SqlDataAdapter _sopInstanceAdapter;
@@ -360,5 +402,8 @@ namespace ClearCanvas.Dicom.DataStore
         private SqlDataAdapter _patientAdapter;
         private DicomMappingTable _dicomMappingTable;
         private readonly Int32 _unavailableForeignKey = -1;
+        private ConnectorState _state = ConnectorState.Unconstructed;
+
+        #endregion
     }
 }
