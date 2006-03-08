@@ -1,5 +1,5 @@
 
-namespace RebuildDatabase
+namespace ClearCanvas.Utilities.RebuildDatabase
 {
     using System;
     using System.Collections.Generic;

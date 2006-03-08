@@ -4,7 +4,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
-using ClearCanvas.Dicom.Data;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.Dicom.Tests

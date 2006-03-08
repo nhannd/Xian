@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 
-namespace RebuildDatabase
+namespace ClearCanvas.Utilities.RebuildDatabase
 {
     using System.Drawing;
     using System.Text;

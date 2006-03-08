@@ -8,7 +8,6 @@ namespace ClearCanvas.Dicom.Tests
     using System.Text;
     using ClearCanvas.Dicom.Network;
     using NUnit.Framework;
-    using ClearCanvas.Dicom.Exceptions;
     using ClearCanvas.Dicom;
 
     [TestFixture]

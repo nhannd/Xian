@@ -1,4 +1,4 @@
-namespace RebuildDatabase.Properties {
+namespace ClearCanvas.Utilities.RebuildDatabase.Properties {
     
     
     // This class allows you to handle specific events on the settings class:

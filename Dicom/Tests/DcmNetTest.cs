@@ -8,8 +8,7 @@ namespace ClearCanvas.Dicom.Tests
     using System.Text;
     using ClearCanvas.Dicom.Network;
     using NUnit.Framework;
-    using ClearCanvas.Dicom.Exceptions;
-    using ClearCanvas.Dicom.DataStore;
+    using ClearCanvas.Dicom;
 
     [TestFixture]
     public class DcmNetTest
@@ -218,11 +217,6 @@ namespace ClearCanvas.Dicom.Tests
             Console.WriteLine("Beg of SopInstanceResultReceivedEventHandler-------------");
             Console.WriteLine("       File name of SOP: {0}", args.SopFileName);
             Console.WriteLine("End of SopInstanceResultReceivedEventHandler-------------");
-
-            DatabaseConnector connector = new DatabaseConnector(new ConnectionString("Data Source=CLINTONLAPTOP\\SQLEXPRESS;Initial Catalog=ripp_version5;User ID=sa;Password=root"));
-            connector.SetupConnector();
-            connector.InsertSopInstance(args.SopFileName);
-            connector.TeardownConnector();
         }
 
         public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)

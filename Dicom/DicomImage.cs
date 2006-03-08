@@ -1,10 +1,10 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
-using ClearCanvas.Dicom.Data;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
 
-namespace ClearCanvas.Dicom.Data
+namespace ClearCanvas.Dicom
 {
 	public abstract class DicomImage
 	{

@@ -1,4 +1,4 @@
-namespace RebuildDatabase
+namespace ClearCanvas.Utilities.RebuildDatabase
 {
     public partial class RebuildDatabaseForm
     {

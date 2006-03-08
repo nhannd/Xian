@@ -1,10 +1,10 @@
-namespace RebuildDatabase
+namespace ClearCanvas.Utilities.RebuildDatabase
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.IO;
-    using ClearCanvas.Dicom.DataStore;
+    using ClearCanvas.DataStore;
 
     public class DatabaseRebuilder
     {
@@ -47,8 +47,8 @@ namespace RebuildDatabase
 
         public void StartRebuild()
         {
-            DatabaseConnector connector = new DatabaseConnector(_connectionString);
-            connector.StartImageInsertion();
+            DatabaseConnector connector = new DatabaseConnector(new ConnectionString(_connectionString));
+            connector.SetupConnector();
             foreach (String file in _fileList)
             {
                 OnImageInsertCompletingEvent(new ImageInsertCompletingEventArgs(file));
@@ -56,7 +56,7 @@ namespace RebuildDatabase
                 OnImageInsertCompletedEvent(new ImageInsertCompletedEventArgs(file));
 
             }
-            connector.StopImageInsertion();
+            connector.TeardownConnector();
             OnDatabaseRebuildCompletedEvent(new DatabaseRebuildCompletedEventArgs());
         }
 

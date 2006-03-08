@@ -9,10 +9,8 @@ namespace ClearCanvas.Dicom.Network
     using System.Text;
     using ClearCanvas.Common;
     using ClearCanvas.Dicom.OffisWrapper;
-    using ClearCanvas.Dicom.Exceptions;
-    using ClearCanvas.Dicom.Data;
+    using ClearCanvas.Dicom;
     using MySR = ClearCanvas.Dicom.SR;
-    using ClearCanvas.Dicom.DataStore;
 
     /// <summary>
     /// Main entry point for DICOM networking functionality. Allows the client to 

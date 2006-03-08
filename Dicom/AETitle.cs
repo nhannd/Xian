@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom
 {
     /// <summary>
     /// Encapsulation of the AE Title DICOM tag.

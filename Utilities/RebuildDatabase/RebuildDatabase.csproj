@@ -7,8 +7,8 @@
     <ProjectGuid>{12DB8195-F96E-471E-B5FC-73C098CAF8C7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RebuildDatabase</RootNamespace>
-    <AssemblyName>RebuildDatabase</AssemblyName>
+    <RootNamespace>ClearCanvas.Utilities.RebuildDatabase</RootNamespace>
+    <AssemblyName>ClearCanvas.Utilities.RebuildDatabase</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +31,10 @@
     <Reference Include="ClearCanvas.Common, Version=1.0.2216.2275, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.DataStore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DataStore\bin\Debug\ClearCanvas.DataStore.dll</HintPath>
     </Reference>
     <Reference Include="ClearCanvas.Dicom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -68,6 +72,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

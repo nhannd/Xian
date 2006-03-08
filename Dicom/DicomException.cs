@@ -1,5 +1,5 @@
 
-namespace ClearCanvas.Dicom.Exceptions
+namespace ClearCanvas.Dicom
 {
     using System;
     using System.Collections.Generic;

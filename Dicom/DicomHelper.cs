@@ -1,7 +1,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.Dicom.Exceptions;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom
 {

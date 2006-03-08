@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace RebuildDatabase
+namespace ClearCanvas.Utilities.RebuildDatabase
 {
     static class Program
     {
