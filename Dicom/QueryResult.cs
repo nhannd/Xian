@@ -25,7 +25,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public PatientId PatientId
         {
-            get { return new PatientId(_internalDictionary[DicomTag.PatientID]); }
+            get { return new PatientId(_internalDictionary[DicomTag.PatientId]); }
         }
 
         /// <summary>
@@ -90,12 +90,12 @@ namespace ClearCanvas.Dicom
             set { (this as IDictionary<DicomTag, string>)[key] = value; }
         }
 
-        internal void Add(DicomTag key, string value)
+        public void Add(DicomTag key, string value)
         {
             (this as IDictionary<DicomTag, string>).Add(key, value);
         }
 
-        internal void Clear()
+        public void Clear()
         {
             (this as ICollection<KeyValuePair<DicomTag, string>>).Clear();
         }
@@ -216,5 +216,10 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+    }
+
+    public class QueryKey : QueryResult
+    {
+
     }
 }

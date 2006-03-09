@@ -92,7 +92,7 @@ namespace ClearCanvas.Controls
 			this._studySearchForm.Location = new System.Drawing.Point(0, 27);
 			this._studySearchForm.Margin = new System.Windows.Forms.Padding(0);
 			this._studySearchForm.Name = "_studySearchForm";
-			this._studySearchForm.PatientID = "";
+			this._studySearchForm.PatientId = "";
 			this._studySearchForm.Size = new System.Drawing.Size(613, 188);
 			this._studySearchForm.StudyDescription = "";
 			this._studySearchForm.TabIndex = 0;

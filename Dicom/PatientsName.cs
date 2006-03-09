@@ -24,6 +24,22 @@ namespace ClearCanvas.Dicom
                 throw new System.ArgumentOutOfRangeException("patientsName", SR.ExceptionGeneralPatientsNameZeroLength);
 
             _patientsName = patientsName;
+
+            // parse out the first and last names
+            string[] names = _patientsName.Split('^');
+
+            _lastName = (names.GetUpperBound(0) >= 0) ? (names[0]) : "";
+            _firstName = (names.GetUpperBound(0) >= 1) ? (names[1]) : "";
+        }
+
+        public String LastName
+        {
+            get { return _lastName; }
+        }
+
+        public String FirstName
+        {
+            get { return _firstName; }
         }
 
         /// <summary>
@@ -36,5 +52,7 @@ namespace ClearCanvas.Dicom
         }
 
         private string _patientsName;
+        private string _lastName;
+        private string _firstName;
     }
 }

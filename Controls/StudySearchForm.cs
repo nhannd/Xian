@@ -15,7 +15,7 @@ namespace ClearCanvas.Controls
 			InitializeComponent();
 		}
 
-		public string PatientID
+		public string PatientId
 		{
 			get { return _patientID.Text; }
 			set { _patientID.Text = value; }

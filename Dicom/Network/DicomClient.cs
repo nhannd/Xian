@@ -274,7 +274,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query keys
-            cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientID), patientId.ToString());
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientId), patientId.ToString());
             cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientsName), patientsName.ToString());
             cFindDataset.putAndInsertString(new DcmTag(Dcm.AccessionNumber), accession.ToString());
 
@@ -466,7 +466,7 @@ namespace ClearCanvas.Dicom.Network
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyTime), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.AccessionNumber), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientsName), "");
-                    cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.PatientId), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyDescription), "");

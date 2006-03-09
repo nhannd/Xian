@@ -227,7 +227,7 @@ namespace ClearCanvas.Dicom
 		public static DcmTagKey ReferencedGrayscalePresentationStateSequence { get { return new DcmTagKey(0x0008, 0x9237); } }
 		public static DcmTagKey PatientGroupLength                   { get { return new DcmTagKey(0x0010, 0x0000); } }
 		public static DcmTagKey PatientsName                         { get { return new DcmTagKey(0x0010, 0x0010); } }
-		public static DcmTagKey PatientID                            { get { return new DcmTagKey(0x0010, 0x0020); } }
+		public static DcmTagKey PatientId                            { get { return new DcmTagKey(0x0010, 0x0020); } }
 		public static DcmTagKey IssuerOfPatientID                    { get { return new DcmTagKey(0x0010, 0x0021); } }
 		public static DcmTagKey PatientsBirthDate                    { get { return new DcmTagKey(0x0010, 0x0030); } }
 		public static DcmTagKey PatientsBirthTime                    { get { return new DcmTagKey(0x0010, 0x0032); } }

@@ -22,10 +22,10 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Constructor with Group and Element represented as a 32-bit integer.
         /// </summary>
-        /// <param name="id">The 32-bit representation of the Group and Element.</param>
-        public DicomTag(UInt32 id)
+        /// <param name="ID">The 32-bit representation of the Group and Element.</param>
+        public DicomTag(UInt32 ID)
         {
-            _id = id;
+            _id = ID;
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom
             // TODO: use the DICOM data dictionary to get a string description of the tag
             // instead of just providing the group and element numbers
             StringBuilder buffer = new StringBuilder();
-            buffer.AppendFormat("(0x{0:x4},0x{1:x4})", Group, Element);
+            buffer.AppendFormat("({0:x4},{1:x4})", Group, Element);
             return buffer.ToString();
         }
 
@@ -305,7 +305,7 @@ namespace ClearCanvas.Dicom
         public static DicomTag ReferencedGrayscalePresentationStateSequence { get { return new DicomTag(0x0008, 0x9237); } }
         public static DicomTag PatientGroupLength { get { return new DicomTag(0x0010, 0x0000); } }
         public static DicomTag PatientsName { get { return new DicomTag(0x0010, 0x0010); } }
-        public static DicomTag PatientID { get { return new DicomTag(0x0010, 0x0020); } }
+        public static DicomTag PatientId { get { return new DicomTag(0x0010, 0x0020); } }
         public static DicomTag IssuerOfPatientID { get { return new DicomTag(0x0010, 0x0021); } }
         public static DicomTag PatientsBirthDate { get { return new DicomTag(0x0010, 0x0030); } }
         public static DicomTag PatientsBirthTime { get { return new DicomTag(0x0010, 0x0032); } }
