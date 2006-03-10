@@ -47,6 +47,13 @@
 		<MakeDir Directories="$(SwigOutputCsharpDir)" Condition="!Exists('$(SwigOutputCsharpDir')" />
 		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('$(SwigOutputCsharpDir)')" />
 		<Exec Command="$(SwigCompiler) $(SwigParameters) -outdir $(SwigOutputCsharpDir) -o @(SwigCppOutputFile) -namespace $(SwigOutputNamespace) @(SwigInterfaceFile)" />
+		<CreateItem
+			Include="$(SwigOutputCsharpDir)\*.cs"
+			Condition="Exists('$(SwigOutputCsharpDir)')">
+		   <Output
+			   TaskParameter="Include"
+			   ItemName="AllSwigOutputFiles"/>
+		</CreateItem>
 	</Target>
 	<Target Name="BuildSwigCppWrappers" DependsOnTargets="GenerateSwigWrappers"
 		Inputs="@(SwigCppOutputFile)"
@@ -57,7 +64,7 @@
 		<Exec Command="$(CppLinker) $(CppLinkerParameters) $(CppLinkerDebugParameters) /OUT:$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).dll') $(CppLinkerObjectFiles) $(CppLinkerZlibFile) $(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).obj')" />
 	</Target>
 	<Target Name="BuildSwigCsharpWrappers" DependsOnTargets="GenerateSwigWrappers"
-		Inputs="@(AllswigOutputFiles)"
+		Inputs="@(AllSwigOutputFiles)"
 		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll">
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
