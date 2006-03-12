@@ -64,7 +64,7 @@ namespace ClearCanvas.Common
 			}
 			catch (Exception e)
 			{
-				Platform.HandleException(e, "LogExceptionPolicy");
+				Platform.HandleException(e);
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace ClearCanvas.Common
 			}
 			catch (Exception e)
 			{
-				Platform.HandleException(e, "LogExceptionPolicy");
+				Platform.HandleException(e);
 			}
 
 			if (recursive)

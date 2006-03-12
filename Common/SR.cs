@@ -95,6 +95,24 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} cannot be empty..
+        /// </summary>
+        public static string ExceptionEmptyString {
+            get {
+                return ResourceManager.GetString("ExceptionEmptyString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expected type {0}..
+        /// </summary>
+        public static string ExceptionExpectedType {
+            get {
+                return ResourceManager.GetString("ExceptionExpectedType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {3}[{0}] is invalid.  Index must be &gt;= {1} and &lt;= {2}..
         /// </summary>
         public static string ExceptionIndexOutOfRange {
@@ -199,6 +217,15 @@ namespace ClearCanvas.Common {
         public static string ExceptionPluginWarning {
             get {
                 return ResourceManager.GetString("ExceptionPluginWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception thrown.
+        /// </summary>
+        public static string ExceptionThrown {
+            get {
+                return ResourceManager.GetString("ExceptionThrown", resourceCulture);
             }
         }
         

@@ -177,4 +177,13 @@
   <data name="LoadingPlugin" xml:space="preserve">
     <value>Loading plugin {0}</value>
   </data>
+  <data name="ExceptionEmptyString" xml:space="preserve">
+    <value>{0} cannot be empty.</value>
+  </data>
+  <data name="ExceptionExpectedType" xml:space="preserve">
+    <value>Expected type {0}.</value>
+  </data>
+  <data name="ExceptionThrown" xml:space="preserve">
+    <value>Exception thrown</value>
+  </data>
 </root>

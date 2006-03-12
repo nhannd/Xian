@@ -47,7 +47,7 @@ namespace ClearCanvas.Common
 				}
 				catch (Exception e)
 				{
-					bool rethrow = Platform.HandleException(e, "LogExceptionPolicy");
+					bool rethrow = Platform.HandleException(e);
 
 					if (rethrow)
 						throw;

@@ -2,38 +2,40 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+using log4net;
+using log4net.spi;
+using log4net.Config;
 
-#if !MONO
-using Microsoft.Practices.EnterpriseLibrary.Common;
-using Microsoft.Practices.EnterpriseLibrary.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-#endif
+// Configure log4net using the .log4net file
+[assembly: log4net.Config.DOMConfigurator(ConfigFile = "Logging.config", Watch = true)]
+// This will cause log4net to look for a configuration file
+// called TestApp.exe.log4net in the application base
+// directory (i.e. the directory containing TestApp.exe)
+// The config file will be watched for changes.
 
 namespace ClearCanvas.Common
 {
-	public enum LogCategory
+	public enum LogLevel
 	{
-		Trace,
-		General,
-		Warning,
+		Debug,
+		Info,
+		Warn,
+		Error,
 		Fatal
 	}
 
 	/// <summary>
 	/// A collection of useful utility functions.
 	/// </summary>
-	public class Platform
+	public static class Platform
 	{
-		// Private attributes
-		private static string m_InstallDir = null;
-		private static string m_PluginDir = "plugins";
-		private static string m_StudyDir = "studies";
-		private static string m_LogDir = "logs";
-		private static volatile PluginManager m_PluginManager;
-		private static object syncRoot = new Object();
-
-		// Properties
+		private static string _installDir = null;
+		private static string _pluginDir = "plugins";
+		private static string _studyDir = "studies";
+		private static string _logDir = "logs";
+		private static volatile PluginManager _pluginManager;
+		private static object _syncRoot = new Object();
+		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
@@ -43,16 +45,16 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-				if (m_PluginManager == null)
+				if (_pluginManager == null)
 				{
-					lock (syncRoot)
+					lock (_syncRoot)
 					{
-						if (m_PluginManager == null)
-							m_PluginManager = new PluginManager(PluginDir);
+						if (_pluginManager == null)
+							_pluginManager = new PluginManager(PluginDir);
 					}
 				}
 
-				return m_PluginManager;
+				return _pluginManager;
 			}
 		}
 		
@@ -87,14 +89,14 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-				if (m_InstallDir == null)
-					m_InstallDir = Directory.GetCurrentDirectory();
+				if (_installDir == null)
+					_installDir = Directory.GetCurrentDirectory();
 
-				return m_InstallDir;
+				return _installDir;
 			}
 			set
 			{
-				m_InstallDir = value;
+				_installDir = value;
 			}
 		}
 
@@ -106,7 +108,7 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, m_PluginDir);
+                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _pluginDir);
 			}
 		}
 
@@ -118,7 +120,7 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, m_StudyDir);
+                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _studyDir);
 			}
 		}
 
@@ -130,7 +132,7 @@ namespace ClearCanvas.Common
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, m_LogDir);
+                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _logDir);
 			}
 		}
 
@@ -156,74 +158,41 @@ namespace ClearCanvas.Common
 		/// <param name="message"></param>
 		public static void Log(object message)
 		{
-			LogHelper(message, null);
+			Log(message, LogLevel.Info);
 		}
 
-		/// <summary>
-		/// Writes a message to
-		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="category"></param>
-		public static void Log(object message, string category)
+		public static void Log(Exception ex)
 		{
-			LogHelper(message, category);
+			Log(SR.ExceptionThrown, LogLevel.Error);
 		}
 
-		public static void Log(object message, LogCategory category)
+		public static void Log(object message, LogLevel category)
 		{
-			string str;
-
 			switch (category)
 			{
-				case LogCategory.Trace:
-					str = "Trace";
+				case LogLevel.Debug:
+					_log.Debug(message);
 					break;
-				case LogCategory.General:
-					str = "General";
+				case LogLevel.Info:
+					_log.Info(message);
 					break;
-				case LogCategory.Warning:
-					str = "Warning";
+				case LogLevel.Warn:
+					_log.Warn(message);
 					break;
-				default:
-					str = "Fatal";
+				case LogLevel.Error:
+					_log.Error(message);
+					break;
+				case LogLevel.Fatal:
+					_log.Fatal(message);
 					break;
 			}
-			
-			LogHelper(message, str);
 		}
-		
-		private static void LogHelper(object message, string category)
-		{
-#if MONO
-			if(category == null)
-			{
-				Console.WriteLine(message);
-			}
-			else
-			{
-				Console.WriteLine(string.Format("{0}: {1}", category, message));
-			}
-#else
-			if(category == null)
-			{
-				Logger.Write(message);
-				
-			}
-			else
-			{
-				Logger.Write(message, category);
-				
-			}
-#endif
-		}
-		
-		
 
 		/// <summary>
 		/// Handles a caught exception.
 		/// </summary>
 		/// <param name="ex">The caught exception.</param>
-		/// <param name="policy">The name of the policy to use when handling the exception.</param>
+		/// 
 		/// <returns><b>true</b> if the exception is to be rethrown, <b>false</b> if not</returns>
 		/// <remarks>Used in a catch block, this utility method allows an exception
 		/// to be handled in a way defined by an XML defined exception policy.  This way, changes
@@ -232,14 +201,10 @@ namespace ClearCanvas.Common
 		/// in the <c>exceptionhandlingconfiguration.config</c> file of the application.  This method
 		/// is just a wrapper around the Enterprise Library's HandleException method.
 		/// </remarks>
-		public static bool HandleException(Exception ex, string policy)
+		public static bool HandleException(Exception ex)
 		{
-#if MONO
 			Log(ex);
 			return true;
-#else
-			return ExceptionPolicy.HandleException(ex, policy);
-#endif
 		}
 
 		/// <summary>
@@ -252,10 +217,11 @@ namespace ClearCanvas.Common
 		/// <exception cref="ArgumentException"><paramref name="variable"/> is zero length.</exception>
 		public static void CheckForEmptyString(string variable, string variableName)
 		{
-#if MONO
-#else
-			ArgumentValidation.CheckForEmptyString(variable, variableName);
-#endif
+			CheckForNullReference(variable, variableName);
+			CheckForNullReference(variableName, "variableName");
+
+			if (variable.Length == 0)
+				throw new ArgumentException(String.Format(SR.ExceptionEmptyString, variableName));
 		}
 
 		/// <summary>
@@ -269,10 +235,11 @@ namespace ClearCanvas.Common
 		/// is <b>null</b>.</exception>
 		public static void CheckForNullReference(object variable, string variableName)
 		{
-#if MONO
-#else
-			ArgumentValidation.CheckForNullReference(variable, variableName);
-#endif
+			if (variableName == null)
+				throw new ArgumentNullException("variableName");
+
+			if (null == variable)
+				throw new ArgumentNullException(variableName);
 		}
 
 		/// <summary>
@@ -285,10 +252,11 @@ namespace ClearCanvas.Common
 		/// <exception cref="ArgumentException"><paramref name="type"/> is not the expected type.</exception>
 		public static void CheckExpectedType(object variable, Type type)
 		{
-#if MONO
-#else
-			ArgumentValidation.CheckExpectedType(variable, type);
-#endif
+			CheckForNullReference(variable, "variable");
+			CheckForNullReference(type, "type");
+
+			if (!type.IsAssignableFrom(variable.GetType()))
+				throw new ArgumentException(String.Format(SR.ExceptionExpectedType, type.FullName));
 		}
 
 		/// <summary>

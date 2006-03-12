@@ -61,134 +61,114 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mono|AnyCPU' ">
-        <DebugSymbols>true</DebugSymbols>
-        <OutputPath>bin\Debug Mono\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;MONO;UNIT_TESTS</DefineConstants>
-        <BaseAddress>285212672</BaseAddress>
-        <DocumentationFile>bin\Debug Mono\ClearCanvas.Common.XML</DocumentationFile>
-        <DebugType>full</DebugType>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <ErrorReport>prompt</ErrorReport>
-        <NoWarn>1591, 0419, 1574, 1587</NoWarn>
-        <Optimize>false</Optimize>
-        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Mono|AnyCPU' ">
-        <OutputPath>bin\Release Mono\</OutputPath>
-        <DefineConstants>TRACE;MONO</DefineConstants>
-        <BaseAddress>285212672</BaseAddress>
-        <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
-        <Optimize>true</Optimize>
-        <DebugType/>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <ErrorReport>prompt</ErrorReport>
-    </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
-            <Name>Microsoft.Practices.EnterpriseLibrary.Common</Name>
-            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration">
-            <Name>Microsoft.Practices.EnterpriseLibrary.Configuration</Name>
-            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Configuration.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling">
-            <Name>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling</Name>
-            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging">
-            <Name>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging</Name>
-            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging">
-            <Name>Microsoft.Practices.EnterpriseLibrary.Logging</Name>
-            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink">
-            <Name>Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink</Name>
-            <HintPath>refs\Microsoft.Practices.EnterpriseLibrary.Logging.RollingFlatFileSink.dll</HintPath>
-        </Reference>
-        <Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-            <SpecificVersion>False</SpecificVersion>
-            <HintPath>..\..\..\..\..\..\..\..\Program Files\NUnit 2.2.3\bin\nunit.framework.dll</HintPath>
-        </Reference>
-        <Reference Include="System">
-            <Name>System</Name>
-        </Reference>
-        <Reference Include="System.Data">
-            <Name>System.Data</Name>
-        </Reference>
-        <Reference Include="System.Drawing"/>
-        <Reference Include="System.Xml">
-            <Name>System.XML</Name>
-        </Reference>
-    </ItemGroup>
-    <ItemGroup/>
-    <ItemGroup>
-        <Compile Include="AssemblyInfo.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Attributes.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Counter.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="DefaultClock.cs"/>
-        <Compile Include="EventsHelper.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Exceptions.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="FileProcessor.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="FloatComparer.cs"/>
-        <Compile Include="IExtensionPoint.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="IPerformanceClock.cs"/>
-        <Compile Include="Platform.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Plugin.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="PluginFinder.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="PluginList.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="PluginLoader.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="PluginManager.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="PluginProgressEventArgs.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="SR.cs"/>
-        <EmbeddedResource Include="SR.resx"/>
-        <Content Include="SR.txt"/>
-        <Compile Include="Tests\FileProcessorTest.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Tests\PluginManagerTest.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Tests\PluginSetupTeardown.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Win32Clock.cs"/>
-    </ItemGroup>
-    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets"/>
-    <Import Project="ClearCanvas.Strings.targets"/>
-    <PropertyGroup>
-        <PreBuildEvent/>
-        <PostBuildEvent/>
-    </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mono|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug Mono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO;UNIT_TESTS</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>bin\Debug Mono\ClearCanvas.Common.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <Optimize>false</Optimize>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Mono|AnyCPU' ">
+    <OutputPath>bin\Release Mono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>ClearCanvas.Platform.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType />
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.0.30714, Culture=neutral, PublicKeyToken=b32731d11ce58905">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>refs\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\NUnit 2.2.3\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Counter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DefaultClock.cs" />
+    <Compile Include="EventsHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Exceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileProcessor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FloatComparer.cs" />
+    <Compile Include="IExtensionPoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPerformanceClock.cs" />
+    <Compile Include="Platform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Plugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PluginFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PluginList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PluginLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PluginManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PluginProgressEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SR.cs" />
+    <EmbeddedResource Include="SR.resx" />
+    <None Include="SR.txt" />
+    <Compile Include="Tests\FileProcessorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\PluginManagerTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\PluginSetupTeardown.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32Clock.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="ClearCanvas.Strings.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+    <PostBuildEvent />
+  </PropertyGroup>
 </Project>
