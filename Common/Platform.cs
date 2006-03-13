@@ -270,10 +270,10 @@ namespace ClearCanvas.Common
 		/// <example>
 		/// <code>
 		/// [C#]
-		/// layer = new OverlayLayer();
-		/// OverlayLayer overlay = layer as OverlayLayer;
+		/// layer = new GraphicLayer();
+		/// GraphicLayer graphicLayer = layer as GraphicLayer;
 		/// // No exception thrown
-		/// Platform.CheckForInvalidCast(overlay, "layer", "OverlayLayer");
+		/// Platform.CheckForInvalidCast(graphicLayer, "layer", "GraphicLayer");
 		///
 		/// ImageLayer image = layer as ImageLayer;
 		/// // InvalidCastException thrown
