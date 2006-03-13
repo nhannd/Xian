@@ -112,6 +112,7 @@
     <Compile Include="Attributes.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CollectionEventArgs.cs" />
     <Compile Include="Counter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -129,7 +130,10 @@
     <Compile Include="IExtensionPoint.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IObservableList.cs" />
     <Compile Include="IPerformanceClock.cs" />
+    <Compile Include="ObservableDictionary.cs" />
+    <Compile Include="ObservableList.cs" />
     <Compile Include="Platform.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -152,7 +156,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SR.cs" />
-    <EmbeddedResource Include="SR.resx" />
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="SR.txt" />
     <Compile Include="Tests\FileProcessorTest.cs">
       <SubType>Code</SubType>
