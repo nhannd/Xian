@@ -37,7 +37,7 @@ namespace ClearCanvas.Common.Tests
 			pluginFileList.Add(m_ClearCanvasViewerCorePath);
 			pluginFileList.Add(m_ClearCanvasViewerUIPath);
 
-			Platform.PluginManager.LoadPlugins(pluginFileList);
+//TODO			Platform.PluginManager.LoadPlugins(pluginFileList);
 		}
 
 		public static void PluginTeardown()

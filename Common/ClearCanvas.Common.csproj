@@ -123,15 +123,23 @@
     <Compile Include="Exceptions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Extension.cs" />
+    <Compile Include="ExtensionFilter.cs" />
+    <Compile Include="ExtensionLoader.cs" />
+    <Compile Include="ExtensionOfAttribute.cs" />
+    <Compile Include="ExtensionPoint.cs" />
+    <Compile Include="ExtensionPointAttribute.cs" />
     <Compile Include="FileProcessor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FloatComparer.cs" />
-    <Compile Include="IExtensionPoint.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="GuiToolkitAttribute.cs" />
+    <Compile Include="GuiToolkitID.cs" />
+    <Compile Include="IApplicationRoot.cs" />
     <Compile Include="IObservableList.cs" />
     <Compile Include="IPerformanceClock.cs" />
+    <Compile Include="MatchAttributes.cs" />
+    <Compile Include="MatchTypes.cs" />
     <Compile Include="ObservableDictionary.cs" />
     <Compile Include="ObservableList.cs" />
     <Compile Include="Platform.cs">
@@ -140,6 +148,7 @@
     <Compile Include="Plugin.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PluginAttribute.cs" />
     <Compile Include="PluginFinder.cs">
       <SubType>Code</SubType>
     </Compile>

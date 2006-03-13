@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Common
 {
@@ -12,14 +13,16 @@ namespace ClearCanvas.Common
 	internal class PluginLoader 
 	{
 		// Private attributes
-		private PluginList m_PluginList = new PluginList();
-		private bool m_FoundModelPlugin = false;
+        private List<Assembly> _pluginList = new List<Assembly>();
 
 		// Constructor
 		public PluginLoader() {	}
 
 		// Properties
-		public PluginList PluginList { get { return m_PluginList; } }
+        public Assembly[] PluginAssemblies
+        {
+            get { return _pluginList.ToArray(); }
+        }
 
 		// Public methods
 		public void LoadPlugin(string path)
@@ -30,15 +33,7 @@ namespace ClearCanvas.Common
 			try
 			{
 				Assembly asm = Assembly.LoadFrom(path);
-				Type pluginType = GetPluginType(asm);
-
-				if (pluginType == null)
-					throw new PluginException(String.Format(SR.ExceptionNotAPlugin, path));
-
-				Plugin plugin = Activator.CreateInstance(pluginType) as Plugin;
-
-				ValidatePlugin(plugin);
-				m_PluginList.AddPlugin(plugin);
+                _pluginList.Add(asm);
 
 				Platform.Log(String.Format(SR.LogPluginLoaded, path));
 			}
@@ -69,24 +64,6 @@ namespace ClearCanvas.Common
 			}
 
 			return null;
-		}
-
-		private void ValidatePlugin(Plugin plugin)
-		{
-			Platform.CheckForNullReference(plugin, "path");
-
-			bool exists = m_PluginList.Contains(plugin);
-
-			if (exists)
-				throw new PluginException(String.Format(SR.ExceptionDuplicatePluginFound, plugin.Name));
-
-			if (plugin.Type == Plugin.PluginType.Model)
-			{
-				if (m_FoundModelPlugin)
-					throw new PluginException(SR.ExceptionMoreThanOneModelPluginFound);
-				else
-					m_FoundModelPlugin = true;
-			}
 		}
 	}
 }

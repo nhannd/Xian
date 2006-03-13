@@ -36,6 +36,7 @@ namespace ClearCanvas.Common
 		private static volatile PluginManager _pluginManager;
 		private static object _syncRoot = new Object();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
+        private static IApplicationRoot _applicationRoot;
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
@@ -57,7 +58,7 @@ namespace ClearCanvas.Common
 				return _pluginManager;
 			}
 		}
-		
+
 		public static bool IsWin32Platform
 		{
 			get
@@ -144,13 +145,20 @@ namespace ClearCanvas.Common
 		/// <remarks>
 		/// A ClearCanvas based application is started by calling this convenience method from
 		/// a bootstrap executable of some kind.  Calling this method results in the loading
-		/// of all plugins and starting of the model and view plugins (in that order).
+		/// of all plugins and creation of an IApplicationRoot extension.
 		/// </remarks>
 		public static void StartApp()
 		{
-			PluginManager.StartModelPlugin();
-			PluginManager.StartViewPlugin();
-		}
+            try
+            {
+                _applicationRoot = (IApplicationRoot)Platform.CreateExtension(typeof(IApplicationRoot));
+                _applicationRoot.RunApplication();
+            }
+            catch (Exception e)
+            {
+                HandleException(e);
+            }
+        }
 
 		/// <summary>
 		/// Writes a message to the default log.
@@ -429,5 +437,63 @@ namespace ClearCanvas.Common
 			if (variable == null)
 				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
+
+        /// <summary>
+        /// Creates an instance of the extension of the specified type, searching across all plugins
+        /// for extensions.  If more than one extension is found, only the first one is created.  If no
+        /// extensions are found, a <see cref="NotSupportedException"/> is thrown.
+        /// </summary>
+        /// <param name="extensionOfType">The type of the extension point interface</param>
+        /// <returns>An instance of the requested extension.</returns>
+        public static object CreateExtension(Type extensionOfType)
+        {
+            CheckForNullReference(extensionOfType, "extensionOfType");
+            return ExtensionLoader.CreateExtension(PluginManager.Extensions, extensionOfType, null);
+        }
+
+        /// <summary>
+        /// Creates an instance of the extension of the specified type, searching across all plugins
+        /// for extensions.  Only extensions matching the specified filter are considered.
+        /// If more than one extension is found, only the first one is created.  If no
+        /// extensions are found, a <see cref="NotSupportedException"/> is thrown.
+        /// </summary>
+        /// <param name="extensionOfType">The type of the extension point interface</param>
+        /// <param name="filter">The filter provides additional criteria to select extensions</param>
+        /// <returns>An instance of the requested extension.</returns>
+        public static object CreateExtension(Type extensionOfType, ExtensionFilter filter)
+        {
+            CheckForNullReference(extensionOfType, "extensionOfType");
+            CheckForNullReference(filter, "filter");
+
+            return ExtensionLoader.CreateExtension(PluginManager.Extensions, extensionOfType, filter);
+        }
+
+        /// <summary>
+        /// Creates an instance of each extension of the specified type, searching across all plugins
+        /// for extensions.  If no extensions are found, the returned array is empty.
+        /// </summary>
+        /// <param name="extensionOfType">The type of the extension point interface</param>
+        /// <returns>An array containing one instance of each extension that was created.</returns>
+        public static object[] CreateExtensions(Type extensionOfType)
+        {
+            CheckForNullReference(extensionOfType, "extensionOfType");
+
+            return ExtensionLoader.CreateExtensions(PluginManager.Extensions, extensionOfType, null);
+        }
+
+        /// <summary>
+        /// Creates an instance of each extension of the specified type, searching across all plugins
+        /// for extensions.  If no extensions are found, the returned array is empty.
+        /// </summary>
+        /// <param name="filter">The filter provides additional criteria to select extensions</param>
+        /// <param name="extensionOfType">The type of the extension point interface</param>
+        /// <returns>An array containing one instance of each extension that was created.</returns>
+        public static object[] CreateExtensions(Type extensionOfType, ExtensionFilter filter)
+        {
+            CheckForNullReference(extensionOfType, "extensionOfType");
+            CheckForNullReference(filter, "filter");
+
+            return ExtensionLoader.CreateExtensions(PluginManager.Extensions, extensionOfType, filter);
+        }
 	}
 }

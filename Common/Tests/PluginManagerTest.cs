@@ -69,9 +69,9 @@ namespace ClearCanvas.Common.Tests
 			pluginFileList.Add(m_ClearCanvasViewerCorePath);
 			pluginFileList.Add(m_ClearCanvasViewerUIPath);
 
-			pm.LoadPlugins(pluginFileList);
+//TODO			pm.LoadPlugins(pluginFileList);
 
-			Assert.IsTrue(pm.NumberOfPlugins == 2);
+			Assert.IsTrue(pm.Plugins.Length == 2);
 		}
 
 		[Test]

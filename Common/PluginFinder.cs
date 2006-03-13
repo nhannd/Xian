@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 
@@ -12,13 +12,18 @@ namespace ClearCanvas.Common
 	internal class PluginFinder : MarshalByRefObject
 	{
 		// Private attributes
-		private StringCollection m_PluginFileList = new StringCollection();
+        private List<string> _pluginFiles = new List<string>();
 
 		// Constructor
-		public PluginFinder() { }
+		public PluginFinder()
+        {
+        }
 
 		// Properties
-		public StringCollection PluginFileList { get {	return m_PluginFileList; } }
+        public string[] PluginFiles
+        {
+            get { return _pluginFiles.ToArray(); }
+        }
 
 		// Public methods
 		public void FindPlugin(string path)
@@ -29,10 +34,17 @@ namespace ClearCanvas.Common
 			try
 			{
 				Assembly asm = LoadAssembly(path);
+                Attribute[] attrs = Attribute.GetCustomAttributes(asm);
+                foreach (Attribute attr in attrs)
+                {
+                    if (attr is PluginAttribute)
+                    {
+                        _pluginFiles.Add(path);
 
-				if (IsPlugin(asm))
-					m_PluginFileList.Add(path);
-			}
+                        break;
+                    }
+                }
+            }
 			catch (BadImageFormatException e)
 			{
 				// Encountered an unmanaged DLL in the plugin directory; this is okay
@@ -81,19 +93,6 @@ namespace ClearCanvas.Common
 
             // However, the same effect can be accomplished with this single line of code
             return Assembly.LoadFrom(path);
-		}
-
-		private bool IsPlugin(Assembly asm)
-		{
-			Platform.CheckForNullReference(asm, "asm");
-
-			foreach (Type type in asm.GetExportedTypes())
-			{
-				if (typeof(Plugin).IsAssignableFrom(type))
-					return true;
-			}
-
-			return false;
 		}
 	}
 }
