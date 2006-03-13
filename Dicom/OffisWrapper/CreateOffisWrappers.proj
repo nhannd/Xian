@@ -69,4 +69,10 @@
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
 	</Target>
+	<Target Name="Clean">
+		<Delete Files="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" Condition="Exists('$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll')" />
+		<Delete Files="@(SwigCppLibraryOutputFile)" Condition="Exists('%(SwigCppLibraryOutputFile.Identity)')" />
+		<Delete Files="@(SwigCppOutputFile)" Condition="Exists('%(SwigCppOutputFile.Identity)')" />
+		<Delete Files="@(AllSwigOutputFiles)" Condition="Exists('%(AllSwigOutputFiles.Identity)')" />
+	</Target>
 </Project>
