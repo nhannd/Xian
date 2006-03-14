@@ -5,7 +5,6 @@ namespace ClearCanvas.Dicom.Network
     using System.Data;
     using System.Data.SqlClient;
     using System.Runtime.InteropServices;    
-    using System.Transactions;
     using System.Text;
     using ClearCanvas.Common;
     using ClearCanvas.Dicom.OffisWrapper;
