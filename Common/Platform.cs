@@ -157,6 +157,7 @@ namespace ClearCanvas.Common
             catch (Exception e)
             {
                 HandleException(e);
+                throw e;
             }
         }
 
