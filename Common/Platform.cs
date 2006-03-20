@@ -170,11 +170,6 @@ namespace ClearCanvas.Common
 			Log(message, LogLevel.Info);
 		}
 
-		public static void Log(Exception ex)
-		{
-			Log(SR.ExceptionThrown, LogLevel.Error);
-		}
-
 		public static void Log(object message, LogLevel category)
 		{
 			switch (category)
@@ -193,6 +188,33 @@ namespace ClearCanvas.Common
 					break;
 				case LogLevel.Fatal:
 					_log.Fatal(message);
+					break;
+			}
+		}
+
+		public static void Log(Exception ex)
+		{
+			Log(ex, LogLevel.Error);
+		}
+
+		public static void Log(Exception ex, LogLevel category)
+		{
+			switch (category)
+			{
+				case LogLevel.Debug:
+					_log.Debug(SR.ExceptionThrown, ex);
+					break;
+				case LogLevel.Info:
+					_log.Info(SR.ExceptionThrown, ex);
+					break;
+				case LogLevel.Warn:
+					_log.Warn(SR.ExceptionThrown, ex);
+					break;
+				case LogLevel.Error:
+					_log.Error(SR.ExceptionThrown, ex);
+					break;
+				case LogLevel.Fatal:
+					_log.Fatal(SR.ExceptionThrown, ex);
 					break;
 			}
 		}
