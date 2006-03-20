@@ -10,7 +10,7 @@ namespace ClearCanvas.Common
     /// Describes a plugin, and provides properties for querying the extension points and extensions defined
     /// in the plugin, and methods for creating the extensions.
     /// </summary>
-    public class Plugin
+    public class Plugin : IBrowsable
     {
         /// <summary>
         /// Internal utility method used by the framework to discover the extensions declared in an assembly.
@@ -163,5 +163,24 @@ namespace ClearCanvas.Common
 
             return ExtensionLoader.CreateExtensions(_extensions, extensionOfType, filter);
         }
+
+        #region IBrowsable Members
+
+        public string FormalName
+        {
+            get { return Assembly.FullName; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        public string Description
+        {
+            get { return _description; }
+        }
+
+        #endregion
     }
 }

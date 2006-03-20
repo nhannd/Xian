@@ -12,7 +12,7 @@ namespace ClearCanvas.Common
     /// plugins looking for extensions. An extension is any class within a plugin that is marked
     /// with the <see cref="ExtensionOfAttribute"/> attribute.
     /// </remarks>
-    public class Extension
+    public class Extension : IBrowsable
     {
         private Type _extensionType;
         private Type _extensionPointType;
@@ -44,6 +44,8 @@ namespace ClearCanvas.Common
             get { return _extensionPointType; }
         }
 
+        #region IBrowsable Members
+
         /// <summary>
         /// Friendly name of this extension, if one exists, otherwise null;
         /// </summary>
@@ -59,5 +61,15 @@ namespace ClearCanvas.Common
         {
             get { return _description; }
         }
+
+        /// <summary>
+        /// Formal name of this object, typically the type name or assembly name.  Cannot be null.
+        /// </summary>
+        public string FormalName
+        {
+            get { return _extensionType.FullName; }
+        }
+
+        #endregion
     }
 }

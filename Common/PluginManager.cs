@@ -21,6 +21,7 @@ namespace ClearCanvas.Common
 	{
         private Plugin[] _plugins;
         private Extension[] _extensions;
+        private ExtensionPoint[] _extensionPoints;
 		private string _pluginDir;
 		private event EventHandler<PluginProgressEventArgs> _pluginProgressEvent;
 
@@ -66,6 +67,22 @@ namespace ClearCanvas.Common
             }
         }
 
+        /// <summary>
+        /// The set of extension points defined across all installed plugins.  If plugins have not yet been loaded
+        /// into memory, querying this property will cause them to be loaded.
+        /// </summary>
+        public ExtensionPoint[] ExtensionPoints
+        {
+            get
+            {
+                if (_extensionPoints == null)
+                {
+                    LoadPlugins();
+                }
+                return _extensionPoints;
+            }
+        }
+
 		/// <summary>
 		/// Occurs when a plugin is loaded.
 		/// </summary>
@@ -103,7 +120,14 @@ namespace ClearCanvas.Common
                 extList.AddRange(plugin.Extensions);
             }
             _extensions = extList.ToArray();
-		}
+
+            List<ExtensionPoint> epList = new List<ExtensionPoint>();
+            foreach (Plugin plugin in _plugins)
+            {
+                epList.AddRange(plugin.ExtensionPoints);
+            }
+            _extensionPoints = epList.ToArray();
+        }
 
         private Plugin[] ProcessAssemblies(Assembly[] assemblies)
         {

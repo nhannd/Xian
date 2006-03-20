@@ -136,6 +136,7 @@
     <Compile Include="GuiToolkitAttribute.cs" />
     <Compile Include="GuiToolkitID.cs" />
     <Compile Include="IApplicationRoot.cs" />
+    <Compile Include="IBrowsable.cs" />
     <Compile Include="IObservableList.cs" />
     <Compile Include="IPerformanceClock.cs" />
     <Compile Include="MatchAttributes.cs" />
