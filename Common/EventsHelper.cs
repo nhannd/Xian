@@ -50,7 +50,7 @@ namespace ClearCanvas.Common
 					bool rethrow = Platform.HandleException(e);
 
 					if (rethrow)
-						throw;
+						throw e;
 				}
 			}
 		}
