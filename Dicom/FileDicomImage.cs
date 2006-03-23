@@ -20,21 +20,19 @@ namespace ClearCanvas.Dicom
 		}
 
 		// Protected methods
-		protected override void Load()
+		protected override void LoadDataset()
 		{
-			if (!base.IsLoaded)
+			if (!base.IsDatasetLoaded)
 			{
-				OFCondition status = _fileFormat.loadFile(_filename, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
+				OFCondition status = _fileFormat.loadFile(_filename, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, 64, false);
 				DicomHelper.CheckReturnValue(status, _filename);
 
-				base.IsLoaded = true;
+				base.IsDatasetLoaded = true;
 				base.Dataset = _fileFormat.getDataset();
-
-				base.Load();
 			}
 		}
 
-		protected override void Unload()
+		protected override void UnloadDataset()
 		{
 			_fileFormat.Dispose();
 		}
