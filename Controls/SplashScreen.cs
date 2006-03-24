@@ -33,6 +33,7 @@ namespace ClearCanvas.Controls
 			this.Opacity = .00;
 			m_Timer.Start();
 			this.ClientSize = this.BackgroundImage.Size;
+			Control.CheckForIllegalCrossThreadCalls = false;
 		}
 
 		// ************* Static Methods *************** //
@@ -44,6 +45,7 @@ namespace ClearCanvas.Controls
 			// Make sure it's only launched once.
 			if (m_SplashForm != null)
 				return;
+
 			m_Thread = new Thread(new ThreadStart(SplashScreen.ShowForm));
 			m_Thread.IsBackground = true;
 			m_Thread.ApartmentState = ApartmentState.STA;
@@ -75,7 +77,7 @@ namespace ClearCanvas.Controls
 				m_SplashForm.m_dblOpacityIncrement = -m_SplashForm.m_dblOpacityDecrement;
 			}
 			m_Thread = null;	// we don't need these any more.
-			m_SplashForm = null;
+			//m_SplashForm = null;
 		}
 
 		// A static method to set the status and update the reference.
@@ -83,6 +85,7 @@ namespace ClearCanvas.Controls
 		{
 			ms_sStatus = newStatus;
 		}
+
 
 		// ************ Private methods ************
 
