@@ -4,6 +4,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
     using System.Collections.Generic;
     using System.Text;
     using System.IO;
+    using System.Threading;
     using ClearCanvas.DataStore;
 
     public class DatabaseRebuilder
@@ -14,6 +15,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
        
         public DatabaseRebuilder(String connectionString, String imageStoragePath, Boolean isSearchRecursive)
         {
+            _state = RebuilderState.Stopped;
             _connectionString = connectionString;
             _imageStoragePath = imageStoragePath;
             _isSearchRecursive = isSearchRecursive;
@@ -45,24 +47,68 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             get { return _fileList.Length; }
         }
 
+        public Boolean IsRebuilding
+        {
+            get { return (RebuilderState.Rebuilding == State); }
+        }
+
+        private RebuilderState State
+        {
+            get
+            {
+                lock (_synchronizationLock)
+                {
+                    return _state;
+                }
+            }
+
+            set
+            {
+                lock (_synchronizationLock)
+                {
+                    _state = value;
+                }
+            }
+        }
+
+        private Boolean StopRequested
+        {
+            get
+            {
+                lock (_synchronizationLock)
+                {
+                    return _stopRequested;
+                }
+            }
+
+            set
+            {
+                lock (_synchronizationLock)
+                {
+                    _stopRequested = value;
+                }
+            }
+        }
+
         public void StartRebuild()
         {
-            DatabaseConnector connector = new DatabaseConnector(new ConnectionString(_connectionString));
-            connector.SetupConnector();
-            foreach (String file in _fileList)
-            {
-                OnImageInsertCompletingEvent(new ImageInsertCompletingEventArgs(file));
-                connector.InsertSopInstance(file);
-                OnImageInsertCompletedEvent(new ImageInsertCompletedEventArgs(file));
+            // TODO
+            if (RebuilderState.Stopped != _state)
+                throw new System.InvalidOperationException("Cannot start a rebuild while the rebuilder object is not in the stopped state");
 
-            }
-            connector.TeardownConnector();
-            OnDatabaseRebuildCompletedEvent(new DatabaseRebuildCompletedEventArgs());
+            State = RebuilderState.Rebuilding;
+            Thread t = new Thread(new ThreadStart(DoRebuild));
+            t.IsBackground = true;
+            t.Start();
         }
 
         public void StopRebuild()
         {
+            // TODO
+            if (RebuilderState.Rebuilding != _state)
+                throw new System.InvalidOperationException("Cannot stop a rebuild while the rebuilder object is not in the rebuilding state");
 
+            StopRequested = true;
         }
 
         protected void OnImageInsertCompletedEvent(ImageInsertCompletedEventArgs args)
@@ -80,11 +126,37 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             ClearCanvas.Common.EventsHelper.Fire(DatabaseRebuildCompletedEvent, this, args);
         }
 
+        protected void DoRebuild()
+        {
+            StopRequested = false;
+
+            DatabaseConnector connector = new DatabaseConnector(new ConnectionString(_connectionString));
+            connector.SetupConnector();
+            foreach (String file in _fileList)
+            {
+                OnImageInsertCompletingEvent(new ImageInsertCompletingEventArgs(file));
+                connector.InsertSopInstance(file);
+                OnImageInsertCompletedEvent(new ImageInsertCompletedEventArgs(file));
+
+                if (StopRequested)
+                {
+                    State = RebuilderState.Stopped;
+                    break;
+                }
+            }
+            connector.TeardownConnector();
+            OnDatabaseRebuildCompletedEvent(new DatabaseRebuildCompletedEventArgs());
+        }
+
         private DatabaseRebuilder() { }
 
         private String _connectionString;
         private String _imageStoragePath;
         private Boolean _isSearchRecursive;
         private String[] _fileList;
+        private Boolean _stopRequested = false;
+        private Object _synchronizationLock = new Object();
+        private enum RebuilderState { Stopped, Rebuilding };
+        private RebuilderState _state;
     }
 }

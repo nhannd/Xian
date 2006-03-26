@@ -12,6 +12,9 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
     public partial class RebuildDatabaseForm : Form
     {
+        delegate void UpdateProgressBarDelegate(ImageInsertCompletingEventArgs args);
+        delegate void EndRebuildDelegate(DatabaseRebuildCompletedEventArgs args);
+
         public RebuildDatabaseForm()
         {
             InitializeComponent();
@@ -22,6 +25,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             _imageFolderText.DataBindings.Add(bindingImageStoragePath);
             _findFilesRecursivelyCheckbox.DataBindings.Add(bindingRecursiveSearch);
             this.CancelButton = _exitButton;
+            _stopButton.Enabled = false;
         }
 
         private void Browse_Click(object sender, EventArgs e)
@@ -43,37 +47,63 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
         private void _exitButton_Click(object sender, EventArgs e)
         {
+            if (_rebuilder.IsRebuilding)
+                _rebuilder.StopRebuild();
             Close();
         }
 
         private void _startButton_Click(object sender, EventArgs e)
         {
-            DatabaseRebuilder rebuilder = new DatabaseRebuilder(_connectionStringText.Text, _imageFolderText.Text, _findFilesRecursivelyCheckbox.Checked);
-            rebuilder.ImageInsertCompletingEvent += ImageInsertCompletingEventHandler;
+            _rebuilder = new DatabaseRebuilder(_connectionStringText.Text, _imageFolderText.Text, _findFilesRecursivelyCheckbox.Checked);
+            _rebuilder.ImageInsertCompletingEvent += ImageInsertCompletingEventHandler;
+            _rebuilder.DatabaseRebuildCompletedEvent += DatabaseRebuildCompletedEventHandler;
+
+            // set up progress bar
             _progressBar.Visible = true;
             _progressBar.Minimum = 1;
-            _progressBar.Maximum = rebuilder.NumberOfFiles;
+            _progressBar.Maximum = _rebuilder.NumberOfFiles;
             _progressBar.Value = 1;
             _progressBar.Step = 1;
 
-            _stopButton.Enabled = false;
-            _exitButton.Enabled = false;
-            DateTime start = DateTime.Now;
-            rebuilder.StartRebuild();
-            DateTime stop = DateTime.Now;
-            TimeSpan duration = stop - start;
             _stopButton.Enabled = true;
-            _exitButton.Enabled = true;
-            _completedRebuildFile.Text = "Processed " + rebuilder.NumberOfFiles.ToString() + " files in " + duration.ToString();
-            _completedRebuildFile.Invalidate();
-            _completedRebuildFile.Update();
+            _exitButton.Enabled = false;
+            _startTime = DateTime.Now;
+            _rebuilder.StartRebuild();
         }
 
         public void ImageInsertCompletingEventHandler(Object source, ImageInsertCompletingEventArgs args)
         {
+            BeginInvoke(new UpdateProgressBarDelegate(UpdateProgressBar), new object[] { args });
+        }
+
+        public void DatabaseRebuildCompletedEventHandler(Object source, DatabaseRebuildCompletedEventArgs args)
+        {
+            BeginInvoke(new EndRebuildDelegate(EndRebuild), new object[] { args });
+        }
+
+        private void _stopButton_Click(object sender, EventArgs e)
+        {
+            _rebuilder.StopRebuild();
+        }
+
+        private void UpdateProgressBar(ImageInsertCompletingEventArgs args)
+        {
             _progressBar.PerformStep();
             _completedRebuildFile.Text = args.FileName;
-            _completedRebuildFile.Update();
         }
+
+        private void EndRebuild(DatabaseRebuildCompletedEventArgs args)
+        {
+            _stopTime = DateTime.Now;
+            TimeSpan duration = _stopTime - _startTime;
+            _stopButton.Enabled = false;
+            _exitButton.Enabled = true;
+            _completedRebuildFile.Text = "Processed " + _rebuilder.NumberOfFiles.ToString() + " files in " + duration.ToString();
+        }
+
+        private DateTime _startTime;
+        private DateTime _stopTime;
+        private DatabaseRebuilder _rebuilder = null;
+
     }
 }

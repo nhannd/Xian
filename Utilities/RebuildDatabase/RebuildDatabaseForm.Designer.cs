@@ -116,6 +116,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             this._stopButton.TabIndex = 8;
             this._stopButton.Text = "Stop";
             this._stopButton.UseVisualStyleBackColor = true;
+            this._stopButton.Click += new System.EventHandler(this._stopButton_Click);
             // 
             // _exitButton
             // 
