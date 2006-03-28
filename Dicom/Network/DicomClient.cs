@@ -26,25 +26,34 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Fires when a C-FIND result is received.
         /// </summary>
-        public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceivedEvent;
+        private event EventHandler<QueryResultReceivedEventArgs> _queryResultReceivedEvent;
         /// <summary>
         /// Fires when the C-FIND query has completed and all results received.
         /// </summary>
-        public event EventHandler<QueryCompletedEventArgs> QueryCompletedEvent;
+        private event EventHandler<QueryCompletedEventArgs> _queryCompletedEvent;
+
+        // TODO:
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
         private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
 
         public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceivedEvent
         {
-            add
-            {
-                _sopInstanceReceivedEvent += value;
-            }
-            remove
-            {
-                _sopInstanceReceivedEvent -= value;
-            }
+            add { _sopInstanceReceivedEvent += value; }
+            remove { _sopInstanceReceivedEvent -= value; }
         }
+
+        public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceivedEvent
+        {
+            add { _queryResultReceivedEvent += value; }
+            remove { _queryResultReceivedEvent -= value; }
+        }
+
+        public event EventHandler<QueryCompletedEventArgs> QueryCompletedEvent
+        {
+            add { _queryCompletedEvent += value; }
+            remove { _queryCompletedEvent -= value; }
+        }
+
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -54,10 +63,11 @@ namespace ClearCanvas.Dicom.Network
         /// of DICOM data.</param>
         public DicomClient(ApplicationEntity ownAEParameters)
         {
-            InitializeSockets();
+            SocketManager.InitializeSockets();
 
             _myOwnAE = ownAEParameters;
 
+            // TODO:
             // since we want the QueryCallbackHelper object to be able to 
             // modifier data that is instance-related in nature, i.e. 
             // query results, we need to make the callback install itself
@@ -72,7 +82,7 @@ namespace ClearCanvas.Dicom.Network
 
         ~DicomClient()
         {
-            DeinitializeSockets();
+            SocketManager.DeinitializeSockets();
         }
 
         /// <summary>
@@ -166,7 +176,6 @@ namespace ClearCanvas.Dicom.Network
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, patientId, patientsName, new Accession("*"));
-            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
@@ -181,7 +190,6 @@ namespace ClearCanvas.Dicom.Network
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName("*"));
-            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
@@ -196,7 +204,6 @@ namespace ClearCanvas.Dicom.Network
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId("*"), patientsName);
-            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
@@ -219,7 +226,8 @@ namespace ClearCanvas.Dicom.Network
             cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
             ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
-            TriggerConditionalQueryCompletedEvent(results);
+
+            GC.KeepAlive(cFindDataset);
             return results;
         }
 
@@ -235,7 +243,6 @@ namespace ClearCanvas.Dicom.Network
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, Accession accession)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName("*"), accession);
-            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
@@ -251,11 +258,11 @@ namespace ClearCanvas.Dicom.Network
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName, Accession accession)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId("*"), patientsName, accession);
-            TriggerConditionalQueryCompletedEvent(results);
             return results;
         }
 
         /// <summary>
+        /// This is currently the most generalized version of Query that other versions will call.
         /// Overload of the Query method that accepts Patient ID, Patient's Name and Accession Number.
         /// </summary>
         /// <param name="serverAE">AE parameters of the remote AE server.</param>
@@ -267,8 +274,6 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName, Accession accession)
         {
-            InitializeQueryState();
-
             DcmDataset cFindDataset = new DcmDataset();
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
@@ -278,7 +283,33 @@ namespace ClearCanvas.Dicom.Network
             cFindDataset.putAndInsertString(new DcmTag(Dcm.AccessionNumber), accession.ToString());
 
             ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
-            TriggerConditionalQueryCompletedEvent(results);
+            TriggerQueryCompletedEvent(results);
+
+            GC.KeepAlive(cFindDataset);
+            return results;
+        }
+
+        /// <summary>
+        /// Query for the series that belong to a particular Study.
+        /// </summary>
+        /// <param name="serverAE">Server's AE parameters.</param>
+        /// <param name="studyInstanceUid">Study Instance UID of the study that 
+        /// the user wants to query the series for.</param>
+        /// <returns>A read-only collection of query results. Successful results
+        /// includes the Study UID, the Series UID, the Series Description and
+        /// the Series Number.</returns>
+        public ReadOnlyQueryResultCollection QuerySeries(ApplicationEntity serverAE, Uid studyInstanceUid)
+        {
+            DcmDataset cFindDataset = new DcmDataset();
+            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Series);
+
+            // set the specific query keys
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
+
+            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
+            TriggerQueryCompletedEvent(results);
+
+            GC.KeepAlive(cFindDataset);
             return results;
         }
 
@@ -311,28 +342,7 @@ namespace ClearCanvas.Dicom.Network
         /// </example>
         public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
         {
-			if (null == saveDirectory)
-				throw new System.ArgumentNullException("saveDirectory", MySR.ExceptionDicomSaveDirectoryNull);
-
-            // make sure that the path passed in has a trailing backslash 
-            StringBuilder normalizedSaveDirectory = new StringBuilder();
-            if (saveDirectory.EndsWith("\\"))
-            {
-                normalizedSaveDirectory.Append(saveDirectory);
-            }
-            else
-            {
-                normalizedSaveDirectory.AppendFormat("{0}\\", saveDirectory);
-            }
-
-            // contract check: existence of saveDirectory
-            if (!System.IO.Directory.Exists(normalizedSaveDirectory.ToString()))
-            {
-                StringBuilder message = new StringBuilder();
-                message.AppendFormat(MySR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedSaveDirectory.ToString());
-
-                throw new System.ArgumentException(message.ToString(), "saveDirectory");
-            }
+            string normalizedSaveDirectory = NormalizeSaveDirectory(saveDirectory);
 
             DcmDataset cMoveDataset = new DcmDataset();
 
@@ -345,8 +355,67 @@ namespace ClearCanvas.Dicom.Network
             // fire event to indicate successful retrieval
             return;
         }
+        
+        /// <summary>
+        /// Retrieves a series from the server.
+        /// </summary>
+        /// <param name="serverAE">Server's AE parameters.</param>
+        /// <param name="seriesInstanceUid">The Series Instance UID of the series that the
+        /// user wants to retrieve.</param>
+        /// <param name="saveDirectory">The path to where the incoming images are stored.</param>
+        public void RetrieveSeries(ApplicationEntity serverAE, Uid seriesInstanceUid, System.String saveDirectory)
+        {
+            string normalizedSaveDirectory = NormalizeSaveDirectory(saveDirectory);
+
+            DcmDataset cMoveDataset = new DcmDataset();
+
+            // set the specific query for study instance uid
+            InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Series);
+            cMoveDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), seriesInstanceUid.ToString());
+
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
+
+            // fire event to indicate successful retrieval
+            return;
+        }
 
         #region Protected members
+
+        /// <summary>
+        /// Utility function that checks for the validity of a directory path
+        /// that is passed in. It will also return the "normalized" path. Right now,
+        /// that just means there will be a trailing backslash appended, which is the
+        /// correct denotation for a directory.
+        /// </summary>
+        /// <param name="directory">Directory path to check and normalize.</param>
+        /// <returns>Normalized directory path.</returns>
+        protected String NormalizeSaveDirectory(String directory)
+        {
+            if (null == directory)
+                throw new System.ArgumentNullException("directory", MySR.ExceptionDicomSaveDirectoryNull);
+
+            // make sure that the path passed in has a trailing backslash 
+            StringBuilder normalizedSaveDirectory = new StringBuilder();
+            if (directory.EndsWith("\\"))
+            {
+                normalizedSaveDirectory.Append(directory);
+            }
+            else
+            {
+                normalizedSaveDirectory.AppendFormat("{0}\\", directory);
+            }
+
+            // contract check: existence of saveDirectory
+            if (!System.IO.Directory.Exists(normalizedSaveDirectory.ToString()))
+            {
+                StringBuilder message = new StringBuilder();
+                message.AppendFormat(MySR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedSaveDirectory.ToString());
+
+                throw new System.ArgumentException(message.ToString(), "directory");
+            }
+
+            return normalizedSaveDirectory.ToString();
+        }
 
         /// <summary>
         /// Specifies the query level to be executed on a C-FIND (<see cref="Query">Query</see>) or C-MOVE
@@ -417,6 +486,8 @@ namespace ClearCanvas.Dicom.Network
         /// <returns>A read-only collection of matching results from the server in response to our Query.</returns>
         protected ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, DcmDataset cFindDataset)
         {
+            InitializeQueryState();
+
             try
             {
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
@@ -481,6 +552,8 @@ namespace ClearCanvas.Dicom.Network
                     // set the other tags we want to retrieve
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.Modality), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.SeriesDescription), "");
+                    cFindDataset.putAndInsertString(new DcmTag(Dcm.SeriesNumber), "");
                     cFindDataset.putAndInsertString(new DcmTag(Dcm.NumberOfSeriesRelatedInstances), "");
                     break;
                 case QRLevel.CompositeObjectInstance:
@@ -540,38 +613,16 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Invoke the event firing helper if the query operation resulted in query results
-        /// i.e. the query was successful.
+        /// Invoke the event firing helper 
         /// </summary>
         /// <param name="results">Collection of query results or null if no results.
         /// were returned</param>
-        protected void TriggerConditionalQueryCompletedEvent(ReadOnlyQueryResultCollection results)
+        protected void TriggerQueryCompletedEvent(ReadOnlyQueryResultCollection results)
         {
-            if (null != results)
-            {
-                QueryCompletedEventArgs args = new QueryCompletedEventArgs(results);
-                OnQueryCompletedEvent(args);
-            }
+            QueryCompletedEventArgs args = new QueryCompletedEventArgs(results);
+            OnQueryCompletedEvent(args);
         }
-
-        /// <summary>
-        /// Initialize the Winsock library in Windows. In 
-        /// non-Windows platforms, this function does nothing via a compiler define.
-        /// </summary>
-        protected void InitializeSockets()
-        {
-            OffisDcm.InitializeSockets();
-        }
-        
-        /// <summary>
-        /// Deinitialize the Winsock library in Windows. In
-        /// non-Windows platforms, this function does nothing.
-        /// </summary>
-        protected void DeinitializeSockets()
-        {
-            OffisDcm.DeinitializeSockets();
-        }
-
+ 
         protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)
         {
             
@@ -590,14 +641,18 @@ namespace ClearCanvas.Dicom.Network
 
         protected void OnQueryResultReceivedEvent(QueryResultReceivedEventArgs e)
         {
-            EventsHelper.Fire(QueryResultReceivedEvent, this, e);
+            EventsHelper.Fire(_queryResultReceivedEvent, this, e);
         }
 
         protected void OnQueryCompletedEvent(QueryCompletedEventArgs e)
         {
-            EventsHelper.Fire(QueryCompletedEvent, this, e);
+            EventsHelper.Fire(_queryCompletedEvent, this, e);
         }
 
+        #endregion
+
+        #region Private members
+        
         class QueryCallbackHelper
         {
             public QueryCallbackHelper(DicomClient parent)
@@ -705,9 +760,6 @@ namespace ClearCanvas.Dicom.Network
             private DicomClient _parent;
         }
 
-        #endregion
-
-        #region Private members
         private QueryCallbackHelper _queryCallbackHelper;
         private StoreCallbackHelper _storeCallbackHelper;
         private QueryResultList _queryResults;
@@ -724,5 +776,6 @@ namespace ClearCanvas.Dicom.Network
         private static bool DICOM_WARNING_STATUS(UInt16 status) { return (((status)&STATUS_Warning) == 0xb000); }
         private static bool DICOM_SUCCESS_STATUS(UInt16 status) { return ( (status) == STATUS_Success ); }
         #endregion
+
     }
 }

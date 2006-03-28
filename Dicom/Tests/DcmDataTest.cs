@@ -26,7 +26,7 @@ namespace ClearCanvas.Dicom.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			string fileName = "CT.dcm";
+			string fileName = @"C:\sampledicomimages\eFilm\1.2.840.113619.2.30.1.1762295590.1623.978668950.113.dcm";
 			m_FileFormat = new DcmFileFormat();
 			OFCondition cond = m_FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
 
