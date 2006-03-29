@@ -22,14 +22,11 @@ namespace ClearCanvas.Common
             List<Extension> extensionList = new List<Extension>();
             foreach (Type type in asm.GetTypes())
             {
-                Attribute[] attrs = Attribute.GetCustomAttributes(type);
-                foreach (Attribute attr in attrs)
+                object[] attrs = type.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
+                if (attrs.Length > 0)
                 {
-                    if (attr is ExtensionOfAttribute)
-                    {
-                        ExtensionOfAttribute a = (ExtensionOfAttribute)attr;
-                        extensionList.Add(new Extension(type, a.ExtensionOfType, a.Name, a.Description));
-                    }
+                    ExtensionOfAttribute a = (ExtensionOfAttribute)attrs[0];
+                    extensionList.Add(new Extension(type, a.ExtensionOfType, a.Name, a.Description));
                 }
             }
             return extensionList.ToArray();
@@ -45,14 +42,11 @@ namespace ClearCanvas.Common
             List<ExtensionPoint> extensionPointList = new List<ExtensionPoint>();
             foreach (Type type in asm.GetTypes())
             {
-                Attribute[] attrs = Attribute.GetCustomAttributes(type);
-                foreach (Attribute attr in attrs)
+                object[] attrs = type.GetCustomAttributes(typeof(ExtensionPointAttribute), false);
+                if (attrs.Length > 0)
                 {
-                    if (attr is ExtensionPointAttribute)
-                    {
-                        ExtensionPointAttribute a = (ExtensionPointAttribute)attr;
-                        extensionPointList.Add(new ExtensionPoint(type, a.Name, a.Description));
-                    }
+                    ExtensionPointAttribute a = (ExtensionPointAttribute)attrs[0];
+                    extensionPointList.Add(new ExtensionPoint(type, a.Name, a.Description));
                 }
             }
             return extensionPointList.ToArray();

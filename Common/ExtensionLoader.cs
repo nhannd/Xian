@@ -57,6 +57,12 @@ namespace ClearCanvas.Common
                 {
                     try
                     {
+                        if (!extension.ExtensionOfType.IsAssignableFrom(extension.ExtensionType))
+                        {
+                            // TODO better error message
+                            throw new Exception("The extension does not implement the required interface");
+                        }
+                        
                         object o = Activator.CreateInstance(extension.ExtensionType);
                         createdObjects.Add(o);
                     }

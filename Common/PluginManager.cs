@@ -131,22 +131,27 @@ namespace ClearCanvas.Common
 
         private Plugin[] ProcessAssemblies(Assembly[] assemblies)
         {
-            Plugin[] plugins = new Plugin[assemblies.Length];
+            List<Plugin> plugins = new List<Plugin>();
             for(int i = 0; i < assemblies.Length; i++)
             {
-                Attribute[] attrs = Attribute.GetCustomAttributes(assemblies[i]);
-                foreach (Attribute attr in attrs)
+                try
                 {
-                    if (attr is PluginAttribute)
+                    object[] attrs = assemblies[i].GetCustomAttributes(typeof(PluginAttribute), false);
+                    if (attrs.Length > 0)
                     {
-                        PluginAttribute a = (PluginAttribute)attr;
-                        plugins[i] = new Plugin(assemblies[i], a.Name, a.Description);
-
-                        break;
+                        PluginAttribute a = (PluginAttribute)attrs[0];
+                        plugins.Add(new Plugin(assemblies[i], a.Name, a.Description));
                     }
+
+                }
+                catch (Exception e)
+                {
+                    // there was a problem processing this assembly
+                    Platform.Log(string.Format("Failed to process plugin assembly {0} with the following exception:", assemblies[i].FullName));
+                    Platform.Log(e);
                 }
             }
-            return plugins;
+            return plugins.ToArray();
         }
 
         private bool RootPluginDirectoryExists()

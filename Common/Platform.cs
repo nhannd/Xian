@@ -149,16 +149,19 @@ namespace ClearCanvas.Common
 		/// </remarks>
 		public static void StartApp()
 		{
+#if !DEBUG
             try
             {
+#endif
                 _applicationRoot = (IApplicationRoot)Platform.CreateExtension(typeof(IApplicationRoot));
                 _applicationRoot.RunApplication();
+#if !DEBUG
             }
             catch (Exception e)
             {
                 HandleException(e);
-                throw e;
             }
+#endif
         }
 
 		/// <summary>
