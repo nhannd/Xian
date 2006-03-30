@@ -21,8 +21,8 @@ namespace ClearCanvas.Dicom
             if (null == accession)
                 throw new System.ArgumentNullException("accession", SR.ExceptionDicomAETitleNull);
 
-            if (0 == accession.Length)
-                throw new System.ArgumentOutOfRangeException("accession", SR.ExceptionDicomAETitleZeroLength);
+            //if (0 == accession.Length)
+            //    throw new System.ArgumentOutOfRangeException("accession", SR.ExceptionDicomAETitleZeroLength);
 
             _accession = accession;
         }

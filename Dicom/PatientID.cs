@@ -19,8 +19,8 @@ namespace ClearCanvas.Dicom
             if (null == patientId)
                 throw new System.ArgumentNullException("patientId", SR.ExceptionGeneralPatientsNameNull);
 
-            if (0 == patientId.Length)
-                throw new System.ArgumentOutOfRangeException("patientId", SR.ExceptionGeneralPatientsNameZeroLength);
+            //if (0 == patientId.Length)
+            //    throw new System.ArgumentOutOfRangeException("patientId", SR.ExceptionGeneralPatientsNameZeroLength);
 
             _patientId = patientId;
         }

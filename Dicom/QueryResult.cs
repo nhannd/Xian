@@ -76,6 +76,26 @@ namespace ClearCanvas.Dicom
             get { return _internalDictionary[DicomTag.AccessionNumber]; }
         }
 
+        public string Modality
+        {
+            get { return _internalDictionary[DicomTag.Modality]; }
+        }
+
+        public string SeriesInstanceUid
+        {
+            get { return _internalDictionary[DicomTag.SeriesInstanceUID]; }
+        }
+
+        public string SeriesDescription
+        {
+            get { return _internalDictionary[DicomTag.SeriesDescription]; }
+        }
+
+        public string SeriesNumber
+        {
+            get { return _internalDictionary[DicomTag.SeriesNumber]; }
+        }
+
         /// <summary>
         /// Gets the whole collection of DICOM tags in this query result.
         /// </summary>

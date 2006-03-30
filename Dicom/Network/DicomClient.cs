@@ -150,7 +150,7 @@ namespace ClearCanvas.Dicom.Network
         ///if (!dicomClient.Verify(serverAE))
         ///    throw new Exception("Target server is not running");
         ///
-        ///ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId("*"), new PatientsName("*"));
+        ///ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId(""), new PatientsName(""));
         ///
         ///Assert.IsTrue(results.Count > 0);
         ///
@@ -175,7 +175,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, patientsName, new Accession("*"));
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, patientsName, new Accession(""));
             return results;
         }
 
@@ -189,7 +189,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName("*"));
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName(""));
             return results;
         }
 
@@ -203,7 +203,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId("*"), patientsName);
+            ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId(""), patientsName);
             return results;
         }
 
@@ -242,7 +242,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, Accession accession)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName("*"), accession);
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName(""), accession);
             return results;
         }
 
@@ -257,7 +257,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName, Accession accession)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId("*"), patientsName, accession);
+            ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId(""), patientsName, accession);
             return results;
         }
 
