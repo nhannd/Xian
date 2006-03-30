@@ -7,7 +7,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Describes the network parameters that define an Application Entity.
     /// </summary>
-    public struct ApplicationEntity
+    public class ApplicationEntity
     {
         /// <summary>
         /// Gets the Hostname as a string.

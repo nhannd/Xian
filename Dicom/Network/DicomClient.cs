@@ -342,7 +342,7 @@ namespace ClearCanvas.Dicom.Network
         /// </example>
         public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
         {
-            string normalizedSaveDirectory = NormalizeSaveDirectory(saveDirectory);
+            string normalizedSaveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
 
             DcmDataset cMoveDataset = new DcmDataset();
 
@@ -365,7 +365,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="saveDirectory">The path to where the incoming images are stored.</param>
         public void RetrieveSeries(ApplicationEntity serverAE, Uid seriesInstanceUid, System.String saveDirectory)
         {
-            string normalizedSaveDirectory = NormalizeSaveDirectory(saveDirectory);
+            string normalizedSaveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
 
             DcmDataset cMoveDataset = new DcmDataset();
 
@@ -380,42 +380,6 @@ namespace ClearCanvas.Dicom.Network
         }
 
         #region Protected members
-
-        /// <summary>
-        /// Utility function that checks for the validity of a directory path
-        /// that is passed in. It will also return the "normalized" path. Right now,
-        /// that just means there will be a trailing backslash appended, which is the
-        /// correct denotation for a directory.
-        /// </summary>
-        /// <param name="directory">Directory path to check and normalize.</param>
-        /// <returns>Normalized directory path.</returns>
-        protected String NormalizeSaveDirectory(String directory)
-        {
-            if (null == directory)
-                throw new System.ArgumentNullException("directory", MySR.ExceptionDicomSaveDirectoryNull);
-
-            // make sure that the path passed in has a trailing backslash 
-            StringBuilder normalizedSaveDirectory = new StringBuilder();
-            if (directory.EndsWith("\\"))
-            {
-                normalizedSaveDirectory.Append(directory);
-            }
-            else
-            {
-                normalizedSaveDirectory.AppendFormat("{0}\\", directory);
-            }
-
-            // contract check: existence of saveDirectory
-            if (!System.IO.Directory.Exists(normalizedSaveDirectory.ToString()))
-            {
-                StringBuilder message = new StringBuilder();
-                message.AppendFormat(MySR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedSaveDirectory.ToString());
-
-                throw new System.ArgumentException(message.ToString(), "directory");
-            }
-
-            return normalizedSaveDirectory.ToString();
-        }
 
         /// <summary>
         /// Specifies the query level to be executed on a C-FIND (<see cref="Query">Query</see>) or C-MOVE
