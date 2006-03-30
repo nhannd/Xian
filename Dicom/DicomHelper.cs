@@ -40,6 +40,11 @@ namespace ClearCanvas.Dicom
 				throw new DicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
 		}
 
+        public static bool CompareConditions(OFCondition condition1, OFCondition condition2)
+        {
+            return (condition1.code() == condition2.code() && condition1.module() == condition2.module());
+        }
+
         private DicomHelper() { }
 	}
 }
