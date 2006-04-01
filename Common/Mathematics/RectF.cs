@@ -101,7 +101,7 @@ namespace ClearCanvas.Common.Mathematics
 			else
 			{
 				if (y > _bottom && y < _top)
-					inXRange = true;
+					inYRange = true;
 			}
 
 			return inXRange && inYRange;
