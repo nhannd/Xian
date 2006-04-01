@@ -141,6 +141,7 @@
     <Compile Include="IPerformanceClock.cs" />
     <Compile Include="MatchAttributes.cs" />
     <Compile Include="MatchTypes.cs" />
+    <Compile Include="Mathematics\RectF.cs" />
     <Compile Include="Mathematics\Vector.cs" />
     <Compile Include="ObservableDictionary.cs" />
     <Compile Include="ObservableList.cs" />
