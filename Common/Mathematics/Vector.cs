@@ -39,6 +39,55 @@ namespace ClearCanvas.Common.Mathematics
 			return new Point(x, y);
 		}
 
+		static public double DistanceFromPointToLine(PointF ptTest, PointF pt1, PointF pt2, ref PointF ptNearest)
+		{
+			float distanceX;
+			float distanceY;
+			double distance;
+
+			// Point on line segment nearest to pt0
+			float dx = pt2.X - pt1.X;
+			float dy = pt2.Y - pt1.Y;
+
+			// It's a point, not a line
+			if (dx == 0 && dy == 0)
+			{
+				distanceX = ptTest.X - pt1.X;
+				distanceY = ptTest.Y - pt1.Y;
+				ptNearest.X = pt1.X;
+				ptNearest.X = pt1.Y;
+			}
+			else
+			{
+				// Parameter
+				double t = ((ptTest.X - pt1.X) * dx + (ptTest.Y - pt1.Y) * dy) / (double)(dx * dx + dy * dy);
+
+				// Nearest point is pt1
+				if (t < 0)
+				{
+					ptNearest = pt1;
+				}
+				// Nearest point is pt2
+				else if (t > 1)
+				{
+					ptNearest = pt2;
+				}
+				// Nearest point is on the line segment
+				else
+				{
+					// Parametric equation
+					ptNearest.X = (int)(pt1.X + t * dx);
+					ptNearest.Y = (int)(pt1.Y + t * dy);
+				}
+			}
+
+			distanceX = ptTest.X - ptNearest.X;
+			distanceY = ptTest.Y - ptNearest.Y;
+			distance = Math.Sqrt(distanceX * distanceX + distanceY * distanceY);
+
+			return distance;
+		}
+
 		public enum LineSegments
 		{
 			DoNotIntersect,
