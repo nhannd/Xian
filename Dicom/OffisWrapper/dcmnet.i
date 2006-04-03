@@ -56,6 +56,8 @@
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRSP)
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
 CONTROLACCESSPUBLIC(InteropStoreCallbackInfo)
+CONTROLACCESSPUBLIC(InteropFindCallbackInfo)
+CONTROLACCESSPUBLIC(InteropMoveCallbackInfo)
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -202,10 +204,24 @@ void DeinitializeSockets()
 #endif
 }
 
+//-------------------------------------------
+// Structs for interop; these need to be here
+// so that C# code and access them
+//-------------------------------------------
 struct InteropStoreCallbackInfo
 {
 	const char* FileName;
 	DcmDataset* ImageDataset;
+};
+
+struct InteropFindCallbackInfo
+{
+
+};
+
+struct InteropMoveCallbackInfo
+{
+
 };
 
 %}
@@ -241,6 +257,18 @@ struct StoreCallbackData
   T_ASC_Association* assoc;
 };
 
+struct FindCallbackData
+{
+	DIC_US priorStatus;
+	DIC_AE ourAETitle;
+};
+
+struct MoveCallbackData
+{
+	DIC_US priorStatus;
+	DIC_AE ourAETitle;
+};
+
 //-------------------------------------------
 // This is the C++ callback function that
 // will take the callback progress data and
@@ -255,23 +283,60 @@ typedef void (SWIGSTDCALL* QueryCallbackHelperCallback)(void *,
 														DcmDataset *);
 static QueryCallbackHelperCallback CSharpQueryCallbackHelperCallback = NULL;
 
-
 #ifdef __cplusplus
 extern "C" 
 #endif
 SWIGEXPORT void SWIGSTDCALL RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHelperCallback callback) {
 	CSharpQueryCallbackHelperCallback = callback;
 }
+//-------------------------------------------
 
+//-----------------------------------
 typedef void (SWIGSTDCALL* StoreCallbackHelperCallback)(InteropStoreCallbackInfo*);
 static StoreCallbackHelperCallback CSharpStoreCallbackHelperCallback = NULL;
-
 
 #ifdef __cplusplus
 extern "C" 
 #endif
 SWIGEXPORT void SWIGSTDCALL RegisterStoreCallbackHelper_OffisDcm(StoreCallbackHelperCallback callback) {
 	CSharpStoreCallbackHelperCallback = callback;
+}
+//-----------------------------------
+
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* FindCallbackHelperCallback)(InteropFindCallbackInfo*);
+static FindCallbackHelperCallback CSharpFindCallbackHelperCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterFindCallbackHelper_OffisDcm(FindCallbackHelperCallback callback) {
+	CSharpFindCallbackHelperCallback = callback;
+}
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* MoveCallbackHelperCallback)(InteropMoveCallbackInfo*);
+static MoveCallbackHelperCallback CSharpMoveCallbackHelperCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterMoveCallbackHelper_OffisDcm(MoveCallbackHelperCallback callback) {
+	CSharpMoveCallbackHelperCallback = callback;
+}
+//--------------------------------------------------------------
+static void
+addRetreiveAETitle(DcmDataset *rspIds, DIC_AE ourAETitle)
+{
+    /*
+     * Since images are stored only by us (for RSNA'93 demo),
+     * we must add in our AE Title to the response identifiers.
+     * The DB cannot do this since it does not know our AE Title.
+     */
+    OFBool ok;
+
+    ok = DU_putStringDOElement(rspIds, DCM_RetrieveAETitle, ourAETitle);
 }
 
 static void CFindProgressCallback(
@@ -415,6 +480,174 @@ static OFCondition StoreScp(
     return cond;
 }
 
+static void MoveScpCallback(
+	/* in */ 
+	void *callbackData,  
+	OFBool cancelled, T_DIMSE_C_MoveRQ *request, 
+	DcmDataset *requestIdentifiers, int responseCount,
+	/* out */
+	T_DIMSE_C_MoveRSP *response,
+	DcmDataset **responseIdentifiers,
+	DcmDataset **statusDetail)
+{
+    OFCondition dbcond = EC_Normal;
+    MoveCallbackData *context;
+
+    context = (MoveCallbackData*)callbackData;	/* recover context */
+
+    if (responseCount == 1) 
+	{
+        // start the database search 
+		// dbcond = DB_startFindRequest(context->dbHandle, STATUS_FIND_Refused_OutOfResources
+		//		request->AffectedSOPClassUID, requestIdentifiers, &dbStatus);
+
+    }
+    
+    // cancel was requested, cancel the find
+    if (cancelled) 
+	{
+
+    }
+
+    if (DICOM_PENDING_STATUS(context->priorStatus)) 
+	{
+		// find the next matching response
+		//dbcond = DB_nextFindResponse(context->dbHandle,
+		//		responseIdentifiers, &dbStatus);
+		//
+		
+		// should fire off image received event
+		if (NULL != CSharpMoveCallbackHelperCallback)
+		{
+			InteropMoveCallbackInfo info;
+			bzero((char*)&info, sizeof(info));
+
+			// prepare the transmission of data 
+
+			CSharpMoveCallbackHelperCallback(&info);
+		}
+		else
+		{
+			*responseIdentifiers = NULL;
+			response->DimseStatus = STATUS_MOVE_Refused_OutOfResourcesNumberOfMatches;
+			*statusDetail = new DcmDataset();
+			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-MOVE missing.");
+			return;
+		}
+    }
+
+    if (*responseIdentifiers != NULL) 
+	{
+		addRetreiveAETitle(*responseIdentifiers, context->ourAETitle);
+    }
+
+	// set the response status, i.e. whether there are more results 
+	// and the status detail
+    // response->DimseStatus = dbStatus.status;
+    // *statusDetail = dbStatus.statusDetail;
+
+}
+
+static OFCondition MoveScp(T_ASC_Association * assoc, T_DIMSE_C_MoveRQ * request,
+	T_ASC_PresentationContextID presID)
+
+{
+	OFCondition cond = EC_Normal;
+	MoveCallbackData context;
+
+	context.priorStatus = STATUS_Pending;
+	ASC_getAPTitles(assoc->params, NULL, context.ourAETitle, NULL);
+
+	cond = DIMSE_moveProvider(assoc, presID, request, 
+		MoveScpCallback, &context, DIMSE_BLOCKING, 0);
+
+	return cond; 
+}
+
+static void FindScpCallback(
+	/* in */ 
+	void *callbackData,  
+	OFBool cancelled, T_DIMSE_C_FindRQ *request, 
+	DcmDataset *requestIdentifiers, int responseCount,
+	/* out */
+	T_DIMSE_C_FindRSP *response,
+	DcmDataset **responseIdentifiers,
+	DcmDataset **statusDetail)
+{
+    OFCondition dbcond = EC_Normal;
+    FindCallbackData *context;
+
+    context = (FindCallbackData*)callbackData;	/* recover context */
+
+    if (responseCount == 1) 
+	{
+        // start the database search 
+		// dbcond = DB_startFindRequest(context->dbHandle, STATUS_FIND_Refused_OutOfResources
+		//		request->AffectedSOPClassUID, requestIdentifiers, &dbStatus);
+
+    }
+    
+    // cancel was requested, cancel the find
+    if (cancelled) 
+	{
+
+    }
+
+    if (DICOM_PENDING_STATUS(context->priorStatus)) 
+	{
+		// find the next matching response
+		//dbcond = DB_nextFindResponse(context->dbHandle,
+		//		responseIdentifiers, &dbStatus);
+		//
+		
+		// should fire off image received event
+		if (NULL != CSharpMoveCallbackHelperCallback)
+		{
+			InteropFindCallbackInfo info;
+			bzero((char*)&info, sizeof(info));
+
+			// prepare the transmission of data 
+
+			CSharpFindCallbackHelperCallback(&info);
+		}
+		else
+		{
+			*responseIdentifiers = NULL;
+			response->DimseStatus = STATUS_FIND_Refused_OutOfResources;
+			*statusDetail = new DcmDataset();
+			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
+			return;
+		}
+    }
+
+    if (*responseIdentifiers != NULL) 
+	{
+		addRetreiveAETitle(*responseIdentifiers, context->ourAETitle);
+    }
+
+	// set the response status, i.e. whether there are more results 
+	// and the status detail
+    // response->DimseStatus = dbStatus.status;
+    // *statusDetail = dbStatus.statusDetail;
+
+}
+
+static OFCondition FindScp(T_ASC_Association * assoc, T_DIMSE_C_FindRQ * request,
+	T_ASC_PresentationContextID presID)
+
+{
+	OFCondition cond = EC_Normal;
+	FindCallbackData context;
+
+	context.priorStatus = STATUS_Pending;
+	ASC_getAPTitles(assoc->params, NULL, context.ourAETitle, NULL);
+
+	cond = DIMSE_findProvider(assoc, presID, request, 
+		FindScpCallback, &context, DIMSE_BLOCKING, 0);
+
+	return cond; 
+}
+
 static OFCondition EchoScp(
 	T_ASC_Association * assoc,
 	T_DIMSE_Message * msg,
@@ -422,7 +655,6 @@ static OFCondition EchoScp(
 {
 	/* the echo succeeded !! */
 	OFCondition cond = DIMSE_sendEchoResponse(assoc, presID, &msg->msg.CEchoRQ, STATUS_Success, NULL);
-
 	return cond;
 }
 
@@ -437,7 +669,7 @@ static OFCondition AcceptSubAssociation(T_ASC_Network * aNet, T_ASC_Association 
     OFCondition cond = ASC_receiveAssociation(aNet, assoc, ASC_DEFAULTMAXPDU);
     if (cond.good())
     {
-		if (gLocalByteOrder == EBO_LittleEndian)  /* defined in dcxfer.h */
+		if (gLocalByteOrder == EBO_LittleEndian)  // defined in dcxfer.h 
 		{
 			transferSyntaxes[0] = UID_LittleEndianExplicitTransferSyntax;
 			transferSyntaxes[1] = UID_BigEndianExplicitTransferSyntax;
@@ -709,6 +941,154 @@ struct T_ASC_Network
 
 		return pAssociation;
 	}
+
+	T_ASC_Association* AcceptAssociation(const char* ownAETitle, int operationTimeout, 
+			int currentNumberOfAssociations, int maximumNumberOfAssociations)
+		throw (dicom_runtime_error)
+	{
+		const char* knownAbstractSyntaxes[] =
+		{
+			UID_VerificationSOPClass,
+			UID_FINDStudyRootQueryRetrieveInformationModel,
+			UID_MOVEStudyRootQueryRetrieveInformationModel
+		};
+
+		const char* transferSyntaxes[] = { NULL, NULL, NULL, NULL };
+		int numTransferSyntaxes = 0;
+
+		char buf[BUFSIZ];
+		T_ASC_Association* assoc;
+		OFCondition cond;
+
+		cond = ASC_receiveAssociation(self, &assoc, ASC_DEFAULTMAXPDU, NULL, NULL, 0, 
+				DUL_NOBLOCK, operationTimeout);
+
+		if (cond.bad())
+		{
+			ASC_dropSCPAssociation(assoc);
+			ASC_destroyAssociation(&assoc);
+
+			if (DUL_NOASSOCIATIONREQUEST == cond)
+			{
+				// this is a special case:
+				// indicate that there is no association, that we just timed out
+				// waiting for one
+				return NULL;
+			}
+			else
+			{
+				string msg = string("T_ASC_Network::AcceptAssociation ") + cond.text();
+				throw dicom_runtime_error(cond, msg);
+			}
+		}
+
+		if (currentNumberOfAssociations >= maximumNumberOfAssociations)
+		{
+			T_ASC_RejectParameters rej =
+			{
+				ASC_RESULT_REJECTEDTRANSIENT,
+				ASC_SOURCE_SERVICEPROVIDER_PRESENTATION_RELATED,
+				ASC_REASON_SP_PRES_TEMPORARYCONGESTION
+			};
+
+			OFCondition	cond = ASC_rejectAssociation(assoc, &rej);
+			
+			ASC_dropSCPAssociation(assoc);
+			ASC_destroyAssociation(&assoc);
+
+			return NULL;
+		}
+
+		// at this point an association has been received
+		// We prefer explicit transfer syntaxes.
+		// If we are running on a Little Endian machine we prefer
+		// LittleEndianExplicitTransferSyntax to BigEndianTransferSyntax.
+		if (gLocalByteOrder == EBO_LittleEndian)  // defined in dcxfer.h
+		{
+			transferSyntaxes[0] = UID_LittleEndianExplicitTransferSyntax;
+			transferSyntaxes[1] = UID_BigEndianExplicitTransferSyntax;
+		}
+		else
+		{
+			transferSyntaxes[0] = UID_BigEndianExplicitTransferSyntax;
+			transferSyntaxes[1] = UID_LittleEndianExplicitTransferSyntax;
+		}
+		transferSyntaxes[2] = UID_LittleEndianImplicitTransferSyntax;
+		numTransferSyntaxes = 3;
+
+		// accept verification sop class
+		cond = ASC_acceptContextsWithPreferredTransferSyntaxes(assoc->params, 
+				knownAbstractSyntaxes, DIM_OF(knownAbstractSyntaxes), 
+				transferSyntaxes, numTransferSyntaxes);
+
+		if (cond.bad())
+		{
+			ASC_dropSCPAssociation(assoc);
+			ASC_destroyAssociation(&assoc);
+
+			string msg = string("T_ASC_Network::AcceptAssociation ") + cond.text();
+			throw dicom_runtime_error(cond, msg);
+		}
+
+		// accepts all Storage SOP classes defined in dcuid.h that
+		// match acceptable transfer syntaxes
+		cond = ASC_acceptContextsWithPreferredTransferSyntaxes(assoc->params, 
+				dcmStorageSOPClassUIDs, numberOfDcmStorageSOPClassUIDs, 
+				transferSyntaxes, numTransferSyntaxes);
+
+		if (cond.bad())
+		{
+			ASC_dropSCPAssociation(assoc);
+			ASC_destroyAssociation(&assoc);
+
+			string msg = string("T_ASC_Network::AcceptAssociation ") + cond.text();
+			throw dicom_runtime_error(cond, msg);
+		}
+
+		ASC_setAPTitles(assoc->params, NULL, NULL, ownAETitle);
+
+		cond = ASC_getApplicationContextName(assoc->params, buf);
+
+		if ((cond.bad()) || strcmp(buf, UID_StandardApplicationContext) != 0)
+		{
+			// reject: the application context name is not supported 
+			T_ASC_RejectParameters rej =
+			{
+				  ASC_RESULT_REJECTEDPERMANENT,
+				  ASC_SOURCE_SERVICEUSER,
+				  ASC_REASON_SU_APPCONTEXTNAMENOTSUPPORTED
+			};
+
+			cond = ASC_rejectAssociation(assoc, &rej);
+
+			ASC_dropSCPAssociation(assoc);
+			ASC_destroyAssociation(&assoc);
+
+			return NULL;
+		}
+		else
+		{
+			cond = ASC_acknowledgeAssociation(assoc);
+			if (cond.bad())
+			{
+				ASC_dropSCPAssociation(assoc);
+				ASC_destroyAssociation(&assoc);
+
+				string msg = string("T_ASC_Network::AcceptAssociation ") + cond.text();
+				throw dicom_runtime_error(cond, msg);
+			}
+		}
+
+		// store calling and called aetitle in global variables to enable
+		// the --exec options using them. Enclose in quotation marks because
+		// aetitles may contain space characters.
+		DIC_AE callingTitle;
+		DIC_AE calledTitle;
+		ASC_getAPTitles(assoc->params, callingTitle, calledTitle, NULL);
+		
+		return assoc;
+	}
+
 
 	~T_ASC_Network() 
 	{
@@ -1087,6 +1467,90 @@ struct T_ASC_Association
 		{
 			return false;
 		}
+	}
+
+	void DropAssociation()
+	{
+		OFCondition cond = ASC_dropSCPAssociation(self);
+	}
+
+	void RespondToReleaseRequest()
+	{
+		OFCondition cond = ASC_acknowledgeRelease(self);
+        cond = ASC_dropSCPAssociation(self);
+	}
+
+	OFCondition ProcessServerCommands(int operationTimeout, const char* saveDirectory)
+	{
+		OFCondition cond = EC_Normal;
+		T_DIMSE_Message msg;
+		T_ASC_PresentationContextID presID = 0;
+		DcmDataset *statusDetail = NULL;
+
+		// start a loop to be able to receive more than one DIMSE command
+		while (cond == EC_Normal || cond == DIMSE_NODATAAVAILABLE)
+		{
+			// receive a DIMSE command over the network
+			if (operationTimeout == -1)
+		  		cond = DIMSE_receiveCommand(self, DIMSE_BLOCKING, 0, &presID, &msg, &statusDetail);
+			else
+			  	cond = DIMSE_receiveCommand(self, DIMSE_NONBLOCKING, operationTimeout, &presID, &msg, &statusDetail);
+
+			// check what kind of error occurred. If no data was
+			// received, check if certain other conditions are met
+			if (cond == DIMSE_NODATAAVAILABLE)
+			{
+				// If in addition to the fact that no data was received also option --eostudy-timeout is set and
+				// if at the same time there is still a study which is considered to be open (i.e. we were actually
+				// expecting to receive more objects that belong to this study) (this is the case if lastStudyInstanceUID
+				// does not equal NULL), we have to consider that all objects for the current study have been received.
+				// In such an "end-of-study" case, we might have to execute certain optional functions which were specified
+				// by the user through command line options passed to storescp.
+				if( operationTimeout != -1)
+				{
+				}
+			}
+
+			// if the command which was received has extra status
+			// detail information, dump this information
+			if (statusDetail != NULL)
+			{
+				// printf("Extra Status Detail: \n");
+				// statusDetail->print(COUT);
+				delete statusDetail;
+			}
+
+			// check if peer did release or abort, or if we have a valid message
+			if (cond == EC_Normal)
+			{
+				// in case we received a valid message, process this command
+				// note that storescp can only process a C-ECHO-RQ and a C-STORE-RQ
+				switch (msg.CommandField)
+				{
+					case DIMSE_C_ECHO_RQ:
+						// process C-ECHO-Request
+						cond = EchoScp(self, &msg, presID);
+						break;
+					case DIMSE_C_STORE_RQ:
+						// process C-STORE-Request
+						cond = StoreScp(self, &msg, presID, saveDirectory);
+						break;
+					case DIMSE_C_FIND_RQ:
+						cond = FindScp(self, &msg.msg.CFindRQ, presID);
+						break;
+					case DIMSE_C_MOVE_RQ:
+						cond = MoveScp(self, &msg.msg.CMoveRQ, presID);
+						break;
+					default:
+						// we cannot handle this kind of message
+						cond = DIMSE_BADCOMMANDTYPE;
+						// fprintf(stderr, "storescp: Cannot handle command: 0x%x\n", OFstatic_cast(unsigned, msg.CommandField));
+						string msg = string("Association::ProcessCommands: ") + cond.text();
+						throw dicom_runtime_error(cond, msg);
+				}
+			}
+		}
+		return cond;
 	}
 
 	bool Release() throw (dicom_runtime_error)
