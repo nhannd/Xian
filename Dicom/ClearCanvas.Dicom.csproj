@@ -126,17 +126,17 @@
     <Compile Include="PatientID.cs" />
     <Compile Include="PatientsName.cs" />
     <Compile Include="QueryResult.cs" />
-    <Compile Include="SR.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
     <Compile Include="QueryResultCollection.cs" />
     <Compile Include="Dcm.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DicomHelper.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Tests\DcmDataTest.cs" />
     <Compile Include="Tests\DcmNetTest.cs" />
@@ -152,8 +152,8 @@
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
-      <!-- <Generator>ResXFileCodeGenerator</Generator> -->
-      <LastGenOutput>SR.cs</LastGenOutput>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

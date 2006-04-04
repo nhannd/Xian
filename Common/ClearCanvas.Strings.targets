@@ -1,22 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Target Name="BeforeBuild"
 		Inputs="SR.resx"
-		Outputs="SR.cs; SR.txt; $(RootNamespace).SR.resources">
+		Outputs="SR.Designer.cs;$(RootNamespace).SR.resources">
 		<GenerateResource  
 		Sources="SR.resx"
 		OutputResources="$(RootNamespace).SR.resources;"
 		StronglyTypedLanguage="C#" 
 		StronglyTypedClassName="SR"
-		StronglyTypedFilename="SR.cs"
+		StronglyTypedFilename="SR.Designer.cs"
 		StronglyTypedNamespace="$(RootNamespace)"
 		PublicClass="true"
 		/>
-		<GenerateResource  
-		Sources="SR.resx"
-		OutputResources="SR.txt"
-		/>
-    <!--
-    <Exec Command="..\Utilities\sed -i &quot;/System.Diagnostics/d&quot; SR.cs" />
-    -->
 	</Target>
 </Project>
