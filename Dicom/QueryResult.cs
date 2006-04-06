@@ -120,6 +120,11 @@ namespace ClearCanvas.Dicom
             (this as ICollection<KeyValuePair<DicomTag, string>>).Clear();
         }
 
+        public Boolean ContainsTag(DicomTag tag)
+        {
+            return (this as IDictionary<DicomTag, string>).ContainsKey(tag);
+        }
+
         /// <summary>
         /// Returns string representation of this query result.
         /// </summary>
