@@ -10,28 +10,7 @@ namespace ClearCanvas.Dicom
     /// Application-level exceptions that are routed from lower-level DICOM library calls
     /// </summary>
     [Serializable]
-    public class DicomException : System.Exception
-    {
-        public DicomException() { }
-
-        public DicomException(string message)
-            : base(message)
-        {
-        }
-
-        public DicomException(string message, System.Exception exception)
-            : base(message, exception)
-        {
-        }
-
-        protected DicomException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-    }
-
-    [Serializable]
-    public class GeneralDicomException : DicomException
+    public class GeneralDicomException : Exception
     {
         public GeneralDicomException() { }
 
@@ -54,7 +33,7 @@ namespace ClearCanvas.Dicom
     }
 
     [Serializable]
-    public class NetworkDicomException : DicomException
+    public class NetworkDicomException : Exception
     {
         public NetworkDicomException() { }
 

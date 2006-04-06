@@ -25,7 +25,7 @@ namespace ClearCanvas.Dicom
 				if (status.code() == 2)
 					tagExists = false;
 				else
-					throw new DicomException(String.Format(SR.ExceptionDICOMTag, tag.toString(), status.text()));
+					throw new GeneralDicomException(String.Format(SR.ExceptionDICOMTag, tag.toString(), status.text()));
 			}
 			else
 			{
@@ -39,7 +39,7 @@ namespace ClearCanvas.Dicom
 			Platform.CheckForNullReference(filename, "filename");
 
 			if (status.bad())
-				throw new DicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
+				throw new GeneralDicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
 		}
 
         public static bool CompareConditions(OFCondition condition1, OFCondition condition2)
