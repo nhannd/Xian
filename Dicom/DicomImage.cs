@@ -22,6 +22,7 @@ namespace ClearCanvas.Dicom
 		private int _sizeInBytes;
 
 		private DcmDataset _dataset;
+		private DcmMetaInfo _metaInfo;
 		private bool _isDatasetLoaded = false;
         private bool _isImageParameterSetLoaded = false;
 
@@ -29,6 +30,12 @@ namespace ClearCanvas.Dicom
 		{
 			get { return _dataset; }
 			set { _dataset = value; }
+		}
+
+		protected DcmMetaInfo MetaInfo
+		{
+			get { return _metaInfo; }
+			set { _metaInfo = value; }
 		}
 
 		public bool IsDatasetLoaded
@@ -211,12 +218,24 @@ namespace ClearCanvas.Dicom
 			LoadDataset();
 			OFCondition status = _dataset.findAndGetUint16(tag, out val);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+
+			if (tagExists)
+				return;
+
+			status = _metaInfo .findAndGetUint16(tag, out val);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 		}
 
 		public void GetTag(DcmTagKey tag, out ushort val, uint position, out bool tagExists)
 		{
 			LoadDataset();
 			OFCondition status = _dataset.findAndGetUint16(tag, out val, position);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+
+			if (tagExists)
+				return;
+
+			status = _metaInfo.findAndGetUint16(tag, out val, position);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 		}
 
@@ -225,12 +244,24 @@ namespace ClearCanvas.Dicom
 			LoadDataset();
 			OFCondition status = _dataset.findAndGetFloat64(tag, out val);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+
+			if (tagExists)
+				return;
+
+			status = _metaInfo.findAndGetFloat64(tag, out val);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 		}
 
 		public void GetTag(DcmTagKey tag, out double val, uint position, out bool tagExists)
 		{
 			LoadDataset();
 			OFCondition status = _dataset.findAndGetFloat64(tag, out val, position);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+
+			if (tagExists)
+				return;
+
+			status = _metaInfo.findAndGetFloat64(tag, out val, position);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 		}
 
@@ -242,17 +273,20 @@ namespace ClearCanvas.Dicom
 			OFCondition status = _dataset.findAndGetOFString(tag, buffer);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 			val = buffer.ToString();
+
+			if (tagExists)
+				return;
+
+			buffer = new StringBuilder(64);
+			status = _metaInfo.findAndGetOFString(tag, buffer);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			val = buffer.ToString();
 		}
 		
 		#endregion
 
-		protected virtual void LoadDataset()
-		{
-		}
-
-		protected virtual void UnloadDataset()
-		{
-		}
+		protected abstract void LoadDataset();
+		protected abstract void UnloadDataset();
 
         protected virtual void LoadImageParameterSet()
         {

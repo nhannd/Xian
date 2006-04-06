@@ -29,6 +29,7 @@ namespace ClearCanvas.Dicom
 
 				base.IsDatasetLoaded = true;
 				base.Dataset = _fileFormat.getDataset();
+				base.MetaInfo = _fileFormat.getMetaInfo();
 			}
 		}
 
