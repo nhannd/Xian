@@ -333,4 +333,7 @@
   <data name="ExceptionGeneralEqualsWrongType" xml:space="preserve">
     <value>The object passed is is not of the right type for Equals comparison.</value>
   </data>
+  <data name="ExceptionDicomTransferSyntaxNotSupported" xml:space="preserve">
+    <value>Transfer syntax {0} for SOP UID = {1} not supported.  Compressed pixel data cannot be loaded at this time.</value>
+  </data>
 </root>

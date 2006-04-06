@@ -205,6 +205,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transfer syntax {0} for SOP UID = {1} not supported.  Compressed pixel data cannot be loaded at this time..
+        /// </summary>
+        public static string ExceptionDicomTransferSyntaxNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionDicomTransferSyntaxNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Accession Number cannot be null.
         /// </summary>
         public static string ExceptionGeneralAccessionNull {
