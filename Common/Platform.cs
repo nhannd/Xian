@@ -37,6 +37,7 @@ namespace ClearCanvas.Common
 		private static object _syncRoot = new Object();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
         private static IApplicationRoot _applicationRoot;
+		private static IMessageBox _messageBox;
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
@@ -220,6 +221,14 @@ namespace ClearCanvas.Common
 					_log.Fatal(SR.ExceptionThrown, ex);
 					break;
 			}
+		}
+
+		public static void ShowMessageBox(string message)
+		{
+			if (_messageBox == null)
+				_messageBox = (IMessageBox)Platform.CreateExtension(typeof(IMessageBox));
+
+			_messageBox.Show(message);
 		}
 
 		/// <summary>
