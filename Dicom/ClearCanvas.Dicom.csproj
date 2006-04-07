@@ -115,6 +115,7 @@
     <Compile Include="Network\DicomServer.cs" />
     <Compile Include="Network\HostName.cs" />
     <Compile Include="Network\ListeningPort.cs" />
+    <Compile Include="Network\ObjectSendingProgressUpdatedEventArgs.cs" />
     <Compile Include="Network\QueryCompletedEventArgs.cs" />
     <Compile Include="Network\QueryResultReceivedEventArgs.cs" />
     <Compile Include="Network\SeriesCompletedEventArgs.cs" />

@@ -10,6 +10,7 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.OffisWrapper;
     using ClearCanvas.Dicom;
     using MySR = ClearCanvas.Dicom.SR;
+    using System.IO;
 
     /// <summary>
     /// Main entry point for DICOM networking functionality. Allows the client to 
@@ -31,6 +32,8 @@ namespace ClearCanvas.Dicom.Network
         /// Fires when the C-FIND query has completed and all results received.
         /// </summary>
         private event EventHandler<QueryCompletedEventArgs> _queryCompletedEvent;
+
+        private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
 
         // TODO:
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
@@ -379,6 +382,83 @@ namespace ClearCanvas.Dicom.Network
             return;
         }
 
+        public void Store(ApplicationEntity serverAE, String directory, Boolean recursivelyDescend)
+        {
+            String normalizedDirectory = DicomHelper.NormalizeDirectory(directory);
+
+            string[] fileList = Directory.GetFiles(directory,
+                "*",
+                recursivelyDescend ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+
+            Store(serverAE, fileList);
+        }
+
+        public void Store(ApplicationEntity serverAE, IEnumerable<String> files)
+        {
+            string[] sopClassUids = { };
+            Store(serverAE, files, sopClassUids);
+        }
+
+        public void Store(ApplicationEntity serverAE, IEnumerable<String> files, IEnumerable<String> sopClassUids)
+        {
+            string[] transferSyntaxUids = { };
+            Store(serverAE, files, sopClassUids, transferSyntaxUids);
+        }
+
+        public void Store(ApplicationEntity serverAE, IEnumerable<String> files, IEnumerable<String> sopClassUids, IEnumerable<String> transferSyntaxUids)
+        {
+            // TODO:
+            if (null == files)
+            {
+                throw new System.ArgumentNullException("files cannot be null");
+            }
+
+            try
+            {
+                SetConnectionTimeout(600);
+
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
+
+                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+
+                #region Interop-specific code
+                // copy over file list
+                OFStringVector interopFilenameList = new OFStringVector();
+                foreach (String filename in files)
+                {
+                    interopFilenameList.Add(filename);
+                }
+
+                // copy over sop class list
+                OFStringVector interopSopClassUid = new OFStringVector();
+                foreach (String sopClass in sopClassUids)
+                {
+                    interopSopClassUid.Add(sopClass);
+                }
+
+                // copy over syntax list
+                OFStringVector interopTransferSyntaxUid = new OFStringVector();
+                foreach (String syntax in transferSyntaxUids)
+                {
+                    interopTransferSyntaxUid.Add(syntax);
+                }
+                #endregion
+
+                associationParameters.ConfigureForCStore(interopFilenameList, interopSopClassUid, interopTransferSyntaxUid);
+
+                T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                if (association.SendCStore(interopFilenameList)) 
+                    association.Release();
+
+                return;
+            }
+            catch (DicomRuntimeApplicationException e)
+            {
+                throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
+            }
+        }
+
         #region Protected members
 
         /// <summary>
@@ -721,6 +801,38 @@ namespace ClearCanvas.Dicom.Network
             }
 
             private StoreCallbackHelperDelegate _storeCallbackHelperDelegate;
+            private DicomClient _parent;
+        }
+
+        class StoreScuCallbackHelper
+        {
+            public StoreScuCallbackHelper(DicomClient parent)
+            {
+                _parent = parent;
+                _storeScuCallbackHelperDelegate = new StoreScuCallbackHelperDelegate(DefaultCallback);
+                RegisterStoreScuCallbackHelper_OffisDcm(_storeScuCallbackHelperDelegate);
+            }
+
+            ~StoreScuCallbackHelper()
+            {
+                RegisterStoreScuCallbackHelper_OffisDcm(null);
+            }
+
+            public delegate void StoreScuCallbackHelperDelegate(IntPtr interopStoreScuCallbackInfo);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterStoreScuCallbackHelper_OffisDcm")]
+            public static extern void RegisterStoreScuCallbackHelper_OffisDcm(StoreScuCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr interopStoreScuCallbackInfo)
+            {
+                InteropStoreScuCallbackInfo callbackInfo = new InteropStoreScuCallbackInfo(interopStoreScuCallbackInfo, false);
+                T_DIMSE_C_StoreRQ request = callbackInfo.Request;
+                T_DIMSE_StoreProgress progress = callbackInfo.Progress;
+
+
+            }
+
+            private StoreScuCallbackHelperDelegate _storeScuCallbackHelperDelegate;
             private DicomClient _parent;
         }
 

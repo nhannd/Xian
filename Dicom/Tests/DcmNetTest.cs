@@ -10,6 +10,7 @@ namespace ClearCanvas.Dicom.Tests
     using NUnit.Framework;
     using ClearCanvas.Dicom;
     using System.Threading;
+    using System.IO;
 
     [TestFixture]
     public class DcmNetTest
@@ -346,6 +347,21 @@ namespace ClearCanvas.Dicom.Tests
             Thread.Sleep(TimeSpan.FromMinutes(5));
 
             dicomServer.Stop();
+        }
+
+        [Test]
+        public void SendTest()
+        {
+            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("CCNETTEST"), new ListeningPort(4000));
+
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("STORESCP"), new ListeningPort(104));
+
+            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+
+            string[] files = Directory.GetFiles(@"C:\SampleDICOMImages\eFilm");
+            dicomClient.Store(serverAE, files);
         }
 
         #region Non-test utility methods

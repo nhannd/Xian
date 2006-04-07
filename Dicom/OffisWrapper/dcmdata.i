@@ -225,14 +225,8 @@ DcmElement* castToDcmElement(DcmObject* pObj)
 
 %}
 
-
 // "out" is a keyword in C#, so rename it to "outStream"
 #define out outStream
-
-// "value" is a keyword in C#, so rename it to "val"
-// This will generate two compiler errors.  They are fixed by editing the
-// dcmtk_wrap.cxx file so that "val" is changed back to "value".
-#define value val
 
 // Ignore these for now, since they're causing problems
 %ignore getOriginalRepresentationKey;

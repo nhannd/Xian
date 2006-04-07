@@ -1,6 +1,9 @@
 %module OffisDcm
 
 %{
+#include <string>
+#include <vector>
+#include "osconfig.h"
 #include "assoc.h"
 #include "dimse.h"
 #include "ofcond.h"
@@ -8,6 +11,13 @@
 #include "diutil.h"
 %}
 
+/////////////////////////////////////////////////////////
+// 
+// These macros cause the parsing of the C++ code to 
+// output modified results to avoid identifier names
+// that coincide with C# keywords
+//
+/////////////////////////////////////////////////////////
 #ifndef params
 	#define params parameters
 #endif
@@ -16,9 +26,16 @@
 	#define base baseclass
 #endif
 
+%include "osconfig.h"
 %include "ofcond.h"
 %include "dicom.h"
 %include "cond.h"
+%include "std_vector.i"
+
+namespace std
+{
+	%template(OFStringVector) vector<string>;
+}
 
 /////////////////////////////////////////////////////////
 //
@@ -58,6 +75,7 @@ CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
 CONTROLACCESSPUBLIC(InteropStoreCallbackInfo)
 CONTROLACCESSPUBLIC(InteropFindCallbackInfo)
 CONTROLACCESSPUBLIC(InteropMoveCallbackInfo)
+CONTROLACCESSPUBLIC(InteropStoreScuCallbackInfo)
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -69,6 +87,11 @@ CONTROLACCESSPUBLIC(InteropMoveCallbackInfo)
 
 #include "ofcond.h"
 #include <stdexcept>
+#include <vector>
+#include <string>
+
+using std::vector;
+using std::string;
 
 class dicom_runtime_error : public std::runtime_error
 {
@@ -214,6 +237,12 @@ struct InteropStoreCallbackInfo
 	DcmDataset* ImageDataset;
 };
 
+struct InteropStoreScuCallbackInfo
+{
+    T_DIMSE_StoreProgress * Progress;
+    T_DIMSE_C_StoreRQ * Request;
+};
+
 struct InteropFindCallbackInfo
 {
 
@@ -292,6 +321,18 @@ SWIGEXPORT void SWIGSTDCALL RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHe
 //-------------------------------------------
 
 //-----------------------------------
+typedef void (SWIGSTDCALL* StoreScuCallbackHelperCallback)(InteropStoreScuCallbackInfo*);
+static StoreScuCallbackHelperCallback CSharpStoreScuCallbackHelperCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterStoreScuCallbackHelper_OffisDcm(StoreScuCallbackHelperCallback callback) {
+	CSharpStoreScuCallbackHelperCallback = callback;
+}
+//-----------------------------------
+
+//-----------------------------------
 typedef void (SWIGSTDCALL* StoreCallbackHelperCallback)(InteropStoreCallbackInfo*);
 static StoreCallbackHelperCallback CSharpStoreCallbackHelperCallback = NULL;
 
@@ -326,8 +367,309 @@ SWIGEXPORT void SWIGSTDCALL RegisterMoveCallbackHelper_OffisDcm(MoveCallbackHelp
 	CSharpMoveCallbackHelperCallback = callback;
 }
 //--------------------------------------------------------------
+
 static void
-addRetreiveAETitle(DcmDataset *rspIds, DIC_AE ourAETitle)
+StoreScuProgressCallback(void * /*callbackData*/,
+    T_DIMSE_StoreProgress *progress,
+    T_DIMSE_C_StoreRQ * req)
+{
+	// should fire off image received event
+	if (NULL != CSharpStoreCallbackHelperCallback)
+	{
+		InteropStoreScuCallbackInfo info;
+
+		// prepare the transmission of data 
+		bzero((char*)&info, sizeof(info));
+		info.Progress = progress;
+		info.Request = req;
+
+		CSharpStoreScuCallbackHelperCallback(&info);
+	}
+}
+
+static OFCondition
+StoreScu(T_ASC_Association * assoc, const char *fname)
+    /*
+     * This function will read all the information from the given file,
+     * figure out a corresponding presentation context which will be used
+     * to transmit the information over the network to the SCP, and it
+     * will finally initiate the transmission of all data to the SCP.
+     *
+     * Parameters:
+     *   assoc - [in] The association (network connection to another DICOM application).
+     *   fname - [in] Name of the file which shall be processed.
+     */
+{
+    DIC_US msgId = assoc->nextMsgID++;
+    T_ASC_PresentationContextID presId;
+    T_DIMSE_C_StoreRQ req;
+    T_DIMSE_C_StoreRSP rsp;
+    DIC_UI sopClass;
+    DIC_UI sopInstance;
+    DcmDataset *statusDetail = NULL;
+
+    /* read information from file. After the call to DcmFileFormat::loadFile(...) the information */
+    /* which is encapsulated in the file will be available through the DcmFileFormat object. */
+    /* In detail, it will be available through calls to DcmFileFormat::getMetaInfo() (for */
+    /* meta header information) and DcmFileFormat::getDataset() (for data set information). */
+    DcmFileFormat dcmff;
+    OFCondition cond = dcmff.loadFile(fname);
+
+    /* figure out if an error occured while the file was read*/
+    if (cond.bad()) {
+        return cond;
+    }
+
+    /* figure out which SOP class and SOP instance is encapsulated in the file */
+    if (!DU_findSOPClassAndInstanceInDataSet(dcmff.getDataset(),
+        sopClass, sopInstance, true)) 
+	{
+        return DIMSE_BADDATA;
+    }
+
+    /* figure out which of the accepted presentation contexts should be used */
+    DcmXfer filexfer(dcmff.getDataset()->getOriginalXfer());
+
+    if (filexfer.getXfer() != EXS_Unknown) presId = ASC_findAcceptedPresentationContextID(assoc, sopClass, filexfer.getXferID());
+    else presId = ASC_findAcceptedPresentationContextID(assoc, sopClass);
+    if (presId == 0) 
+	{
+        const char *modalityName = dcmSOPClassUIDToModality(sopClass);
+        if (!modalityName) modalityName = dcmFindNameOfUID(sopClass);
+        if (!modalityName) modalityName = "unknown SOP class";
+        return DIMSE_NOVALIDPRESENTATIONCONTEXTID;
+    }
+
+    /* prepare the transmission of data */
+    bzero((char*)&req, sizeof(req));
+    req.MessageID = msgId;
+    strcpy(req.AffectedSOPClassUID, sopClass);
+    strcpy(req.AffectedSOPInstanceUID, sopInstance);
+    req.DataSetType = DIMSE_DATASET_PRESENT;
+    req.Priority = DIMSE_PRIORITY_LOW;
+
+    /* finally conduct transmission of data */
+    cond = DIMSE_storeUser(assoc, presId, &req,
+        NULL, dcmff.getDataset(), StoreScuProgressCallback, NULL,
+        DIMSE_BLOCKING, 0,
+        &rsp, &statusDetail, NULL, DU_fileSize(fname));
+
+    /*
+     * If store command completed normally, with a status
+     * of success or some warning then the image was accepted.
+     */
+    if (cond == EC_Normal && (rsp.DimseStatus == STATUS_Success || DICOM_WARNING_STATUS(rsp.DimseStatus))) 
+	{
+        
+    }
+
+    /* remember the response's status for later transmissions of data */
+    // lastStatusCode = rsp.DimseStatus;
+
+    /* dump some more general information */
+    if (cond == EC_Normal)
+    {
+
+    }
+    else
+    {
+
+    }
+
+    /* dump status detail information if there is some */
+    if (statusDetail != NULL) 
+	{
+        delete statusDetail;
+    }
+
+    /* return */
+    return cond;
+}
+
+static OFCondition
+AddPresentationContext(T_ASC_Parameters *params,
+    int presentationContextId, const OFString& abstractSyntax,
+    const OFString& transferSyntax,
+    T_ASC_SC_ROLE proposedRole = ASC_SC_ROLE_DEFAULT)
+{
+    const char* c_p = transferSyntax.c_str();
+    OFCondition cond = ASC_addPresentationContext(params, presentationContextId,
+        abstractSyntax.c_str(), &c_p, 1, proposedRole);
+    return cond;
+}
+
+static OFCondition
+AddPresentationContext(T_ASC_Parameters *params,
+    int presentationContextId, const OFString& abstractSyntax,
+    const std::vector<string >& transferSyntaxList,
+    T_ASC_SC_ROLE proposedRole = ASC_SC_ROLE_DEFAULT)
+{
+    // create an array of supported/possible transfer syntaxes
+    const char** transferSyntaxes = new const char*[transferSyntaxList.size()];
+    int transferSyntaxCount = 0;
+	std::vector<string >::const_iterator s_cur = transferSyntaxList.begin();
+	std::vector<string >::const_iterator s_end = transferSyntaxList.end();
+    while (s_cur != s_end) 
+	{
+        transferSyntaxes[transferSyntaxCount++] = (*s_cur).c_str();
+        ++s_cur;
+    }
+
+    OFCondition cond = ASC_addPresentationContext(params, presentationContextId,
+        abstractSyntax.c_str(), transferSyntaxes, transferSyntaxCount, proposedRole);
+
+    delete[] transferSyntaxes;
+    return cond;
+}
+
+static OFBool
+IsaListMember(std::vector<string >& lst, OFString& s)
+{
+	std::vector<string >::iterator cur = lst.begin();
+    std::vector<string >::iterator end = lst.end();
+
+    OFBool found = OFFalse;
+
+    while (cur != end && !found) {
+
+        found = (s == *cur);
+
+        ++cur;
+    }
+
+    return found;
+}
+
+static OFCondition
+AddStoragePresentationContexts(T_ASC_Parameters *params, std::vector<string >& sopClasses)
+{
+    /*
+     * Each SOP Class will be proposed in two presentation contexts (unless
+     * the opt_combineProposedTransferSyntaxes global variable is true).
+     * The command line specified a preferred transfer syntax to use.
+     * This prefered transfer syntax will be proposed in one
+     * presentation context and a set of alternative (fallback) transfer
+     * syntaxes will be proposed in a different presentation context.
+     *
+     * Generally, we prefer to use Explicitly encoded transfer syntaxes
+     * and if running on a Little Endian machine we prefer
+     * LittleEndianExplicitTransferSyntax to BigEndianTransferSyntax.
+     * Some SCP implementations will just select the first transfer
+     * syntax they support (this is not part of the standard) so
+     * organise the proposed transfer syntaxes to take advantage
+     * of such behaviour.
+     */
+
+    OFString preferredTransferSyntax;
+
+	/* gLocalByteOrder is defined in dcxfer.h */
+	if (gLocalByteOrder == EBO_LittleEndian) 
+	{
+		/* we are on a little endian machine */
+		preferredTransferSyntax = UID_LittleEndianExplicitTransferSyntax;
+	} 
+	else 
+	{
+		/* we are on a big endian machine */
+		preferredTransferSyntax = UID_BigEndianExplicitTransferSyntax;
+	}
+
+	std::vector<string > fallbackSyntaxes;
+	fallbackSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
+
+	std::vector<string >::iterator s_cur;
+    std::vector<string >::iterator s_end;
+
+        // If little endian implicit is preferred then we don't need any fallback syntaxes
+    // because it is the default transfer syntax and all applications must support it.
+    if (false) 
+	{
+		// if preferred syntax was EXS_LittleEndianImplicit
+        fallbackSyntaxes.clear();
+    }
+
+    // created a list of transfer syntaxes combined from the preferred and fallback syntaxes
+	std::vector<string > combinedSyntaxes;
+    s_cur = fallbackSyntaxes.begin();
+    s_end = fallbackSyntaxes.end();
+    combinedSyntaxes.push_back(preferredTransferSyntax);
+    while (s_cur != s_end)
+    {
+        if (!IsaListMember(combinedSyntaxes, *s_cur)) combinedSyntaxes.push_back(*s_cur);
+        ++s_cur;
+    }
+
+    if (false) 
+	{
+        // add all the known storage sop classes to the list
+        // the array of Storage SOP Class UIDs comes from dcuid.h
+        for (int i=0; i<numberOfDcmStorageSOPClassUIDs; i++) 
+		{
+            sopClasses.push_back(dcmStorageSOPClassUIDs[i]);
+        }
+    }
+
+    // thin out the sop classes to remove any duplicates.
+	std::vector<string > sops;
+    s_cur = sopClasses.begin();
+    s_end = sopClasses.end();
+    while (s_cur != s_end) 
+	{
+        if (!IsaListMember(sops, *s_cur)) 
+		{
+            sops.push_back(*s_cur);
+        }
+        ++s_cur;
+    }
+
+    // add a presentations context for each sop class / transfer syntax pair
+    OFCondition cond = EC_Normal;
+    int pid = 1; // presentation context id
+    s_cur = sops.begin();
+    s_end = sops.end();
+    while (s_cur != s_end && cond.good()) 
+	{
+
+        if (pid > 255) 
+		{
+            // errmsg("Too many presentation contexts");
+            return ASC_BADPRESENTATIONCONTEXTID;
+        }
+
+        if (false) 
+		{
+			// combine transfer syntaxes
+            cond = AddPresentationContext(params, pid, *s_cur, combinedSyntaxes);
+            pid += 2;   /* only odd presentation context id's */
+        } 
+		else 
+		{
+
+            // sop class with preferred transfer syntax
+            cond = AddPresentationContext(params, pid, *s_cur, preferredTransferSyntax);
+            pid += 2;   /* only odd presentation context id's */
+
+            if (fallbackSyntaxes.size() > 0) 
+			{
+                if (pid > 255) 
+				{
+                    // errmsg("Too many presentation contexts");
+                    return ASC_BADPRESENTATIONCONTEXTID;
+                }
+
+                // sop class with fallback transfer syntax
+                cond = AddPresentationContext(params, pid, *s_cur, fallbackSyntaxes);
+                pid += 2;       /* only odd presentation context id's */
+            }
+        }
+        ++s_cur;
+    }
+
+    return cond;
+}
+
+static void
+AddRetrieveAETitle(DcmDataset *rspIds, DIC_AE ourAETitle)
 {
     /*
      * Since images are stored only by us (for RSNA'93 demo),
@@ -357,7 +699,7 @@ static void CFindProgressCallback(
 	}
 }
 
-static void CMoveProgressCallback(void *callbackData, 
+static void MoveProgressCallback(void *callbackData, 
 		T_DIMSE_C_MoveRQ *request,
     	int responseCount, 
 		T_DIMSE_C_MoveRSP *response)
@@ -538,7 +880,7 @@ static void MoveScpCallback(
 
     if (*responseIdentifiers != NULL) 
 	{
-		addRetreiveAETitle(*responseIdentifiers, context->ourAETitle);
+		AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
     }
 
 	// set the response status, i.e. whether there are more results 
@@ -622,7 +964,7 @@ static void FindScpCallback(
 
     if (*responseIdentifiers != NULL) 
 	{
-		addRetreiveAETitle(*responseIdentifiers, context->ourAETitle);
+		AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
     }
 
 	// set the response status, i.e. whether there are more results 
@@ -1122,10 +1464,10 @@ struct T_ASC_Parameters
 %extend(canthrow=1) T_ASC_Parameters {
 
 	T_ASC_Parameters(int maxReceivePduLength,
-	const char* ourAETitle,
-	const char* peerAETitle,
-	const char* peerHostName,
-	int peerPort) throw (dicom_runtime_error)
+		const char* ourAETitle,
+		const char* peerAETitle,
+		const char* peerHostName,
+		int peerPort) throw (dicom_runtime_error)
 	{
 		T_ASC_Parameters* pParameters = 0;
 		OFCondition result = ASC_createAssociationParameters(&pParameters,
@@ -1170,7 +1512,7 @@ struct T_ASC_Parameters
 		return pParameters;
 	}
 
-	void ConfigureForVerification()
+	void ConfigureForVerification() throw (dicom_runtime_error)
 	{
 		static const char* transferSyntaxes[] = {
 			UID_LittleEndianExplicitTransferSyntax,
@@ -1193,7 +1535,7 @@ struct T_ASC_Parameters
 
 	}
 
-	void ConfigureForStudyRootQuery()
+	void ConfigureForStudyRootQuery() throw (dicom_runtime_error)
 	{
 		const char* transferSyntaxes[] = {
 			UID_LittleEndianExplicitTransferSyntax,
@@ -1215,7 +1557,7 @@ struct T_ASC_Parameters
 		}
 	}
 
-	void ConfigureForCMoveStudyRootQuery()
+	void ConfigureForCMoveStudyRootQuery() throw (dicom_runtime_error)
 	{
 		const char* transferSyntaxes[] = { NULL, NULL, NULL };
 		int numTransferSyntaxes = 0;
@@ -1241,6 +1583,48 @@ struct T_ASC_Parameters
 		if (result.bad())
 		{
 			string msg = string("ASC_addPresentationContext: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
+	}
+
+	void ConfigureForCStore(std::vector<string > interopFilenameList, std::vector<string > interopSopClassList, 
+			std::vector<string > interopTransferSyntaxList) throw (dicom_runtime_error)
+	{
+		bool parseSopClass = (interopSopClassList.size() <= 0);
+		bool parseTransferSyntax = (interopTransferSyntaxList.size() <= 0);
+
+		if (parseSopClass)
+		{
+			char sopClassUID[128];
+			char sopInstanceUID[128];
+
+			for (std::vector<string >::iterator p = interopFilenameList.begin(); p != interopFilenameList.end(); ++p)
+			{
+				if (!DU_findSOPClassAndInstanceInFile((*p).c_str(), sopClassUID, sopInstanceUID))
+				{
+					OFCondition cond;
+
+					string msg = string("SendCStore: Missing SOP class in file: ") + *p;
+					throw dicom_runtime_error(cond, msg);
+				}
+				else if (!dcmIsaStorageSOPClassUID(sopClassUID))
+				{
+					OFCondition cond;
+
+					string msg = string("SendCStore: Unknown storage SOP class in file: ") + *p;
+					throw dicom_runtime_error(cond, msg);
+				}
+				else
+				{
+					interopSopClassList.push_back(sopClassUID);
+				}
+			}
+		}
+
+		OFCondition result = AddStoragePresentationContexts(self, interopSopClassList);
+		if (result.bad())
+		{
+			string msg = string("AddStoragePresentationContexts: ") + result.text();
 			throw dicom_runtime_error(result, msg);
 		}
 	}
@@ -1440,7 +1824,7 @@ struct T_ASC_Association
 		ASC_getAPTitles(self->params, req.MoveDestination, NULL, NULL);
 
 		OFCondition cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
-			CMoveProgressCallback, &callbackData, DIMSE_BLOCKING, 0,
+			MoveProgressCallback, &callbackData, DIMSE_BLOCKING, 0,
 			network, CStoreSubOpCallback, (void*) saveDirectory,
 			&rsp, &statusDetail, &rspIds);
 
@@ -1466,6 +1850,45 @@ struct T_ASC_Association
 		else // some other abnormal condition
 		{
 			return false;
+		}
+	}
+
+	bool SendCStore(std::vector<string > fileNameList) throw (dicom_runtime_error)
+	{
+		OFCondition cond = EC_Normal;
+		std::vector<string >::iterator iter = fileNameList.begin();
+		std::vector<string >::iterator enditer = fileNameList.end();
+
+		while ((iter != enditer) && (cond == EC_Normal)) // compare with EC_Normal since DUL_PEERREQUESTEDRELEASE is also good()
+		{
+			cond = StoreScu(self, (*iter).c_str());
+
+			// don't increment the iterator if cond is not EC_Normal so that we can get the file name
+			if (cond == EC_Normal)
+				++iter;
+		}
+
+		/* tear down association, i.e. terminate network connection to SCP */
+		if (cond == EC_Normal)
+		{
+			return true;
+		}
+		else if (cond == DUL_PEERREQUESTEDRELEASE)
+		{
+			ASC_abortAssociation(self);
+			string msg = string("SendCStore: Protocol error, peer requested release (association aborted); ") + cond.text();
+			throw dicom_runtime_error(cond, msg);
+		}
+		else if (cond == DUL_PEERABORTEDASSOCIATION)
+		{
+			// right now we don't do anything special
+			// but in the future, this could be logged
+			return false;
+		}
+		else // some other abnormal condition
+		{
+			string msg = string("SendCStore: Bad dicom file - ") + (*iter) + cond.text();
+			throw dicom_runtime_error(cond, msg);
 		}
 	}
 
@@ -1723,3 +2146,29 @@ struct T_DIMSE_C_FindRSP {
 #define O_FIND_AFFECTEDSOPCLASSUID		0x0001
 };
 
+struct T_DIMSE_C_StoreRQ {
+	DIC_US          MessageID;				/* M */
+	DIC_UI          AffectedSOPClassUID;			/* M */
+	T_DIMSE_Priority Priority;				/* M */
+	T_DIMSE_DataSetType DataSetType;			/* M */
+	DIC_UI          AffectedSOPInstanceUID;			/* M */
+	DIC_AE          MoveOriginatorApplicationEntityTitle;	/* U */
+	DIC_US          MoveOriginatorID;			/* U */
+	/* DataSet provided as argument to DIMSE functions */	/* M */
+	unsigned int	opts; /* which optional items are set */
+#define O_STORE_MOVEORIGINATORAETITLE			0x0001
+#define O_STORE_MOVEORIGINATORID			0x0002
+        /* the following flag is set on incoming C-STORE requests if
+         * the SOP instance UID is (incorrectly) padded with a space
+         * character. Will only be detected if the dcmdata flag
+         * dcmEnableAutomaticInputDataCorrection is false.
+         */
+#define O_STORE_RQ_BLANK_PADDING			0x0008
+};
+
+struct T_DIMSE_StoreProgress { /* progress structure for store callback routines */
+    T_DIMSE_StoreProgressState state;	/* current state */
+    long callbackCount;	/* callback execution count */
+    long progressBytes;	/* sent/received so far */
+    long totalBytes;		/* total/estimated total to send/receive */
+} ;
