@@ -169,6 +169,7 @@
     <Compile Include="PluginProgressEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ResourceResolver.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
