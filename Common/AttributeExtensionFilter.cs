@@ -14,7 +14,7 @@ namespace ClearCanvas.Common
     /// for quite sophisticated matching capabilities, as the attribute itself decides what constitutes
     /// a match.
     /// </remarks>
-    public class MatchAttributes : ExtensionFilter
+    public class AttributeExtensionFilter : ExtensionFilter
     {
         private Attribute[] _attributes;
 
@@ -22,7 +22,7 @@ namespace ClearCanvas.Common
         /// Creates a filter to match on multiple attributes.  The extension must test true on each attribute.
         /// </summary>
         /// <param name="attributes">The attributes to be used as test criteria</param>
-        public MatchAttributes(Attribute[] attributes)
+        public AttributeExtensionFilter(Attribute[] attributes)
         {
             _attributes = attributes;
         }
@@ -31,7 +31,7 @@ namespace ClearCanvas.Common
         /// Creates a filter to match on a single attribute.
         /// </summary>
         /// <param name="attribute">The attribute to be used as test criteria</param>
-        public MatchAttributes(Attribute attribute)
+        public AttributeExtensionFilter(Attribute attribute)
             :this(new Attribute[] { attribute })
         {
         }

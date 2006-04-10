@@ -12,7 +12,7 @@ namespace ClearCanvas.Common
     /// types supplied as criteria to this filter.  Typically these types are interfaces, however, a
     /// single class may be supplied, in which case the extension must be a subclass of that class.
     /// </remarks>
-    public class MatchTypes : ExtensionFilter
+    public class TypeExtensionFilter : ExtensionFilter
     {
         private Type[] _types;
 
@@ -20,7 +20,7 @@ namespace ClearCanvas.Common
         /// Creates a filter that matches on multiple types.
         /// </summary>
         /// <param name="types">The types used as criteria to match</param>
-        public MatchTypes(Type[] types)
+        public TypeExtensionFilter(Type[] types)
         {
             _types = types;
         }
@@ -29,7 +29,7 @@ namespace ClearCanvas.Common
         /// Creates a filter that matches on a single type.
         /// </summary>
         /// <param name="type">The type used as criteria to match</param>
-        public MatchTypes(Type type)
+        public TypeExtensionFilter(Type type)
             : this(new Type[] { type })
         {
         }
