@@ -165,7 +165,7 @@ namespace ClearCanvas.Common
             {
 #endif
                 ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
-                _applicationRoot = xp.CreateExtension();
+                _applicationRoot = (IApplicationRoot)xp.CreateExtension();
                 _applicationRoot.RunApplication();
 #if !DEBUG
             }
@@ -239,7 +239,7 @@ namespace ClearCanvas.Common
             if (_messageBox == null)
             {
                 MessageBoxExtensionPoint xp = new MessageBoxExtensionPoint();
-                _messageBox = xp.CreateExtension();
+                _messageBox = (IMessageBox)xp.CreateExtension();
             }
 
 			_messageBox.Show(message);
@@ -249,7 +249,7 @@ namespace ClearCanvas.Common
 		/// Handles a caught exception.
 		/// </summary>
 		/// <param name="ex">The caught exception.</param>
-		/// 
+		///
 		/// <returns><b>true</b> if the exception is to be rethrown, <b>false</b> if not</returns>
 		/// <remarks>Used in a catch block, this utility method allows an exception
 		/// to be handled in a way defined by an XML defined exception policy.  This way, changes

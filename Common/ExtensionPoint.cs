@@ -126,8 +126,9 @@ namespace ClearCanvas.Common
     }
 
     public abstract class ExtensionPoint<TInterface> : ExtensionPointBase
-        where TInterface : class
     {
+/*  This stuff won't compile correctly under MONO.
+	Better to leave it out for now, can re-introduce it when MONO compiler matures
         public new TInterface CreateExtension()
         {
             return (TInterface)base.CreateExtension();
@@ -153,7 +154,7 @@ namespace ClearCanvas.Common
             Array.Copy(objs, extensions, objs.Length);
             return extensions;
         }
-
+*/
         protected override Type InterfaceType
         {
             get { return typeof(TInterface); }
