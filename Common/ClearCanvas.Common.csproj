@@ -141,8 +141,8 @@
     <Compile Include="IBrowsable.cs" />
     <Compile Include="IObservableList.cs" />
     <Compile Include="IPerformanceClock.cs" />
-    <Compile Include="MatchAttributes.cs" />
-    <Compile Include="MatchTypes.cs" />
+    <Compile Include="AttributeExtensionFilter.cs" />
+    <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Mathematics\RectF.cs" />
     <Compile Include="Mathematics\Vector.cs" />
     <Compile Include="ObservableDictionary.cs" />
