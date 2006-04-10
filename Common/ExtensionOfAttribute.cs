@@ -8,28 +8,24 @@ namespace ClearCanvas.Common
     /// Attribute used to mark a class as being an extension of the specified type, which must be
     /// an interface, and must have been marked with the <see cref="ExtensionOfAttribute"/> attribute.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
     public class ExtensionOfAttribute: Attribute
     {
-        private Type _extensionPointType;
+        private Type _extensionPointClass;
         private string _name;
         private string _description;
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="extensionPointType">The type of the interface on which the extension point is defined, and which the attributed class implements.</param>
-        public ExtensionOfAttribute(Type extensionPointType)
+        public ExtensionOfAttribute(Type extensionPointClass)
         {
-            _extensionPointType = extensionPointType;
+            _extensionPointClass = extensionPointClass;
         }
 
         /// <summary>
         /// The type of interface on which the extension point is defined.
         /// </summary>
-        public Type ExtensionOfType
+        public Type ExtensionPointClass
         {
-            get { return _extensionPointType; }
+            get { return _extensionPointClass; }
         }
 
         /// <summary>

@@ -17,16 +17,15 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="asm">The assembly to inspect</param>
         /// <returns>An array of extensions</returns>
-        internal static Extension[] DiscoverExtensions(Assembly asm)
+        internal static ExtensionInfo[] DiscoverExtensions(Assembly asm)
         {
-            List<Extension> extensionList = new List<Extension>();
+            List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
             foreach (Type type in asm.GetTypes())
             {
                 object[] attrs = type.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
-                if (attrs.Length > 0)
+                foreach (ExtensionOfAttribute a in attrs)
                 {
-                    ExtensionOfAttribute a = (ExtensionOfAttribute)attrs[0];
-                    extensionList.Add(new Extension(type, a.ExtensionOfType, a.Name, a.Description));
+                    extensionList.Add(new ExtensionInfo(type, a.ExtensionPointClass, a.Name, a.Description));
                 }
             }
             return extensionList.ToArray();
@@ -37,16 +36,15 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="asm">The assembly to inspect</param>
         /// <returns>An array of extension points</returns>
-        internal static ExtensionPoint[] DiscoverExtensionPoints(Assembly asm)
+        internal static ExtensionPointInfo[] DiscoverExtensionPoints(Assembly asm)
         {
-            List<ExtensionPoint> extensionPointList = new List<ExtensionPoint>();
+            List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
             foreach (Type type in asm.GetTypes())
             {
                 object[] attrs = type.GetCustomAttributes(typeof(ExtensionPointAttribute), false);
-                if (attrs.Length > 0)
+                foreach (ExtensionPointAttribute a in attrs)
                 {
-                    ExtensionPointAttribute a = (ExtensionPointAttribute)attrs[0];
-                    extensionPointList.Add(new ExtensionPoint(type, a.Name, a.Description));
+                    extensionPointList.Add(new ExtensionPointInfo(type, a.Name, a.Description));
                 }
             }
             return extensionPointList.ToArray();
@@ -57,8 +55,8 @@ namespace ClearCanvas.Common
         private string _description;
         private Assembly _assembly;
 
-        private ExtensionPoint[] _extensionPoints;
-        private Extension[] _extensions;
+        private ExtensionPointInfo[] _extensionPoints;
+        private ExtensionInfo[] _extensions;
 
         /// <summary>
         /// Default constructor, used internally by the framework.
@@ -79,7 +77,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// The set of extensions defined in this plugin.
         /// </summary>
-        public Extension[] Extensions
+        public ExtensionInfo[] Extensions
         {
             get { return _extensions; }
         }
@@ -87,7 +85,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// The set of extension points defined in this plugin.
         /// </summary>
-        public ExtensionPoint[] ExtensionPoints
+        public ExtensionPointInfo[] ExtensionPoints
         {
             get { return _extensionPoints; }
         }
@@ -98,64 +96,6 @@ namespace ClearCanvas.Common
         public Assembly Assembly
         {
             get { return _assembly; }
-        }
-
-        /// <summary>
-        /// Creates an instance of the extension of the specified type, searching only this plugin
-        /// for extensions.  If more than one extension is found, only the first one is created.  If no
-        /// extensions are found, a <see cref="NotSupportedException"/> is thrown.
-        /// </summary>
-        /// <param name="extensionOfType">The type of the extension point interface</param>
-        /// <returns>An instance of the requested extension.</returns>
-        public object CreateExtension(Type extensionOfType)
-        {
-            Platform.CheckForNullReference(extensionOfType, "extensionOfType");
-
-            return ExtensionLoader.CreateExtension(_extensions, extensionOfType, null);
-        }
-
-        /// <summary>
-        /// Creates an instance of the extension of the specified type, searching only this plugin
-        /// for extensions.  Only extensions matching the specified filter are considered.
-        /// If more than one extension is found, only the first one is created.  If no
-        /// extensions are found, a <see cref="NotSupportedException"/> is thrown.
-        /// </summary>
-        /// <param name="extensionOfType">The type of the extension point interface</param>
-        /// <param name="filter">The filter provides additional criteria to select extensions</param>
-        /// <returns>An instance of the requested extension.</returns>
-        public object CreateExtension(Type extensionOfType, ExtensionFilter filter)
-        {
-            Platform.CheckForNullReference(extensionOfType, "extensionOfType");
-            Platform.CheckForNullReference(filter, "filter");
-
-            return ExtensionLoader.CreateExtension(_extensions, extensionOfType, filter);
-        }
-
-        /// <summary>
-        /// Creates an instance of each extension of the specified type, searching only this plugin
-        /// for extensions.  If no extensions are found, the returned array is empty.
-        /// </summary>
-        /// <param name="extensionOfType">The type of the extension point interface</param>
-        /// <returns>An array containing one instance of each extension that was created.</returns>
-        public object[] CreateExtensions(Type extensionOfType)
-        {
-            Platform.CheckForNullReference(extensionOfType, "extensionOfType");
-            return ExtensionLoader.CreateExtensions(_extensions, extensionOfType, null);
-        }
-
-        /// <summary>
-        /// Creates an instance of each extension of the specified type, searching only this plugin
-        /// for extensions.  If no extensions are found, the returned array is empty.
-        /// </summary>
-        /// <param name="filter">The filter provides additional criteria to select extensions</param>
-        /// <param name="extensionOfType">The type of the extension point interface</param>
-        /// <returns>An array containing one instance of each extension that was created.</returns>
-        public object[] CreateExtensions(Type extensionOfType, ExtensionFilter filter)
-        {
-            Platform.CheckForNullReference(extensionOfType, "extensionOfType");
-            Platform.CheckForNullReference(filter, "filter");
-
-            return ExtensionLoader.CreateExtensions(_extensions, extensionOfType, filter);
         }
 
         #region IBrowsable Members

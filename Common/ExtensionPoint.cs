@@ -4,59 +4,160 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
-    /// <summary>
-    /// Describes an extension point.  
-    /// </summary>
-    /// <remarks>
-    /// Instances of this class are constructed by the framework when it processes
-    /// plugins looking for extension points. An extension point is any class within a plugin that is marked
-    /// with the <see cref="ExtensionPointAttribute"/> attribute.
-    /// </remarks>
-    public class ExtensionPoint : IBrowsable
+    public interface IExtensionPoint
     {
-        private Type _extensibleType;
+        ExtensionInfo[] ListExtensions();
+        ExtensionInfo[] ListExtensions(ExtensionFilter filter);
+        object CreateExtension();
+        object CreateExtension(ExtensionFilter filter);
+        object[] CreateExtensions();
+        object[] CreateExtensions(ExtensionFilter filter);
+    }
 
-        private string _name;
-        private string _description;
-
-        internal ExtensionPoint(Type extensibleType, string name, string description)
+    public abstract class ExtensionPointBase : IExtensionPoint
+    {
+        public ExtensionInfo[] ListExtensions()
         {
-            _extensibleType = extensibleType;
-            _name = name;
-            _description = description;
+            return ListExtensions(this.GetType(), null).ToArray();
         }
 
-        /// <summary>
-        /// The type of the interface that this extension point is defined on.
-        /// </summary>
-        public Type ExtensibleType
+        public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
         {
-            get { return _extensibleType; }
+            return ListExtensions(this.GetType(), filter).ToArray();
         }
 
-        #region IBrowsable Members
-
-        /// <summary>
-        /// Friendly name of this extension point, if one exists, otherwise null;
-        /// </summary>
-        public string Name
+        public object CreateExtension()
         {
-            get { return _name; }
+            return AtLeastOne(CreateExtensionsHelper(this.GetType(), null, true), this.GetType());
         }
 
-        /// <summary>
-        /// A friendly description of this extension point, if one exists, otherwise null.
-        /// </summary>
-        public string Description
+        public object CreateExtension(ExtensionFilter filter)
         {
-            get { return _description; }
+            return AtLeastOne(CreateExtensionsHelper(this.GetType(), filter, true), this.GetType());
         }
 
-        public string FormalName
+        public object[] CreateExtensions()
         {
-            get { return _extensibleType.FullName; }
+            return CreateExtensionsHelper(this.GetType(), null, false);
+        }
+        public object[] CreateExtensions(ExtensionFilter filter)
+        {
+            return CreateExtensionsHelper(this.GetType(), null, false);
         }
 
-        #endregion
+        protected abstract Type InterfaceType { get; }
+
+        protected object[] CreateExtensionsHelper(Type extensionPointClass, ExtensionFilter filter, bool justOne)
+        {
+            // get subset of applicable extensions
+            List<ExtensionInfo> extensions = ListExtensions(extensionPointClass, filter);
+
+            // attempt to instantiate the extension classes
+            List<object> createdObjects = new List<object>();
+            foreach (ExtensionInfo extension in extensions)
+            {
+                if (justOne && createdObjects.Count > 0)
+                    break;
+
+                // is the extension a concrete class?
+                if (!IsConcreteClass(extension.ExtensionClass))
+                {
+                    Platform.Log(string.Format(SR.ExceptionExtensionMustBeConcreteClass,
+                        extension.ExtensionClass.FullName), LogLevel.Warn);
+                    continue;
+                }
+
+                // does the extension implement the required interface?
+                if (!InterfaceType.IsAssignableFrom(extension.ExtensionClass))
+                {
+                    Platform.Log(string.Format(SR.ExceptionExtensionDoesNotImplementRequiredInterface,
+                        extension.ExtensionClass.FullName,
+                        InterfaceType), LogLevel.Warn);
+                    continue;
+                }
+
+                try
+                {
+                    // instantiate
+                    object o = Activator.CreateInstance(extension.ExtensionClass);
+                    createdObjects.Add(o);
+                }
+                catch (Exception e)
+                {
+                    // instantiation failed
+                    Platform.HandleException(e);
+                }
+            }
+
+            return createdObjects.ToArray();
+        }
+
+        protected List<ExtensionInfo> ListExtensions(Type extensionPointClass, ExtensionFilter filter)
+        {
+            List<ExtensionInfo> extensions = new List<ExtensionInfo>();
+            foreach (ExtensionInfo extension in Platform.PluginManager.Extensions)
+            {
+                if (extension.ExtensionPointClass == extensionPointClass
+                    && (filter == null || filter.Test(extension)))
+                {
+                    extensions.Add(extension);
+                }
+            }
+            return extensions;
+        }
+
+        protected object AtLeastOne(object[] objs, Type extensionPointType)
+        {
+            if (objs.Length > 0)
+            {
+                return objs[0];
+            }
+            else
+            {
+                throw new ExtensionException(
+                    string.Format(SR.ExceptionNoExtensionsCreated, extensionPointType.FullName));
+            }
+        }
+
+        protected bool IsConcreteClass(Type type)
+        {
+            return !type.IsAbstract && type.IsClass;
+        }
+    }
+
+    public abstract class ExtensionPoint<TInterface> : ExtensionPointBase
+        where TInterface : class
+    {
+        public new TInterface CreateExtension()
+        {
+            return (TInterface)base.CreateExtension();
+        }
+
+        public new TInterface CreateExtension(ExtensionFilter filter)
+        {
+            return (TInterface)base.CreateExtension(filter);
+        }
+
+        public new TInterface[] CreateExtensions()
+        {
+            object[] objs = base.CreateExtensions();
+            TInterface[] extensions = new TInterface[objs.Length];
+            Array.Copy(objs, extensions, objs.Length);
+            return extensions;
+        }
+
+        public new TInterface[] CreateExtensions(ExtensionFilter filter)
+        {
+            object[] objs = base.CreateExtensions(filter);
+            TInterface[] extensions = new TInterface[objs.Length];
+            Array.Copy(objs, extensions, objs.Length);
+            return extensions;
+        }
+
+        protected override Type InterfaceType
+        {
+            get { return typeof(TInterface); }
+        }
+
     }
 }

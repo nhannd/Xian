@@ -20,8 +20,8 @@ namespace ClearCanvas.Common
 	public class PluginManager 
 	{
         private Plugin[] _plugins;
-        private Extension[] _extensions;
-        private ExtensionPoint[] _extensionPoints;
+        private ExtensionInfo[] _extensions;
+        private ExtensionPointInfo[] _extensionPoints;
 		private string _pluginDir;
 		private event EventHandler<PluginProgressEventArgs> _pluginProgressEvent;
 
@@ -55,7 +55,7 @@ namespace ClearCanvas.Common
         /// The set of extensions defined across all installed plugins.  If plugins have not yet been loaded
         /// into memory, querying this property will cause them to be loaded.
         /// </summary>
-        public Extension[] Extensions
+        public ExtensionInfo[] Extensions
         {
             get
             {
@@ -71,7 +71,7 @@ namespace ClearCanvas.Common
         /// The set of extension points defined across all installed plugins.  If plugins have not yet been loaded
         /// into memory, querying this property will cause them to be loaded.
         /// </summary>
-        public ExtensionPoint[] ExtensionPoints
+        public ExtensionPointInfo[] ExtensionPoints
         {
             get
             {
@@ -114,14 +114,14 @@ namespace ClearCanvas.Common
 
             Validate();
 
-            List<Extension> extList = new List<Extension>();
+            List<ExtensionInfo> extList = new List<ExtensionInfo>();
             foreach (Plugin plugin in _plugins)
             {
                 extList.AddRange(plugin.Extensions);
             }
             _extensions = extList.ToArray();
 
-            List<ExtensionPoint> epList = new List<ExtensionPoint>();
+            List<ExtensionPointInfo> epList = new List<ExtensionPointInfo>();
             foreach (Plugin plugin in _plugins)
             {
                 epList.AddRange(plugin.ExtensionPoints);

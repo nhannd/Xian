@@ -4,7 +4,6 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
-	[ClearCanvas.Common.ExtensionPoint()]
 	public interface IMessageBox
 	{
 		void Show(string message);

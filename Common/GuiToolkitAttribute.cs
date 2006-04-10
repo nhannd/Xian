@@ -25,26 +25,11 @@ namespace ClearCanvas.Common
             get { return _toolkitID; }
         }
 
-        public static bool operator ==(GuiToolkitAttribute x, GuiToolkitAttribute y)
-        {
-            return x.ToolkitID == y.ToolkitID;
-        }
-
-        public static bool operator !=(GuiToolkitAttribute x, GuiToolkitAttribute y)
-        {
-            return !(x == y);
-        }
-
-        public override int GetHashCode()
-        {
-            return _toolkitID.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
+        public override bool Match(object obj)
         {
             if (obj != null && obj is GuiToolkitAttribute)
             {
-                return (obj as GuiToolkitAttribute) == this;
+                return (obj as GuiToolkitAttribute).ToolkitID == this.ToolkitID;
             }
             else
             {

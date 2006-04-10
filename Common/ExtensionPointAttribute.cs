@@ -7,11 +7,15 @@ namespace ClearCanvas.Common
     /// <summary>
     /// Attribute used to mark an interface as an extension point.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Interface)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class ExtensionPointAttribute : Attribute
     {
         private string _name;
         private string _description;
+
+        public ExtensionPointAttribute()
+        {
+        }
 
         /// <summary>
         /// A friendly name for the extension point.  This is optional and may be supplied as a named parameter.

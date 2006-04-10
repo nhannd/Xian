@@ -16,6 +16,6 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="extension">The extension to test</param>
         /// <returns>true if the extension meets the criteria, false otherwise</returns>
-        public abstract bool Test(Extension extension);
+        public abstract bool Test(ExtensionInfo extension);
     }
 }

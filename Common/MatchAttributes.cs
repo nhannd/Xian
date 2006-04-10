@@ -9,11 +9,10 @@ namespace ClearCanvas.Common
     /// </summary>
     /// <remarks>
     /// For each attribute that is supplied to the constructor of this filter, the filter
-    /// will check if the extension is marked with an attribute that is equal.  That is, the extension
-    /// must have at least one attribute of the same type, and that attribute must be equal to the test
-    /// attribute, where equality is tested with the <see cref="Object.Equals"/> method.  This allows
-    /// for quite sophisticated matching capabilities, since attributes are defined as classes, and hence
-    /// equality of attributes is defined by the attribute class.
+    /// will check if the extension is marked with at least one matching attribute.  A matching attribute is an
+    /// attribute for which the <see cref="Attribute.Match"/> method returns true.  This allows
+    /// for quite sophisticated matching capabilities, as the attribute itself decides what constitutes
+    /// a match.
     /// </remarks>
     public class MatchAttributes : ExtensionFilter
     {
@@ -43,11 +42,11 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="extension">The extension to test</param>
         /// <returns>true if the test succeeds</returns>
-        public override bool Test(Extension extension)
+        public override bool Test(ExtensionInfo extension)
         {
             foreach (Attribute a in _attributes)
             {
-                object[] candidates = extension.ExtensionType.GetCustomAttributes(a.GetType(), true);
+                object[] candidates = extension.ExtensionClass.GetCustomAttributes(a.GetType(), true);
                 if (!AnyMatch(a, candidates))
                 {
                     return false;
@@ -60,7 +59,7 @@ namespace ClearCanvas.Common
         {
             foreach (Attribute c in candidates)
             {
-                if (c.Equals(a))
+                if (c.Match(a))
                 {
                     return true;
                 }

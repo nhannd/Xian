@@ -186,4 +186,13 @@
   <data name="ExceptionThrown" xml:space="preserve">
     <value>Exception thrown</value>
   </data>
+  <data name="ExceptionExtensionDoesNotImplementRequiredInterface" xml:space="preserve">
+    <value>Extension class {0} does not implement required interface {1}.</value>
+  </data>
+  <data name="ExceptionExtensionMustBeConcreteClass" xml:space="preserve">
+    <value>Extension class {0} must be a concrete class.</value>
+  </data>
+  <data name="ExceptionNoExtensionsCreated" xml:space="preserve">
+    <value>No extensions found for extension point {0}, or the extensions could not be instantiated.  See log file.</value>
+  </data>
 </root>

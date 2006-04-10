@@ -9,7 +9,6 @@ namespace ClearCanvas.Common
     /// When the <see cref="Platform.StartApp"/> method is called, the platform will attempt to create
     /// exaclty one extension of IApplicationRoot.
     /// </summary>
-    [ExtensionPoint()]
     public interface IApplicationRoot
     {
         /// <summary>

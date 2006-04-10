@@ -39,11 +39,11 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="extension">The extension to test</param>
         /// <returns>True if the test succeeds</returns>
-        public override bool Test(Extension extension)
+        public override bool Test(ExtensionInfo extension)
         {
             foreach (Type filterType in _types)
             {
-                if (!filterType.IsAssignableFrom(extension.ExtensionType))
+                if (!filterType.IsAssignableFrom(extension.ExtensionClass))
                 {
                     return false;
                 }

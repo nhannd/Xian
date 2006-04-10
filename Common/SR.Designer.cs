@@ -115,6 +115,24 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extension class {0} does not implement required interface {1}..
+        /// </summary>
+        public static string ExceptionExtensionDoesNotImplementRequiredInterface {
+            get {
+                return ResourceManager.GetString("ExceptionExtensionDoesNotImplementRequiredInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension class {0} must be a concrete class..
+        /// </summary>
+        public static string ExceptionExtensionMustBeConcreteClass {
+            get {
+                return ResourceManager.GetString("ExceptionExtensionMustBeConcreteClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {3}[{0}] is invalid.  Index must be &gt;= {1} and &lt;= {2}..
         /// </summary>
         public static string ExceptionIndexOutOfRange {
@@ -156,6 +174,15 @@ namespace ClearCanvas.Common {
         public static string ExceptionMoreThanOneModelPluginFound {
             get {
                 return ResourceManager.GetString("ExceptionMoreThanOneModelPluginFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No extensions found for extension point {0}, or the extensions could not be instantiated.  See log file..
+        /// </summary>
+        public static string ExceptionNoExtensionsCreated {
+            get {
+                return ResourceManager.GetString("ExceptionNoExtensionsCreated", resourceCulture);
             }
         }
         

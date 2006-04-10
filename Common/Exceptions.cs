@@ -11,6 +11,12 @@ namespace ClearCanvas.Common
 		public PluginException(string message) : base(message) {}
 		public PluginException(string message, Exception inner) : base(message, inner) {}
 	}
+
+    public class ExtensionException : Exception
+    {
+		public ExtensionException(string message) : base(message) {}
+        public ExtensionException(string message, Exception inner) : base(message, inner) { }
+    }
 	
 /*
 	public class PluginErrorException : PluginException

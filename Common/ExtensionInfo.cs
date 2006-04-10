@@ -12,36 +12,29 @@ namespace ClearCanvas.Common
     /// plugins looking for extensions. An extension is any class within a plugin that is marked
     /// with the <see cref="ExtensionOfAttribute"/> attribute.
     /// </remarks>
-    public class Extension : IBrowsable
+    public class ExtensionInfo : IBrowsable
     {
-        private Type _extensionType;
-        private Type _extensionPointType;
-
+        private Type _extensionClass;
+        private Type _extensionPointClass;
         private string _name;
         private string _description;
 
-        internal Extension(Type extensionType, Type extensionPointType, string name, string description)
+        internal ExtensionInfo(Type extensionClass, Type extensionPointClass, string name, string description)
         {
-            _extensionType = extensionType;
-            _extensionPointType = extensionPointType;
+            _extensionClass = extensionClass;
+            _extensionPointClass = extensionPointClass;
             _name = name;
             _description = description;
         }
 
-        /// <summary>
-        /// The type of this extension.
-        /// </summary>
-        public Type ExtensionType
+        public Type ExtensionClass
         {
-            get { return _extensionType; }
+            get { return _extensionClass; }
         }
 
-        /// <summary>
-        /// The type of the <see cref="ExtensionPoint"/> interface that is extended.
-        /// </summary>
-        public Type ExtensionOfType
+        public Type ExtensionPointClass
         {
-            get { return _extensionPointType; }
+            get { return _extensionPointClass; }
         }
 
         #region IBrowsable Members
@@ -63,11 +56,11 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Formal name of this object, typically the type name or assembly name.  Cannot be null.
+        /// Formal name of this extension.
         /// </summary>
         public string FormalName
         {
-            get { return _extensionType.FullName; }
+            get { return _extensionClass.FullName; }
         }
 
         #endregion
