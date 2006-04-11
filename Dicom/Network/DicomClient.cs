@@ -81,6 +81,8 @@ namespace ClearCanvas.Dicom.Network
             _storeCallbackHelper = new StoreCallbackHelper(this);
 
             _queryResults = new QueryResultList();
+
+            SetConnectionTimeout(_timeout);
         }
 
         ~DicomClient()
@@ -115,18 +117,29 @@ namespace ClearCanvas.Dicom.Network
             {
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
 
-                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
-                associationParameters.ConfigureForVerification();
+                using (network)
+                {
+                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
 
-                T_ASC_Association association = network.CreateAssociation(associationParameters);
-                if (association.SendCEcho(_cEchoRepeats))
-                {
-                    association.Release();
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    using (associationParameters)
+                    {
+                        associationParameters.ConfigureForVerification();
+
+                        T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                        using (association)
+                        {
+                            if (association.SendCEcho(_cEchoRepeats))
+                            {
+                                association.Release();
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
             catch (DicomRuntimeApplicationException e)
@@ -220,8 +233,6 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, Uid studyInstanceUid)
         {
-            InitializeQueryState();
-
             DcmDataset cFindDataset = new DcmDataset();
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
@@ -353,7 +364,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Study);
             cMoveDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
-            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString(), true);
 
             // fire event to indicate successful retrieval
             return;
@@ -376,7 +387,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Series);
             cMoveDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), seriesInstanceUid.ToString());
 
-            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString(),true);
 
             // fire event to indicate successful retrieval
             return;
@@ -415,43 +426,50 @@ namespace ClearCanvas.Dicom.Network
 
             try
             {
-                SetConnectionTimeout(600);
-
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
 
-                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
-
-                #region Interop-specific code
-                // copy over file list
-                OFStringVector interopFilenameList = new OFStringVector();
-                foreach (String filename in files)
+                using (network)
                 {
-                    interopFilenameList.Add(filename);
+                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+
+                    using (associationParameters)
+                    {
+                        #region Interop-specific code
+                        // copy over file list
+                        OFStringVector interopFilenameList = new OFStringVector();
+                        foreach (String filename in files)
+                        {
+                            interopFilenameList.Add(filename);
+                        }
+
+                        // copy over sop class list
+                        OFStringVector interopSopClassUid = new OFStringVector();
+                        foreach (String sopClass in sopClassUids)
+                        {
+                            interopSopClassUid.Add(sopClass);
+                        }
+
+                        // copy over syntax list
+                        OFStringVector interopTransferSyntaxUid = new OFStringVector();
+                        foreach (String syntax in transferSyntaxUids)
+                        {
+                            interopTransferSyntaxUid.Add(syntax);
+                        }
+                        #endregion
+
+                        associationParameters.ConfigureForCStore(interopFilenameList, interopSopClassUid, interopTransferSyntaxUid);
+
+                        T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                        using (association)
+                        {
+                            if (association.SendCStore(interopFilenameList))
+                                association.Release();
+
+                            return;
+                        }
+                    }
                 }
-
-                // copy over sop class list
-                OFStringVector interopSopClassUid = new OFStringVector();
-                foreach (String sopClass in sopClassUids)
-                {
-                    interopSopClassUid.Add(sopClass);
-                }
-
-                // copy over syntax list
-                OFStringVector interopTransferSyntaxUid = new OFStringVector();
-                foreach (String syntax in transferSyntaxUids)
-                {
-                    interopTransferSyntaxUid.Add(syntax);
-                }
-                #endregion
-
-                associationParameters.ConfigureForCStore(interopFilenameList, interopSopClassUid, interopTransferSyntaxUid);
-
-                T_ASC_Association association = network.CreateAssociation(associationParameters);
-
-                if (association.SendCStore(interopFilenameList)) 
-                    association.Release();
-
-                return;
             }
             catch (DicomRuntimeApplicationException e)
             {
@@ -497,21 +515,29 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="cMoveDataset">The dataset containing the parameters for this Retrieve.</param>
         /// <param name="saveDirectory">The path on the local filesystem that will store the
         /// DICOM objects that are received.</param>
-        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory)
+        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory, Boolean listenForSubAssociations)
         {
             try
             {
-                SetConnectionTimeout(600);
-
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, _timeout);
 
-                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
-                associationParameters.ConfigureForCMoveStudyRootQuery();
+                using (network)
+                {
+                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
 
-                T_ASC_Association association = network.CreateAssociation(associationParameters);
+                    using (associationParameters)
+                    {
+                        associationParameters.ConfigureForCMoveStudyRootQuery();
 
-                if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory))
-                    association.Release();
+                        T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                        using (association)
+                        {
+                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory, listenForSubAssociations))
+                                association.Release();
+                        }
+                    }
+                }
 
                 return;
             }
@@ -536,19 +562,29 @@ namespace ClearCanvas.Dicom.Network
             {
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
 
-                T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
-                associationParameters.ConfigureForStudyRootQuery();
-
-                T_ASC_Association association = network.CreateAssociation(associationParameters);
-
-                if (association.SendCFindStudyRootQuery(cFindDataset))
+                using (network)
                 {
-                    association.Release();
-                    return new ReadOnlyQueryResultCollection(_queryResults);
-                }
-                else
-                {
-                    return null;
+                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+
+                    using (associationParameters)
+                    {
+                        associationParameters.ConfigureForStudyRootQuery();
+
+                        T_ASC_Association association = network.CreateAssociation(associationParameters);
+
+                        using (association)
+                        {
+                            if (association.SendCFindStudyRootQuery(cFindDataset))
+                            {
+                                association.Release();
+                                return new ReadOnlyQueryResultCollection(_queryResults);
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
                 }
             }
             catch (DicomRuntimeApplicationException e)
@@ -648,12 +684,12 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Resets the contents of the query result collection, typically done before
-        /// any query operations are invoked to ensure that the collection is empty.
+        /// Instantiates a new list object, so that any old results will be left
+        /// available (as long as it hasn't be GC'd).
         /// </summary>
         protected void InitializeQueryState()
         {
-            _queryResults.Clear();
+            _queryResults = new QueryResultList();
         }
 
         /// <summary>
@@ -840,7 +876,7 @@ namespace ClearCanvas.Dicom.Network
         private StoreCallbackHelper _storeCallbackHelper;
         private QueryResultList _queryResults;
         private ApplicationEntity _myOwnAE;
-        private int _timeout = 500;
+        private Int16 _timeout = 500;
         private int _defaultPDUSize = 16384;
         private int _cEchoRepeats = 7;
 

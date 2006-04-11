@@ -81,9 +81,9 @@ namespace ClearCanvas.Dicom
             get { return _internalDictionary[DicomTag.Modality]; }
         }
 
-        public string SeriesInstanceUid
+        public Uid SeriesInstanceUid
         {
-            get { return _internalDictionary[DicomTag.SeriesInstanceUID]; }
+            get { return new Uid(_internalDictionary[DicomTag.SeriesInstanceUID]); }
         }
 
         public string SeriesDescription
