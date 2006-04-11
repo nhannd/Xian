@@ -364,7 +364,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Study);
             cMoveDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
 
-            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString(), true);
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
 
             // fire event to indicate successful retrieval
             return;
@@ -387,7 +387,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Series);
             cMoveDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), seriesInstanceUid.ToString());
 
-            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString(),true);
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
 
             // fire event to indicate successful retrieval
             return;
@@ -515,7 +515,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="cMoveDataset">The dataset containing the parameters for this Retrieve.</param>
         /// <param name="saveDirectory">The path on the local filesystem that will store the
         /// DICOM objects that are received.</param>
-        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory, Boolean listenForSubAssociations)
+        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory)
         {
             try
             {
@@ -533,7 +533,7 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory, listenForSubAssociations))
+                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory))
                                 association.Release();
                         }
                     }
