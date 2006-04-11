@@ -4,7 +4,6 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
-    public delegate T PropertyQueryDelegate<T>();
 
     public class PropertyChangedEventArgs<T> : EventArgs
     {
