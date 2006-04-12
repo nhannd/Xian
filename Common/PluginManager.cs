@@ -23,7 +23,7 @@ namespace ClearCanvas.Common
         private ExtensionInfo[] _extensions;
         private ExtensionPointInfo[] _extensionPoints;
 		private string _pluginDir;
-		private event EventHandler<PluginProgressEventArgs> _pluginProgressEvent;
+		private event EventHandler<PluginLoadedEventArgs> _pluginProgressEvent;
 
 		// Constructor is internal, since we only ever one instance of it and that
 		// one instance is created through the Platform class.
@@ -86,7 +86,7 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Occurs when a plugin is loaded.
 		/// </summary>
-		public event EventHandler<PluginProgressEventArgs> PluginProgress
+		public event EventHandler<PluginLoadedEventArgs> PluginLoaded
 		{
 			add { _pluginProgressEvent += value; }
 			remove { _pluginProgressEvent -= value; }
@@ -169,7 +169,7 @@ namespace ClearCanvas.Common
 
 			try
 			{
-				EventsHelper.Fire(_pluginProgressEvent, this, new PluginProgressEventArgs("Finding plugins..."));
+				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs("Finding plugins..."));
 
 				// Create a secondary AppDomain where we can load all the DLLs in the plugin directory
 				domain = AppDomain.CreateDomain("Secondary");
@@ -218,7 +218,7 @@ namespace ClearCanvas.Common
 			{
 				loader.LoadPlugin(pluginFile);
 				string pluginName = Path.GetFileName(pluginFile);
-				EventsHelper.Fire(_pluginProgressEvent, this, new PluginProgressEventArgs(String.Format(SR.LoadingPlugin, pluginName)));
+				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(String.Format(SR.LoadingPlugin, pluginName)));
 			}
 
 			return loader.PluginAssemblies;

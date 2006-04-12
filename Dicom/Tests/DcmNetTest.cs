@@ -173,13 +173,13 @@ namespace ClearCanvas.Dicom.Tests
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            dicomClient.QueryResultReceivedEvent += QueryResultReceivedEventHandler;
-            dicomClient.QueryCompletedEvent += QueryCompletedEventHandler;
+            dicomClient.QueryResultReceived += QueryResultReceivedEventHandler;
+            dicomClient.QueryCompleted += QueryCompletedEventHandler;
 
             ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId(""), new PatientsName(""));
 
-            dicomClient.QueryResultReceivedEvent -= QueryResultReceivedEventHandler;
-            dicomClient.QueryCompletedEvent -= QueryCompletedEventHandler;
+            dicomClient.QueryResultReceived -= QueryResultReceivedEventHandler;
+            dicomClient.QueryCompleted -= QueryCompletedEventHandler;
 
             Assert.IsTrue(results.Count > 0);
         }
@@ -311,9 +311,9 @@ namespace ClearCanvas.Dicom.Tests
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            dicomClient.SopInstanceReceivedEvent += SopInstanceReceivedEventHandler;
+            dicomClient.SopInstanceReceived += SopInstanceReceivedEventHandler;
             dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), @"C:\Temp\retrieveTest");
-            dicomClient.SopInstanceReceivedEvent -= SopInstanceReceivedEventHandler;
+            dicomClient.SopInstanceReceived -= SopInstanceReceivedEventHandler;
         }
 
         [Test]
@@ -329,9 +329,9 @@ namespace ClearCanvas.Dicom.Tests
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            dicomClient.SopInstanceReceivedEvent += SopInstanceReceivedEventHandler;
+            dicomClient.SopInstanceReceived += SopInstanceReceivedEventHandler;
             dicomClient.RetrieveSeries(serverAE, new Uid("1.2.840.113619.2.30.1.1762295590.1623.978668949.887"), @"C:\Temp\retrieveTest\");
-            dicomClient.SopInstanceReceivedEvent -= SopInstanceReceivedEventHandler;
+            dicomClient.SopInstanceReceived -= SopInstanceReceivedEventHandler;
         }
 
         [Test]

@@ -39,19 +39,19 @@ namespace ClearCanvas.Dicom.Network
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
         private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
 
-        public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceivedEvent
+        public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceived
         {
             add { _sopInstanceReceivedEvent += value; }
             remove { _sopInstanceReceivedEvent -= value; }
         }
 
-        public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceivedEvent
+        public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceived
         {
             add { _queryResultReceivedEvent += value; }
             remove { _queryResultReceivedEvent -= value; }
         }
 
-        public event EventHandler<QueryCompletedEventArgs> QueryCompletedEvent
+        public event EventHandler<QueryCompletedEventArgs> QueryCompleted
         {
             add { _queryCompletedEvent += value; }
             remove { _queryCompletedEvent -= value; }

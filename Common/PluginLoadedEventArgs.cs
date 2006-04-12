@@ -5,11 +5,11 @@ namespace ClearCanvas.Common
 	/// <summary>
 	/// Summary description for PluginProgressEventArgs.
 	/// </summary>
-	public class PluginProgressEventArgs : EventArgs
+	public class PluginLoadedEventArgs : EventArgs
 	{
 		string m_Message;
 
-		public PluginProgressEventArgs(string message)
+		public PluginLoadedEventArgs(string message)
 		{
 			m_Message = message;
 		}

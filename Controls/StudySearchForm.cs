@@ -45,7 +45,7 @@ namespace ClearCanvas.Controls
 			set { _studyDescription.Text = value; }
 		}
 
-		public event EventHandler SearchClickedEvent
+		public event EventHandler SearchClicked
 		{
 			add { _searchButton.Click += value; }
 			remove { _searchButton.Click -= value; }

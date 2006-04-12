@@ -23,11 +23,11 @@ namespace ClearCanvas.Common
 		/// [C#]
 		/// public class PresentationImage
 		/// {
-		///    private event EventHandler m_DrawImageEvent;
+		///    private event EventHandler _imageDrawingEvent;
 		///    
 		///    public void Draw()
 		///    {
-		///       EventsHelper.Fire(m_DrawImageEvent, this, new DrawImageEventArgs());
+		///       EventsHelper.Fire(_imageDrawingEvent, this, new DrawImageEventArgs());
 		///    }
 		/// }
 		/// </code>
