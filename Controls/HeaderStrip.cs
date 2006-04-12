@@ -1,3 +1,6 @@
+// Taken from Microsoft sample code.  Not the greatest.
+// Should probably modify this to make it a better class.
+
 #region Using directives
 
 using System;
@@ -73,16 +76,12 @@ namespace ClearCanvas.Controls
 			// Get system font
 			Font	font = SystemFonts.MenuFont;
 
+			this.ForeColor = System.Drawing.Color.White;
+
 			if (_headerStyle == AreaHeaderStyle.Large)
-			{
 				this.Font = new Font("Arial", font.SizeInPoints + 3.75F, FontStyle.Bold);
-				this.ForeColor = System.Drawing.Color.White;
-			}
 			else
-			{
-				this.Font = font;
-				this.ForeColor = System.Drawing.Color.Black;
-			}
+				this.Font = new Font("Arial", font.SizeInPoints + 0.75F, FontStyle.Bold);
 
 			// Only way to calculate size
 			ToolStripLabel	tsl = new ToolStripLabel();
@@ -126,17 +125,8 @@ namespace ClearCanvas.Controls
 			{
 				ToolStripProfessionalRenderer pr = (this.Renderer as ToolStripProfessionalRenderer);
 
-				// Setup colors from the provided renderer
-				if (_headerStyle == AreaHeaderStyle.Large)
-				{
-					start = pr.ColorTable.OverflowButtonGradientMiddle;
-					end = pr.ColorTable.OverflowButtonGradientEnd;
-				}
-				else
-				{
-					start = pr.ColorTable.MenuStripGradientEnd;
-					end = pr.ColorTable.MenuStripGradientBegin;
-				}
+				start = pr.ColorTable.OverflowButtonGradientMiddle;
+				end = pr.ColorTable.OverflowButtonGradientEnd;
 
 				// Size to paint
 				Rectangle bounds = new Rectangle(Point.Empty, e.ToolStrip.Size);
