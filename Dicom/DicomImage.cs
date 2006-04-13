@@ -211,8 +211,6 @@ namespace ClearCanvas.Dicom
 
 		#endregion
 
-		#region IDicomImage members
-
 		public void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
 		{
 			LoadDataset();
@@ -283,8 +281,6 @@ namespace ClearCanvas.Dicom
 			val = buffer.ToString();
 		}
 		
-		#endregion
-
 		protected abstract void LoadDataset();
 		protected abstract void UnloadDataset();
 
