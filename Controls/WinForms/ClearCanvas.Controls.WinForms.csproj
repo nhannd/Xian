@@ -85,7 +85,7 @@
     <Compile Include="StudySearchPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="StudySearchPanel.designer.cs">
+    <Compile Include="StudySearchPanel.Designer.cs">
       <DependentUpon>StudySearchPanel.cs</DependentUpon>
     </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />

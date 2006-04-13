@@ -1,4 +1,4 @@
-namespace ClearCanvas.Controls
+namespace ClearCanvas.Controls.WinForms
 {
 	partial class StudySearchPanel
 	{
@@ -29,10 +29,10 @@ namespace ClearCanvas.Controls
 		private void InitializeComponent()
 		{
 			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this._headerStrip = new ClearCanvas.Controls.HeaderStrip();
+			this._headerStrip = new ClearCanvas.Controls.WinForms.HeaderStrip();
 			this._headerStripLabel = new System.Windows.Forms.ToolStripLabel();
-			this._studyGridView = new ClearCanvas.Controls.StudyGridView();
-			this._studySearchForm = new ClearCanvas.Controls.StudySearchForm();
+			this._studyGridView = new ClearCanvas.Controls.WinForms.StudyGridView();
+			this._studySearchForm = new ClearCanvas.Controls.WinForms.StudySearchForm();
 			this._tableLayoutPanel.SuspendLayout();
 			this._headerStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -112,8 +112,8 @@ namespace ClearCanvas.Controls
 
 		#endregion
 
-		private ClearCanvas.Controls.StudySearchForm _studySearchForm;
-		private ClearCanvas.Controls.StudyGridView _studyGridView;
+		private ClearCanvas.Controls.WinForms.StudySearchForm _studySearchForm;
+		private ClearCanvas.Controls.WinForms.StudyGridView _studyGridView;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
 		private HeaderStrip _headerStrip;
 		private System.Windows.Forms.ToolStripLabel _headerStripLabel;
