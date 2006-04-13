@@ -8,9 +8,9 @@
 		<CppCompiler>cl.exe</CppCompiler>
 		<CppLinker>link.exe</CppLinker>
 		<SwigCompiler>..\..\swig\swig.exe</SwigCompiler>
-		<CppCompilerParameters>/EHsc /TP /D "WIN32" /D "_WINDOWS" /D "_CRT_SECURE_NO_DEPRECATE" /D "SWIG" /D "WITH_LIBPNG" /D "WITH_LIBTIFF" /D "WITH_ZLIB" /D "_WINDLL" /D "MBCS" /D "HAVE_STD_STRING" /D "HAVE_CXX_BOOL" /GR /c</CppCompilerParameters>
+		<CppCompilerParameters>/EHsc /TP /D "WIN32" /D "_WINDOWS" /D "_CRT_SECURE_NO_DEPRECATE" /D "SWIG" /D "WITH_LIBPNG" /D "WITH_LIBTIFF" /D "WITH_ZLIB" /D "_WINDLL" /D "MBCS" /D "HAVE_STD_STRING" /D "HAVE_CXX_BOOL" /D "HAVE_CLASS_TEMPLATE" /D "HAVE_STL" /D "HAVE_STL_LIST" /GR /c</CppCompilerParameters>
 		<CppCompilerIncludeParameters>/I "..\..\OFFIS\dcmtk-3.5.3\config\include" /I "..\..\OFFIS\dcmtk-3.5.3\dcmnet\include" /I "..\..\OFFIS\dcmtk-3.5.3\ofstd\include" /I "..\..\OFFIS\dcmtk-3.5.3\dcmdata\include" /I "..\..\OFFIS\dcmtk-3.5.3\zlib-1.2.1\include"</CppCompilerIncludeParameters>
-		<SwigParameters>-csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -DHAVE_STL -DHAVE_STL_LIST -I..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -Wall -makedefault -Fmicrosoft</SwigParameters>
+		<SwigParameters>-v -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DHAVE_CXX_BOOL -DHAVE_STL -DHAVE_STL_LIST -DHAVE_CLASS_TEMPLATE -I..\..\OFFIS\dcmtk-3.5.3\config\include -I..\..\OFFIS\dcmtk-3.5.3\ofstd\include -I..\..\OFFIS\dcmtk-3.5.3\dcmdata\include -I..\..\OFFIS\dcmtk-3.5.3\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -Wall -makedefault -Fmicrosoft</SwigParameters>
 		<CppLinkerObjectFiles>ofstd.lib dcmdata.lib dcmnet.lib ws2_32.lib netapi32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib</CppLinkerObjectFiles>
 	</PropertyGroup>
 	<Choose>
