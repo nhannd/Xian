@@ -7,6 +7,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Encapsulation of a hostname.
     /// </summary>
+    [SerializableAttribute]
     public struct HostName
     {
         /// <summary>
@@ -37,6 +38,11 @@ namespace ClearCanvas.Dicom.Network
         public override string ToString()
         {
             return _hostName;
+        }
+
+        public String StringForm
+        {
+            get { return this.ToString(); }
         }
 
         private string _hostName;

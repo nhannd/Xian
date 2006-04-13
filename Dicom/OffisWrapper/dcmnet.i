@@ -5,10 +5,10 @@
 #include <vector>
 #include "osconfig.h"
 #include "assoc.h"
-#include "dimse.h"
 #include "ofcond.h"
 #include "cond.h"
 #include "diutil.h"
+#include "dimse.h"
 %}
 
 /////////////////////////////////////////////////////////
@@ -27,8 +27,8 @@
 #endif
 
 %include "osconfig.h"
-%include "ofcond.h"
 %include "dicom.h"
+%include "ofcond.h"
 %include "cond.h"
 %include "std_vector.i"
 
@@ -73,7 +73,7 @@ namespace std
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRSP)
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
 CONTROLACCESSPUBLIC(InteropStoreCallbackInfo)
-CONTROLACCESSPUBLIC(InteropFindCallbackInfo)
+CONTROLACCESSPUBLIC(InteropFindScpCallbackInfo)
 CONTROLACCESSPUBLIC(InteropMoveCallbackInfo)
 CONTROLACCESSPUBLIC(InteropStoreScuCallbackInfo)
 
@@ -243,9 +243,16 @@ struct InteropStoreScuCallbackInfo
     T_DIMSE_C_StoreRQ * Request;
 };
 
-struct InteropFindCallbackInfo
+struct InteropFindScpCallbackInfo
 {
-
+	OFBool Cancelled; 
+	T_DIMSE_C_FindRQ *Request;
+	DcmDataset *RequestIdentifiers; 
+	int ResponseCount;
+	// out 
+	T_DIMSE_C_FindRSP *Response;
+	DcmDataset *ResponseIdentifiers;
+	DcmDataset *StatusDetail;
 };
 
 struct InteropMoveCallbackInfo
@@ -345,14 +352,14 @@ SWIGEXPORT void SWIGSTDCALL RegisterStoreCallbackHelper_OffisDcm(StoreCallbackHe
 //-----------------------------------
 
 //--------------------------------------------------------------
-typedef void (SWIGSTDCALL* FindCallbackHelperCallback)(InteropFindCallbackInfo*);
-static FindCallbackHelperCallback CSharpFindCallbackHelperCallback = NULL;
+typedef void (SWIGSTDCALL* FindScpCallbackHelperCallback)(InteropFindScpCallbackInfo*);
+static FindScpCallbackHelperCallback CSharpFindScpCallbackHelperCallback = NULL;
 
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT void SWIGSTDCALL RegisterFindCallbackHelper_OffisDcm(FindCallbackHelperCallback callback) {
-	CSharpFindCallbackHelperCallback = callback;
+SWIGEXPORT void SWIGSTDCALL RegisterFindScpCallbackHelper_OffisDcm(FindScpCallbackHelperCallback callback) {
+	CSharpFindScpCallbackHelperCallback = callback;
 }
 //--------------------------------------------------------------
 
@@ -945,12 +952,18 @@ static void FindScpCallback(
 		// should fire off image received event
 		if (NULL != CSharpMoveCallbackHelperCallback)
 		{
-			InteropFindCallbackInfo info;
+			InteropFindScpCallbackInfo info;
 			bzero((char*)&info, sizeof(info));
 
 			// prepare the transmission of data 
+			info.Cancelled = cancelled;
+			info.Request = request;
+			info.RequestIdentifiers = requestIdentifiers; 
+			info.Response = new T_DIMSE_C_FindRSP();
+			info.ResponseIdentifiers = new DcmDataset();
+			info.StatusDetail = new DcmDataset();
 
-			CSharpFindCallbackHelperCallback(&info);
+			CSharpFindScpCallbackHelperCallback(&info);
 		}
 		else
 		{
@@ -1797,7 +1810,8 @@ struct T_ASC_Association
 		*/
 	}
 
-	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, const char* saveDirectory) throw (dicom_runtime_error)
+	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, const char* saveDirectory) 
+		throw (dicom_runtime_error)
 	{
 		T_ASC_PresentationContextID presId;
 		T_DIMSE_C_MoveRQ    req;
@@ -1824,9 +1838,9 @@ struct T_ASC_Association
 		ASC_getAPTitles(self->params, req.MoveDestination, NULL, NULL);
 
 		OFCondition cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
-			MoveProgressCallback, &callbackData, DIMSE_BLOCKING, 0,
-			network, CStoreSubOpCallback, (void*) saveDirectory,
-			&rsp, &statusDetail, &rspIds);
+				MoveProgressCallback, &callbackData, DIMSE_BLOCKING, 5,
+				network, CStoreSubOpCallback, (void*) saveDirectory,
+				&rsp, &statusDetail, &rspIds); 
 
 		if (rspIds != NULL) delete rspIds;
 

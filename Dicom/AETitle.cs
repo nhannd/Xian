@@ -7,6 +7,7 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Encapsulation of the AE Title DICOM tag.
     /// </summary>
+    [SerializableAttribute]
     public struct AETitle
     {
         /// <summary>
@@ -32,6 +33,11 @@ namespace ClearCanvas.Dicom
         public override string ToString()
         {
             return _aeTitle;
+        }
+
+        public String StringForm
+        {
+            get { return this.ToString(); }
         }
 
         private string _aeTitle;

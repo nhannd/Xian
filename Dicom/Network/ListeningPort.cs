@@ -7,6 +7,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Encapsulation of a listening port number.
     /// </summary>
+    [SerializableAttribute]
     public struct ListeningPort
     {
         /// <summary>
@@ -29,6 +30,11 @@ namespace ClearCanvas.Dicom.Network
         public System.Int32 ToInt32()
         {
             return _listeningPort;
+        }
+
+        public Int32 IntegerForm
+        {
+            get { return this.ToInt32(); }
         }
 
         private System.Int32 _listeningPort;

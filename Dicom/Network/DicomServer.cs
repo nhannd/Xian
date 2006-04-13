@@ -5,6 +5,7 @@ namespace ClearCanvas.Dicom.Network
     using System.Text;
     using System.Threading;
     using ClearCanvas.Dicom.OffisWrapper;
+    using System.Runtime.InteropServices;    
     using MySR = ClearCanvas.Dicom.SR;
 
     public class DicomServer
@@ -116,6 +117,11 @@ namespace ClearCanvas.Dicom.Network
             OffisDcm.SetConnectionTimeout(timeout);
         }
 
+        public Int16 MaximumAssociations
+        {
+            get { return 25; }
+        }
+
         protected enum ServerState
         {
             STOPPED,
@@ -144,11 +150,6 @@ namespace ClearCanvas.Dicom.Network
             private T_ASC_Association _association;
             private ThreadList _threadList;
             private DicomServer _parent;
-        }
-
-        public Int16 MaximumAssociations
-        {
-            get { return 25; }
         }
 
         protected class ThreadList : IList<Thread>
@@ -280,6 +281,47 @@ namespace ClearCanvas.Dicom.Network
             private object _monitorLock = new object();
             private List<Thread> _threadList = new List<Thread>();
         }
+
+        class FindScpCallbackHelper
+        {
+            public FindScpCallbackHelper(DicomServer parent)
+            {
+                _parent = parent;
+                _findScpCallbackHelperDelegate = new FindScpCallbackHelperDelegate(DefaultCallback);
+                RegisterFindScpCallbackHelper_OffisDcm(_findScpCallbackHelperDelegate);
+            }
+
+            ~FindScpCallbackHelper()
+            {
+                RegisterFindScpCallbackHelper_OffisDcm(null);
+            }
+
+            public delegate void FindScpCallbackHelperDelegate(IntPtr interopFindScpCallbackInfo);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterFindScpCallbackHelper_OffisDcm")]
+            public static extern void RegisterFindScpCallbackHelper_OffisDcm(FindScpCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr interopFindScpCallbackInfoPointer)
+            {
+                /*
+                InteropFindScpCallbackInfo interopFindScpCallbackInfo = new InteropFindScpCallbackInfo(interopFindScpCallbackInfoPointer, false);
+
+                T_DIMSE_C_FindRSP response = interopFindScpCallbackInfo.Response;
+                DcmDataset responseIdentifiers = interopFindScpCallbackInfo.RequestIdentifiers;
+                DcmDataset statusDetail = interopFindScpCallbackInfo.StatusDetail;
+
+                response.DimseStatus = STATUS_FIND_Refused_OutOfResources;
+                response.DimseStatus = OffisDcm.STATUS
+                *statusDetail = new DcmDataset();
+                (*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
+                */
+
+            }
+
+            private FindScpCallbackHelperDelegate _findScpCallbackHelperDelegate;
+            private DicomServer _parent;
+        }
+
 
         #region Private members
         private ServerState State
