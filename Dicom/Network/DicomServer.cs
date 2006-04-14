@@ -110,11 +110,11 @@ namespace ClearCanvas.Dicom.Network
         /// library.
         /// </summary>
         /// <param name="timeout">Timeout period in seconds.</param>
-        public static void SetConnectionTimeout(Int16 timeout)
+        public static void SetGlobalConnectionTimeout(Int16 timeout)
         {
             if (timeout < 1)
                 throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
-            OffisDcm.SetConnectionTimeout(timeout);
+            OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
 
         public Int16 MaximumAssociations

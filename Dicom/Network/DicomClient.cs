@@ -82,7 +82,8 @@ namespace ClearCanvas.Dicom.Network
 
             _queryResults = new QueryResultList();
 
-            SetConnectionTimeout(_timeout);
+            SetGlobalConnectionTimeout(120);    // global timeout is 2 minutes
+            SetReverseDnsLookupFlag(false);     // don't do reverse DNS lookup
         }
 
         ~DicomClient()
@@ -95,13 +96,31 @@ namespace ClearCanvas.Dicom.Network
         /// library.
         /// </summary>
         /// <param name="timeout">Timeout period in seconds.</param>
-        public static void SetConnectionTimeout(Int16 timeout)
+        public static void SetGlobalConnectionTimeout(Int16 timeout)
         {
             if (timeout < 1)
                 throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
-            OffisDcm.SetConnectionTimeout(timeout);
+            OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
 
+        public static void SetReverseDnsLookupFlag(Boolean enable)
+        {
+            OffisDcm.SetReverseDnsLookupFlag(enable);
+        }
+
+        /// <summary>
+        /// Timeout value is in seconds
+        /// </summary>
+        public UInt16 Timeout
+        {
+            get { return _timeout; }
+            set
+            {
+                if (value < 1)
+                    throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
+                _timeout = value;
+            }
+        }
         /// <summary>
         /// Verifies that a remote AE has an operational DICOM implementation using
         /// C-ECHO. Note that a successful verify does not necessarily mean that
@@ -129,7 +148,7 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCEcho(_cEchoRepeats))
+                            if (association.SendCEcho(_cEchoRepeats, _timeout))
                             {
                                 association.Release();
                                 return true;
@@ -143,8 +162,12 @@ namespace ClearCanvas.Dicom.Network
                 }
             }
             catch (DicomRuntimeApplicationException e)
-            {                
-                throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
+            {
+                OFCondition condition = e.Condition;
+                if (DicomHelper.CompareConditions(condition, OffisDcm.DUL_REQUESTASSOCIATIONFAILED))
+                    return false;
+                else
+                    throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
             }
         }
 
@@ -876,7 +899,7 @@ namespace ClearCanvas.Dicom.Network
         private StoreCallbackHelper _storeCallbackHelper;
         private QueryResultList _queryResults;
         private ApplicationEntity _myOwnAE;
-        private Int16 _timeout = 500;
+        private UInt16 _timeout = 5;                     // by default connections timeout in 5 seconds
         private int _defaultPDUSize = 16384;
         private int _cEchoRepeats = 7;
 

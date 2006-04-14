@@ -158,6 +158,11 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 		}
 	}
 
+	public OFCondition Condition
+	{
+		get { return new OFCondition(_condition); }
+	}
+
 	private OFCondition _condition = null;
 }
 %}
@@ -199,9 +204,14 @@ public class DicomRuntimeApplicationException : System.ApplicationException {
 // Helper function to set the connection
 // timeout in the OFFIS tk
 //-------------------------------------------
-void SetConnectionTimeout(int newTimeout)
+void SetGlobalConnectionTimeout(int newTimeout)
 {
 	dcmConnectionTimeout.set((Sint32) newTimeout);
+}
+
+void SetReverseDnsLookupFlag(bool enable)
+{
+	dcmDisableGethostbyaddr.set((OFBool) enable);
 }
 
 //-------------------------------------------
@@ -1692,7 +1702,7 @@ struct T_ASC_Association
 
 %extend(canthrow=1) T_ASC_Association {
 
-	bool SendCEcho(int numberOfCEchoRepeats) throw (dicom_runtime_error)
+	bool SendCEcho(int numberOfCEchoRepeats, int timeout) throw (dicom_runtime_error)
 	{
 		OFCondition cond = EC_Normal;
 		unsigned long n = numberOfCEchoRepeats;
@@ -1706,7 +1716,7 @@ struct T_ASC_Association
 			DcmDataset *statusDetail = NULL;
 
 			// send C-ECHO-RQ and handle response 
-			cond = DIMSE_echoUser(self, msgId, DIMSE_BLOCKING, 0,
+			cond = DIMSE_echoUser(self, msgId, DIMSE_BLOCKING, timeout,
 				&status, &statusDetail);
 
 			// check for status detail information, there should never be any 
