@@ -114,7 +114,7 @@ namespace ClearCanvas.Common
             }
             else
             {
-                throw new ExtensionException(
+                throw new NotSupportedException(
                     string.Format(SR.ExceptionNoExtensionsCreated, extensionPointType.FullName));
             }
         }
