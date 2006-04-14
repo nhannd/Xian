@@ -96,10 +96,8 @@ namespace ClearCanvas.Dicom.Network
         /// library.
         /// </summary>
         /// <param name="timeout">Timeout period in seconds.</param>
-        public static void SetGlobalConnectionTimeout(Int16 timeout)
+        protected static void SetGlobalConnectionTimeout(UInt16 timeout)
         {
-            if (timeout < 1)
-                throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
             OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
 
@@ -108,19 +106,6 @@ namespace ClearCanvas.Dicom.Network
             OffisDcm.SetReverseDnsLookupFlag(enable);
         }
 
-        /// <summary>
-        /// Timeout value is in seconds
-        /// </summary>
-        public UInt16 Timeout
-        {
-            get { return _timeout; }
-            set
-            {
-                if (value < 1)
-                    throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
-                _timeout = value;
-            }
-        }
         /// <summary>
         /// Verifies that a remote AE has an operational DICOM implementation using
         /// C-ECHO. Note that a successful verify does not necessarily mean that
@@ -134,7 +119,10 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
+                // set appropriate timeouts
+                SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
+
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
 
                 using (network)
                 {
@@ -148,7 +136,7 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCEcho(_cEchoRepeats, _timeout))
+                            if (association.SendCEcho(_cEchoRepeats, serverAE.OperationTimeout))
                             {
                                 association.Release();
                                 return true;
@@ -449,7 +437,8 @@ namespace ClearCanvas.Dicom.Network
 
             try
             {
-                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
+                SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
 
                 using (network)
                 {
@@ -542,7 +531,8 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, _timeout);
+                SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
 
                 using (network)
                 {
@@ -583,7 +573,8 @@ namespace ClearCanvas.Dicom.Network
 
             try
             {
-                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, _timeout);
+                SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
+                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
 
                 using (network)
                 {
@@ -899,7 +890,6 @@ namespace ClearCanvas.Dicom.Network
         private StoreCallbackHelper _storeCallbackHelper;
         private QueryResultList _queryResults;
         private ApplicationEntity _myOwnAE;
-        private UInt16 _timeout = 5;                     // by default connections timeout in 5 seconds
         private int _defaultPDUSize = 16384;
         private int _cEchoRepeats = 7;
 

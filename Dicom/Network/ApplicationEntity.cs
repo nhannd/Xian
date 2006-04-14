@@ -44,6 +44,18 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        public UInt16 ConnectionTimeout
+        {
+            get { return _connectionTimeout; }
+            set { _connectionTimeout = value; }
+        }
+
+        public UInt16 OperationTimeout
+        {
+            get { return _operationTimeout; }
+            set { _operationTimeout = value; }
+        }
+
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -57,6 +69,18 @@ namespace ClearCanvas.Dicom.Network
             _listeningPort = listenPort;
         }
 
+        public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort, UInt16 connectionTimeout)
+            : this(hostname, aeTitle, listenPort)
+        {
+            _connectionTimeout = connectionTimeout;
+        }
+
+        public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort, UInt16 connectionTimeout, UInt16 operationTimeout)
+            : this(hostname, aeTitle, listenPort, connectionTimeout)
+        {
+            _operationTimeout = operationTimeout;
+        }
+
         public override string ToString()
         {
             StringBuilder me = new StringBuilder();
@@ -67,5 +91,7 @@ namespace ClearCanvas.Dicom.Network
         private HostName _hostname;
         private AETitle _aeTitle;
         private ListeningPort _listeningPort;
+        private UInt16 _connectionTimeout = 20;
+        private UInt16 _operationTimeout = 180;
     }
 }
