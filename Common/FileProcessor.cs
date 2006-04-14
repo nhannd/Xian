@@ -64,7 +64,8 @@ namespace ClearCanvas.Common
 			}
 			catch (Exception e)
 			{
-				Platform.HandleException(e);
+				Platform.Log(e, LogLevel.Warn);
+				throw e;
 			}
 		}
 
@@ -78,7 +79,8 @@ namespace ClearCanvas.Common
 			}
 			catch (Exception e)
 			{
-				Platform.HandleException(e);
+				Platform.Log(e, LogLevel.Warn);
+				throw e;
 			}
 
 			if (recursive)
