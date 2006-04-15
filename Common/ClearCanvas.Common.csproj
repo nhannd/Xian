@@ -117,9 +117,9 @@
   <ItemGroup>
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
+    <Compile Include="IObservablePropertyBinding.cs" />
+    <Compile Include="DynamicObservablePropertyBinding.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
-    <Compile Include="PropertyBinding.cs" />
-    <Compile Include="PropertyChangedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
