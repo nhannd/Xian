@@ -33,7 +33,7 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         private event EventHandler<QueryCompletedEventArgs> _queryCompletedEvent;
 
-        private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
+        //private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
 
         // TODO:
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;

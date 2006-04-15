@@ -19,8 +19,6 @@ namespace ClearCanvas.Dicom
 		private string _photometricInterpretation;
 		private byte[] _pixelData;
 
-		private int _sizeInBytes;
-
 		private DcmDataset _dataset;
 		private DcmMetaInfo _metaInfo;
 		private bool _isDatasetLoaded = false;

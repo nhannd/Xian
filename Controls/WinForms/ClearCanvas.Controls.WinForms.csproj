@@ -27,6 +27,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
