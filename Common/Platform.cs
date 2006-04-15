@@ -171,10 +171,11 @@ namespace ClearCanvas.Common
             }
             catch (Exception e)
             {
-                HandleException(e);
+				Platform.Log(e, LogLevel.Fatal);
+				Platform.ShowMessageBox(SR.ExceptionFatalApplicationError);
             }
 #endif
-        }
+		}
 
 		/// <summary>
 		/// Writes a message to the default log.
@@ -243,25 +244,6 @@ namespace ClearCanvas.Common
             }
 
 			_messageBox.Show(message);
-		}
-
-		/// <summary>
-		/// Handles a caught exception.
-		/// </summary>
-		/// <param name="ex">The caught exception.</param>
-		///
-		/// <returns><b>true</b> if the exception is to be rethrown, <b>false</b> if not</returns>
-		/// <remarks>Used in a catch block, this utility method allows an exception
-		/// to be handled in a way defined by an XML defined exception policy.  This way, changes
-		/// in exception policies don't have to implemented by recompiling new code,
-		/// but rather by changing an XML file at runtime.  Policies are typically defined
-		/// in the <c>exceptionhandlingconfiguration.config</c> file of the application.  This method
-		/// is just a wrapper around the Enterprise Library's HandleException method.
-		/// </remarks>
-		public static bool HandleException(Exception ex)
-		{
-			Log(ex);
-			return true;
 		}
 
 		/// <summary>

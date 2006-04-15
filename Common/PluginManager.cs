@@ -190,10 +190,8 @@ namespace ClearCanvas.Common
 			}
 			catch (Exception e)
 			{
-				bool rethrow = Platform.HandleException(e);
-
-				if (rethrow)
-					throw;
+				Platform.Log(e, LogLevel.Error);
+				throw e;
 			}
 			finally
 			{

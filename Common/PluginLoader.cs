@@ -39,17 +39,13 @@ namespace ClearCanvas.Common
 			}
 			catch (FileNotFoundException e)
 			{
-				bool rethrow = Platform.HandleException(e);
-
-				if (rethrow)
-					throw;
+				Platform.Log(e, LogLevel.Error);
+				throw e;
 			}
 			catch (Exception e)
 			{
-				bool rethrow = Platform.HandleException(e);
-
-				if (rethrow)
-					throw;
+				Platform.Log(e, LogLevel.Error);
+				throw e;
 			}
 		}
 

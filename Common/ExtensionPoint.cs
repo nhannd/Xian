@@ -85,8 +85,8 @@ namespace ClearCanvas.Common
                 catch (Exception e)
                 {
                     // instantiation failed
-                    Platform.HandleException(e);
-                }
+					Platform.Log(e, LogLevel.Error);
+				}
             }
 
             return createdObjects.ToArray();
