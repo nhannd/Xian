@@ -314,6 +314,24 @@ namespace ClearCanvas.Dicom.Network
             return results;
         }
 
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, QueryKey key)
+        {
+            DcmDataset cFindDataset = new DcmDataset();
+            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
+
+            // set the specific query keys
+            foreach (DicomTag tag in key.DicomTags)
+            {
+                cFindDataset.putAndInsertString(new DcmTag(tag.Group, tag.Element), key[tag]);
+            }
+ 
+            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
+            TriggerQueryCompletedEvent(results);
+
+            GC.KeepAlive(cFindDataset);
+            return results;
+        }
+
         /// <summary>
         /// Query for the series that belong to a particular Study.
         /// </summary>
