@@ -28,7 +28,7 @@ namespace ClearCanvas.Controls.WinForms
 		public StackStrip() : base()
 		{
 			// Check Dock
-			this.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
+			//this.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
 		}
 
 		public int ItemCount
