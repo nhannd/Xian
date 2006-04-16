@@ -10,8 +10,7 @@ namespace ClearCanvas.Common
     /// </summary>
     /// <remarks>
     /// Instances of this class are constructed by the framework when it processes
-    /// plugins looking for extension points. An extension point is any class within a plugin that is marked
-    /// with the <see cref="ExtensionPointAttribute"/> attribute.
+    /// plugins looking for extension points.
     /// </remarks>
     public class ExtensionPointInfo : IBrowsable
     {
@@ -19,6 +18,9 @@ namespace ClearCanvas.Common
         private string _name;
         private string _description;
 
+        /// <summary>
+        /// Internal constructor.
+        /// </summary>
         internal ExtensionPointInfo(Type extensionPointClass, string name, string description)
         {
             _extensionPointClass = extensionPointClass;
@@ -26,6 +28,9 @@ namespace ClearCanvas.Common
             _description = description;
         }
 
+        /// <summary>
+        /// The class that defines the extension point.
+        /// </summary>
         public Type ExtensionPointClass
         {
             get { return _extensionPointClass; }
@@ -34,7 +39,7 @@ namespace ClearCanvas.Common
         #region IBrowsable Members
 
         /// <summary>
-        /// Friendly name of this extension point, if one exists, otherwise null;
+        /// Friendly name of this extension point, if one exists, otherwise null.
         /// </summary>
         public string Name
         {
@@ -49,6 +54,9 @@ namespace ClearCanvas.Common
             get { return _description; }
         }
 
+        /// <summary>
+        /// Formal name of this extension, which is the fully qualified name of the extension point class.
+        /// </summary>
         public string FormalName
         {
             get { return _extensionPointClass.FullName; }

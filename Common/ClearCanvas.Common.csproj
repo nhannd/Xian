@@ -116,6 +116,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="ExtensionPoint.cs" />
+    <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="IObservablePropertyBinding.cs" />
     <Compile Include="DynamicObservablePropertyBinding.cs" />
@@ -123,14 +124,11 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Attributes.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="CollectionEventArgs.cs" />
-    <Compile Include="Counter.cs">
+    <Compile Include="CodeClock.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DefaultClock.cs" />
+    <Compile Include="DefaultPerformanceCounter.cs" />
     <Compile Include="EventsHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -151,7 +149,7 @@
     <Compile Include="IApplicationRoot.cs" />
     <Compile Include="IBrowsable.cs" />
     <Compile Include="IObservableList.cs" />
-    <Compile Include="IPerformanceClock.cs" />
+    <Compile Include="IPerformanceCounter.cs" />
     <Compile Include="AttributeExtensionFilter.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Mathematics\RectF.cs" />
@@ -161,14 +159,11 @@
     <Compile Include="Platform.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Plugin.cs">
+    <Compile Include="PluginInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PluginAttribute.cs" />
     <Compile Include="PluginFinder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="PluginList.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PluginLoader.cs">
@@ -192,7 +187,7 @@
     <Compile Include="Tests\PluginSetupTeardown.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Win32Clock.cs" />
+    <Compile Include="Win32PerformanceCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

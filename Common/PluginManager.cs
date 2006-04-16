@@ -19,7 +19,7 @@ namespace ClearCanvas.Common
 	///	</remarks>
 	public class PluginManager 
 	{
-        private Plugin[] _plugins;
+        private PluginInfo[] _plugins;
         private ExtensionInfo[] _extensions;
         private ExtensionPointInfo[] _extensionPoints;
 		private string _pluginDir;
@@ -39,7 +39,7 @@ namespace ClearCanvas.Common
         /// The set of installed plugins.  If plugins have not yet been loaded into memory,
         /// querying this property will cause them to be loaded.
         /// </summary>
-        public Plugin[] Plugins
+        public PluginInfo[] Plugins
         {
             get 
             {
@@ -115,23 +115,23 @@ namespace ClearCanvas.Common
             Validate();
 
             List<ExtensionInfo> extList = new List<ExtensionInfo>();
-            foreach (Plugin plugin in _plugins)
+            foreach (PluginInfo plugin in _plugins)
             {
                 extList.AddRange(plugin.Extensions);
             }
             _extensions = extList.ToArray();
 
             List<ExtensionPointInfo> epList = new List<ExtensionPointInfo>();
-            foreach (Plugin plugin in _plugins)
+            foreach (PluginInfo plugin in _plugins)
             {
                 epList.AddRange(plugin.ExtensionPoints);
             }
             _extensionPoints = epList.ToArray();
         }
 
-        private Plugin[] ProcessAssemblies(Assembly[] assemblies)
+        private PluginInfo[] ProcessAssemblies(Assembly[] assemblies)
         {
-            List<Plugin> plugins = new List<Plugin>();
+            List<PluginInfo> plugins = new List<PluginInfo>();
             for(int i = 0; i < assemblies.Length; i++)
             {
                 try
@@ -140,7 +140,7 @@ namespace ClearCanvas.Common
                     if (attrs.Length > 0)
                     {
                         PluginAttribute a = (PluginAttribute)attrs[0];
-                        plugins.Add(new Plugin(assemblies[i], a.Name, a.Description));
+                        plugins.Add(new PluginInfo(assemblies[i], a.Name, a.Description));
                     }
 
                 }

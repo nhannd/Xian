@@ -6,7 +6,7 @@ namespace ClearCanvas.Common
 {
     /// <summary>
     /// An abstract base class for extension filters.  Extension filters are used to filter the
-    /// extension points returned by <see cref="Platform.CreateExtensions"/>.  Subclasses of this
+    /// extension points returned by <see cref="IExtensionPoint.CreateExtensions"/>.  Subclasses of this
     /// class implement specific types of filters.
     /// </summary>
     public abstract class ExtensionFilter

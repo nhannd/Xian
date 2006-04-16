@@ -8,15 +8,15 @@ namespace ClearCanvas.Common
 {
     /// <summary>
     /// Describes a plugin, and provides properties for querying the extension points and extensions defined
-    /// in the plugin, and methods for creating the extensions.
+    /// in the plugin.
     /// </summary>
-    public class Plugin : IBrowsable
+    public class PluginInfo : IBrowsable
     {
         /// <summary>
-        /// Internal utility method used by the framework to discover the extensions declared in an assembly.
+        /// Internal method used by the framework to discover the extensions declared in a plugin.
         /// </summary>
-        /// <param name="asm">The assembly to inspect</param>
-        /// <returns>An array of extensions</returns>
+        /// <param name="asm">The plugin assembly to inspect</param>
+        /// <returns>An array of <see cref="ExtensionInfo"> objects describing the extensions</returns>
         internal static ExtensionInfo[] DiscoverExtensions(Assembly asm)
         {
             List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
@@ -32,10 +32,10 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Internal utility method used by the framework to discover the extension points declared in an assembly.
+        /// Internal method used by the framework to discover the extension points declared in a plugin.
         /// </summary>
-        /// <param name="asm">The assembly to inspect</param>
-        /// <returns>An array of extension points</returns>
+        /// <param name="asm">The plugin assembly to inspect</param>
+        /// <returns>An array of <see cref="ExtensionPointInfo"> objects describing the extension points</returns>
         internal static ExtensionPointInfo[] DiscoverExtensionPoints(Assembly asm)
         {
             List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
@@ -59,12 +59,12 @@ namespace ClearCanvas.Common
         private ExtensionInfo[] _extensions;
 
         /// <summary>
-        /// Default constructor, used internally by the framework.
+        /// Internal constructor.
         /// </summary>
         /// <param name="assembly"></param>
         /// <param name="name"></param>
         /// <param name="description"></param>
-        internal Plugin(Assembly assembly, string name, string description)
+        internal PluginInfo(Assembly assembly, string name, string description)
         {
             _name = name;
             _description = description;

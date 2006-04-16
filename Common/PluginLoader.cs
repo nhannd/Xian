@@ -55,7 +55,7 @@ namespace ClearCanvas.Common
 
 			foreach (Type type in asm.GetExportedTypes())
 			{
-				if (typeof(Plugin).IsAssignableFrom(type))
+				if (typeof(PluginInfo).IsAssignableFrom(type))
 					return type;
 			}
 

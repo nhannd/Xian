@@ -1,6 +1,6 @@
 namespace ClearCanvas.Common
 {
-	public interface IPerformanceClock
+	public interface IPerformanceCounter
 	{
 		long Count
 		{

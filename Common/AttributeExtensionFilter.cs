@@ -37,8 +37,8 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Checks whether the specified <see cref="Extension"/> is marked with attributes that 
-        /// test equal to every test attribute supplied as criteria to this filter.
+        /// Checks whether the specified extension is marked with attributes that 
+        /// match every test attribute supplied as criteria to this filter.
         /// </summary>
         /// <param name="extension">The extension to test</param>
         /// <returns>true if the test succeeds</returns>

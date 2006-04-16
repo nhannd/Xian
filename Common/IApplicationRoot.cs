@@ -5,14 +5,13 @@ using System.Text;
 namespace ClearCanvas.Common
 {
     /// <summary>
-    /// This extension point serves as the application entry point.
-    /// When the <see cref="Platform.StartApp"/> method is called, the platform will attempt to create
-    /// exaclty one extension of IApplicationRoot.
+    /// Defines an application entry point.
     /// </summary>
+    /// <seealso cref="ApplicationRootExtensionPoint"/>
     public interface IApplicationRoot
     {
         /// <summary>
-        /// Called by the platform to run the application, as defined by the implementing extension.
+        /// Called by the platform to run the application.
         /// </summary>
         /// <remarks>
         /// It is expected that this method may block for the duration of the application's execution, if

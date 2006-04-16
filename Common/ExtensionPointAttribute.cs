@@ -5,14 +5,21 @@ using System.Text;
 namespace ClearCanvas.Common
 {
     /// <summary>
-    /// Attribute used to mark an interface as an extension point.
+    /// Attribute used to mark a class as defining an extension point.
     /// </summary>
+    /// <remarks>
+    /// Use this attribute to mark a class as defining an extension point.  This attribute must only be
+    /// applied to subclasses of <see cref="ExtensionPoint">.
+    /// </remarks>
     [AttributeUsage(AttributeTargets.Class)]
     public class ExtensionPointAttribute : Attribute
     {
         private string _name;
         private string _description;
 
+        /// <summary>
+        /// Attribute constructor.
+        /// </summary>
         public ExtensionPointAttribute()
         {
         }

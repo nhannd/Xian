@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
+    /// <summary>
+    /// Used by framework to provide a consistent interface for browsable meta-data objects.
+    /// </summary>
     public interface IBrowsable
     {
         /// <summary>

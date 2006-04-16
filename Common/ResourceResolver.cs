@@ -5,17 +5,36 @@ using System.Reflection;
 
 namespace ClearCanvas.Common
 {
+    /// <summary>
+    /// Utility class that provides runtime string resource resolution services.
+    /// </summary>
+    /// <remarks>
+    /// This class searches a specified set of assemblies for classes named SR,
+    /// and searches the properties of the SR classes for a property with a matching name.
+    /// </remarks>
     public class ResourceResolver
     {
         private static Dictionary<Assembly, List<Type>> _mapAsmToSRclass = new Dictionary<Assembly,List<Type>>();
 
         private Assembly[] _assemblies;
 
+        /// <summary>
+        /// Constructs an object that will search the specified set of assemblies.
+        /// </summary>
+        /// <param name="assemblies">The set of assemblies to search</param>
         public ResourceResolver(Assembly[] assemblies)
         {
             _assemblies = assemblies;
         }
 
+        /// <summary>
+        /// Attempts to resolve the specified resource key by searching any classes named SR
+        /// within the set of assemblies passed to the constructor for a property whose name
+        /// matches the key.
+        /// </summary>
+        /// <param name="key">The name of the resource key to look for</param>
+        /// <returns>The resource value, if the resource key was resolved, or the key value, if
+        /// the key could not be resolved</returns>
         public string Resolve(string key)
         {
             // search the assemblies in order

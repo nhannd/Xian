@@ -8,7 +8,7 @@ namespace ClearCanvas.Common
     /// Implements an extension filter that performs matching on types.
     /// </summary>
     /// <remarks>
-    /// The filter will test true if the <see cref="Extension"/> in question implements all of the
+    /// The filter will test true if the extension in question implements all of the
     /// types supplied as criteria to this filter.  Typically these types are interfaces, however, a
     /// single class may be supplied, in which case the extension must be a subclass of that class.
     /// </remarks>

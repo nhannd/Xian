@@ -4,14 +4,59 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
-    public interface IExtensionPoint
+    /// <summary>
+    /// Base class for all extension points.
+    /// </summary>
+    /// <typeparam name="TInterface">The interface that extensions are expected to implement.</typeparam>
+    /// <remarks>
+    /// <para>
+    /// To define an extension point, create a dedicated subclass of this class, specifying the interface
+    /// that extensions are expected to implement.  The name of the subclass should be chosen
+    /// with care, as the name effectively acts as a unique identifier which all extensions
+    /// will reference.  Once chosen, the name should not be changed, as doing so will break all
+    /// existing extensions to this extension point.  There is no need to add any methods to the subclass,
+    /// and it is recommended that the class be left empty, such that it serves as a dedicated
+    /// factory for creating extensions of this extension point.
+    /// </para>
+    /// <para>The subclass must also be marked with the <see cref="ExtensionPointAttribute"> in order
+    /// for the framework to discover it at runtime.
+    /// </para>
+    /// </remarks>
+    public abstract class ExtensionPoint<TInterface> : ExtensionPointBase
     {
-        ExtensionInfo[] ListExtensions();
-        ExtensionInfo[] ListExtensions(ExtensionFilter filter);
-        object CreateExtension();
-        object CreateExtension(ExtensionFilter filter);
-        object[] CreateExtensions();
-        object[] CreateExtensions(ExtensionFilter filter);
+ /*  This stuff won't compile correctly under MONO.
+            Better to leave it out for now, can re-introduce it when MONO compiler matures
+        public new TInterface CreateExtension()
+        {
+            return (TInterface)base.CreateExtension();
+        }
+
+        public new TInterface CreateExtension(ExtensionFilter filter)
+        {
+            return (TInterface)base.CreateExtension(filter);
+        }
+
+        public new TInterface[] CreateExtensions()
+        {
+            object[] objs = base.CreateExtensions();
+            TInterface[] extensions = new TInterface[objs.Length];
+            Array.Copy(objs, extensions, objs.Length);
+            return extensions;
+        }
+
+        public new TInterface[] CreateExtensions(ExtensionFilter filter)
+        {
+            object[] objs = base.CreateExtensions(filter);
+            TInterface[] extensions = new TInterface[objs.Length];
+            Array.Copy(objs, extensions, objs.Length);
+            return extensions;
+        }
+ */
+        protected override Type InterfaceType
+        {
+            get { return typeof(TInterface); }
+        }
+
     }
 
     public abstract class ExtensionPointBase : IExtensionPoint
@@ -125,40 +170,4 @@ namespace ClearCanvas.Common
         }
     }
 
-    public abstract class ExtensionPoint<TInterface> : ExtensionPointBase
-    {
-/*  This stuff won't compile correctly under MONO.
-	Better to leave it out for now, can re-introduce it when MONO compiler matures
-        public new TInterface CreateExtension()
-        {
-            return (TInterface)base.CreateExtension();
-        }
-
-        public new TInterface CreateExtension(ExtensionFilter filter)
-        {
-            return (TInterface)base.CreateExtension(filter);
-        }
-
-        public new TInterface[] CreateExtensions()
-        {
-            object[] objs = base.CreateExtensions();
-            TInterface[] extensions = new TInterface[objs.Length];
-            Array.Copy(objs, extensions, objs.Length);
-            return extensions;
-        }
-
-        public new TInterface[] CreateExtensions(ExtensionFilter filter)
-        {
-            object[] objs = base.CreateExtensions(filter);
-            TInterface[] extensions = new TInterface[objs.Length];
-            Array.Copy(objs, extensions, objs.Length);
-            return extensions;
-        }
-*/
-        protected override Type InterfaceType
-        {
-            get { return typeof(TInterface); }
-        }
-
-    }
 }
