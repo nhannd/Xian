@@ -30,6 +30,7 @@ namespace ClearCanvas.Controls.WinForms
 		public SplashScreen()
 		{
 			InitializeComponent();
+			this.m_StatusLabel.ForeColor = Color.FromArgb(60, 150, 208);
 			this.Opacity = .00;
 			m_Timer.Start();
 			this.ClientSize = this.BackgroundImage.Size;
