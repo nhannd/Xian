@@ -72,7 +72,7 @@ namespace ClearCanvas.Controls.WinForms
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableLayoutPanel.Size = new System.Drawing.Size(469, 122);
+			this._tableLayoutPanel.Size = new System.Drawing.Size(469, 106);
 			this._tableLayoutPanel.TabIndex = 1;
 			// 
 			// _patientIDLabel
@@ -151,7 +151,7 @@ namespace ClearCanvas.Controls.WinForms
 			// 
 			this._studyDescriptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._studyDescriptionLabel.AutoSize = true;
-			this._studyDescriptionLabel.Location = new System.Drawing.Point(3, 93);
+			this._studyDescriptionLabel.Location = new System.Drawing.Point(3, 85);
 			this._studyDescriptionLabel.Name = "_studyDescriptionLabel";
 			this._studyDescriptionLabel.Size = new System.Drawing.Size(90, 13);
 			this._studyDescriptionLabel.TabIndex = 6;
@@ -160,7 +160,7 @@ namespace ClearCanvas.Controls.WinForms
 			// _studyDescription
 			// 
 			this._studyDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._studyDescription.Location = new System.Drawing.Point(99, 90);
+			this._studyDescription.Location = new System.Drawing.Point(99, 82);
 			this._studyDescription.Name = "_studyDescription";
 			this._studyDescription.Size = new System.Drawing.Size(141, 20);
 			this._studyDescription.TabIndex = 7;
@@ -186,9 +186,9 @@ namespace ClearCanvas.Controls.WinForms
 			// _searchButton
 			// 
 			this._searchButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this._searchButton.Location = new System.Drawing.Point(353, 88);
+			this._searchButton.Location = new System.Drawing.Point(353, 81);
 			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(75, 23);
+			this._searchButton.Size = new System.Drawing.Size(75, 22);
 			this._searchButton.TabIndex = 10;
 			this._searchButton.Text = "Search";
 			this._searchButton.UseVisualStyleBackColor = true;
