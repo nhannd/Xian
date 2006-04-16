@@ -47,7 +47,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
         private void _exitButton_Click(object sender, EventArgs e)
         {
-            if (_rebuilder.IsRebuilding)
+            if (null != _rebuilder && _rebuilder.IsRebuilding)
                 _rebuilder.StopRebuild();
             Close();
         }
