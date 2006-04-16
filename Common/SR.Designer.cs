@@ -277,7 +277,7 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loading plugin {0}.
+        ///   Looks up a localized string similar to Loading plugin: {0}.
         /// </summary>
         public static string LoadingPlugin {
             get {

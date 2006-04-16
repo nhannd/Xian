@@ -175,7 +175,7 @@
     <value>Loaded plugin: {0}</value>
   </data>
   <data name="LoadingPlugin" xml:space="preserve">
-    <value>Loading plugin {0}</value>
+    <value>Loading plugin: {0}</value>
   </data>
   <data name="ExceptionEmptyString" xml:space="preserve">
     <value>{0} cannot be empty.</value>
