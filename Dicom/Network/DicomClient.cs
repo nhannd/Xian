@@ -356,6 +356,21 @@ namespace ClearCanvas.Dicom.Network
             return results;
         }
 
+        public ReadOnlyQueryResultCollection QuerySopInstance(ApplicationEntity serverAE, Uid studyInstanceUid)
+        {
+            DcmDataset cFindDataset = new DcmDataset();
+            InitializeStandardCFindDataset(ref cFindDataset, QRLevel.CompositeObjectInstance);
+
+            // set the specific query keys
+            cFindDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
+
+            ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
+            TriggerQueryCompletedEvent(results);
+
+            GC.KeepAlive(cFindDataset);
+            return results;
+        }
+
         /// <summary>
         /// Performs a DICOM retrieve using C-MOVE with the Study Root Query/Retrieve Information Model.
         /// A DICOM listener will automatically be created to receive the incoming DICOM data. The listener's

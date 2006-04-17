@@ -96,6 +96,36 @@ namespace ClearCanvas.Dicom
             get { return _internalDictionary[DicomTag.SeriesNumber]; }
         }
 
+        public UInt32 NumberOfStudyRelatedInstances
+        {
+            get
+            {
+                if (ContainsTag(DicomTag.NumberOfStudyRelatedInstances))
+                {
+                    String temp = _internalDictionary[DicomTag.NumberOfStudyRelatedInstances];
+                    UInt32 output;
+                    if (UInt32.TryParse(temp, out output))
+                        return output;
+                }
+                return 0;
+            }
+        }
+
+        public UInt32 NumberOfSeriesRelatedInstances
+        {
+            get
+            {
+                if (ContainsTag(DicomTag.NumberOfSeriesRelatedInstances))
+                {
+                    String temp = _internalDictionary[DicomTag.NumberOfSeriesRelatedInstances];
+                    UInt32 output;
+                    if (UInt32.TryParse(temp, out output))
+                        return output;
+                }
+                return 0;
+            }
+        }
+
         /// <summary>
         /// Gets the whole collection of DICOM tags in this query result.
         /// </summary>
