@@ -98,7 +98,7 @@ namespace ClearCanvas.Dicom.Network
 
             _queryResults = new QueryResultList();
 
-            SetGlobalConnectionTimeout(120);    // global timeout is 2 minutes
+            SetGlobalConnectionTimeout(20);    // global timeout is 2 minutes
             SetReverseDnsLookupFlag(false);     // don't do reverse DNS lookup
         }
 
