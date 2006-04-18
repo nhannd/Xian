@@ -4,7 +4,10 @@ namespace ClearCanvas.Dicom
     using System.Collections.Generic;
     using System.Text;
 
-    public struct Uid// : System.IComparable
+    /// <summary>
+    /// Wrapper class for UIDs used in the framework.
+    /// </summary>
+    public struct Uid
     {
         private string _uid;
         public Uid(string constructionUid)
@@ -24,22 +27,14 @@ namespace ClearCanvas.Dicom
             return _uid;
         }
 
-        //#region IComparable Members
-
-        //public int CompareTo(object obj)
-        //{
-        //    Uid otherUid = obj as Uid;
-        //    if (null != otherUid)
-        //    {
-        //        if (this._uid == otherUid._uid)
-        //            return 0;
-        //        else
-        //            return 1;
-        //    }
-
-        //    throw new System.ArgumentException(SR.ExceptionGeneralUidCompareToTypeIncorrect, "obj");
-        //}
-
-        //#endregion
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        /// <param name="aet">The AETitle object to be casted.</param>
+        /// <returns>A String representation of the AE Title object.</returns>
+        public static implicit operator String(Uid uid)
+        {
+            return uid.ToString();
+        }
     }
 }

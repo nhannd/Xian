@@ -36,6 +36,16 @@ namespace ClearCanvas.Dicom
             return _accession;
         }
 
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        /// <param name="aet">The Accession object to be casted.</param>
+        /// <returns>A String representation of the Accession object.</returns>
+        public static implicit operator String(Accession acc)
+        {
+            return acc.ToString();
+        }
+
         private string _accession;
     }
 }

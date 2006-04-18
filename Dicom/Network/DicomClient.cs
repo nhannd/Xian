@@ -32,25 +32,41 @@ namespace ClearCanvas.Dicom.Network
         /// Fires when the C-FIND query has completed and all results received.
         /// </summary>
         private event EventHandler<QueryCompletedEventArgs> _queryCompletedEvent;
-
-        //private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
-
         // TODO:
+        /// <summary>
+        /// This event is not yet implemented.
+        /// </summary>
+        private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
+        /// <summary>
+        /// This event is not yet implemented.
+        /// </summary>
         private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
+        /// <summary>
+        /// This event is not yet implemented.
+        /// </summary>
         private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
 
+        /// <summary>
+        /// Event accessor.
+        /// </summary>
         public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceived
         {
             add { _sopInstanceReceivedEvent += value; }
             remove { _sopInstanceReceivedEvent -= value; }
         }
 
+        /// <summary>
+        /// Event accessor.
+        /// </summary>
         public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceived
         {
             add { _queryResultReceivedEvent += value; }
             remove { _queryResultReceivedEvent -= value; }
         }
 
+        /// <summary>
+        /// Event accessor.
+        /// </summary>
         public event EventHandler<QueryCompletedEventArgs> QueryCompleted
         {
             add { _queryCompletedEvent += value; }
@@ -86,6 +102,9 @@ namespace ClearCanvas.Dicom.Network
             SetReverseDnsLookupFlag(false);     // don't do reverse DNS lookup
         }
 
+        /// <summary>
+        /// Destructor for the DicomClient class.
+        /// </summary>
         ~DicomClient()
         {
             SocketManager.DeinitializeSockets();
@@ -95,12 +114,17 @@ namespace ClearCanvas.Dicom.Network
         /// Set the overall connection timeout period in the underlying OFFIS DICOM
         /// library.
         /// </summary>
-        /// <param name="timeout">Timeout period in seconds.</param>
+        /// <param name="timeout">Timeout period in seconds. Default is 120 seconds.</param>
         protected static void SetGlobalConnectionTimeout(UInt16 timeout)
         {
             OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
 
+        /// <summary>
+        /// Enables or disables the use of reverse DNS lookups for
+        /// completing DICOM associations. 
+        /// </summary>
+        /// <param name="enable">True - turn on, False - turn off. Default is False.</param>
         public static void SetReverseDnsLookupFlag(Boolean enable)
         {
             OffisDcm.SetReverseDnsLookupFlag(enable);
@@ -314,6 +338,13 @@ namespace ClearCanvas.Dicom.Network
             return results;
         }
 
+        /// <summary>
+        /// The general overload for the Query method that allows an almost arbitary list of
+        /// tags to be queried for. 
+        /// </summary>
+        /// <param name="serverAE">The target AE.</param>
+        /// <param name="key">The set of query keys.</param>
+        /// <returns>A collection of studies from the server that satisifes the query key.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, QueryKey key)
         {
             DcmDataset cFindDataset = new DcmDataset();
@@ -356,6 +387,15 @@ namespace ClearCanvas.Dicom.Network
             return results;
         }
 
+        /// <summary>
+        /// Perform a query at the Composite Object Instance ("IMAGE") level. Can be used to determine
+        /// the number of Sop Instances that are in a given Study, if the server does not support querying
+        /// for the Number Of Study Related Instances tag.
+        /// </summary>
+        /// <param name="serverAE">The target AE.</param>
+        /// <param name="studyInstanceUid">The relevant Study's Study Instance Uid.</param>
+        /// <returns>A read-only collection of query results that will include the SOP Class UID and
+        /// SOP Instance UID. Use the Count property to determine the number of results returned.</returns>
         public ReadOnlyQueryResultCollection QuerySopInstance(ApplicationEntity serverAE, Uid studyInstanceUid)
         {
             DcmDataset cFindDataset = new DcmDataset();
@@ -437,6 +477,13 @@ namespace ClearCanvas.Dicom.Network
             return;
         }
 
+        /// <summary>
+        /// Performs a C-STORE, i.e. send, an object to a target AE.
+        /// </summary>
+        /// <param name="serverAE">The target AE.</param>
+        /// <param name="directory">The folder/directory from which the objects to be sent will be obtained.</param>
+        /// <param name="recursivelyDescend">Whether the search for objects from the 'directory' location will 
+        /// descend recursively or not.</param>
         public void Store(ApplicationEntity serverAE, String directory, Boolean recursivelyDescend)
         {
             String normalizedDirectory = DicomHelper.NormalizeDirectory(directory);
@@ -448,18 +495,51 @@ namespace ClearCanvas.Dicom.Network
             Store(serverAE, fileList);
         }
 
+        /// <summary>
+        /// Overload of the Store function, that allows you to specify a list of files to send,
+        /// rather than specifying a root location. The SOP Classes of the files will be 
+        /// determined automatically by parsing the headers of all the files.
+        /// </summary>
+        /// <param name="serverAE">The target AE.</param>
+        /// <param name="files">The list of files in any collection that implements the
+        /// IEnumerable interface.</param>
         public void Store(ApplicationEntity serverAE, IEnumerable<String> files)
         {
             string[] sopClassUids = { };
             Store(serverAE, files, sopClassUids);
         }
 
+        /// <summary>
+        /// Overload of the Store function, that allows you to specify a list of files to send,
+        /// rather than specifying a root location. The SOP Classes of the files is also provided.
+        /// </summary>
+        /// <param name="serverAE">The target AE.</param>
+        /// <param name="files">The list of files in any collection that implements the
+        /// IEnumerable interface.</param>
+        /// <param name="sopClassUids">The list of SOP Classes in any collection that implements
+        /// the IEnumerable interface. The list should be normalized to maximize efficiency, i.e.
+        /// there should be no duplicate entries.</param>
         public void Store(ApplicationEntity serverAE, IEnumerable<String> files, IEnumerable<String> sopClassUids)
         {
             string[] transferSyntaxUids = { };
             Store(serverAE, files, sopClassUids, transferSyntaxUids);
         }
 
+        /// <summary>
+        /// Overload of the Store function, that allows you to specify a list of files to send,
+        /// rather than specifying a root location. The SOP Classes of the files is also provided, along
+        /// with the Transfer Syntaxes of the stored objects. This is the most efficient version of the 
+        /// method as it avoids parsing of every file's DICOM header.
+        /// </summary>
+        /// <param name="serverAE">The target AE.</param>
+        /// <param name="files">The list of files in any collection that implements the
+        /// IEnumerable interface.</param>
+        /// <param name="sopClassUids">The list of SOP Classes in any collection that implements
+        /// the IEnumerable interface. The list should be normalized to maximize efficiency, i.e.
+        /// there should be no duplicate entries.</param>
+        /// <param name="transferSyntaxUids">The list of Transfer Syntaxes in any collection that implements
+        /// the IEnumerable interface. The list should be normalized to maximize efficiency, i.e.
+        /// there should be no duplicate entries.</param>
         public void Store(ApplicationEntity serverAE, IEnumerable<String> files, IEnumerable<String> sopClassUids, IEnumerable<String> transferSyntaxUids)
         {
             // TODO:
@@ -752,7 +832,6 @@ namespace ClearCanvas.Dicom.Network
  
         protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)
         {
-            
             EventsHelper.Fire(_sopInstanceReceivedEvent, this, e);
         }
 

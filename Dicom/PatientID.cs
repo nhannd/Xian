@@ -19,9 +19,6 @@ namespace ClearCanvas.Dicom
             if (null == patientId)
                 throw new System.ArgumentNullException("patientId", SR.ExceptionGeneralPatientsNameNull);
 
-            //if (0 == patientId.Length)
-            //    throw new System.ArgumentOutOfRangeException("patientId", SR.ExceptionGeneralPatientsNameZeroLength);
-
             _patientId = patientId;
         }
 
@@ -32,6 +29,16 @@ namespace ClearCanvas.Dicom
         public override string ToString()
         {
             return _patientId;
+        }
+
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        /// <param name="aet">The AETitle object to be casted.</param>
+        /// <returns>A String representation of the AE Title object.</returns>
+        public static implicit operator String(PatientId pid)
+        {
+            return pid.ToString();
         }
 
         private string _patientId;

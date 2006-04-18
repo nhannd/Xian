@@ -8,6 +8,9 @@ namespace ClearCanvas.Dicom.Network
     using System.Runtime.InteropServices;    
     using MySR = ClearCanvas.Dicom.SR;
 
+    /// <summary>
+    /// This class's implementation is not yet complete. Use at your own risk.
+    /// </summary>
     public class DicomServer
     {
         public DicomServer(ApplicationEntity ownAEParameters, String saveDirectory)

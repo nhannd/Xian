@@ -5,7 +5,9 @@ namespace ClearCanvas.Dicom
     using System.Text;
 
     /// <summary>
-    /// Describes a DICOM tag.
+    /// Describes a DICOM tag and provides some static helper functions
+    /// that return DicomTag objects representing tags without the use
+    /// of string literals, but uses symbolic names instead.
     /// </summary>
     public class DicomTag
     {
@@ -33,13 +35,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public UInt16 Group
         {
-            get
-            {
-                return ((UInt16) ((_id & 0xffff0000) >> 16));
-            }
-            set
-            {
-            }
+            get { return ((UInt16) ((_id & 0xffff0000) >> 16)); }
         }
 
         /// <summary>
@@ -47,13 +43,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public UInt16 Element
         {
-            get
-            {
-                return ((UInt16) (_id & 0x0000ffff));
-            }
-            set
-            {
-            }
+            get { return ((UInt16) (_id & 0x0000ffff)); }
         }
 
         /// <summary>
@@ -70,7 +60,7 @@ namespace ClearCanvas.Dicom
         /// Provides a human-readable representation of the tag.
         /// </summary>
         /// <returns>The string representation of the Group and Element.</returns>
-        public override System.String ToString()
+        public override String ToString()
         {
             // TODO: use the DICOM data dictionary to get a string description of the tag
             // instead of just providing the group and element numbers
@@ -79,6 +69,12 @@ namespace ClearCanvas.Dicom
             return buffer.ToString();
         }
 
+        /// <summary>
+        /// This override allows the comparison of two DicomTag objects
+        /// for semantic equivalence. 
+        /// </summary>
+        /// <param name="obj">The other DicomTag object to compare this object to.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             DicomTag otherTag = obj as DicomTag;

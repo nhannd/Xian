@@ -6,6 +6,9 @@ using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.Dicom
 {
+    /// <summary>
+    /// Representation of a DicomImage object.
+    /// </summary>
 	public abstract class DicomImage
 	{
 		private ushort _rows;
@@ -24,24 +27,41 @@ namespace ClearCanvas.Dicom
 		private bool _isDatasetLoaded = false;
         private bool _isImageParameterSetLoaded = false;
 
+        /// <summary>
+        /// The underlying DcmDataset object of this image.
+        /// </summary>
 		protected DcmDataset Dataset
 		{
 			get { return _dataset; }
 			set { _dataset = value; }
 		}
 
+        /// <summary>
+        /// The underlying DcmMetaInfo object of this image, that
+        /// represents the meta-header describing the dataset. The DcmMetaInfo
+        /// may not exist, as it typically only exists if the dataset is stored
+        /// onto media, where the meta-header is used to describe the format
+        /// of the storage.
+        /// </summary>
 		protected DcmMetaInfo MetaInfo
 		{
 			get { return _metaInfo; }
 			set { _metaInfo = value; }
 		}
 
+        /// <summary>
+        /// Flag indicating whether the underlying dataset has been loaded into memory.
+        /// </summary>
 		public bool IsDatasetLoaded
 		{
 			get { return _isDatasetLoaded; }
 			protected set { _isDatasetLoaded = value; }
 		}
 
+        /// <summary>
+        /// Flag indicating whether or not the parameters that define an image for
+        /// rendering has been loaded into memory.
+        /// </summary>
         public bool IsImageParameterSetLoaded
         {
             get { return _isImageParameterSetLoaded; }
@@ -140,6 +160,12 @@ namespace ClearCanvas.Dicom
 			} 
 		}
 
+        /// <summary>
+        /// Obtains the pixel data for this image dataset.
+        /// </summary>
+        /// <returns>A byte array representing the pixel data. This array's interpretation
+        /// should be subject to the various image-defining parameters such as Samples Per Pixel
+        /// and Bits Stored.</returns>
 		public byte[] GetPixelData()
 		{
 			if (!IsDatasetLoaded)
@@ -175,6 +201,19 @@ namespace ClearCanvas.Dicom
 			return _pixelData;
 		}
 
+        /// <summary>
+        /// Obtains the pixel data for this image dataset, given a set of
+        /// image-defining parameters. This method allows for slight optimization if
+        /// these parameters are already known, since the need to parse the
+        /// image's dataset for these values is avoided.
+        /// </summary>
+        /// <param name="bitsAllocated">The Bits Allocated tag of the image.</param>
+        /// <param name="rows">The Rows tag of the image.</param>
+        /// <param name="columns">The Columns tag of the image.</param>
+        /// <param name="samplesPerPixel">The Samples Per Pixel tag of the image.</param>
+        /// <returns>A byte array representing the pixel data. This array's interpretation
+        /// should be subject to the various image-defining parameters such as Samples Per Pixel
+        /// and Bits Stored.</returns>
         public byte[] GetPixelData(int bitsAllocated, int rows, int columns, int samplesPerPixel)
         {
             // assume that if bitsAllocated, etc. are provided, IsImageParameterSetLoaded is true
@@ -209,6 +248,14 @@ namespace ClearCanvas.Dicom
 
 		#endregion
 
+        /// <summary>
+        /// One of several overloads that allows the client to obtain a particular tag from
+        /// the image file's dataset. Each overload mirrors an overload of the findAndGetxxx()
+        /// functions in the underlying OFFIS DICOM Toolkit.
+        /// </summary>
+        /// <param name="tag">The tag that will be obtained</param>
+        /// <param name="val">The object that the value will be stored in.</param>
+        /// <param name="tagExists">An indicator whether the tag exists in the dataset or not.</param>
 		public void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
 		{
 			LoadDataset();
@@ -282,6 +329,10 @@ namespace ClearCanvas.Dicom
 		protected abstract void LoadDataset();
 		protected abstract void UnloadDataset();
 
+        /// <summary>
+        /// Loads the minmum set of image parameter tags that is
+        /// necessary for rendering the pixel data to the display.
+        /// </summary>
         protected virtual void LoadImageParameterSet()
         {
             if (IsImageParameterSetLoaded)

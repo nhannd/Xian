@@ -27,14 +27,19 @@ namespace ClearCanvas.Dicom.Network
         /// Gets the listening port as a 32-bit integer.
         /// </summary>
         /// <returns>The listening port as a 32-bit integer.</returns>
-        public System.Int32 ToInt32()
+        public Int32 ToInt32()
         {
             return _listeningPort;
         }
 
-        public Int32 IntegerForm
+        /// <summary>
+        /// Implicit cast to return the listen port as an integer for ease of use.
+        /// </summary>
+        /// <param name="lp">The ListeningPort object to be casted.</param>
+        /// <returns>An integer representing the listening port.</returns>
+        public static implicit operator Int32(ListeningPort lp)
         {
-            get { return this.ToInt32(); }
+            return lp._listeningPort;
         }
 
         private System.Int32 _listeningPort;

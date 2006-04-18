@@ -4,7 +4,8 @@ using ClearCanvas.Dicom.OffisWrapper;
 namespace ClearCanvas.Dicom
 {
 	/// <summary>
-	/// Summary description for Dcm.
+	/// A helper class that supplies various DICOM tags using a symbolic name rather than
+    /// a string literal.
 	/// </summary>
 	public class Dcm
 	{

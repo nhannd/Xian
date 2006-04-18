@@ -34,15 +34,20 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Gets the Hostname as a string.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The hostname in String form.</returns>
         public override string ToString()
         {
             return _hostName;
         }
 
-        public String StringForm
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        /// <param name="aet">The Hostname object to be casted.</param>
+        /// <returns>A String representation of the Hostname object.</returns>
+        public static implicit operator String(HostName hn)
         {
-            get { return this.ToString(); }
+            return hn.ToString();
         }
 
         private string _hostName;

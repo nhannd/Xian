@@ -35,9 +35,14 @@ namespace ClearCanvas.Dicom
             return _aeTitle;
         }
 
-        public String StringForm
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        /// <param name="aet">The AETitle object to be casted.</param>
+        /// <returns>A String representation of the AE Title object.</returns>
+        public static implicit operator String(AETitle aet)
         {
-            get { return this.ToString(); }
+            return aet.ToString();
         }
 
         private string _aeTitle;

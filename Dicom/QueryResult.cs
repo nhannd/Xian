@@ -76,26 +76,41 @@ namespace ClearCanvas.Dicom
             get { return _internalDictionary[DicomTag.AccessionNumber]; }
         }
 
+        /// <summary>
+        /// Gets Modality as a string.
+        /// </summary>
         public string Modality
         {
             get { return _internalDictionary[DicomTag.Modality]; }
         }
 
+        /// <summary>
+        /// Gets Series Instance UID as a Uid object.
+        /// </summary>
         public Uid SeriesInstanceUid
         {
             get { return new Uid(_internalDictionary[DicomTag.SeriesInstanceUID]); }
         }
 
+        /// <summary>
+        /// Gets Series Description as a string.
+        /// </summary>
         public string SeriesDescription
         {
             get { return _internalDictionary[DicomTag.SeriesDescription]; }
         }
 
+        /// <summary>
+        /// Gets Series Number as a string.
+        /// </summary>
         public string SeriesNumber
         {
             get { return _internalDictionary[DicomTag.SeriesNumber]; }
         }
 
+        /// <summary>
+        /// Gets Number Of Study Related Instances as a number.
+        /// </summary>
         public UInt32 NumberOfStudyRelatedInstances
         {
             get
@@ -111,6 +126,9 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Gets Number of Series Related Instances as a number.
+        /// </summary>
         public UInt32 NumberOfSeriesRelatedInstances
         {
             get
@@ -134,22 +152,40 @@ namespace ClearCanvas.Dicom
             get { return (this as IDictionary<DicomTag, string>).Keys; }
         }
 
+        /// <summary>
+        /// Indexer based on the DicomTag key to this collection.
+        /// </summary>
+        /// <param name="key">The key representing the tag the client wants to obtain.</param>
+        /// <returns>The string representation of that value.</returns>
         public string this[DicomTag key]
         {
             get { return (this as IDictionary<DicomTag, string>)[key]; }
             set { (this as IDictionary<DicomTag, string>)[key] = value; }
         }
 
+        /// <summary>
+        /// Add a new tag into the collection.
+        /// </summary>
+        /// <param name="key">The key of the tag.</param>
+        /// <param name="value">The value of the tag.</param>
         public void Add(DicomTag key, string value)
         {
             (this as IDictionary<DicomTag, string>).Add(key, value);
         }
 
+        /// <summary>
+        /// Empties out the collection.
+        /// </summary>
         public void Clear()
         {
             (this as ICollection<KeyValuePair<DicomTag, string>>).Clear();
         }
 
+        /// <summary>
+        /// Determines whether the collection contains a particular tag.
+        /// </summary>
+        /// <param name="tag">The tag to check.</param>
+        /// <returns>True - tag exists; False - tag does not exist.</returns>
         public Boolean ContainsTag(DicomTag tag)
         {
             return (this as IDictionary<DicomTag, string>).ContainsKey(tag);
@@ -273,6 +309,14 @@ namespace ClearCanvas.Dicom
         #endregion
     }
 
+    /// <summary>
+    /// A helper class. This class is identical in
+    /// every respect to QueryResult, but the name. A new
+    /// name has been given in order to have the correct
+    /// semantic when a collection of tags is used to define
+    /// a query or retrieve, rather than when used as a
+    /// collection of query results.
+    /// </summary>
     public class QueryKey : QueryResult
     {
 

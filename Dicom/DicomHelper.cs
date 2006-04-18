@@ -8,10 +8,21 @@ namespace ClearCanvas.Dicom
     using System.Text;
 
 	/// <summary>
-	/// Summary description for Dicom.
+	/// Encapsulates a set of static functions that helps with work on various aspects to
+    /// do with the OFFIS DICOM Toolkit.
 	/// </summary>
 	public class DicomHelper
 	{
+        /// <summary>
+        /// Check the OFCondition object that is returned from many of the OFFIS functions/methods.
+        /// Used in the extraction of a DICOM tag. If the condition is that the tag does not exist,
+        /// this will not be considered an exception, and execution will proceed normally.
+        /// </summary>
+        /// <exception cref="GeneralDicomException">GeneralDicomException</exception>
+        /// <param name="status">The condition object that will be checked.</param>
+        /// <param name="tag">The tag that was to be extracted.</param>
+        /// <param name="tagExists">Output argument that will indicate whether or not
+        /// the tag that was to be extracted exists in the dataset.</param>
 		public static void CheckReturnValue(OFCondition status, DcmTagKey tag, out bool tagExists)
 		{
 			Platform.CheckForNullReference(status, "status");
@@ -33,6 +44,13 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+        /// <summary>
+        /// Checks the condition returned when loading a DICOM file. If there was a problem
+        /// in loading the file, an exception will be thrown.
+        /// </summary>
+        /// <exception cref="GeneralDicomExceptoin">GeneralDicomException</exception>
+        /// <param name="status">The condition object to be checked.</param>
+        /// <param name="filename">The filename that was to be loaded.</param>
 		public static void CheckReturnValue(OFCondition status, string filename)
 		{
 			Platform.CheckForNullReference(status, "status");
@@ -42,6 +60,18 @@ namespace ClearCanvas.Dicom
 				throw new GeneralDicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
 		}
 
+        /// <summary>
+        /// Compares one OFCondition condition object with another for semantic equality. This was created
+        /// because the static OFCondition objects that the OFFIS toolkit creates when the library is 
+        /// initialized cannot be used as-is in the C# world. For example, DUL_PEERREQUESTEDRELEASE is 
+        /// a OFCondition object that can be compared to condition objects returned from certain network
+        /// functions. The object, however, cannot be compared directly, since the addresses where they
+        /// reside in the C++ world and C# world are different. This function compares their semantic
+        /// meanings for equality.
+        /// </summary>
+        /// <param name="condition1">The first condition object.</param>
+        /// <param name="condition2">The second condition object.</param>
+        /// <returns></returns>
         public static bool CompareConditions(OFCondition condition1, OFCondition condition2)
         {
             return (condition1.code() == condition2.code() && condition1.module() == condition2.module());

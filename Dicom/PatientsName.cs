@@ -51,6 +51,16 @@ namespace ClearCanvas.Dicom
             return _patientsName;
         }
 
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        /// <param name="aet">The AETitle object to be casted.</param>
+        /// <returns>A String representation of the AE Title object.</returns>
+        public static implicit operator String(PatientsName pn)
+        {
+            return pn.ToString();
+        }
+
         private string _patientsName;
         private string _lastName;
         private string _firstName;
