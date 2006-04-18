@@ -36,7 +36,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// This event is not yet implemented.
         /// </summary>
-        private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
+        //private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
         /// <summary>
         /// This event is not yet implemented.
         /// </summary>
