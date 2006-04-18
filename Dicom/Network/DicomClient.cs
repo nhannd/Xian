@@ -184,7 +184,12 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// This variation on the function takes Patient ID and Patient's Name.
+        /// This variation on the function takes Patient ID and Patient's Name. This query takes 
+        /// place at the STUDY level and the the following tags are used as the key:
+        /// Query Retrieve Level, Study Date, Study Time, Accession Number, Patient's Name,
+        /// Patient ID, Study Instance UID, Modalities In Study, Study Description,
+        /// Specific Character Set, Patient's Birth Date, Number Of Study Related Series,
+        /// and Number Of Study Related Instances.
         /// </summary>
         /// <overloads>There are currently seven overloads of this function. Query the 
         /// remote AE to determine what studies the server contains using a C-FIND. This 
@@ -364,7 +369,10 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Query for the series that belong to a particular Study.
+        /// Query for the series that belong to a particular Study. The following tags
+        /// are part of the query key at the SERIES level: Query Retrieve Level, 
+        /// Modality, Series Instance Uid, Series Description, Series Number and
+        /// Number Of Series Related Instances.
         /// </summary>
         /// <param name="serverAE">Server's AE parameters.</param>
         /// <param name="studyInstanceUid">Study Instance UID of the study that 
@@ -390,7 +398,8 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Perform a query at the Composite Object Instance ("IMAGE") level. Can be used to determine
         /// the number of Sop Instances that are in a given Study, if the server does not support querying
-        /// for the Number Of Study Related Instances tag.
+        /// for the Number Of Study Related Instances tag. The following tags are part of this query: SOP Class UID
+        /// and SOP Instance UID.
         /// </summary>
         /// <param name="serverAE">The target AE.</param>
         /// <param name="studyInstanceUid">The relevant Study's Study Instance Uid.</param>
