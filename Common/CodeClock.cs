@@ -4,7 +4,7 @@ namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// A simple stopwatch class that can be used to profile code.  To ensure portability, use this
-    /// class instead of the <see cref="System.Diagnostics.Stopwatch"> class which has not yet been
+    /// class instead of the <see cref="System.Diagnostics.Stopwatch" /> class which has not yet been
     /// implemented in Mono.
 	/// </summary>
 	/// <remarks>

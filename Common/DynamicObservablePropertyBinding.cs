@@ -9,7 +9,7 @@ namespace ClearCanvas.Common
     delegate void PropertySetDelegate<T>(T val);
 
     /// <summary>
-    /// Provides a dynamic implementation of <see cref="IObservablePropertyBinding">.  The implementation
+    /// Provides a dynamic implementation of <see cref="IObservablePropertyBinding" />.  The implementation
     /// is dynamic in the sense that it uses reflection to bind to the target object at runtime.
     /// </summary>
     /// <typeparam name="T">The type of the underlying property</typeparam>

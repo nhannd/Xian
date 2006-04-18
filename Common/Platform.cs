@@ -34,9 +34,9 @@ namespace ClearCanvas.Common
     }
 
     /// <summary>
-    /// Defines the Application Root extension point.  When <see cref="Platform.StartApp"> is called,
+    /// Defines the Application Root extension point.  When <see cref="Platform.StartApp" /> is called,
     /// the platform creates an application root extension and executes it by calling
-    /// <see cref="IApplicationRoot.RunApplication">.
+    /// <see cref="IApplicationRoot.RunApplication" />.
     /// </summary>
     [ExtensionPoint()]
     public class ApplicationRootExtensionPoint : ExtensionPoint<IApplicationRoot>

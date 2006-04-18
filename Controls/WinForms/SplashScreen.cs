@@ -48,8 +48,8 @@ namespace ClearCanvas.Controls.WinForms
 				return;
 
 			m_Thread = new Thread(new ThreadStart(SplashScreen.ShowForm));
-			m_Thread.IsBackground = true;
-			m_Thread.ApartmentState = ApartmentState.STA;
+            m_Thread.IsBackground = true;
+            m_Thread.SetApartmentState(ApartmentState.STA);
 			m_Thread.Start();
 		}
 

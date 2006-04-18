@@ -43,7 +43,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Implicit cast to a String object, for ease of use.
         /// </summary>
-        /// <param name="aet">The Hostname object to be casted.</param>
+        /// <param name="hn">The Hostname object to be casted.</param>
         /// <returns>A String representation of the Hostname object.</returns>
         public static implicit operator String(HostName hn)
         {

@@ -9,7 +9,7 @@ namespace ClearCanvas.Common
     /// </summary>
     /// <remarks>
     /// Use this attribute to mark a class as being an extension of the specified extension point,
-    /// specified by the <see cref="Type"> of the extension point class.
+    /// specified by the <see cref="Type" /> of the extension point class.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
     public class ExtensionOfAttribute: Attribute

@@ -101,7 +101,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Provides a string representation of an Application Entity.
         /// </summary>
-        /// <returns>The String representation.</returns>
+        /// <returns>The String representation.</returns>D
         public override string ToString()
         {
             StringBuilder me = new StringBuilder();

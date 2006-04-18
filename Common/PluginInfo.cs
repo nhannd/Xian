@@ -16,7 +16,7 @@ namespace ClearCanvas.Common
         /// Internal method used by the framework to discover the extensions declared in a plugin.
         /// </summary>
         /// <param name="asm">The plugin assembly to inspect</param>
-        /// <returns>An array of <see cref="ExtensionInfo"> objects describing the extensions</returns>
+        /// <returns>An array of <see cref="ExtensionInfo" />objects describing the extensions</returns>
         internal static ExtensionInfo[] DiscoverExtensions(Assembly asm)
         {
             List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
@@ -35,7 +35,7 @@ namespace ClearCanvas.Common
         /// Internal method used by the framework to discover the extension points declared in a plugin.
         /// </summary>
         /// <param name="asm">The plugin assembly to inspect</param>
-        /// <returns>An array of <see cref="ExtensionPointInfo"> objects describing the extension points</returns>
+        /// <returns>An array of <see cref="ExtensionPointInfo" />objects describing the extension points</returns>
         internal static ExtensionPointInfo[] DiscoverExtensionPoints(Assembly asm)
         {
             List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();

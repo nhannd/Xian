@@ -39,7 +39,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Implicit cast to a String object, for ease of use.
         /// </summary>
-        /// <param name="aet">The Accession object to be casted.</param>
+        /// <param name="acc">The Accession object to be casted.</param>
         /// <returns>A String representation of the Accession object.</returns>
         public static implicit operator String(Accession acc)
         {

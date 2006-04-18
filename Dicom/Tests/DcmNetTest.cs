@@ -15,8 +15,6 @@ namespace ClearCanvas.Dicom.Tests
     [TestFixture]
     public class DcmNetTest
     {   
-        private Process _dicomServer = null;
-
         [TestFixtureSetUp]
         public void Init()
         {

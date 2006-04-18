@@ -4,7 +4,7 @@ namespace ClearCanvas.Common
 	/// A wrapping of the Win32 high resolution performance counter
 	/// that can be used to profile code.  Taken from an MSDN article.
     /// 
-    /// Do not use this class directly - use <see cref="CodeClock"> instead.
+    /// Do not use this class directly - use <see cref="CodeClock" /> instead.
 	/// </summary>
 	internal class Win32PerformanceCounter : IPerformanceCounter
 	{

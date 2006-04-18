@@ -12,20 +12,20 @@ namespace ClearCanvas.Common
     /// the extension point and call methods on it without knowing the type of the extension point class.
     /// 
     /// Extension point classes should never implement this interface directly.
-    /// Instead, subclass <see cref="ExtensionPoint"/>.
+    /// Instead, subclass <see cref="ExtensionPoint" />.
     /// </remarks>
     public interface IExtensionPoint
     {
         /// <summary>
         /// Lists the available extensions.
         /// </summary>
-        /// <returns>An array of <see cref="ExtensionInfo"/> objects describing the available extensions.</returns>
+        /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the available extensions.</returns>
         ExtensionInfo[] ListExtensions();
 
         /// <summary>
-        /// Lists the available extensions, that also match the specified <see cref="ExtensionFilter">.
+        /// Lists the available extensions, that also match the specified <see cref="ExtensionFilter" />.
         /// </summary>
-        /// <returns>An array of <see cref="ExtensionInfo"> objects describing the available extensions.</returns>
+        /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the available extensions.</returns>
         ExtensionInfo[] ListExtensions(ExtensionFilter filter);
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace ClearCanvas.Common
         object CreateExtension();
 
         /// <summary>
-        /// Instantiates an extension that also matches the specified <see cref="ExtensionFilter">.
+        /// Instantiates an extension that also matches the specified <see cref="ExtensionFilter" />.
         /// </summary>
         /// <remarks>
         /// If more than one extension exists, then the type of the extension that is
@@ -64,7 +64,7 @@ namespace ClearCanvas.Common
         object[] CreateExtensions();
 
         /// <summary>
-        /// Instantiates each available extension that also matches the specified <see cref="ExtensionFilter">.
+        /// Instantiates each available extension that also matches the specified <see cref="ExtensionFilter" />.
         /// </summary>
         /// <remarks>
         /// Attempts to instantiate each matching extension.  If an extension fails to instantiate
