@@ -12,14 +12,14 @@ namespace ClearCanvas.Common
     /// the extension point and call methods on it without knowing the type of the extension point class.
     /// 
     /// Extension point classes should never implement this interface directly.
-    /// Instead, subclass <see cref="ExtensionPoint">.
+    /// Instead, subclass <see cref="ExtensionPoint"/>.
     /// </remarks>
     public interface IExtensionPoint
     {
         /// <summary>
         /// Lists the available extensions.
         /// </summary>
-        /// <returns>An array of <see cref="ExtensionInfo"> objects describing the available extensions.</returns>
+        /// <returns>An array of <see cref="ExtensionInfo"/> objects describing the available extensions.</returns>
         ExtensionInfo[] ListExtensions();
 
         /// <summary>

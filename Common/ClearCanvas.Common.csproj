@@ -65,34 +65,6 @@
     <WarningsAsErrors>
     </WarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mono|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug Mono\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MONO;UNIT_TESTS</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>ClearCanvas.Common.xml</DocumentationFile>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
-    <Optimize>false</Optimize>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <WarningsAsErrors>
-    </WarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Mono|AnyCPU' ">
-    <OutputPath>bin\Release Mono\</OutputPath>
-    <DefineConstants>TRACE;MONO</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>ClearCanvas.Common.xml</DocumentationFile>
-    <Optimize>true</Optimize>
-    <DebugType />
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningsAsErrors>
-    </WarningsAsErrors>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.0.30714, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>

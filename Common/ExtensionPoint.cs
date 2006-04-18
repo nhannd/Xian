@@ -18,7 +18,7 @@ namespace ClearCanvas.Common
     /// and it is recommended that the class be left empty, such that it serves as a dedicated
     /// factory for creating extensions of this extension point.
     /// </para>
-    /// <para>The subclass must also be marked with the <see cref="ExtensionPointAttribute"> in order
+    /// <para>The subclass must also be marked with the <see cref="ExtensionPointAttribute"/> in order
     /// for the framework to discover it at runtime.
     /// </para>
     /// </remarks>
