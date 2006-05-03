@@ -17,7 +17,7 @@ namespace ClearCanvas.Dicom.Network
     /// perform C-ECHO, C-FIND and C-MOVE commands. Both C-FIND and C-MOVE 
     /// implement the Study Root Query/Retrieve Information Model.
     /// </summary>
-    public class DicomClient
+    public class DicomClient : IDisposable
     {
         /// <summary>
         /// Fires when a new SOP Instance has arrived and has been successfully
@@ -100,14 +100,6 @@ namespace ClearCanvas.Dicom.Network
 
             SetGlobalConnectionTimeout(20);    // global timeout is 2 minutes
             SetReverseDnsLookupFlag(false);     // don't do reverse DNS lookup
-        }
-
-        /// <summary>
-        /// Destructor for the DicomClient class.
-        /// </summary>
-        ~DicomClient()
-        {
-            SocketManager.DeinitializeSockets();
         }
 
         /// <summary>
@@ -868,18 +860,13 @@ namespace ClearCanvas.Dicom.Network
 
         #region Private members
         
-        class QueryCallbackHelper
+        class QueryCallbackHelper : IDisposable
         {
             public QueryCallbackHelper(DicomClient parent)
             {
                 _parent = parent;
                 _queryCallbackHelperDelegate = new QueryCallbackHelperDelegate(DefaultCallback);
                 RegisterQueryCallbackHelper_OffisDcm(_queryCallbackHelperDelegate);
-            }
-
-            ~QueryCallbackHelper()
-            {
-                RegisterQueryCallbackHelper_OffisDcm(null);
             }
 
             public delegate void QueryCallbackHelperDelegate(IntPtr callbackData,
@@ -935,20 +922,24 @@ namespace ClearCanvas.Dicom.Network
 
             private QueryCallbackHelperDelegate _queryCallbackHelperDelegate;
             private DicomClient _parent;
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                RegisterQueryCallbackHelper_OffisDcm(null);
+            }
+
+            #endregion
         }
 
-        class StoreCallbackHelper
+        class StoreCallbackHelper : IDisposable
         {
             public StoreCallbackHelper(DicomClient parent)
             {
                 _parent = parent;
                 _storeCallbackHelperDelegate = new StoreCallbackHelperDelegate(DefaultCallback);
                 RegisterStoreCallbackHelper_OffisDcm(_storeCallbackHelperDelegate);
-            }
-
-            ~StoreCallbackHelper()
-            {
-                RegisterStoreCallbackHelper_OffisDcm(null);
             }
 
             public delegate void StoreCallbackHelperDelegate(IntPtr interopStoreCallbackInfo);
@@ -973,20 +964,24 @@ namespace ClearCanvas.Dicom.Network
 
             private StoreCallbackHelperDelegate _storeCallbackHelperDelegate;
             private DicomClient _parent;
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                RegisterStoreCallbackHelper_OffisDcm(null);
+            }
+
+            #endregion
         }
 
-        class StoreScuCallbackHelper
+        class StoreScuCallbackHelper : IDisposable
         {
             public StoreScuCallbackHelper(DicomClient parent)
             {
                 _parent = parent;
                 _storeScuCallbackHelperDelegate = new StoreScuCallbackHelperDelegate(DefaultCallback);
                 RegisterStoreScuCallbackHelper_OffisDcm(_storeScuCallbackHelperDelegate);
-            }
-
-            ~StoreScuCallbackHelper()
-            {
-                RegisterStoreScuCallbackHelper_OffisDcm(null);
             }
 
             public delegate void StoreScuCallbackHelperDelegate(IntPtr interopStoreScuCallbackInfo);
@@ -1005,6 +1000,15 @@ namespace ClearCanvas.Dicom.Network
 
             private StoreScuCallbackHelperDelegate _storeScuCallbackHelperDelegate;
             private DicomClient _parent;
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                RegisterStoreScuCallbackHelper_OffisDcm(null);
+            }
+
+            #endregion
         }
 
         private QueryCallbackHelper _queryCallbackHelper;
@@ -1023,5 +1027,16 @@ namespace ClearCanvas.Dicom.Network
         private static bool DICOM_SUCCESS_STATUS(UInt16 status) { return ( (status) == STATUS_Success ); }
         #endregion
 
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            SocketManager.DeinitializeSockets();
+            _queryCallbackHelper.Dispose();
+            _storeCallbackHelper.Dispose();
+        }
+
+        #endregion
     }
 }
