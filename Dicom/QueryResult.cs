@@ -17,7 +17,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public Uid StudyInstanceUid
         {
-            get { return new Uid(_internalDictionary[DicomTag.StudyInstanceUID]); }
+            get
+            {
+                if (this.ContainsTag(DicomTag.StudyInstanceUID))
+                    return new Uid(_internalDictionary[DicomTag.StudyInstanceUID]);
+                else
+                    return new Uid();
+            }
         }
 
         /// <summary>
@@ -25,7 +31,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public PatientId PatientId
         {
-            get { return new PatientId(_internalDictionary[DicomTag.PatientId]); }
+            get
+            {
+                if (this.ContainsTag(DicomTag.PatientId))
+                    return new PatientId(_internalDictionary[DicomTag.PatientId]);
+                else
+                    return new PatientId();
+            }
         }
 
         /// <summary>
@@ -33,7 +45,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public PatientsName PatientsName
         {
-            get { return new PatientsName(_internalDictionary[DicomTag.PatientsName]); }
+            get
+            {
+                if (this.ContainsTag(DicomTag.PatientsName))
+                    return new PatientsName(_internalDictionary[DicomTag.PatientsName]);
+                else
+                    return new PatientsName();
+            }
         }
 
         /// <summary>
@@ -41,7 +59,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ModalitiesInStudy
         {
-            get { return _internalDictionary[DicomTag.ModalitiesInStudy]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.ModalitiesInStudy))
+                    return _internalDictionary[DicomTag.ModalitiesInStudy];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -49,7 +73,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string StudyDescription
         {
-            get { return _internalDictionary[DicomTag.StudyDescription]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.StudyDescription))
+                    return _internalDictionary[DicomTag.StudyDescription];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -57,7 +87,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string StudyDate
         {
-            get { return _internalDictionary[DicomTag.StudyDate]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.StudyDate))
+                    return _internalDictionary[DicomTag.StudyDate];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -65,7 +101,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string StudyTime
         {
-            get { return _internalDictionary[DicomTag.StudyTime]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.StudyTime))
+                    return _internalDictionary[DicomTag.StudyTime];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -73,7 +115,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string AccessionNumber
         {
-            get { return _internalDictionary[DicomTag.AccessionNumber]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.AccessionNumber))
+                    return _internalDictionary[DicomTag.AccessionNumber];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -81,7 +129,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string Modality
         {
-            get { return _internalDictionary[DicomTag.Modality]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.Modality))
+                    return _internalDictionary[DicomTag.Modality];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -89,7 +143,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public Uid SeriesInstanceUid
         {
-            get { return new Uid(_internalDictionary[DicomTag.SeriesInstanceUID]); }
+            get
+            {
+                if (this.ContainsTag(DicomTag.SeriesInstanceUID))
+                    return new Uid(_internalDictionary[DicomTag.SeriesInstanceUID]);
+                else
+                    return new Uid();
+            }
         }
 
         /// <summary>
@@ -97,7 +157,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string SeriesDescription
         {
-            get { return _internalDictionary[DicomTag.SeriesDescription]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.SeriesDescription))
+                    return _internalDictionary[DicomTag.SeriesDescription];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -105,7 +171,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string SeriesNumber
         {
-            get { return _internalDictionary[DicomTag.SeriesNumber]; }
+            get
+            {
+                if (this.ContainsTag(DicomTag.SeriesNumber))
+                    return _internalDictionary[DicomTag.SeriesNumber];
+                else
+                    return "";
+            }
         }
 
         /// <summary>
@@ -133,7 +205,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (ContainsTag(DicomTag.NumberOfSeriesRelatedInstances))
+                if (this.ContainsTag(DicomTag.NumberOfSeriesRelatedInstances))
                 {
                     String temp = _internalDictionary[DicomTag.NumberOfSeriesRelatedInstances];
                     UInt32 output;
@@ -159,7 +231,13 @@ namespace ClearCanvas.Dicom
         /// <returns>The string representation of that value.</returns>
         public string this[DicomTag key]
         {
-            get { return (this as IDictionary<DicomTag, string>)[key]; }
+            get 
+            {
+                if (this.ContainsTag(key))
+                    return (this as IDictionary<DicomTag, string>)[key];
+                else
+                    return "";
+            }
             set { (this as IDictionary<DicomTag, string>)[key] = value; }
         }
 
