@@ -34,39 +34,12 @@ namespace ClearCanvas.Common
 			return Compare(x, y, tolerance, out dummy);
 		}
 
-		public static bool AreEqual(float x, float y)
-		{
-			int dummy;
-			const int tolerance = 5;
-
-			int result = Compare(x, y, tolerance, out dummy);
-
-			if (result == 0)
-				return true;
-			else
-				return false;
-		}
-
-		public static bool AreEqual(PointF pt1, PointF pt2)
-		{
-			int dummy;
-			const int tolerance = 100;
-
-			int xResult = Compare(pt1.X, pt2.X, tolerance, out dummy);
-			int yResult = Compare(pt1.Y, pt2.Y, tolerance, out dummy);
-
-			if (xResult == 0 && yResult == 0)
-				return true;
-			else
-				return false;
-		}
-
-		private static int Compare(float x, float y, int tolerance, out int difference)
+		public static int Compare(float x, float y, int tolerance, out int difference)
 		{
 			// Make sure maxUlps is non-negative and small enough that the
 			// default NAN won't compare as equal to anything.
 			dbg.Assert(tolerance >= 0 && tolerance < 4 * 1024 * 1024);
-
+			
 			// Reinterpret float bits as sign-magnitude integers.
 			int xi = BitReinterpreter.Convert(x);
 			int yi = BitReinterpreter.Convert(y);
@@ -90,11 +63,43 @@ namespace ClearCanvas.Common
 				return 0;
 		}
 
+		public static bool AreEqual(float x, float y, float tolerance)
+		{
+			return Math.Abs(x - y) < tolerance;
+		}
+
+		public static bool AreEqual(float x, float y)
+		{
+			int dummy;
+			const int tolerance = 100;
+
+			int result = Compare(x, y, tolerance, out dummy);
+
+			if (result == 0)
+				return true;
+			else
+				return false;
+		}
+
+		public static bool AreEqual(PointF pt1, PointF pt2)
+		{
+			int dummy;
+			const int tolerance = 100;
+
+			int xResult = Compare(pt1.X, pt2.X, tolerance, out dummy);
+			int yResult = Compare(pt1.Y, pt2.Y, tolerance, out dummy);
+
+			if (xResult == 0 && yResult == 0)
+				return true;
+			else
+				return false;
+		}
+
 		//
 		// Implementation
 
 		[StructLayout(LayoutKind.Explicit)]
-		private struct BitReinterpreter
+		internal struct BitReinterpreter
 		{
 			public static int Convert(float f)
 			{
