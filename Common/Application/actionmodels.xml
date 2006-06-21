@@ -1,0 +1,42 @@
+<action-models>
+  <action-model id="ClearCanvas.Workstation.Model.WorkbenchToolExtensionPoint.menu">
+    <action id="ClearCanvas.Workstation.Dashboard.DashboardTool.activate" path="MenuFile/MenuFileSearch" />
+    <action id="ClearCanvas.Workstation.ExtensionBrowser.ExtensionBrowserTool.show" path="MenuFile/Extension Browser" />
+    <action id="ClearCanvas.Workstation.View.WinForms.StockWorkbenchTools+ExitAppTool.exit" path="MenuFile/MenuFileExitApplication" />
+    <action id="ClearCanvas.Workstation.Help.HelpTool.activate" path="MenuHelp/MenuHelpAbout" />
+  </action-model>
+  <action-model id="ClearCanvas.Workstation.Model.WorkbenchToolExtensionPoint.toolbars">
+    <action id="ClearCanvas.Workstation.Dashboard.DashboardTool.activate" path="ToolbarStandard/ToolbarToolsStandardStudyCentre" />
+  </action-model>
+  <action-model id="ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint.menu">
+    <action id="ClearCanvas.Workstation.Edit.UndoTool.activate" path="MenuEdit/MenuEditUndo" />
+    <action id="ClearCanvas.Workstation.Edit.RedoTool.activate" path="MenuEdit/MenuEditRedo" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.StackTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardStack" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.WindowLevelTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardWindowLevel" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.PanTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardPan" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.ZoomTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardZoom" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.FlipHorizontalTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardFlipHorizontal" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.FlipVerticalTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardFlipVertical" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.RotateLeftTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardRotateLeft" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.RotateRightTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardRotateRight" />
+    <action id="ClearCanvas.Workstation.Layout.Basic.LayoutTool.show" path="MenuLayout/MenuLayoutLayoutManager" />
+    <action id="ClearCanvas.Workstation.Tools.Measurement.RulerTool.activate" path="MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler" />
+    <action id="ClearCanvas.Workstation.Tools.Measurement.RectangularROITool.activate" path="MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI" />
+    <action id="ClearCanvas.Workstation.View.WinForms.StockWorkspaceTools+CloseWorkspaceTool.closeWorkspace" path="MenuFile/MenuFileCloseWorkspace" />
+  </action-model>
+  <action-model id="ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint.toolbars">
+    <action id="ClearCanvas.Workstation.Edit.UndoTool.activate" path="ToolbarStandard/ToolbarStandardUndo" />
+    <action id="ClearCanvas.Workstation.Edit.RedoTool.activate" path="ToolbarStandard/ToolbarStandardRedo" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.StackTool.activate" path="ToolbarStandard/ToolbarToolsStandardStack" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.WindowLevelTool.activate" path="ToolbarStandard/ToolbarToolsStandardWindowLevel" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.PanTool.activate" path="ToolbarStandard/ToolbarToolsStandardPan" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.ZoomTool.activate" path="ToolbarStandard/ToolbarToolsStandardZoom" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.FlipHorizontalTool.activate" path="ToolbarStandard/ToolbarToolsStandardFlipHorizontal" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.FlipVerticalTool.activate" path="ToolbarStandard/ToolbarToolsStandardFlipVertical" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.RotateLeftTool.activate" path="ToolbarStandard/ToolbarToolsStandardRotateLeft" />
+    <action id="ClearCanvas.Workstation.Tools.Standard.RotateRightTool.activate" path="ToolbarStandard/ToolbarToolsStandardRotateRight" />
+    <action id="ClearCanvas.Workstation.Layout.Basic.LayoutTool.show" path="ToolbarStandard/MenuLayoutLayoutManager" />
+    <action id="ClearCanvas.Workstation.Tools.Measurement.RulerTool.activate" path="ToolbarMeasurement/ToolsMeasurementRuler" />
+    <action id="ClearCanvas.Workstation.Tools.Measurement.RectangularROITool.activate" path="ToolbarMeasurement/ToolsMeasurementRectangularROI" />
+  </action-model>
+</action-models>
