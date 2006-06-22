@@ -27,7 +27,7 @@ namespace ClearCanvas.Common.Application.Tools
         /// <summary>
         /// Default constructor
         /// </summary>
-        internal ToolContext(IExtensionPoint toolExtensionPoint)
+        public ToolContext(IExtensionPoint toolExtensionPoint)
         {
             _tools = new List<ITool>();
             _toolViews = new List<ToolViewProxy>();

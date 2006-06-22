@@ -81,7 +81,7 @@ namespace ClearCanvas.Common.Application
 			remove { _activationChangedEvent -= value; }
 		}
 
-		internal abstract void Cleanup();
+		public abstract void Cleanup();
 
 		private void CreateCommandHistory()
 		{
