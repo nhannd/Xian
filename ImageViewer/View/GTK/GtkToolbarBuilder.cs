@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using Gtk;
-using ClearCanvas.Workstation.Model.Actions;
+using ClearCanvas.ImageViewer.Actions;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
     public class GtkToolbarBuilder
     {

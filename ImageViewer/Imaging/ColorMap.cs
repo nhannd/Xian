@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class ColorMap
 	{

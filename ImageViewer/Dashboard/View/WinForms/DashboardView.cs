@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Workstation.View.WinForms;
 
-namespace ClearCanvas.Workstation.Dashboard.View.WinForms
+namespace ClearCanvas.ImageViewer.Dashboard.View.WinForms
 {
 	[ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Dashboard.DashboardToolViewExtensionPoint))]
 	public class DashboardView : WinFormsView, IToolView

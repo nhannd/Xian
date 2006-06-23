@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Dashboard.Remote {
+namespace ClearCanvas.ImageViewer.Dashboard.Remote {
     using System;
     
     

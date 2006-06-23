@@ -3,10 +3,10 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model.Layers;
-using ClearCanvas.Common.Application;
+using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for InteractiveGraphic.

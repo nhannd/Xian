@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard.LocalDataStore
+namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
 {
     using System;
     using System.Collections.Generic;
@@ -7,9 +7,9 @@ namespace ClearCanvas.Workstation.Dashboard.LocalDataStore
     using System.Windows.Forms;
     using System.IO;
 	using ClearCanvas.Common;
-    using ClearCanvas.Common.Application;
+    using ClearCanvas.Desktop;
     using ClearCanvas.Workstation.Model;
-    using ClearCanvas.Workstation.Model.StudyManagement;
+    using ClearCanvas.ImageViewer.StudyManagement;
     using ClearCanvas.Workstation.Dashboard;
     using ClearCanvas.Controls.WinForms;
     using ClearCanvas.Dicom;

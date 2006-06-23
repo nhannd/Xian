@@ -1,9 +1,8 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for AnchorPointEventArgs.

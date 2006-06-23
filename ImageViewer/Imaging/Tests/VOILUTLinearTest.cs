@@ -2,9 +2,9 @@
 
 using System;
 using NUnit.Framework;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Tools.Standard.Tests
+namespace ClearCanvas.ImageViewer.Tools.Standard.Tests
 {
 	/// <summary>
 	/// Summary description for VOILUTLinearTest.

@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard.Local
+namespace ClearCanvas.ImageViewer.Dashboard.Local
 {
 	partial class DetailViewControl
 	{

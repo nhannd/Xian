@@ -2,9 +2,9 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// Implements a 2D affine transformation

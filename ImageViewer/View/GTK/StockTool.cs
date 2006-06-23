@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Tools;
+using ClearCanvas.ImageViewer.Tools;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
     public abstract class StockTool : Tool
     {

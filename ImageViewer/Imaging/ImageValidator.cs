@@ -1,8 +1,8 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model.StudyManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// Summary description for ImageValidator.

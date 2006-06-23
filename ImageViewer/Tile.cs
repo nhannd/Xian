@@ -3,9 +3,9 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	public class Tile : IDrawable, IClientArea, IUIEventHandler, IMemorable
 	{

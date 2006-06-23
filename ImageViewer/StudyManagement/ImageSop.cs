@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
 
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class ImageSop : Sop
 	{

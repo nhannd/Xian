@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Renderer.GDI {
+namespace ClearCanvas.ImageViewer.Renderer.GDI {
     using System;
     
     

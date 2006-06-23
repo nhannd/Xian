@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
-using ClearCanvas.Workstation.Model;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class StudyLoader : IStudyLoader
 	{
@@ -28,7 +27,7 @@ namespace ClearCanvas.Workstation.Model.StudyManagement
 			}
 
 			ImageWorkspace ws = new ImageWorkspace(studyInstanceUID);
-			WorkstationModel.WorkspaceManager.Workspaces.Add(ws);
+			DesktopApplication.WorkspaceManager.Workspaces.Add(ws);
 		}
 	}
 }

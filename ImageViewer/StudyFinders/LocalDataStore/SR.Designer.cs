@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.StudyFinders.LocalDataStore {
+namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Workstation.StudyFinders.LocalDataStore {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Workstation.StudyFinders.LocalDataStore.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

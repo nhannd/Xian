@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Mathematics;
-using ClearCanvas.Workstation.Model.DynamicOverlays;
+using ClearCanvas.ImageViewer.DynamicOverlays;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	/// <summary>
 	/// Summary description for Rectangle.

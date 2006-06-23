@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Workstation.Tools.Standard
+namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardStack", Flags = ClickActionFlags.CheckAction)]

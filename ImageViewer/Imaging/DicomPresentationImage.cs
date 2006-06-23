@@ -2,11 +2,10 @@ using System;
 using System.Drawing;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.StudyManagement;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// Summary description for PresentationImage.

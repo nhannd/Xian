@@ -35,7 +35,7 @@ using Gtk;
  *
  */
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
     public class WorkspaceDrawingArea : Gtk.DrawingArea
     {

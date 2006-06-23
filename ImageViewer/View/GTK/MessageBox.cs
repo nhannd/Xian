@@ -2,7 +2,7 @@ using Gtk;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
 	[GuiToolkit(GuiToolkitID.GTK)]
 	[ExtensionOf(typeof(ClearCanvas.Common.MessageBoxExtensionPoint))]

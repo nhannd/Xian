@@ -2,10 +2,10 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Common.Application;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Workstation.Tools.Standard
+namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	/// <summary>
 	/// Summary description for StackCommand.

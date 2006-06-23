@@ -9,7 +9,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Controls.WinForms;
 using Microsoft.VisualBasic.FileIO;
 
-namespace ClearCanvas.Workstation.Dashboard.Local
+namespace ClearCanvas.ImageViewer.Dashboard.Local
 {
 	public partial class DetailViewControl : UserControl
 	{

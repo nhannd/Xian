@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Workstation.Model.StudyManagement;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Desktop;
 
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
     [ExtensionPoint()]
 	public class ImageWorkspaceViewExtensionPoint : ExtensionPoint<IWorkspaceView>

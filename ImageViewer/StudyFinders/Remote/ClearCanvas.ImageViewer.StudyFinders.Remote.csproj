@@ -7,8 +7,8 @@
     <ProjectGuid>{4454D96D-8E43-44CB-987B-FCAFCD98BCC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Workstation.StudyFinders.Remote</RootNamespace>
-    <AssemblyName>ClearCanvas.Workstation.StudyFinders.Remote</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.StudyFinders.Remote</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.StudyFinders.Remote</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,9 +52,9 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Model\ClearCanvas.Workstation.Model.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.Workstation.Model</Name>
+      <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard
+namespace ClearCanvas.ImageViewer.Dashboard
 {
 	partial class DashboardForm
 	{

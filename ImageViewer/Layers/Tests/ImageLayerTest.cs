@@ -6,7 +6,7 @@ using System.Collections;
 //using MbUnit.Framework;
 using NUnit.Framework;
 
-namespace ClearCanvas.Workstation.Model.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	[TestFixture]
 	public class ImageLayerTest

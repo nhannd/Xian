@@ -4,7 +4,7 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace ClearCanvas.Workstation.Renderer.GDI
+namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
     public class ImageBuffer : IDisposable
     {

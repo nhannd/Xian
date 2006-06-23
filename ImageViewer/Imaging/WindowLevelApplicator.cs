@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class WindowLevelApplicator : ImageOperationApplicator
 	{

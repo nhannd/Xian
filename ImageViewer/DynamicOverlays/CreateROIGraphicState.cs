@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class CreateROIGraphicState : GraphicState
 	{

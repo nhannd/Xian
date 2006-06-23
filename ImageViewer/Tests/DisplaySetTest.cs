@@ -4,10 +4,9 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 /*
 	public class DummyDicomImage : DicomImage

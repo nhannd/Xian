@@ -1,9 +1,9 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 using ClearCanvas.Workstation.Model;
 
-namespace ClearCanvas.Workstation.Layout.Basic
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	/// <summary>
 	/// Summary description for LayoutCommand.

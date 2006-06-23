@@ -1,10 +1,10 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Workstation.Layout.Basic
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
     [ExtensionPoint()]
     public class LayoutToolViewExtensionPoint : ExtensionPoint<IToolView>

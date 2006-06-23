@@ -8,7 +8,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
 
-namespace ClearCanvas.Workstation.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	/// <summary>
 	/// Summary description for WorkspaceForm.

@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard.LocalDataStore
+namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
 {
     partial class MasterViewControl
     {

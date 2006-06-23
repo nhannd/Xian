@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Workstation.Model.Tools;
-using ClearCanvas.Workstation.Model.Actions;
+using ClearCanvas.ImageViewer.Tools;
+using ClearCanvas.ImageViewer.Actions;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
     public class StockWorkspaceTools
     {

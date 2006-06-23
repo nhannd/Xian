@@ -1,8 +1,8 @@
 using System;
 using Gtk;
-using ClearCanvas.Workstation.Model.Tools;
+using ClearCanvas.ImageViewer.Tools;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
 	public class ToolViewHostDialog : Dialog
 	{

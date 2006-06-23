@@ -3,10 +3,9 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	/// <summary>
 	/// The base layer object.

@@ -3,12 +3,12 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Mathematics;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Workstation.Model.DynamicOverlays;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.DynamicOverlays;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Workstation.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
     [MenuAction("activate", "MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "ToolbarMeasurement/ToolsMeasurementRuler", Flags = ClickActionFlags.CheckAction)]

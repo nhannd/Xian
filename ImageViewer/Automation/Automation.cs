@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using ClearCanvas.Common;
 //using ClearCanvas.Workstation.View;
 
-namespace ClearCanvas.Workstation.Automation
+namespace ClearCanvas.ImageViewer.Automation
 {
 	/// <summary>
 	/// Summary description for Class1.

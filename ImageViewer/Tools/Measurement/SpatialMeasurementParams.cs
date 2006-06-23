@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Workstation.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	/// <summary>
 	/// Summary description for MeasurementParams.

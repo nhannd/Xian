@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using System.Collections;
 
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
     [ExtensionPoint()]
     public class StudyLoaderExtensionPoint : ExtensionPoint<IStudyLoader>

@@ -1,7 +1,7 @@
 using ClearCanvas.Common;
 using Gtk;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
 	/// <summary>
 	/// Abstract base class for GTK-based views.  Any class that implements a view using GTK as the underlying

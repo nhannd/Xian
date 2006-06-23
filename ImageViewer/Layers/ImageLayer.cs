@@ -3,11 +3,10 @@ using System.Drawing;
 using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Workstation.Model.StudyManagement;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	/// <summary>
 	/// Describes an image.

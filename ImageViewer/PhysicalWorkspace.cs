@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// A container of image boxes.

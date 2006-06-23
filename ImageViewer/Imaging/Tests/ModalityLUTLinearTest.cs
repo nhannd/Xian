@@ -2,11 +2,9 @@
 
 using System;
 using NUnit.Framework;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Workstation.Tools.Standard;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace  ClearCanvas.Workstation.Tools.Standard.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	/// <summary>
 	/// Summary description for ModalityLUTLinearTest.

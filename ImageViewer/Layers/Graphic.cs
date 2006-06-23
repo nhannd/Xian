@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Collections;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	public enum LineStyle
 	{

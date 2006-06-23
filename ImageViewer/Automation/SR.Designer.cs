@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Automation {
+namespace ClearCanvas.ImageViewer.Automation {
     using System;
     
     

@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard.LocalDataStore
+namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
 {
     using System;
     using System.Collections.Generic;

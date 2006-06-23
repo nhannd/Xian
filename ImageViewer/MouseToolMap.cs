@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
     /// <summary>
     /// Maps mouse buttons to mouse tools.

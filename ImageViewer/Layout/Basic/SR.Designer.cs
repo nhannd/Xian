@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Layout.Basic {
+namespace ClearCanvas.ImageViewer.Layout.Basic {
     using System;
     
     

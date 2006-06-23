@@ -2,9 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for GraphicState.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// Defines a grayscale lookup table pipeline.

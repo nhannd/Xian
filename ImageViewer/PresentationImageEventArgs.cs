@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	public class PresentationImageEventArgs : CollectionEventArgs<PresentationImage>
 	{

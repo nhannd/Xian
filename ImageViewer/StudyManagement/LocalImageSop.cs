@@ -4,10 +4,9 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class LocalImageSop : ImageSop
 	{

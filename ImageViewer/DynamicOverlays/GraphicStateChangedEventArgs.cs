@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class GraphicStateChangedEventArgs : EventArgs
 	{

@@ -2,7 +2,7 @@
 using Gtk;
 using System;
 
-namespace ClearCanvas.Workstation.Layout.Basic.View.GTK
+namespace ClearCanvas.ImageViewer.Layout.Basic.View.GTK
 {
 	public class LayoutPanel : Frame
 	{

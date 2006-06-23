@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.StudyManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Workstation.Dashboard;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Dashboard.Local
+namespace ClearCanvas.ImageViewer.Dashboard.Local
 {
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Dashboard.DashboardContentExtensionPoint))]
 	public class LocalDashboardContent : DashboardContent

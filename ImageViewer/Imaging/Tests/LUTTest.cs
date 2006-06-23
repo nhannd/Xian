@@ -5,9 +5,9 @@ using System.Collections;
 //using MbUnit.Core.Framework;
 //using MbUnit.Framework;
 using NUnit.Framework;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	[TestFixture]
 	public class LUTTest

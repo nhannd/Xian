@@ -2,13 +2,13 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Tools;
-using ClearCanvas.Workstation.Model.Actions;
-using ClearCanvas.Workstation.Model.StudyManagement;
+using ClearCanvas.ImageViewer.Tools;
+using ClearCanvas.ImageViewer.Actions;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 using Gtk;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
 	[MenuAction("activate", "MenuFile/MenuFileSearch")]
 	[ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardStudyCentre")]

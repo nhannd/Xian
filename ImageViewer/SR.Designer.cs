@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Model {
+namespace ClearCanvas.ImageViewer {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Workstation.Model {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Workstation.Model.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

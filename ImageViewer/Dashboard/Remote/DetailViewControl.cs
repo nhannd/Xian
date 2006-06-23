@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClearCanvas.Workstation.Dashboard.Remote
+namespace ClearCanvas.ImageViewer.Dashboard.Remote
 {
 	public partial class DetailViewControl : UserControl
 	{

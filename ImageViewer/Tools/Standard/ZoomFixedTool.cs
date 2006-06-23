@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Common.Application;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Workstation.Tools.Standard
+namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     public abstract class ZoomFixedTool : Tool
     {

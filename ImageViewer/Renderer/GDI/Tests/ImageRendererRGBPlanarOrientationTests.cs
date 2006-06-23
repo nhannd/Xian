@@ -7,11 +7,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Workstation.Renderer.GDI;
 
-namespace ClearCanvas.Workstation.Model.Imaging.Tests
+namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
 	[TestFixture]
 	public class ImageRendererRGBPlanarOrientationTests

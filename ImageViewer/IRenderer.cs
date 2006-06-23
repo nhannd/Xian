@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 
 
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Summary description for IRenderer.

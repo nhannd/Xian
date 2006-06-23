@@ -3,9 +3,9 @@
 using System;
 using System.Drawing;
 using NUnit.Framework;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	[TestFixture]
 	public class TileTest

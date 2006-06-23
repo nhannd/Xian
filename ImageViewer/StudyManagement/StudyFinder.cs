@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
     using System;
     using System.Collections.Generic;

@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for CreateRulerCommand.

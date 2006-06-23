@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for ControlPointEventArgs.

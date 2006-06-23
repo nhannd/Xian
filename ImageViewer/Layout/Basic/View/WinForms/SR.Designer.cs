@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Layout.Basic.View.WinForms {
+namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms {
     using System;
     
     

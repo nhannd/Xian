@@ -5,10 +5,10 @@ using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.Workstation.Renderer.GDI
+namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
 	/// <summary>
 	/// Summary description for GDIRenderer.

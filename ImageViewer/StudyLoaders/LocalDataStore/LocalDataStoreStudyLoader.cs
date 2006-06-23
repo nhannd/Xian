@@ -1,17 +1,16 @@
-namespace ClearCanvas.Workstation.StudyLoaders.LocalDataStore
+namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.IO;
     using ClearCanvas.Common;
-    using ClearCanvas.Workstation.Model;
-    using ClearCanvas.Workstation.Model.StudyManagement;
-	using ClearCanvas.Workstation.Model.Imaging;
+    using ClearCanvas.ImageViewer.StudyManagement;
+	using ClearCanvas.ImageViewer.Imaging;
 	using ClearCanvas.DataStore;
     using ClearCanvas.Dicom;
 
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Model.StudyManagement.StudyLoaderExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyLoaderExtensionPoint))]
     public class LocalDataStoreStudyLoader : StudyLoader
     {
         public LocalDataStoreStudyLoader()
@@ -53,7 +52,7 @@ namespace ClearCanvas.Workstation.StudyLoaders.LocalDataStore
                         // Only bug the user once...
                         if (!errorMessageShown)
                         {
-                            Platform.ShowMessageBox(ClearCanvas.Workstation.Model.SR.ErrorAtLeastOneImageFailedToLoad);
+                            Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
                             errorMessageShown = true;
                         }
 

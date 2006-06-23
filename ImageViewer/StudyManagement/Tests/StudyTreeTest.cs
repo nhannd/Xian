@@ -4,7 +4,7 @@ using System;
 using NUnit.Framework;
 using System.Drawing;
 
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	[TestFixture]
 	public class StudyTreeTest

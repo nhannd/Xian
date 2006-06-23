@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ClearCanvas.Workstation.Renderer.GDI
+namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
 	/// <summary>
 	/// Summary description for GDI.

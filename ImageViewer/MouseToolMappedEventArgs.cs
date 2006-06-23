@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
     /// <summary>
     /// Arguments for the <see cref="MouseToolMap.MouseToolMapped"/> event.

@@ -2,9 +2,9 @@ using System;
 using System.Drawing;
 using System.Collections;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	/// <summary>
 	/// A group of layers that are subject to a particular <see cref="SpatialTransform"/>.

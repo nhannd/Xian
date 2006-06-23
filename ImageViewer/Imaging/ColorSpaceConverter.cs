@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	public static unsafe class ColorSpaceConverter
 	{

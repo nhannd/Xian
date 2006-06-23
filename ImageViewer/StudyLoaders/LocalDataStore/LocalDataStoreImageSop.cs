@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.StudyLoaders.LocalDataStore
+namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,7 @@ namespace ClearCanvas.Workstation.StudyLoaders.LocalDataStore
     using ClearCanvas.Common;
     using ClearCanvas.Dicom;
     using ClearCanvas.Dicom.OffisWrapper;
-    using ClearCanvas.Workstation.Model;
-    using ClearCanvas.Workstation.Model.StudyManagement;
+    using ClearCanvas.ImageViewer.StudyManagement;
 
 	public class LocalDataStoreImageSop : ImageSop, IDicomPropertySettable
 	{

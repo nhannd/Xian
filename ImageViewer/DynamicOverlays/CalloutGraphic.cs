@@ -3,11 +3,10 @@ using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Mathematics;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Layers;
-using ClearCanvas.Common.Application;
+using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for CalloutGraphic.

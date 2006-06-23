@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.StudyManagement;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	public class DicomImageLayer : ImageLayer
 	{

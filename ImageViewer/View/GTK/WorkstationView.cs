@@ -3,7 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
 using Gtk;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
 	[ExtensionOf(typeof(ClearCanvas.Workstation.Model.WorkstationViewExtensionPoint))]
 	public class WorkstationView : GtkView, IWorkstationView

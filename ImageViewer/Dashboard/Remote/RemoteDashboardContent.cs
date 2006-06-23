@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard.Remote
+namespace ClearCanvas.ImageViewer.Dashboard.Remote
 {
     using System;
     using System.Collections.Generic;
@@ -7,12 +7,12 @@ namespace ClearCanvas.Workstation.Dashboard.Remote
     using ClearCanvas.Workstation.Dashboard;
     using ClearCanvas.Controls.WinForms;
     using ClearCanvas.Workstation.Model;
-    using ClearCanvas.Workstation.Model.StudyManagement;
+    using ClearCanvas.ImageViewer.StudyManagement;
     using ClearCanvas.Dicom;
     using ClearCanvas.Dicom.Network;
     using ClearCanvas.DataStore;
     using ClearCanvas.Common;
-    using ClearCanvas.Common.Application;
+    using ClearCanvas.Desktop;
     using System.Threading;
     using System.IO;
     using System.Runtime.Serialization;

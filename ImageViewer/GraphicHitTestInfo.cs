@@ -1,7 +1,7 @@
 using System;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public enum ActiveZones
 	{

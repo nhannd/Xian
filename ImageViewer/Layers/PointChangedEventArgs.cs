@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	public class PointChangedEventArgs : EventArgs
 	{

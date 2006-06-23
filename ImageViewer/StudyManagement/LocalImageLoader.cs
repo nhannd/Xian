@@ -4,11 +4,9 @@ using System.Text;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.StudyManagement;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class LocalImageLoader
 	{
@@ -41,7 +39,7 @@ namespace ClearCanvas.Workstation.Model.StudyManagement
 			FileProcessor.Process(path, "*.dcm", process, true);
 
 			if (_atLeastOneImageFailedToLoad)
-				Platform.ShowMessageBox(ClearCanvas.Workstation.Model.SR.ErrorAtLeastOneImageFailedToLoad);
+				Platform.ShowMessageBox(SR.ErrorAtLeastOneImageFailedToLoad);
 
 			return _studyInstanceUID;
 		}

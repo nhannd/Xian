@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Workstation.Layout.Basic
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
     public class LayoutToolViewEventArgs : EventArgs
     {

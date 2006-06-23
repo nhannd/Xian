@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class SelectedROIGraphicState : GraphicState
 	{

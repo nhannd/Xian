@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.DynamicOverlays
+namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	/// <summary>
 	/// Summary description for InactiveState.

@@ -4,13 +4,13 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Actions;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Workstation.Model;
 using ClearCanvas.Workstation.Layout.Basic;
 using ClearCanvas.Workstation.View.WinForms;
 
-namespace ClearCanvas.Workstation.Layout.Basic.View.WinForms
+namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 {
     /// <summary>
     /// WinForms extension of the <see cref="LayoutToolViewExtensionPoint"/> extension point.

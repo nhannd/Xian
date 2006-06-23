@@ -4,7 +4,7 @@ using System;
 using NUnit.Framework;
 using System.Drawing;
 
-namespace ClearCanvas.Workstation.Model.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	[TestFixture]
 	public class ClientAreaTest

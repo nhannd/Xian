@@ -1,8 +1,8 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Summary description for TileMemento.

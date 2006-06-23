@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.StudyFinders.Remote {
+namespace ClearCanvas.ImageViewer.StudyFinders.Remote {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Workstation.StudyFinders.Remote {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Workstation.StudyFinders.Remote.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.StudyFinders.Remote.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -3,10 +3,10 @@ using System.Collections;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Imaging;
-using ClearCanvas.Workstation.Model.StudyManagement;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.Workstation.Layout.Basic
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	/// <summary>
 	/// Summary description for LayoutManager.

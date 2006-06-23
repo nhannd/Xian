@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// IDrawable interface

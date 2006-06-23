@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model 
+namespace ClearCanvas.ImageViewer 
 {
 	/// <summary>
 	/// Describes a logical workspace.

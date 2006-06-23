@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.Imaging
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// Summary description for LUTComposer.

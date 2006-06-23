@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
+using ClearCanvas.Desktop;
 using ClearCanvas.Workstation.Model;
 
-namespace ClearCanvas.Workstation.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	[ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceViewExtensionPoint))]
 	public class ImageWorkspaceView : WinFormsView, IWorkspaceView

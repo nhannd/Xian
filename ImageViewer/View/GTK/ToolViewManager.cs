@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Workstation.Model.Tools;
+using ClearCanvas.ImageViewer.Tools;
 using Gtk;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
 	public class ToolViewManager
 	{

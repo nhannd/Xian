@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Dashboard.Remote.Tests
+namespace ClearCanvas.ImageViewer.Dashboard.Remote.Tests
 {
     using System;
     using System.Collections.Generic;

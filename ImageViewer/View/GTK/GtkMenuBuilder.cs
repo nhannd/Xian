@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Actions;
+using ClearCanvas.ImageViewer.Actions;
 using Gtk;
 
-namespace ClearCanvas.Workstation.View.GTK
+namespace ClearCanvas.ImageViewer.View.GTK
 {
     public class GtkMenuBuilder
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace ClearCanvas.Workstation.Renderer.GDI
+namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
 	public class RectangleUtilities
 	{

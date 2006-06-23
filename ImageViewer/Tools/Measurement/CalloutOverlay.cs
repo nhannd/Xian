@@ -2,9 +2,9 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.Workstation.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	/// <summary>
 	/// Summary description for RulerOverlay.

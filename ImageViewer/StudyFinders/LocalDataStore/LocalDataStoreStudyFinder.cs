@@ -1,15 +1,14 @@
-namespace LocalDataStore
+namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using ClearCanvas.Common;
-    using ClearCanvas.Workstation.Model;
-    using ClearCanvas.Workstation.Model.StudyManagement;
+    using ClearCanvas.ImageViewer.StudyManagement;
     using ClearCanvas.Dicom;
     using ClearCanvas.DataStore;
 
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Model.StudyManagement.StudyFinderExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]
     public class LocalDataStoreStudyFinder : StudyFinder
     {
         public LocalDataStoreStudyFinder()

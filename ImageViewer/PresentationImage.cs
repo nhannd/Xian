@@ -3,10 +3,10 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model.Layers;
-using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Describes a presentation image

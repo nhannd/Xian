@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.View.GTK {
+namespace ClearCanvas.ImageViewer.View.GTK {
     using System;
     
     

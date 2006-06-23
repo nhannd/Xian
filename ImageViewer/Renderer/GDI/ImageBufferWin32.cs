@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Renderer.GDI
+namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
     public class ImageBufferWin32 : ImageBuffer
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Tools.Measurement {
+namespace ClearCanvas.ImageViewer.Tools.Measurement {
     using System;
     
     

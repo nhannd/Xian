@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Summary description for IDrawable.

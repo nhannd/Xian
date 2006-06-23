@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Model.Layers
+namespace ClearCanvas.ImageViewer.Layers
 {
 	/// <summary>
 	/// Summary description for CustomLayer.

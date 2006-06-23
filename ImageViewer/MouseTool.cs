@@ -1,9 +1,9 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Desktop.Tools;
 
 
-namespace ClearCanvas.Workstation.Model
+namespace ClearCanvas.ImageViewer
 {
     /// <summary>
     /// Extends the <see cref="Tool"/> class to provide functionality that is common to mouse tools

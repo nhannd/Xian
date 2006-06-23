@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Dashboard {
+namespace ClearCanvas.ImageViewer.Dashboard {
     using System;
     
     

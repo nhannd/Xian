@@ -1,10 +1,10 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Model.Tools;
-using ClearCanvas.Workstation.Model.Actions;
+using ClearCanvas.ImageViewer.Tools;
+using ClearCanvas.ImageViewer.Actions;
 
-namespace ClearCanvas.Workstation.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
     [MenuAction("activate", "MenuTools/MenuToolsMeasurement/ToolsMeasurementEllipticalROI", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
