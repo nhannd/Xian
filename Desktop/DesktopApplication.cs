@@ -3,34 +3,34 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
     [ExtensionPoint()]
-    public class WorkstationViewExtensionPoint : ExtensionPoint<IWorkstationView>
+    public class DesktopViewExtensionPoint : ExtensionPoint<IDesktopView>
     {
     }
 
     [ClearCanvas.Common.ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class WorkstationModel : IApplicationRoot
+    public class DesktopApplication : IApplicationRoot
     {
-        private static WorkstationModel _instance;
+        private static DesktopApplication _instance;
         private static WorkspaceManager _workspaceManager;
         private static ToolManager _toolManager;
         private static ToolContext _workbenchToolContext;
-        private static IWorkstationView _view;
+        private static IDesktopView _view;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WorkstationModel"/> class.
         /// </summary>
-        public WorkstationModel()
+        public DesktopApplication()
         {
             _instance = this;
 
             // Create the view
-            WorkstationViewExtensionPoint xp = new WorkstationViewExtensionPoint();
-            _view = (IWorkstationView)xp.CreateExtension();
+            DesktopViewExtensionPoint xp = new DesktopViewExtensionPoint();
+            _view = (IDesktopView)xp.CreateExtension();
 		}
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace ClearCanvas.Common.Application
         /// <summary>
         /// Returns the view associated with this <see cref="WorkstationModel"/>.
         /// </summary>
-        public static IWorkstationView View
+        public static IDesktopView View
         {
             get { return _view; }
         }
@@ -96,7 +96,7 @@ namespace ClearCanvas.Common.Application
         {
             if (_toolManager != null)
                 return;
-            _workbenchToolContext = new WorkstationToolContext();
+            _workbenchToolContext = new DesktopToolContext();
             _toolManager = new ToolManager(_workbenchToolContext);
             _workbenchToolContext.Activate(true);
         }

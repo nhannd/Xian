@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Defines the interface for the main view of the workstation.
     /// </summary>
-    public interface IWorkstationView : IView
+    public interface IDesktopView : IView
     {
         /// <summary>
         /// Starts the message pump of the underlying GUI toolkit.  Typically this method is expected to
