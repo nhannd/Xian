@@ -1,0 +1,111 @@
+using System;
+using System.Drawing;
+using System.Diagnostics;
+using ClearCanvas.Common;
+using ClearCanvas.Workstation.Model;
+using ClearCanvas.Workstation.Model.Layers;
+using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.Common.Application;
+using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Common.Application.Actions;
+
+namespace ClearCanvas.Workstation.Tools.Standard
+{
+    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+    [CheckedStateObserver("activate", "Active", "ActivationChanged")]
+    [ClickHandler("activate", "Select")]
+    [Tooltip("activate", "ToolbarToolsStandardZoom")]
+	[IconSet("activate", IconScheme.Colour, "", "Icons.ZoomMedium.png", "Icons.ZoomLarge.png")]
+    
+    /// <summary>
+	/// Summary description for ZoomTool.
+	/// </summary>
+    [ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    public class ZoomTool : MouseTool
+	{
+		private UndoableCommand _command;
+		private SpatialTransformApplicator _applicator;
+
+		public ZoomTool()
+            :base(XMouseButtons.Right, false)
+		{
+		}
+
+		#region IUIEventHandler Members
+
+		public override bool OnMouseDown(XMouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+
+			if (e.SelectedPresentationImage == null)
+				return true;
+
+			_applicator = new SpatialTransformApplicator(e.SelectedPresentationImage);
+			_command = new UndoableCommand(_applicator);
+			_command.Name = SR.CommandZoom;
+			_command.BeginState = _applicator.CreateMemento();
+
+			return true;
+		}
+
+		public override bool OnMouseMove(XMouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+
+			if (_command == null)
+				return true;
+
+			SpatialTransform spatialTransform = e.SelectedPresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
+			spatialTransform.ScaleToFit = false;
+			spatialTransform.Scale += (float)base.DeltaY * 0.025f;
+			spatialTransform.Calculate();
+			e.SelectedPresentationImage.Draw(true);
+
+			return true;
+		}
+
+		public override bool OnMouseUp(XMouseEventArgs e)
+		{
+			if (_command == null)
+				return true;
+
+			_command.EndState = _applicator.CreateMemento();
+
+			// If the state hasn't changed since MouseDown just return
+			if (_command.EndState.Equals(_command.BeginState))
+			{
+				_command = null;
+				return true;
+			}
+
+			// Apply the final state to all linked images
+			_applicator.SetMemento(_command.EndState);
+
+			this.Workspace.CommandHistory.AddCommand(_command);
+
+			return true;
+		}
+
+		public override bool OnMouseWheel(XMouseEventArgs e)
+		{
+			Platform.CheckForNullReference(e, "e");
+
+			return true;
+		}
+
+		public override bool OnKeyDown(XKeyEventArgs e)
+		{
+			return false;
+		}
+
+
+		public override bool OnKeyUp(XKeyEventArgs e)
+		{
+			return false;
+		}
+
+		#endregion
+
+    }
+}

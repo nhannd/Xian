@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="9.75" />
+  <Class Name="ClearCanvas.Workstation.Model.PresentationImage" Collapsed="true">
+    <Position X="0.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>PresentationImage.cs</FileName>
+      <HashCode>QAEAABBAAACABgCAAIACAAAAABIAiIEIIAAABCgCAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="LayerManager" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.LayerManager" Collapsed="true">
+    <Position X="3.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\LayerManager.cs</FileName>
+      <HashCode>AAIAAAAAAAAABAIAAAAAQkDBDAAAEAAIAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="RootLayerGroup" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.LayerGroup" Collapsed="true">
+    <Position X="5.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\LayerGroup.cs</FileName>
+      <HashCode>AAIAAAAAAAAAABAAAAAAAAAIAAACAAAEAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Layers" />
+    </ShowAsCollectionAssociation>
+    <InheritanceLine Type="ClearCanvas.Workstation.Model.Layers.Layer" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.875" Y="3.056" />
+        <Point X="5.875" Y="5" />
+      </Path>
+    </InheritanceLine>
+    <AssociationLine Name="Layers" Type="ClearCanvas.Workstation.Model.Layers.Layer" FixedFromPoint="true">
+      <Path>
+        <Point X="6.75" Y="5" />
+        <Point X="6.75" Y="3.056" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.756" Y="0.877" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.Layer" Collapsed="true">
+    <Position X="5" Y="2.5" Width="4" />
+    <TypeIdentifier>
+      <FileName>Layers\Layer.cs</FileName>
+      <HashCode>ACIAIAAAQGCAFhCAAoCAEgwKABKBBAEIJAAAAoAGAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SpatialTransform" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.CustomLayer" Collapsed="true">
+    <Position X="13.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\CustomLayer.cs</FileName>
+      <HashCode>AAAAAAAAIAAAAhAAAAACAACAAAAAAAAAgAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="ClearCanvas.Workstation.Model.Layers.Layer" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.875" Y="3.056" />
+        <Point X="5.875" Y="4.625" />
+        <Point X="6.667" Y="4.625" Type="JumpStart" />
+        <Point X="6.833" Y="4.625" Type="JumpEnd" />
+        <Point X="10.011" Y="4.625" Type="JumpStart" />
+        <Point X="10.177" Y="4.625" Type="JumpEnd" />
+        <Point X="14.5" Y="4.625" />
+        <Point X="14.5" Y="5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.Graphic" Collapsed="true">
+    <Position X="11.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\Graphic.cs</FileName>
+      <HashCode>CAAAAAAAAIBIAhAAABAAAAAACAAABAAAAAAAgABAAAI=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="ClearCanvas.Workstation.Model.Layers.Layer" FixedFromPoint="true">
+      <Path>
+        <Point X="5.875" Y="3.056" />
+        <Point X="5.875" Y="4.625" />
+        <Point X="6.667" Y="4.625" Type="JumpStart" />
+        <Point X="6.833" Y="4.625" Type="JumpEnd" />
+        <Point X="10.011" Y="4.625" Type="JumpStart" />
+        <Point X="10.177" Y="4.625" Type="JumpEnd" />
+        <Point X="12.5" Y="4.625" />
+        <Point X="12.5" Y="5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.ImageLayer" Collapsed="true">
+    <Position X="7.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\ImageLayer.cs</FileName>
+      <HashCode>AABAAAAAIAAABFAAQACAgEUAAAAAACtAAAghAAkAgQI=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="ClearCanvas.Workstation.Model.Layers.Layer" FixedFromPoint="true">
+      <Path>
+        <Point X="5.875" Y="3.056" />
+        <Point X="5.875" Y="4.625" />
+        <Point X="6.667" Y="4.625" Type="JumpStart" />
+        <Point X="6.833" Y="4.625" Type="JumpEnd" />
+        <Point X="8.5" Y="4.625" />
+        <Point X="8.5" Y="5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.GraphicLayer" Collapsed="true">
+    <Position X="9.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\GraphicLayer.cs</FileName>
+      <HashCode>CAAAAAAAAAAAABAAAAAAAAAACAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Graphics" />
+    </ShowAsCollectionAssociation>
+    <InheritanceLine Type="ClearCanvas.Workstation.Model.Layers.Layer" FixedFromPoint="true">
+      <Path>
+        <Point X="5.875" Y="3.056" />
+        <Point X="5.875" Y="4.625" />
+        <Point X="6.667" Y="4.625" Type="JumpStart" />
+        <Point X="6.833" Y="4.625" Type="JumpEnd" />
+        <Point X="10.011" Y="4.625" Type="JumpStart" />
+        <Point X="10.177" Y="4.625" Type="JumpEnd" />
+        <Point X="10.5" Y="4.625" />
+        <Point X="10.5" Y="5" />
+      </Path>
+    </InheritanceLine>
+    <AssociationLine Name="Graphics" Type="ClearCanvas.Workstation.Model.Layers.Layer" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.094" Y="5" />
+        <Point X="10.094" Y="3.431" />
+        <Point X="7.533" Y="3.431" />
+        <Point X="7.533" Y="3.056" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-2.44" Y="0.655" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Imaging.SpatialTransform" Collapsed="true">
+    <Position X="10.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Imaging\SpatialTransform.cs</FileName>
+      <HashCode>CABACAAAAAoERYAWMAMgATQAACACBAQNOAAAAAoBUGA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.InvariantPrimitive" Collapsed="true">
+    <Position X="9.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\InvariantPrimitive.cs</FileName>
+      <HashCode>AAAAAAAAAJAAIAAAAAAAAAAAABBAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.LinePrimitive" Collapsed="true">
+    <Position X="11.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\LinePrimitive.cs</FileName>
+      <HashCode>AAQAAAAABIBAAAAAAAAAAAAAQEAAAAAAAAAACAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.RectanglePrimitive" Collapsed="true">
+    <Position X="14" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Layers\RectanglePrimitive.cs</FileName>
+      <HashCode>AgAAAAAABIBAABAAAAAAAGAAAABAAGAAAAAAAAAQBAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.InvariantRectanglePrimitive" Collapsed="true">
+    <Position X="10.25" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Layers\InvariantRectanglePrimitive.cs</FileName>
+      <HashCode>AgAAAAAABABAABAAAAAAAECAAABAAAQAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.InvariantTextPrimitive" Collapsed="true">
+    <Position X="7.75" Y="8" Width="2" />
+    <TypeIdentifier>
+      <FileName>Layers\InvariantTextPrimitive.cs</FileName>
+      <HashCode>AAAAAAAAARBAAAAACAAAAAIAACCBAAAIAAgACAACAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Workstation.Model.Layers.DicomImageLayer" Collapsed="true">
+    <Position X="6.25" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Layers\DicomImageLayer.cs</FileName>
+      <HashCode>AAAAAAAAIAAABEAAQACAAEEABAAAQAABAAAgAAkIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+</ClassDiagram>

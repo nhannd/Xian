@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MenuToolsStandardStack" xml:space="preserve">
+    <value>&amp;Stack</value>
+  </data>
+  <data name="MenuToolsStandardWindowLevel" xml:space="preserve">
+    <value>&amp;Window/Level</value>
+  </data>
+  <data name="MenuToolsStandardZoom" xml:space="preserve">
+    <value>&amp;Zoom</value>
+  </data>
+  <data name="MenuToolsStandardPan" xml:space="preserve">
+    <value>&amp;Pan</value>
+  </data>
+  <data name="MenuToolsStandardFlipHorizontal" xml:space="preserve">
+    <value>Flip &amp;Horizontal</value>
+  </data>
+  <data name="MenuToolsStandardFlipVertical" xml:space="preserve">
+    <value>Flip &amp;Vertical</value>
+  </data>
+  <data name="MenuToolsStandardRotateRight" xml:space="preserve">
+    <value>Rotate &amp;Right</value>
+  </data>
+  <data name="MenuToolsStandardRotateLeft" xml:space="preserve">
+    <value>Rotate &amp;Left</value>
+  </data>
+  <data name="MenuToolsStandardReset" xml:space="preserve">
+    <value>R&amp;eset</value>
+  </data>
+  <data name="MenuToolsStandardZoom1X" xml:space="preserve">
+    <value>&amp;1X</value>
+  </data>
+  <data name="MenuToolsStandardZoom2X" xml:space="preserve">
+    <value>&amp;2X</value>
+  </data>
+  <data name="MenuToolsStandardZoom4X" xml:space="preserve">
+    <value>&amp;4X</value>
+  </data>
+  <data name="ToolbarToolsStandardStack" xml:space="preserve">
+    <value>Stack</value>
+  </data>
+  <data name="ToolbarToolsStandardWindowLevel" xml:space="preserve">
+    <value>Window/Level</value>
+  </data>
+  <data name="ToolbarToolsStandardZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="ToolbarToolsStandardPan" xml:space="preserve">
+    <value>Pan</value>
+  </data>
+  <data name="ToolbarToolsStandardFlipHorizontal" xml:space="preserve">
+    <value>Flip Horizontal</value>
+  </data>
+  <data name="ToolbarToolsStandardFlipVertical" xml:space="preserve">
+    <value>Flip Vertical</value>
+  </data>
+  <data name="ToolbarToolsStandardRotateRight" xml:space="preserve">
+    <value>Rotate Right</value>
+  </data>
+  <data name="ToolbarToolsStandardRotateLeft" xml:space="preserve">
+    <value>Rotate Left</value>
+  </data>
+  <data name="ToolbarToolsStandardReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ToolbarToolsStandardZoom1X" xml:space="preserve">
+    <value>1X</value>
+  </data>
+  <data name="ToolbarToolsStandardZoom2X" xml:space="preserve">
+    <value>2X</value>
+  </data>
+  <data name="ToolbarToolsStandardZoom4X" xml:space="preserve">
+    <value>4X</value>
+  </data>
+  <data name="CommandStack" xml:space="preserve">
+    <value>Stack</value>
+  </data>
+  <data name="CommandWindowLevel" xml:space="preserve">
+    <value>Window/Level</value>
+  </data>
+  <data name="CommandZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="CommandPan" xml:space="preserve">
+    <value>Pan</value>
+  </data>
+  <data name="CommandFlipHorizontal" xml:space="preserve">
+    <value>Flip Horizontal</value>
+  </data>
+  <data name="CommandFlipVertical" xml:space="preserve">
+    <value>Flip Vertical</value>
+  </data>
+  <data name="CommandRotateRight" xml:space="preserve">
+    <value>Rotate Right</value>
+  </data>
+  <data name="CommandRotateLeft" xml:space="preserve">
+    <value>Rotate Left</value>
+  </data>
+  <data name="CommandReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ExceptionIndexOutOfRange" xml:space="preserve">
+    <value>[{0}] is an invalid index.  Index must be between {1} and {2}.</value>
+  </data>
+  <data name="ExceptionLUTIndexOutOfRange" xml:space="preserve">
+    <value>LUT index out of range (index = {0})</value>
+  </data>
+  <data name="ExceptionLUTInputOutputRange" xml:space="preserve">
+    <value>Output range of previous LUT does not match input range of current LUT</value>
+  </data>
+  <data name="ExceptionLUTNotAdded" xml:space="preserve">
+    <value>Cannot generate composite LUT because no LUTs have been added yet</value>
+  </data>
+  <data name="ExceptionLUTLastOutputRange" xml:space="preserve">
+    <value>Output range of last LUT is not 8 bits</value>
+  </data>
+  <data name="ExceptionLUTMinGreaterThanEqualToMax" xml:space="preserve">
+    <value>Minimum input value greater than or equal to maximum input value</value>
+  </data>
+</root>

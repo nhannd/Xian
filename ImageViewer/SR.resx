@@ -1,0 +1,435 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApplicationName" xml:space="preserve">
+    <value>ClearCanvas Workstation</value>
+  </data>
+  <data name="ApplicationVersion" xml:space="preserve">
+    <value>0.9</value>
+  </data>
+  <data name="CommandCreateMultilineGraphic" xml:space="preserve">
+    <value>Create multiline graphic</value>
+  </data>
+  <data name="CommandCreateRectangleGraphic" xml:space="preserve">
+    <value>Create rectangle graphic</value>
+  </data>
+  <data name="CommandCreateROIGraphic" xml:space="preserve">
+    <value>Create ROI graphic</value>
+  </data>
+  <data name="CommandMoveControlPoint" xml:space="preserve">
+    <value>Move control point</value>
+  </data>
+  <data name="CommandMoveGraphic" xml:space="preserve">
+    <value>Move graphic</value>
+  </data>
+  <data name="ErrorAtLeastOneImageFailedToLoad" xml:space="preserve">
+    <value>At least one image failed to load.  Check log for details.</value>
+  </data>
+  <data name="ErrorUnableToLoadStudy" xml:space="preserve">
+    <value>Unable to load any images in the study.  Check log for details.</value>
+  </data>
+  <data name="ExceptionDuplicateNodeFound" xml:space="preserve">
+    <value>Cannot add the same node more than once</value>
+  </data>
+  <data name="ExceptionImageProcessorsNotAdded" xml:space="preserve">
+    <value>No ImageProcessors have been added.</value>
+  </data>
+  <data name="ExceptionInvalidBitsAllocated" xml:space="preserve">
+    <value>BitsAllocated must be either 8 or 16 (bitsAllocated = {0})</value>
+  </data>
+  <data name="ExceptionInvalidBitsStored" xml:space="preserve">
+    <value>BitsStored must be greater than zero (bitsStored = {0})</value>
+  </data>
+  <data name="ExceptionInvalidBitsStoredBitsAllocated" xml:space="preserve">
+    <value>BitsStored must be &lt;= BitsAllocated (bitsStored = {0}, bitsAllocated = {1})</value>
+  </data>
+  <data name="ExceptionInvalidColumns" xml:space="preserve">
+    <value>Columns must be greater than zero (columns = {0})</value>
+  </data>
+  <data name="ExceptionInvalidHighBit" xml:space="preserve">
+    <value>Highbit must be greater than zero (highBit = {0})</value>
+  </data>
+  <data name="ExceptionInvalidHighBitBitsAllocated" xml:space="preserve">
+    <value>HighBit must be &lt;= BitsAllocated - 1 (highBit = {0}, bitsAllocated = {1})</value>
+  </data>
+  <data name="ExceptionInvalidNormalizedRectangle" xml:space="preserve">
+    <value>({0},{1},{2},{3}) is an invalid normalized rectangle.  Normalized rectangle coordinates must be between 0.0 and 1.0 with Right &gt; Left, Bottom &gt; Top</value>
+  </data>
+  <data name="ExceptionInvalidOrdinal" xml:space="preserve">
+    <value>{0} is an invalid ordinal.  Ordinals must be &gt;= 0</value>
+  </data>
+  <data name="ExceptionInvalidParentRectangle" xml:space="preserve">
+    <value>({0},{1},{2},{3}) is an invalid parent rectangle.  Parent rectangle must be such that all coordinates are positive with Right &gt; Left, Bottom &gt; Top</value>
+  </data>
+  <data name="ExceptionInvalidPatientID" xml:space="preserve">
+    <value>Patient ID must not be empty</value>
+  </data>
+  <data name="ExceptionInvalidPhotometricInterpretation" xml:space="preserve">
+    <value>PhotometricInterpretation must be one of the enumerated values specified in DICOM PS 3.3 (photometricInterpretation = {0})</value>
+  </data>
+  <data name="ExceptionInvalidPhotometricInterpretationSamplesPerPixel" xml:space="preserve">
+    <value>PhotometricInterpretation must be consistent with the the number of SamplesPerPixel (photometricInterpretation = {0}, samplesPerPixel = {1})</value>
+  </data>
+  <data name="ExceptionInvalidPixelData" xml:space="preserve">
+    <value>PixelData length must be equal to SizeInBytes (pixelDataLength = {0}, sizeInBytes = {1})</value>
+  </data>
+  <data name="ExceptionInvalidPixelRepresentation" xml:space="preserve">
+    <value>PixelRepresentation must be 0 or 1 (pixelRepresentation = {0})</value>
+  </data>
+  <data name="ExceptionInvalidPixelSpacing" xml:space="preserve">
+    <value>Pixel spacing must be positive (pixelSpacing = {0})</value>
+  </data>
+  <data name="ExceptionInvalidPlanarConfiguration" xml:space="preserve">
+    <value>PlanarConfiguration must be 0 or 1 (planarConfiguration = {0})</value>
+  </data>
+  <data name="ExceptionInvalidRows" xml:space="preserve">
+    <value>Rows must be greater than zero (rows = {0})</value>
+  </data>
+  <data name="ExceptionInvalidSamplesPerPixel" xml:space="preserve">
+    <value>SamplesPerPixel must be 1, 3 or 4 (samplesPerPixel = {0})</value>
+  </data>
+  <data name="ExceptionInvalidSeriesInstanceUID" xml:space="preserve">
+    <value>Series instance UID must not be empty</value>
+  </data>
+  <data name="ExceptionInvalidSizeInBytes" xml:space="preserve">
+    <value>SizeInBytes improperly calculated (correct size = {0}, calculated size {1})</value>
+  </data>
+  <data name="ExceptionInvalidSOPInstanceUID" xml:space="preserve">
+    <value>SOP instance UID must not be empty</value>
+  </data>
+  <data name="ExceptionInvalidStandardPathItem" xml:space="preserve">
+    <value>{0} is an invalid standard path item</value>
+  </data>
+  <data name="ExceptionInvalidStride" xml:space="preserve">
+    <value>Stride improperly calculated (correct stride = {0}, calculated stride = {1})</value>
+  </data>
+  <data name="ExceptionInvalidStudyInstanceUID" xml:space="preserve">
+    <value>Study instance UID must not be empty</value>
+  </data>
+  <data name="ExceptionInvalidTransferSyntaxUID" xml:space="preserve">
+    <value>Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1 or 1.2.840.10008.1.2.2</value>
+  </data>
+  <data name="ExceptionLayoutManagerDoesNotExist" xml:space="preserve">
+    <value>Layout Manager extension does not exist</value>
+  </data>
+  <data name="ExceptionLUTIndexOutOfRange" xml:space="preserve">
+    <value>LUT index out of range (index = {0})</value>
+  </data>
+  <data name="ExceptionLUTInputOutputRange" xml:space="preserve">
+    <value>Output range of previous LUT does not match input range of current LUT</value>
+  </data>
+  <data name="ExceptionLUTLastOutputRange" xml:space="preserve">
+    <value>Output range of last LUT is not 8 bits</value>
+  </data>
+  <data name="ExceptionLUTMinGreaterThanEqualToMax" xml:space="preserve">
+    <value>Minimum input value greater than or equal to maximum input value</value>
+  </data>
+  <data name="ExceptionLUTNotAdded" xml:space="preserve">
+    <value>Cannot generate composite LUT because no LUTs have been added yet</value>
+  </data>
+  <data name="ExceptionNoDisplaySetAssociatedWithImageBoxTile" xml:space="preserve">
+    <value>Is the ImageBox to which this Tile belongs supposed to be empty?</value>
+  </data>
+  <data name="ExceptionNoPresentationImageAssociatedWithTile" xml:space="preserve">
+    <value>Is the tile supposed to be empty?</value>
+  </data>
+  <data name="ExceptionPresentationImageNotFound" xml:space="preserve">
+    <value>Requested PresentationImage cannot be found in this DisplaySet</value>
+  </data>
+  <data name="ExceptionProcessorDoesNotExist" xml:space="preserve">
+    <value>An ImageProcessor that implements the {0} interface could not be found.</value>
+  </data>
+  <data name="ExceptionSizeInBytesCannotBeCalculated" xml:space="preserve">
+    <value>SizeInBytes cannot be calculated; one or more of Rows, Columns or BitsAllocated have not been set yet (rows = {0}, columns = {1}, bitsAllocated = {2})</value>
+  </data>
+  <data name="ExceptionSpatialTransformNotSet" xml:space="preserve">
+    <value>Has the layer been added to layer tree yet?</value>
+  </data>
+  <data name="ExceptionStrideCannotBeCalculated" xml:space="preserve">
+    <value>Stride cannot be calculated; Columns has not been set yet (columns = {0})</value>
+  </data>
+  <data name="ExceptionToolExists" xml:space="preserve">
+    <value>{0} already exists in ToolBag</value>
+  </data>
+  <data name="ExceptionWorkbenchToolsNotCreated" xml:space="preserve">
+    <value>WorkbenchTools have not yet been created.  Has Model plugin has been started?</value>
+  </data>
+  <data name="ExceptionWorkspaceManagerNotCreated" xml:space="preserve">
+    <value>WorkspaceManager has not yet been created.  Has the Model plugin has been started?</value>
+  </data>
+  <data name="ExceptionWorkstationViewNotCreated" xml:space="preserve">
+    <value>The main workstation view has not been created.</value>
+  </data>
+  <data name="MenuClipboard" xml:space="preserve">
+    <value>&amp;Clipboard </value>
+  </data>
+  <data name="MenuClipboardBurnCD" xml:space="preserve">
+    <value>Burn CD</value>
+  </data>
+  <data name="MenuClipboardKeyImages" xml:space="preserve">
+    <value>Key Images</value>
+  </data>
+  <data name="MenuClipboardPrint" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="MenuEdit" xml:space="preserve">
+    <value>&amp;Edit</value>
+  </data>
+  <data name="MenuEditCopyToClipboard" xml:space="preserve">
+    <value>Copy to Clipboard</value>
+  </data>
+  <data name="MenuEditRedo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="MenuEditUndo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>&amp;File</value>
+  </data>
+  <data name="MenuFileCloseWorkspace" xml:space="preserve">
+    <value>Close Workspace</value>
+  </data>
+  <data name="MenuFileExitApplication" xml:space="preserve">
+    <value>Exit Application</value>
+  </data>
+  <data name="MenuFileSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
+  <data name="MenuHelpAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="MenuHelpContents" xml:space="preserve">
+    <value>Contents</value>
+  </data>
+  <data name="MenuHelpIndex" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="MenuLayout" xml:space="preserve">
+    <value>&amp;Layout</value>
+  </data>
+  <data name="MenuNavigation" xml:space="preserve">
+    <value>&amp;Navigation</value>
+  </data>
+  <data name="MenuNavigationNextDisplaySet" xml:space="preserve">
+    <value>Next Display Set</value>
+  </data>
+  <data name="MenuNavigationNextImage" xml:space="preserve">
+    <value>Next Image</value>
+  </data>
+  <data name="MenuNavigationNextStudy" xml:space="preserve">
+    <value>Next Study</value>
+  </data>
+  <data name="MenuNavigationPreviousDisplaySet" xml:space="preserve">
+    <value>Previous Display Set</value>
+  </data>
+  <data name="MenuNavigationPreviousImage" xml:space="preserve">
+    <value>Previous Image</value>
+  </data>
+  <data name="MenuNavigationPreviousStudy" xml:space="preserve">
+    <value>Previous Study</value>
+  </data>
+  <data name="MenuTools" xml:space="preserve">
+    <value>&amp;Tools</value>
+  </data>
+  <data name="MenuTools3D" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="MenuToolsCrossReference" xml:space="preserve">
+    <value>Cross Reference</value>
+  </data>
+  <data name="MenuToolsImageProcessing" xml:space="preserve">
+    <value>Image Processing</value>
+  </data>
+  <data name="MenuToolsLUT" xml:space="preserve">
+    <value>Lookup Table</value>
+  </data>
+  <data name="MenuToolsMeasurement" xml:space="preserve">
+    <value>Measurement</value>
+  </data>
+  <data name="MenuToolsMyTools" xml:space="preserve">
+    <value>My Tools</value>
+  </data>
+  <data name="MenuToolsMyToolsMyTool" xml:space="preserve">
+    <value>My Tool</value>
+  </data>
+  <data name="MenuToolsOrientation" xml:space="preserve">
+    <value>Orientation</value>
+  </data>
+  <data name="MenuToolsStandard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="MenuToolsSynchronization" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>&amp;View</value>
+  </data>
+  <data name="MenuViewToolbars" xml:space="preserve">
+    <value>Toolbars</value>
+  </data>
+  <data name="MenuWindow" xml:space="preserve">
+    <value>&amp;Window</value>
+  </data>
+  <data name="Toolbar3D" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="ToolbarClipboard" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
+  <data name="ToolbarCrossReference" xml:space="preserve">
+    <value>Cross Reference</value>
+  </data>
+  <data name="ToolbarImageProcessing" xml:space="preserve">
+    <value>Image Processing</value>
+  </data>
+  <data name="ToolbarLUT" xml:space="preserve">
+    <value>Lookup Table</value>
+  </data>
+  <data name="ToolbarMeasurement" xml:space="preserve">
+    <value>Measurement</value>
+  </data>
+  <data name="ToolbarMyTools" xml:space="preserve">
+    <value>My Tools</value>
+  </data>
+  <data name="ToolbarMyToolsMyTool" xml:space="preserve">
+    <value>My Tool</value>
+  </data>
+  <data name="ToolbarNavigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="ToolbarOrientation" xml:space="preserve">
+    <value>Orientation</value>
+  </data>
+  <data name="ToolbarStandard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="ToolbarStandardRedo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="ToolbarStandardUndo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="ToolbarSynchronization" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+</root>

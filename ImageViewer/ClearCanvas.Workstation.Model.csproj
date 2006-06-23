@@ -1,0 +1,309 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{85100D3E-471C-47C9-9687-ABF25F617ED7}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon />
+    <AssemblyKeyContainerName />
+    <AssemblyName>ClearCanvas.Workstation.Model</AssemblyName>
+    <AssemblyOriginatorKeyFile />
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ClearCanvas.Workstation.Model</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject />
+    <FileUpgradeFlags />
+    <UpgradeBackupLocation />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>DEBUG;TRACE;UNIT_TESTS</DefineConstants>
+    <DocumentationFile>ClearCanvas.Workstation.Model.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>ClearCanvas.Workstation.Model.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Common\refs\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="ClientArea.cs" />
+    <Compile Include="DisplaySet.cs" />
+    <Compile Include="DisplaySetCollection.cs" />
+    <Compile Include="DisplaySetEventArgs.cs" />
+    <Compile Include="DisplaySetSelectedEventArgs.cs" />
+    <Compile Include="DrawCustomLayerEventArgs.cs" />
+    <Compile Include="DynamicOverlays\AnchorPointEventArgs.cs" />
+    <Compile Include="DynamicOverlays\CalloutGraphic.cs" />
+    <Compile Include="DynamicOverlays\ControlPoint.cs" />
+    <Compile Include="DynamicOverlays\ControlPointEventArgs.cs" />
+    <Compile Include="DynamicOverlays\ControlPointsGraphic.cs" />
+    <Compile Include="DynamicOverlays\CreateMultiLineGraphicState.cs" />
+    <Compile Include="DynamicOverlays\CreateRectangleGraphicState.cs" />
+    <Compile Include="DynamicOverlays\CreateROIGraphicState.cs" />
+    <Compile Include="DynamicOverlays\FocusGraphicState.cs" />
+    <Compile Include="DynamicOverlays\GraphicState.cs" />
+    <Compile Include="DynamicOverlays\GraphicStateChangedEventArgs.cs" />
+    <Compile Include="DynamicOverlays\InactiveGraphicState.cs" />
+    <Compile Include="DynamicOverlays\InteractiveGraphic.cs" />
+    <Compile Include="DynamicOverlays\InteractiveMultiLineGraphic.cs" />
+    <Compile Include="DynamicOverlays\InteractiveRectangleGraphic.cs" />
+    <Compile Include="DynamicOverlays\MoveControlPointGraphicState.cs" />
+    <Compile Include="DynamicOverlays\MoveGraphicState.cs" />
+    <Compile Include="DynamicOverlays\MultiLineAnchorPointsGraphic.cs" />
+    <Compile Include="DynamicOverlays\PointMemento.cs" />
+    <Compile Include="DynamicOverlays\PointsMemento.cs" />
+    <Compile Include="DynamicOverlays\PositionInteractiveGraphicCommand.cs" />
+    <Compile Include="DynamicOverlays\RectangleMemento.cs" />
+    <Compile Include="DynamicOverlays\ROIGraphic.cs" />
+    <Compile Include="DynamicOverlays\SelectedGraphicState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicOverlays\SelectedInteractiveGraphicState.cs" />
+    <Compile Include="DynamicOverlays\SelectedROIGraphicState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicOverlays\StatefulGraphic.cs" />
+    <Compile Include="Enumerations.cs" />
+    <Compile Include="EventBroker.cs" />
+    <Compile Include="GraphicHitTestInfo.cs" />
+    <Compile Include="IClientArea.cs" />
+    <Compile Include="ICustomDrawable.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="ILayoutManager.cs" />
+    <Compile Include="ImageBox.cs" />
+    <Compile Include="ImageBoxCollection.cs" />
+    <Compile Include="ImageBoxEventArgs.cs" />
+    <Compile Include="ImageBoxMemento.cs" />
+    <Compile Include="ImageBoxSelectedEventArgs.cs" />
+    <Compile Include="ImageDrawingEventArgs.cs" />
+    <Compile Include="ImageWorkspace.cs" />
+    <Compile Include="Imaging\CalculatedGrayscaleLUT.cs" />
+    <Compile Include="Imaging\ColorSpaceConverter.cs" />
+    <Compile Include="Imaging\ColorMap.cs" />
+    <Compile Include="Imaging\GrayscaleLUTPipeline.cs" />
+    <Compile Include="Imaging\ImageValidationException.cs" />
+    <Compile Include="Imaging\LUTComposer.cs" />
+    <Compile Include="Imaging\PhotometricInterpretations.cs" />
+    <Compile Include="Imaging\SpatialTransform.cs" />
+    <Compile Include="Imaging\SpatialTransformApplicator.cs" />
+    <Compile Include="Imaging\SpatialTransformMemento.cs" />
+    <Compile Include="Imaging\Tests\SpatialTransformTest.cs" />
+    <Compile Include="Imaging\WindowLevelApplicator.cs" />
+    <Compile Include="Imaging\DicomPresentationImage.cs" />
+    <Compile Include="Imaging\GrayscaleLUT.cs" />
+    <Compile Include="Imaging\IGrayscaleLUT.cs" />
+    <Compile Include="Imaging\ILUT.cs" />
+    <Compile Include="Imaging\ImageOperationApplicatorMemento.cs" />
+    <Compile Include="Imaging\ImageValidator.cs" />
+    <Compile Include="Imaging\ImageOperationApplicator.cs" />
+    <Compile Include="Imaging\LUT.cs" />
+    <Compile Include="Imaging\ModalityLUTLinear.cs" />
+    <Compile Include="Imaging\Tests\CompositeLUTTest.cs" />
+    <Compile Include="Imaging\Tests\FileDicomImageTest.cs" />
+    <Compile Include="Imaging\Tests\GrayscaleLUTTest.cs" />
+    <Compile Include="Imaging\Tests\LUTTest.cs" />
+    <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
+    <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
+    <Compile Include="Imaging\VOILUTLinear.cs" />
+    <Compile Include="Imaging\WindowLevelMemento.cs" />
+    <Compile Include="Imaging\WindowLevelOperator.cs" />
+    <Compile Include="IRenderer.cs" />
+    <Compile Include="IUIEventHandler.cs" />
+    <Compile Include="Layers\BaseLayerCollection.cs" />
+    <Compile Include="Layers\GraphicLayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layers\GraphicLayerSelectedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layers\GraphicSelectedEventArgs.cs" />
+    <Compile Include="Layers\ImageLayerSelectedEventArgs.cs" />
+    <Compile Include="Layers\CustomLayer.cs" />
+    <Compile Include="Layers\Graphic.cs" />
+    <Compile Include="Layers\GraphicCollection.cs" />
+    <Compile Include="Layers\ImageLayer.cs" />
+    <Compile Include="Layers\InvariantPrimitive.cs" />
+    <Compile Include="Layers\InvariantRectanglePrimitive.cs" />
+    <Compile Include="Layers\InvariantTextPrimitive.cs" />
+    <Compile Include="Layers\Layer.cs" />
+    <Compile Include="Layers\LayerCollection.cs" />
+    <Compile Include="Layers\LayerEventArgs.cs" />
+    <Compile Include="Layers\LayerGroup.cs" />
+    <Compile Include="Layers\LayerGroupSelectedEventArgs.cs" />
+    <Compile Include="Layers\LayerManager.cs" />
+    <Compile Include="Layers\LinePrimitive.cs" />
+    <Compile Include="Layers\PixelDataWrapper.cs" />
+    <Compile Include="Layers\PointChangedEventArgs.cs" />
+    <Compile Include="Layers\RectanglePrimitive.cs" />
+    <Compile Include="Layers\DicomImageLayer.cs" />
+    <Compile Include="Layers\Tests\PixelDataWrapperTest.cs" />
+    <Compile Include="Layers\Tests\ImageLayerTest.cs" />
+    <Compile Include="Layers\Tests\LayerGroupTest.cs" />
+    <Compile Include="LinkageChangedEventArgs.cs" />
+    <Compile Include="LogicalWorkspace.cs" />
+    <Compile Include="MouseTool.cs" />
+    <Compile Include="MouseToolMap.cs" />
+    <Compile Include="MouseToolMappedEventArgs.cs" />
+    <Compile Include="PhysicalWorkspace.cs" />
+    <Compile Include="PhysicalWorkspaceMemento.cs" />
+    <Compile Include="PresentationImage.cs" />
+    <Compile Include="PresentationImageCollection.cs" />
+    <Compile Include="PresentationImageEventArgs.cs" />
+    <Compile Include="PresentationImageSelectedEventArgs.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RectangleChangedEventArgs.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyManagement\ImageSop.cs" />
+    <Compile Include="StudyManagement\IStudyFinder.cs" />
+    <Compile Include="StudyManagement\IStudyLoader.cs" />
+    <Compile Include="StudyManagement\LocalImageSop.cs" />
+    <Compile Include="StudyManagement\LocalImageLoader.cs" />
+    <Compile Include="StudyManagement\SopCollection.cs" />
+    <Compile Include="StudyManagement\SopEventArgs.cs" />
+    <Compile Include="StudyManagement\Series.cs" />
+    <Compile Include="StudyManagement\SeriesCollection.cs" />
+    <Compile Include="StudyManagement\SeriesEventArgs.cs" />
+    <Compile Include="StudyManagement\Sop.cs" />
+    <Compile Include="StudyManagement\Study.cs" />
+    <Compile Include="StudyManagement\StudyEventArgs.cs" />
+    <Compile Include="StudyManagement\StudyCollection.cs" />
+    <Compile Include="StudyManagement\StudyFinder.cs" />
+    <Compile Include="StudyManagement\Patient.cs" />
+    <Compile Include="StudyManagement\PatientCollection.cs" />
+    <Compile Include="StudyManagement\PatientEventArgs.cs" />
+    <Compile Include="StudyManagement\StudyFinderMap.cs" />
+    <Compile Include="StudyManagement\StudyLoaderMap.cs" />
+    <Compile Include="StudyManagement\StudyManager.cs" />
+    <Compile Include="StudyManagement\StudyTree.cs" />
+    <Compile Include="StudyManagement\StudyLoader.cs" />
+    <Compile Include="StudyManagement\Tests\StudyTreeTest.cs" />
+    <Compile Include="StudyManagement\Tests\StudyLoaderTest.cs" />
+    <Compile Include="Tests\ClientAreaTest.cs" />
+    <Compile Include="Tests\CorePluginTest.cs" />
+    <Compile Include="Tests\DisplaySetTest.cs" />
+    <Compile Include="Tests\ImageBoxTest.cs" />
+    <Compile Include="Tests\LogicalWorkspaceTest.cs" />
+    <Compile Include="Tests\MappableModalToolsIndexTest.cs" />
+    <Compile Include="Tests\PhysicalWorkspaceTest.cs" />
+    <Compile Include="Tests\SourceImageSetTest.cs" />
+    <Compile Include="Tests\TileTest.cs" />
+    <Compile Include="Tile.cs" />
+    <Compile Include="TileCollection.cs" />
+    <Compile Include="TileEventArgs.cs" />
+    <Compile Include="TileMemento.cs" />
+    <Compile Include="TileSelectedEventArgs.cs" />
+    <Compile Include="UIEventHandler.cs" />
+    <Compile Include="XKeyEventArgs.cs" />
+    <Compile Include="XMouseEventArgs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Common.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Layers\Layers.cd" />
+    <None Include="Workspaces.cd" />
+    <None Include="Model.cd" />
+    <None Include="StudyManagement\StudyFindersAndLoaders.cd" />
+    <None Include="StudyManagement\StudyTree.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="actionmodels.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DynamicOverlays\Tests\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+    <PostBuildEvent />
+  </PropertyGroup>
+</Project>

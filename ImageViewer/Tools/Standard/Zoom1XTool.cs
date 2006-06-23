@@ -1,0 +1,40 @@
+using System;
+using System.Drawing;
+using System.Diagnostics;
+using ClearCanvas.Common;
+using ClearCanvas.Workstation.Model;
+using ClearCanvas.Workstation.Model.Imaging;
+using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Common.Application.Actions;
+
+namespace ClearCanvas.Workstation.Tools.Standard
+{
+    /// <summary>
+	/// Summary description for ZoomTool.
+	/// </summary>
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+	public class Zoom1XTool : ZoomFixedTool
+	{
+		public Zoom1XTool()
+		{
+		}
+
+		private void GetDefaults()
+		{
+			//base.MenuPath.AddStandardItem(Model.SR.MenuTools);
+			//base.MenuPath.AddStandardItem(Model.SR.MenuToolsStandard);
+			//base.MenuPath.AddCustomItem(SR.MenuToolsStandardZoom, 30);
+
+			//base.ToolbarPath.AddStandardItem(Model.SR.ToolbarStandard);
+			//base.ToolbarPath.AddCustomItem(SR.ToolbarToolsStandardZoom, 50);
+			//base.ToolbarPath.AddCustomItem(SR.ToolbarToolsStandardZoom1X, 10);
+
+			//base.Tooltip = SR.ToolbarToolsStandardZoom1X;
+		}
+
+        public override void Activate()
+        {
+            this.ApplyZoom(1.0f);
+        }
+	}
+}
