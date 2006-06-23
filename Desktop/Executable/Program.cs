@@ -4,12 +4,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Controls.WinForms;
 #endif
 
-namespace ClearCanvas.Workstation.Executable
+namespace ClearCanvas.Desktop.Executable
 {
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	class Viewer
+	class Program
 	{
 		/// <summary>
 		/// The main entry point for the application.

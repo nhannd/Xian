@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClearCanvas.Workstation.Help
+namespace ClearCanvas.Desktop.Help
 {
 	public partial class AboutForm : Form
 	{

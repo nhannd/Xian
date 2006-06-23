@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.ExtensionBrowser;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser.ExtensionPointView
+namespace ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView
 {
     public class ExtensionPointViewExtensionNode : BrowserNode
     {

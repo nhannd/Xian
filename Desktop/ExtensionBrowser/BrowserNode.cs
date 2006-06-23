@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser
+namespace ClearCanvas.Desktop.ExtensionBrowser
 {
     public abstract class BrowserNode : IBrowserNode
     {

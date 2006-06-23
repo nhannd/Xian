@@ -61,11 +61,29 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The main workstation view has not been created..
+        ///   Looks up a localized string similar to ClearCanvas Workstation.
         /// </summary>
-        internal static string ExceptionWorkstationViewNotCreated {
+        internal static string ApplicationName {
             get {
-                return ResourceManager.GetString("ExceptionWorkstationViewNotCreated", resourceCulture);
+                return ResourceManager.GetString("ApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0.9.
+        /// </summary>
+        internal static string ApplicationVersion {
+            get {
+                return ResourceManager.GetString("ApplicationVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The main desktop view has not been created..
+        /// </summary>
+        internal static string ExceptionDesktopViewNotCreated {
+            get {
+                return ResourceManager.GetString("ExceptionDesktopViewNotCreated", resourceCulture);
             }
         }
     }

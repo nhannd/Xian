@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.Help
+namespace ClearCanvas.Desktop.Help
 {
 	partial class AboutForm
 	{

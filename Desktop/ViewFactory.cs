@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop
             IDesktopView desktopView = DesktopApplication.View;
             if (desktopView == null)
             {
-                throw new InvalidOperationException(SR.ExceptionWorkstationViewNotCreated);
+                throw new InvalidOperationException(SR.ExceptionDesktopViewNotCreated);
             }
 
             return CreateView(extensionPoint, desktopView.GuiToolkitID);

@@ -1,12 +1,11 @@
 using System;
 using System.Drawing;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Workstation.Dashboard
+namespace ClearCanvas.Desktop.Dashboard
 {
     [ExtensionPoint()]
     public class DashboardToolViewExtensionPoint : ExtensionPoint<IToolView>
@@ -27,7 +26,7 @@ namespace ClearCanvas.Workstation.Dashboard
 		"IsViewActive", 
 		"ViewActivationChanged")]
 
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Common.Application.WorkstationToolExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class DashboardTool : Tool
 	{
 		private static bool _showView;
@@ -41,12 +40,12 @@ namespace ClearCanvas.Workstation.Dashboard
 
 		public override void Initialize()
 		{
-			WorkstationModel.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
+			DesktopApplication.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
 		}
 
 		private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
 		{
-			if (WorkstationModel.WorkspaceManager.Workspaces.Count == 0)
+            if (DesktopApplication.WorkspaceManager.Workspaces.Count == 0)
 				this.IsViewActive = true;
 		}
 

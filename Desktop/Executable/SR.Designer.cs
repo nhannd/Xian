@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.Executable {
+namespace ClearCanvas.Desktop.Executable {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Workstation.Executable {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Workstation.Executable.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.Executable.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

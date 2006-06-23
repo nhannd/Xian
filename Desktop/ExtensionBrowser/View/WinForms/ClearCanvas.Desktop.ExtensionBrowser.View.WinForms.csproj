@@ -7,8 +7,8 @@
     <ProjectGuid>{BA5FDA96-AFD6-4546-A294-24D6BC77E808}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Workstation.ExtensionBrowser.View.WinForms</RootNamespace>
-    <AssemblyName>ClearCanvas.Workstation.ExtensionBrowser.View.WinForms</AssemblyName>
+    <RootNamespace>ClearCanvas.Desktop.ExtensionBrowser.View.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.Desktop.ExtensionBrowser.View.WinForms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,25 +52,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Common\Application\ClearCanvas.Common.Application.csproj">
-      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
-      <Name>ClearCanvas.Common.Application</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Model\ClearCanvas.Workstation.Model.csproj">
-      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.Workstation.Model</Name>
+    <ProjectReference Include="..\..\..\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\View\WinForms\ClearCanvas.Workstation.View.WinForms.csproj">
-      <Project>{1B8C0C00-F5E4-42B6-A389-B01717AF9460}</Project>
-      <Name>ClearCanvas.Workstation.View.WinForms</Name>
+    <ProjectReference Include="..\..\..\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
+      <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
+      <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.Workstation.ExtensionBrowser.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.Desktop.ExtensionBrowser.csproj">
       <Project>{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}</Project>
-      <Name>ClearCanvas.Workstation.ExtensionBrowser</Name>
+      <Name>ClearCanvas.Desktop.ExtensionBrowser</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

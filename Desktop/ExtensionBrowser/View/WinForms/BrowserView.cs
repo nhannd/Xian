@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-using ClearCanvas.Workstation.View.WinForms;
-using ClearCanvas.Workstation.ExtensionBrowser;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser.View.WinForms
+namespace ClearCanvas.Desktop.ExtensionBrowser.View.WinForms
 {
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.ExtensionBrowser.ExtensionBrowserViewExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ExtensionBrowserViewExtensionPoint))]
     public class BrowserView : WinFormsView, IToolView
     {
         private ExtensionBrowserTool _browser;

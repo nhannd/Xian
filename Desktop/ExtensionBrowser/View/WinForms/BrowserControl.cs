@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser.View.WinForms
+namespace ClearCanvas.Desktop.ExtensionBrowser.View.WinForms
 {
     public partial class BrowserControl : UserControl
     {

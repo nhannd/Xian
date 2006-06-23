@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.ExtensionBrowser;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser.PluginView
+namespace ClearCanvas.Desktop.ExtensionBrowser.PluginView
 {
     public class PluginViewExtensionNode : BrowserNode
     {

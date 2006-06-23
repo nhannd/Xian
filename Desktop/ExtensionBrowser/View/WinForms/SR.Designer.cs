@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Workstation.ExtensionBrowser.View.WinForms {
+namespace ClearCanvas.Desktop.ExtensionBrowser.View.WinForms {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Workstation.ExtensionBrowser.View.WinForms {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Workstation.ExtensionBrowser.View.WinForms.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

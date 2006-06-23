@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser
+namespace ClearCanvas.Desktop.ExtensionBrowser
 {
     public interface IBrowserNode
     {

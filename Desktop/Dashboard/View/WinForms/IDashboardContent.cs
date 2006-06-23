@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClearCanvas.Workstation.Dashboard
+namespace ClearCanvas.Desktop.Dashboard
 {
     public interface IDashboardContent
     {

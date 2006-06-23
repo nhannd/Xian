@@ -1,4 +1,4 @@
-namespace ClearCanvas.Workstation.ExtensionBrowser.View.WinForms
+namespace ClearCanvas.Desktop.ExtensionBrowser.View.WinForms
 {
     partial class BrowserControl
     {

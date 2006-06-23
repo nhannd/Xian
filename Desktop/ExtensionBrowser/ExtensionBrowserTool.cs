@@ -4,11 +4,10 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.ExtensionBrowser.PluginView;
-using ClearCanvas.Workstation.ExtensionBrowser.ExtensionPointView;
+using ClearCanvas.Desktop.ExtensionBrowser.PluginView;
+using ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView;
 
-namespace ClearCanvas.Workstation.ExtensionBrowser
+namespace ClearCanvas.Desktop.ExtensionBrowser
 {
     [ExtensionPoint()]
     public class ExtensionBrowserViewExtensionPoint : ExtensionPoint<IToolView>
@@ -25,7 +24,7 @@ namespace ClearCanvas.Workstation.ExtensionBrowser
     /// <summary>
     /// Summary description for ExtensionBrowserTool.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Common.Application.WorkstationToolExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExtensionBrowserTool : Tool
 	{
         private PluginViewRootNode _pluginViewTree;

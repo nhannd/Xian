@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Workstation.Dashboard
+namespace ClearCanvas.Desktop.Dashboard
 {
 	public partial class DashboardForm : UserControl
 	{
