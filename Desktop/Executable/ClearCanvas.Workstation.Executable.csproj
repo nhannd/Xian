@@ -1,0 +1,178 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <AssemblyKeyContainerName />
+    <AssemblyName>ClearCanvas.Workstation.Executable</AssemblyName>
+    <AssemblyOriginatorKeyFile />
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ClearCanvas.Workstation.Executable</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>ClearCanvas.Workstation.Executable.Viewer</StartupObject>
+    <FileUpgradeFlags />
+    <UpgradeBackupLocation />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>DEBUG;TRACE;UNIT_TESTS</DefineConstants>
+    <DocumentationFile />
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile />
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting">
+      <Name>System.Runtime.Remoting</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <Content Include="App.ico" />
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="Logging.config" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Workstation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
+      <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
+      <Name>ClearCanvas.Controls.WinForms</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Tests\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+    <PostBuildEvent>
+      :: Delete contents of plugin directory
+      del /Q .\plugins\*.*
+
+      :: Make required directories
+      md .\common
+      md .\plugins
+      md .\logs
+      md .\studies
+
+      :: Copy shared assemblies
+      copy "..\..\..\..\Common\bin\$(ConfigurationName)\*.*" .\Common
+      copy "..\..\..\..\Common\refs\nunit.framework.dll" .\Common 
+      copy "..\..\..\..\Common\refs\log4net.dll" .\Common
+      copy "..\..\..\..\Controls\WinForms\bin\$(ConfigurationName)\ClearCanvas.Controls.WinForms.dll" .\Common
+      copy "..\..\..\..\Controls\WinForms\refs\DotNetMagic2005.DLL" .\Common
+      copy "..\..\..\..\Dicom\bin\$(ConfigurationName)\ClearCanvas.Dicom.dll" .\Common
+      copy "..\..\..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll" .\Common
+      copy "..\..\..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll" .\Common
+      copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
+
+      :: Copy plugin assemblies
+      copy "..\..\..\..\Common\Application\bin\$(ConfigurationName)\ClearCanvas.Common.Application.dll" .\plugins
+      copy "..\..\..\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.View.WinForms.dll" .\plugins
+      copy "..\..\..\Model\bin\$(ConfigurationName)\ClearCanvas.Workstation.Model.dll" .\plugins
+      copy "..\..\..\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.Workstation.Tools.Measurement.dll" .\plugins
+      copy "..\..\..\Tools\Standard\bin\$(ConfigurationName)\ClearCanvas.Workstation.Tools.Standard.dll" .\plugins
+      copy "..\..\..\Help\bin\$(ConfigurationName)\ClearCanvas.Workstation.Help.dll" .\plugins
+      copy "..\..\..\Edit\bin\$(ConfigurationName)\ClearCanvas.Workstation.Edit.dll" .\plugins
+      copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.dll" .\plugins
+      copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.View.WinForms.dll" .\plugins
+      copy "..\..\..\Dashboard\Local\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.Local.dll" .\plugins
+      copy "..\..\..\Dashboard\Remote\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.Remote.dll" .\plugins
+      copy "..\..\..\Dashboard\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.LocalDataStore.dll" .\plugins
+      copy "..\..\..\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.Workstation.Layout.Basic.dll" .\plugins
+      copy "..\..\..\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.Layout.Basic.View.WinForms.dll" .\plugins
+      copy "..\..\..\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.Workstation.Renderer.GDI.dll" .\plugins
+      copy "..\..\..\StudyFinders\Remote\bin\$(ConfigurationName)\ClearCanvas.Workstation.StudyFinders.Remote.dll" .\plugins
+      copy "..\..\..\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.Workstation.StudyFinders.LocalDataStore.dll" .\plugins
+      copy "..\..\..\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.Workstation.StudyLoaders.LocalDataStore.dll" .\plugins
+
+      copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Workstation.ExtensionBrowser.dll" .\plugins
+      copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.ExtensionBrowser.View.WinForms.dll" .\plugins
+
+
+      :: Copy config files
+      copy ..\..\Logging.config .
+      copy ..\..\..\Model\actionmodels.xml .
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>
