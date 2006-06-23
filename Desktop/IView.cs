@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// A base interface for all classes that represent UI "views".  A view is any class that implements

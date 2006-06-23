@@ -1,9 +1,9 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Workstation.Model;
 
 namespace ClearCanvas.Workstation.Edit

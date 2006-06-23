@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Provides a convenient set of methods for instantiating view extensions.
@@ -36,13 +36,13 @@ namespace ClearCanvas.Common.Application
         /// <exception cref="InvalidOperationException">The main workstation view has not yet been created.</exception>
         public static IView CreateView(IExtensionPoint extensionPoint)
         {
-            IWorkstationView workstationView = WorkstationModel.View;
-            if (workstationView == null)
+            IDesktopView desktopView = DesktopApplication.View;
+            if (desktopView == null)
             {
                 throw new InvalidOperationException(SR.ExceptionWorkstationViewNotCreated);
             }
 
-            return CreateView(extensionPoint, workstationView.GuiToolkitID);
+            return CreateView(extensionPoint, desktopView.GuiToolkitID);
         }
     }
 }

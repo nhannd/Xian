@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Set of flags that customize the behaviour of objects of type <see cref="IClickAction"/>.

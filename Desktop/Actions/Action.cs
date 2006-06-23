@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Abstract base class providing a default implementation of <see cref="IAction"/>.  Action classes should

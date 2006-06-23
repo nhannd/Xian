@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Represents an action path.  An action path specifies the location of an action within

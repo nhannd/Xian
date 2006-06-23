@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// Summary description for IMemorable.

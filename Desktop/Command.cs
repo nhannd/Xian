@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
 	public abstract class Command
 	{

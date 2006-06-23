@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Default implementation of <see cref="IActionBuilder"/>.  Used by the framework to construct

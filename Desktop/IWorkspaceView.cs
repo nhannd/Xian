@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Extends the <see cref="IView"/> interface for views that look at workspaces.

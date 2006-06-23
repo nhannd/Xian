@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 using ClearCanvas.Workstation.View.WinForms;
 using ClearCanvas.Workstation.ExtensionBrowser;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Workstation.ExtensionBrowser.View.WinForms
 {

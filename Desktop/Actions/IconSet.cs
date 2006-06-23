@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Represents a set of icon resources that specify the same logical icon in different sizes.

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Common.Application.Tools;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Common.Application.Tests
+namespace ClearCanvas.Desktop.Tests
 {
     class StubWorkspace : Workspace
     {
@@ -55,7 +56,7 @@ namespace ClearCanvas.Common.Application.Tests
         {
         }
 
-        protected override ClearCanvas.Common.Application.Tools.ToolContext CreateToolContext()
+        protected override ClearCanvas.Desktop.Tools.ToolContext CreateToolContext()
         {
             return new StubToolContext(new StubToolsExtensionPoint());
         }

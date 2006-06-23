@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Tools
+namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
     /// Abstract base class providing a default implementation of <see cref="ITool"/>.  Tool classes should

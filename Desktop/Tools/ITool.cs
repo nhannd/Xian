@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common.Application.Tools
+namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
     /// Used by the framework to initialize a tool.  All tools must implement this interface, but

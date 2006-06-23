@@ -5,7 +5,7 @@ using System.Reflection;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Tools
+namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
     /// Undocumented - API subject to change

@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Extends the <see cref="IAction"/> interface for actions that have single-click

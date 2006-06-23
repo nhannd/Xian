@@ -5,7 +5,7 @@ using System.Collections;
 using NUnit.Framework;
 using ClearCanvas.Common.Tests;
 
-namespace ClearCanvas.Common.Application.Tests
+namespace ClearCanvas.Desktop.Tests
 {
 	[TestFixture]
 	public class WorkspaceTest

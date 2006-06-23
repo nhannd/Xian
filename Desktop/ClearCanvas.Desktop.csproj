@@ -7,8 +7,8 @@
     <ProjectGuid>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Common.Application</RootNamespace>
-    <AssemblyName>ClearCanvas.Common.Application</AssemblyName>
+    <RootNamespace>ClearCanvas.Desktop</RootNamespace>
+    <AssemblyName>ClearCanvas.Desktop</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,7 +30,7 @@
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\refs\nunit.framework.dll</HintPath>
+      <HintPath>..\Common\refs\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -78,7 +78,7 @@
     <Compile Include="IMemorable.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="IWorkspaceView.cs" />
-    <Compile Include="IWorkstationView.cs" />
+    <Compile Include="IDesktopView.cs" />
     <Compile Include="MementoList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectionChangedEventArgs.cs" />
@@ -109,17 +109,11 @@
     <Compile Include="WorkspaceCollectionEventArgs.cs" />
     <Compile Include="WorkspaceEventArgs.cs" />
     <Compile Include="WorkspaceManager.cs" />
-    <Compile Include="WorkstationModel.cs" />
-    <Compile Include="WorkstationToolContext.cs" />
+    <Compile Include="DesktopApplication.cs" />
+    <Compile Include="DesktopToolContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ClearCanvas.Common.csproj">
-      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
-      <Name>ClearCanvas.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -127,6 +121,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Common.Application {
+namespace ClearCanvas.Desktop {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Common.Application {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Common.Application.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common.Application.Tools
+namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
     /// Extends the <see cref="IView"/> interface for views that look at tools.

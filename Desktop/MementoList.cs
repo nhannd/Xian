@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// Summary description for MementoList.

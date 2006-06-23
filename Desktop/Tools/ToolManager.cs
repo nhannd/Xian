@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Common.Application.Tools
+namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
     /// Undocumented - API subject to change

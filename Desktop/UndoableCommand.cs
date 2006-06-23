@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application
+namespace ClearCanvas.Desktop
 {
 	public class UndoableCommand : Command
 	{

@@ -6,7 +6,7 @@ using System;
 using NUnit.Framework;
 
 
-namespace ClearCanvas.Common.Application.Tests.CommandHistoryTest
+namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 {
 	[TestFixture]
 	public class CommandHistoryTest

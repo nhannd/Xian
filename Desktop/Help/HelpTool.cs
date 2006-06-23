@@ -1,8 +1,8 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Workstation.Model;
 
 namespace ClearCanvas.Workstation.Help

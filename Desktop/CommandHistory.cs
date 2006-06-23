@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application 
+namespace ClearCanvas.Desktop 
 {
 	public class CommandHistory 
 	{

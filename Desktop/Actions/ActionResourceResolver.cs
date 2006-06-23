@@ -5,7 +5,7 @@ using System.Reflection;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// A specialization of the <see cref="ResourceResolver"/> class for use in resolving action path
@@ -19,7 +19,7 @@ namespace ClearCanvas.Common.Application.Actions
         /// </summary>
         /// <param name="actionTarget">The action target for which resources will be resolved</param>
         internal ActionResourceResolver(object actionTarget)
-            :base(new Assembly[] { actionTarget.GetType().Assembly, typeof(WorkstationModel).Assembly } )
+            :base(new Assembly[] { actionTarget.GetType().Assembly, typeof(DesktopApplication).Assembly } )
         {
         }
     }

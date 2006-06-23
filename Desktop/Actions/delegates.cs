@@ -1,4 +1,4 @@
-namespace ClearCanvas.Common.Application.Actions
+namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Used by <see cref="ClickAction"/> objects to forward a click to a method on a tool.
