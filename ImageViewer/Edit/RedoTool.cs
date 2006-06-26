@@ -1,12 +1,11 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Application;
-using ClearCanvas.Common.Application.Tools;
-using ClearCanvas.Common.Application.Actions;
-using ClearCanvas.Workstation.Model;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Workstation.Edit
+namespace ClearCanvas.ImageViewer.Edit
 {
     [MenuAction("activate", "MenuEdit/MenuEditRedo")]
     [ButtonAction("activate", "ToolbarStandard/ToolbarStandardRedo")]
@@ -18,7 +17,7 @@ namespace ClearCanvas.Workstation.Edit
 	/// <summary>
 	/// Summary description for Redo.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
 	public class RedoTool : Tool
 	{
 		private bool _enabled = false;
