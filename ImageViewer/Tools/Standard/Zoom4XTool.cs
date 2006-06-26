@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -12,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// <summary>
 	/// Summary description for ZoomTool.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
 	public class Zoom4XTool : ZoomFixedTool
 	{
 		public Zoom4XTool()

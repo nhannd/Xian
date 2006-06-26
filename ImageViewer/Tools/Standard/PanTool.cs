@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
@@ -21,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for PanTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
     public class PanTool : MouseTool
 	{
 		private UndoableCommand _command;

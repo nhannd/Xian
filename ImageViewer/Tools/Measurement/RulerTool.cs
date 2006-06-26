@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Mathematics;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.DynamicOverlays;
 using ClearCanvas.Desktop.Tools;
@@ -20,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     /// <summary>
 	/// Summary description for RulerTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
     public class RulerTool : MouseTool
 	{
 		public RulerTool()

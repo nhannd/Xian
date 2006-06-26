@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.DynamicOverlays;
 using ClearCanvas.Desktop.Tools;
@@ -19,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     /// <summary>
 	/// Summary description for RulerTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
     public class RectangularROITool : MouseTool
 	{
 		public RectangularROITool()

@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
@@ -18,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// 
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
     public class StackTool : MouseTool
 	{
 		private StackCommand m_Command;
