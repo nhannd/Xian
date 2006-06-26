@@ -61,7 +61,7 @@ namespace ClearCanvas.Common
             List<Type> SRtypes = GetSRTypes(asm);
             foreach (Type SRclass in SRtypes)
             {
-                PropertyInfo propertyInfo = SRclass.GetProperty(str, BindingFlags.Public | BindingFlags.Static);
+                PropertyInfo propertyInfo = SRclass.GetProperty(str, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
                 if (propertyInfo != null)
                 {
                     MethodInfo getter = propertyInfo.GetGetMethod();

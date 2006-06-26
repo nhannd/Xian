@@ -59,5 +59,23 @@ namespace ClearCanvas.ImageViewer.Edit {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        public static string MenuEditRedo {
+            get {
+                return ResourceManager.GetString("MenuEditRedo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string MenuEditUndo {
+            get {
+                return ResourceManager.GetString("MenuEditUndo", resourceCulture);
+            }
+        }
     }
 }

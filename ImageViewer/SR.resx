@@ -288,41 +288,8 @@
   <data name="MenuClipboardPrint" xml:space="preserve">
     <value>Print</value>
   </data>
-  <data name="MenuEdit" xml:space="preserve">
-    <value>&amp;Edit</value>
-  </data>
   <data name="MenuEditCopyToClipboard" xml:space="preserve">
     <value>Copy to Clipboard</value>
-  </data>
-  <data name="MenuEditRedo" xml:space="preserve">
-    <value>Redo</value>
-  </data>
-  <data name="MenuEditUndo" xml:space="preserve">
-    <value>Undo</value>
-  </data>
-  <data name="MenuFile" xml:space="preserve">
-    <value>&amp;File</value>
-  </data>
-  <data name="MenuFileCloseWorkspace" xml:space="preserve">
-    <value>Close Workspace</value>
-  </data>
-  <data name="MenuFileExitApplication" xml:space="preserve">
-    <value>Exit Application</value>
-  </data>
-  <data name="MenuFileSearch" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="MenuHelp" xml:space="preserve">
-    <value>&amp;Help</value>
-  </data>
-  <data name="MenuHelpAbout" xml:space="preserve">
-    <value>About</value>
-  </data>
-  <data name="MenuHelpContents" xml:space="preserve">
-    <value>Contents</value>
-  </data>
-  <data name="MenuHelpIndex" xml:space="preserve">
-    <value>Index</value>
   </data>
   <data name="MenuLayout" xml:space="preserve">
     <value>&amp;Layout</value>
@@ -347,9 +314,6 @@
   </data>
   <data name="MenuNavigationPreviousStudy" xml:space="preserve">
     <value>Previous Study</value>
-  </data>
-  <data name="MenuTools" xml:space="preserve">
-    <value>&amp;Tools</value>
   </data>
   <data name="MenuTools3D" xml:space="preserve">
     <value>3D</value>

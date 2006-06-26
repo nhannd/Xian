@@ -574,110 +574,11 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Edit.
-        /// </summary>
-        public static string MenuEdit {
-            get {
-                return ResourceManager.GetString("MenuEdit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Copy to Clipboard.
         /// </summary>
         public static string MenuEditCopyToClipboard {
             get {
                 return ResourceManager.GetString("MenuEditCopyToClipboard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo.
-        /// </summary>
-        public static string MenuEditRedo {
-            get {
-                return ResourceManager.GetString("MenuEditRedo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo.
-        /// </summary>
-        public static string MenuEditUndo {
-            get {
-                return ResourceManager.GetString("MenuEditUndo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;File.
-        /// </summary>
-        public static string MenuFile {
-            get {
-                return ResourceManager.GetString("MenuFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Close Workspace.
-        /// </summary>
-        public static string MenuFileCloseWorkspace {
-            get {
-                return ResourceManager.GetString("MenuFileCloseWorkspace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exit Application.
-        /// </summary>
-        public static string MenuFileExitApplication {
-            get {
-                return ResourceManager.GetString("MenuFileExitApplication", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search.
-        /// </summary>
-        public static string MenuFileSearch {
-            get {
-                return ResourceManager.GetString("MenuFileSearch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Help.
-        /// </summary>
-        public static string MenuHelp {
-            get {
-                return ResourceManager.GetString("MenuHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to About.
-        /// </summary>
-        public static string MenuHelpAbout {
-            get {
-                return ResourceManager.GetString("MenuHelpAbout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Contents.
-        /// </summary>
-        public static string MenuHelpContents {
-            get {
-                return ResourceManager.GetString("MenuHelpContents", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Index.
-        /// </summary>
-        public static string MenuHelpIndex {
-            get {
-                return ResourceManager.GetString("MenuHelpIndex", resourceCulture);
             }
         }
         
@@ -750,15 +651,6 @@ namespace ClearCanvas.ImageViewer {
         public static string MenuNavigationPreviousStudy {
             get {
                 return ResourceManager.GetString("MenuNavigationPreviousStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Tools.
-        /// </summary>
-        public static string MenuTools {
-            get {
-                return ResourceManager.GetString("MenuTools", resourceCulture);
             }
         }
         
