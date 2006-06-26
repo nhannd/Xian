@@ -147,32 +147,34 @@
       copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
 
       :: Copy plugin assemblies
-      copy "..\..\..\..\Common\Application\bin\$(ConfigurationName)\ClearCanvas.Common.Application.dll" .\plugins
-      copy "..\..\..\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.View.WinForms.dll" .\plugins
-      copy "..\..\..\Model\bin\$(ConfigurationName)\ClearCanvas.Workstation.Model.dll" .\plugins
-      copy "..\..\..\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.Workstation.Tools.Measurement.dll" .\plugins
-      copy "..\..\..\Tools\Standard\bin\$(ConfigurationName)\ClearCanvas.Workstation.Tools.Standard.dll" .\plugins
-      copy "..\..\..\Help\bin\$(ConfigurationName)\ClearCanvas.Workstation.Help.dll" .\plugins
-      copy "..\..\..\Edit\bin\$(ConfigurationName)\ClearCanvas.Workstation.Edit.dll" .\plugins
-      copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.dll" .\plugins
-      copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.View.WinForms.dll" .\plugins
-      copy "..\..\..\Dashboard\Local\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.Local.dll" .\plugins
-      copy "..\..\..\Dashboard\Remote\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.Remote.dll" .\plugins
-      copy "..\..\..\Dashboard\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.Workstation.Dashboard.LocalDataStore.dll" .\plugins
-      copy "..\..\..\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.Workstation.Layout.Basic.dll" .\plugins
-      copy "..\..\..\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.Layout.Basic.View.WinForms.dll" .\plugins
-      copy "..\..\..\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.Workstation.Renderer.GDI.dll" .\plugins
-      copy "..\..\..\StudyFinders\Remote\bin\$(ConfigurationName)\ClearCanvas.Workstation.StudyFinders.Remote.dll" .\plugins
-      copy "..\..\..\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.Workstation.StudyFinders.LocalDataStore.dll" .\plugins
-      copy "..\..\..\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.Workstation.StudyLoaders.LocalDataStore.dll" .\plugins
+      copy "..\..\..\bin\$(ConfigurationName)\ClearCanvas.Desktop.dll" .\plugins
+      copy "..\..\..\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.View.WinForms.dll" .\plugins
+      copy "..\..\..\Help\bin\$(ConfigurationName)\ClearCanvas.Desktop.Help.dll" .\plugins
+      copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.dll" .\plugins
+      copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.View.WinForms.dll" .\plugins
+      copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.dll" .\plugins
+      copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" .\plugins
 
-      copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Workstation.ExtensionBrowser.dll" .\plugins
-      copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Workstation.ExtensionBrowser.View.WinForms.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.View.WinForms.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Measurement.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Tools\Standard\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Standard.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Edit\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Edit.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Dashboard\Local\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Dashboard.Local.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Dashboard\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Dashboard.Remote.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Dashboard\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Dashboard.LocalDataStore.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\StudyFinders\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins
+
 
 
       :: Copy config files
       copy ..\..\Logging.config .
-      copy ..\..\..\Model\actionmodels.xml .
+      copy ..\..\..\..\ImageViewer\actionmodels.xml .
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -7,8 +7,8 @@
     <ProjectGuid>{BB434EC3-A580-4744-A635-A2B4029C66DE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ViewWinForms</RootNamespace>
-    <AssemblyName>ViewWinForms</AssemblyName>
+    <RootNamespace>ClearCanvas.Desktop.View.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.Desktop.View.WinForms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
