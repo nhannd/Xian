@@ -8,14 +8,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon />
     <AssemblyKeyContainerName />
-    <AssemblyName>ClearCanvas.Workstation.Layout.Basic</AssemblyName>
+    <AssemblyName>ClearCanvas.ImageViewer.Layout.Basic</AssemblyName>
     <AssemblyOriginatorKeyFile />
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>ClearCanvas.Workstation.Layout.Basic</RootNamespace>
+    <RootNamespace>ClearCanvas.ImageViewer.Layout.Basic</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject />
     <FileUpgradeFlags />
@@ -62,17 +62,17 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Application\ClearCanvas.Common.Application.csproj">
-      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
-      <Name>ClearCanvas.Common.Application</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Model\ClearCanvas.Workstation.Model.csproj">
+    <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.Workstation.Model</Name>
+      <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
     <Reference Include="System">
       <Name>System</Name>

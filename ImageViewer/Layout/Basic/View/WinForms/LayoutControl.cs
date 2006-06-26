@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace ClearCanvas.ImageViewer.Layout.Basic
+namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 {
 	/// <summary>
 	/// Summary description for LayoutControl.

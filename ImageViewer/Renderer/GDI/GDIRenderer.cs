@@ -4,7 +4,6 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
 
@@ -13,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 	/// <summary>
 	/// Summary description for GDIRenderer.
 	/// </summary>
-	[ExtensionOf(typeof(ClearCanvas.Workstation.Model.RendererExtensionPoint))]
+	[ExtensionOf(typeof(ClearCanvas.ImageViewer.RendererExtensionPoint))]
     public class GDIRenderer : IRenderer
 	{
 		private static readonly SizeF DropShadowOffset = new SizeF(1, 1);

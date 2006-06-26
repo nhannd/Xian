@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {

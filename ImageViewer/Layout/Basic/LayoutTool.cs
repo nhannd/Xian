@@ -1,6 +1,5 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
@@ -23,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// <summary>
 	/// Summary description for LayoutCentre.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
 	public class LayoutTool : Tool
 	{
         // by making these members static we cause the view activation state to be shared across all

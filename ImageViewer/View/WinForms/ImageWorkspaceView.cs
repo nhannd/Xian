@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Workstation.Model;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
-	[ExtensionOf(typeof(ClearCanvas.Workstation.Model.ImageWorkspaceViewExtensionPoint))]
+	[ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceViewExtensionPoint))]
 	public class ImageWorkspaceView : WinFormsView, IWorkspaceView
 	{
 		private ImageWorkspaceControl _imageWorkspaceControl;

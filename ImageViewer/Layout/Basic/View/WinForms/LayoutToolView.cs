@@ -6,16 +6,14 @@ using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Workstation.Model;
-using ClearCanvas.Workstation.Layout.Basic;
-using ClearCanvas.Workstation.View.WinForms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 {
     /// <summary>
     /// WinForms extension of the <see cref="LayoutToolViewExtensionPoint"/> extension point.
     /// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Layout.Basic.LayoutToolViewExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(LayoutToolViewExtensionPoint))]
     public class LayoutToolView : WinFormsView, IToolView
     {
         private LayoutControl _control;

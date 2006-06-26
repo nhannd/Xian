@@ -9,7 +9,7 @@ using NUnit.Framework;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
-using ClearCanvas.Workstation.Renderer.GDI;
+using ClearCanvas.ImageViewer.Renderer.GDI;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {

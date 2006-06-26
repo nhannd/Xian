@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Renderer.GDI {
+namespace ClearCanvas.Workstation.Edit {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Renderer.GDI.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Workstation.Edit.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

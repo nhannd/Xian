@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
 
