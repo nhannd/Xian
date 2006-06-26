@@ -9,7 +9,7 @@
   <action-model id="ClearCanvas.Desktop.DesktopToolExtensionPoint.toolbars">
     <action id="ClearCanvas.Desktop.Dashboard.DashboardTool.activate" path="ToolbarStandard/ToolbarToolsStandardStudyCentre" />
   </action-model>
-  <action-model id="ClearCanvas.Workstation.Model.ImageWorkspaceToolExtensionPoint.menu">
+  <action-model id="ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint.menu">
     <action id="ClearCanvas.ImageViewer.Edit.UndoTool.activate" path="MenuEdit/MenuEditUndo" />
     <action id="ClearCanvas.ImageViewer.Edit.RedoTool.activate" path="MenuEdit/MenuEditRedo" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool.activate" path="MenuTools/MenuToolsStandard/MenuToolsStandardStack" />
@@ -24,7 +24,7 @@
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool.activate" path="MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool.activate" path="MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI" />
   </action-model>
-  <action-model id="ClearCanvas.ImageViewer.Model.ImageWorkspaceToolExtensionPoint.toolbars">
+  <action-model id="ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint.toolbars">
     <action id="ClearCanvas.ImageViewer.Edit.UndoTool.activate" path="ToolbarStandard/ToolbarStandardUndo" />
     <action id="ClearCanvas.ImageViewer.Edit.RedoTool.activate" path="ToolbarStandard/ToolbarStandardRedo" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool.activate" path="ToolbarStandard/ToolbarToolsStandardStack" />

@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop.Executable
 		static void Main(string[] args)
 		{
 #if !MONO
-			//SplashScreen.ShowSplashScreen();
+			SplashScreen.ShowSplashScreen();
 #endif
 			Platform.PluginManager.PluginLoaded += new EventHandler<PluginLoadedEventArgs>(OnPluginProgress);
 			Platform.StartApp();
