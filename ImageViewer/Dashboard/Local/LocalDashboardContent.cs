@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 				}
 
 				ImageWorkspace ws = new ImageWorkspace(studyInstanceUID);
-				WorkstationModel.WorkspaceManager.Workspaces.Add(ws);
+				DesktopApplication.WorkspaceManager.Workspaces.Add(ws);
 			}
 		}
 	}

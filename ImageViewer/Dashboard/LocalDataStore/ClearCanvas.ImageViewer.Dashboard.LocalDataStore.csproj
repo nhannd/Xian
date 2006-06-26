@@ -7,8 +7,8 @@
     <ProjectGuid>{8A3BA1E6-8A41-4196-8058-42C509D9E917}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Workstation.Dashboard.LocalDataStore</RootNamespace>
-    <AssemblyName>ClearCanvas.Workstation.Dashboard.LocalDataStore</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Dashboard.LocalDataStore</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Dashboard.LocalDataStore</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,10 +52,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Application\ClearCanvas.Common.Application.csproj">
-      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
-      <Name>ClearCanvas.Common.Application</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
@@ -68,17 +64,25 @@
       <Project>{7439F04D-3980-4A3D-A681-71B2A7150B3F}</Project>
       <Name>ClearCanvas.DataStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Dashboard\ClearCanvas.Desktop.Dashboard.csproj">
+      <Project>{085823EA-DDAE-4DAF-A99D-17F75A03CF23}</Project>
+      <Name>ClearCanvas.Desktop.Dashboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Dashboard\View\WinForms\ClearCanvas.Desktop.Dashboard.View.WinForms.csproj">
+      <Project>{CE79FC90-7561-4D14-8486-36E342133D92}</Project>
+      <Name>ClearCanvas.Desktop.Dashboard.View.WinForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Model\ClearCanvas.Workstation.Model.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.Workstation.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\View\WinForms\ClearCanvas.Workstation.Dashboard.View.WinForms.csproj">
-      <Project>{CE79FC90-7561-4D14-8486-36E342133D92}</Project>
-      <Name>ClearCanvas.Workstation.Dashboard.View.WinForms</Name>
+      <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
