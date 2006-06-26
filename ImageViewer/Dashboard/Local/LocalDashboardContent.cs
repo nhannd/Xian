@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using ClearCanvas.Workstation.Model;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Workstation.Dashboard;
+using ClearCanvas.Desktop.Dashboard;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Dashboard.Local
 {
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Dashboard.DashboardContentExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Desktop.Dashboard.DashboardContentExtensionPoint))]
 	public class LocalDashboardContent : DashboardContent
 	{
 		private MasterViewControl _masterView = new MasterViewControl();
@@ -51,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 				if (studyInstanceUID == "" ||
 					ImageWorkspace.StudyManager.StudyTree.GetStudy(studyInstanceUID) == null)
 				{
-					Platform.ShowMessageBox(ClearCanvas.Workstation.Model.SR.ErrorUnableToLoadStudy);
+					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
 					return;
 				}
 

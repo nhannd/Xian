@@ -4,9 +4,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
     using System.Collections.Generic;
     using System.Text;
     using System.Windows.Forms;
-    using ClearCanvas.Workstation.Dashboard;
+    using ClearCanvas.Desktop.Dashboard;
     using ClearCanvas.Controls.WinForms;
-    using ClearCanvas.Workstation.Model;
     using ClearCanvas.ImageViewer.StudyManagement;
     using ClearCanvas.Dicom;
     using ClearCanvas.Dicom.Network;
@@ -18,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
 
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Dashboard.DashboardContentExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Desktop.Dashboard.DashboardContentExtensionPoint))]
     public class RemoteDashboardContent : DashboardContent
 	{
 		private MasterViewControl _masterView = new MasterViewControl();

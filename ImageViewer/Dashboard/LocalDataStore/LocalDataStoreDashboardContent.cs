@@ -8,9 +8,9 @@ namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
     using System.IO;
 	using ClearCanvas.Common;
     using ClearCanvas.Desktop;
-    using ClearCanvas.Workstation.Model;
     using ClearCanvas.ImageViewer.StudyManagement;
-    using ClearCanvas.Workstation.Dashboard;
+    using ClearCanvas.ImageViewer.Dashboard;
+    using ClearCanvas.Desktop.Dashboard;
     using ClearCanvas.Controls.WinForms;
     using ClearCanvas.Dicom;
     using ClearCanvas.DataStore;
@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
     using System.Runtime.Serialization.Formatters;
     using System.Runtime.Serialization.Formatters.Binary;
 
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Workstation.Dashboard.DashboardContentExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Desktop.Dashboard.DashboardContentExtensionPoint))]
     public class LocalDataStoreDashboardContent : DashboardContent
     {
         private MasterViewControl _masterView = new MasterViewControl();
