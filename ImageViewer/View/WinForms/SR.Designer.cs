@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Desktop.Dashboard {
+namespace ClearCanvas.ImageViewer.View.WinForms {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop.Dashboard {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.Dashboard.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.View.WinForms.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,15 +57,6 @@ namespace ClearCanvas.Desktop.Dashboard {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Study Centre.
-        /// </summary>
-        public static string ToolbarToolsStandardStudyCentre {
-            get {
-                return ResourceManager.GetString("ToolbarToolsStandardStudyCentre", resourceCulture);
             }
         }
     }
