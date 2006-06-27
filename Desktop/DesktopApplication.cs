@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop
         /// Runs the application by running the view's message pump.  Typically this method will
         /// block until the message pump terminates.
         /// </summary>
-        public void RunApplication()
+        public void RunApplication(string[] args)
         {
             _view.RunMessagePump();
         }

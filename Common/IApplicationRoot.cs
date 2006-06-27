@@ -17,6 +17,6 @@ namespace ClearCanvas.Common
         /// It is expected that this method may block for the duration of the application's execution, if
         /// for instance, a GUI event message pump is started.
         /// </remarks>
-        void RunApplication();
+        void RunApplication(string[] args);
     }
 }

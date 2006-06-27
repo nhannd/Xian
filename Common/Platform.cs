@@ -3,11 +3,11 @@ using System.IO;
 using System.Reflection;
 using System.Resources;
 using log4net;
-using log4net.spi;
+//using log4net.spi;
 using log4net.Config;
 
 // Configure log4net using the .log4net file
-[assembly: log4net.Config.DOMConfigurator(ConfigFile = "Logging.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
 // This will cause log4net to look for a configuration file
 // called TestApp.exe.log4net in the application base
 // directory (i.e. the directory containing TestApp.exe)
@@ -157,6 +157,37 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Starts the application.
+        /// </summary>
+        /// <param name="applicationRootFilter">An extension filter that selects the application root extension to execute</param>
+        /// <param name="args">The set of arguments passed from the command line</param>
+        /// <remarks>
+        /// A ClearCanvas based application is started by calling this convenience method from
+        /// a bootstrap executable of some kind.  Calling this method results in the loading
+        /// of all plugins and creation of an IApplicationRoot extension.
+        /// </remarks>
+        public static void StartApp(ExtensionFilter applicationRootFilter, string[] args)
+        {
+#if !DEBUG
+            try
+            {
+#endif
+            ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
+            _applicationRoot = (applicationRootFilter == null) ?
+                (IApplicationRoot)xp.CreateExtension() :
+                (IApplicationRoot)xp.CreateExtension(applicationRootFilter);
+            _applicationRoot.RunApplication(args);
+#if !DEBUG
+            }
+            catch (Exception e)
+            {
+				Platform.Log(e, LogLevel.Fatal);
+				Platform.ShowMessageBox(SR.ExceptionFatalApplicationError);
+            }
+#endif
+        }
+
 		// Public methods
 
 		/// <summary>
@@ -169,21 +200,7 @@ namespace ClearCanvas.Common
 		/// </remarks>
 		public static void StartApp()
 		{
-#if !DEBUG
-            try
-            {
-#endif
-                ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
-                _applicationRoot = (IApplicationRoot)xp.CreateExtension();
-                _applicationRoot.RunApplication();
-#if !DEBUG
-            }
-            catch (Exception e)
-            {
-				Platform.Log(e, LogLevel.Fatal);
-				Platform.ShowMessageBox(SR.ExceptionFatalApplicationError);
-            }
-#endif
+            StartApp(null, new string[] { });
 		}
 
 		/// <summary>
