@@ -39,12 +39,17 @@
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
+    <Compile Include="Patient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Enterprise\ClearCanvas.Enterprise.csproj">
       <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
       <Name>ClearCanvas.Enterprise</Name>

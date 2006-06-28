@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace <%= @model.namespace %>.Hib
+namespace <%= @model.namespace %>.Hibernate
 {
     /// <summary>
     /// NHibernate mapping class for <see cref="<%= @className %> enumeration"/>.
