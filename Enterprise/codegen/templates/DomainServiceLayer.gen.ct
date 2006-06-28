@@ -10,10 +10,10 @@ using <%= @namespace %>.Brokers;
 namespace <%= @namespace %> {
 
     /// <summary>
-    /// Abstract base class for service layers that make use of the <see cref="ClearCanvas.HCM"/> domain model.
+    /// Abstract base class for service layers that make use of this domain model.
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public abstract class HCMServiceLayer : ServiceLayer
+	public abstract class <%= shortName %>ServiceLayer : ServiceLayer
 	{
 		<% @enumDefs.each do |e| %>
 		/// <summary>

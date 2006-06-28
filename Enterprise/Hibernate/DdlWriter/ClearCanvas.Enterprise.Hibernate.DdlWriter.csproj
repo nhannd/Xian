@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4CED35C2-4659-492D-8F85-F560E469BE11}</ProjectGuid>
+    <ProjectGuid>{298A5358-EF8F-4D27-A935-5E0E2BEF754F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Enterprise.Hibernate</RootNamespace>
-    <AssemblyName>ClearCanvas.Enterprise.Hibernate</AssemblyName>
+    <RootNamespace>ClearCanvas.Enterprise.Hibernate.DdlWriter</RootNamespace>
+    <AssemblyName>ClearCanvas.Enterprise.Hibernate.DdlWriter</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,13 +28,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\refs\Iesi.Collections.dll</HintPath>
-    </Reference>
     <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>refs\NHibernate.dll</HintPath>
+      <HintPath>..\refs\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -43,36 +39,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Broker.cs" />
-    <Compile Include="CustomSqlDialect.cs" />
-    <Compile Include="EntityBroker.cs" />
-    <Compile Include="EnumBroker.cs" />
-    <Compile Include="EnumeratorWrapper.cs" />
-    <Compile Include="Hql\HqlCondition.cs" />
-    <Compile Include="Hql\HqlQuery.cs" />
-    <Compile Include="Hql\HqlSort.cs" />
-    <Compile Include="ListWrapper.cs" />
-    <Compile Include="PersistenceContext.cs" />
-    <Compile Include="PersistentStore.cs" />
+    <Compile Include="DdlWriter.cs" />
+    <Compile Include="DdlWriterApplication.cs" />
+    <Compile Include="DdlWriterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DdlWriterForm.designer.cs">
+      <DependentUpon>DdlWriterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadContext.cs" />
-    <Compile Include="UpdateContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+    <EmbeddedResource Include="DdlWriterForm.resx">
+      <DependentUpon>DdlWriterForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClearCanvas.Enterprise.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.Enterprise.csproj">
       <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
       <Name>ClearCanvas.Enterprise</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="persistence.cd">
-      <SubType>
-      </SubType>
-    </None>
+    <ProjectReference Include="..\ClearCanvas.Enterprise.Hibernate.csproj">
+      <Project>{4CED35C2-4659-492D-8F85-F560E469BE11}</Project>
+      <Name>ClearCanvas.Enterprise.Hibernate</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

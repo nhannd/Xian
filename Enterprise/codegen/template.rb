@@ -12,11 +12,12 @@ class Template
     @overwrite = overwrite
   end
   
-  # runs this template on the specified ClassDef
+  # runs this template on the specified ElementDef
   def run(elementDef, templateDir, destDir)
     #use the namespace of the model to extend the destDir
     #e.g. if destDir = . and the namespace is Foo.Bar, destDir becomes ./Foo/Bar
-    destDir = File.expand_path(elementDef.namespace.gsub('.', "/"), destDir)
+    #HACK: the ClearCanvas portion of the namespace is removed first
+    destDir = File.expand_path(elementDef.namespace.gsub("ClearCanvas.", "").gsub('.', "/"), destDir)
     
     # create the erb once only, since it can be re-used
     @outFilenameERB = ERB.new(@outFilenameTemplate) if @outFilenameERB == nil

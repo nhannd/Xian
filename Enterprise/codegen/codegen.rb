@@ -1,14 +1,13 @@
 require "metamodel"
 require "template"
-#require "find"
 
 # Main class for program execution
 class CodeGen
 
   # set of templates that apply to the model as a whole
   @@modelTemplates = [
-    Template.new("IHCMServiceLayer.gen.ct", "IHCMServiceLayer.gen.cs", true),
-    Template.new("HCMServiceLayer.gen.ct", "HCMServiceLayer.gen.cs", true)
+    Template.new("IDomainServiceLayer.gen.ct", "I<%=shortName%>ServiceLayer.gen.cs", true),
+    Template.new("DomainServiceLayer.gen.ct", "<%=shortName%>ServiceLayer.gen.cs", true)
   ]
 
   # specifies a set of templates that will be applied to entity classes
@@ -17,7 +16,7 @@ class CodeGen
     Template.new("Entity.gen.ct", "<%=@className%>.gen.cs", true),
     Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true),
     Template.new("IEntityBroker.gen.ct", "Brokers/I<%=@className%>Broker.gen.cs", true),
-    Template.new("EntityBroker.gen.ct", "Hib/Brokers/<%=@className%>Broker.gen.cs", true)
+    Template.new("EntityBroker.gen.ct", "Hibernate/Brokers/<%=@className%>Broker.gen.cs", true)
   ]
   
   # specifies a set of templates that will be applied to enum classes
@@ -42,7 +41,7 @@ class CodeGen
     #check for bad input
     exitWithMessage("usage: inputDir outputDir") if ( srcDir == nil || destDir == nil )
     exitWithMessage("#{srcDir} does not exist") if !File.exist?(srcDir)
-    exitWithMessage("#{destDir} directory does not exist") if !File.exist?(destDir)
+    exitWithMessage("#{destDir} does not exist") if !File.exist?(destDir)
     
     #create a new model object
     model = Model.new
@@ -88,7 +87,7 @@ class CodeGen
 end
 
 # execute program using command line args
-CodeGen.generate(ARGV[0], ARGV[1])
+CodeGen.generate(*ARGV)
 
 
 

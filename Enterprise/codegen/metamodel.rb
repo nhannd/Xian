@@ -27,7 +27,7 @@ class Model < ElementDef
     # read the hbm xml file
     mappings = REXML::Document.new(File.new(hbmFile))
     
-    # extract the namespace
+    # extract the namespace - TODO throw exception if model already defined and doesn't match
     @namespace = mappings.root.attributes['namespace']
     
     # process each class in the hbm file
@@ -43,6 +43,11 @@ class Model < ElementDef
         end
       end
     end
+  end
+  
+  def shortName
+    #return the last component of the namespace
+    @namespace.split('.')[-1]
   end
 
 protected

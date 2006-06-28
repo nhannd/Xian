@@ -30,15 +30,15 @@
   <ItemGroup>
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Iesi.Collections.dll</HintPath>
+      <HintPath>refs\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Aop, Version=2.1.0.2, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Spring.Aop.dll</HintPath>
+      <HintPath>refs\Spring.Aop.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Core, Version=2.1.0.2, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Spring.Core.dll</HintPath>
+      <HintPath>refs\Spring.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
