@@ -1,0 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Enterprise;
+
+namespace <%= @model.namespace %>.Brokers {
+
+    /// <summary>
+    /// Defines the interface for a <see cref="<%= @className %>"/> broker
+    /// This file is machine generated - changes will be lost.
+    /// </summary>
+	public partial interface I<%= @className %>Broker : IEnumBroker<<%= @enumName %>, <%= @className %>>
+	{
+	}
+}

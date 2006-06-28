@@ -1,0 +1,41 @@
+using System;
+using System.Collections;
+using System.Text;
+
+using Iesi.Collections;
+using ClearCanvas.Enterprise;
+using <%= @namespace %>.Brokers;
+
+
+namespace <%= @namespace %> {
+
+    /// <summary>
+    /// Abstract base class for service layers that make use of the <see cref="ClearCanvas.HCM"/> domain model.
+    /// This file is machine generated - changes will be lost.
+    /// </summary>
+	public abstract class HCMServiceLayer : ServiceLayer
+	{
+		<% @enumDefs.each do |e| %>
+		/// <summary>
+		/// Returns the <see cref="<%= e.enumName %>"/> enum table
+		/// </summary>
+		public EnumTable<<%= e.enumName %>, <%= e.className %>> <%= e.className %>Table
+		{
+			get { return GetEnumTable<<%= e.enumName %>, <%= e.className %>, I<%= e.className %>Broker>(); }
+		}
+	  	<% end %>
+	  	
+	  	
+		<% @entityDefs.each do |e| %>
+		/// <summary>
+		/// Returns a <see cref="<%= e.className %>"/> broker for the current context
+		/// </summary>
+		/// <returns>An instance of <see cref="I<%= e.className %>Broker"/></returns>
+	  	protected I<%= e.className %>Broker Get<%= e.className %>Broker()
+        {
+            return this.CurrentContext.GetBroker<I<%= e.className %>Broker>();
+        }
+	  	<% end %>
+	  	
+	}
+}

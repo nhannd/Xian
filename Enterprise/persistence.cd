@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.4" />
+  <Class Name="ClearCanvas.Enterprise.Entity" Collapsed="true">
+    <Position X="10.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Entity.cs</FileName>
+      <HashCode>IAABAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Enterprise.EnumTable&lt;e, E&gt;" Collapsed="true">
+    <Position X="6" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>EnumTable.cs</FileName>
+      <HashCode>ACAAAAAAAAAAABAACAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.Enterprise.SearchCriteria" Collapsed="true">
+    <Position X="11.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>SearchCriteria.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAEEAAAAAAAAAAAAAAAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.Enterprise.SearchCondition&lt;T&gt;" Collapsed="true">
+    <Position X="11.5" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>SearchCondition.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAgIAAEAAAAAAAAAAIAAAAEARBgiA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="ClearCanvas.Enterprise.IPersistenceContext" Collapsed="true">
+    <Position X="3" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>IPersistenceContext.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Enterprise.IUpdateContext" Collapsed="true">
+    <Position X="4.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IUpdateContext.cs</FileName>
+      <HashCode>AAAAAEAAAAAAAAACAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Enterprise.IReadContext" Collapsed="true">
+    <Position X="1.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IReadContext.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Enterprise.IPersistentStore">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IPersistentStore.cs</FileName>
+      <HashCode>AAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Enterprise.IPersistenceBroker" Collapsed="true">
+    <Position X="7.25" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>IPersistenceBroker.cs</FileName>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Enterprise.IEntityBroker&lt;TEntity, TSearchCriteria&gt;" Collapsed="true">
+    <Position X="9.75" Y="3.75" Width="3" />
+    <TypeIdentifier>
+      <FileName>IEntityBroker.cs</FileName>
+      <HashCode>AAAAAgAAAAAAAABAAAAAAAAAAAEAAAAAAAAAAQAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Enterprise.IEnumBroker&lt;e, E&gt;" Collapsed="true">
+    <Position X="6" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>IEnumBroker.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+</ClassDiagram>

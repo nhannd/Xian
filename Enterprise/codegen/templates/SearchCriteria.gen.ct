@@ -1,0 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Enterprise;
+
+namespace <%= @model.namespace %> {
+
+    /// <summary>
+    /// Search criteria for <see cref="<%= @className %>"/> entity
+    /// This file is machine generated - changes will be lost.
+    /// </summary>
+	public partial class <%= @className %>SearchCriteria : <%= @isSubClass  ? @superClassName : nil %>SearchCriteria
+	{
+		<% @fields.each do |f|
+			if(!f.isCollection) %>
+	  	public SearchCondition<<%= f.dataType %>> <%= f.accessorName %> = new SearchCondition<<%= f.dataType %>>();
+	  	<% end
+	  	 end %>
+	}
+}

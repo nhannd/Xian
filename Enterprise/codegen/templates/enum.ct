@@ -1,0 +1,13 @@
+using System;
+using System.Collections;
+using System.Text;
+
+namespace <%= @model.namespace %> {
+
+    /// <summary>
+    /// <%= @enumName %> enumeration
+    /// </summary>
+	public enum <%= @enumName %>
+	{
+	}
+}
