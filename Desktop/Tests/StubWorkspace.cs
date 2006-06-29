@@ -47,6 +47,11 @@ namespace ClearCanvas.Desktop.Tests
 
         private IWorkspaceView _view;
 
+        public StubWorkspace()
+            : base("Stub")
+        {
+        }
+
         public override IWorkspaceView View
         {
             get { if (_view == null) _view = new StubWorkspaceView(); return _view; }

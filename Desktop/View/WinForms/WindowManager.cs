@@ -37,7 +37,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			// Add the new tab
 			WorkspaceTab workspaceTab = new WorkspaceTab(workspace);
-			workspaceTab.Title = "Study";
 			workspaceTab.Selected = true;
 			_tabControl.TabPages.Add(workspaceTab);
 

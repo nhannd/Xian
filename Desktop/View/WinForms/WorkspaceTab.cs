@@ -20,7 +20,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_workspace = workspace;
 			this.Control = workspace.View.GuiElement as Control;
 			this.PropertyChanged += new PropChangeHandler(OnPropertyChanged);
+
+            this.Title = _workspace.Title;
+            _workspace.TitleChanged += new EventHandler(_workspace_TitleChanged);
 		}
+
+        void _workspace_TitleChanged(object sender, EventArgs e)
+        {
+            this.Title = _workspace.Title;
+        }
 
 		public Workspace Workspace
 		{

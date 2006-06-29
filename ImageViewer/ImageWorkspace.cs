@@ -57,6 +57,7 @@ namespace ClearCanvas.ImageViewer
 		private IWorkspaceView _view;
 
 		public ImageWorkspace(string studyInstanceUID)
+            : base("Study")// default title to "Study"
 		{
 			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
 

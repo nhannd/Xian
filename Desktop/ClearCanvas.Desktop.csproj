@@ -71,9 +71,15 @@
     <Compile Include="Actions\StateObserverAttribute.cs" />
     <Compile Include="Actions\TooltipAttribute.cs" />
     <Compile Include="ActivationChangedEventArgs.cs" />
+    <Compile Include="ApplicationComponent.cs" />
+    <Compile Include="ApplicationComponentHostWorkspace.cs" />
+    <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommandAddedEventArgs.cs" />
     <Compile Include="CommandHistory.cs" />
+    <Compile Include="IApplicationComponent.cs" />
+    <Compile Include="IApplicationComponentHost.cs" />
+    <Compile Include="IApplicationComponentView.cs" />
     <Compile Include="IMemento.cs" />
     <Compile Include="IMemorable.cs" />
     <Compile Include="IView.cs" />

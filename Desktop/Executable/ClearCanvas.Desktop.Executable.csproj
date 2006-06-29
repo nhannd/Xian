@@ -149,8 +149,6 @@
       copy "..\..\..\bin\$(ConfigurationName)\ClearCanvas.Desktop.dll" .\plugins
       copy "..\..\..\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.View.WinForms.dll" .\plugins
       copy "..\..\..\Help\bin\$(ConfigurationName)\ClearCanvas.Desktop.Help.dll" .\plugins
-      copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.dll" .\plugins
-      copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.View.WinForms.dll" .\plugins
       copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.dll" .\plugins
       copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" .\plugins
 
@@ -163,6 +161,8 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
 
       :: Copy ImageViewer plugins
+      copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.dll" .\plugins
+      copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.dll" .\plugins
       copy "..\..\..\..\ImageViewer\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Measurement.dll" .\plugins
@@ -194,6 +194,10 @@ if $(SolutionName) == Ris goto RisModules
       :: copy Healthcare
       copy "..\..\..\..\Healthcare\bin\$(ConfigurationName)\ClearCanvas.Healthcare.dll" .\plugins
       copy "..\..\..\..\Healthcare\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
+
+      :: Ris
+      copy "..\..\..\..\Ris\Client\Admin\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.dll" .\plugins
+      copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
 
 </PostBuildEvent>
   </PropertyGroup>

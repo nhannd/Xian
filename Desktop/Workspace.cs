@@ -26,20 +26,32 @@ namespace ClearCanvas.Desktop
         private ToolContext _toolContext;
 
 		private event EventHandler<ActivationChangedEventArgs> _activationChangedEvent;
+        private event EventHandler _titleChanged;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Workspace"/> class.
 		/// </summary>
-		public Workspace()
+		public Workspace(string title)
 		{
+            _title = title;
 			CreateCommandHistory();
 			CreateWorkspaceTools();
 		}
 
+        /// <summary>
+        /// Gets or sets the title of this workspace.  The title will be displayed in the user-interface
+        /// </summary>
 		public string Title
 		{
 			get { return _title; }
-			set { _title = value; }
+            set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    EventsHelper.Fire(_titleChanged, this, new EventArgs());
+                }
+            }
 		}
 
 		public virtual bool IsActivated
@@ -80,6 +92,15 @@ namespace ClearCanvas.Desktop
 			add { _activationChangedEvent += value; }
 			remove { _activationChangedEvent -= value; }
 		}
+
+        /// <summary>
+        /// Fired when the title of the workspace is changed
+        /// </summary>
+        public event EventHandler TitleChanged
+        {
+            add { _titleChanged += value; }
+            remove { _titleChanged -= value; }
+        }
 
 		public abstract void Cleanup();
 
