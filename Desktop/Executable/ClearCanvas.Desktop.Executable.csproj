@@ -135,18 +135,17 @@
       md .\logs
       md .\studies
 
-      :: Copy shared assemblies
+      :: Copy shared config files
+      copy ..\..\Logging.config .
+
+      :: Copy shared libraries
       copy "..\..\..\..\Common\bin\$(ConfigurationName)\*.*" .\Common
       copy "..\..\..\..\Common\refs\nunit.framework.dll" .\Common 
       copy "..\..\..\..\Common\refs\log4net.dll" .\Common
       copy "..\..\..\..\Controls\WinForms\bin\$(ConfigurationName)\ClearCanvas.Controls.WinForms.dll" .\Common
       copy "..\..\..\..\Controls\WinForms\refs\DotNetMagic2005.DLL" .\Common
-      copy "..\..\..\..\Dicom\bin\$(ConfigurationName)\ClearCanvas.Dicom.dll" .\Common
-      copy "..\..\..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll" .\Common
-      copy "..\..\..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll" .\Common
-      copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
 
-      :: Copy plugin assemblies
+      :: Copy shared plugins
       copy "..\..\..\bin\$(ConfigurationName)\ClearCanvas.Desktop.dll" .\plugins
       copy "..\..\..\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.View.WinForms.dll" .\plugins
       copy "..\..\..\Help\bin\$(ConfigurationName)\ClearCanvas.Desktop.Help.dll" .\plugins
@@ -155,6 +154,15 @@
       copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.dll" .\plugins
       copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" .\plugins
 
+if $(SolutionName) == Ris goto RisModules
+
+      :: Copy Dicom assemblies	
+      copy "..\..\..\..\Dicom\bin\$(ConfigurationName)\ClearCanvas.Dicom.dll" .\Common
+      copy "..\..\..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll" .\Common
+      copy "..\..\..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll" .\Common
+      copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
+
+      :: Copy ImageViewer plugins
       copy "..\..\..\..\ImageViewer\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.dll" .\plugins
       copy "..\..\..\..\ImageViewer\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Measurement.dll" .\plugins
@@ -170,11 +178,23 @@
       copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins
 
-
-
       :: Copy config files
-      copy ..\..\Logging.config .
       copy ..\..\..\..\ImageViewer\actionmodels.xml .
+
+      :: Important to exit here - do not copy the Ris Modules
+      exit
+
+:RisModules
+
+      :: Copy Enterprise	
+      copy "..\..\..\..\Enterprise\bin\$(ConfigurationName)\ClearCanvas.Enterprise.dll" .\plugins
+      copy "..\..\..\..\Enterprise\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Enterprise.Hibernate.dll" .\plugins
+      copy "..\..\..\..\Enterprise\Hibernate\DdlWriter\bin\$(ConfigurationName)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" .\plugins
+
+      :: copy Healthcare
+      copy "..\..\..\..\Healthcare\bin\$(ConfigurationName)\ClearCanvas.Healthcare.dll" .\plugins
+      copy "..\..\..\..\Healthcare\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
+
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

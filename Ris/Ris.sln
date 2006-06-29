@@ -13,6 +13,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Hibernate", "..\Healthcare\Hibernate\ClearCanvas.Healthcare.Hibernate.csproj", "{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop", "..\Desktop\ClearCanvas.Desktop.csproj", "{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.View.WinForms", "..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj", "{BB434EC3-A580-4744-A635-A2B4029C66DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executable", "..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj", "{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser", "..\Desktop\ExtensionBrowser\ClearCanvas.Desktop.ExtensionBrowser.csproj", "{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser.View.WinForms", "..\Desktop\ExtensionBrowser\View\WinForms\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.csproj", "{BA5FDA96-AFD6-4546-A294-24D6BC77E808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Controls.WinForms", "..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj", "{CA91515F-D706-4D15-882B-811F3BDC4956}"
+EndProject
 Global
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1
@@ -46,6 +58,30 @@ Global
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA5FDA96-AFD6-4546-A294-24D6BC77E808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA5FDA96-AFD6-4546-A294-24D6BC77E808}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA5FDA96-AFD6-4546-A294-24D6BC77E808}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA5FDA96-AFD6-4546-A294-24D6BC77E808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA91515F-D706-4D15-882B-811F3BDC4956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA91515F-D706-4D15-882B-811F3BDC4956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA91515F-D706-4D15-882B-811F3BDC4956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA91515F-D706-4D15-882B-811F3BDC4956}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
