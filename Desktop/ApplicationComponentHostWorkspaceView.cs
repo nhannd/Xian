@@ -6,6 +6,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// This is not an abstract base class.  Because this class merely delegates to the application component view,
+    /// it does not need to be subclassed.  It is only used internally.
+    /// </summary>
     internal class ApplicationComponentHostWorkspaceView : IWorkspaceView
     {
         private ApplicationComponentHostWorkspace _workspace;

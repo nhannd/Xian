@@ -17,13 +17,11 @@ namespace ClearCanvas.Desktop
 	/// workspace tools and <see cref="CommandHistory"/>.  This allows workspaces to
 	/// function independently of each other.
 	/// </remarks>
-	public abstract class Workspace
+	public abstract class Workspace : IWorkspace
 	{
 		private string _title;
 		private bool _isActivated;
 		private CommandHistory _commandHistory;
-        private ToolManager _toolManager;
-        private ToolContext _toolContext;
 
 		private event EventHandler<ActivationChangedEventArgs> _activationChangedEvent;
         private event EventHandler _titleChanged;
@@ -35,7 +33,6 @@ namespace ClearCanvas.Desktop
 		{
             _title = title;
 			CreateCommandHistory();
-			CreateWorkspaceTools();
 		}
 
         /// <summary>
@@ -62,7 +59,7 @@ namespace ClearCanvas.Desktop
 				if (_isActivated != value)
 				{
 					_isActivated = value;
-                    _toolContext.Activate(_isActivated);
+                    this.ToolSet.Activate(_isActivated);
 					EventsHelper.Fire(_activationChangedEvent, this, new ActivationChangedEventArgs(value));
 				}
 			}
@@ -77,9 +74,9 @@ namespace ClearCanvas.Desktop
 			get { return _commandHistory; }
 		}
 
-        public ToolManager ToolManager
+        public abstract IToolSet ToolSet
         {
-            get { return _toolManager; }
+            get;
         }
 
 		public abstract IWorkspaceView View
@@ -109,13 +106,5 @@ namespace ClearCanvas.Desktop
 			int maxHistorySize = 100;
 			_commandHistory = new CommandHistory(maxHistorySize);
 		}
-
-		private void CreateWorkspaceTools()
-        {
-            _toolContext = CreateToolContext();
-            _toolManager = new ToolManager(_toolContext);
-		}
-
-        protected abstract ToolContext CreateToolContext();
 	}
 }

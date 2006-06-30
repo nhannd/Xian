@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageViewer
 		private MouseToolMap _currentMappableModalTools = new MouseToolMap();
 		private string _studyInstanceUID;
 		private IWorkspaceView _view;
+        private ToolSet _toolSet;
 
 		public ImageWorkspace(string studyInstanceUID)
             : base("Study")// default title to "Study"
@@ -214,12 +215,6 @@ namespace ClearCanvas.ImageViewer
 			StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
 		}
 
-        protected override ToolContext CreateToolContext()
-        {
-            return new ImageWorkspaceToolContext(this);
-        }
-
-
 		private void CreateLayoutManager()
 		{
 			try
@@ -247,5 +242,17 @@ namespace ClearCanvas.ImageViewer
 			_layoutManager.ApplyLayout(_logicalWorkspace, _physicalWorkspace, _studyInstanceUID);
 			StudyManager.StudyTree.IncrementStudyReferenceCount(_studyInstanceUID);
 		}
-	}
+
+        public override IToolSet ToolSet
+        {
+            get
+            {
+                if(_toolSet == null)
+                {
+                    _toolSet = new ToolSet(new ImageWorkspaceToolContext(this));
+                }
+                return _toolSet;
+            }
+        }
+    }
 }

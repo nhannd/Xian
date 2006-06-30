@@ -7,14 +7,15 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
-    // intentionally left off the [Extension] attribute - do not actually want to expose this to framework
+    // intentionally left off the [ExtensionPoint] attribute - do not actually want to expose this to framework
     // it is just a dummy class to make this work for now
     public class StubToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public class ApplicationComponentHostWorkspace : Workspace, IApplicationComponentHost
+    public class ApplicationComponentHostWorkspace : Workspace
     {
+        // this is just a dummy tool context to make this work for now
         public class WorkspaceToolContext : ToolContext
         {
             public WorkspaceToolContext()
@@ -23,9 +24,21 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        // implements the host interface, which is exposed to the hosted application component
+        class Host : IApplicationComponentHost
+        {
+            private ApplicationComponentHostWorkspace _workspace;
+
+            internal Host(ApplicationComponentHostWorkspace workspace)
+            {
+                _workspace = workspace;
+            }
+        }
+
         private IApplicationComponent _component;
         private IExtensionPoint _componentViewExtPoint;
         private ApplicationComponentHostWorkspaceView _view;
+        private ToolSet _toolSet;
 
 
         public ApplicationComponentHostWorkspace(string title, IApplicationComponent component, IExtensionPoint componentViewExtPoint)
@@ -34,7 +47,7 @@ namespace ClearCanvas.Desktop
             _component = component;
             _componentViewExtPoint = componentViewExtPoint;
 
-            _component.SetHost(this);
+            _component.SetHost(new Host(this));
         }
 
 
@@ -57,9 +70,16 @@ namespace ClearCanvas.Desktop
             // nothing to do
         }
 
-        protected override ToolContext CreateToolContext()
+        public override IToolSet ToolSet
         {
-            return new WorkspaceToolContext();
+            get
+            {
+                if (_toolSet == null)
+                {
+                    _toolSet = new ToolSet(new WorkspaceToolContext());
+                }
+                return _toolSet;
+            }
         }
     }
 }

@@ -11,9 +11,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	class WorkspaceTab : Crownwood.DotNetMagic.Controls.TabPage
 	{
-		private Workspace _workspace;
+        private IWorkspace _workspace;
 
-		public WorkspaceTab(Workspace workspace)
+		public WorkspaceTab(IWorkspace workspace)
 		{
 			Platform.CheckForNullReference(workspace, "workspace");
 
@@ -30,7 +30,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Title = _workspace.Title;
         }
 
-		public Workspace Workspace
+        public IWorkspace Workspace
 		{
 			get { return _workspace; }
 		}

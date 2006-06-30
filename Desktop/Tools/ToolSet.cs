@@ -10,12 +10,12 @@ namespace ClearCanvas.Desktop.Tools
     /// <summary>
     /// Undocumented - API subject to change
     /// </summary>
-    public class ToolManager
+    public class ToolSet : IToolSet
     {
         private ToolContext _context;
 
 
-        internal ToolManager(ToolContext context)
+        public ToolSet(ToolContext context)
         {
             _context = context;
         }
@@ -33,6 +33,11 @@ namespace ClearCanvas.Desktop.Tools
         public ToolViewProxy[] ToolViews
         {
             get { return _context.ToolViews; }
+        }
+
+        public void Activate(bool activate)
+        {
+            _context.Activate(activate);
         }
     }
 }

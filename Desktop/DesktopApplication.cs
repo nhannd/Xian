@@ -17,7 +17,7 @@ namespace ClearCanvas.Desktop
     {
         private static DesktopApplication _instance;
         private static WorkspaceManager _workspaceManager;
-        private static ToolManager _toolManager;
+        private static ToolSet _toolSet;
         private static ToolContext _desktopToolContext;
         private static IDesktopView _view;
 
@@ -78,14 +78,14 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the collection of workstation tools.
         /// </summary>
-        public static ToolManager ToolManager
+        public static ToolSet ToolSet
         {
             get
             {
-                if (_toolManager == null)
+                if (_toolSet == null)
                     CreateDesktopTools();
 
-                return _toolManager;
+                return _toolSet;
             }
         }
 		
@@ -94,7 +94,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <value>The currently active <see cref="Workspace"/>, or <b>null</b> if there are
         /// no workspaces in the <see cref="WorkspaceManager"/>.</value>
-        public static Workspace ActiveWorkspace
+        public static IWorkspace ActiveWorkspace
         {
             get
             {
@@ -104,10 +104,10 @@ namespace ClearCanvas.Desktop
 
         private static void CreateDesktopTools()
         {
-            if (_toolManager != null)
+            if (_toolSet != null)
                 return;
             _desktopToolContext = new DesktopToolContext();
-            _toolManager = new ToolManager(_desktopToolContext);
+            _toolSet = new ToolSet(_desktopToolContext);
             _desktopToolContext.Activate(true);
         }
     }

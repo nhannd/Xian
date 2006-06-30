@@ -83,6 +83,7 @@
     <Compile Include="IMemento.cs" />
     <Compile Include="IMemorable.cs" />
     <Compile Include="IView.cs" />
+    <Compile Include="IWorkspace.cs" />
     <Compile Include="IWorkspaceView.cs" />
     <Compile Include="IDesktopView.cs" />
     <Compile Include="MementoList.cs" />
@@ -98,13 +99,14 @@
     <Compile Include="Tests\WorkspaceManagerTest.cs" />
     <Compile Include="Tests\WorkspaceTest.cs" />
     <Compile Include="Tools\ITool.cs" />
+    <Compile Include="Tools\IToolSet.cs" />
     <Compile Include="Tools\IToolView.cs" />
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\ToolAttribute.cs" />
     <Compile Include="Tools\ToolAttributeProcessor.cs" />
     <Compile Include="Tools\ToolBuilder.cs" />
     <Compile Include="Tools\ToolContext.cs" />
-    <Compile Include="Tools\ToolManager.cs" />
+    <Compile Include="Tools\ToolSet.cs" />
     <Compile Include="Tools\ToolViewAttribute.cs" />
     <Compile Include="Tools\ToolViewDisplayHint.cs" />
     <Compile Include="Tools\ToolViewProxy.cs" />
@@ -112,7 +114,6 @@
     <Compile Include="ViewFactory.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="WorkspaceCollection.cs" />
-    <Compile Include="WorkspaceCollectionEventArgs.cs" />
     <Compile Include="WorkspaceEventArgs.cs" />
     <Compile Include="WorkspaceManager.cs" />
     <Compile Include="DesktopApplication.cs" />

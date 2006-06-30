@@ -8,7 +8,7 @@ namespace ClearCanvas.Desktop
 	/// <summary>
 	/// Summary description for WorkspaceCollection.
 	/// </summary>
-	public class WorkspaceCollection : ObservableList<Workspace, WorkspaceEventArgs>
+	public class WorkspaceCollection : ObservableList<IWorkspace, WorkspaceEventArgs>
 	{
 		public WorkspaceCollection()
 		{

@@ -111,7 +111,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _windowManager.RemoveWorkspace(DesktopApplication.ActiveWorkspace);
 		}
 
-        private void RebuildMenusAndToolbars(Workspace activeWorkspace)
+        private void RebuildMenusAndToolbars(IWorkspace activeWorkspace)
         {
 			// Suspend the layouts so we avoid the flicker when we empty
 			// and refill the menus and toolbars
@@ -124,13 +124,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             _menuModel = new ActionModelRoot(null);
             _toolbarModel = new ActionModelRoot(null);
 
-            _menuModel.Merge(DesktopApplication.ToolManager.MenuModel);
-            _toolbarModel.Merge(DesktopApplication.ToolManager.ToolbarModel);
+            _menuModel.Merge(DesktopApplication.ToolSet.MenuModel);
+            _toolbarModel.Merge(DesktopApplication.ToolSet.ToolbarModel);
 
             if (activeWorkspace != null)
             {
-                _menuModel.Merge(DesktopApplication.ActiveWorkspace.ToolManager.MenuModel);
-                _toolbarModel.Merge(DesktopApplication.ActiveWorkspace.ToolManager.ToolbarModel);
+                _menuModel.Merge(DesktopApplication.ActiveWorkspace.ToolSet.MenuModel);
+                _toolbarModel.Merge(DesktopApplication.ActiveWorkspace.ToolSet.ToolbarModel);
             }
 
             ToolStripBuilder.BuildMenu(this.mainMenu.Items, _menuModel.ChildNodes);

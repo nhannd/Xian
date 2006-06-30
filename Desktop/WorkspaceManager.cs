@@ -14,19 +14,19 @@ namespace ClearCanvas.Desktop
 	/// </remarks>
 	public class WorkspaceManager
 	{
-		private WorkspaceCollection m_Workspaces = new WorkspaceCollection();
-		private event EventHandler<WorkspaceEventArgs> m_WorkspaceActivatedEvent;
-		private Workspace m_ActiveWorkspace;
+		private WorkspaceCollection _workspaces = new WorkspaceCollection();
+		private event EventHandler<WorkspaceEventArgs> _workspaceActivatedEvent;
+		private IWorkspace _activeWorkspace;
 
 		internal WorkspaceManager()
 		{
-			m_Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
-			m_Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
+			_workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
+			_workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
 		}
 
 		public WorkspaceCollection Workspaces
 		{
-			get { return m_Workspaces; }
+			get { return _workspaces; }
 		}
 
 		/// <summary>
@@ -39,34 +39,34 @@ namespace ClearCanvas.Desktop
 		/// <value>The currently active <see cref="Workspace"/> or <b>null</b> if
 		/// there are no workspaces in the <see cref="WorkspaceManager"/>.</value>
 		/// <exception cref="ArgumentNullException"><paramref name="ActiveWorkspace"/> is set to <b>null</b>.</exception>
-		public Workspace ActiveWorkspace
+		public IWorkspace ActiveWorkspace
 		{
 			get
 			{
 				if (this.Workspaces.Count == 0)
 					return null;
 
-				Platform.CheckMemberIsSet(m_ActiveWorkspace, "ActiveWorkspace");
+				Platform.CheckMemberIsSet(_activeWorkspace, "ActiveWorkspace");
 
-				return m_ActiveWorkspace;
+				return _activeWorkspace;
 			}
 			private set
 			{
 				Platform.CheckForNullReference(value, "ActiveWorkspace");
 
 				// Don't bother if nothing's changed
-				if (m_ActiveWorkspace == value)
+				if (_activeWorkspace == value)
 					return;
 
 				// Set the existing active workspace to inactive
-				if (m_ActiveWorkspace != null)
-					m_ActiveWorkspace.IsActivated = false;
+				if (_activeWorkspace != null)
+					_activeWorkspace.IsActivated = false;
 
 				// Set the new active workspace
-				m_ActiveWorkspace = value;
+				_activeWorkspace = value;
 
 				// Let everyone know there's a new active workspace
-				EventsHelper.Fire(m_WorkspaceActivatedEvent, this, new WorkspaceEventArgs(m_ActiveWorkspace));
+				EventsHelper.Fire(_workspaceActivatedEvent, this, new WorkspaceEventArgs(_activeWorkspace));
 			}
 		}
 
@@ -76,8 +76,8 @@ namespace ClearCanvas.Desktop
 		/// <remarks>The event handler receives an argument of type <see cref="WorkspaceEventArgs"/>.</remarks>
 		public event EventHandler<WorkspaceEventArgs> WorkspaceActivated
 		{
-			add { m_WorkspaceActivatedEvent += value; }
-			remove { m_WorkspaceActivatedEvent -= value; }
+			add { _workspaceActivatedEvent += value; }
+			remove { _workspaceActivatedEvent -= value; }
 		}
 
 		private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
@@ -98,7 +98,7 @@ namespace ClearCanvas.Desktop
 			// Make sure that we remove the reference to the last active workspace so
 			// it can be swept up by the garbage collector			
 			if (this.Workspaces.Count == 0)
-				m_ActiveWorkspace = null;
+				_activeWorkspace = null;
 		}
 
 		private void OnActivationChanged(object sender, ActivationChangedEventArgs e)

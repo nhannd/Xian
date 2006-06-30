@@ -61,9 +61,9 @@ namespace ClearCanvas.Desktop.Tests
         {
         }
 
-        protected override ClearCanvas.Desktop.Tools.ToolContext CreateToolContext()
+        public override IToolSet ToolSet
         {
-            return new StubToolContext(new StubToolsExtensionPoint());
+            get { return new ToolSet(new StubToolContext(new StubToolsExtensionPoint())); }
         }
     }
 }

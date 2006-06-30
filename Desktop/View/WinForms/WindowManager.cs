@@ -29,11 +29,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_dockingManager.InnerControl = tabControl;
 			_tabControl = tabControl;
 			_workbenchToolViewManager = new ToolViewManager(_dockingManager);
-            _workbenchToolViewManager.ToolManager = DesktopApplication.ToolManager;
+            _workbenchToolViewManager.ToolSet = DesktopApplication.ToolSet;
 			_workspaceToolViewManager = new ToolViewManager(_dockingManager);
 		}
 
-		public void AddWorkpace(Workspace workspace)
+		public void AddWorkpace(IWorkspace workspace)
 		{
 			// Add the new tab
 			WorkspaceTab workspaceTab = new WorkspaceTab(workspace);
@@ -60,7 +60,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			HideDockingWindows();
 		}
 
-		public void RemoveWorkspace(Workspace workspace)
+		public void RemoveWorkspace(IWorkspace workspace)
 		{
 			// Find the tab that owns the workspace and remove it
 			foreach (WorkspaceTab workspaceTab in _tabControl.TabPages)
@@ -90,7 +90,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				else if (_tabControl.Style == VisualStyle.Office2003)
 					_tabControl.OfficePixelBorder = false;
 
-				_workspaceToolViewManager.ToolManager = null;
+				_workspaceToolViewManager.ToolSet = null;
 
 				// We MUST do this because of a bug in DotNetMagic where the TabControl
 				// has a private member field called _oldPage that doesn't get nulled
@@ -101,9 +101,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		public void ActivateWorkspace(Workspace workspace)
+		public void ActivateWorkspace(IWorkspace workspace)
 		{
-			_workspaceToolViewManager.ToolManager = workspace.ToolManager;
+			_workspaceToolViewManager.ToolSet = workspace.ToolSet;
 		}
 
 		private void HideDockingWindows()

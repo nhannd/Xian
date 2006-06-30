@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	class ToolViewManager
 	{
-		private ToolManager _toolManager;
+		private IToolSet _toolSet;
 		// We're using the ToolViewProxy's Type as the key as opposed the ToolViewProxy
 		// itself since we want to search on the Type, not the instance.
 		private Dictionary<Type, Content> _dockingWindows = new Dictionary<Type, Content>();
@@ -29,23 +29,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_dockingManager.ContentHidden += new DockingManager.ContentHandler(OnContentHidden);
 		}
 
-		public ToolManager ToolManager
+        public IToolSet ToolSet
 		{
-			get { return _toolManager; }
+			get { return _toolSet; }
 			set
 			{
 				// Disconnect handler from old tool views
-				if (_toolManager != null)
+				if (_toolSet != null)
 				{
-					foreach (ToolViewProxy toolViewProxy in _toolManager.ToolViews)
+					foreach (ToolViewProxy toolViewProxy in _toolSet.ToolViews)
 						toolViewProxy.ActivationChanged -= new EventHandler<ActivationChangedEventArgs>(OnToolViewActivationChanged);
 				}
 
-				_toolManager = value;
+				_toolSet = value;
 
 				// If null, then assume we want to destroy all docking windows
 				// associated with tool views.
-				if (_toolManager == null)
+				if (_toolSet == null)
 				{
 					foreach (KeyValuePair<Type, Content> pair in _dockingWindows)
 						_dockingManager.Contents.Remove(pair.Value);
@@ -54,7 +54,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					return;
 				}
 
-				foreach (ToolViewProxy toolViewProxy in _toolManager.ToolViews)
+				foreach (ToolViewProxy toolViewProxy in _toolSet.ToolViews)
 				{
 					// Connect handler to new tool views
 					toolViewProxy.ActivationChanged += new EventHandler<ActivationChangedEventArgs>(OnToolViewActivationChanged);
