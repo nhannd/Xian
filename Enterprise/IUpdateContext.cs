@@ -31,5 +31,13 @@ namespace ClearCanvas.Enterprise
         /// this context is no longer valid for use and must be disposed.
         /// </summary>
         void Rollback();
+
+        /// <summary>
+        /// Returns the set of entities that were changed when this context was committed.  This
+        /// is only meaningful after the <see cref="Commit"/> method has been called successfully.
+        /// The return value of this property prior to calling <see cref="Commit"/> or in the case where
+        /// an exception was thrown during the commit is undefined.
+        /// </summary>
+        EntityChange[] EntityChangeSet { get; }
     }
 }

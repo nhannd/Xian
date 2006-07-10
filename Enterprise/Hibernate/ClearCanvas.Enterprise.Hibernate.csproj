@@ -48,6 +48,7 @@
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />
     <Compile Include="EnumeratorWrapper.cs" />
+    <Compile Include="DefaultInterceptor.cs" />
     <Compile Include="Hql\HqlCondition.cs" />
     <Compile Include="Hql\HqlQuery.cs" />
     <Compile Include="Hql\HqlSort.cs" />

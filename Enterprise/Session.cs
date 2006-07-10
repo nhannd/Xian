@@ -17,6 +17,7 @@ namespace ClearCanvas.Enterprise
 
 
         private ServiceManager _serviceManager;
+        private TransactionMonitor _transactionMonitor;
 
         protected abstract IPersistentStore DataStore { get; }
 
@@ -29,6 +30,18 @@ namespace ClearCanvas.Enterprise
                     _serviceManager = new ServiceManager(this);
                 }
                 return _serviceManager;
+            }
+        }
+
+        public ITransactionMonitor TransactionMonitor
+        {
+            get
+            {
+                if (_transactionMonitor == null)
+                {
+                    _transactionMonitor = new TransactionMonitor(this);
+                }
+                return _transactionMonitor;
             }
         }
 

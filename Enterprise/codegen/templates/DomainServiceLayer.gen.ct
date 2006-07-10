@@ -15,6 +15,22 @@ namespace <%= @namespace %> {
     /// </summary>
 	public abstract class <%= shortName %>ServiceLayer : ServiceLayer
 	{
+	
+		<% @entityDefs.each do |e| %>
+		/// <summary>
+		/// Provides notification when a <see cref="<%= e.className %>"/> entity changes.  This
+		/// is actually just a convenience method that allows a client to hook into notifications
+		/// from the transaction monitor associated with the session.  If you subscribe to this event,
+		/// it is extremely important to explicitly unsubscribe.
+		/// </summary>
+		public event EventHandler<EntityChangeEventArgs> <%= e.className %>Changed
+		{
+			add { this.Session.TransactionMonitor.Subscribe(typeof(<%= e.className %>), value); }
+			remove { this.Session.TransactionMonitor.Unsubscribe(typeof(<%= e.className %>), value); }
+		}
+	  	<% end %>
+	
+	
 		<% @enumDefs.each do |e| %>
 		/// <summary>
 		/// Returns the <see cref="<%= e.enumName %>"/> enum table

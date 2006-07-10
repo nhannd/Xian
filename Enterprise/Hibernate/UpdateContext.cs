@@ -19,6 +19,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             _transaction = this.Session.BeginTransaction();
         }
 
+        public EntityChange[] EntityChangeSet
+        {
+            get { return this.Interceptor.EntityChangeSet; }
+        }
+
         public bool InTransaction
         {
             get { return _transaction != null; }

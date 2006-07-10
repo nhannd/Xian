@@ -22,12 +22,15 @@ namespace ClearCanvas.Enterprise
                 object retval = null;
                 try
                 {
-                    // set the update context as the current context of the service layer
+                    // set the current context of the service layer
                     serviceLayer.CurrentContext = uctx;
                     retval = invocation.Proceed();
                     
                     // commit transaction
                     uctx.Commit();
+
+                    // forward the change set to the transaction monitor
+                    this.Session.TransactionMonitor.Queue(uctx.EntityChangeSet);
 
                     return retval;
                 }

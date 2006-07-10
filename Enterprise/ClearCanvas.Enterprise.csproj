@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityChange.cs" />
+    <Compile Include="EntityChangeEventArgs.cs" />
+    <Compile Include="ITransactionMonitor.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="IServiceLayer.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="ServiceOperationAdvice.cs" />
     <Compile Include="ServiceOperationAttribute.cs" />
     <Compile Include="ServiceManager.cs" />
+    <Compile Include="TransactionMonitor.cs" />
     <Compile Include="UpdateContextAdvice.cs" />
     <Compile Include="UpdateOperationAttribute.cs" />
   </ItemGroup>

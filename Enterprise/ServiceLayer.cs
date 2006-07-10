@@ -29,6 +29,11 @@ namespace ClearCanvas.Enterprise
             _session = session;
         }
 
+        protected Session Session
+        {
+            get { return _session; }
+        }
+
         /// <summary>
         /// Allows the current context to be set by the framework
         /// </summary>

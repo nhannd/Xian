@@ -23,6 +23,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         private ISession _session;
         private bool _readOnly;
+        private DefaultInterceptor _interceptor;
 
         /// <summary>
         /// 
@@ -31,7 +32,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="readOnly"></param>
         internal PersistenceContext(ISessionFactory sessionFactory, bool readOnly)
         {
-            _session = sessionFactory.OpenSession();
+            _session = sessionFactory.OpenSession(_interceptor = new DefaultInterceptor());
             _readOnly = readOnly;
         }
 
@@ -81,6 +82,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         protected virtual void Dispose(bool disposing)
         {
             Close();
+        }
+
+        protected DefaultInterceptor Interceptor
+        {
+            get { return _interceptor; }
         }
     }
 }
