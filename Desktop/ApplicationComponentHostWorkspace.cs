@@ -7,23 +7,8 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
-    // intentionally left off the [ExtensionPoint] attribute - do not actually want to expose this to framework
-    // it is just a dummy class to make this work for now
-    public class StubToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public class ApplicationComponentHostWorkspace : Workspace
     {
-        // this is just a dummy tool context to make this work for now
-        public class WorkspaceToolContext : ToolContext
-        {
-            public WorkspaceToolContext()
-                : base(new StubToolExtensionPoint())
-            {
-            }
-        }
-
         // implements the host interface, which is exposed to the hosted application component
         class Host : IApplicationComponentHost
         {
@@ -33,12 +18,16 @@ namespace ClearCanvas.Desktop
             {
                 _workspace = workspace;
             }
+
+            public void Complete()
+            {
+                DesktopApplication.WorkspaceManager.Workspaces.Remove(_workspace);
+            }
         }
 
         private IApplicationComponent _component;
         private IExtensionPoint _componentViewExtPoint;
         private ApplicationComponentHostWorkspaceView _view;
-        private ToolSet _toolSet;
 
 
         public ApplicationComponentHostWorkspace(string title, IApplicationComponent component, IExtensionPoint componentViewExtPoint)
@@ -72,14 +61,7 @@ namespace ClearCanvas.Desktop
 
         public override IToolSet ToolSet
         {
-            get
-            {
-                if (_toolSet == null)
-                {
-                    _toolSet = new ToolSet(new WorkspaceToolContext());
-                }
-                return _toolSet;
-            }
+            get { return _component.ToolSet; }
         }
     }
 }

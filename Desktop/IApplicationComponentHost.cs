@@ -6,5 +6,6 @@ namespace ClearCanvas.Desktop
 {
     public interface IApplicationComponentHost
     {
+        void Complete();
     }
 }

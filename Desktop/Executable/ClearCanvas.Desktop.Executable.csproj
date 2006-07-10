@@ -188,8 +188,16 @@ if $(SolutionName) == Ris goto RisModules
 
       :: Copy Enterprise	
       copy "..\..\..\..\Enterprise\bin\$(ConfigurationName)\ClearCanvas.Enterprise.dll" .\plugins
+      copy "..\..\..\..\Enterprise\refs\Iesi.Collections.dll" .\plugins
+      copy "..\..\..\..\Enterprise\refs\Spring.Core.dll" .\plugins
+      copy "..\..\..\..\Enterprise\refs\Spring.Aop.dll" .\plugins
+
       copy "..\..\..\..\Enterprise\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Enterprise.Hibernate.dll" .\plugins
       copy "..\..\..\..\Enterprise\Hibernate\DdlWriter\bin\$(ConfigurationName)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" .\plugins
+      copy "..\..\..\..\Enterprise\Hibernate\refs\Castle.DynamicProxy.dll" .\plugins
+      copy "..\..\..\..\Enterprise\Hibernate\refs\HashCodeProvider.dll" .\plugins
+      copy "..\..\..\..\Enterprise\Hibernate\refs\NHibernate.dll" .\plugins
+
 
       :: copy Healthcare
       copy "..\..\..\..\Healthcare\bin\$(ConfigurationName)\ClearCanvas.Healthcare.dll" .\plugins

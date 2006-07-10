@@ -42,12 +42,30 @@
     <Compile Include="PatientAdminControl.Designer.cs">
       <DependentUpon>PatientAdminControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="PatientDetailComponentView.cs" />
+    <Compile Include="PatientDetailControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientDetailControl.Designer.cs">
+      <DependentUpon>PatientDetailControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientSearchControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientSearchControl.Designer.cs">
+      <DependentUpon>PatientSearchControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientSearchToolView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
+      <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
+      <Name>ClearCanvas.Controls.WinForms</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
@@ -69,6 +87,14 @@
     <EmbeddedResource Include="PatientAdminControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PatientAdminControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientDetailControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PatientDetailControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientSearchControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

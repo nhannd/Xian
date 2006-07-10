@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region IApplicationComponentView Members
 
-        public void SetComponent(IApplicationComponent component)
+        public virtual void SetComponent(IApplicationComponent component)
         {
             _component = component;
         }

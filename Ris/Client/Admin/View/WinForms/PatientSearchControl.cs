@@ -6,20 +6,18 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-using ClearCanvas.Desktop.View.WinForms;
-
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    public partial class PatientAdminControl : UserControl
+    public partial class PatientSearchControl : UserControl
     {
-        public PatientAdminControl()
+        public PatientSearchControl()
         {
             InitializeComponent();
         }
 
-        public TableView PatientTableView
+        public Button SearchButton
         {
-            get { return _patientTableView; }
+            get { return _searchButton; }
         }
     }
 }

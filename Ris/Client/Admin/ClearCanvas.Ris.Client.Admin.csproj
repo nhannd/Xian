@@ -33,8 +33,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminTool.cs" />
+    <Compile Include="PatientAdminLaunchTool.cs" />
     <Compile Include="PatientAdminComponent.cs" />
+    <Compile Include="PatientDetailComponent.cs" />
+    <Compile Include="PatientSearchTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +50,14 @@
     <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\ClearCanvas.Enterprise.csproj">
+      <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
+      <Name>ClearCanvas.Enterprise</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Healthcare\ClearCanvas.Healthcare.csproj">
+      <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
+      <Name>ClearCanvas.Healthcare</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

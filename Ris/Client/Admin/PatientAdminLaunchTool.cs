@@ -9,11 +9,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("patientAdmin", "Admin/Patient")]
+    [MenuAction("patientAdmin", "Admin/Patients")]
     [ClickHandler("patientAdmin", "LaunchPatientAdmin")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class AdminTool : Tool
+    public class PatientAdminLaunchTool : Tool
     {
         public void LaunchPatientAdmin()
         {

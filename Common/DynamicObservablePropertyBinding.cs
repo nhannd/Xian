@@ -5,8 +5,8 @@ using System.Reflection;
 
 namespace ClearCanvas.Common
 {
-    delegate T PropertyGetDelegate<T>();
-    delegate void PropertySetDelegate<T>(T val);
+    public delegate T PropertyGetDelegate<T>();
+    public delegate void PropertySetDelegate<T>(T val);
 
     /// <summary>
     /// Provides a dynamic implementation of <see cref="IObservablePropertyBinding" />.  The implementation
