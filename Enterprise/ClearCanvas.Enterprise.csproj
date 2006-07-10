@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
+    <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="ITransactionMonitor.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="AuditAdvice.cs" />

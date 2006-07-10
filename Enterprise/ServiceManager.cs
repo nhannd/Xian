@@ -37,8 +37,13 @@ namespace ClearCanvas.Enterprise
             IAdvisor auditAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ServiceOperationAttribute), true), new AuditAdvice(_session));
             IAdvisor readContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ReadOperationAttribute), true), new ReadContextAdvice(_session));
             IAdvisor updateContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new UpdateContextAdvice(_session));
+            IAdvisor transactionMonitorAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new TransactionMonitorAdvice(_session));
 
             ProxyFactory factory = new ProxyFactory(service);
+
+            // transaction monitor advice should occur outside of audit advice
+            factory.AddAdvisor(transactionMonitorAdvisor);
+ 
             // must add audit advice before context advice
             factory.AddAdvisor(auditAdvisor);
 
