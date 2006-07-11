@@ -1,41 +1,50 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Presentation
 {
 
     public class TableData<TItem> : ITableData
     {
-        class TableRow<T> : ITableRow
+        public class TableRow<T> : ITableRow
         {
             private T _item;
-            private ITableData _table;
+            private TableData<T> _table;
 
-            internal TableRow(ITableData table, T item)
+            internal TableRow(TableData<T> table, T item)
             {
                 _table = table;
                 _item = item;
             }
 
+            public T Item
+            {
+                get { return _item; }
+                set { _item = value; }
+            }
+
             #region ITableRow Members
 
-            public object Item
+            object ITableRow.Item
             {
                 get { return _item; }
             }
 
-            public object GetValue(int column)
+            object ITableRow.GetValue(int column)
             {
-                return ((TableColumn<T>)_table.Columns[column]).GetValue(_item);
+                return _table.Columns[column].GetValue(_item);
             }
 
             #endregion
         }
 
 
-        private List<ITableColumn> _columns;
-        private List<ITableRow> _rows;
+        private ArrayList _columns;
+        private ArrayList _rows;
 
         public TableData()
             :this(new TableColumn<TItem>[] {})
@@ -44,8 +53,8 @@ namespace ClearCanvas.Desktop.Presentation
 
         public TableData(TableColumn<TItem>[] columns)
         {
-            _rows = new List<ITableRow>();
-            _columns = new List<ITableColumn>();
+            _rows = new ArrayList();
+            _columns = new ArrayList();
             _columns.AddRange(columns);
         }
         
@@ -62,25 +71,35 @@ namespace ClearCanvas.Desktop.Presentation
             }
         }
 
-        public void Fill(IList<TItem> data)
+        public void Fill(ICollection<TItem> data)
         {
-            _rows = new List<ITableRow>();
+            _rows.Clear();
             foreach (TItem item in data)
             {
                 _rows.Add(new TableRow<TItem>(this, item));
             }
         }
 
-        #region ITableDataModel Members
-
-        public IList<ITableRow> Rows
+        public TableRow<TItem>[] Rows
         {
-            get { return _rows; }
+            get { return (TableRow<TItem>[])_rows.ToArray(typeof(TableRow<TItem>)); }
         }
 
-        public IList<ITableColumn> Columns
+        public TableColumn<TItem>[] Columns
         {
-            get { return _columns; }
+            get { return (TableColumn<TItem>[])_columns.ToArray(typeof(TableColumn<TItem>)); }
+        }
+
+        #region ITableData Members
+
+        ITableRow[] ITableData.Rows
+        {
+            get { return (ITableRow[])_rows.ToArray(typeof(ITableRow)); }
+        }
+
+        ITableColumn[] ITableData.Columns
+        {
+            get { return (ITableColumn[])_columns.ToArray(typeof(ITableColumn)); }
         }
 
         #endregion

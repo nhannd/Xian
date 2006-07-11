@@ -32,7 +32,6 @@ namespace ClearCanvas.ImageViewer
         private ImageWorkspace _workspace;
 
         public ImageWorkspaceToolContext(ImageWorkspace workspace)
-            : base(new ImageWorkspaceToolExtensionPoint())
         {
             _workspace = workspace;
         }
@@ -249,7 +248,7 @@ namespace ClearCanvas.ImageViewer
             {
                 if(_toolSet == null)
                 {
-                    _toolSet = new ToolSet(new ImageWorkspaceToolContext(this));
+                    _toolSet = new ToolSet(new ImageWorkspaceToolExtensionPoint(), new ImageWorkspaceToolContext(this));
                 }
                 return _toolSet;
             }

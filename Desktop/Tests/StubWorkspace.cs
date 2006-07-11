@@ -33,14 +33,6 @@ namespace ClearCanvas.Desktop.Tests
             #endregion
         }
 
-        class StubToolContext : ToolContext
-        {
-            public StubToolContext(IExtensionPoint xp)
-                : base(xp)
-            {
-            }
-        }
-
         class StubToolsExtensionPoint : ExtensionPoint<ITool>
         {
         }
@@ -63,7 +55,7 @@ namespace ClearCanvas.Desktop.Tests
 
         public override IToolSet ToolSet
         {
-            get { return new ToolSet(new StubToolContext(new StubToolsExtensionPoint())); }
+            get { return new ToolSet(new StubToolsExtensionPoint(), new ToolContext()); }
         }
     }
 }

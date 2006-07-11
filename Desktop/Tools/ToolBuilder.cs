@@ -12,12 +12,12 @@ namespace ClearCanvas.Desktop.Tools
     /// </summary>
     public class ToolBuilder
     {
-        private ToolContext _context;
+        private ToolSet _toolSet;
         private ITool _tool;
 
-        internal ToolBuilder(ToolContext context, ITool tool)
+        internal ToolBuilder(ToolSet toolSet, ITool tool)
         {
-            _context = context;
+            _toolSet = toolSet;
             _tool = tool;
         }
 
@@ -31,7 +31,7 @@ namespace ClearCanvas.Desktop.Tools
             ResourceResolver resolver = new ResourceResolver(new Assembly[] { _tool.GetType().Assembly });
             string title = resolver.Resolve(a.Title);
 
-            _context.RegisterView(new ToolViewProxy(_tool, xp, title, a.DisplayHint, viewActivePropertyBinding));
+            _toolSet.RegisterView(new ToolViewProxy(_tool, xp, title, a.DisplayHint, viewActivePropertyBinding));
         }
     }
 }

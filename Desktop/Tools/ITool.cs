@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop.Tools
         /// Called by the framework when the tool is first loaded, to set its context.
         /// </summary>
         /// <param name="context">A context which provides the tool with a sense of its environment.</param>
-        void SetContext(ToolContext context);
+        void SetContext(IToolContext context);
 
         /// <summary>
         /// Called by the framework to allow the tool to initialize itself.  This method will

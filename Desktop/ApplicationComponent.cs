@@ -18,19 +18,6 @@ namespace ClearCanvas.Desktop
         {
         }
 
-        /// <summary>
-        /// Provides a default tool-context that will not load any tools
-        /// </summary>
-        public class StubToolContext : ToolContext
-        {
-            internal StubToolContext()
-                : base(new StubToolExtensionPoint())
-            {
-            }
-        }
-
-
-
         private IApplicationComponentHost _host;
         private ToolSet _stubToolSet;
 
@@ -61,7 +48,7 @@ namespace ClearCanvas.Desktop
             {
                 if (_stubToolSet == null)
                 {
-                    _stubToolSet = new ToolSet(new StubToolContext());
+                    _stubToolSet = new ToolSet(new StubToolExtensionPoint(), new ToolContext());
                 }
                 return _stubToolSet;
             }

@@ -12,13 +12,22 @@ namespace ClearCanvas.Desktop
     {
     }
 
+    /// <summary>
+    /// Defines an extension point for tools that are applicable to the desktop as a whole.
+    /// </summary>
+    [ExtensionPoint()]
+    public class DesktopToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+
+
     [ClearCanvas.Common.ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class DesktopApplication : IApplicationRoot
     {
         private static DesktopApplication _instance;
         private static WorkspaceManager _workspaceManager;
         private static ToolSet _toolSet;
-        private static ToolContext _desktopToolContext;
         private static IDesktopView _view;
 
         /// <summary>
@@ -106,9 +115,8 @@ namespace ClearCanvas.Desktop
         {
             if (_toolSet != null)
                 return;
-            _desktopToolContext = new DesktopToolContext();
-            _toolSet = new ToolSet(_desktopToolContext);
-            _desktopToolContext.Activate(true);
+            _toolSet = new ToolSet(new DesktopToolExtensionPoint(), new ToolContext());
+            _toolSet.Activate(true);
         }
     }
 }

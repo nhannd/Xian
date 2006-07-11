@@ -6,7 +6,7 @@ namespace ClearCanvas.Desktop.Presentation
 {
     public interface ITableData
     {
-        IList<ITableRow> Rows { get; }
-        IList<ITableColumn> Columns { get; }
+        ITableRow[] Rows { get; }
+        ITableColumn[] Columns { get; }
     }
 }

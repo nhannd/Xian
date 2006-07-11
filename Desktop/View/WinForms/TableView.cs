@@ -13,6 +13,30 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	public partial class TableView : UserControl
 	{
+        class Selection : ISelection
+        {
+            private ITableRow[] _rows;
+
+            internal Selection(ITableRow[] rows)
+            {
+                _rows = rows;
+            }
+
+            #region ISelection Members
+
+            public ITableRow[] SelectedRows
+            {
+                get { return _rows; }
+            }
+
+            public ITableRow SelectedRow
+            {
+                get { return _rows.Length > 0 ? _rows[0] : null; }
+            }
+
+            #endregion
+        }
+
         private ITableData _tableData;
         private event EventHandler<TableViewEventArgs> _itemDoubleClicked;
         private event EventHandler<TableViewEventArgs> _selectionChanged;
@@ -24,9 +48,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 		}
 
-        public void SetTable(ITableData table)
+        public void SetData(ITableData tableData)
         {
-            _tableData = table;
+            _tableData = tableData;
+
             RefreshColumns();
             RefreshRows();
         }
@@ -46,25 +71,28 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public void RefreshRows()
         {
+            _dataGridView.SuspendLayout();
             _dataGridView.Rows.Clear();
 
             foreach(ITableRow tr in _tableData.Rows)
             {
-                object[] rowValues = new object[_tableData.Columns.Count];
-                for(int c = 0; c < _tableData.Columns.Count; c++)
+                object[] rowValues = new object[_tableData.Columns.Length];
+                for(int c = 0; c < _tableData.Columns.Length; c++)
                 {
                     rowValues[c] = tr.GetValue(c);
                 }
 
                 int i = _dataGridView.Rows.Add(rowValues);
-                _dataGridView.Rows[i].Tag = tr.Item;
+                _dataGridView.Rows[i].Tag = tr;
             }
+            _dataGridView.ResumeLayout(true);
+
         }
 
         /// <summary>
-        /// Returns the set of rows that are currently selected
+        /// Returns the current selection
         /// </summary>
-        public ITableRow[] SelectedRows
+        public ISelection CurrentSelection
         {
             get
             {
@@ -73,21 +101,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     rows.Add((ITableRow)dr.Tag);
                 }
-                return rows.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Convenience method to obtain the currently selected row in a single-select scenario.
-        /// If no rows are selected, the method returns null.  If more than one row is selected,
-        /// it is undefined which row will be returned.
-        /// </summary>
-        public ITableRow SelectedRow
-        {
-            get
-            {
-                ITableRow[] selectedRows = this.SelectedRows;
-                return selectedRows.Length > 0 ? selectedRows[0] : null;
+                return new Selection(rows.ToArray());
             }
         }
 

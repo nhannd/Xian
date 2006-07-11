@@ -9,9 +9,9 @@ namespace ClearCanvas.Desktop.Tools
     /// </summary>
     public static class ToolAttributeProcessor
     {
-        public static void Process(ITool tool, ToolContext context)
+        public static void Process(ITool tool, ToolSet toolSet)
         {
-            ToolBuilder builder = new ToolBuilder(context, tool);
+            ToolBuilder builder = new ToolBuilder(toolSet, tool);
 
             object[] attributes = tool.GetType().GetCustomAttributes(typeof(ToolAttribute), true);
             foreach (ToolAttribute a in attributes)

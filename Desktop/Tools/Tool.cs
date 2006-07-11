@@ -11,9 +11,9 @@ namespace ClearCanvas.Desktop.Tools
     /// </summary>
 	public abstract class Tool : ITool
 	{
-        private ToolContext _context;
+        private IToolContext _context;
 
-        public void SetContext(ToolContext context)
+        public void SetContext(IToolContext context)
         {
             _context = context;
         }
@@ -30,7 +30,7 @@ namespace ClearCanvas.Desktop.Tools
         /// It is valid only after the <see cref="SetContext"/> method has been called by
         /// the framework
         /// </remarks>
-        protected ToolContext Context
+        protected IToolContext Context
         {
             get { return _context; }
         }
