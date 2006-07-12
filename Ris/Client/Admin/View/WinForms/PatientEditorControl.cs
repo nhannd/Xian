@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    public partial class PatientDetailControl : UserControl
+    public partial class PatientEditorControl : UserControl
     {
-        private PatientDetailComponent _component;
+        private PatientEditorComponent _component;
 
-        public PatientDetailControl(PatientDetailComponent component)
+        public PatientEditorControl(PatientEditorComponent component)
         {
             InitializeComponent();
             _component = component;

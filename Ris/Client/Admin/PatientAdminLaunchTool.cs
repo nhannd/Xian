@@ -9,20 +9,15 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("patientAdmin", "Admin/Patients")]
-    [ClickHandler("patientAdmin", "LaunchPatientAdmin")]
+//    [MenuAction("patientAdmin", "Admin/Patients")]
+//    [ClickHandler("patientAdmin", "LaunchPatientAdmin")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class PatientAdminLaunchTool : Tool
     {
         public void LaunchPatientAdmin()
         {
-            Workspace workspace = new ApplicationComponentHostWorkspace(
-                "Patient Admin",
-                new PatientAdminComponent(),
-                new PatientAdminComponentViewExtensionPoint());
-
-            DesktopApplication.WorkspaceManager.Workspaces.Add(workspace);
+            ApplicationComponent.LaunchAsWorkspace(new PatientAdminComponent(), "Patient Admin", null);
         }
     }
 }

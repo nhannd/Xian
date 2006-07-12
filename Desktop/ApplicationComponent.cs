@@ -7,8 +7,30 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
+    public delegate void ApplicationComponentExitDelegate(IApplicationComponent component);    
+    
     public abstract class ApplicationComponent : IApplicationComponent
     {
+        public static IWorkspace LaunchAsWorkspace(
+            IApplicationComponent component,
+            string title,
+            ApplicationComponentExitDelegate exitCallback)
+        {
+
+            object[] attrs = component.GetType().GetCustomAttributes(typeof(ApplicationComponentViewAttribute), false);
+            if (attrs.Length == 0)
+                throw new Exception("View attribute not specified");    //TODO elaborate
+
+            ApplicationComponentViewAttribute viewAttribute = (ApplicationComponentViewAttribute)attrs[0];
+            IExtensionPoint viewExtensionPoint = (IExtensionPoint)Activator.CreateInstance(viewAttribute.ViewExtensionPointType);
+
+            IWorkspace workspace = new ApplicationComponentHostWorkspace(title, component, viewExtensionPoint, exitCallback);
+            DesktopApplication.WorkspaceManager.Workspaces.Add(workspace);
+            return workspace;
+        }
+
+
+
         /// <summary>
         /// This class is intentionally not exposed as an extension point because
         /// it is not intended that any extensions ever be implemented - it is only
@@ -20,9 +42,11 @@ namespace ClearCanvas.Desktop
 
         private IApplicationComponentHost _host;
         private ToolSet _stubToolSet;
+        private ApplicationComponentExitCode _exitCode;
 
         public ApplicationComponent()
         {
+            _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
         }
 
         protected IApplicationComponentHost Host
@@ -52,6 +76,25 @@ namespace ClearCanvas.Desktop
                 }
                 return _stubToolSet;
             }
+        }
+
+        public virtual void Start()
+        {
+        }
+
+        public virtual void Stop()
+        {
+        }
+
+        public virtual bool CanExit()
+        {
+            return true;
+        }
+
+        public virtual ApplicationComponentExitCode ExitCode
+        {
+            get { return _exitCode; }
+            protected set { _exitCode = value; }
         }
 
         #endregion

@@ -19,24 +19,37 @@ namespace ClearCanvas.Desktop
                 _workspace = workspace;
             }
 
-            public void Complete()
+            public void Exit()
             {
-                DesktopApplication.WorkspaceManager.Workspaces.Remove(_workspace);
+                // close the workspace
+                // pass true, because the component requested the close, therefore there is no need
+                // to call _component.CanClose()
+                _workspace.Close(true);
             }
+
+            public MessageBoxResult ShowMessageBox(string message, MessageBoxButtons buttons)
+            {
+                return Platform.ShowMessageBox(message, buttons);
+            }
+
         }
 
         private IApplicationComponent _component;
         private IExtensionPoint _componentViewExtPoint;
         private ApplicationComponentHostWorkspaceView _view;
+        private ApplicationComponentExitDelegate _exitCallback;
 
 
-        public ApplicationComponentHostWorkspace(string title, IApplicationComponent component, IExtensionPoint componentViewExtPoint)
+        internal ApplicationComponentHostWorkspace(string title, IApplicationComponent component,
+            IExtensionPoint componentViewExtPoint, ApplicationComponentExitDelegate exitCallback)
             :base(title)
         {
             _component = component;
             _componentViewExtPoint = componentViewExtPoint;
+            _exitCallback = exitCallback;
 
             _component.SetHost(new Host(this));
+            _component.Start();
         }
 
 
@@ -54,9 +67,29 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        public override void Close()
+        {
+            // try closing, but don't force the component to close
+            Close(false);
+        }
+
+        protected void Close(bool force)
+        {
+            if (force || _component.CanExit())
+            {
+                // calling the base class will cause the workspace to close
+                base.Close();
+
+                if (_exitCallback != null)
+                {
+                    _exitCallback(_component);
+                }
+            }
+        }
+
         public override void Cleanup()
         {
-            // nothing to do
+            _component.Stop();
         }
 
         public override IToolSet ToolSet

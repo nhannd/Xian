@@ -12,14 +12,30 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     public partial class PatientAdminControl : UserControl
     {
-        public PatientAdminControl()
+        private PatientAdminComponent _component;
+
+        public PatientAdminControl(PatientAdminComponent component)
         {
             InitializeComponent();
+
+            _component = component;
+
+            _component.WorkingSetChanged += new EventHandler(_component_WorkingSetChanged);
         }
 
-        public TableView PatientTableView
+        private void _component_WorkingSetChanged(object sender, EventArgs e)
         {
-            get { return _patientTableView; }
+            _patientTableView.SetData(_component.WorkingSetTableData);
+        }
+
+        private void _patientTableView_ItemDoubleClicked(object sender, TableViewEventArgs e)
+        {
+            _component.RowDoubleClick();
+        }
+
+        private void _patientTableView_SelectionChanged(object sender, TableViewEventArgs e)
+        {
+            _component.SetSelection(_patientTableView.CurrentSelection);
         }
     }
 }

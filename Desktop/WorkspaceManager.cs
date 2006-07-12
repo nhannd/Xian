@@ -82,18 +82,16 @@ namespace ClearCanvas.Desktop
 
 		private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
 		{
-			e.Workspace.ActivationChangedEvent += new EventHandler<ActivationChangedEventArgs>(OnActivationChanged);
+			e.Workspace.ActivationChanged += OnActivationChanged;
+            e.Workspace.WorkspaceClosed += OnWorkspaceClosed;
 			// Set the workspace just added to active
 			e.Workspace.IsActivated = true;
-
-            // NB- this is now done internally when the workspace is activated
-            //e.Workspace.InitializeTools();
 		}
 
 		private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
 		{
-			e.Workspace.ActivationChangedEvent -= new EventHandler<ActivationChangedEventArgs>(OnActivationChanged);
-			e.Workspace.Cleanup();
+			e.Workspace.ActivationChanged -= OnActivationChanged;
+            e.Workspace.WorkspaceClosed -= OnWorkspaceClosed;
 
 			// Make sure that we remove the reference to the last active workspace so
 			// it can be swept up by the garbage collector			
@@ -105,5 +103,15 @@ namespace ClearCanvas.Desktop
 		{
 			this.ActiveWorkspace = sender as Workspace;
 		}
+
+        /// <summary>
+        /// The workspace was closed, so remove it from the collection
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnWorkspaceClosed(object sender, EventArgs e)
+        {
+            _workspaces.Remove((IWorkspace)sender);
+        }
 	}
 }

@@ -263,14 +263,20 @@ namespace ClearCanvas.Common
 
 		public static void ShowMessageBox(string message)
 		{
+            ShowMessageBox(message, MessageBoxButtons.Ok);
+		}
+
+        public static MessageBoxResult ShowMessageBox(string message, MessageBoxButtons buttons)
+        {
             if (_messageBox == null)
             {
                 MessageBoxExtensionPoint xp = new MessageBoxExtensionPoint();
                 _messageBox = (IMessageBox)xp.CreateExtension();
             }
 
-			_messageBox.Show(message);
-		}
+            return _messageBox.Show(message, buttons);
+        }
+
 
 		/// <summary>
 		/// Checks if a string is empty.

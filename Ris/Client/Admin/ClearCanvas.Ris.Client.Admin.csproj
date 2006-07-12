@@ -33,9 +33,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PatientAddTool.cs" />
+    <Compile Include="PatientAddEditToolBase.cs" />
     <Compile Include="PatientAdminLaunchTool.cs" />
     <Compile Include="PatientAdminComponent.cs" />
-    <Compile Include="PatientDetailComponent.cs" />
+    <Compile Include="PatientEditorComponent.cs" />
+    <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

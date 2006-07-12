@@ -74,6 +74,7 @@
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />
     <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="ApplicationComponentViewAttribute.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommandAddedEventArgs.cs" />
     <Compile Include="CommandHistory.cs" />

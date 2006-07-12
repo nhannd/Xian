@@ -42,12 +42,12 @@
     <Compile Include="PatientAdminControl.Designer.cs">
       <DependentUpon>PatientAdminControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientDetailComponentView.cs" />
-    <Compile Include="PatientDetailControl.cs">
+    <Compile Include="PatientEditorComponentView.cs" />
+    <Compile Include="PatientEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientDetailControl.Designer.cs">
-      <DependentUpon>PatientDetailControl.cs</DependentUpon>
+    <Compile Include="PatientEditorControl.Designer.cs">
+      <DependentUpon>PatientEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientSearchControl.cs">
       <SubType>UserControl</SubType>
@@ -88,9 +88,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PatientAdminControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientDetailControl.resx">
+    <EmbeddedResource Include="PatientEditorControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientDetailControl.cs</DependentUpon>
+      <DependentUpon>PatientEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientSearchControl.resx">
       <SubType>Designer</SubType>

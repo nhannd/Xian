@@ -38,6 +38,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._patientTableView.Name = "_patientTableView";
             this._patientTableView.Size = new System.Drawing.Size(720, 281);
             this._patientTableView.TabIndex = 0;
+            this._patientTableView.ItemDoubleClicked += new System.EventHandler<ClearCanvas.Desktop.View.WinForms.TableViewEventArgs>(this._patientTableView_ItemDoubleClicked);
+            this._patientTableView.SelectionChanged += new System.EventHandler<ClearCanvas.Desktop.View.WinForms.TableViewEventArgs>(this._patientTableView_SelectionChanged);
             // 
             // PatientAdminControl
             // 

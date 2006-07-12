@@ -8,23 +8,23 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    [ExtensionOf(typeof(PatientDetailComponentViewExtensionPoint))]
-    public class PatientDetailComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PatientEditorComponentViewExtensionPoint))]
+    public class PatientEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientDetailControl _control;
-        private PatientDetailComponent _component;
+        private PatientEditorControl _control;
+        private PatientEditorComponent _component;
 
-        public PatientDetailComponentView()
+        public PatientEditorComponentView()
         {
         }
 
-        protected PatientDetailControl Control
+        protected PatientEditorControl Control
         {
             get
             {
                 if (_control == null)
                 {
-                    _control = new PatientDetailControl(_component);
+                    _control = new PatientEditorControl(_component);
                     _control.OkButton.Click += new EventHandler(OkButton_Click);
                     _control.CancelButton.Click += new EventHandler(CancelButton_Click);
                 }
@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void OkButton_Click(object sender, EventArgs e)
         {
-            _component.Complete();
+            _component.Accept();
         }
 
         public override object GuiElement
@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientDetailComponent)component;
+            _component = (PatientEditorComponent)component;
         }
 
         #endregion

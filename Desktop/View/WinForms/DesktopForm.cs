@@ -44,7 +44,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_windowManager = new WindowManager(this.toolStripContainer.ContentPanel, this.tabControl);
 
 			RebuildMenusAndToolbars(null);
-			this.tabControl.ClosePressed += new EventHandler(OnCloseWorkspace);
+			this.tabControl.ClosePressed += new EventHandler(OnCloseWorkspaceTab);
         }
 
         private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         // This is the event handler for when a workspace is removed from the
-        // WorkspaceManager.  Not to be confused with OnCloseWorkspace
+        // WorkspaceManager.  Not to be confused with OnCloseWorkspaceTab
         private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
         {
             try
@@ -92,7 +92,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
         }
 
-		private void OnCloseWorkspace(object sender, EventArgs e)
+        private void OnCloseWorkspaceTab(object sender, EventArgs e)
 		{
 			try
 			{
@@ -108,7 +108,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		
 		internal void RemoveActiveWorkspace()
         {
-            _windowManager.RemoveWorkspace(DesktopApplication.ActiveWorkspace);
+            DesktopApplication.ActiveWorkspace.Close();
 		}
 
         private void RebuildMenusAndToolbars(IWorkspace activeWorkspace)

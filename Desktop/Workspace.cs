@@ -25,6 +25,7 @@ namespace ClearCanvas.Desktop
 
 		private event EventHandler<ActivationChangedEventArgs> _activationChangedEvent;
         private event EventHandler _titleChanged;
+        private event EventHandler _workspaceClosed;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Workspace"/> class.
@@ -84,7 +85,7 @@ namespace ClearCanvas.Desktop
 			get;
 		}
 
-		public event EventHandler<ActivationChangedEventArgs> ActivationChangedEvent
+		public event EventHandler<ActivationChangedEventArgs> ActivationChanged
 		{
 			add { _activationChangedEvent += value; }
 			remove { _activationChangedEvent -= value; }
@@ -97,6 +98,18 @@ namespace ClearCanvas.Desktop
         {
             add { _titleChanged += value; }
             remove { _titleChanged -= value; }
+        }
+
+        public event EventHandler WorkspaceClosed
+        {
+            add { _workspaceClosed += value; }
+            remove { _workspaceClosed -= value; }
+        }
+
+        public virtual void Close()
+        {
+            Cleanup();
+            EventsHelper.Fire(_workspaceClosed, this, new EventArgs());
         }
 
 		public abstract void Cleanup();

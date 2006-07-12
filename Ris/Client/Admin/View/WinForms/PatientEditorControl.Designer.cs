@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    partial class PatientDetailControl
+    partial class PatientEditorControl
     {
         /// <summary> 
         /// Required designer variable.

@@ -17,43 +17,17 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         public void SetComponent(IApplicationComponent component)
         {
             _component = (PatientAdminComponent)component;
-            _component.WorkingSetChanged += new EventHandler(PatientAdminComponent_WorkingSetChanged);
-        }
-
-        public void PatientAdminComponent_WorkingSetChanged(object sender, EventArgs e)
-        {
-            this.Control.PatientTableView.RefreshRows();
-        }
-
-        protected PatientAdminControl Control
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new PatientAdminControl();
-                    _control.PatientTableView.SetTable(_component.SearchResults);
-                    _control.PatientTableView.SelectionChanged += new EventHandler<TableViewEventArgs>(PatientTableView_SelectionChanged);
-                    _control.PatientTableView.ItemDoubleClicked += new EventHandler<TableViewEventArgs>(PatientTableView_ItemDoubleClicked);
-                }
-                return _control;
-            }
-        }
-
-        private void PatientTableView_ItemDoubleClicked(object sender, TableViewEventArgs e)
-        {
-            _component.OpenPatient(0);
-        }
-
-        private void PatientTableView_SelectionChanged(object sender, TableViewEventArgs e)
-        {
         }
 
         public override object GuiElement
         {
             get
             {
-                return this.Control;
+                if (_control == null)
+                {
+                    _control = new PatientAdminControl(_component);
+                }
+                return _control;
             }
         }
     }

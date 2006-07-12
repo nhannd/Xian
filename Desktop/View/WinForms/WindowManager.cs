@@ -62,17 +62,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public void RemoveWorkspace(IWorkspace workspace)
 		{
-			// Find the tab that owns the workspace and remove it
-			foreach (WorkspaceTab workspaceTab in _tabControl.TabPages)
-			{
-				if (workspaceTab.Workspace == workspace)
-				{
-					_tabControl.TabPages.Remove(workspaceTab);
-					break;
-				}
-			}
-
-            DesktopApplication.WorkspaceManager.Workspaces.Remove(workspace);
+            // Find the tab that owns the workspace and remove it
+            foreach (WorkspaceTab workspaceTab in _tabControl.TabPages)
+            {
+                if (workspaceTab.Workspace == workspace)
+                {
+                    _tabControl.TabPages.Remove(workspaceTab);
+                    break;
+                }
+            }
 
 			// If we have no more tabs left, revert to the plain gray look of the tab control
 			// when we first started the app
