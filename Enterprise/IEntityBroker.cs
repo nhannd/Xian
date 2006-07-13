@@ -23,14 +23,21 @@ namespace ClearCanvas.Enterprise
         /// </summary>
         /// <param name="oid">The object ID of the entity to retrieve</param>
         /// <returns>The entity instance</returns>
-        TEntity Get(long oid);
+        TEntity Find(long oid);
 
         /// <summary>
         /// Retrieves a list of all entities matching the specified criteria.
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        IList<TEntity> Match(TSearchCriteria criteria);
+        IList<TEntity> Find(TSearchCriteria criteria);
+
+        /// <summary>
+        /// Returns the number of entities matching the specified criteria.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        long Count(TSearchCriteria criteria);
 
         /// <summary>
         /// Forces loading of a lazy property of the specified entity.

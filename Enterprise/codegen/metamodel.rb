@@ -28,7 +28,7 @@ class Model < ElementDef
     mappings = REXML::Document.new(File.new(hbmFile))
     
     # extract the namespace - TODO throw exception if model already defined and doesn't match
-    @namespace = mappings.root.attributes['namespace']
+    @namespace = mappings.root.attributes['namespace'] if @namespace == nil
     
     # process each class in the hbm file
     mappings.root.each_element('class') do |c|
@@ -118,7 +118,7 @@ class EntityDef < ClassDef
     @isSubClass = (superClassName != "Entity")
     @fields = []
     classNode.each_element do |fieldNode|
-      processField(fieldNode) if(['property', 'map','set','many-to-one'].include?(fieldNode.name))
+      processField(fieldNode) if(['property', 'map','set','many-to-one','component'].include?(fieldNode.name))
     end
   end
   
@@ -141,9 +141,13 @@ class FieldDef
       @accessorName = fieldNode.attributes['name']
       @fieldName = "_" + @accessorName[0..0].downcase + @accessorName[1..-1]
       
+      #if 'not-null' attribute is omitted, the default value is false (eg. the column is nullable)
+      nullable = (fieldNode.attributes['not-null'] == nil || fieldNode.attributes['not-null'] == 'false')
+      
       if(fieldNode.name == "property")
         @dataType = Model.fixDataType(fieldNode.attributes['type'])
-      elsif(fieldNode.name == "many-to-one")
+	@dataType << "?" if(@dataType == 'DateTime' && nullable)
+      elsif(['many-to-one', 'component'].include?(fieldNode.name))
         @dataType = Model.fixDataType(fieldNode.attributes['class'])
       elsif(fieldNode.name == "map")
         @dataType = "IDictionary"
@@ -152,7 +156,7 @@ class FieldDef
       end
       
       @readOnly = @isCollection = ['map', 'set'].include?(fieldNode.name)
-      @initialValue = @@initialValues[@dataType]
+      @initialValue = @@initialValues[@dataType] || ("new #{@dataType}()" if fieldNode.name == 'component')
   end
 end
 

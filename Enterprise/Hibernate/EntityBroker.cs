@@ -18,7 +18,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         where TEntity : Entity
         where TSearchCriteria : SearchCriteria
     {
-        public IList<TEntity> Match(TSearchCriteria criteria)
+        public IList<TEntity> Find(TSearchCriteria criteria)
         {
             string baseHql = string.Format("from {0} x", typeof(TEntity).Name);
             HqlQuery query = HqlQuery.FromSearchCriteria(baseHql, "x", criteria);
@@ -26,7 +26,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return MakeTypeSafe(ExecuteHql(query));
         }
 
-        public TEntity Get(long oid)
+        public TEntity Find(long oid)
         {
             TEntity entity = (TEntity)this.Context.Session.Load(typeof(TEntity), oid);
 
@@ -34,6 +34,21 @@ namespace ClearCanvas.Enterprise.Hibernate
             NHibernateUtil.Initialize(entity);
 
             return entity;
+        }
+
+        public long Count(TSearchCriteria criteria)
+        {
+            string baseHql = string.Format("select count(*) from {0} x", typeof(TEntity).Name);
+
+            // construct the query object manually
+            // for a "count" query, sort conditions and limits that may be present in the
+            // criteria object must be ignored- therefore, only the conditions are added to the query
+            HqlQuery query = new HqlQuery(baseHql);
+            query.AddConditions(HqlCondition.FromSearchCriteria("x", criteria));
+            IList results = ExecuteHql(query);
+
+            // expect exactly one integer result
+            return (long)results[0];
         }
 
         public void Store(TEntity entity)

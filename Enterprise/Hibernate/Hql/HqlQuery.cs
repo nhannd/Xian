@@ -29,7 +29,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// </example>
         public static HqlQuery FromSearchCriteria(string baseHql, string alias, SearchCriteria criteria)
         {
-            return FromSearchCriteria(baseHql, new string[] { alias }, new SearchCriteria[] { criteria }, criteria.FirstRow, criteria.MaxRows);
+            return FromSearchCriteria(baseHql, new string[] { alias }, new SearchCriteria[] { criteria }, criteria.Limit);
         }
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="alias">The aliases used in the base criteria that must be prepended to the criteria</param>
         /// <param name="criteria">The search criteria</param>
         /// <returns>a new instance of <see cref="HqlQuery"/></returns>
-        public static HqlQuery FromSearchCriteria(string baseHql, string[] aliases, SearchCriteria[] criteria, int firstRow, int maxRows)
+        public static HqlQuery FromSearchCriteria(string baseHql, string[] aliases, SearchCriteria[] criteria, SearchResultLimit limit)
         {
             if (aliases.Length != criteria.Length)
             {
                 throw new ArgumentException();  // TODO elaborate
             }
 
-            HqlQuery q = new HqlQuery(baseHql, firstRow, maxRows);
+            HqlQuery q = new HqlQuery(baseHql, limit);
             for (int i = 0; i < criteria.Length; i++)
             {
                 q.AddConditions(HqlCondition.FromSearchCriteria(aliases[i], criteria[i]));
@@ -60,8 +60,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         private string _baseQuery;
         private List<HqlCondition> _conditions;
         private List<HqlSort> _sorts;
-        private int _firstRow;
-        private int _maxRows;
+        private SearchResultLimit _limit;
 
         /// <summary>
         /// Constructor.
@@ -69,22 +68,21 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="baseHql">The base HQL statement, without the "where" or "order by" clauses</param>
         /// <param name="firstRow">First record to retrieve</param>
         /// <param name="maxRows">Maximum number of records to retrieve</param>
-        public HqlQuery(string baseHql, int firstRow, int maxRows)
+        public HqlQuery(string baseHql, SearchResultLimit limit)
         {
             _baseQuery = baseHql;
-            _firstRow = firstRow;
-            _maxRows = maxRows;
+            _limit = limit;
 
             _conditions = new List<HqlCondition>();
             _sorts = new List<HqlSort>();
         }
 
         /// <summary>
-        /// Constructor creates a query that will retrieve the first 100 rows at most.
+        /// Constructor creates a query that has no limits.
         /// </summary>
         /// <param name="baseHql">The base HQL statement, without the "where" or "order by" clauses</param>
         public HqlQuery(string baseQuery)
-            :this(baseQuery, 0, 100)
+            :this(baseQuery, null)
         {
         }
 
@@ -161,6 +159,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         internal IQuery BuildHibernateQueryObject(PersistenceContext ctx)
         {
             IQuery q = ctx.Session.CreateQuery(this.Hql);
+
+            // add the parameters to the query
             int i = 0;
             foreach (HqlCondition c in _conditions)
             {
@@ -168,7 +168,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 {
                     if (val is Enum)
                     {
-                        // convert to string, since hibernate doesn't know what to do with enums
+                        // convert to string, since nhibernate doesn't know what to do with enums
                         q.SetParameter(i++, val.ToString());
                     }
                     else
@@ -179,8 +179,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 }
             }
 
-            q.SetFirstResult(_firstRow);
-            q.SetMaxResults(_maxRows);
+            // if limits were specified, pass them to nhibernate
+            if (_limit != null)
+            {
+                q.SetFirstResult(_limit.FirstRow);
+                q.SetMaxResults(_limit.MaxRows);
+            }
 
             return q;
         }

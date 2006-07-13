@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class DdlWriterApp : IApplicationRoot
+    public class DdlWriterApplication : IApplicationRoot
     {
         #region IApplicationRoot Members
 

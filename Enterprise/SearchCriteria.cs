@@ -34,31 +34,19 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     public abstract class SearchCriteria
     {
-        private int _firstRow;
-        private int _maxRows;
+        private SearchResultLimit _limit;
 
         public SearchCriteria()
         {
-            _firstRow = 0;  // default
-            _maxRows = 100; // default
+            _limit = new SearchResultLimit();
         }
 
         /// <summary>
-        /// The first row to return.  Used in paging scenarios.
+        /// Used in paging scenarios to specify a limit clause
         /// </summary>
-        public int FirstRow
+        public SearchResultLimit Limit
         {
-            get { return _firstRow; }
-            set { _firstRow = value; }
-        }
-
-        /// <summary>
-        /// The maximum number of rows to return.  Used in paging scenarios.
-        /// </summary>
-        public int MaxRows
-        {
-            get { return _maxRows; }
-            set { _maxRows = value; }
+            get { return _limit; }
         }
     }
 }
