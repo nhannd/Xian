@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop
                 _workspace.Close(true);
             }
 
-            public MessageBoxResult ShowMessageBox(string message, MessageBoxButtons buttons)
+            public MessageBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
             {
                 return Platform.ShowMessageBox(message, buttons);
             }

@@ -20,16 +20,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         static MessageBox() {
 
             _buttonMap = new Dictionary<int, System.Windows.Forms.MessageBoxButtons>();
-            _buttonMap.Add((int)ClearCanvas.Common.MessageBoxButtons.Ok, System.Windows.Forms.MessageBoxButtons.OK);
-            _buttonMap.Add((int)ClearCanvas.Common.MessageBoxButtons.OkCancel, System.Windows.Forms.MessageBoxButtons.OKCancel);
-            _buttonMap.Add((int)ClearCanvas.Common.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxButtons.YesNo);
-            _buttonMap.Add((int)ClearCanvas.Common.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+            _buttonMap.Add((int)MessageBoxActions.Ok, MessageBoxButtons.OK);
+            _buttonMap.Add((int)MessageBoxActions.OkCancel, MessageBoxButtons.OKCancel);
+            _buttonMap.Add((int)MessageBoxActions.YesNo, MessageBoxButtons.YesNo);
+            _buttonMap.Add((int)MessageBoxActions.YesNoCancel, MessageBoxButtons.YesNoCancel);
 
             _resultMap = new Dictionary<DialogResult, int>();
-            _resultMap.Add(DialogResult.OK, (int)ClearCanvas.Common.MessageBoxResult.Ok);
-            _resultMap.Add(DialogResult.Cancel, (int)ClearCanvas.Common.MessageBoxResult.Cancel);
-            _resultMap.Add(DialogResult.Yes, (int)ClearCanvas.Common.MessageBoxResult.Yes);
-            _resultMap.Add(DialogResult.No, (int)ClearCanvas.Common.MessageBoxResult.No);
+            _resultMap.Add(DialogResult.OK, (int)MessageBoxAction.Ok);
+            _resultMap.Add(DialogResult.Cancel, (int)MessageBoxAction.Cancel);
+            _resultMap.Add(DialogResult.Yes, (int)MessageBoxAction.Yes);
+            _resultMap.Add(DialogResult.No, (int)MessageBoxAction.No);
         }
 
         public MessageBox()
@@ -44,11 +44,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			System.Windows.Forms.MessageBox.Show(message, DesktopApplication.ApplicationName);
 		}
 
-        public MessageBoxResult Show(string message, ClearCanvas.Common.MessageBoxButtons buttons)
+        public MessageBoxAction Show(string message, ClearCanvas.Common.MessageBoxActions buttons)
         {
             DialogResult dr = System.Windows.Forms.MessageBox.Show(
                 message, DesktopApplication.ApplicationName, _buttonMap[(int)buttons]);
-            return (MessageBoxResult)_resultMap[dr];
+            return (MessageBoxAction)_resultMap[dr];
         }
 
     }

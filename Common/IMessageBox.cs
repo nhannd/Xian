@@ -5,7 +5,7 @@ using System.Text;
 namespace ClearCanvas.Common
 {
     [Flags]
-    public enum MessageBoxResult
+    public enum MessageBoxAction
     {
         Ok      = 0x0001,
         Cancel  = 0x0002,
@@ -13,17 +13,17 @@ namespace ClearCanvas.Common
         No      = 0x0008,
     }
 
-    public enum MessageBoxButtons
+    public enum MessageBoxActions
     {
-        Ok = MessageBoxResult.Ok,
-        OkCancel = MessageBoxResult.Ok | MessageBoxResult.Cancel,
-        YesNo = MessageBoxResult.Yes | MessageBoxResult.No,
-        YesNoCancel = MessageBoxResult.Yes | MessageBoxResult.No | MessageBoxResult.Cancel
+        Ok = MessageBoxAction.Ok,
+        OkCancel = MessageBoxAction.Ok | MessageBoxAction.Cancel,
+        YesNo = MessageBoxAction.Yes | MessageBoxAction.No,
+        YesNoCancel = MessageBoxAction.Yes | MessageBoxAction.No | MessageBoxAction.Cancel
     }
 
 	public interface IMessageBox
 	{
 		void Show(string message);
-        MessageBoxResult Show(string message, MessageBoxButtons buttons);
+        MessageBoxAction Show(string message, MessageBoxActions buttons);
 	}
 }

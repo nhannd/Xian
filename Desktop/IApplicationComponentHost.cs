@@ -8,7 +8,7 @@ namespace ClearCanvas.Desktop
 {
     public interface IApplicationComponentHost
     {
-        MessageBoxResult ShowMessageBox(string message, MessageBoxButtons buttons);
+        MessageBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
         void Exit();
     }
 }

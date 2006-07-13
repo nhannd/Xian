@@ -263,10 +263,10 @@ namespace ClearCanvas.Common
 
 		public static void ShowMessageBox(string message)
 		{
-            ShowMessageBox(message, MessageBoxButtons.Ok);
+            ShowMessageBox(message, MessageBoxActions.Ok);
 		}
 
-        public static MessageBoxResult ShowMessageBox(string message, MessageBoxButtons buttons)
+        public static MessageBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             if (_messageBox == null)
             {
