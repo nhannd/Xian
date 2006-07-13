@@ -40,13 +40,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override bool CanExit()
         {
-            MessageBoxResult result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxButtons.YesNoCancel);
+            MessageBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
             switch (result)
             {
-                case MessageBoxResult.Yes:
+                case MessageBoxAction.Yes:
                     SaveChanges();
                     return true;
-                case MessageBoxResult.No:
+                case MessageBoxAction.No:
                     DiscardChanges();
                     return true;
                 default:

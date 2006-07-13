@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             TableColumn<Patient>[] columns = new TableColumn<Patient>[] {
                 new TableColumn<Patient>("ID", delegate(Patient p) { return p.PatientId; }),
-                new TableColumn<Patient>("Name", delegate(Patient p) { return p.PrimaryName; }),
+                new TableColumn<Patient>("Name", delegate(Patient p) { return p.Name.Format(); }),
             };
 
             _workingSetTableData = new TableData<Patient>(columns);
@@ -98,12 +98,14 @@ namespace ClearCanvas.Ris.Client.Admin
             List<Patient> data = new List<Patient>();
 
             Patient p1 = Patient.New();
-            p1.PrimaryName = "Jim Bean";
+            p1.Name.FamilyName = "Bean";
+            p1.Name.GivenName = "Jim";
             p1.PatientId = "1122";
             data.Add(p1);
 
             Patient p2 = Patient.New();
-            p2.PrimaryName = "Sally Jones";
+            p2.Name.FamilyName = "Jones";
+            p2.Name.GivenName = "Sally";
             p2.PatientId = "3344";
             data.Add(p2);
 

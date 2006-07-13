@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Admin
             Patient patient = this.PatientAdminToolContext.SelectedPatient;
             if (patient != null) // should never be null, but just in case
             {
-                string title = string.Format("Edit Patient - {0}, {1}", patient.PatientId, patient.PrimaryName);
+                string title = string.Format("Edit Patient - {0}, {1}", patient.PatientId, patient.Name.Format());
                 OpenPatient(title, patient);
             }
         }

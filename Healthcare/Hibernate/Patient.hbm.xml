@@ -7,8 +7,27 @@
       </generator>
     </id>
     <version name="Version" column="Version"/>
+    
     <property name="PatientId" column="PatientId_" type="String" length="20" />
-    <property name="PrimaryName" column="PrimaryName_" type="String" length="50" />
-    <property name="DateOfBirth" column="DateOfBirth_" type="DateTime" />
+    <component name="Name" class="PersonName">
+      <property name="FamilyName" column="FamilyName_" type="String" length="40" not-null="true"/>
+      <property name="GivenName" column="GivenName_" type="String" length="40" not-null="true"/>
+      <property name="MiddleName" column="MiddleName_" type="String" length="40" not-null="false"/>
+      <property name="Prefix" column="Prefix_" type="String" length="10" not-null="false"/>
+      <property name="Suffix" column="Suffix_" type="String" length="10" not-null="false"/>
+      <property name="Degree" column="Degree_" type="String" length="10" not-null="false"/>
+    </component>
+    <set name="Identifiers" lazy="true" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
+      <key column="PatientOID_"/>
+      <composite-element class="ClearCanvas.Healthcare.PatientIdentifier, ClearCanvas.Healthcare">
+        <property name="Id" column="Id_" type="String" length="30" not-null="true"/>
+        <property name="AssigningAuthority" column="AssigningAuthority_" type="String" length="100" not-null="true"/>
+        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.PatientIdentifierTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+      </composite-element>
+    </set>
+    <property name="DateOfBirth" column="DateOfBirth_" type="DateTime" not-null="true"/>
+    <property name="Sex" column="Sex_" type="ClearCanvas.Healthcare.Hibernate.SexEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <property name="DeathIndicator" column="DeathIndicator_" type="Boolean" not-null="true"/>
+    <property name="TimeOfDeath" column="TimeOfDeath_" type="DateTime" not-null="false"/>
   </class>
 </hibernate-mapping>

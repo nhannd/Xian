@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Enterprise\Hibernate\refs\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -42,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Patient.hbm.xml" />
+    <Content Include="PatientIdentifierTypeEnum.hbm.xml" />
+    <Content Include="SexEnum.hbm.xml" />
+    <Content Include="TelephoneEquipmentEnum.hbm.xml" />
+    <Content Include="TelephoneUseEnum.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
