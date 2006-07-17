@@ -45,11 +45,11 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Patient.hbm.xml" />
-    <Content Include="PatientIdentifierTypeEnum.hbm.xml" />
-    <Content Include="SexEnum.hbm.xml" />
-    <Content Include="TelephoneEquipmentEnum.hbm.xml" />
-    <Content Include="TelephoneUseEnum.hbm.xml" />
+    <EmbeddedResource Include="Patient.hbm.xml" />
+    <EmbeddedResource Include="PatientIdentifierTypeEnum.hbm.xml" />
+    <EmbeddedResource Include="SexEnum.hbm.xml" />
+    <EmbeddedResource Include="TelephoneEquipmentEnum.hbm.xml" />
+    <EmbeddedResource Include="TelephoneUseEnum.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

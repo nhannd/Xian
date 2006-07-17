@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Text;
 
+using ClearCanvas.Enterprise;
+
 namespace ClearCanvas.Healthcare {
 
     /// <summary>
@@ -12,31 +14,37 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Female
         /// </summary>
+        [EnumValue("Female")]
         F,
 
         /// <summary>
         /// Male
         /// </summary>
+        [EnumValue("Male")]
         M,
 
         /// <summary>
         /// Other
         /// </summary>
+        [EnumValue("Other")]
         O,
 
         /// <summary>
         /// Unknown
         /// </summary>
+        [EnumValue("Unknown")]
         U,
 
         /// <summary>
         /// Ambiguous
         /// </summary>
+        [EnumValue("Ambiguous")]
         A,
 
         /// <summary>
         /// Not applicable
         /// </summary>
+        [EnumValue("Not Applicable")]
         N
 	}
 }

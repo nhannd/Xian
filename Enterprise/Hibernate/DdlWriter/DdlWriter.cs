@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 using NHibernate.Cfg;
 
@@ -9,103 +10,35 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
     class DdlWriter
     {
-        enum CreateFileType
-        {
-            Create,
-            Drop
-        };
-
-        #region Fields
-        private String _createSchemaFileName;
-        private String _dropSchemaFileName;
-        private Configuration _cfg;
-        #endregion
-
-        #region Properties
-
-        public String CreateSchemaFileName
-        {
-            get { return _createSchemaFileName; }
-            set { _createSchemaFileName = value; }
-        }
-
-        public String DropSchemaFileName
-        {
-            get { return _dropSchemaFileName; }
-            set { _dropSchemaFileName = value; }
-        }
-
-        #endregion
-
-        #region Events
-        public event WriterStatusChangedEventHandler Changed;
-        #endregion
-
-        #region Constructors
+        private List<Generator> _generators;
 
         public DdlWriter()
         {
-            _createSchemaFileName = "CreateTables.ddl";
-            _dropSchemaFileName = "DropTables.ddl";
+            _generators = new List<Generator>();
+        }
 
+        public void AddGenerator(Generator gen)
+        {
+            _generators.Add(gen);
+        }
+
+        public void Execute(string outputFile)
+        {
             PersistentStore store = new PersistentStore();
             store.Initialize();
-            _cfg = store.Configuration;
-        }
 
-        public DdlWriter(String createSchemaFileName, String dropSchemaFileName)
-        {
-            _createSchemaFileName = createSchemaFileName;
-            _dropSchemaFileName = dropSchemaFileName;
+            StreamWriter sw = File.CreateText(outputFile);
 
-            PersistentStore store = new PersistentStore();
-            store.Initialize();
-            _cfg = store.Configuration;
-        }
-
-        #endregion
-
-        #region Methods
-
-        public void Execute()
-        {
-            OnChanged("Starting DDL Writer...");
-
-            CreateFile(CreateFileType.Create, _createSchemaFileName);
-            OnChanged("Create Schema Script created...");
-
-            CreateFile(CreateFileType.Drop, _dropSchemaFileName);
-            OnChanged("Drop Schema Script created...");
-
-            OnChanged("Finished");
-        }
-
-        private void CreateFile(CreateFileType fileType, String fileName)
-        {
-            string[] ddl;
-            ddl = fileType == CreateFileType.Create ?
-                _cfg.GenerateSchemaCreationScript(NHibernate.Dialect.MsSql2000Dialect.GetDialect()) :
-                _cfg.GenerateDropSchemaScript(NHibernate.Dialect.MsSql2000Dialect.GetDialect());
-               
-            StreamWriter sw;
-            sw = File.CreateText(fileName);
-
-            foreach (string s in ddl)
+            foreach(Generator gen in _generators)
             {
-                sw.WriteLine(s);
+                string[] scripts = gen.Run(store);
+                foreach (string s in scripts)
+                {
+                    sw.WriteLine(s);
+                }
             }
 
             sw.Close();
         }
-
-        protected void OnChanged(String description)
-        {
-            if (Changed != null)
-            {
-                Changed(description);
-            }
-        }
-
-        #endregion
     }
 }

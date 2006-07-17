@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
@@ -27,8 +28,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         public void Initialize()
         {
             // create the hibernate configuration
-            // this will automatically read from the app config file
             _cfg = new Configuration();
+
+            // this will automatically read from the hibernate.xml.cfg file
+            _cfg.Configure();
                         
             // build the set of all assemblies containing Broker extensions
             // the assumption is that these assemblies also contain the .hbm.xml mapping files
@@ -64,6 +67,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         public Configuration Configuration
         {
             get { return _cfg; }
+        }
+
+        public IDictionary Metadata
+        {
+            get { return _sessionFactory.GetAllClassMetadata(); }
         }
     }
 }

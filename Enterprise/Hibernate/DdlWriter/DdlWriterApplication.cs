@@ -8,38 +8,24 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class DdlWriterApplication : IApplicationRoot
     {
-        #region IApplicationRoot Members
-
         public void RunApplication(string[] args)
         {
+            string outputFile = "model.ddl";
+
             if (args.Length > 0)
             {
-                string createFile = null;
-                string dropFile = null;
-                for (int i = 0; i < args.Length; i++)
-                {
-                    ParseArg(args[i], "create", ref createFile);
-                    ParseArg(args[i], "drop", ref dropFile);
-                }
-
-                if (createFile == null && dropFile == null)
-                {
-                    PrintUsage();
-                    return;
-                }
-
-                DdlWriter writer = new DdlWriter();
-                writer.CreateSchemaFileName = createFile;
-                writer.DropSchemaFileName = dropFile;
-                writer.Execute();
+                // maybe an explicit output file is specified 
             }
-            else
-            {
-                // run GUI
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new DdlWriterForm());
-            }
+
+            DdlWriter writer = new DdlWriter();
+
+            // generators will be processed in order they are added
+            writer.AddGenerator(new DropSchemaGenerator());
+            writer.AddGenerator(new CreateSchemaGenerator());
+            writer.AddGenerator(new EnumValueInsertGenerator());
+
+
+            writer.Execute(outputFile);
         }
 
         private void ParseArg(string arg, string command, ref string val)
@@ -48,13 +34,5 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             if (arg.IndexOf(lookFor) > -1)
                 val = arg.Replace(lookFor, "");
         }
-
-        private void PrintUsage()
-        {
-            Console.WriteLine("DDL Writer usage:");
-            Console.WriteLine("/create:<file> /drop:<file>");
-        }
-
-        #endregion        
     }
 }

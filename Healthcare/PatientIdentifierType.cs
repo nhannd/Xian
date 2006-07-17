@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Text;
 
+using ClearCanvas.Enterprise;
+
 namespace ClearCanvas.Healthcare {
 
     /// <summary>
@@ -12,11 +14,13 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// MRN - Medical Record Number
         /// </summary>
+        [EnumValue("MRN", Description="Medical Record Number")]
         MR,
 
         /// <summary>
         /// Healthcard Number
         /// </summary>
+        [EnumValue("Healthcard")]
         HC,
 	}
 }
