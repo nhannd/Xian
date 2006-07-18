@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Presentation;
@@ -19,13 +20,59 @@ namespace ClearCanvas.Ris.Client.Admin
     public class PatientEditorComponent : ApplicationComponent
     {
         private Patient _patient;
+        private IPatientAdminService _patientAdminService;
 
         public PatientEditorComponent()
         {
             _patient = Patient.New();
-
         }
 
+        /// <summary>
+        /// Gets or sets the subject (e.g Patient) that this editor operates on.  This property
+        /// should never be used by the view.
+        /// </summary>
+        public Patient Subject
+        {
+            get { return _patient; }
+            set { _patient = value; }
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            _patientAdminService = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+        }
+
+        public string FamilyName
+        {
+            get { return _patient.Name.FamilyName; }
+            set { _patient.Name.FamilyName = value; }
+        }
+
+        public string GivenName
+        {
+            get { return _patient.Name.GivenName; }
+            set { _patient.Name.GivenName = value; }
+        }
+
+        public string MiddleName
+        {
+            get { return _patient.Name.MiddleName; }
+            set { _patient.Name.MiddleName = value; }
+        }
+
+        public string Sex
+        {
+            get { return _patientAdminService.SexEnumTable[_patient.Sex].Value; }
+            set { _patient.Sex = _patientAdminService.SexEnumTable[value].Code; }
+        }
+
+        public string[] SexChoices
+        {
+            get { return _patientAdminService.SexEnumTable.Values; }
+        }
+        
+        
         public void Accept()
         {
             SaveChanges();

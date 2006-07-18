@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -21,6 +22,17 @@ namespace ClearCanvas.Ris.Client.Admin
         public void AddPatient()
         {
             OpenPatient("New Patient", Patient.New());
+        }
+
+        protected override void PatientEditorExited(IApplicationComponent component)
+        {
+            if (component.ExitCode == ApplicationComponentExitCode.Normal)
+            {
+                PatientEditorComponent patientEditor = (PatientEditorComponent)component;
+
+                IPatientAdminService service = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+                service.AddNewPatient(patientEditor.Subject);
+            }
         }
     }
 }

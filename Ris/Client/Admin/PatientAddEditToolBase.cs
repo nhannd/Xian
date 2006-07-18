@@ -14,21 +14,13 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         protected void OpenPatient(string title, Patient patient)
         {
-            ApplicationComponent.LaunchAsWorkspace(
-                new PatientEditorComponent(),
-                title,
-                PatientEditorExited);
+            PatientEditorComponent editor = new PatientEditorComponent();
+            editor.Subject = patient;
+
+            ApplicationComponent.LaunchAsWorkspace(editor, title, PatientEditorExited);
         }
 
-        protected void PatientEditorExited(IApplicationComponent component)
-        {
-            if (component.ExitCode == ApplicationComponentExitCode.Normal)
-            {
-                PatientEditorComponent patientEditor = (PatientEditorComponent)component;
-
-                // TODO use service to save patient
-            }
-        }
+        protected abstract void PatientEditorExited(IApplicationComponent component);
 
         protected IPatientAdminToolContext PatientAdminToolContext
         {

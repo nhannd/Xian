@@ -16,16 +16,24 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         {
             InitializeComponent();
             _component = component;
+
+            // create bindings
+            _familyName.DataBindings.Add("Value", _component, "FamilyName");
+            _givenName.DataBindings.Add("Value", _component, "GivenName");
+            _middleName.DataBindings.Add("Value", _component, "MiddleName");
+
+            _sex.DataSource = _component.SexChoices;
+            _sex.DataBindings.Add("Value", _component, "Sex");
         }
 
-        public Button OkButton
+        private void _okButton_Click(object sender, EventArgs e)
         {
-            get { return _okButton; }
+            _component.Accept();
         }
 
-        public Button CancelButton
+        private void _cancelButton_Click(object sender, EventArgs e)
         {
-            get { return _cancelButton; }
+            _component.Cancel();
         }
     }
 }

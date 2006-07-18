@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -38,11 +39,27 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void EditPatient()
         {
-            Patient patient = this.PatientAdminToolContext.SelectedPatient;
-            if (patient != null) // should never be null, but just in case
+            long oid = this.PatientAdminToolContext.SelectedPatient.OID;
+
+            // reload the patient for 3 reasons:
+            // 1. the existing copy in memory may be stale
+            // 2. the editor should operate on a copy
+            // 3. it may need patient details that were not loaded when the patients were listed
+            IPatientAdminService service = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+            Patient patient = service.LoadPatientDetails(oid);
+            
+            string title = string.Format("Edit Patient - {0}, {1}", patient.PatientId, patient.Name.Format());
+            OpenPatient(title, patient);
+        }
+
+        protected override void PatientEditorExited(IApplicationComponent component)
+        {
+            if (component.ExitCode == ApplicationComponentExitCode.Normal)
             {
-                string title = string.Format("Edit Patient - {0}, {1}", patient.PatientId, patient.Name.Format());
-                OpenPatient(title, patient);
+                PatientEditorComponent patientEditor = (PatientEditorComponent)component;
+
+                IPatientAdminService service = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+                service.UpdatePatient(patientEditor.Subject);
             }
         }
     }

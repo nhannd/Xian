@@ -33,10 +33,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IPatientAdminService.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientAddEditToolBase.cs" />
     <Compile Include="PatientAdminLaunchTool.cs" />
     <Compile Include="PatientAdminComponent.cs" />
+    <Compile Include="PatientAdminService.cs" />
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientSearchTool.cs" />

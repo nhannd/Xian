@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -69,6 +70,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private ClickHandlerDelegate _defaultActionHandler;
 
+        private IPatientAdminService _patientAdminService;
+
         public PatientAdminComponent()
         {
             TableColumn<Patient>[] columns = new TableColumn<Patient>[] {
@@ -78,6 +81,24 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _workingSetTableData = new TableData<Patient>(columns);
 
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            _patientAdminService = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+            _patientAdminService.PatientChanged += _patientAdminService_PatientChanged;
+        }
+
+        public override void Stop()
+        {
+            _patientAdminService.PatientChanged -= _patientAdminService_PatientChanged;
+
+            base.Stop();
+        }
+
+        private void _patientAdminService_PatientChanged(object sender, EntityChangeEventArgs e)
+        {
         }
 
         public override IToolSet ToolSet
@@ -94,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void SetSearchCriteria(PatientSearchCriteria criteria)
         {
-            // create some fake data
+            /* create some fake data
             List<Patient> data = new List<Patient>();
 
             Patient p1 = Patient.New();
@@ -111,6 +132,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
 
             _workingSetTableData.Fill(data);
+             * */
+
+            // obtain a list of patients matching the specified criteria
+            IList<Patient> patients = _patientAdminService.ListPatients(criteria);
+            _workingSetTableData.Fill(patients);
+
             EventsHelper.Fire(_workingSetChanged, this, new EventArgs());
         }
 
