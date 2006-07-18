@@ -43,6 +43,18 @@ namespace ClearCanvas.Common
     {
     }
 
+    /// <summary>
+    /// Defines a general mechanism for establishing a session.  When <see cref="Platform.StartApp"/>
+    /// is called, the framework will look for a session manager extension.  If one is found, the
+    /// framework will attempt to establish a session by calling <see cref="ISessionManager.InitiateSession"/>.
+    /// If no session manager extensions are found, the application will proceed to execute in standalone
+    /// (i.e no authentication) mode.
+    /// </summary>
+    [ExtensionPoint()]
+    public class SessionManagerExtensionPoint : ExtensionPoint<ISessionManager>
+    {
+    }
+
 	/// <summary>
 	/// A collection of useful utility functions.
 	/// </summary>
@@ -173,11 +185,29 @@ namespace ClearCanvas.Common
             try
             {
 #endif
-            ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
-            _applicationRoot = (applicationRootFilter == null) ?
-                (IApplicationRoot)xp.CreateExtension() :
-                (IApplicationRoot)xp.CreateExtension(applicationRootFilter);
-            _applicationRoot.RunApplication(args);
+            ISessionManager sessionManager = GetSessionManager();
+            if (sessionManager != null)
+            {
+                // allow any exception thrown here to cause the application to terminate
+                sessionManager.InitiateSession();
+            }
+
+            try
+            {
+                ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
+                _applicationRoot = (applicationRootFilter == null) ?
+                    (IApplicationRoot)xp.CreateExtension() :
+                    (IApplicationRoot)xp.CreateExtension(applicationRootFilter);
+                _applicationRoot.RunApplication(args);
+            }
+            finally
+            {
+                if (sessionManager != null)
+                    sessionManager.TerminateSession();
+            }
+
+
+
 #if !DEBUG
             }
             catch (Exception e)
@@ -202,6 +232,24 @@ namespace ClearCanvas.Common
 		{
             StartApp(null, new string[] { });
 		}
+
+        /// <summary>
+        /// Private method to get a session manager
+        /// </summary>
+        /// <returns></returns>
+        private static ISessionManager GetSessionManager()
+        {
+            try
+            {
+                SessionManagerExtensionPoint xp = new SessionManagerExtensionPoint();
+                return (ISessionManager)xp.CreateExtension();
+            }
+            catch (NotSupportedException)
+            {
+                // no session manager implementation
+                return null;
+            }
+        }
 
 		/// <summary>
 		/// Writes a message to the default log.
