@@ -21,7 +21,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public abstract class PersistenceContext : IPersistenceContext
     {
-        private ISession _session;
+        private NHibernate.ISession _session;
         private bool _readOnly;
         private DefaultInterceptor _interceptor;
 
@@ -60,7 +60,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <summary>
         /// Provides access the NHibernate Session object.
         /// </summary>
-        internal ISession Session
+        internal NHibernate.ISession Session
         {
             get { return _session; }
         }

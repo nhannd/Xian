@@ -16,6 +16,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// <summary>
     /// NHibernate implemenation of <see cref="IPersistentStore"/>.
     /// </summary>
+    [ExtensionOf(typeof(PersistentStoreExtensionPoint))]
     public class PersistentStore : IPersistentStore
     {
         private ISessionFactory _sessionFactory;

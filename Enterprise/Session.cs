@@ -2,26 +2,48 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common;
+
 namespace ClearCanvas.Enterprise
 {
-    public abstract class Session
+    public class PersistentStoreExtensionPoint : ExtensionPoint<IPersistentStore>
     {
-        private static Session _current;
+    }
+
+    public class Session : ISession
+    {
+        private static ISession _current;
 
 
-        public static Session Current
+        public static ISession Current
         {
             get { return _current; }
             set { _current = value; }
         }
 
 
-        private ServiceManager _serviceManager;
+        private IPersistentStore _dataStore;
+        private IServiceManager _serviceManager;
         private TransactionMonitor _transactionMonitor;
 
-        protected abstract IPersistentStore DataStore { get; }
+        internal Session()
+        {
+            // initialize the data store now, rather than deferring it
+            // (the session is pretty useless without a data-store)
+            PersistentStoreExtensionPoint xp = new PersistentStoreExtensionPoint();
+            _dataStore = (IPersistentStore)xp.CreateExtension();
+            _dataStore.Initialize();
+        }
 
-        public ServiceManager ServiceManager
+        protected IPersistentStore DataStore
+        {
+            get
+            {
+                return _dataStore;
+            }
+        }
+
+        public IServiceManager ServiceManager
         {
             get
             {

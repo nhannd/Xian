@@ -16,11 +16,12 @@ namespace ClearCanvas.Enterprise
     /// See <cref="IEnumBroker.LoadEnumeration"/>.
     /// </summary>
     /// <typeparam name="TEnum">The C# enum that this table corresponds to</typeparam>
-    public class EnumTable<e, E> : IEnumerable<E>
+    public class EnumTable<e, E>
         where e : struct
         where E : EnumValue<e>
     {
         private IDictionary<e, E> _values;
+        private string[] _displayValues;
 
         /// <summary>
         /// Not used by client code.
@@ -41,22 +42,40 @@ namespace ClearCanvas.Enterprise
             get { return _values[code]; }
         }
 
-        #region IEnumerable<E> Members
-
-        public IEnumerator<E> GetEnumerator()
+        /// <summary>
+        /// Returns the <see cref="EnumValue"/> corresponding to the specified value string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public E this[string value]
         {
-            return _values.Values.GetEnumerator();
+            get
+            {
+                foreach (E entry in _values.Values)
+                {
+                    if (entry.Value == value)
+                        return entry;
+                }
+                throw new IndexOutOfRangeException();
+            }
         }
 
-        #endregion
-
-        #region IEnumerable Members
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        /// <summary>
+        /// Returns an array of the displayable values for this enum table, for use in presentation layer.
+        /// </summary>
+        public string[] Values
         {
-            return _values.Values.GetEnumerator();
+            get
+            {
+                if (_displayValues == null)
+                {
+                    _displayValues = new string[_values.Count];
+                    int i = 0;
+                    foreach (E entry in _values.Values)
+                        _displayValues[i++] = entry.Value;
+                }
+                return _displayValues;
+            }
         }
-
-        #endregion
-    }
+     }
 }
