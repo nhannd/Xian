@@ -3,6 +3,8 @@ using System.Text;
 using System.Runtime.InteropServices;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Codecs;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
@@ -26,6 +28,8 @@ namespace ClearCanvas.Dicom
 		private DcmMetaInfo _metaInfo;
 		private bool _isDatasetLoaded = false;
         private bool _isImageParameterSetLoaded = false;
+		private string _transferSyntaxUid;
+		private static ImageCodecMap _imageCodecMap;
 
         /// <summary>
         /// The underlying DcmDataset object of this image.
@@ -174,31 +178,15 @@ namespace ClearCanvas.Dicom
             if (!IsImageParameterSetLoaded)
                 LoadImageParameterSet();
 
-			if (_pixelData == null)
-			{
-				OFCondition status;
-				IntPtr pUnmanagedPixelData = IntPtr.Zero;
-
-				if (_bitsAllocated == 16)
-					status = _dataset.findAndGetUint16Array(Dcm.PixelData, ref pUnmanagedPixelData);
-				else
-					status = _dataset.findAndGetUint8Array(Dcm.PixelData, ref pUnmanagedPixelData);
-
-				bool tagExists;
-				DicomHelper.CheckReturnValue(status, Dcm.PixelData, out tagExists);
-
-				// TODO: Eventually need to check for transfer syntax and decompress here if necessary
-
-				int sizeInBytes = (int)(this.Rows * this.Columns * this.SamplesPerPixel * this.BitsAllocated / 8);
-				_pixelData = new byte[sizeInBytes];
-				Marshal.Copy(pUnmanagedPixelData, _pixelData, 0, sizeInBytes);
-				
-				// We don't need the unmanaged pixel data anymore since we've already
-				// made a copy so just get rid of it to free up some memory
-				_dataset.findAndDeleteElement(Dcm.PixelData);
-			}
-
-			return _pixelData;
+			return GetPixelData(
+				this.Rows,
+				this.Columns,
+				this.BitsAllocated,
+				this.BitsStored,
+				this.PixelRepresentation,
+				this.PhotometricInterpretation,
+				this.SamplesPerPixel,
+				this.PlanarConfiguration);
 		}
 
         /// <summary>
@@ -214,7 +202,15 @@ namespace ClearCanvas.Dicom
         /// <returns>A byte array representing the pixel data. This array's interpretation
         /// should be subject to the various image-defining parameters such as Samples Per Pixel
         /// and Bits Stored.</returns>
-        public byte[] GetPixelData(int bitsAllocated, int rows, int columns, int samplesPerPixel)
+        public byte[] GetPixelData(
+			int rows, 
+			int columns,
+			int bitsAllocated,
+			int bitsStored,
+			int pixelRepresentation,
+			string photometricInterpretation,
+			int samplesPerPixel,
+			int planarConfiguration)
         {
             // assume that if bitsAllocated, etc. are provided, IsImageParameterSetLoaded is true
             if (!IsDatasetLoaded)
@@ -222,7 +218,9 @@ namespace ClearCanvas.Dicom
 
             if (_pixelData == null)
             {
-                OFCondition status;
+				CreateImageCodecMap();
+				
+				OFCondition status;
                 IntPtr pUnmanagedPixelData = IntPtr.Zero;
 
                 if (bitsAllocated == 16)
@@ -233,15 +231,38 @@ namespace ClearCanvas.Dicom
                 bool tagExists;
                 DicomHelper.CheckReturnValue(status, Dcm.PixelData, out tagExists);
 
-                // TODO: Eventually need to check for transfer syntax and decompress here if necessary
                 int sizeInBytes = (int)(rows * columns * samplesPerPixel * bitsAllocated / 8);
-                _pixelData = new byte[sizeInBytes];
-                Marshal.Copy(pUnmanagedPixelData, _pixelData, 0, sizeInBytes);
+                byte[] compressedPixelData = new byte[sizeInBytes];
+				Marshal.Copy(pUnmanagedPixelData, compressedPixelData, 0, sizeInBytes);
 
                 // We don't need the unmanaged pixel data anymore since we've already
                 // made a copy so just get rid of it to free up some memory
-                _dataset.findAndDeleteElement(Dcm.PixelData);
-            }
+                status = _dataset.findAndDeleteElement(Dcm.PixelData);
+				DicomHelper.CheckReturnValue(status, Dcm.PixelData, out tagExists);
+				
+				if (!_imageCodecMap.IsTransferSyntaxSupported(_transferSyntaxUid))
+					throw new Exception("Transfer syntax not supported");
+
+				try
+				{
+					_pixelData = _imageCodecMap[_transferSyntaxUid].Decode(
+						compressedPixelData,
+						rows,
+						columns,
+						bitsAllocated,
+						this.BitsStored,
+						this.PixelRepresentation,
+						this.PhotometricInterpretation,
+						samplesPerPixel,
+						this.PlanarConfiguration,
+						null);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
+					throw new Exception("Unable to decode pixel data", e);
+				}
+			}
 
             return _pixelData;
         }
@@ -371,12 +392,23 @@ namespace ClearCanvas.Dicom
                 DicomHelper.CheckReturnValue(status, Dcm.PlanarConfiguration, out tagExists);
             }
 
-            StringBuilder buf = new StringBuilder(64);
-            status = _dataset.findAndGetOFString(Dcm.PhotometricInterpretation, buf);
+            StringBuilder buffer = new StringBuilder(64);
+            status = _dataset.findAndGetOFString(Dcm.PhotometricInterpretation, buffer);
             DicomHelper.CheckReturnValue(status, Dcm.PhotometricInterpretation, out tagExists);
-            _photometricInterpretation = buf.ToString();
+            _photometricInterpretation = buffer.ToString();
 
-            IsImageParameterSetLoaded = true;
+			buffer = new StringBuilder(64);
+			status = _metaInfo.findAndGetOFString(Dcm.TransferSyntaxUID, buffer);
+			DicomHelper.CheckReturnValue(status, Dcm.TransferSyntaxUID, out tagExists);
+			_transferSyntaxUid = buffer.ToString();
+			
+			IsImageParameterSetLoaded = true;
         }
+
+		private static void CreateImageCodecMap()
+		{
+			if (_imageCodecMap == null)
+				_imageCodecMap = new ImageCodecMap();
+		}
 	}
 }

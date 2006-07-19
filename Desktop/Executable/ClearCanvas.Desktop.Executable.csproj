@@ -161,6 +161,7 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
 
       :: Copy ImageViewer plugins
+      copy "..\..\..\..\Codecs\bin\$(ConfigurationName)\ClearCanvas.Codecs.dll" .\plugins
       copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.dll" .\plugins
       copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.dll" .\plugins
