@@ -10,14 +10,23 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     public partial class PatientSearchControl : UserControl
     {
-        public PatientSearchControl()
+        private PatientSearchTool _tool;
+
+        public PatientSearchControl(PatientSearchTool tool)
         {
             InitializeComponent();
+            _tool = tool;
+
+            _familyName.DataBindings.Add("Value", _tool, "FamilyName");
+            _givenName.DataBindings.Add("Value", _tool, "GivenName");
+
+            _searchButton.DataBindings.Add("Enabled", _tool, "SearchEnabled");
         }
 
-        public Button SearchButton
+        private void _searchButton_Click(object sender, EventArgs e)
         {
-            get { return _searchButton; }
+            _tool.Search();
         }
+
     }
 }

@@ -1,56 +1,28 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
-namespace ClearCanvas.Healthcare
-{
+using Iesi.Collections;
+using ClearCanvas.Enterprise;
+
+
+namespace ClearCanvas.Healthcare {
+
+
     /// <summary>
     /// Implements a simplified version of the HL7 XPN (Extended Person Name) data type
     /// </summary>
-    public class PersonName
-    {
-        private string _familyName;
-        private string _givenName;
-        private string _middleName;
-        private string _prefix;
-        private string _suffix;
-        private string _degree;
-
-        public string FamilyName
-        {
-            get { return _familyName; }
-            set { _familyName = value; }
-        }
-
-        public string GivenName
-        {
-            get { return _givenName; }
-            set { _givenName = value; }
-        }
-
-        public string MiddleName
-        {
-            get { return _middleName; }
-            set { _middleName = value; }
-        }
-
-        public string Prefix
-        {
-            get { return _prefix; }
-            set { _prefix = value; }
-        }
-
-        public string Suffix
-        {
-            get { return _suffix; }
-            set { _suffix = value; }
-        }
-
-        public string Degree
-        {
-            get { return _degree; }
-            set { _degree = value; }
-        }
+	public partial class PersonName
+	{
+		/// <summary>
+		/// Factory method
+		/// </summary>
+		public static PersonName New()
+		{
+			// add any object initialization code here
+			// the signature of the New() method may be freely changed as needed
+			return new PersonName();
+		}
 
         /// <summary>
         /// Returns a string formatting the person name for purpose of display.
@@ -62,5 +34,5 @@ namespace ClearCanvas.Healthcare
         {
             return string.Format("{0}, {1} {2}", FamilyName, GivenName, MiddleName).Trim();
         }
-    }
+	}
 }

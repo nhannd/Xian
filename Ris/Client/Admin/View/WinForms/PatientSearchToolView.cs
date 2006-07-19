@@ -22,16 +22,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PatientSearchControl();
-                    _control.SearchButton.Click += new EventHandler(SearchButton_Click);
+                    _control = new PatientSearchControl(_tool);
                 }
                 return _control;
             }
-        }
-
-        private void SearchButton_Click(object sender, EventArgs e)
-        {
-            _tool.Search();
         }
 
         public override object GuiElement
