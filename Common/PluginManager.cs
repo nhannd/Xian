@@ -5,6 +5,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using System.Security.Policy;
+using System.Security;
 
 namespace ClearCanvas.Common
 {
@@ -172,8 +174,19 @@ namespace ClearCanvas.Common
 				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs("Finding plugins..."));
 
 				// Create a secondary AppDomain where we can load all the DLLs in the plugin directory
-				domain = AppDomain.CreateDomain("Secondary");
+				Evidence evidence = new Evidence(
+					new object[] { new Zone(SecurityZone.MyComputer) },
+					new object[] { });
 
+				PermissionSet permissions =
+					SecurityManager.ResolvePolicy(evidence);
+
+				AppDomainSetup setup = new AppDomainSetup();
+				setup.ApplicationBase =	AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+				domain = AppDomain.CreateDomain(
+					"Secondary", evidence, setup,
+					permissions, new StrongName[] { }); 
+				
 				Assembly asm = Assembly.GetExecutingAssembly();
 
 				// Instantiate the finder in the secondary domain
