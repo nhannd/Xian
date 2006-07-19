@@ -9,7 +9,7 @@ namespace ClearCanvas.Common
 	/// <summary>
 	/// Summary description for PluginFinder.
 	/// </summary>
-	internal class PluginFinder : MarshalByRefObject
+	public class PluginFinder : MarshalByRefObject
 	{
 		// Private attributes
         private List<string> _pluginFiles = new List<string>();
