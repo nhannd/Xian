@@ -27,14 +27,15 @@ namespace ClearCanvas.Enterprise
     /// <summary>
     /// Type-independent base class for the <see cref="SearchCondition"/>
     /// </summary>
-    public class SearchConditionBase
+    public class SearchConditionBase : SearchCriteria
     {
         private object[] _values;
         private SearchConditionTest _test;
         private int _sortPosition;
         private bool _sortDirection;
 
-        public SearchConditionBase()
+        public SearchConditionBase(string name)
+            :base(name)
         {
             _test = SearchConditionTest.None;
             _sortPosition = -1;     // do not sort on this field
@@ -47,6 +48,14 @@ namespace ClearCanvas.Enterprise
         public SearchConditionTest Test
         {
             get { return _test; }
+        }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                return _test == SearchConditionTest.None && _sortPosition == -1;
+            }
         }
 
         /// <summary>
@@ -93,7 +102,7 @@ namespace ClearCanvas.Enterprise
             foreach (object val in values)
             {
                 if (IsNullValue(val))
-                    return;
+                    throw new ArgumentNullException();
             }
 
             _test = test;

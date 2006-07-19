@@ -4,12 +4,12 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
-    public class SearchResultLimit
+    public class SearchResultPage
     {
         private int _firstRow;
         private int _maxRows;
 
-        public SearchResultLimit()
+        public SearchResultPage()
         {
             _firstRow = 0;  // default
             _maxRows = 100; // default

@@ -5,7 +5,8 @@ using System.Text;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// Defines the public inteface for a search condition.
+    /// Defines the public inteface for a search condition.  Note that all methods
+    /// will throw an exception if a null argument is passed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface ISearchCondition<T>
@@ -14,13 +15,13 @@ namespace ClearCanvas.Enterprise
         /// Specifies that the condition variable be equal to the specified value.
         /// </summary>
         /// <param name="val"></param>
-        void Equal(T val);
+        void EqualTo(T val);
 
         /// <summary>
         /// Specifies that the condition variable not be equal to the specified value.
         /// </summary>
         /// <param name="val"></param>
-        void NotEqual(T val);
+        void NotEqualTo(T val);
 
         /// <summary>
         /// Specifies that the condition variable be "like" the specified value.
@@ -61,7 +62,7 @@ namespace ClearCanvas.Enterprise
         /// Specifies that the condition variable be less than or equal to the specified value.
         /// </summary>
         /// <param name="val"></param>
-        void LessThanOrEqual(T val);
+        void LessThanOrEqualTo(T val);
 
         /// <summary>
         /// Specifies that the condition variable be more than the specified value.
@@ -73,7 +74,7 @@ namespace ClearCanvas.Enterprise
         /// Specifies that the condition variable be more than or equal to the specified value.
         /// </summary>
         /// <param name="val"></param>
-        void MoreThanOrEqual(T val);
+        void MoreThanOrEqualTo(T val);
 
         /// <summary>
         /// Specifies that the condition variable be null, assuming T is a type that supports the notion of null.

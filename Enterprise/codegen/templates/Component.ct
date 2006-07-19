@@ -1,0 +1,27 @@
+using System;
+using System.Collections;
+using System.Text;
+
+using Iesi.Collections;
+using ClearCanvas.Enterprise;
+
+
+namespace <%= @model.namespace %> {
+
+
+    /// <summary>
+    /// <%= @className %> component
+    /// </summary>
+	public partial class <%= @className %>
+	{
+		/// <summary>
+		/// Factory method
+		/// </summary>
+		public static <%= @className %> New()
+		{
+			// add any object initialization code here
+			// the signature of the New() method may be freely changed as needed
+			return new <%= @className %>();
+		}
+	}
+}

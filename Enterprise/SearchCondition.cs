@@ -11,7 +11,12 @@ namespace ClearCanvas.Enterprise
     /// <typeparam name="T">The type of the condition variable</typeparam>
     public class SearchCondition<T> : SearchConditionBase, ISearchCondition<T>
     {
-        public void Equal(T val)
+        public SearchCondition(string name)
+            : base(name)
+        {
+        }
+
+        public void EqualTo(T val)
         {
             SetCondition(SearchConditionTest.Equal, val);
         }
@@ -45,7 +50,7 @@ namespace ClearCanvas.Enterprise
             SetCondition(SearchConditionTest.LessThan, val);
         }
 
-        public void LessThanOrEqual(T val)
+        public void LessThanOrEqualTo(T val)
         {
             SetCondition(SearchConditionTest.LessThanOrEqual, val);
         }
@@ -55,12 +60,12 @@ namespace ClearCanvas.Enterprise
             SetCondition(SearchConditionTest.MoreThan, val);
         }
 
-        public void MoreThanOrEqual(T val)
+        public void MoreThanOrEqualTo(T val)
         {
             SetCondition(SearchConditionTest.MoreThanOrEqual, val);
         }
 
-        public void NotEqual(T val)
+        public void NotEqualTo(T val)
         {
             SetCondition(SearchConditionTest.NotEqual, val);
         }

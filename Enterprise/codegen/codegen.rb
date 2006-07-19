@@ -28,6 +28,14 @@ class CodeGen
     Template.new("EnumHbm.gen.ct", "Hibernate/<%=@className%>Hbm.gen.cs", true)
   ]
   
+    # specifies a set of templates that will be applied to component classes
+  @@componentTemplates = [
+    Template.new("Component.ct", "<%=@className%>.cs", false),
+    Template.new("Component.gen.ct", "<%=@className%>.gen.cs", true),
+    Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true)
+  ]
+  
+  
   # total number of generated files
   @@count = 0
 
@@ -61,6 +69,7 @@ class CodeGen
     applyTemplates(@@modelTemplates, [model], destDir)
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
     applyTemplates(@@enumTemplates, model.enumDefs, destDir)
+    applyTemplates(@@componentTemplates, model.componentDefs, destDir)
     
     
     puts "Total #{@@count} files"

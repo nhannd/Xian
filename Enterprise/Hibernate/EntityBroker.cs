@@ -20,8 +20,14 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         public IList<TEntity> Find(TSearchCriteria criteria)
         {
+            // use default page constraint
+            return Find(criteria, new SearchResultPage());
+        }
+
+        public IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
+        {
             string baseHql = string.Format("from {0} x", typeof(TEntity).Name);
-            HqlQuery query = HqlQuery.FromSearchCriteria(baseHql, "x", criteria);
+            HqlQuery query = HqlQuery.FromSearchCriteria(baseHql, "x", criteria, page);
 
             return MakeTypeSafe(ExecuteHql(query));
         }

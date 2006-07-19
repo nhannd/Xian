@@ -27,9 +27,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// This would produce the following HQL:
         ///     "from Person p where p.LastName = ?"
         /// </example>
-        public static HqlQuery FromSearchCriteria(string baseHql, string alias, SearchCriteria criteria)
+        public static HqlQuery FromSearchCriteria(string baseHql, string alias, SearchCriteria criteria, SearchResultPage page)
         {
-            return FromSearchCriteria(baseHql, new string[] { alias }, new SearchCriteria[] { criteria }, criteria.Limit);
+            return FromSearchCriteria(baseHql, new string[] { alias }, new SearchCriteria[] { criteria }, page);
         }
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="alias">The aliases used in the base criteria that must be prepended to the criteria</param>
         /// <param name="criteria">The search criteria</param>
         /// <returns>a new instance of <see cref="HqlQuery"/></returns>
-        public static HqlQuery FromSearchCriteria(string baseHql, string[] aliases, SearchCriteria[] criteria, SearchResultLimit limit)
+        public static HqlQuery FromSearchCriteria(string baseHql, string[] aliases, SearchCriteria[] criteria, SearchResultPage page)
         {
             if (aliases.Length != criteria.Length)
             {
                 throw new ArgumentException();  // TODO elaborate
             }
 
-            HqlQuery q = new HqlQuery(baseHql, limit);
+            HqlQuery q = new HqlQuery(baseHql, page);
             for (int i = 0; i < criteria.Length; i++)
             {
                 q.AddConditions(HqlCondition.FromSearchCriteria(aliases[i], criteria[i]));
@@ -60,7 +60,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         private string _baseQuery;
         private List<HqlCondition> _conditions;
         private List<HqlSort> _sorts;
-        private SearchResultLimit _limit;
+        private SearchResultPage _page;
 
         /// <summary>
         /// Constructor.
@@ -68,10 +68,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="baseHql">The base HQL statement, without the "where" or "order by" clauses</param>
         /// <param name="firstRow">First record to retrieve</param>
         /// <param name="maxRows">Maximum number of records to retrieve</param>
-        public HqlQuery(string baseHql, SearchResultLimit limit)
+        public HqlQuery(string baseHql, SearchResultPage page)
         {
             _baseQuery = baseHql;
-            _limit = limit;
+            _page = page;
 
             _conditions = new List<HqlCondition>();
             _sorts = new List<HqlSort>();
@@ -180,10 +180,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             }
 
             // if limits were specified, pass them to nhibernate
-            if (_limit != null)
+            if (_page != null)
             {
-                q.SetFirstResult(_limit.FirstRow);
-                q.SetMaxResults(_limit.MaxRows);
+                q.SetFirstResult(_page.FirstRow);
+                q.SetMaxResults(_page.MaxRows);
             }
 
             return q;

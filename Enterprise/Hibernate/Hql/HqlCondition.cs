@@ -20,20 +20,23 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         public static IList<HqlCondition> FromSearchCriteria(string alias, SearchCriteria criteria)
         {
             List<HqlCondition> hqlConditions = new List<HqlCondition>();
-
-            FieldInfo[] fields = criteria.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
-            foreach (FieldInfo field in fields)
+            foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
             {
-                if (field.FieldType.IsSubclassOf(typeof(SearchConditionBase)))
+                if (subCriteria is SearchConditionBase)
                 {
-                    SearchConditionBase sc = (SearchConditionBase)field.GetValue(criteria);
+                    SearchConditionBase sc = (SearchConditionBase)subCriteria;
                     if (sc.Test != SearchConditionTest.None)
                     {
-                        hqlConditions.Add(FromSearchCondition(alias, field.Name, sc));
+                        hqlConditions.Add(FromSearchCondition(alias, sc.GetKey(), sc));
                     }
                 }
+                else
+                {
+                    // recur on subCriteria
+                    string subAlias = string.Format("{0}.{1}", alias, subCriteria.GetKey());
+                    hqlConditions.AddRange(FromSearchCriteria(subAlias, subCriteria));
+                }
             }
-
             return hqlConditions;
         }
 

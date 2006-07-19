@@ -12,10 +12,51 @@ namespace <%= @model.namespace %> {
     /// </summary>
 	public partial class <%= @className %>SearchCriteria : <%= @isSubClass  ? @superClassName : nil %>SearchCriteria
 	{
+		/// <summary>
+		/// Constructor for top-level search criteria (no key required)
+		/// </summary>
+		public <%= @className %>SearchCriteria()
+		{
+		}
+	
+		/// <summary>
+		/// Constructor for sub-criteria (key required)
+		/// </summary>
+		public <%= @className %>SearchCriteria(string key)
+			:base(key)
+		{
+		}
+	
 		<% @fields.each do |f|
-			if(!f.isCollection) %>
-	  	public SearchCondition<<%= f.dataType %>> <%= f.accessorName %> = new SearchCondition<<%= f.dataType %>>();
-	  	<% end
-	  	 end %>
+				if(!f.isCollection && !f.isComponent) %>
+	  	public ISearchCondition<<%= f.dataType %>> <%= f.accessorName %>
+	  	{
+	  		get
+	  		{
+	  			if(!this.SubCriteria.ContainsKey("<%= f.accessorName %>"))
+	  			{
+	  				this.SubCriteria["<%= f.accessorName %>"] = new SearchCondition<<%= f.dataType %>>("<%= f.accessorName %>");
+	  			}
+	  			return (ISearchCondition<<%= f.dataType %>>)this.SubCriteria["<%= f.accessorName %>"];
+	  		}
+	  	}
+	  	<%		end
+	  		end %>
+	  		
+		<% @fields.each do |f|
+				if(f.isComponent) %>
+	  	public <%= f.dataType %>SearchCriteria <%= f.accessorName %>
+	  	{
+	  		get
+	  		{
+	  			if(!this.SubCriteria.ContainsKey("<%= f.accessorName %>"))
+	  			{
+	  				this.SubCriteria["<%= f.accessorName %>"] = new <%= f.dataType %>SearchCriteria("<%= f.accessorName %>");
+	  			}
+	  			return (<%= f.dataType %>SearchCriteria)this.SubCriteria["<%= f.accessorName %>"];
+	  		}
+	  	}
+	  	<%		end
+	  		end %>
 	}
 }

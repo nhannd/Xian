@@ -7,46 +7,51 @@ namespace ClearCanvas.Enterprise
     /// <summary>
     /// Abstract base class for all search criteria classes.
     /// 
-    /// Typically, a concrete search criteria class is created for any entity that is intended to be
-    /// searchable.  To create such a class, extend this class and add member fields of type <see cref="SearchCondition"/>
-    /// that have the same names as the corresponding properties of the searchable entity.
-    /// 
-    /// For example, for an entity Person defined as
-    /// <code>
-    /// class Person : Entity {
-    ///     public string FirstName { get {...} }
-    ///     public string LastName { get {...} }
-    /// }
-    /// </code>
-    /// 
-    /// the search criteria would be defined as 
-    /// <code>
-    /// class PersonSearchCriteria : SearchCriteria
-    /// {
-    ///     public SearchCondition{string} FirstName = new SearchCondition{string}();
-    ///     public SearchCondition{string} LastName = new SearchCondition{string}();
-    /// }
-    /// </code>
-    /// 
-    /// Note that <see cref="SearchCondition"/> members need only be added for fields that are searchable.  It is
-    /// important that they are named identically to the properties in the corresponding entity class.
     /// 
     /// </summary>
     public abstract class SearchCriteria
     {
-        private SearchResultLimit _limit;
+        private string _key;
+        private Dictionary<string, SearchCriteria> _subCriteria;
+
+        public SearchCriteria(string key)
+        {
+            _key = key;
+            _subCriteria = new Dictionary<string, SearchCriteria>();
+        }
 
         public SearchCriteria()
+            :this(null)
         {
-            _limit = new SearchResultLimit();
         }
 
         /// <summary>
-        /// Used in paging scenarios to specify a limit clause
+        /// Returns the key (e.g the property) on which this criteria is defined.  This is intentionally
+        /// implemented as a method, rather than a property, so that there is no chance that a sub-class
+        /// property will conflict.
         /// </summary>
-        public SearchResultLimit Limit
+        /// <returns></returns>
+        public string GetKey()
         {
-            get { return _limit; }
+            return _key;
+        }
+
+        public IDictionary<string, SearchCriteria> SubCriteria
+        {
+            get { return _subCriteria; }
+        }
+
+        public virtual bool IsEmpty
+        {
+            get
+            {
+                foreach (SearchCriteria criteria in _subCriteria.Values)
+                {
+                    if (!criteria.IsEmpty)
+                        return false;
+                }
+                return true;
+            }
         }
     }
 }

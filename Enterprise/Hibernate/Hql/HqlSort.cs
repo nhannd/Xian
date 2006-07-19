@@ -20,20 +20,23 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         public static IList<HqlSort> FromSearchCriteria(string alias, SearchCriteria criteria)
         {
             List<HqlSort> hqlSorts = new List<HqlSort>();
-            
-            FieldInfo[] fields = criteria.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
-            foreach (FieldInfo field in fields)
+            foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
             {
-                if (field.FieldType.IsSubclassOf(typeof(SearchConditionBase)))
+                if (subCriteria is SearchConditionBase)
                 {
-                    SearchConditionBase sc = (SearchConditionBase)field.GetValue(criteria);
+                    SearchConditionBase sc = (SearchConditionBase)subCriteria;
                     if (sc.SortPosition > -1)
                     {
-                        hqlSorts.Add(new HqlSort(alias, field.Name, sc.SortDirection, sc.SortPosition));
+                        hqlSorts.Add(new HqlSort(alias, sc.GetKey(), sc.SortDirection, sc.SortPosition));
                     }
                 }
+                else
+                {
+                    // recur on subCriteria
+                    string subAlias = string.Format("{0}.{1}", alias, subCriteria.GetKey());
+                    hqlSorts.AddRange(FromSearchCriteria(subAlias, subCriteria));
+                }
             }
-
             return hqlSorts;
         }
 

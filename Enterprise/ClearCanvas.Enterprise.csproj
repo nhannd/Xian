@@ -50,7 +50,7 @@
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="IServiceManager.cs" />
     <Compile Include="ISession.cs" />
-    <Compile Include="SearchResultLimit.cs" />
+    <Compile Include="SearchResultPage.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="ITransactionMonitor.cs" />

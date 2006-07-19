@@ -1,0 +1,56 @@
+using System;
+using System.Collections;
+using System.Text;
+
+using Iesi.Collections;
+using ClearCanvas.Enterprise;
+
+
+namespace <%= @model.namespace %> {
+
+
+    /// <summary>
+    /// <%= @className %> component
+    /// This file is machine generated - changes will be lost.
+    /// </summary>
+	public partial class <%= @className %>
+	{
+       	#region Private fields
+       	
+		<% @fields.each do |f| %>
+	  	private <%= f.dataType %> <%= f.fieldName %>;
+	  	<% end %>
+	  	
+	  	#endregion
+	  	
+	  	#region Constructors
+	  	
+	  	/// <summary>
+	  	/// Default no-args constructor required by NHibernate
+	  	/// </summary>
+	  	protected <%= @className %>()
+	  	{
+		 	<% @fields.each do |f| 
+		 		if(f.initialValue)%>
+		  	<%= f.fieldName %> = <%= f.initialValue %>;
+		  	<% 	end 
+		  	end %>
+	  	}
+	  	
+	  	#endregion
+	  	
+	  	#region Public Properties
+	  	
+	  	<% @fields.each do |f| %>
+	  	public <%= f.dataType %> <%= f.accessorName %>
+	  	{
+			get { return <%= f.fieldName %>; }
+			<% if(!f.readOnly) %>
+			set { <%= f.fieldName %> = value; }
+			<% end %>
+	  	}
+	  	<% end %>
+	  	
+	  	#endregion
+	}
+}

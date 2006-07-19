@@ -26,11 +26,21 @@ namespace ClearCanvas.Enterprise
         TEntity Find(long oid);
 
         /// <summary>
-        /// Retrieves a list of all entities matching the specified criteria.
+        /// Retrieves a list of all entities matching the specified criteria,
+        /// using the implementation's default page constraint
+        /// (for example, the implementation may choose to limit the result set to the first 100 entities)
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria criteria);
+
+        /// <summary>
+        /// Retrieves a list of all entities matching the specified criteria,
+        /// constrained by the specified page constraint.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page);
 
         /// <summary>
         /// Returns the number of entities matching the specified criteria.
