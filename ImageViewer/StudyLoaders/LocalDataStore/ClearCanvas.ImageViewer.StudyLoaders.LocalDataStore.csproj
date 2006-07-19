@@ -67,7 +67,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.Workstation.Model</Name>
+      <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

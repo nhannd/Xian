@@ -1059,7 +1059,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override byte[] GetPixelData()
 		{
-			return _dicomImage.GetPixelData(BitsAllocated, Rows, Columns, SamplesPerPixel);
+			return _dicomImage.GetPixelData(
+				this.Rows,
+				this.Columns,
+				this.BitsAllocated,
+				this.BitsStored,
+				this.PixelRepresentation,
+				this.PhotometricInterpretation,
+				this.SamplesPerPixel,
+				this.PlanarConfiguration);
 		}
 
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
