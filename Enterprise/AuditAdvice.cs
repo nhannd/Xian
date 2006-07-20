@@ -10,7 +10,7 @@ namespace ClearCanvas.Enterprise
 {
     public class AuditAdvice : ServiceOperationAdvice, IMethodInterceptor
     {
-        public AuditAdvice(Session session)
+        internal AuditAdvice(Session session)
             : base(session)
         {
         }

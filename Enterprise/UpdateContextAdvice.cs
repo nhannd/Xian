@@ -9,7 +9,7 @@ namespace ClearCanvas.Enterprise
 {
     public class UpdateContextAdvice : PersistenceContextAdvice
     {
-        public UpdateContextAdvice(Session session)
+        internal UpdateContextAdvice(Session session)
             : base(session)
         {
         }

@@ -17,12 +17,12 @@ namespace ClearCanvas.Enterprise
     {
     }
 
-    public class ServiceManager : IServiceManager
+    internal class ServiceManager : IServiceManager
     {
         private Session _session;
         private Dictionary<Type, ProxyFactory> _proxyFactoryCache;
 
-        public ServiceManager(Session session)
+        internal ServiceManager(Session session)
         {
             _session = session;
             _proxyFactoryCache = new Dictionary<Type, ProxyFactory>();

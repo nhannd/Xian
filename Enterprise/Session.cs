@@ -10,12 +10,12 @@ namespace ClearCanvas.Enterprise
     {
     }
 
-    public class Session : ISession
+    internal class Session : ISession
     {
-        private static ISession _current;
+        private static Session _current;
 
 
-        public static ISession Current
+        internal static Session Current
         {
             get { return _current; }
             set { _current = value; }

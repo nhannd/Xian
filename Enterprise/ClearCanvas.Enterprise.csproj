@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationContext.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
     <Compile Include="EnumValueAttribute.cs" />

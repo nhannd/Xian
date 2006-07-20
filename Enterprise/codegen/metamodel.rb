@@ -112,8 +112,15 @@ protected
   # processes fields to create instances of FieldDef
   # a "field" is a node of type property, map, set, many-to-one, and others
   def processField(fieldNode)
-      @fields << FieldDef.new(fieldNode)
-      @model.processComponent(fieldNode) if(fieldNode.name == 'component')
+    field = FieldDef.new(fieldNode)
+    @fields << field
+    
+    # check for components/composite elements, and process them
+    if(fieldNode.name == 'component')
+      @model.processComponent(fieldNode) 
+    elsif(field.isCollection && (compositeElementNode = fieldNode.elements['composite-element']))
+      @model.processComponent(compositeElementNode)
+    end
   end
 end
 

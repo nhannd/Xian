@@ -2,6 +2,9 @@
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Defines the public interface for a session.
+    /// </summary>
     public interface ISession
     {
         /// <summary>

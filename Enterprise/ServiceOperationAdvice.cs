@@ -10,12 +10,12 @@ namespace ClearCanvas.Enterprise
     {
         private Session _session;
 
-        public ServiceOperationAdvice(Session session)
+        internal ServiceOperationAdvice(Session session)
         {
             _session = session;
         }
 
-        protected Session Session
+        internal Session Session
         {
             get { return _session; }
         }

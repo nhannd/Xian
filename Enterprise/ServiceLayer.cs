@@ -18,18 +18,18 @@ namespace ClearCanvas.Enterprise
         }
 
         private IPersistenceContext _currentContext;
-        private Session _session;
+        private ISession _session;
 
         protected ServiceLayer()
         {
         }
 
-        public void SetSession(Session session)
+        public void SetSession(ISession session)
         {
             _session = session;
         }
 
-        protected Session Session
+        protected ISession Session
         {
             get { return _session; }
         }
