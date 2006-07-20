@@ -38,6 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
+    <Compile Include="Address.cs" />
+    <Compile Include="AddressType.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Patient.cs" />
     <Compile Include="PatientIdentifier.cs" />

@@ -10,18 +10,18 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// TelephoneNumber component
+    /// Address component
     /// </summary>
-	public partial class TelephoneNumber
+	public partial class Address
 	{
 		/// <summary>
 		/// Factory method
 		/// </summary>
-		public static TelephoneNumber New()
+		public static Address New()
 		{
 			// add any object initialization code here
 			// the signature of the New() method may be freely changed as needed
-			return new TelephoneNumber();
+			return new Address();
 		}
 	}
 }

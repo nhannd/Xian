@@ -7,8 +7,15 @@
       </generator>
     </id>
     <version name="Version" column="Version"/>
-    
-    <property name="PatientId" column="PatientId_" type="String" length="20" />
+
+    <set name="Identifiers" lazy="true" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
+      <key column="PatientOID_"/>
+      <composite-element class="PatientIdentifier">
+        <property name="Id" column="Id_" type="String" length="30" not-null="true"/>
+        <property name="AssigningAuthority" column="AssigningAuthority_" type="String" length="100" not-null="true"/>
+        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.PatientIdentifierTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+      </composite-element>
+    </set>
     <component name="Name" class="PersonName">
       <property name="FamilyName" column="FamilyName_" type="String" length="40" not-null="true"/>
       <property name="GivenName" column="GivenName_" type="String" length="40" not-null="true"/>
@@ -17,17 +24,34 @@
       <property name="Suffix" column="Suffix_" type="String" length="10" not-null="false"/>
       <property name="Degree" column="Degree_" type="String" length="10" not-null="false"/>
     </component>
-    <set name="Identifiers" lazy="true" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
-      <key column="PatientOID_"/>
-      <composite-element class="ClearCanvas.Healthcare.PatientIdentifier, ClearCanvas.Healthcare">
-        <property name="Id" column="Id_" type="String" length="30" not-null="true"/>
-        <property name="AssigningAuthority" column="AssigningAuthority_" type="String" length="100" not-null="true"/>
-        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.PatientIdentifierTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
-      </composite-element>
-    </set>
     <property name="DateOfBirth" column="DateOfBirth_" type="DateTime" not-null="true"/>
     <property name="Sex" column="Sex_" type="ClearCanvas.Healthcare.Hibernate.SexEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <property name="DeathIndicator" column="DeathIndicator_" type="Boolean" not-null="true"/>
     <property name="TimeOfDeath" column="TimeOfDeath_" type="DateTime" not-null="false"/>
+    <set name="TelephoneNumbers" lazy="true" table="PatientTelephoneNumber_" access="nosetter.camelcase-underscore">
+      <key column="PatientOID_"/>
+      <composite-element class="TelephoneNumber">
+        <property name="CountryCode" column="CountryCode_" type="String" length="10" not-null="true"/>
+        <property name="AreaCode" column="AreaCode_" type="String" length="10" not-null="true"/>
+        <property name="Number" column="Number_" type="String" length="10" not-null="true"/>
+        <property name="Extension" column="Extension_" type="String" length="10" not-null="true"/>
+        <property name="Use" column="Use_" type="ClearCanvas.Healthcare.Hibernate.TelephoneUseEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="Equipment" column="Equipment_" type="ClearCanvas.Healthcare.Hibernate.TelephoneEquipmentEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+      </composite-element>
+    </set>
+    <map name="Addresses" table="PatientAddress_" lazy="true" access="nosetter.camelcase-underscore">
+      <key column="PatientOID_"/>
+      <index column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+      <composite-element class="Address">
+        <property name="Street" column="Street_" type="String" length="100" not-null="true"/>
+        <property name="City" column="City_" type="String" length="50" not-null="true"/>
+        <property name="Province" column="Province_" type="String" length="50" not-null="true"/>
+        <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="true"/>
+        <property name="Country" column="Country_" type="String" length="50" not-null="true"/>
+        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="ValidFrom" column="ValidFrom_" type="DateTime" not-null="false"/>
+        <property name="ValidUntil" column="ValidUntil_" type="DateTime" not-null="false"/>
+      </composite-element>
+    </map>
   </class>
 </hibernate-mapping>
