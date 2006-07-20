@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public override void Start()
         {
             base.Start();
-            _patientAdminService = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
         }
 
         public string FamilyName

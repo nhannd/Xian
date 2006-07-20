@@ -75,7 +75,6 @@ namespace ClearCanvas.Ris.Client.Admin
         public PatientAdminComponent()
         {
             TableColumn<Patient>[] columns = new TableColumn<Patient>[] {
-                new TableColumn<Patient>("ID", delegate(Patient p) { return p.PatientId; }),
                 new TableColumn<Patient>("Name", delegate(Patient p) { return p.Name.Format(); }),
             };
 
@@ -86,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public override void Start()
         {
             base.Start();
-            _patientAdminService = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _patientAdminService.PatientChanged += _patientAdminService_PatientChanged;
         }
 

@@ -45,10 +45,10 @@ namespace ClearCanvas.Ris.Client.Admin
             // 1. the existing copy in memory may be stale
             // 2. the editor should operate on a copy
             // 3. it may need patient details that were not loaded when the patients were listed
-            IPatientAdminService service = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+            IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
             Patient patient = service.LoadPatientDetails(oid);
             
-            string title = string.Format("Edit Patient - {0}, {1}", patient.PatientId, patient.Name.Format());
+            string title = string.Format("Edit Patient - {0}", patient.Name.Format());
             OpenPatient(title, patient);
         }
 
@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 PatientEditorComponent patientEditor = (PatientEditorComponent)component;
 
-                IPatientAdminService service = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+                IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
                 service.UpdatePatient(patientEditor.Subject);
             }
         }

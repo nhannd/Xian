@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 PatientEditorComponent patientEditor = (PatientEditorComponent)component;
 
-                IPatientAdminService service = Session.Current.ServiceManager.GetService<IPatientAdminService>();
+                IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
                 service.AddNewPatient(patientEditor.Subject);
             }
         }
