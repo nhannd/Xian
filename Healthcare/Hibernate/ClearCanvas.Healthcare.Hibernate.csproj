@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
+    <Compile Include="Brokers\PatientBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

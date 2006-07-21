@@ -24,7 +24,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return Find(criteria, new SearchResultPage());
         }
 
-        public IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
+        public virtual IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
         {
             string baseHql = string.Format("from {0} x", typeof(TEntity).Name);
             HqlQuery query = HqlQuery.FromSearchCriteria(baseHql, "x", criteria, page);
@@ -32,7 +32,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return MakeTypeSafe(ExecuteHql(query));
         }
 
-        public TEntity Find(long oid)
+        public virtual TEntity Find(long oid)
         {
             TEntity entity = (TEntity)this.Context.Session.Load(typeof(TEntity), oid);
 
@@ -42,7 +42,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return entity;
         }
 
-        public long Count(TSearchCriteria criteria)
+        public virtual long Count(TSearchCriteria criteria)
         {
             string baseHql = string.Format("select count(*) from {0} x", typeof(TEntity).Name);
 
@@ -57,7 +57,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return (long)results[0];
         }
 
-        public void Store(TEntity entity)
+        public virtual void Store(TEntity entity)
         {
             if (this.Context.ReadOnly)
                 throw new Exception();  //TODO elaborate
@@ -65,7 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             this.Context.Session.SaveOrUpdate(entity);
         }
 
-        public void Delete(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             if (this.Context.ReadOnly)
                  throw new Exception();  //TODO elaborate
@@ -73,7 +73,7 @@ namespace ClearCanvas.Enterprise.Hibernate
              this.Context.Session.Delete(entity);
         }
 
-        public void LoadRelated(TEntity entity, object property)
+        public virtual void LoadRelated(TEntity entity, object property)
         {
             // if the entity is not part of the current session, re-attach
             if (!this.Context.Session.Contains(entity))

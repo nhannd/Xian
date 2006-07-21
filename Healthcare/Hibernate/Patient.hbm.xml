@@ -8,7 +8,7 @@
     </id>
     <version name="Version" column="Version"/>
 
-    <set name="Identifiers" lazy="true" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
+    <set name="Identifiers" lazy="false" fetch="join" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
       <key column="PatientOID_"/>
       <composite-element class="PatientIdentifier">
         <property name="Id" column="Id_" type="String" length="30" not-null="true"/>
@@ -39,9 +39,8 @@
         <property name="Equipment" column="Equipment_" type="ClearCanvas.Healthcare.Hibernate.TelephoneEquipmentEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
       </composite-element>
     </set>
-    <map name="Addresses" table="PatientAddress_" lazy="true" access="nosetter.camelcase-underscore">
+    <set name="Addresses" table="PatientAddress_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="PatientOID_"/>
-      <index column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
       <composite-element class="Address">
         <property name="Street" column="Street_" type="String" length="100" not-null="true"/>
         <property name="City" column="City_" type="String" length="50" not-null="true"/>
@@ -52,6 +51,6 @@
         <property name="ValidFrom" column="ValidFrom_" type="DateTime" not-null="false"/>
         <property name="ValidUntil" column="ValidUntil_" type="DateTime" not-null="false"/>
       </composite-element>
-    </map>
+    </set>
   </class>
 </hibernate-mapping>
