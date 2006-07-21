@@ -28,13 +28,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this._dataGridView = new System.Windows.Forms.DataGridView();
             this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this._bindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).BeginInit();
             this._tableLayoutPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // _dataGridView
@@ -71,7 +74,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._dataGridView.Size = new System.Drawing.Size(720, 256);
             this._dataGridView.TabIndex = 0;
             this._dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellDoubleClick);
-            this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);
             // 
             // _toolStrip
             // 
@@ -111,6 +113,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).EndInit();
             this._tableLayoutPanel.ResumeLayout(false);
             this._tableLayoutPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -120,5 +123,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private System.Windows.Forms.DataGridView _dataGridView;
 		private System.Windows.Forms.ToolStrip _toolStrip;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
+        private System.Windows.Forms.BindingSource _bindingSource;
 	}
 }

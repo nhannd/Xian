@@ -7,9 +7,9 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Presentation;
 
 using ClearCanvas.Healthcare;
+using System.ComponentModel;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Admin
         
         private ToolSet _toolSet;
         private event EventHandler _workingSetChanged;
-        private TableData<Patient> _workingSetTableData;
+        private TableData<PatientTableEntry> _workingSet;
  
         private Patient _selectedPatient;
         private event EventHandler _selectedPatientChanged;
@@ -74,12 +74,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public PatientAdminComponent()
         {
-            TableColumn<Patient>[] columns = new TableColumn<Patient>[] {
-                new TableColumn<Patient>("Name", delegate(Patient p) { return p.Name.Format(); }),
-            };
-
-            _workingSetTableData = new TableData<Patient>(columns);
-
+            _workingSet = new TableData<PatientTableEntry>();
         }
 
         public override void Start()
@@ -135,7 +130,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
             // obtain a list of patients matching the specified criteria
             IList<Patient> patients = _patientAdminService.ListPatients(criteria);
-            _workingSetTableData.Fill(patients);
+            _workingSet.Clear();
+            foreach (Patient patient in patients)
+                _workingSet.Add(new PatientTableEntry(patient));
 
             EventsHelper.Fire(_workingSetChanged, this, new EventArgs());
         }
@@ -146,9 +143,9 @@ namespace ClearCanvas.Ris.Client.Admin
             remove { _workingSetChanged -= value; }
         }
 
-        public ITableData WorkingSetTableData
+        public ITableData WorkingSet
         {
-            get { return _workingSetTableData; }
+            get { return _workingSet; }
         }
 
         public void RowDoubleClick()
@@ -161,8 +158,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void SetSelection(ISelection selection)
         {
-            ITableRow row = selection.SelectedRow;
-            _selectedPatient = (Patient)(row == null ? null : row.Item);
+            PatientTableEntry entry = (PatientTableEntry)selection.Item;
+            _selectedPatient = entry == null ? null : entry.Patient;
             EventsHelper.Fire(_selectedPatientChanged, this, new EventArgs());
         }
     }

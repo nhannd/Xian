@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Presentation;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -15,32 +14,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
         class Selection : ISelection
         {
-            private ITableRow[] _rows;
+            private List<object> _items;
 
-            internal Selection(ITableRow[] rows)
+            internal Selection(DataGridViewSelectedRowCollection rows)
             {
-                _rows = rows;
+                _items = new List<object>();
+                foreach (DataGridViewRow row in rows)
+                    _items.Add(row.DataBoundItem);
             }
 
             #region ISelection Members
 
-            public ITableRow[] SelectedRows
+            public object[] Items
             {
-                get { return _rows; }
+                get { return _items.ToArray(); }
             }
 
-            public ITableRow SelectedRow
+            public object Item
             {
-                get { return _rows.Length > 0 ? _rows[0] : null; }
+                get { return _items.Count > 0 ? _items[0] : null; }
             }
 
             #endregion
         }
 
-        private ITableData _tableData;
-        private event EventHandler<TableViewEventArgs> _itemDoubleClicked;
-        private event EventHandler<TableViewEventArgs> _selectionChanged;
-
+        private event EventHandler _itemDoubleClicked;
 
 
 		public TableView()
@@ -48,45 +46,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 		}
 
-        public void SetData(ITableData tableData)
+        public object DataSource
         {
-            _tableData = tableData;
-
-            RefreshColumns();
-            RefreshRows();
-        }
-
-        public void RefreshColumns()
-        {
-            _dataGridView.Columns.Clear();
-
-            foreach(ITableColumn tc in _tableData.Columns)
+            get { return _bindingSource.DataSource; }
+            set
             {
-			    DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
-			    column.HeaderText = tc.Header;
-			    column.Width = (int)(tc.Width * 100);
-                _dataGridView.Columns.Add(column);
+                _bindingSource.DataSource = value;
+                _dataGridView.DataSource = _bindingSource;
             }
-        }
-
-        public void RefreshRows()
-        {
-            _dataGridView.SuspendLayout();
-            _dataGridView.Rows.Clear();
-
-            foreach(ITableRow tr in _tableData.Rows)
-            {
-                object[] rowValues = new object[_tableData.Columns.Length];
-                for(int c = 0; c < _tableData.Columns.Length; c++)
-                {
-                    rowValues[c] = tr.GetValue(c);
-                }
-
-                int i = _dataGridView.Rows.Add(rowValues);
-                _dataGridView.Rows[i].Tag = tr;
-            }
-            _dataGridView.ResumeLayout(true);
-
         }
 
         /// <summary>
@@ -94,24 +61,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public ISelection CurrentSelection
         {
-            get
-            {
-                List<ITableRow> rows = new List<ITableRow>();
-                foreach (DataGridViewRow dr in _dataGridView.SelectedRows)
-                {
-                    rows.Add((ITableRow)dr.Tag);
-                }
-                return new Selection(rows.ToArray());
-            }
+            get { return new Selection(_dataGridView.SelectedRows); }
         }
 
-        public event EventHandler<TableViewEventArgs> SelectionChanged
+        public event EventHandler SelectionChanged
         {
-            add { _selectionChanged += value; }
-            remove { _selectionChanged -= value; }
+            add { _dataGridView.SelectionChanged += value; }
+            remove { _dataGridView.SelectionChanged -= value; }
         }
 
-        public event EventHandler<TableViewEventArgs> ItemDoubleClicked
+        public event EventHandler ItemDoubleClicked
         {
             add { _itemDoubleClicked += value; }
             remove { _itemDoubleClicked -= value; }
@@ -121,13 +80,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (e.RowIndex > -1)    // rowindex == -1 represents a header click
             {
-                EventsHelper.Fire(_itemDoubleClicked, this, new TableViewEventArgs());
+                EventsHelper.Fire(_itemDoubleClicked, this, new EventArgs());
             }
-        }
-
-        private void _dataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            EventsHelper.Fire(_selectionChanged, this, new TableViewEventArgs());
         }
 	}
 }

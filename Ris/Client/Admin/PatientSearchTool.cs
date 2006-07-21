@@ -32,6 +32,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private IWorkspace _patientAdminWorkspace;
         private PatientAdminComponent _patientAdminComponent;
 
+        private string _mrn;
         private string _familyName;
         private string _givenName;
 
@@ -60,6 +61,16 @@ namespace ClearCanvas.Ris.Client.Admin
         public void ShowHide()
         {
             this.IsViewActive = !this.IsViewActive;
+        }
+
+        public string Mrn
+        {
+            get { return _mrn; }
+            set
+            {
+                _mrn = value;
+                UpdateDisplay();
+            }
         }
 
         public string FamilyName
@@ -124,6 +135,12 @@ namespace ClearCanvas.Ris.Client.Admin
         private PatientSearchCriteria BuildCriteria()
         {
             PatientSearchCriteria criteria = new PatientSearchCriteria();
+            if (_mrn != null && _mrn.Length > 0)
+            {
+                criteria.Identifiers.Id.Like(_mrn + "%");
+                criteria.Identifiers.Type.EqualTo(PatientIdentifierType.MR);
+            }
+
             if (_familyName != null && _familyName.Length > 0)
                 criteria.Name.FamilyName.Like(_familyName + "%");
 

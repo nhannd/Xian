@@ -6,7 +6,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Presentation;
 using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Admin

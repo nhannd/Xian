@@ -20,20 +20,20 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _component = component;
 
+            _patientTableView.DataSource = _component.WorkingSet;
             _component.WorkingSetChanged += new EventHandler(_component_WorkingSetChanged);
         }
 
         private void _component_WorkingSetChanged(object sender, EventArgs e)
         {
-            _patientTableView.SetData(_component.WorkingSetTableData);
         }
 
-        private void _patientTableView_ItemDoubleClicked(object sender, TableViewEventArgs e)
+        private void _patientTableView_ItemDoubleClicked(object sender, EventArgs e)
         {
             _component.RowDoubleClick();
         }
 
-        private void _patientTableView_SelectionChanged(object sender, TableViewEventArgs e)
+        private void _patientTableView_SelectionChanged(object sender, EventArgs e)
         {
             _component.SetSelection(_patientTableView.CurrentSelection);
         }

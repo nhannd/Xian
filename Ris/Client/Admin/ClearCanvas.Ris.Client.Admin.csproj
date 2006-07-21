@@ -42,6 +42,7 @@
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
+    <Compile Include="PatientTableEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

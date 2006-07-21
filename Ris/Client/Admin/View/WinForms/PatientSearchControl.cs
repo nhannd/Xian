@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             InitializeComponent();
             _tool = tool;
 
+            _mrn.DataBindings.Add("Value", _tool, "Mrn");
             _familyName.DataBindings.Add("Value", _tool, "FamilyName");
             _givenName.DataBindings.Add("Value", _tool, "GivenName");
 

@@ -58,7 +58,6 @@
     <Compile Include="TableView.Designer.cs">
       <DependentUpon>TableView.cs</DependentUpon>
     </Compile>
-    <Compile Include="TableViewEventArgs.cs" />
     <Compile Include="ToolStripBuilder.cs" />
     <Compile Include="ToolViewManager.cs" />
     <Compile Include="WindowManager.cs" />
