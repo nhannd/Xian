@@ -23,7 +23,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             // along with the patient in a single select statement, rather than having to execute a subsequent
             // select statement
             HqlQuery query = HqlQuery.FromSearchCriteria(
-                "from Patient p join fetch p.Identifiers i",
+                "from Patient p left join fetch p.Identifiers i",
                 new string[] { "p", "i" },
                 new SearchCriteria[] { criteria, criteria.Identifiers },
                 page);

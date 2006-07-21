@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Admin
         [TableColumn("MRN")]
         public string Mrn
         {
-            get { return _patient.GetMrn().Id; }
+            get { return _patient.GetMrn() == null ? null : _patient.GetMrn().Id; }
         }
 
         [TableColumn("Name")]
