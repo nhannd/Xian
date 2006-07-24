@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
@@ -13,7 +14,7 @@ namespace ClearCanvas.Desktop
         Cancelled,
     }
 
-    public interface IApplicationComponent
+    public interface IApplicationComponent : INotifyPropertyChanged
     {
         void SetHost(IApplicationComponentHost host);
         IToolSet ToolSet { get; }

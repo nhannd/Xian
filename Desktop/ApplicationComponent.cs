@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
@@ -43,6 +44,7 @@ namespace ClearCanvas.Desktop
         private IApplicationComponentHost _host;
         private ToolSet _stubToolSet;
         private ApplicationComponentExitCode _exitCode;
+        private event PropertyChangedEventHandler _propertyChanged;
 
         public ApplicationComponent()
         {
@@ -52,6 +54,17 @@ namespace ClearCanvas.Desktop
         protected IApplicationComponentHost Host
         {
             get { return _host; }
+        }
+
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));   
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { _propertyChanged += value; }
+            remove { _propertyChanged -= value; }
         }
 
 
