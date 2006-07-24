@@ -9,11 +9,11 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionModelNode
     {
-        private ActionPathSegment _pathSegment;
+        private PathSegment _pathSegment;
         private List<ActionModelNode> _childNodes;
         private IAction _action; // null if this is not a leaf node
 
-        protected ActionModelNode(ActionPathSegment pathSegment)
+        protected ActionModelNode(PathSegment pathSegment)
         {
             _pathSegment = pathSegment;
             _childNodes = new List<ActionModelNode>();
@@ -24,7 +24,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         /// <param name="pathSegment">The path segment which this node represents</param>
         /// <returns>A new node of this type.</returns>
-        protected virtual ActionModelNode CreateNode(ActionPathSegment pathSegment)
+        protected virtual ActionModelNode CreateNode(PathSegment pathSegment)
         {
             return new ActionModelNode(pathSegment);
         }
@@ -32,7 +32,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// The action path segment represented by this node.
         /// </summary>
-        public ActionPathSegment PathSegment
+        public PathSegment PathSegment
         {
             get { return _pathSegment; }
         }
@@ -101,7 +101,7 @@ namespace ClearCanvas.Desktop.Actions
             if (segmentCount == 0)
                 return;
 
-            ActionPathSegment segment = action.Path.Segments[pathDepth];
+            PathSegment segment = action.Path.Segments[pathDepth];
             if (pathDepth + 1 == segmentCount)
             {
                 // this is the last path segment -> leaf node
@@ -121,7 +121,7 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        protected ActionModelNode FindChild(ActionPathSegment segment)
+        protected ActionModelNode FindChild(PathSegment segment)
         {
             foreach (ActionModelNode child in _childNodes)
             {

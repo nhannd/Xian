@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// The menu or toolbar path for this action.
         /// </summary>
-        ActionPath Path { get; set; }
+        Path Path { get; set; }
 
         /// <summary>
         /// The label that the action should present in the UI.

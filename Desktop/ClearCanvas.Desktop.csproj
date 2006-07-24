@@ -48,8 +48,8 @@
     <Compile Include="Actions\ActionModelNode.cs" />
     <Compile Include="Actions\ActionModelRoot.cs" />
     <Compile Include="Actions\ActionModelStore.cs" />
-    <Compile Include="Actions\ActionPath.cs" />
-    <Compile Include="Actions\ActionPathSegment.cs" />
+    <Compile Include="Path.cs" />
+    <Compile Include="PathSegment.cs" />
     <Compile Include="Actions\ActionResourceResolver.cs" />
     <Compile Include="Actions\ButtonAction.cs" />
     <Compile Include="Actions\ButtonActionAttribute.cs" />
@@ -89,6 +89,8 @@
     <Compile Include="IDesktopView.cs" />
     <Compile Include="ISelection.cs" />
     <Compile Include="ITableData.cs" />
+    <Compile Include="NavigatorComponent.cs" />
+    <Compile Include="NavigatorNode.cs" />
     <Compile Include="TableColumnAttribute.cs" />
     <Compile Include="TableData.cs" />
     <Compile Include="MementoList.cs" />

@@ -24,15 +24,10 @@ namespace ClearCanvas.Ris.Client.Admin
             OpenPatient("New Patient", Patient.New());
         }
 
-        protected override void PatientEditorExited(IApplicationComponent component)
+        protected override void SaveChanges(Patient patient)
         {
-            if (component.ExitCode == ApplicationComponentExitCode.Normal)
-            {
-                PatientEditorComponent patientEditor = (PatientEditorComponent)component;
-
-                IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
-                service.AddNewPatient(patientEditor.Subject);
-            }
+            IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
+            service.AddNewPatient(patient);
         }
     }
 }

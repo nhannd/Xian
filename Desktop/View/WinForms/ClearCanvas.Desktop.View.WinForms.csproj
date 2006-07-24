@@ -48,6 +48,13 @@
     <Compile Include="ApplicationComponentView.cs" />
     <Compile Include="IconFactory.cs" />
     <Compile Include="MessageBox.cs" />
+    <Compile Include="NavigatorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NavigatorComponentControl.Designer.cs">
+      <DependentUpon>NavigatorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NavigatorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs" />
     <Compile Include="StockTool.cs" />
@@ -77,6 +84,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="NavigatorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NavigatorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

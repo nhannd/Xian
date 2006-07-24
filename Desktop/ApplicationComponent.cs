@@ -17,17 +17,20 @@ namespace ClearCanvas.Desktop
             string title,
             ApplicationComponentExitDelegate exitCallback)
         {
+            IExtensionPoint viewExtensionPoint = GetViewExtensionPoint(component.GetType());
+            IWorkspace workspace = new ApplicationComponentHostWorkspace(title, component, viewExtensionPoint, exitCallback);
+            DesktopApplication.WorkspaceManager.Workspaces.Add(workspace);
+            return workspace;
+        }
 
-            object[] attrs = component.GetType().GetCustomAttributes(typeof(ApplicationComponentViewAttribute), false);
+        public static IExtensionPoint GetViewExtensionPoint(Type applicationComponentType)
+        {
+            object[] attrs = applicationComponentType.GetCustomAttributes(typeof(ApplicationComponentViewAttribute), false);
             if (attrs.Length == 0)
                 throw new Exception("View attribute not specified");    //TODO elaborate
 
             ApplicationComponentViewAttribute viewAttribute = (ApplicationComponentViewAttribute)attrs[0];
-            IExtensionPoint viewExtensionPoint = (IExtensionPoint)Activator.CreateInstance(viewAttribute.ViewExtensionPointType);
-
-            IWorkspace workspace = new ApplicationComponentHostWorkspace(title, component, viewExtensionPoint, exitCallback);
-            DesktopApplication.WorkspaceManager.Workspaces.Add(workspace);
-            return workspace;
+            return (IExtensionPoint)Activator.CreateInstance(viewAttribute.ViewExtensionPointType);
         }
 
 

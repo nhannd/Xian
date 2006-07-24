@@ -50,7 +50,7 @@ namespace ClearCanvas.Desktop.Actions
             InsertAction(action, 0);
         }
         
-        protected override ActionModelNode CreateNode(ActionPathSegment pathSegment)
+        protected override ActionModelNode CreateNode(PathSegment pathSegment)
         {
             return new ActionModelRoot(_modelID);
         }

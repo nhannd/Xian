@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Desktop.Actions
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Represents a single segment of an <see cref="ActionPath"/>.
     /// </summary>
-    public class ActionPathSegment
+    public class PathSegment
     {
         private string _key;
         private string _localized;
@@ -17,7 +17,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         /// <param name="key">The resource key or unlocalized path segment string</param>
         /// <param name="localized">The localized path segment string</param>
-        internal ActionPathSegment(string key, string localized)
+        internal PathSegment(string key, string localized)
         {
             _key = key;
             _localized = localized;

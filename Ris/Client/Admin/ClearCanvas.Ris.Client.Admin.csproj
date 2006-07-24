@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressesEditorComponent.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientAddEditToolBase.cs" />
@@ -43,6 +44,7 @@
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PatientTableEntry.cs" />
+    <Compile Include="PhoneNumbersEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

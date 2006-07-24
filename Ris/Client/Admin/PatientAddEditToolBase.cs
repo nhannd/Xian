@@ -12,15 +12,36 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     public abstract class PatientAddEditToolBase : Tool
     {
+        private PatientEditorComponent _patientEditor;
+        private AddressesEditorComponent _addressesEditor;
+        private PhoneNumbersEditorComponent _phoneNumbersEditor;
+
         protected void OpenPatient(string title, Patient patient)
         {
-            PatientEditorComponent editor = new PatientEditorComponent();
-            editor.Subject = patient;
+            NavigatorComponent navigator = new NavigatorComponent();
 
-            ApplicationComponent.LaunchAsWorkspace(editor, title, PatientEditorExited);
+            _patientEditor = new PatientEditorComponent();
+            _patientEditor.Subject = patient;
+
+            _addressesEditor = new AddressesEditorComponent();
+            _phoneNumbersEditor = new PhoneNumbersEditorComponent();
+
+            navigator.Nodes.Add(new NavigatorNode("Patient", _patientEditor));
+            navigator.Nodes.Add(new NavigatorNode("Patient/Addresses", _addressesEditor));
+            navigator.Nodes.Add(new NavigatorNode("Patient/Phone Numbers", _phoneNumbersEditor));
+
+            ApplicationComponent.LaunchAsWorkspace(navigator, title, PatientEditorExited);
         }
 
-        protected abstract void PatientEditorExited(IApplicationComponent component);
+        private void PatientEditorExited(IApplicationComponent component)
+        {
+            if (component.ExitCode == ApplicationComponentExitCode.Normal)
+            {
+                SaveChanges(_patientEditor.Subject);
+            }
+        }
+
+        protected abstract void SaveChanges(Patient patient);
 
         protected IPatientAdminToolContext PatientAdminToolContext
         {

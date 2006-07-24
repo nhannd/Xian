@@ -16,7 +16,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="path"></param>
         /// <param name="target"></param>
         /// <param name="flags"></param>
-        internal MenuAction(string actionID, ActionPath path, object target, ClickActionFlags flags)
+        internal MenuAction(string actionID, Path path, object target, ClickActionFlags flags)
             : base(actionID, ActionCategory.MenuAction, path, target, flags)
         {
         }

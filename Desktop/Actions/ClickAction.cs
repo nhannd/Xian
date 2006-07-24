@@ -17,7 +17,7 @@ namespace ClearCanvas.Desktop.Actions
 
         private IObservablePropertyBinding<bool> _checkedPropertyBinding;
 
-        public ClickAction(string actionID, ActionCategory category, ActionPath path, object target, ClickActionFlags flags)
+        public ClickAction(string actionID, ActionCategory category, Path path, object target, ClickActionFlags flags)
             :base(actionID, category, path, target)
         {
             _flags = flags;

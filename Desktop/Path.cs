@@ -4,13 +4,13 @@ using System.Text;
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Desktop.Actions
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Represents an action path.  An action path specifies the location of an action within
     /// a menu or toolbar hierarchy.
     /// </summary>
-    public class ActionPath
+    public class Path
     {
         const char SEPARATOR = '/';
 
@@ -26,28 +26,28 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="path">The path string to parse</param>
         /// <param name="resolver">The <see cref="ResourceResolver"/> to use for localization</param>
         /// <returns>A new <see cref="ActionPath"/> object</returns>
-        public static ActionPath ParseAndLocalize(string path, ResourceResolver resolver)
+        public static Path ParseAndLocalize(string path, ResourceResolver resolver)
         {
             string[] parts = path.Split(new char[] { SEPARATOR });
 
             int n = parts.Length;
-            ActionPathSegment[] segments = new ActionPathSegment[n];
+            PathSegment[] segments = new PathSegment[n];
             for (int i = 0; i < n; i++)
             {
-                segments[i] = new ActionPathSegment(parts[i], resolver.Resolve(parts[i]));
+                segments[i] = new PathSegment(parts[i], resolver.Resolve(parts[i]));
             }
 
-            return new ActionPath(segments);
+            return new Path(segments);
         }
 
 
-        private ActionPathSegment[] _segments;
+        private PathSegment[] _segments;
 
         /// <summary>
         /// Internal constructor
         /// </summary>
         /// <param name="segments"></param>
-        internal ActionPath(ActionPathSegment[] segments)
+        internal Path(PathSegment[] segments)
         {
             _segments = segments;
         }
@@ -55,7 +55,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// The set of individual segments contained in this path.
         /// </summary>
-        public ActionPathSegment[] Segments
+        public PathSegment[] Segments
         {
             get { return _segments; }
             set { _segments = value; }
@@ -64,7 +64,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// The final segment in this path, or null if this path is empty
         /// </summary>
-        public ActionPathSegment LastSegment
+        public PathSegment LastSegment
         {
             get { return _segments.Length > 0 ? _segments[_segments.Length - 1] : null; }
         }
@@ -76,7 +76,7 @@ namespace ClearCanvas.Desktop.Actions
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (ActionPathSegment segment in _segments)
+            foreach (PathSegment segment in _segments)
             {
                 if (sb.Length > 0)
                     sb.Append(SEPARATOR);

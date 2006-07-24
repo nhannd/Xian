@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressesEditorComponentView.cs" />
+    <Compile Include="AddressesEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddressesEditorControl.Designer.cs">
+      <DependentUpon>AddressesEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PatientAdminComponentView.cs" />
     <Compile Include="PatientAdminControl.cs">
       <SubType>UserControl</SubType>
@@ -56,6 +63,13 @@
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientSearchToolView.cs" />
+    <Compile Include="PhoneNumbersEditorComponentView.cs" />
+    <Compile Include="PhoneNumbersEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PhoneNumbersEditorControl.Designer.cs">
+      <DependentUpon>PhoneNumbersEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +98,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddressesEditorControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AddressesEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PatientAdminControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PatientAdminControl.cs</DependentUpon>
@@ -95,6 +113,10 @@
     <EmbeddedResource Include="PatientSearchControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PhoneNumbersEditorControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PhoneNumbersEditorControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
