@@ -16,7 +16,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Text = title;
 
             Control content = (Control)view.GuiElement;
+
+            // important - if we do not set a minimum size, the full content may not be displayed
+            content.MinimumSize = content.Size;
             content.Dock = DockStyle.Fill;
+
+            // force the dialog client size to the size of the content
+            this.ClientSize = content.Size;
             _contentPanel.Controls.Add(content);
         }
     }
