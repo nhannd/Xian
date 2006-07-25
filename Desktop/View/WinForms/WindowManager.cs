@@ -63,13 +63,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public void RemoveWorkspace(IWorkspace workspace)
 		{
             // Find the tab that owns the workspace and remove it
-            foreach (WorkspaceTab workspaceTab in _tabControl.TabPages)
+            WorkspaceTab tab = FindTabForWorkspace(workspace);
+            if (tab != null)
             {
-                if (workspaceTab.Workspace == workspace)
-                {
-                    _tabControl.TabPages.Remove(workspaceTab);
-                    break;
-                }
+                _tabControl.TabPages.Remove(tab);
             }
 
 			// If we have no more tabs left, revert to the plain gray look of the tab control
@@ -101,8 +98,29 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public void ActivateWorkspace(IWorkspace workspace)
 		{
-			_workspaceToolViewManager.ToolSet = workspace.ToolSet;
+            // Find the tab that owns the workspace and activate it
+            WorkspaceTab tab = FindTabForWorkspace(workspace);
+            if (tab != null)
+            {
+                tab.Selected = true;
+            }
+
+            // adjust visible toolset
+            _workspaceToolViewManager.ToolSet = workspace.ToolSet;
 		}
+
+        private WorkspaceTab FindTabForWorkspace(IWorkspace workspace)
+        {
+            // Find the tab that owns the workspace and remove it
+            foreach (WorkspaceTab workspaceTab in _tabControl.TabPages)
+            {
+                if (workspaceTab.Workspace == workspace)
+                {
+                    return workspaceTab;
+                }
+            }
+            return null;
+        }
 
 		private void HideDockingWindows()
 		{
