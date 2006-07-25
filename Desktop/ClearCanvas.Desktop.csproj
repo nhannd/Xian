@@ -48,6 +48,9 @@
     <Compile Include="Actions\ActionModelNode.cs" />
     <Compile Include="Actions\ActionModelRoot.cs" />
     <Compile Include="Actions\ActionModelStore.cs" />
+    <Compile Include="ApplicationComponentHostDialog.cs" />
+    <Compile Include="ClosingEventArgs.cs" />
+    <Compile Include="IDialogBox.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="PathSegment.cs" />
     <Compile Include="Actions\ActionResourceResolver.cs" />

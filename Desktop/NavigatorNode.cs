@@ -67,7 +67,7 @@ namespace ClearCanvas.Desktop
             throw new NotSupportedException();
         }
 
-        public MessageBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
+        public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             return Platform.ShowMessageBox(message, buttons);
         }

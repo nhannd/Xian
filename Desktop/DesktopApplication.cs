@@ -20,6 +20,13 @@ namespace ClearCanvas.Desktop
     {
     }
 
+    /// <summary>
+    /// Defines an extension point for a general dialog box
+    /// </summary>
+    public class DialogBoxExtensionPoint : ExtensionPoint<IDialogBox>
+    {
+    }
+
 
 
     [ClearCanvas.Common.ExtensionOf(typeof(ApplicationRootExtensionPoint))]
@@ -67,6 +74,17 @@ namespace ClearCanvas.Desktop
         public static string ApplicationVersion
         {
             get { return SR.ApplicationVersion; }
+        }
+
+        /// <summary>
+        /// Factory method to create a dialog box using the GUI toolkit of the main window
+        /// </summary>
+        /// <returns></returns>
+        public static IDialogBox CreateDialogBox()
+        {
+            GuiToolkitAttribute testAttr = new GuiToolkitAttribute(View.GuiToolkitID);
+            DialogBoxExtensionPoint xp = new DialogBoxExtensionPoint();
+            return (IDialogBox)xp.CreateExtension(new AttributeExtensionFilter(testAttr));
         }
 
         /// <summary>

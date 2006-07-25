@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client.Admin
             navigator.Nodes.Add(new NavigatorNode("Patient/Phone Numbers", _phoneNumbersEditor));
 
             ApplicationComponent.LaunchAsWorkspace(navigator, title, PatientEditorExited);
+            //ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(navigator, title);
         }
 
         private void PatientEditorExited(IApplicationComponent component)

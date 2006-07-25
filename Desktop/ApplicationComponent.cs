@@ -12,6 +12,14 @@ namespace ClearCanvas.Desktop
     
     public abstract class ApplicationComponent : IApplicationComponent
     {
+        /// <summary>
+        /// Executes the specified application component in a new workspace.  The exit callback will be invoked
+        /// when the workspace is closed.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <param name="exitCallback"></param>
+        /// <returns></returns>
         public static IWorkspace LaunchAsWorkspace(
             IApplicationComponent component,
             string title,
@@ -23,6 +31,27 @@ namespace ClearCanvas.Desktop
             return workspace;
         }
 
+        /// <summary>
+        /// Executes the specified application component in a modal dialog box.  This call will block until
+        /// the dialog box is closed.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public static ApplicationComponentExitCode LaunchAsDialog(
+            IApplicationComponent component,
+            string title)
+        {
+            ApplicationComponentHostDialog hostDialog = new ApplicationComponentHostDialog(title, component);
+            return hostDialog.RunModal();
+        }
+
+        /// <summary>
+        /// Returns the view extension point associated with the specified application component type by
+        /// looking for an attribute of type <see cref="ApplicationComponentViewAttribute"/>.
+        /// </summary>
+        /// <param name="applicationComponentType"></param>
+        /// <returns></returns>
         public static IExtensionPoint GetViewExtensionPoint(Type applicationComponentType)
         {
             object[] attrs = applicationComponentType.GetCustomAttributes(typeof(ApplicationComponentViewAttribute), false);

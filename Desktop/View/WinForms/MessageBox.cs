@@ -26,10 +26,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             _buttonMap.Add((int)MessageBoxActions.YesNoCancel, MessageBoxButtons.YesNoCancel);
 
             _resultMap = new Dictionary<DialogResult, int>();
-            _resultMap.Add(DialogResult.OK, (int)MessageBoxAction.Ok);
-            _resultMap.Add(DialogResult.Cancel, (int)MessageBoxAction.Cancel);
-            _resultMap.Add(DialogResult.Yes, (int)MessageBoxAction.Yes);
-            _resultMap.Add(DialogResult.No, (int)MessageBoxAction.No);
+            _resultMap.Add(DialogResult.OK, (int)DialogBoxAction.Ok);
+            _resultMap.Add(DialogResult.Cancel, (int)DialogBoxAction.Cancel);
+            _resultMap.Add(DialogResult.Yes, (int)DialogBoxAction.Yes);
+            _resultMap.Add(DialogResult.No, (int)DialogBoxAction.No);
         }
 
         public MessageBox()
@@ -44,11 +44,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			System.Windows.Forms.MessageBox.Show(message, DesktopApplication.ApplicationName);
 		}
 
-        public MessageBoxAction Show(string message, ClearCanvas.Common.MessageBoxActions buttons)
+        public DialogBoxAction Show(string message, ClearCanvas.Common.MessageBoxActions buttons)
         {
             DialogResult dr = System.Windows.Forms.MessageBox.Show(
                 message, DesktopApplication.ApplicationName, _buttonMap[(int)buttons]);
-            return (MessageBoxAction)_resultMap[dr];
+            return (DialogBoxAction)_resultMap[dr];
         }
 
     }

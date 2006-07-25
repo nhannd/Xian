@@ -314,7 +314,7 @@ namespace ClearCanvas.Common
             ShowMessageBox(message, MessageBoxActions.Ok);
 		}
 
-        public static MessageBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
+        public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             if (_messageBox == null)
             {

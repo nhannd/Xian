@@ -45,6 +45,13 @@
     <Compile Include="ActiveToolbarButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DialogBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogBoxForm.Designer.cs">
+      <DependentUpon>DialogBoxForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogBox.cs" />
     <Compile Include="ApplicationComponentView.cs" />
     <Compile Include="IconFactory.cs" />
     <Compile Include="MessageBox.cs" />
@@ -84,6 +91,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DialogBoxForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DialogBoxForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NavigatorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>NavigatorComponentControl.cs</DependentUpon>
