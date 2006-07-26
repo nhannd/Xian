@@ -7,6 +7,8 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 
+using Iesi.Collections;
+
 namespace ClearCanvas.Ris.Client.Admin
 {
     [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
@@ -31,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Admin
             Patient patient = broker.Find(oid);
 
             // load all relevant collections
-            //broker.LoadRelated(patient, patient.Identifiers);
+            broker.LoadRelated(patient, patient.Identifiers);
 
             return patient;
         }
