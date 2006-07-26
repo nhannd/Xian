@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Admin
         
         private ToolSet _toolSet;
         private event EventHandler _workingSetChanged;
-        private TableData<PatientTableEntry> _workingSet;
+        private TableData<Patient> _workingSet;
  
         private Patient _selectedPatient;
         private event EventHandler _selectedPatientChanged;
@@ -74,7 +74,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public PatientAdminComponent()
         {
-            _workingSet = new TableData<PatientTableEntry>();
         }
 
         public override void Start()
@@ -82,6 +81,11 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _patientAdminService.PatientChanged += _patientAdminService_PatientChanged;
+
+            _workingSet = new TableData<Patient>();
+            _workingSet.AddColumn<string>("MRN", delegate(Patient p) { return p.GetMrn().Id; });
+            _workingSet.AddColumn<string>("Name", delegate(Patient p) { return p.Name.Format(); });
+            _workingSet.AddColumn<string>("Sex", delegate(Patient p) { return _patientAdminService.SexEnumTable[p.Sex].Value; });
         }
 
         public override void Stop()
@@ -132,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Admin
             IList<Patient> patients = _patientAdminService.ListPatients(criteria);
             _workingSet.Clear();
             foreach (Patient patient in patients)
-                _workingSet.Add(new PatientTableEntry(patient));
+                _workingSet.Add(patient);
 
             EventsHelper.Fire(_workingSetChanged, this, new EventArgs());
         }
@@ -158,8 +162,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void SetSelection(ISelection selection)
         {
-            PatientTableEntry entry = (PatientTableEntry)selection.Item;
-            _selectedPatient = entry == null ? null : entry.Patient;
+            _selectedPatient = (Patient)selection.Item;
             EventsHelper.Fire(_selectedPatientChanged, this, new EventArgs());
         }
     }

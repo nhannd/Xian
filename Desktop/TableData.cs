@@ -14,93 +14,79 @@ namespace ClearCanvas.Desktop
     /// <typeparam name="TItem"></typeparam>
     public class TableData<TItem> : BindingList<TItem>, ITableData
     {
-        /// <summary>
-        /// Extends <see cref="PropertyDescriptor"/> in order to give us control
-        /// over implementation of abstract methods.  This implementation
-        /// simply wraps an existing property descriptor and delegates all methods
-        /// to the inner instance, however it allows us to control the Name property
-        /// which is otherwise not available.
-        /// </summary>
+        public delegate object ColumnValueGetDelegate<TObject>(TObject obj);
+
         internal class PropertyDescriptorEx : PropertyDescriptor
         {
-            private static Attribute[] ConvertAttrCollectionToArray(AttributeCollection col)
-            {
-                Attribute[] attrs = new Attribute[col.Count];
-                int i = 0;
-                foreach (Attribute a in col)
-                    attrs[i++] = a;
-                return attrs;
-            }
+            private Type _columnType;
+            private ColumnValueGetDelegate<TItem> _valueGetDelegate;
 
-            private PropertyDescriptor _p;
-
-            internal PropertyDescriptorEx(string name, PropertyDescriptor p)
-                : base(name, ConvertAttrCollectionToArray(p.Attributes))
+            internal PropertyDescriptorEx(string name, Type columnType, ColumnValueGetDelegate<TItem> valueGetDelegate)
+                : base(name, new Attribute[] { })
             {
-                _p = p;
+                _columnType = columnType;
+                _valueGetDelegate = valueGetDelegate;
             }
 
             public override bool CanResetValue(object component)
             {
-                return _p.CanResetValue(component);
+                return false;
             }
 
             public override Type ComponentType
             {
-                get { return _p.ComponentType; }
+                get { return typeof(TItem); }
             }
 
             public override object GetValue(object component)
             {
-                return _p.GetValue(component);
+                return _valueGetDelegate((TItem)component);
             }
 
             public override bool IsReadOnly
             {
-                get { return _p.IsReadOnly; }
+                get { return true; }
             }
 
             public override Type PropertyType
             {
-                get { return _p.PropertyType; }
+                get { return _columnType; }
             }
 
             public override void ResetValue(object component)
             {
-                _p.ResetValue(component);
+                throw new NotSupportedException();
             }
 
             public override void SetValue(object component, object value)
             {
-                _p.SetValue(component, value);
+                throw new NotSupportedException();
             }
 
             public override bool ShouldSerializeValue(object component)
             {
-                return _p.ShouldSerializeValue(component);
+                return false;
             }
         }
 
+        private List<PropertyDescriptor> _properties;
 
+        public TableData()
+        {
+            _properties = new List<PropertyDescriptor>();
+        }
+
+        public void AddColumn<TColumnType>(string columnName, ColumnValueGetDelegate<TItem> valueGetDelegate)
+        {
+            _properties.Add(new PropertyDescriptorEx(columnName, typeof(TColumnType), valueGetDelegate));
+        }
 
 
         #region ITypedList Members
 
         public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)
         {
-            PropertyDescriptorCollection properties =
-                TypeDescriptor.GetProperties(typeof(TItem));
-
-            List<PropertyDescriptor> wrappedProperties = new List<PropertyDescriptor>();
-            foreach (PropertyDescriptor property in properties)
-            {
-                TableColumnAttribute a = GetTableColumnAttribute(property);
-                if (a != null)
-                {
-                    wrappedProperties.Add(new PropertyDescriptorEx(a.ColumnName, property));
-                }
-            }
-            return new PropertyDescriptorCollection(wrappedProperties.ToArray());
+            return new PropertyDescriptorCollection(_properties.ToArray());
         }
 
         public string GetListName(PropertyDescriptor[] listAccessors)
@@ -109,15 +95,5 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
-
-        private TableColumnAttribute GetTableColumnAttribute(PropertyDescriptor property)
-        {
-            foreach (Attribute a in property.Attributes)
-            {
-                if (a.GetType() == typeof(TableColumnAttribute))
-                    return (TableColumnAttribute)a;
-            }
-            return null;
-        }
-    }
+     }
 }

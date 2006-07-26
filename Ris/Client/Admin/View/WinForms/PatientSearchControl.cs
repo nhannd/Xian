@@ -17,9 +17,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             InitializeComponent();
             _tool = tool;
 
-            _mrn.DataBindings.Add("Value", _tool, "Mrn");
-            _familyName.DataBindings.Add("Value", _tool, "FamilyName");
-            _givenName.DataBindings.Add("Value", _tool, "GivenName");
+            _patientIdentifierType.DataSource = _tool.PatientIdentifierTypeChoices;
+            _patientIdentifierType.DataBindings.Add("Value", _tool, "PatientIdentifierType", false, DataSourceUpdateMode.OnPropertyChanged);
+
+            _patientIdentifier.DataBindings.Add("Value", _tool, "PatientIdentifier", false, DataSourceUpdateMode.OnPropertyChanged);
+            _familyName.DataBindings.Add("Value", _tool, "FamilyName", false, DataSourceUpdateMode.OnPropertyChanged);
+            _givenName.DataBindings.Add("Value", _tool, "GivenName", false, DataSourceUpdateMode.OnPropertyChanged);
+            
+            _sex.DataSource = _tool.SexChoices;
+            _sex.DataBindings.Add("Value", _tool, "Sex", false, DataSourceUpdateMode.OnPropertyChanged);
 
             _searchButton.DataBindings.Add("Enabled", _tool, "SearchEnabled");
         }

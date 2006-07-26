@@ -50,7 +50,6 @@
     <Compile Include="PatientIdentifierEditorComponent.cs" />
     <Compile Include="PatientIdentifierTableEntry.cs" />
     <Compile Include="PatientSearchTool.cs" />
-    <Compile Include="PatientTableEntry.cs" />
     <Compile Include="PhoneNumbersEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

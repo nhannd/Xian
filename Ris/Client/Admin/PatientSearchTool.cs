@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -31,13 +32,25 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private IWorkspace _patientAdminWorkspace;
         private PatientAdminComponent _patientAdminComponent;
+        private IPatientAdminService _patientAdminService;
 
-        private string _mrn;
+        private string _patientIdentifier;
+        private PatientIdentifierType _patientIdentifierType;
         private string _familyName;
         private string _givenName;
+        private Sex? _sex;
 
         private bool _searchEnabled;
         private event EventHandler _searchEnabledChanged;
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            _patientIdentifierType = ClearCanvas.Healthcare.PatientIdentifierType.MR;
+
+            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+        }
 
         public bool IsViewActive
         {
@@ -63,14 +76,25 @@ namespace ClearCanvas.Ris.Client.Admin
             this.IsViewActive = !this.IsViewActive;
         }
 
-        public string Mrn
+        public string PatientIdentifier
         {
-            get { return _mrn; }
+            get { return _patientIdentifier; }
             set
             {
-                _mrn = value;
+                _patientIdentifier = value;
                 UpdateDisplay();
             }
+        }
+
+        public string PatientIdentifierType
+        {
+            get { return _patientAdminService.PatientIdentifierTypeEnumTable[_patientIdentifierType].Value; }
+            set { _patientIdentifierType = _patientAdminService.PatientIdentifierTypeEnumTable[value].Code; }
+        }
+
+        public string[] PatientIdentifierTypeChoices
+        {
+            get { return _patientAdminService.PatientIdentifierTypeEnumTable.Values; }
         }
 
         public string FamilyName
@@ -90,6 +114,22 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 _givenName = value;
                 UpdateDisplay();
+            }
+        }
+
+        public string Sex
+        {
+            get { return _sex == null ? "(Any)" : _patientAdminService.SexEnumTable[(Sex)_sex].Value; }
+            set { _sex = value == "(Any)" ? null : (Sex?)_patientAdminService.SexEnumTable[value].Code; }
+        }
+
+        public string[] SexChoices
+        {
+            get
+            {
+                List<string> values = new List<string>(_patientAdminService.SexEnumTable.Values);
+                values.Add("(Any)");
+                return values.ToArray();
             }
         }
 
@@ -113,14 +153,20 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         public void Search()
-        {   
+        {
             if (_patientAdminWorkspace == null)
             {
+                // create the workspace if it doesn't exist
                 _patientAdminComponent = new PatientAdminComponent();
                 _patientAdminWorkspace = ApplicationComponent.LaunchAsWorkspace(
                     _patientAdminComponent,
                     "Patient Search Results",
                     ResultsWorkspaceClosed);
+            }
+            else
+            {
+                // otherwise set it active
+                _patientAdminWorkspace.IsActivated = true;
             }
 
             _patientAdminComponent.SetSearchCriteria(BuildCriteria());
@@ -135,10 +181,10 @@ namespace ClearCanvas.Ris.Client.Admin
         private PatientSearchCriteria BuildCriteria()
         {
             PatientSearchCriteria criteria = new PatientSearchCriteria();
-            if (_mrn != null && _mrn.Length > 0)
+            if (_patientIdentifier != null && _patientIdentifier.Length > 0)
             {
-                criteria.Identifiers.Id.Like(_mrn + "%");
-                criteria.Identifiers.Type.EqualTo(PatientIdentifierType.MR);
+                criteria.Identifiers.Id.Like(_patientIdentifier + "%");
+                criteria.Identifiers.Type.EqualTo(_patientIdentifierType);
             }
 
             if (_familyName != null && _familyName.Length > 0)
@@ -146,6 +192,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
             if (_givenName != null && _givenName.Length > 0)
                 criteria.Name.GivenName.Like(_givenName + "%");
+
+            if (_sex != null)
+                criteria.Sex.EqualTo((Sex)_sex);
 
             return criteria;
         }
