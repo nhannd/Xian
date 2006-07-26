@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Admin
     public abstract class PatientAddEditToolBase : Tool
     {
         private PatientEditorComponent _patientEditor;
-        private AddressesEditorComponent _addressesEditor;
+        private AddressesSummaryComponent _addressesEditor;
         private PhoneNumbersEditorComponent _phoneNumbersEditor;
 
         protected void OpenPatient(string title, Patient patient)
@@ -23,7 +23,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientEditor = new PatientEditorComponent();
             _patientEditor.Subject = patient;
 
-            _addressesEditor = new AddressesEditorComponent();
+            _addressesEditor = new AddressesSummaryComponent();
+            _addressesEditor.Subject = patient;
             _phoneNumbersEditor = new PhoneNumbersEditorComponent();
 
             navigator.Nodes.Add(new NavigatorNode("Patient", _patientEditor));

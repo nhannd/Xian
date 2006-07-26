@@ -9,17 +9,17 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     [ExtensionOf(typeof(AddressesEditorComponentViewExtensionPoint))]
-    public class AddressesEditorComponentView : WinFormsView, IApplicationComponentView
+    public class AddressesSummaryComponentView : WinFormsView, IApplicationComponentView
     {
-        private AddressesEditorComponent _component;
-        private AddressesEditorControl _control;
+        private AddressesSummaryComponent _component;
+        private AddressesSummaryControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (AddressesEditorComponent)component;
+            _component = (AddressesSummaryComponent)component;
         }
 
         #endregion
@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new AddressesEditorControl();
+                    _control = new AddressesSummaryControl(_component);
                 }
                 return _control;
             }
