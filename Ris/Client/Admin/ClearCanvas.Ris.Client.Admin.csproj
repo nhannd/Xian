@@ -37,7 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressesEditorComponent.cs" />
+    <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="AddressesTableEntry.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="PatientAddTool.cs" />
