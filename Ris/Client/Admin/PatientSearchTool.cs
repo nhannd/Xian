@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private string _familyName;
         private string _givenName;
         private Sex? _sex;
+        private DateTime? _dateOfBirth;
 
         private bool _searchEnabled;
         private event EventHandler _searchEnabledChanged;
@@ -133,6 +134,12 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        public DateTime? DateOfBirth
+        {
+            get { return _dateOfBirth; }
+            set { _dateOfBirth = value; }
+        }
+
         public bool SearchEnabled
         {
             get { return _searchEnabled; }
@@ -174,27 +181,35 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void UpdateDisplay()
         {
-            PatientSearchCriteria criteria = BuildCriteria();
-            this.SearchEnabled = !criteria.IsEmpty;
+            // ensure the criteria is specific enough before enabling search
+            // (eg. sex alone is not specific enough)
+            this.SearchEnabled = _patientIdentifier != null || _familyName != null || _givenName != null || _dateOfBirth != null;
         }
 
         private PatientSearchCriteria BuildCriteria()
         {
             PatientSearchCriteria criteria = new PatientSearchCriteria();
-            if (_patientIdentifier != null && _patientIdentifier.Length > 0)
+            if (_patientIdentifier != null)
             {
                 criteria.Identifiers.Id.Like(_patientIdentifier + "%");
                 criteria.Identifiers.Type.EqualTo(_patientIdentifierType);
             }
 
-            if (_familyName != null && _familyName.Length > 0)
+            if (_familyName != null)
                 criteria.Name.FamilyName.Like(_familyName + "%");
 
-            if (_givenName != null && _givenName.Length > 0)
+            if (_givenName != null)
                 criteria.Name.GivenName.Like(_givenName + "%");
 
             if (_sex != null)
                 criteria.Sex.EqualTo((Sex)_sex);
+
+            if (_dateOfBirth != null)
+            {
+                DateTime start = ((DateTime)_dateOfBirth).Date;
+                DateTime end = start + new TimeSpan(23, 59, 59);
+                criteria.DateOfBirth.Between(start, end);
+            }
 
             return criteria;
         }

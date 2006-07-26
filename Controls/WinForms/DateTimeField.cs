@@ -48,6 +48,7 @@ namespace ClearCanvas.Controls.WinForms
                 _nullable = value;
                 _label.Visible = !_nullable;
                 _checkBox.Visible = _nullable;
+                _dateTimePicker.Enabled = _checkBox.Checked;
             }
         }
 
@@ -59,16 +60,16 @@ namespace ClearCanvas.Controls.WinForms
 
         public DateTime? Value
         {
-            get { return _dateTimePicker.Value; }
+            get
+            {
+                return _checkBox.Checked ? (DateTime?)_dateTimePicker.Value : null;
+            }
             set
             {
-                if (_dateTimePicker.Value != value)
-                {
-                    if (value != null)
-                        _dateTimePicker.Value = (DateTime)value;
-                    else
-                        _checkBox.Checked = false;
-                }
+                if (!TestNull(value))
+                    _dateTimePicker.Value = (DateTime)value;
+
+                _checkBox.Checked = !TestNull(value);
             }
         }
 
@@ -76,6 +77,11 @@ namespace ClearCanvas.Controls.WinForms
         {
             add { _valueChanged += value; }
             remove { _valueChanged -= value; }
+        }
+
+        private static bool TestNull(object value)
+        {
+            return value == null || value == System.DBNull.Value;
         }
     }
 }

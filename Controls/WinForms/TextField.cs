@@ -17,7 +17,7 @@ namespace ClearCanvas.Controls.WinForms
 
         public string Value
         {
-            get { return _textBox.Text; }
+            get { return NullIfEmpty(_textBox.Text); }
             set { _textBox.Text = value; }
         }
 
@@ -31,6 +31,11 @@ namespace ClearCanvas.Controls.WinForms
         {
             get { return _label.Text; }
             set { _label.Text = value; }
+        }
+
+        private static string NullIfEmpty(string value)
+        {
+            return (value != null && value.Length == 0) ? null : value;
         }
     }
 }

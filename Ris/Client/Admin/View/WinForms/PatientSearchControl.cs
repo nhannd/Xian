@@ -18,14 +18,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _tool = tool;
 
             _patientIdentifierType.DataSource = _tool.PatientIdentifierTypeChoices;
-            _patientIdentifierType.DataBindings.Add("Value", _tool, "PatientIdentifierType", false, DataSourceUpdateMode.OnPropertyChanged);
+            _patientIdentifierType.DataBindings.Add("Value", _tool, "PatientIdentifierType", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _patientIdentifier.DataBindings.Add("Value", _tool, "PatientIdentifier", false, DataSourceUpdateMode.OnPropertyChanged);
-            _familyName.DataBindings.Add("Value", _tool, "FamilyName", false, DataSourceUpdateMode.OnPropertyChanged);
-            _givenName.DataBindings.Add("Value", _tool, "GivenName", false, DataSourceUpdateMode.OnPropertyChanged);
+            _patientIdentifier.DataBindings.Add("Value", _tool, "PatientIdentifier", true, DataSourceUpdateMode.OnPropertyChanged);
+            _familyName.DataBindings.Add("Value", _tool, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _givenName.DataBindings.Add("Value", _tool, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
             
             _sex.DataSource = _tool.SexChoices;
-            _sex.DataBindings.Add("Value", _tool, "Sex", false, DataSourceUpdateMode.OnPropertyChanged);
+            _sex.DataBindings.Add("Value", _tool, "Sex", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _dateOfBirth.DataBindings.Add("Value", _tool, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _searchButton.DataBindings.Add("Enabled", _tool, "SearchEnabled");
         }
