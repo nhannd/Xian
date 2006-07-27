@@ -33,10 +33,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             // _patientTableView
             // 
-            this._patientTableView.Location = new System.Drawing.Point(22, 39);
+            this._patientTableView.DataSource = null;
+            this._patientTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._patientTableView.Location = new System.Drawing.Point(0, 0);
             this._patientTableView.Margin = new System.Windows.Forms.Padding(4);
             this._patientTableView.Name = "_patientTableView";
-            this._patientTableView.Size = new System.Drawing.Size(720, 281);
+            this._patientTableView.Size = new System.Drawing.Size(765, 374);
             this._patientTableView.TabIndex = 0;
             this._patientTableView.ItemDoubleClicked += new System.EventHandler(this._patientTableView_ItemDoubleClicked);
             this._patientTableView.SelectionChanged += new System.EventHandler(this._patientTableView_SelectionChanged);

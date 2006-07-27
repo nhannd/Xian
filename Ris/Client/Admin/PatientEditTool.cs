@@ -54,8 +54,17 @@ namespace ClearCanvas.Ris.Client.Admin
 
         protected override void SaveChanges(Patient patient)
         {
-            IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
-            service.UpdatePatient(patient);
+            try
+            {
+                IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
+                service.UpdatePatient(patient);
+
+            }
+            catch (ConcurrentModificationException e)
+            {
+                Platform.Log(e, LogLevel.Info);
+                Platform.ShowMessageBox("The patient was modified by another user.  Your changes could not be saved.");
+            }
         }
     }
 }
