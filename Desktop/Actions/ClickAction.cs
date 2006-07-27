@@ -59,12 +59,12 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        internal void SetCheckedObservable(IObservablePropertyBinding<bool> checkedPropertyBinding)
+        public void SetCheckedObservable(IObservablePropertyBinding<bool> checkedPropertyBinding)
         {
             _checkedPropertyBinding = checkedPropertyBinding;
         }
 
-        internal void SetClickHandler(ClickHandlerDelegate clickHandler)
+        public void SetClickHandler(ClickHandlerDelegate clickHandler)
         {
             _clickHandler = clickHandler;
         }

@@ -28,6 +28,15 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
+        /// Constructs an object that will search the specified assembly.
+        /// </summary>
+        /// <param name="assembly">The set of assemblies to search</param>
+        public ResourceResolver(Assembly assembly)
+            :this(new Assembly[] { assembly })
+        {
+        }
+
+        /// <summary>
         /// Attempts to resolve the specified resource key by searching any classes named SR
         /// within the set of assemblies passed to the constructor for a property whose name
         /// matches the key.

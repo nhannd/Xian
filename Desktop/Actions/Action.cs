@@ -93,7 +93,7 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        internal void SetEnabledObservable(IObservablePropertyBinding<bool> enabledPropertyBinding)
+        public void SetEnabledObservable(IObservablePropertyBinding<bool> enabledPropertyBinding)
         {
             _enabledPropertyBinding = enabledPropertyBinding;
         }

@@ -7,6 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -39,12 +41,29 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         private event EventHandler _itemDoubleClicked;
-
+        private ActionModelNode _toolbarModel;
 
 		public TableView()
 		{
 			InitializeComponent();
 		}
+
+        public ActionModelNode ToolbarModel
+        {
+            get { return _toolbarModel;  }
+            set
+            {
+                _toolbarModel = value;
+                RebuildToolbar();
+            }
+        }
+
+        private void RebuildToolbar()
+        {
+            ToolStripBuilder.Clear(_toolStrip.Items);
+            ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
+        }
+
 
         public object DataSource
         {

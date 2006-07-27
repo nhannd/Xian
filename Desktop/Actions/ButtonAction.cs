@@ -10,13 +10,13 @@ namespace ClearCanvas.Desktop.Actions
     public class ButtonAction : ClickAction
     {
         /// <summary>
-        /// Internal constructor
+        /// Default constructor
         /// </summary>
         /// <param name="actionID"></param>
         /// <param name="path"></param>
         /// <param name="target"></param>
         /// <param name="flags"></param>
-        internal ButtonAction(string actionID, Path path, object target, ClickActionFlags flags)
+        public ButtonAction(string actionID, Path path, object target, ClickActionFlags flags)
             : base(actionID, ActionCategory.ToolbarAction, path, target, flags)
         {
         }
