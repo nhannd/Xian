@@ -35,6 +35,7 @@ namespace ClearCanvas.Ris.Client.Admin
             // load all relevant collections
             broker.LoadRelated(patient, patient.Identifiers);
             broker.LoadRelated(patient, patient.Addresses);
+            broker.LoadRelated(patient, patient.TelephoneNumbers);
 
             return patient;
         }

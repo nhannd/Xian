@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PhoneNumbersSummaryControl();
+                    _control = new PhoneNumbersSummaryControl(_component);
                 }
                 return _control;
             }

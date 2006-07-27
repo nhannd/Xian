@@ -49,6 +49,7 @@
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientIdentifierEditorComponent.cs" />
     <Compile Include="PatientSearchTool.cs" />
+    <Compile Include="PhoneNumbersEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
