@@ -26,6 +26,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _sex.DataBindings.Add("Value", _component, "Sex", false, DataSourceUpdateMode.OnPropertyChanged);
 
             _patientIdentifierList.DataSource = _component.PatientIdentifiers;
+            _patientIdentifierList.ToolbarModel = _component.PatientIdentifierActions;
         }
 
         private void _identiferAddButton_Click(object sender, EventArgs e)

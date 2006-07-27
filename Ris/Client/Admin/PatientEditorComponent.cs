@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Healthcare;
 
 using Iesi.Collections;
@@ -20,9 +21,38 @@ namespace ClearCanvas.Ris.Client.Admin
     [ApplicationComponentView(typeof(PatientEditorComponentViewExtensionPoint))]
     public class PatientEditorComponent : ApplicationComponent
     {
+        class PatientIdentifiersActionHandler : CrudActionHandler
+        {
+            private PatientEditorComponent _component;
+
+            internal PatientIdentifiersActionHandler(PatientEditorComponent component)
+            {
+                _component = component;
+            }
+
+            protected override void Add()
+            {
+                Console.WriteLine("Add");
+            }
+
+            protected override void Edit()
+            {
+                Console.WriteLine("Edit");
+            }
+
+            protected override void Delete()
+            {
+                Console.WriteLine("Delete");
+            }
+        }
+
+
+
         private Patient _patient;
         private IPatientAdminService _patientAdminService;
         private TableData<PatientIdentifier> _patientIdentifiers;
+
+        private PatientIdentifiersActionHandler _patientIdentifiersActionHandler;
 
         public PatientEditorComponent()
         {
@@ -33,6 +63,10 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientIdentifiers.AddColumn<string>("ID", delegate(PatientIdentifier pi) { return pi.Id; });
             _patientIdentifiers.AddColumn<string>("AssigningAuthority", delegate(PatientIdentifier pi) { return pi.AssigningAuthority; });
 
+            _patientIdentifiersActionHandler = new PatientIdentifiersActionHandler(this);
+
+            // add is always enabled
+            _patientIdentifiersActionHandler.AddEnabled = true;
         }
 
         /// <summary>
@@ -49,6 +83,11 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+        }
+
+        public ActionModelNode PatientIdentifierActions
+        {
+            get { return _patientIdentifiersActionHandler.ActionModel; }
         }
 
         public string FamilyName

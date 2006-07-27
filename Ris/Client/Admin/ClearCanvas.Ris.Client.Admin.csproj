@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="AddressesEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
+    <Compile Include="CrudActionHandler.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientAddEditToolBase.cs" />
@@ -73,6 +74,10 @@
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Delete.png" />
+    <EmbeddedResource Include="Icons\Edit.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
