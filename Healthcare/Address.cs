@@ -23,5 +23,17 @@ namespace ClearCanvas.Healthcare {
 			// the signature of the New() method may be freely changed as needed
 			return new Address();
 		}
+
+        public void CopyFrom(Address source)
+        {
+            _type = source.Type;
+            _street = source.Street;
+            _city = source.City;
+            _province = source.Province;
+            _country = source.Country;
+            _postalCode = source.Province;
+            _validFrom = source.ValidFrom;
+            _validUntil = source.ValidUntil;
+        }
 	}
 }

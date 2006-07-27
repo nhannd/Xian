@@ -38,11 +38,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component.Cancel();
         }
 
-        private void _identifierTableView_SelectionChanged(object sender, EventArgs e)
-        {
-            _component.SetIdentifierSelection(_patientIdentifierList.CurrentSelection);            
-        }
-
         private void _identiferAddButton_Click(object sender, EventArgs e)
         {
             _component.AddIdentifer();

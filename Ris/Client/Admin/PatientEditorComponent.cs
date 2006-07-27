@@ -24,8 +24,6 @@ namespace ClearCanvas.Ris.Client.Admin
         private IPatientAdminService _patientAdminService;
         private TableData<PatientIdentifier> _patientIdentifiers;
 
-        private PatientIdentifier _selectedPatientIdentifier;
-
         public PatientEditorComponent()
         {
             _patient = Patient.New();
@@ -110,20 +108,10 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public void SetIdentifierSelection(ISelection selection)
-        {
-            if (selection == null) return;
-            PatientIdentifier entry = (PatientIdentifier)selection.Item;
-            _selectedPatientIdentifier = PatientIdentifier.New();
-            if (entry != null)
-            {
-                _selectedPatientIdentifier.CopyFrom(entry);
-            }
-        }
-
         public void AddIdentifer()
         {
             PatientIdentifier identifier = PatientIdentifier.New();
+
             PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(identifier);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Identifier...");
             if (exitCode == ApplicationComponentExitCode.Normal)
@@ -136,11 +124,16 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void UpdateSelectedIdentifier(ISelection selection)
         {
-            PatientIdentifier entry = (PatientIdentifier)selection.Item;
-            PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(entry);
+            PatientIdentifier identifier = PatientIdentifier.New();
+            PatientIdentifier selectedIdentifier = (PatientIdentifier)selection.Item;
+            identifier.CopyFrom(selectedIdentifier);
+
+            PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(identifier);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Identifier...");
+
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
+                selectedIdentifier.CopyFrom(identifier);
                 this.Modified = true;
             }
         }

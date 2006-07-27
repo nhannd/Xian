@@ -66,11 +66,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void UpdateAddress(ISelection selection)
         {
-            Address address = (Address)selection.Item;
+            Address address = Address.New();
+            Address selectedAddress = (Address)selection.Item;
+            address.CopyFrom(selectedAddress);
+
             AddressesEditorComponent editor = new AddressesEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Address...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
+                selectedAddress.CopyFrom(address);
                 this.Modified = true;
             }
         }

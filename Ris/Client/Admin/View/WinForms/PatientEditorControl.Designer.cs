@@ -38,6 +38,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._identifierAddButton = new System.Windows.Forms.Button();
             this._identifierDeleteButton = new System.Windows.Forms.Button();
             this._identifierUpdateButton = new System.Windows.Forms.Button();
+            this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._dateOfDeath = new ClearCanvas.Controls.WinForms.DateTimeField();
             this.SuspendLayout();
             // 
             // _okButton
@@ -70,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._middleName.Name = "_middleName";
             this._middleName.Size = new System.Drawing.Size(139, 38);
             this._middleName.TabIndex = 25;
-            this._middleName.Value = "";
+            this._middleName.Value = null;
             // 
             // _givenName
             // 
@@ -80,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._givenName.Name = "_givenName";
             this._givenName.Size = new System.Drawing.Size(139, 38);
             this._givenName.TabIndex = 24;
-            this._givenName.Value = "";
+            this._givenName.Value = null;
             // 
             // _familyName
             // 
@@ -90,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._familyName.Name = "_familyName";
             this._familyName.Size = new System.Drawing.Size(139, 38);
             this._familyName.TabIndex = 23;
-            this._familyName.Value = "";
+            this._familyName.Value = null;
             // 
             // _sex
             // 
@@ -111,7 +113,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._patientIdentifierList.Size = new System.Drawing.Size(510, 170);
             this._patientIdentifierList.TabIndex = 27;
             this._patientIdentifierList.ItemDoubleClicked += new System.EventHandler(this._patientIdentifierList_ItemDoubleClicked);
-            this._patientIdentifierList.SelectionChanged += new System.EventHandler(this._identifierTableView_SelectionChanged);
             // 
             // _identifierAddButton
             // 
@@ -143,10 +144,34 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._identifierUpdateButton.UseVisualStyleBackColor = true;
             this._identifierUpdateButton.Click += new System.EventHandler(this._identifierUpdateButton_Click);
             // 
+            // _dateOfBirth
+            // 
+            this._dateOfBirth.LabelText = "Date of Birth";
+            this._dateOfBirth.Location = new System.Drawing.Point(196, 82);
+            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._dateOfBirth.Name = "_dateOfBirth";
+            this._dateOfBirth.Nullable = false;
+            this._dateOfBirth.Size = new System.Drawing.Size(139, 41);
+            this._dateOfBirth.TabIndex = 35;
+            this._dateOfBirth.Value = null;
+            // 
+            // _dateOfDeath
+            // 
+            this._dateOfDeath.LabelText = "Date of Death";
+            this._dateOfDeath.Location = new System.Drawing.Point(366, 82);
+            this._dateOfDeath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._dateOfDeath.Name = "_dateOfDeath";
+            this._dateOfDeath.Nullable = false;
+            this._dateOfDeath.Size = new System.Drawing.Size(139, 41);
+            this._dateOfDeath.TabIndex = 36;
+            this._dateOfDeath.Value = null;
+            // 
             // PatientEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._dateOfDeath);
+            this.Controls.Add(this._dateOfBirth);
             this.Controls.Add(this._identifierUpdateButton);
             this.Controls.Add(this._identifierDeleteButton);
             this.Controls.Add(this._identifierAddButton);
@@ -177,5 +202,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _identifierAddButton;
         private System.Windows.Forms.Button _identifierDeleteButton;
         private System.Windows.Forms.Button _identifierUpdateButton;
+        private ClearCanvas.Controls.WinForms.DateTimeField _dateOfBirth;
+        private ClearCanvas.Controls.WinForms.DateTimeField _dateOfDeath;
     }
 }

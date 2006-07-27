@@ -64,11 +64,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void UpdatePhoneNumber(ISelection selection)
         {
-            TelephoneNumber phoneNumber = (TelephoneNumber)selection.Item;
+            TelephoneNumber phoneNumber = TelephoneNumber.New();
+            TelephoneNumber selectedPhoneNumber = (TelephoneNumber)selection.Item;
+            phoneNumber.CopyFrom(selectedPhoneNumber);
+            
             PhoneNumbersEditorComponent editor = new PhoneNumbersEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
+                selectedPhoneNumber.CopyFrom(phoneNumber);
                 this.Modified = true;
             }
         }
