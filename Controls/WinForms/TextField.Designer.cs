@@ -35,9 +35,10 @@ namespace ClearCanvas.Controls.WinForms
             // _label
             // 
             this._label.AutoSize = true;
-            this._label.Location = new System.Drawing.Point(3, 0);
+            this._label.Location = new System.Drawing.Point(2, 0);
+            this._label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this._label.Name = "_label";
-            this._label.Size = new System.Drawing.Size(38, 17);
+            this._label.Size = new System.Drawing.Size(29, 13);
             this._label.TabIndex = 0;
             this._label.Text = "label";
             // 
@@ -45,19 +46,21 @@ namespace ClearCanvas.Controls.WinForms
             // 
             this._textBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._textBox.Location = new System.Drawing.Point(0, 20);
+            this._textBox.Location = new System.Drawing.Point(3, 18);
+            this._textBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._textBox.Name = "_textBox";
-            this._textBox.Size = new System.Drawing.Size(197, 22);
+            this._textBox.Size = new System.Drawing.Size(145, 20);
             this._textBox.TabIndex = 1;
             // 
             // TextField
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._textBox);
             this.Controls.Add(this._label);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "TextField";
-            this.Size = new System.Drawing.Size(200, 50);
+            this.Size = new System.Drawing.Size(150, 41);
             this.ResumeLayout(false);
             this.PerformLayout();
 
