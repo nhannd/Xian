@@ -31,15 +31,6 @@ namespace ClearCanvas.Ris.Client.Admin
         public AddressesEditorComponent(Address address)
         {
             _address = address;
-
-            //_address.City = "Toronto";
-            //_address.Country = "Canada";
-            //_address.PostalCode = "M5B 2H5";
-            //_address.Province = "Ontario";
-            //_address.Street = "20 Carlton St.";
-            //_address.Type = AddressType.B;
-            //_address.ValidFrom = DateTime.Now;
-            //_address.ValidUntil = DateTime.Now;
         }
 
         public Address Address
@@ -88,17 +79,17 @@ namespace ClearCanvas.Ris.Client.Admin
             set { _address.PostalCode = value; }
         }
 
-        public DateTime? ValidFrom
-        {
-            get { return _address.ValidFrom; }
-            set { _address.ValidFrom = value; }
-        }
+        //public DateTime? ValidFrom
+        //{
+        //    get { return _address.ValidFrom; }
+        //    set { _address.ValidFrom = value; }
+        //}
 
-        public DateTime? ValidUntil
-        {
-            get { return _address.ValidUntil; }
-            set { _address.ValidUntil = value; }
-        }
+        //public DateTime? ValidUntil
+        //{
+        //    get { return _address.ValidUntil; }
+        //    set { _address.ValidUntil = value; }
+        //}
 
         public string Type
         {

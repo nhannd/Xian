@@ -29,8 +29,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _street.DataBindings.Add("Value", _component, "Street", false, DataSourceUpdateMode.OnPropertyChanged);
             _city.DataBindings.Add("Value", _component, "City", false, DataSourceUpdateMode.OnPropertyChanged);
             _postalCode.DataBindings.Add("Value", _component, "PostalCode", false, DataSourceUpdateMode.OnPropertyChanged);
-            _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
-            _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
+            //_validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+            //_validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _acceptButton_Click(object sender, EventArgs e)

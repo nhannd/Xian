@@ -31,8 +31,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _addresses.AddColumn<string>("Province", delegate(Address a) { return a.Province; });
             _addresses.AddColumn<string>("PostalCode", delegate(Address a) { return a.PostalCode; });
             _addresses.AddColumn<string>("Country", delegate(Address a) { return a.Country; });
-            _addresses.AddColumn<string>("ValidFrom", delegate(Address a) { return a.ValidFrom; });
-            _addresses.AddColumn<string>("ValidUntil", delegate(Address a) { return a.ValidUntil; });
+            //_addresses.AddColumn<string>("ValidFrom", delegate(Address a) { return a.ValidFrom; });
+            //_addresses.AddColumn<string>("ValidUntil", delegate(Address a) { return a.ValidUntil; });
         }
 
         public Patient Subject

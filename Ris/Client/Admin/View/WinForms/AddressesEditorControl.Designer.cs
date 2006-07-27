@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             // _acceptButton
             // 
-            this._acceptButton.Location = new System.Drawing.Point(466, 262);
+            this._acceptButton.Location = new System.Drawing.Point(466, 219);
             this._acceptButton.Name = "_acceptButton";
             this._acceptButton.Size = new System.Drawing.Size(75, 23);
             this._acceptButton.TabIndex = 8;
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(563, 262);
+            this._cancelButton.Location = new System.Drawing.Point(563, 219);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 9;
@@ -73,24 +73,26 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // _validFrom
             // 
             this._validFrom.LabelText = "Valid From";
-            this._validFrom.Location = new System.Drawing.Point(25, 225);
+            this._validFrom.Location = new System.Drawing.Point(314, 24);
             this._validFrom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._validFrom.Name = "_validFrom";
             this._validFrom.Nullable = true;
             this._validFrom.Size = new System.Drawing.Size(150, 41);
             this._validFrom.TabIndex = 6;
             this._validFrom.Value = new System.DateTime(2006, 7, 26, 16, 37, 8, 953);
+            this._validFrom.Visible = false;
             // 
             // _validUntil
             // 
             this._validUntil.LabelText = "Valid Until";
-            this._validUntil.Location = new System.Drawing.Point(227, 225);
+            this._validUntil.Location = new System.Drawing.Point(488, 24);
             this._validUntil.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._validUntil.Name = "_validUntil";
             this._validUntil.Nullable = true;
             this._validUntil.Size = new System.Drawing.Size(150, 41);
             this._validUntil.TabIndex = 7;
             this._validUntil.Value = new System.DateTime(2006, 7, 26, 16, 37, 6, 765);
+            this._validUntil.Visible = false;
             // 
             // _type
             // 
@@ -160,7 +162,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.Controls.Add(this._city);
             this.Controls.Add(this._street);
             this.Name = "AddressesEditorControl";
-            this.Size = new System.Drawing.Size(678, 303);
+            this.Size = new System.Drawing.Size(678, 273);
             this.ResumeLayout(false);
 
         }
