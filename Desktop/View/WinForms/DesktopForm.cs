@@ -62,6 +62,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void LoadWindowSettings()
 		{
+#if !MONO
 			this.SuspendLayout();
 
 			Rectangle screenRectangle = Screen.PrimaryScreen.Bounds;
@@ -96,10 +97,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 				this.WindowState = DesktopView.Settings.WindowState;
 
 			this.ResumeLayout();
+#endif
 		}
 
 		private void SaveWindowSettings()
 		{
+#if !MONO
 			// If the window state is normal, just save its location and size
 			if (this.WindowState == FormWindowState.Normal)
 				DesktopView.Settings.WindowRectangle = new Rectangle(this.Location, this.Size);
@@ -110,6 +113,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			DesktopView.Settings.WindowState = this.WindowState;
 			DesktopView.Settings.PrimaryScreenRectangle = Screen.PrimaryScreen.Bounds;
 			DesktopView.Settings.Save();
+#endif
 		}
 
         private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
