@@ -31,8 +31,16 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public void Commit()
         {
-            _transaction.Commit();
-            _transaction = null;
+            try
+            {
+                _transaction.Commit();
+                _transaction = null;
+            }
+            catch (StaleObjectStateException e)
+            {
+                // wrap NHibernate exception
+                throw new ConcurrentModificationException(e);
+            }
         }
 
         public void Rollback()

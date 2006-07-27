@@ -46,11 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="IServiceManager.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="PersistenceException.cs" />
     <Compile Include="SearchResultPage.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
