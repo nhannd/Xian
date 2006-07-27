@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         private PatientEditorComponent _patientEditor;
         private AddressesSummaryComponent _addressesEditor;
-        private PhoneNumbersEditorComponent _phoneNumbersEditor;
+        private PhoneNumbersSummaryComponent _phoneNumbersEditor;
 
         protected void OpenPatient(string title, Patient patient)
         {
@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _addressesEditor = new AddressesSummaryComponent();
             _addressesEditor.Subject = patient;
-            _phoneNumbersEditor = new PhoneNumbersEditorComponent();
+            _phoneNumbersEditor = new PhoneNumbersSummaryComponent();
 
             navigator.Nodes.Add(new NavigatorNode("Patient", _patientEditor));
             navigator.Nodes.Add(new NavigatorNode("Patient/Addresses", _addressesEditor));

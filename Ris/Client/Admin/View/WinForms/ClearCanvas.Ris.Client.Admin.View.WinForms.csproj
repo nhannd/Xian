@@ -77,12 +77,12 @@
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientSearchToolView.cs" />
-    <Compile Include="PhoneNumbersEditorComponentView.cs" />
-    <Compile Include="PhoneNumbersEditorControl.cs">
+    <Compile Include="PhoneNumbersSummaryComponentView.cs" />
+    <Compile Include="PhoneNumbersSummaryControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PhoneNumbersEditorControl.Designer.cs">
-      <DependentUpon>PhoneNumbersEditorControl.cs</DependentUpon>
+    <Compile Include="PhoneNumbersSummaryControl.Designer.cs">
+      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -136,9 +136,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PhoneNumbersEditorControl.resx">
+    <EmbeddedResource Include="PhoneNumbersSummaryControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PhoneNumbersEditorControl.cs</DependentUpon>
+      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

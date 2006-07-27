@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    public partial class PhoneNumbersEditorControl : UserControl
+    public partial class PhoneNumbersSummaryControl : UserControl
     {
-        public PhoneNumbersEditorControl()
+        public PhoneNumbersSummaryControl()
         {
             InitializeComponent();
         }

@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    partial class PhoneNumbersEditorControl
+    partial class PhoneNumbersSummaryControl
     {
         /// <summary> 
         /// Required designer variable.
