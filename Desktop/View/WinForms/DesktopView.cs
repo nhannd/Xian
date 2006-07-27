@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
+
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -15,10 +16,22 @@ namespace ClearCanvas.Desktop.View.WinForms
     public class DesktopView : WinFormsView, IDesktopView
     {
         private DesktopForm _mainForm;
+		private static DesktopViewSettings _settings;
 
         public DesktopView()
         {
         }
+
+		public static DesktopViewSettings Settings
+		{
+			get
+			{
+				if (_settings == null)
+					_settings = new DesktopViewSettings();
+
+				return _settings;
+			}
+		}
 
         public void RunMessagePump()
         {

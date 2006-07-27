@@ -45,6 +45,7 @@
     <Compile Include="ActiveToolbarButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DesktopViewSettings.cs" />
     <Compile Include="DialogBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>

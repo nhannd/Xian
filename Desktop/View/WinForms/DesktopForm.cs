@@ -30,7 +30,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 				SplashScreen.SplashForm.Owner = this;
 			
 			InitializeComponent();
-			this.Size = new Size(1024, 768);
 			this.Text = String.Format("{0} {1}",
                 DesktopApplication.ApplicationName,
                 DesktopApplication.ApplicationVersion);
@@ -46,6 +45,72 @@ namespace ClearCanvas.Desktop.View.WinForms
 			RebuildMenusAndToolbars(null);
 			this.tabControl.ClosePressed += new EventHandler(OnCloseWorkspaceTab);
         }
+
+		protected override void OnLoad(EventArgs e)
+		{
+			LoadWindowSettings();
+
+			base.OnLoad(e);
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			SaveWindowSettings();
+
+			base.OnClosing(e);
+		}
+
+		private void LoadWindowSettings()
+		{
+			this.SuspendLayout();
+
+			Rectangle screenRectangle = Screen.PrimaryScreen.Bounds;
+
+			// If the bounds of the primary screen is different from what was saved
+			// either because there was a screen resolution change or because the app
+			// is being started for the first time, get Windows to properly position the window.
+			if (screenRectangle != DesktopView.Settings.PrimaryScreenRectangle)
+			{
+				// Make the window size 75% of the primary screen
+				float scale = 0.75f;
+				this.Width = (int) (screenRectangle.Width * scale);
+				this.Height = (int) (screenRectangle.Height * scale);
+
+				// Center the window (for some reason, FormStartPosition.CenterScreen doesn't seem
+				// to work.)
+				int x = (screenRectangle.Width - this.Width) / 2;
+				int y = (screenRectangle.Height - this.Height) / 2;
+				this.Location = new Point(x, y);
+			}
+			else
+			{
+				this.Location = DesktopView.Settings.WindowRectangle.Location;
+				this.Size = DesktopView.Settings.WindowRectangle.Size;
+			}
+
+			// If window was last closed when minimized, don't open it up minimized,
+			// but rather just open it normally
+			if (DesktopView.Settings.WindowState == FormWindowState.Minimized)
+				this.WindowState = FormWindowState.Normal;
+			else
+				this.WindowState = DesktopView.Settings.WindowState;
+
+			this.ResumeLayout();
+		}
+
+		private void SaveWindowSettings()
+		{
+			// If the window state is normal, just save its location and size
+			if (this.WindowState == FormWindowState.Normal)
+				DesktopView.Settings.WindowRectangle = new Rectangle(this.Location, this.Size);
+			// But, if it's minimized or maximized, save the restore bounds instead
+			else
+				DesktopView.Settings.WindowRectangle = this.RestoreBounds;
+
+			DesktopView.Settings.WindowState = this.WindowState;
+			DesktopView.Settings.PrimaryScreenRectangle = Screen.PrimaryScreen.Bounds;
+			DesktopView.Settings.Save();
+		}
 
         private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
         {

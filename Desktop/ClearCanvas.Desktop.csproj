@@ -50,6 +50,7 @@
     <Compile Include="Actions\ActionModelStore.cs" />
     <Compile Include="ApplicationComponentHostDialog.cs" />
     <Compile Include="ClosingEventArgs.cs" />
+    <Compile Include="ExtensionSettings.cs" />
     <Compile Include="IDialogBox.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="PathSegment.cs" />
