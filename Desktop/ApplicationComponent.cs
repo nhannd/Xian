@@ -10,6 +10,11 @@ namespace ClearCanvas.Desktop
 {
     public delegate void ApplicationComponentExitDelegate(IApplicationComponent component);    
     
+    /// <summary>
+    /// Abstract base class for all application components.  Components should extend this class
+    /// rather than implement <see cref="IApplicationComponent"/> directly, as it provides default
+    /// implementations that behave well in most situations.
+    /// </summary>
     public abstract class ApplicationComponent : IApplicationComponent
     {
         /// <summary>
@@ -76,29 +81,35 @@ namespace ClearCanvas.Desktop
         private IApplicationComponentHost _host;
         private ToolSet _stubToolSet;
         private ApplicationComponentExitCode _exitCode;
-        private event PropertyChangedEventHandler _propertyChanged;
+        private bool _modified;
+        private event EventHandler _modifiedChanged;
 
         public ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
         }
 
+        /// <summary>
+        /// Provides subclasses with access to the host
+        /// </summary>
         protected IApplicationComponentHost Host
         {
             get { return _host; }
         }
 
-        protected void NotifyPropertyChanged(string propertyName)
+        /// <summary>
+        /// Convenience method to fire the <see cref="ModifiedChanged"/> event.
+        /// Note that it is not necessary to explicitly call this method if the 
+        /// default implementation of the <see cref="Modified"/> property is used,
+        /// since the event is fired automatically.
+        /// 
+        /// This method is provided for situations where the subclass has chosen
+        /// to override the <see cref="Modified"/> property.
+        /// </summary>
+        protected void FireModifiedChanged()
         {
-            EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));   
+            EventsHelper.Fire(_modifiedChanged, this, new EventArgs());
         }
-
-        public event PropertyChangedEventHandler PropertyChanged
-        {
-            add { _propertyChanged += value; }
-            remove { _propertyChanged -= value; }
-        }
-
 
         #region IApplicationComponent Members
 
@@ -123,19 +134,76 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.Start"/>
+        /// </summary>
         public virtual void Start()
         {
         }
 
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.Stop"/>
+        /// </summary>
         public virtual void Stop()
         {
         }
 
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.CanExit"/>.
+        /// Checks the <see cref="Modified"/> property, and if true, presents a standard
+        /// confirmation dialog to the user asking whether or not changes should be
+        /// retained.
+        /// </summary>
         public virtual bool CanExit()
         {
+            if (this.Modified)
+            {
+                DialogBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
+                switch (result)
+                {
+                    case DialogBoxAction.Yes:
+                        this.ExitCode = ApplicationComponentExitCode.Normal;
+                        return true;
+                    case DialogBoxAction.No:
+                        this.ExitCode = ApplicationComponentExitCode.Cancelled;
+                        return true;
+                    default:
+                        return false;
+                }
+            }
             return true;
         }
 
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.Modified"/>
+        /// Set this property from within the subclass.
+        /// </summary>
+        public virtual bool Modified
+        {
+            get { return _modified; }
+            protected set
+            {
+                if (value != _modified)
+                {
+                    _modified = value;
+                    FireModifiedChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.ModifiedChanged"/>
+        /// </summary>
+        public event EventHandler ModifiedChanged
+        {
+            add { _modifiedChanged += value; }
+            remove { _modifiedChanged -= value; }
+        }
+
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.ExitCode"/>
+        /// Set this property from within the subclass.
+        /// </summary>
         public virtual ApplicationComponentExitCode ExitCode
         {
             get { return _exitCode; }

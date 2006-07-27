@@ -28,6 +28,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _nextButton.DataBindings.Add("Enabled", _component, "ForwardEnabled");
             _backButton.DataBindings.Add("Enabled", _component, "BackEnabled");
+            _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
 
             foreach (NavigatorNode node in _component.Nodes)
             {

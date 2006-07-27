@@ -46,6 +46,11 @@ namespace ClearCanvas.Desktop
                 _component.Stop();
         }
 
+        public IApplicationComponent Component
+        {
+            get { return _component; }
+        }
+
         public IApplicationComponentView ComponentView
         {
             get
