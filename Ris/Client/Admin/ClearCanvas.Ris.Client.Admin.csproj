@@ -37,8 +37,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressesEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="AddressesTableEntry.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientAddEditToolBase.cs" />
@@ -48,7 +48,6 @@
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientIdentifierEditorComponent.cs" />
-    <Compile Include="PatientIdentifierTableEntry.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PhoneNumbersEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

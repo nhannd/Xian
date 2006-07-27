@@ -22,14 +22,19 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         private Patient _patient;
         private IPatientAdminService _patientAdminService;
-        private TableData<PatientIdentifierTableEntry> _patientIdentifiers;
+        private TableData<PatientIdentifier> _patientIdentifiers;
 
         private PatientIdentifier _selectedPatientIdentifier;
 
         public PatientEditorComponent()
         {
             _patient = Patient.New();
-            _patientIdentifiers = new TableData<PatientIdentifierTableEntry>();
+            _patientIdentifiers = new TableData<PatientIdentifier>();
+
+            _patientIdentifiers.AddColumn<string>("Type", delegate(PatientIdentifier pi) { return _patientAdminService.PatientIdentifierTypeEnumTable[pi.Type].Value; });
+            _patientIdentifiers.AddColumn<string>("ID", delegate(PatientIdentifier pi) { return pi.Id; });
+            _patientIdentifiers.AddColumn<string>("AssigningAuthority", delegate(PatientIdentifier pi) { return pi.AssigningAuthority; });
+
         }
 
         /// <summary>
@@ -88,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 foreach (PatientIdentifier identifier in _patient.Identifiers)
                 {
-                    _patientIdentifiers.Add(new PatientIdentifierTableEntry(identifier));
+                    _patientIdentifiers.Add(identifier);
                 }
             }
         }
@@ -96,11 +101,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public void SetIdentifierSelection(ISelection selection)
         {
             if (selection == null) return;
-            PatientIdentifierTableEntry entry = (PatientIdentifierTableEntry)selection.Item;
+            PatientIdentifier entry = (PatientIdentifier)selection.Item;
             _selectedPatientIdentifier = PatientIdentifier.New();
             if (entry != null)
             {
-                _selectedPatientIdentifier.CopyFrom(entry.PatientIdentifier);
+                _selectedPatientIdentifier.CopyFrom(entry);
             }
         }
 
@@ -108,31 +113,29 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             PatientIdentifier identifier = PatientIdentifier.New();
             PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(identifier);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "test");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Identifier...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                _patientIdentifiers.Add(new PatientIdentifierTableEntry(identifier));
+                _patientIdentifiers.Add(identifier);
                 _patient.Identifiers.Add(identifier);
             }
         }
 
         public void UpdateSelectedIdentifier(ISelection selection)
         {
-            PatientIdentifierTableEntry entry = (PatientIdentifierTableEntry)selection.Item;
-            PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(entry.PatientIdentifier);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "test");
+            PatientIdentifier entry = (PatientIdentifier)selection.Item;
+            PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(entry);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Identifier...");
         }
 
         public void DeleteSelectedIdentifier(ISelection selection)
         {
             if (this.Host.ShowMessageBox("Are you sure you want to delete this identifier", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
-                PatientIdentifierTableEntry entry = (PatientIdentifierTableEntry)selection.Item;
-                PatientIdentifier patientIdentifer = entry.PatientIdentifier;
+                PatientIdentifier entry = (PatientIdentifier)selection.Item;
                 _patientIdentifiers.Remove(entry);
-                _patient.Identifiers.Remove(patientIdentifer);
+                _patient.Identifiers.Remove(entry);
             }
-
         }
 
         public void Accept()
@@ -165,8 +168,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void SaveChanges()
         {
-            // TODO save data here
-
             this.ExitCode = ApplicationComponentExitCode.Normal;
         }
 

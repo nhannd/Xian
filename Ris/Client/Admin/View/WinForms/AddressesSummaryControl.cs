@@ -35,12 +35,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component.DeleteAddress(_addressList.CurrentSelection);
         }
 
-        private void _addresses_DoubleClick(object sender, EventArgs e)
+        private void _addressList_ItemDoubleClicked(object sender, EventArgs e)
         {
             _component.UpdateAddress(_addressList.CurrentSelection);
         }
 
-        private void AddressesEditorControl_Load(object sender, EventArgs e)
+        private void AddressesSummaryControl_Load(object sender, EventArgs e)
         {
             _component.LoadAddressesTable();
         }

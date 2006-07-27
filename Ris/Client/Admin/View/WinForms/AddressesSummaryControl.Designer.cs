@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._addressList.Name = "_addressList";
             this._addressList.Size = new System.Drawing.Size(540, 228);
             this._addressList.TabIndex = 1;
-            this._addressList.DoubleClick += new System.EventHandler(this._addresses_DoubleClick);
+            this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
             // 
             // _addButton
             // 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._deleteButton.UseVisualStyleBackColor = true;
             this._deleteButton.Click += new System.EventHandler(this._deleteButton_Click);
             // 
-            // AddressesEditorControl
+            // AddressesSummaryControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -93,10 +93,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.Controls.Add(this._addButton);
             this.Controls.Add(this._addressList);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.Name = "AddressesEditorControl";
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "AddressesSummaryControl";
             this.Size = new System.Drawing.Size(593, 324);
-            this.Load += new System.EventHandler(this.AddressesEditorControl_Load);
+            this.Load += new System.EventHandler(this.AddressesSummaryControl_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

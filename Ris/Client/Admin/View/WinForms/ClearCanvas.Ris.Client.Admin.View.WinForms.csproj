@@ -35,6 +35,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressesEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddressesEditorControl.Designer.cs">
+      <DependentUpon>AddressesEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="AddressesSummaryComponentView.cs" />
     <Compile Include="AddressesSummaryControl.cs">
       <SubType>UserControl</SubType>
@@ -42,6 +48,7 @@
     <Compile Include="AddressesSummaryControl.Designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddressesEditorComponentView.cs" />
     <Compile Include="PatientAdminComponentView.cs" />
     <Compile Include="PatientAdminControl.cs">
       <SubType>UserControl</SubType>
@@ -105,6 +112,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddressesEditorControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AddressesEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AddressesSummaryControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>

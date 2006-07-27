@@ -8,7 +8,7 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    [ExtensionOf(typeof(AddressesEditorComponentViewExtensionPoint))]
+    [ExtensionOf(typeof(AddressesSummaryComponentViewExtensionPoint))]
     public class AddressesSummaryComponentView : WinFormsView, IApplicationComponentView
     {
         private AddressesSummaryComponent _component;
