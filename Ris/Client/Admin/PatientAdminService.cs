@@ -27,6 +27,17 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         [ReadOperation]
+        public Patient LoadPatient(long oid)
+        {
+            IPatientBroker broker = this.GetPatientBroker();
+            Patient patient = broker.Find(oid);
+
+            // load all relevant collections
+            broker.LoadRelated(patient, patient.Identifiers);
+            return patient;
+        }
+
+        [ReadOperation]
         public Patient LoadPatientDetails(long oid)
         {
             IPatientBroker broker = this.GetPatientBroker();

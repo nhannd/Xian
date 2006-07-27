@@ -24,6 +24,13 @@ namespace ClearCanvas.Ris.Client.Admin
         Patient LoadPatientDetails(long oid);
 
         /// <summary>
+        /// Loads the specified patient.
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <returns></returns>
+        Patient LoadPatient(long oid);
+
+        /// <summary>
         /// Add a new patient to the system
         /// </summary>
         /// <param name="patient"></param>

@@ -19,6 +19,13 @@ namespace ClearCanvas.Ris.Client.Admin
     [ExtensionOf(typeof(PatientAdminToolExtensionPoint))]
     public class PatientEditTool : PatientAddEditToolBase
     {
+        private Dictionary<long, IWorkspace> _openEditors;
+
+        public PatientEditTool()
+        {
+            _openEditors = new Dictionary<long, IWorkspace>();
+        }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -41,30 +48,45 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             long oid = this.PatientAdminToolContext.SelectedPatient.OID;
 
-            // reload the patient for 3 reasons:
-            // 1. the existing copy in memory may be stale
-            // 2. the editor should operate on a copy
-            // 3. it may need patient details that were not loaded when the patients were listed
-            IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
-            Patient patient = service.LoadPatientDetails(oid);
-            
-            string title = string.Format("Edit Patient - {0}", patient.Name.Format());
-            OpenPatient(title, patient);
+            // check for an already open editor
+            if (_openEditors.ContainsKey(oid))
+            {
+                // activate existing editor
+                _openEditors[oid].IsActivated = true;
+            }
+            else
+            {
+                // reload the patient for 3 reasons:
+                // 1. the existing copy in memory may be stale
+                // 2. the editor should operate on a copy
+                // 3. it may need patient details that were not loaded when the patients were listed
+                IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
+                Patient patient = service.LoadPatientDetails(oid);
+
+                // create a new editing workspace
+                string title = string.Format("Edit Patient - {0}", patient.Name.Format());
+                IWorkspace workspace = OpenPatient(title, patient);
+                _openEditors[oid] = workspace;
+            }
         }
 
-        protected override void SaveChanges(Patient patient)
+        protected override void EditorClosed(Patient patient, ApplicationComponentExitCode exitCode)
         {
-            try
+            if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
-                service.UpdatePatient(patient);
+                try
+                {
+                    IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
+                    service.UpdatePatient(patient);
+                }
+                catch (ConcurrentModificationException)
+                {
+                    Platform.ShowMessageBox("The patient was modified by another user.  Your changes could not be saved.");
+                }
+            }
 
-            }
-            catch (ConcurrentModificationException e)
-            {
-                Platform.Log(e, LogLevel.Info);
-                Platform.ShowMessageBox("The patient was modified by another user.  Your changes could not be saved.");
-            }
+            // remove from list of open editors
+            _openEditors.Remove(patient.OID);
         }
     }
 }

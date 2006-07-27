@@ -97,6 +97,16 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void _patientAdminService_PatientChanged(object sender, EntityChangeEventArgs e)
         {
+            long oid = e.Change.EntityOID;
+
+            // check if the patient with this oid is in the list
+            int index = _workingSet.FindIndex(delegate(Patient p) { return p.OID == oid; });
+            if (index > -1)
+            {
+                Patient p = _patientAdminService.LoadPatient(oid);
+                // update the patient in the list
+                _workingSet[index] = p;
+            }
         }
 
         public override IToolSet ToolSet

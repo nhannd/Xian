@@ -31,7 +31,7 @@ namespace ClearCanvas.Healthcare {
         /// This method will need to change in future to deal with multiple Mrns. 
         /// </summary>
         /// <returns></returns>
-        public PatientIdentifier GetMrn()
+        public virtual PatientIdentifier GetMrn()
         {
             foreach(PatientIdentifier identifier in _identifiers)
             {

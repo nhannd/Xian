@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     public abstract class PatientAddEditToolBase : Tool
     {
-        protected void OpenPatient(string title, Patient patient)
+        protected IWorkspace OpenPatient(string title, Patient patient)
         {
             NavigatorComponent navigator = new NavigatorComponent();
 
@@ -28,20 +28,17 @@ namespace ClearCanvas.Ris.Client.Admin
             navigator.Nodes.Add(new NavigatorNode("Patient/Addresses", addressesSummary));
             navigator.Nodes.Add(new NavigatorNode("Patient/Phone Numbers", phoneNumbersSummary));
 
-            ApplicationComponent.LaunchAsWorkspace(navigator, title, PatientEditorExited);
+            return ApplicationComponent.LaunchAsWorkspace(navigator, title, PatientEditorExited);
         }
 
         private void PatientEditorExited(IApplicationComponent component)
         {
-            if (component.ExitCode == ApplicationComponentExitCode.Normal)
-            {
-                NavigatorComponent navigator = (NavigatorComponent)component;
-                PatientEditorComponent patientEditor = (PatientEditorComponent)navigator.Nodes[0].Component;
-                SaveChanges(patientEditor.Subject);
-            }
+            NavigatorComponent navigator = (NavigatorComponent)component;
+            PatientEditorComponent patientEditor = (PatientEditorComponent)navigator.Nodes[0].Component;
+            EditorClosed(patientEditor.Subject, component.ExitCode);
         }
 
-        protected abstract void SaveChanges(Patient patient);
+        protected abstract void EditorClosed(Patient patient, ApplicationComponentExitCode exitCode);
 
         protected IPatientAdminToolContext PatientAdminToolContext
         {

@@ -15,6 +15,7 @@ namespace ClearCanvas.Desktop
     public class TableData<TItem> : BindingList<TItem>, ITableData
     {
         public delegate object ColumnValueGetDelegate<TObject>(TObject obj);
+        public delegate bool FindDelegate<TObject>(TObject obj);
 
         internal class PropertyDescriptorEx : PropertyDescriptor
         {
@@ -79,6 +80,16 @@ namespace ClearCanvas.Desktop
         public void AddColumn<TColumnType>(string columnName, ColumnValueGetDelegate<TItem> valueGetDelegate)
         {
             _properties.Add(new PropertyDescriptorEx(columnName, typeof(TColumnType), valueGetDelegate));
+        }
+
+        public int FindIndex(FindDelegate<TItem> findDelegate)
+        {
+            for(int i = 0; i < this.Count; i++)
+            {
+                if (findDelegate(this[i]))
+                    return i;
+            }
+            return -1;
         }
 
 
