@@ -28,8 +28,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._okButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
             this._middleName = new ClearCanvas.Controls.WinForms.TextField();
             this._givenName = new ClearCanvas.Controls.WinForms.TextField();
             this._familyName = new ClearCanvas.Controls.WinForms.TextField();
@@ -41,28 +39,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._dateOfDeath = new ClearCanvas.Controls.WinForms.DateTimeField();
             this.SuspendLayout();
-            // 
-            // _okButton
-            // 
-            this._okButton.Location = new System.Drawing.Point(436, 433);
-            this._okButton.Margin = new System.Windows.Forms.Padding(2);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(56, 19);
-            this._okButton.TabIndex = 12;
-            this._okButton.Text = "OK";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(505, 433);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(56, 19);
-            this._cancelButton.TabIndex = 13;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
             // _middleName
             // 
@@ -180,11 +156,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.Controls.Add(this._middleName);
             this.Controls.Add(this._givenName);
             this.Controls.Add(this._familyName);
-            this.Controls.Add(this._cancelButton);
-            this.Controls.Add(this._okButton);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PatientEditorControl";
-            this.Size = new System.Drawing.Size(582, 468);
+            this.Size = new System.Drawing.Size(570, 394);
             this.Load += new System.EventHandler(this.PatientEditorControl_Load);
             this.ResumeLayout(false);
 
@@ -192,8 +166,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         #endregion
 
-        private System.Windows.Forms.Button _okButton;
-        private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Controls.WinForms.TextField _familyName;
         private ClearCanvas.Controls.WinForms.TextField _givenName;
         private ClearCanvas.Controls.WinForms.TextField _middleName;

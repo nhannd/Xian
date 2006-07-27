@@ -148,43 +148,5 @@ namespace ClearCanvas.Ris.Client.Admin
                 this.Modified = true;
             }
         }
-
-        public void Accept()
-        {
-            SaveChanges();
-            Host.Exit();
-        }
-
-        public void Cancel()
-        {
-            DiscardChanges();
-            Host.Exit();
-        }
-
-        public override bool CanExit()
-        {
-            DialogBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
-            switch (result)
-            {
-                case DialogBoxAction.Yes:
-                    SaveChanges();
-                    return true;
-                case DialogBoxAction.No:
-                    DiscardChanges();
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private void SaveChanges()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
-        }
-
-        private void DiscardChanges()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-        }
     }
 }

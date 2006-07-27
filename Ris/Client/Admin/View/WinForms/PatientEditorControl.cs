@@ -28,16 +28,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _patientIdentifierList.DataSource = _component.PatientIdentifiers;
         }
 
-        private void _okButton_Click(object sender, EventArgs e)
-        {
-            _component.Accept();
-        }
-
-        private void _cancelButton_Click(object sender, EventArgs e)
-        {
-            _component.Cancel();
-        }
-
         private void _identiferAddButton_Click(object sender, EventArgs e)
         {
             _component.AddIdentifer();
