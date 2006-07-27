@@ -56,25 +56,37 @@ namespace ClearCanvas.Ris.Client.Admin
         public string FamilyName
         {
             get { return _patient.Name.FamilyName; }
-            set { _patient.Name.FamilyName = value; }
+            set { 
+                _patient.Name.FamilyName = value;
+                this.Modified = true;
+            }
         }
 
         public string GivenName
         {
             get { return _patient.Name.GivenName; }
-            set { _patient.Name.GivenName = value; }
+            set { 
+                _patient.Name.GivenName = value;
+                this.Modified = true;
+            }
         }
 
         public string MiddleName
         {
             get { return _patient.Name.MiddleName; }
-            set { _patient.Name.MiddleName = value; }
+            set { 
+                _patient.Name.MiddleName = value;
+                this.Modified = true;
+            }
         }
 
         public string Sex
         {
             get { return _patientAdminService.SexEnumTable[_patient.Sex].Value; }
-            set { _patient.Sex = _patientAdminService.SexEnumTable[value].Code; }
+            set { 
+                _patient.Sex = _patientAdminService.SexEnumTable[value].Code;
+                this.Modified = true;
+            }
         }
 
         public string[] SexChoices
@@ -118,6 +130,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 _patientIdentifiers.Add(identifier);
                 _patient.Identifiers.Add(identifier);
+                this.Modified = true;
             }
         }
 
@@ -126,6 +139,10 @@ namespace ClearCanvas.Ris.Client.Admin
             PatientIdentifier entry = (PatientIdentifier)selection.Item;
             PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(entry);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Identifier...");
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                this.Modified = true;
+            }
         }
 
         public void DeleteSelectedIdentifier(ISelection selection)
@@ -135,6 +152,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 PatientIdentifier entry = (PatientIdentifier)selection.Item;
                 _patientIdentifiers.Remove(entry);
                 _patient.Identifiers.Remove(entry);
+                this.Modified = true;
             }
         }
 

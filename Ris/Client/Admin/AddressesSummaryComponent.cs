@@ -60,6 +60,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 _addresses.Add(address);
                 _patient.Addresses.Add(address);
+                this.Modified = true;
             }
         }
 
@@ -68,6 +69,10 @@ namespace ClearCanvas.Ris.Client.Admin
             Address address = (Address)selection.Item;
             AddressesEditorComponent editor = new AddressesEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Address...");
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                this.Modified = true;
+            }
         }
 
         public void DeleteAddress(ISelection selection)
@@ -77,6 +82,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 Address address  = (Address)selection.Item;
                 _addresses.Remove(address);
                 _patient.Addresses.Remove(address);
+                this.Modified = true;
             }
         }
 

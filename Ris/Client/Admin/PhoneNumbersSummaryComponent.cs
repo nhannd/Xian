@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 _phoneNumbers.Add(phoneNumber);
                 _patient.TelephoneNumbers.Add(phoneNumber);
+                this.Modified = true;
             }
         }
 
@@ -66,6 +67,10 @@ namespace ClearCanvas.Ris.Client.Admin
             TelephoneNumber phoneNumber = (TelephoneNumber)selection.Item;
             PhoneNumbersEditorComponent editor = new PhoneNumbersEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Phone Number...");
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                this.Modified = true;
+            }
         }
 
         public void DeleteNumber(ISelection selection)
@@ -75,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 TelephoneNumber phoneNumber  = (TelephoneNumber)selection.Item;
                 _phoneNumbers.Remove(phoneNumber);
                 _patient.TelephoneNumbers.Remove(phoneNumber);
+                this.Modified = true;
             }
         }
 
