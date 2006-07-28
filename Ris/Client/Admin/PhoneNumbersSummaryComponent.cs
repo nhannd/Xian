@@ -54,12 +54,12 @@ namespace ClearCanvas.Ris.Client.Admin
             _phoneNumbers = new TableData<TelephoneNumber>();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
 
-            _phoneNumbers.AddColumn<string>("CountryCode", delegate(TelephoneNumber pn) { return pn.CountryCode; });
-            _phoneNumbers.AddColumn<string>("AreaCode", delegate(TelephoneNumber pn) { return pn.AreaCode; });
-            _phoneNumbers.AddColumn<string>("Number", delegate(TelephoneNumber pn) { return pn.Number; });
-            _phoneNumbers.AddColumn<string>("Extension", delegate(TelephoneNumber pn) { return pn.Extension; });
             _phoneNumbers.AddColumn<string>("Use", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneUseEnumTable[pn.Use].Value; });
             _phoneNumbers.AddColumn<string>("Equipment", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneEquipmentEnumTable[pn.Equipment].Value; });
+            _phoneNumbers.AddColumn<string>("Country Code", delegate(TelephoneNumber pn) { return pn.CountryCode; });
+            _phoneNumbers.AddColumn<string>("Area Code", delegate(TelephoneNumber pn) { return pn.AreaCode; });
+            _phoneNumbers.AddColumn<string>("Number", delegate(TelephoneNumber pn) { return pn.Number; });
+            _phoneNumbers.AddColumn<string>("Extension", delegate(TelephoneNumber pn) { return pn.Extension; });
 
             _phoneNumberActionHandler = new PhoneNumberActionHandler(this);
             _phoneNumberActionHandler.AddEnabled = true;
