@@ -141,8 +141,6 @@ namespace ClearCanvas.Ris.Client.Admin
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Address...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                //_currentAddressSelection.CopyFrom(address);
-
                 // delete and re-insert to ensure that TableView updates correctly
                 Address toBeRemoved = _currentAddressSelection;
                 _addresses.Remove(toBeRemoved);
@@ -159,6 +157,8 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (this.Host.ShowMessageBox("Are you sure you want to delete this address?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
+                //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
+                //  resulting in the wrong Address being removed from the Patient
                 Address toBeRemoved  = _currentAddressSelection;
                 _addresses.Remove(toBeRemoved);
                 _patient.Addresses.Remove(toBeRemoved);

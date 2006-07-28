@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 
@@ -16,9 +17,37 @@ namespace ClearCanvas.Ris.Client.Admin
     [ApplicationComponentView(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
     public class PhoneNumbersSummaryComponent : ApplicationComponent
     {
+        class PhoneNumberActionHandler : CrudActionHandler
+        {
+            private PhoneNumbersSummaryComponent _component;
+
+            internal PhoneNumberActionHandler(PhoneNumbersSummaryComponent component)
+            {
+                _component = component;
+            }
+
+            protected override void Add()
+            {
+                _component.AddPhoneNumber();
+            }
+
+            protected override void Edit()
+            {
+                _component.UpdateSelectedPhoneNumber();
+            }
+
+            protected override void Delete()
+            {
+                _component.DeleteSelectedPhoneNumber();
+            }
+        }
+
         private Patient _patient;
         private IPatientAdminService _patientAdminService;
         private TableData<TelephoneNumber> _phoneNumbers;
+        private TelephoneNumber _currentPhoneNumberSelection;
+
+        PhoneNumberActionHandler _phoneNumberActionHandler;
 
         public PhoneNumbersSummaryComponent()
         {
@@ -31,6 +60,9 @@ namespace ClearCanvas.Ris.Client.Admin
             _phoneNumbers.AddColumn<string>("Extension", delegate(TelephoneNumber pn) { return pn.Extension; });
             _phoneNumbers.AddColumn<string>("Use", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneUseEnumTable[pn.Use].Value; });
             _phoneNumbers.AddColumn<string>("Equipment", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneEquipmentEnumTable[pn.Equipment].Value; });
+
+            _phoneNumberActionHandler = new PhoneNumberActionHandler(this);
+            _phoneNumberActionHandler.AddEnabled = true;
         }
 
         public Patient Subject
@@ -43,6 +75,42 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get { return _phoneNumbers; }
         }
+
+        public ActionModelNode PhoneNumberActions
+        {
+            get { return _phoneNumberActionHandler.ActionModel; }
+        }
+
+        public TelephoneNumber CurrentPhoneNumberSelection
+        {
+            get { return _currentPhoneNumberSelection; }
+            set
+            {
+                _currentPhoneNumberSelection = value;
+                PhoneNumberSelectionChanged();
+            }
+        }
+
+        public void SetSelectedPhoneNumber(ISelection selection)
+        {
+            this.CurrentPhoneNumberSelection = (TelephoneNumber)selection.Item;
+        }
+
+        private void PhoneNumberSelectionChanged()
+        {
+            if (_currentPhoneNumberSelection != null)
+            {
+                _phoneNumberActionHandler.EditEnabled = true;
+                _phoneNumberActionHandler.DeleteEnabled = true;
+            }
+            else
+            {
+                _phoneNumberActionHandler.EditEnabled = false;
+                _phoneNumberActionHandler.DeleteEnabled = false;
+            }
+        }
+
+
 
         public void AddPhoneNumber()
         {
@@ -62,28 +130,36 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public void UpdatePhoneNumber(ISelection selection)
+        public void UpdateSelectedPhoneNumber()
         {
             TelephoneNumber phoneNumber = TelephoneNumber.New();
-            TelephoneNumber selectedPhoneNumber = (TelephoneNumber)selection.Item;
-            phoneNumber.CopyFrom(selectedPhoneNumber);
+            phoneNumber.CopyFrom(_currentPhoneNumberSelection);
             
             PhoneNumbersEditorComponent editor = new PhoneNumbersEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                selectedPhoneNumber.CopyFrom(phoneNumber);
+                // delete and re-insert to ensure that TableView updates correctly
+                TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
+                _phoneNumbers.Remove(toBeRemoved);
+                _patient.TelephoneNumbers.Remove(toBeRemoved);
+
+                _phoneNumbers.Add(phoneNumber);
+                _patient.TelephoneNumbers.Add(phoneNumber);
+
                 this.Modified = true;
             }
         }
 
-        public void DeleteNumber(ISelection selection)
+        public void DeleteSelectedPhoneNumber()
         {
             if (this.Host.ShowMessageBox("Are you sure you want to delete this phone number?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
-                TelephoneNumber phoneNumber  = (TelephoneNumber)selection.Item;
-                _phoneNumbers.Remove(phoneNumber);
-                _patient.TelephoneNumbers.Remove(phoneNumber);
+                //  Must use temporary TelephoneNumber otherwise as a side effect TableDate.Remove() will change the current selection 
+                //  resulting in the wrong TelephoneNumber being removed from the Patient
+                TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
+                _phoneNumbers.Remove(toBeRemoved);
+                _patient.TelephoneNumbers.Remove(toBeRemoved);
                 this.Modified = true;
             }
         }

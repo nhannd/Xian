@@ -18,6 +18,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             _phoneNumbers.DataSource = _component.PhoneNumbers;
+            _phoneNumbers.ToolbarModel = _component.PhoneNumberActions;
+
         }
 
         private void _addButton_Click(object sender, EventArgs e)
@@ -27,12 +29,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _updateButton_Click(object sender, EventArgs e)
         {
-            _component.UpdatePhoneNumber(_phoneNumbers.CurrentSelection);
+//            _component.UpdateSelectedPhoneNumber(_phoneNumbers.CurrentSelection);
         }
 
         private void _deleteButton_Click(object sender, EventArgs e)
         {
-            _component.DeleteNumber(_phoneNumbers.CurrentSelection);
+            //_component.DeleteSelectedPhoneNumber(_phoneNumbers.CurrentSelection);
         }
 
         private void PhoneNumbersSummaryControl_Load(object sender, EventArgs e)
@@ -42,7 +44,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _phoneNumbers_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.UpdatePhoneNumber(_phoneNumbers.CurrentSelection);
+            _component.UpdateSelectedPhoneNumber();
+        }
+
+        private void _phoneNumbers_SelectionChanged(object sender, EventArgs e)
+        {
+            _component.SetSelectedPhoneNumber(_phoneNumbers.CurrentSelection);
         }
     }
 }
