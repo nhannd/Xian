@@ -134,6 +134,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void UpdateSelectedAddress()
         {
+            // can occur if user double clicks while holding control
+            if (_currentAddressSelection == null) return;
+
             Address address = Address.New();
             address.CopyFrom(_currentAddressSelection);
 

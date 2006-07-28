@@ -132,6 +132,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void UpdateSelectedPhoneNumber()
         {
+            // can occur if user double clicks while holding control
+            if (_currentPhoneNumberSelection == null) return;
+
             TelephoneNumber phoneNumber = TelephoneNumber.New();
             phoneNumber.CopyFrom(_currentPhoneNumberSelection);
             
