@@ -37,39 +37,43 @@ namespace ClearCanvas.Controls.WinForms
             // 
             this._dateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._dateTimePicker.Location = new System.Drawing.Point(3, 25);
+            this._dateTimePicker.Location = new System.Drawing.Point(2, 20);
+            this._dateTimePicker.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._dateTimePicker.Name = "_dateTimePicker";
-            this._dateTimePicker.Size = new System.Drawing.Size(194, 22);
+            this._dateTimePicker.Size = new System.Drawing.Size(146, 20);
             this._dateTimePicker.TabIndex = 0;
             // 
             // _label
             // 
             this._label.AutoSize = true;
-            this._label.Location = new System.Drawing.Point(3, 4);
+            this._label.Location = new System.Drawing.Point(2, 3);
+            this._label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this._label.Name = "_label";
-            this._label.Size = new System.Drawing.Size(38, 17);
+            this._label.Size = new System.Drawing.Size(29, 13);
             this._label.TabIndex = 1;
             this._label.Text = "label";
             // 
             // _checkBox
             // 
             this._checkBox.AutoSize = true;
-            this._checkBox.Location = new System.Drawing.Point(6, 3);
+            this._checkBox.Location = new System.Drawing.Point(4, 1);
+            this._checkBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._checkBox.Name = "_checkBox";
-            this._checkBox.Size = new System.Drawing.Size(90, 21);
+            this._checkBox.Size = new System.Drawing.Size(74, 17);
             this._checkBox.TabIndex = 2;
             this._checkBox.Text = "checkBox";
             this._checkBox.UseVisualStyleBackColor = true;
             // 
             // DateTimeField
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._label);
-            this.Controls.Add(this._checkBox);
             this.Controls.Add(this._dateTimePicker);
+            this.Controls.Add(this._checkBox);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "DateTimeField";
-            this.Size = new System.Drawing.Size(200, 50);
+            this.Size = new System.Drawing.Size(150, 41);
             this.ResumeLayout(false);
             this.PerformLayout();
 
