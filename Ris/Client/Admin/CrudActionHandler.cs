@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _actionModel = new ActionModelRoot("");
             _enabledState = new Dictionary<string, ObservableProperty<bool>>();
 
-            AddAction("Add", Add, null);
+            AddAction("Add", Add, "Icons.NewDocumentHS.png");
             AddAction("Edit", Edit, "Icons.Edit.png");
             AddAction("Delete", Delete, "Icons.Delete.png");
         }
