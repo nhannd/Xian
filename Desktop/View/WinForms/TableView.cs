@@ -57,7 +57,19 @@ namespace ClearCanvas.Desktop.View.WinForms
                 ToolStripBuilder.Clear(_toolStrip.Items);
                 if (_toolbarModel != null)
                 {
-                    ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
+                    if (_toolStrip.RightToLeft == RightToLeft.Yes)
+                    {
+                        ActionModelNode[] childNodesCopy = new ActionModelNode[_toolbarModel.ChildNodes.Length];
+                        for (int i = 0; i < _toolbarModel.ChildNodes.Length; i++)
+                        {
+                                childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
+                        }
+                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy);
+                    }
+                    else
+                    {
+                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
+                    }
                 }
             }
         }
@@ -70,6 +82,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _bindingSource.DataSource = value;
                 _dataGridView.DataSource = _bindingSource;
             }
+        }
+
+        public RightToLeft ToolStripRightToLeft
+        {
+            get { return _toolStrip.RightToLeft; }
+            set { _toolStrip.RightToLeft = value; }
         }
 
         /// <summary>
