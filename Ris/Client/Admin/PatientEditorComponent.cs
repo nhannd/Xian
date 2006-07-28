@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _patientIdentifiers.AddColumn<string>("Type", delegate(PatientIdentifier pi) { return _patientAdminService.PatientIdentifierTypeEnumTable[pi.Type].Value; });
             _patientIdentifiers.AddColumn<string>("ID", delegate(PatientIdentifier pi) { return pi.Id; });
-            _patientIdentifiers.AddColumn<string>("AssigningAuthority", delegate(PatientIdentifier pi) { return pi.AssigningAuthority; });
+            _patientIdentifiers.AddColumn<string>("Assigning Authority", delegate(PatientIdentifier pi) { return pi.AssigningAuthority; });
 
             _patientIdentifiersActionHandler = new PatientIdentifiersActionHandler(this);
 
