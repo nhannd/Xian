@@ -28,86 +28,58 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
             this._addressList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._addButton = new System.Windows.Forms.Button();
-            this._updateButton = new System.Windows.Forms.Button();
-            this._deleteButton = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(96, 115);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Addresses";
             // 
             // _addressList
             // 
+            this._addressList.AutoSize = true;
             this._addressList.DataSource = null;
-            this._addressList.Location = new System.Drawing.Point(23, 10);
+            this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._addressList.Location = new System.Drawing.Point(3, 3);
             this._addressList.Name = "_addressList";
-            this._addressList.Size = new System.Drawing.Size(540, 228);
+            this._addressList.Size = new System.Drawing.Size(123, 112);
             this._addressList.TabIndex = 1;
+            this._addressList.ToolbarModel = null;
+            this._addressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
+            this._addressList.SelectionChanged += new System.EventHandler(this._addressList_SelectionChanged);
             // 
-            // _addButton
+            // tableLayoutPanel1
             // 
-            this._addButton.Location = new System.Drawing.Point(298, 269);
-            this._addButton.Name = "_addButton";
-            this._addButton.Size = new System.Drawing.Size(75, 23);
-            this._addButton.TabIndex = 2;
-            this._addButton.Text = "Add...";
-            this._addButton.UseVisualStyleBackColor = true;
-            this._addButton.Click += new System.EventHandler(this._addButton_Click);
-            // 
-            // _updateButton
-            // 
-            this._updateButton.Location = new System.Drawing.Point(397, 269);
-            this._updateButton.Name = "_updateButton";
-            this._updateButton.Size = new System.Drawing.Size(75, 23);
-            this._updateButton.TabIndex = 3;
-            this._updateButton.Text = "Update...";
-            this._updateButton.UseVisualStyleBackColor = true;
-            this._updateButton.Click += new System.EventHandler(this._updateButton_Click);
-            // 
-            // _deleteButton
-            // 
-            this._deleteButton.Location = new System.Drawing.Point(488, 269);
-            this._deleteButton.Name = "_deleteButton";
-            this._deleteButton.Size = new System.Drawing.Size(75, 23);
-            this._deleteButton.TabIndex = 4;
-            this._deleteButton.Text = "Delete";
-            this._deleteButton.UseVisualStyleBackColor = true;
-            this._deleteButton.Click += new System.EventHandler(this._deleteButton_Click);
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this._addressList, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(129, 118);
+            this.tableLayoutPanel1.TabIndex = 6;
             // 
             // AddressesSummaryControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._deleteButton);
-            this.Controls.Add(this._updateButton);
-            this.Controls.Add(this._addButton);
-            this.Controls.Add(this._addressList);
-            this.Controls.Add(this.label1);
+            this.AutoSize = true;
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "AddressesSummaryControl";
-            this.Size = new System.Drawing.Size(593, 324);
+            this.Size = new System.Drawing.Size(129, 118);
             this.Load += new System.EventHandler(this.AddressesSummaryControl_Load);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
         private ClearCanvas.Desktop.View.WinForms.TableView _addressList;
-        private System.Windows.Forms.Button _addButton;
-        private System.Windows.Forms.Button _updateButton;
-        private System.Windows.Forms.Button _deleteButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }
