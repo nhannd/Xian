@@ -132,6 +132,34 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _patientAdminService.SexEnumTable.Values; }
         }
 
+        public DateTime DateOfBirth
+        {
+            get { return _patient.DateOfBirth; }
+            set { 
+                _patient.DateOfBirth = value;
+                this.Modified = true;
+            }
+        }
+
+        public bool DeathIndicator
+        {
+            get { return _patient.DeathIndicator; }
+            set { 
+                _patient.DeathIndicator = value;
+                this.Modified = true;
+            }
+        }
+
+        public DateTime? TimeOfDeath
+        {
+            get { return _patient.TimeOfDeath; }
+            set { 
+                _patient.TimeOfDeath = value;
+                this.Modified = true;
+            }
+        }
+            
+
         public ITableData PatientIdentifiers
         {
             get { return _patientIdentifiers; }

@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._dateOfDeath.Location = new System.Drawing.Point(194, 44);
             this._dateOfDeath.Margin = new System.Windows.Forms.Padding(2);
             this._dateOfDeath.Name = "_dateOfDeath";
-            this._dateOfDeath.Nullable = false;
+            this._dateOfDeath.Nullable = true;
             this._dateOfDeath.Size = new System.Drawing.Size(93, 54);
             this._dateOfDeath.TabIndex = 5;
             this._dateOfDeath.Value = null;

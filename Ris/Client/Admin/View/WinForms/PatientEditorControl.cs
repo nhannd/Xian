@@ -18,12 +18,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             // create bindings
-            _familyName.DataBindings.Add("Value", _component, "FamilyName", false, DataSourceUpdateMode.OnPropertyChanged);
-            _givenName.DataBindings.Add("Value", _component, "GivenName", false, DataSourceUpdateMode.OnPropertyChanged);
-            _middleName.DataBindings.Add("Value", _component, "MiddleName", false, DataSourceUpdateMode.OnPropertyChanged);
+            _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _sex.DataSource = _component.SexChoices;
-            _sex.DataBindings.Add("Value", _component, "Sex", false, DataSourceUpdateMode.OnPropertyChanged);
+            _sex.DataBindings.Add("Value", _component, "Sex", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
+            _dateOfDeath.DataBindings.Add("Value", _component, "TimeOfDeath", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _patientIdentifierList.DataSource = _component.PatientIdentifiers;
             _patientIdentifierList.ToolbarModel = _component.PatientIdentifierActions;
