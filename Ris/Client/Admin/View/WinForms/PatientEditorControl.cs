@@ -29,6 +29,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _patientIdentifierList.ToolbarModel = _component.PatientIdentifierActions;
         }
 
+        private void PatientEditorControl_Load(object sender, EventArgs e)
+        {
+            _component.LoadIdentifierTable();
+        }
+
+        private void _patientIdentifierList_SelectionChanged(object sender, EventArgs e)
+        {
+            _component.SetSelectedIdentifier(_patientIdentifierList.CurrentSelection);
+        }
+
         private void _identiferAddButton_Click(object sender, EventArgs e)
         {
             _component.AddIdentifer();
@@ -36,22 +46,17 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _identifierUpdateButton_Click(object sender, EventArgs e)
         {
-            _component.UpdateSelectedIdentifier(_patientIdentifierList.CurrentSelection);
-        }
-
-        private void _identifierDeleteButton_Click(object sender, EventArgs e)
-        {
-            _component.DeleteSelectedIdentifier(_patientIdentifierList.CurrentSelection);
+            _component.UpdateSelectedIdentifier();
         }
 
         private void _patientIdentifierList_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.UpdateSelectedIdentifier(_patientIdentifierList.CurrentSelection);
+            _component.UpdateSelectedIdentifier();
         }
 
-        private void PatientEditorControl_Load(object sender, EventArgs e)
+        private void _identifierDeleteButton_Click(object sender, EventArgs e)
         {
-            _component.LoadIdentifierTable();
+            _component.DeleteSelectedIdentifier();
         }
     }
 }

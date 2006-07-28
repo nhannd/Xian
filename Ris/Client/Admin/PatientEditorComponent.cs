@@ -32,17 +32,17 @@ namespace ClearCanvas.Ris.Client.Admin
 
             protected override void Add()
             {
-                Console.WriteLine("Add");
+                _component.AddIdentifer();
             }
 
             protected override void Edit()
             {
-                Console.WriteLine("Edit");
+                _component.UpdateSelectedIdentifier();
             }
 
             protected override void Delete()
             {
-                Console.WriteLine("Delete");
+                _component.DeleteSelectedIdentifier();
             }
         }
 
@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private Patient _patient;
         private IPatientAdminService _patientAdminService;
         private TableData<PatientIdentifier> _patientIdentifiers;
+        private PatientIdentifier _currentPatientIdentifierSelection;
 
         private PatientIdentifiersActionHandler _patientIdentifiersActionHandler;
 
@@ -136,6 +137,34 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _patientIdentifiers; }
         }
 
+        public PatientIdentifier CurrentPatientIdentifierSelection
+        {
+            get { return _currentPatientIdentifierSelection; }
+            set { 
+                _currentPatientIdentifierSelection = value;
+                PatientIdentifierSelectionChanged();
+            }
+        }
+
+        public void SetSelectedIdentifier(ISelection selection)
+        {
+            this.CurrentPatientIdentifierSelection = (PatientIdentifier)selection.Item;
+        }
+
+        private void PatientIdentifierSelectionChanged()
+        {
+            if (_currentPatientIdentifierSelection != null)
+            {
+                _patientIdentifiersActionHandler.EditEnabled = true;
+                _patientIdentifiersActionHandler.DeleteEnabled = true;
+            }
+            else
+            {
+                _patientIdentifiersActionHandler.EditEnabled = false;
+                _patientIdentifiersActionHandler.DeleteEnabled = false;
+            }
+        }
+
         public void LoadIdentifierTable()
         {
             if (_patient != null)
@@ -161,29 +190,33 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public void UpdateSelectedIdentifier(ISelection selection)
+        public void UpdateSelectedIdentifier()
         {
+            // can occur if user double clicks while holding control
+            if (_currentPatientIdentifierSelection == null) return;
+
             PatientIdentifier identifier = PatientIdentifier.New();
-            PatientIdentifier selectedIdentifier = (PatientIdentifier)selection.Item;
-            identifier.CopyFrom(selectedIdentifier);
+            identifier.CopyFrom(_currentPatientIdentifierSelection);
 
             PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(identifier);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Identifier...");
 
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                selectedIdentifier.CopyFrom(identifier);
+                _currentPatientIdentifierSelection.CopyFrom(identifier);
                 this.Modified = true;
             }
         }
 
-        public void DeleteSelectedIdentifier(ISelection selection)
+        public void DeleteSelectedIdentifier()
         {
             if (this.Host.ShowMessageBox("Are you sure you want to delete this identifier", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
-                PatientIdentifier entry = (PatientIdentifier)selection.Item;
-                _patientIdentifiers.Remove(entry);
-                _patient.Identifiers.Remove(entry);
+                //  Must use temporary PatientIdentifier otherwise as a side effect TableDate.Remove() will change the current selection 
+                //  resulting in the wrong Identifier being removed from the Patient
+                PatientIdentifier toBeRemoved = _currentPatientIdentifierSelection;
+                _patientIdentifiers.Remove(toBeRemoved);
+                _patient.Identifiers.Remove(toBeRemoved);
                 this.Modified = true;
             }
         }
