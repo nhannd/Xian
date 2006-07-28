@@ -54,16 +54,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _toolbarModel = value;
-                RebuildToolbar();
+                ToolStripBuilder.Clear(_toolStrip.Items);
+                if (_toolbarModel != null)
+                {
+                    ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
+                }
             }
         }
-
-        private void RebuildToolbar()
-        {
-            ToolStripBuilder.Clear(_toolStrip.Items);
-            ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
-        }
-
 
         public object DataSource
         {
