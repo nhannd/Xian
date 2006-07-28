@@ -31,20 +31,21 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._searchButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._familyName = new ClearCanvas.Controls.WinForms.TextField();
+            this._patientIdentifierType = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._patientIdentifier = new ClearCanvas.Controls.WinForms.TextField();
             this._givenName = new ClearCanvas.Controls.WinForms.TextField();
             this._sex = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._patientIdentifierType = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._patientIdentifier = new ClearCanvas.Controls.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // _searchButton
             // 
             this._searchButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this._searchButton.Location = new System.Drawing.Point(215, 284);
+            this._searchButton.Location = new System.Drawing.Point(156, 241);
+            this._searchButton.Margin = new System.Windows.Forms.Padding(2);
             this._searchButton.Name = "_searchButton";
-            this._searchButton.Size = new System.Drawing.Size(75, 23);
+            this._searchButton.Size = new System.Drawing.Size(56, 19);
             this._searchButton.TabIndex = 6;
             this._searchButton.Text = "Search";
             this._searchButton.UseVisualStyleBackColor = true;
@@ -64,6 +65,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._searchButton, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 7;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -73,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.53846F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 78.46154F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(293, 528);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(214, 480);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // _familyName
@@ -82,12 +84,51 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._familyName, 2);
             this._familyName.LabelText = "Family Name";
-            this._familyName.Location = new System.Drawing.Point(3, 56);
-            this._familyName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._familyName.Location = new System.Drawing.Point(2, 47);
+            this._familyName.Margin = new System.Windows.Forms.Padding(2);
             this._familyName.Name = "_familyName";
-            this._familyName.Size = new System.Drawing.Size(287, 50);
+            this._familyName.Size = new System.Drawing.Size(210, 41);
             this._familyName.TabIndex = 2;
             this._familyName.Value = null;
+            // 
+            // _patientIdentifierType
+            // 
+            this._patientIdentifierType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._patientIdentifierType.DataSource = null;
+            this._patientIdentifierType.LabelText = "Type";
+            this._patientIdentifierType.Location = new System.Drawing.Point(130, 2);
+            this._patientIdentifierType.Margin = new System.Windows.Forms.Padding(2);
+            this._patientIdentifierType.Name = "_patientIdentifierType";
+            this._patientIdentifierType.Size = new System.Drawing.Size(82, 41);
+            this._patientIdentifierType.TabIndex = 1;
+            this._patientIdentifierType.Value = null;
+            // 
+            // _dateOfBirth
+            // 
+            this._dateOfBirth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.SetColumnSpan(this._dateOfBirth, 2);
+            this._dateOfBirth.LabelText = "Date of Birth";
+            this._dateOfBirth.Location = new System.Drawing.Point(2, 182);
+            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
+            this._dateOfBirth.Name = "_dateOfBirth";
+            this._dateOfBirth.Nullable = true;
+            this._dateOfBirth.Size = new System.Drawing.Size(210, 39);
+            this._dateOfBirth.TabIndex = 5;
+            this._dateOfBirth.Value = null;
+            // 
+            // _patientIdentifier
+            // 
+            this._patientIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._patientIdentifier.LabelText = "Patient ID";
+            this._patientIdentifier.Location = new System.Drawing.Point(2, 2);
+            this._patientIdentifier.Margin = new System.Windows.Forms.Padding(2);
+            this._patientIdentifier.Name = "_patientIdentifier";
+            this._patientIdentifier.Size = new System.Drawing.Size(124, 41);
+            this._patientIdentifier.TabIndex = 0;
+            this._patientIdentifier.Value = null;
             // 
             // _givenName
             // 
@@ -95,10 +136,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._givenName, 2);
             this._givenName.LabelText = "Given Name";
-            this._givenName.Location = new System.Drawing.Point(3, 110);
-            this._givenName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._givenName.Location = new System.Drawing.Point(2, 92);
+            this._givenName.Margin = new System.Windows.Forms.Padding(2);
             this._givenName.Name = "_givenName";
-            this._givenName.Size = new System.Drawing.Size(287, 50);
+            this._givenName.Size = new System.Drawing.Size(210, 41);
             this._givenName.TabIndex = 3;
             this._givenName.Value = null;
             // 
@@ -109,59 +150,21 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.SetColumnSpan(this._sex, 2);
             this._sex.DataSource = null;
             this._sex.LabelText = "Sex";
-            this._sex.Location = new System.Drawing.Point(3, 164);
-            this._sex.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._sex.Location = new System.Drawing.Point(2, 137);
+            this._sex.Margin = new System.Windows.Forms.Padding(2);
             this._sex.Name = "_sex";
-            this._sex.Size = new System.Drawing.Size(287, 50);
+            this._sex.Size = new System.Drawing.Size(210, 41);
             this._sex.TabIndex = 4;
             this._sex.Value = null;
             // 
-            // _dateOfBirth
-            // 
-            this._dateOfBirth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.SetColumnSpan(this._dateOfBirth, 2);
-            this._dateOfBirth.LabelText = "Date of Birth";
-            this._dateOfBirth.Location = new System.Drawing.Point(3, 218);
-            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._dateOfBirth.Name = "_dateOfBirth";
-            this._dateOfBirth.Nullable = true;
-            this._dateOfBirth.Size = new System.Drawing.Size(287, 48);
-            this._dateOfBirth.TabIndex = 5;
-            this._dateOfBirth.Value = null;
-            // 
-            // _patientIdentifierType
-            // 
-            this._patientIdentifierType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._patientIdentifierType.DataSource = null;
-            this._patientIdentifierType.LabelText = "Type";
-            this._patientIdentifierType.Location = new System.Drawing.Point(178, 2);
-            this._patientIdentifierType.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._patientIdentifierType.Name = "_patientIdentifierType";
-            this._patientIdentifierType.Size = new System.Drawing.Size(112, 50);
-            this._patientIdentifierType.TabIndex = 1;
-            this._patientIdentifierType.Value = null;
-            // 
-            // _patientIdentifier
-            // 
-            this._patientIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._patientIdentifier.LabelText = "Patient ID";
-            this._patientIdentifier.Location = new System.Drawing.Point(3, 2);
-            this._patientIdentifier.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._patientIdentifier.Name = "_patientIdentifier";
-            this._patientIdentifier.Size = new System.Drawing.Size(169, 50);
-            this._patientIdentifier.TabIndex = 0;
-            this._patientIdentifier.Value = null;
-            // 
             // PatientSearchControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PatientSearchControl";
-            this.Size = new System.Drawing.Size(293, 528);
+            this.Size = new System.Drawing.Size(214, 480);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
