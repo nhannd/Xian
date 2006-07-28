@@ -86,6 +86,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _workingSet.AddColumn<string>("MRN", delegate(Patient p) { return p.GetMrn().Id; });
             _workingSet.AddColumn<string>("Name", delegate(Patient p) { return p.Name.Format(); });
             _workingSet.AddColumn<string>("Sex", delegate(Patient p) { return _patientAdminService.SexEnumTable[p.Sex].Value; });
+            _workingSet.AddColumn<string>("Date of Birth", delegate(Patient p) { return p.DateOfBirth.Date.ToShortDateString(); });
         }
 
         public override void Stop()

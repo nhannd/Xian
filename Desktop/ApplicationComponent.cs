@@ -171,6 +171,11 @@ namespace ClearCanvas.Desktop
                         return false;
                 }
             }
+            else
+            {
+                // this is equivalent to cancelling
+                this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            }
             return true;
         }
 

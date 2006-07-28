@@ -14,6 +14,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [MenuAction("add", "Admin/Patient/New...")]
     [ButtonAction("add", "PatientAdminToolbar/AddPatient")]
     [Tooltip("add", "Add new Patient")]
+    [IconSet("add", IconScheme.Colour, "Icons.AddPatientMedium.png", "Icons.AddPatientMedium.png", "Icons.AddPatientMedium.png")]
     [ClickHandler("add", "AddPatient")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]

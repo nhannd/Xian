@@ -15,6 +15,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [ClickHandler("edit", "EditPatient")]
     [EnabledStateObserver("edit", "Enabled", "EnabledChanged")]
     [Tooltip("edit", "Edit Patient")]
+    [IconSet("edit", IconScheme.Colour, "Icons.EditPatientMedium.png", "Icons.EditPatientMedium.png", "Icons.EditPatientMedium.png")]
 
     [ExtensionOf(typeof(PatientAdminToolExtensionPoint))]
     public class PatientEditTool : PatientAddEditToolBase

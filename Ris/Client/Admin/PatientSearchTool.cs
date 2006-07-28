@@ -19,6 +19,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [MenuAction("showHide", "Admin/Patient/Find...")]
     [ButtonAction("showHide", "PatientAdminToolbar/Find")]
     [Tooltip("showHide", "Find Patient")]
+    [IconSet("showHide", IconScheme.Colour, "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png")]
     [ClickHandler("showHide", "ShowHide")]
     [CheckedStateObserver("showHide", "IsViewActive", "ViewActivationChanged")]
 
