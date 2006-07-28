@@ -73,7 +73,7 @@ namespace ClearCanvas.Common
                 PropertyInfo propertyInfo = SRclass.GetProperty(str, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
                 if (propertyInfo != null)
                 {
-                    MethodInfo getter = propertyInfo.GetGetMethod();
+                    MethodInfo getter = propertyInfo.GetGetMethod(true);
                     return (string)getter.Invoke(null, null);
                 }
             }
