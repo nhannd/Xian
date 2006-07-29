@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		}
 
 		[Test]
-		public void Rotate()
+		public void Rotate1()
 		{
 			SpatialTransform transform = new SpatialTransform();
 			transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
@@ -159,6 +159,27 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsTrue(Math.Abs(1.0f - transform.Transform.Elements[1]) < 1.0E-05);
 			Assert.IsTrue(Math.Abs(-1.0f - transform.Transform.Elements[2]) < 1.0E-05);
 			Assert.IsTrue(Math.Abs(0.0f - transform.Transform.Elements[3]) < 1.0E-05);
+		}
+
+		[Test]
+		public void Rotate2()
+		{
+			SpatialTransform transform = new SpatialTransform();
+
+			transform.Rotation = 0;
+			Assert.AreEqual(0, transform.Rotation);
+			transform.Rotation = 90;
+			Assert.AreEqual(90, transform.Rotation);
+			transform.Rotation = 360;
+			Assert.AreEqual(0, transform.Rotation);
+			transform.Rotation = 450;
+			Assert.AreEqual(90, transform.Rotation);
+			transform.Rotation = -90;
+			Assert.AreEqual(270, transform.Rotation);
+			transform.Rotation = -270;
+			Assert.AreEqual(90, transform.Rotation);
+			transform.Rotation = -450;
+			Assert.AreEqual(270, transform.Rotation);
 		}
 
 		[Test]

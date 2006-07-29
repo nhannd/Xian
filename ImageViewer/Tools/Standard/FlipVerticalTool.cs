@@ -38,15 +38,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (selectedImage == null)
 				return;
 
+			// Save the old state
 			SpatialTransformApplicator applicator = new SpatialTransformApplicator(selectedImage);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandFlipVertical;
 			command.BeginState = applicator.CreateMemento();
 
 			SpatialTransform spatialTransform = selectedImage.LayerManager.SelectedLayerGroup.SpatialTransform;
-			spatialTransform.FlipVertical = !spatialTransform.FlipVertical;
+
+			// Do the transform
+			if (spatialTransform.Rotation == 0 || spatialTransform.Rotation == 180)
+				spatialTransform.FlipVertical = !spatialTransform.FlipVertical;
+			// If image is rotated 90 or 270, then a vertical flip is really a horizontal flip
+			else
+				spatialTransform.FlipHorizontal = !spatialTransform.FlipHorizontal;
+
 			spatialTransform.Calculate();
 
+			// Save the new state
 			command.EndState = applicator.CreateMemento();
 
 			// Apply the final state to all linked images

@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private float m_Scale;
 		private float m_TranslationX;
 		private float m_TranslationY;
-		private float m_Rotation;
+		private int m_Rotation;
 		private bool m_FlipHorizontal;
 		private bool m_FlipVertical;
 
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public float Rotation
+		public int Rotation
 		{
 			get
 			{

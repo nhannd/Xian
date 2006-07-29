@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			spatialTransform.TranslationY = 0.0f;
 			spatialTransform.FlipHorizontal = false;
 			spatialTransform.FlipVertical = false;
-			spatialTransform.Rotation = 0.0f;
+			spatialTransform.Rotation = 0;
 			spatialTransform.ScaleToFit = true;
 			spatialTransform.Calculate();
 

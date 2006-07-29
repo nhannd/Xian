@@ -130,12 +130,24 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets or sets the rotation in degrees.
 		/// </summary>
-		public float Rotation
+		/// <remarks>
+		/// Any multiple of 90 is allowed.  However, the value will always be "wrap" to
+		/// either 0, 90, 180 or 270.  For example, if set to -450, the property will
+		/// return 270.
+		/// </remarks>
+		public int Rotation
 		{
-			get { return _rotation; }
+			get { return (int)_rotation; }
 			set 
-			{ 
-				_rotation = value;
+			{
+				if ((value % 90) != 0)
+					throw new ArgumentException("Value must be 0, 90, 180 or 270");
+
+				_rotation = value % 360;
+
+				if (_rotation < 0)
+					_rotation += 360;
+
 				_recalculationRequired = true;
 			}
 		}
