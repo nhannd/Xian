@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 
 			for (int x = 0; x < dstRegionWidth; x++)
 			{
-				byte value = pLutData[*((short*)pRowSrcPixelData)];
+				byte value = pLutData[*((ushort*)pRowSrcPixelData)];
 				pRowDstPixelData[0] = value; //B
 				pRowDstPixelData[1] = value; //G
 				pRowDstPixelData[2] = value; //R
