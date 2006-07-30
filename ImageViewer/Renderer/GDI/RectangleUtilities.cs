@@ -21,31 +21,110 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 		public static RectangleF Intersect(RectangleF r1,
 					RectangleF r2)
 		{
+			if (!DoesIntersect(r1, r2))
+				return Rectangle.Empty;
+
 			float left, top, right, bottom;
 
-			if (r2.Width >= 0)
+			if (r1.Width >= 0)
 			{
-				left = Math.Max(r1.Left, r2.Left);
-				right = Math.Min(r1.Right, r2.Right);
+				if (r2.Width >= 0)
+				{
+					left = Math.Max(r1.Left, r2.Left);
+					right = Math.Min(r1.Right, r2.Right);
+				}
+				else
+				{
+					left = Math.Max(r1.Left, r2.Right);
+					right = Math.Min(r1.Right, r2.Left);
+				}
 			}
 			else
 			{
-				left = Math.Min(r1.Right, r2.Left);
-				right = Math.Max(r1.Left, r2.Right);
+				if (r2.Width >= 0)
+				{
+					left = Math.Max(r1.Right, r2.Left);
+					right = Math.Min(r1.Left, r2.Right);
+				}
+				else
+				{
+					left = Math.Max(r1.Right, r2.Right);
+					right = Math.Min(r1.Left, r2.Left);
+				}
 			}
 
-			if (r2.Height >= 0)
+			if (r1.Height >= 0)
 			{
-				top = Math.Max(r1.Top, r2.Top);
-				bottom = Math.Min(r1.Bottom, r2.Bottom);
+				if (r2.Height >= 0)
+				{
+					top = Math.Max(r1.Top, r2.Top);
+					bottom = Math.Min(r1.Bottom, r2.Bottom);
+				}
+				else
+				{
+					top = Math.Max(r1.Top, r2.Bottom);
+					bottom = Math.Min(r1.Bottom, r2.Top);
+				}
 			}
 			else
 			{
-				top = Math.Min(r1.Bottom, r2.Top);
-				bottom = Math.Max(r1.Top, r2.Bottom);
+				if (r2.Height >= 0)
+				{
+					top = Math.Max(r1.Bottom, r2.Top);
+					bottom = Math.Min(r1.Top, r2.Bottom);
+				}
+				else
+				{
+					top = Math.Max(r1.Bottom, r2.Bottom);
+					bottom = Math.Min(r1.Top, r2.Top);
+				}
 			}
 
 			return RectangleF.FromLTRB(left, top, right, bottom);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rect1"></param>
+		/// <param name="rect2"></param>
+		/// <returns></returns>
+		public static bool DoesIntersect(RectangleF r1, RectangleF r2)
+		{
+			bool intersectLeftRight;
+			bool intersectTopBottom;
+
+			if (r1.Width >= 0)
+			{
+				if (r2.Width >= 0)
+					intersectLeftRight = !((r1.Right <= r2.Left) || (r2.Right <= r1.Left));
+				else
+					intersectLeftRight = !((r1.Right <= r2.Right) || (r2.Left <= r1.Left));
+			}
+			else
+			{
+				if (r2.Width >= 0)
+					intersectLeftRight = !((r1.Left <= r2.Left) || (r2.Right <= r1.Right));
+				else
+					intersectLeftRight = !((r1.Left <= r2.Right) || (r2.Left <= r1.Right));
+			}
+
+			if (r1.Height >= 0)
+			{
+				if (r2.Height >= 0)
+					intersectTopBottom = !((r1.Bottom <= r2.Top) || (r2.Bottom <= r1.Top));
+				else
+					intersectTopBottom = !((r1.Bottom <= r2.Bottom) || (r2.Top <= r1.Top));
+			}
+			else
+			{
+				if (r2.Height >= 0)
+					intersectTopBottom = !((r1.Top <= r2.Top) || (r2.Bottom <= r1.Bottom));
+				else
+					intersectTopBottom = !((r1.Top <= r2.Bottom) || (r2.Top <= r1.Bottom));
+			}
+
+			return intersectLeftRight && intersectTopBottom;
 		}
 
 		/// <summary>
@@ -64,6 +143,9 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 		/// </remarks>
 		public static Rectangle MakeRectangleZeroBased(Rectangle rect)
 		{
+			if (rect.IsEmpty)
+				return Rectangle.Empty;
+
 			int left, top, right, bottom;
 
 			if (rect.Width >= 0)

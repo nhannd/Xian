@@ -26,6 +26,9 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			Rectangle dstViewableRectangle, srcViewableRectangle;
 			CalculateVisibleRectangles(imageLayer, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
 
+			if (srcViewableRectangle.IsEmpty)
+				return;
+
 			byte[] srcPixelData = imageLayer.GetPixelData();
 
 			byte[] lutData = null;
@@ -83,6 +86,13 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			// Find the intersection between the drawable client rectangle and
 			// the transformed destination rectangle
 			RectangleF dstVisibleRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
+
+			if (dstVisibleRectangleF.IsEmpty)
+			{
+				dstVisibleRectangle = Rectangle.Empty;
+				srcVisibleRectangle = Rectangle.Empty;
+				return;
+			}
 
 			// From that intersection, figure out what portion of the image
 			// is Visible in source coordinates

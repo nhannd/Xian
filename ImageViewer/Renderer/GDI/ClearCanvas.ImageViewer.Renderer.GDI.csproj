@@ -113,6 +113,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="Tests\RectangleIntersectionTests.cs" />
     <Compile Include="Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Tests\ImageRendererRGBPlanarOrientationTests.cs" />
     <Compile Include="Tests\ImageRendererMiscTests.cs" />
