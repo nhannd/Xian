@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Admin
             phoneNumber.CountryCode = "1";
             phoneNumber.Extension = "N/A";
 
-            PhoneNumbersEditorComponent editor = new PhoneNumbersEditorComponent(phoneNumber);
+            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client.Admin
             TelephoneNumber phoneNumber = TelephoneNumber.New();
             phoneNumber.CopyFrom(_currentPhoneNumberSelection);
             
-            PhoneNumbersEditorComponent editor = new PhoneNumbersEditorComponent(phoneNumber);
+            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {

@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    public partial class PhoneNumbersEditorControl : UserControl
+    public partial class PhoneNumberEditorControl : UserControl
     {
-        private PhoneNumbersEditorComponent _component;
+        private PhoneNumberEditorComponent _component;
 
-        public PhoneNumbersEditorControl(PhoneNumbersEditorComponent component)
+        public PhoneNumberEditorControl(PhoneNumberEditorComponent component)
         {
             InitializeComponent();
             _component = component;

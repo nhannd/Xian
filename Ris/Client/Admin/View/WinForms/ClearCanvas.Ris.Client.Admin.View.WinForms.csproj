@@ -35,11 +35,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressesEditorControl.cs">
+    <Compile Include="AddressEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AddressesEditorControl.Designer.cs">
-      <DependentUpon>AddressesEditorControl.cs</DependentUpon>
+    <Compile Include="AddressEditorControl.Designer.cs">
+      <DependentUpon>AddressEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AddressesSummaryComponentView.cs" />
     <Compile Include="AddressesSummaryControl.cs">
@@ -48,7 +48,7 @@
     <Compile Include="AddressesSummaryControl.Designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddressesEditorComponentView.cs" />
+    <Compile Include="AddressEditorComponentView.cs" />
     <Compile Include="PatientAdminComponentView.cs" />
     <Compile Include="PatientAdminControl.cs">
       <SubType>UserControl</SubType>
@@ -77,12 +77,12 @@
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientSearchToolView.cs" />
-    <Compile Include="PhoneNumbersEditorComponentView.cs" />
-    <Compile Include="PhoneNumbersEditorControl.cs">
+    <Compile Include="PhoneNumberEditorComponentView.cs" />
+    <Compile Include="PhoneNumberEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PhoneNumbersEditorControl.Designer.cs">
-      <DependentUpon>PhoneNumbersEditorControl.cs</DependentUpon>
+    <Compile Include="PhoneNumberEditorControl.Designer.cs">
+      <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PhoneNumbersSummaryComponentView.cs" />
     <Compile Include="PhoneNumbersSummaryControl.cs">
@@ -119,9 +119,9 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AddressesEditorControl.resx">
+    <EmbeddedResource Include="AddressEditorControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>AddressesEditorControl.cs</DependentUpon>
+      <DependentUpon>AddressEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AddressesSummaryControl.resx">
       <SubType>Designer</SubType>
@@ -143,9 +143,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PhoneNumbersEditorControl.resx">
+    <EmbeddedResource Include="PhoneNumberEditorControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PhoneNumbersEditorControl.cs</DependentUpon>
+      <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PhoneNumbersSummaryControl.resx">
       <SubType>Designer</SubType>

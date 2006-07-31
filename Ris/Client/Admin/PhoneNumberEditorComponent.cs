@@ -14,19 +14,20 @@ namespace ClearCanvas.Ris.Client.Admin
     }
 
     [ApplicationComponentView(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
-    public class PhoneNumbersEditorComponent : ApplicationComponent
+    public class PhoneNumberEditorComponent : ApplicationComponent
     {
         TelephoneNumber _phoneNumber;
-        static IPatientAdminService _patientAdminService;
+        private IPatientAdminService _patientAdminService;
 
-        static PhoneNumbersEditorComponent()
-        {
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-        }
-
-        public PhoneNumbersEditorComponent(TelephoneNumber phoneNumber)
+        public PhoneNumberEditorComponent(TelephoneNumber phoneNumber)
         {
             _phoneNumber = phoneNumber;
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
         }
 
         /// <summary>

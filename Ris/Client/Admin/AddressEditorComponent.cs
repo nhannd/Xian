@@ -16,19 +16,14 @@ namespace ClearCanvas.Ris.Client.Admin
     }
 
     [ApplicationComponentView(typeof(AddressesEditorComponentViewExtensionPoint))]
-    public class AddressesEditorComponent : ApplicationComponent
+    public class AddressEditorComponent : ApplicationComponent
     {
         Address _address;
         private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
         private string[] _dummyCountryChoices = new string[] { "Canada" };
-        static IPatientAdminService _patientAdminService;
+        private IPatientAdminService _patientAdminService;
 
-        static AddressesEditorComponent()
-        {
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-        }
-
-        public AddressesEditorComponent(Address address)
+        public AddressEditorComponent(Address address)
         {
             _address = address;
         }
@@ -41,6 +36,12 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get { return _address; }
             set { _address = value; }
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
         }
 
         public string Street

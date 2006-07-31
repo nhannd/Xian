@@ -21,12 +21,7 @@ namespace ClearCanvas.Ris.Client.Admin
         PatientIdentifier _patientIdentifier;
         private string[] _dummyAssigningAuthorityChoices = new string[] { "UHN", "MSH", "Ontario" };
 
-        static IPatientAdminService _patientAdminService;
-
-        static PatientIdentifierEditorComponent()
-        {
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-        }
+        private IPatientAdminService _patientAdminService;
 
         public PatientIdentifierEditorComponent(PatientIdentifier patientIdentifier)
         {
@@ -41,6 +36,12 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get { return _patientIdentifier; }
             set { _patientIdentifier = value; }
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
         }
 
 

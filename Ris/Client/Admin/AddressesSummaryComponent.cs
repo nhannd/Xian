@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Admin
             address.Province = "Ontario";
             address.Country = "Canada";
 
-            AddressesEditorComponent editor = new AddressesEditorComponent(address);
+            AddressEditorComponent editor = new AddressEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Address...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client.Admin
             Address address = Address.New();
             address.CopyFrom(_currentAddressSelection);
 
-            AddressesEditorComponent editor = new AddressesEditorComponent(address);
+            AddressEditorComponent editor = new AddressEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Address...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
