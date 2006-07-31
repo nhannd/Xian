@@ -20,13 +20,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             _identifierType.DataSource = _component.TypeChoices;
-            _identifierType.DataBindings.Add("Value", _component, "Type", false, DataSourceUpdateMode.OnPropertyChanged);
+            _identifierType.DataBindings.Add("Value", _component, "Type", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _identifierID.DataBindings.Add("Value", _component, "Id", false, DataSourceUpdateMode.OnPropertyChanged);
+            _identifierID.DataBindings.Add("Value", _component, "Id", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _identifierAssigningAuthority.DataSource = _component.AssigningAuthorityChoices;
-            _identifierAssigningAuthority.DataBindings.Add("Value", _component, "AssigningAuthority", false, DataSourceUpdateMode.OnPropertyChanged);
+            _identifierAssigningAuthority.DataBindings.Add("Value", _component, "AssigningAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _acceptButton_Click(object sender, EventArgs e)

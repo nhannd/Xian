@@ -13,7 +13,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     public class DialogBox : IDialogBox
     {
         private DialogBoxForm _form;
-        private DialogBoxAction _endAction;
         private event EventHandler<ClosingEventArgs> _dialogClosing;
 
         #region IDialogBox Members
@@ -41,17 +40,39 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public DialogBoxAction RunModal()
         {
-            _form.ShowDialog();
-            return _endAction;
+            DialogResult result = _form.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.Cancel:
+                    return DialogBoxAction.Cancel;
+                case DialogResult.OK:
+                    return DialogBoxAction.Ok;
+                case DialogResult.No:
+                    return DialogBoxAction.No;
+                case DialogResult.Yes:
+                    return DialogBoxAction.Yes;
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         public void EndModal(DialogBoxAction action)
         {
-            // save this value to return it to the caller
-            _endAction = action;
-
-            // close the dialog - don't care about the DialogResult value because it is not used
-            _form.DialogResult = DialogResult.OK;
+            switch (action)
+            {
+                case DialogBoxAction.Cancel:
+                    _form.DialogResult = DialogResult.Cancel;
+                    break;
+                case DialogBoxAction.Ok:
+                    _form.DialogResult = DialogResult.OK;
+                    break;
+                case DialogBoxAction.No:
+                    _form.DialogResult = DialogResult.No;
+                    break;
+                case DialogBoxAction.Yes:
+                    _form.DialogResult = DialogResult.Yes;
+                    break;
+            }
         }
 
         #endregion

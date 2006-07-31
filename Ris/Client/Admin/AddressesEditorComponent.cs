@@ -33,6 +33,10 @@ namespace ClearCanvas.Ris.Client.Admin
             _address = address;
         }
 
+        /// <summary>
+        /// Sets the subject upon which the editor acts
+        /// Not for use by the view
+        /// </summary>
         public Address Address
         {
             get { return _address; }
@@ -42,19 +46,31 @@ namespace ClearCanvas.Ris.Client.Admin
         public string Street
         {
             get { return _address.Street; }
-            set { _address.Street = value; }
+            set
+            {
+                _address.Street = value;
+                this.Modified = true;
+            }
         }
 
         public string City
         {
             get { return _address.City; }
-            set { _address.City = value; }
+            set
+            {
+                _address.City = value;
+                this.Modified = true;
+            }
         }
 
         public string Province
         {
             get { return _address.Province; }
-            set { _address.Province = value; }
+            set
+            {
+                _address.Province = value;
+                this.Modified = true;
+            }
         }
 
         public string[] ProvinceChoices
@@ -65,7 +81,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public string Country
         {
             get { return _address.Country; }
-            set { _address.Country = value; }
+            set
+            {
+                _address.Country = value;
+                this.Modified = true;
+            }
         }
 
         public string[] CountryChoices
@@ -76,7 +96,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public string PostalCode
         {
             get { return _address.PostalCode; }
-            set { _address.PostalCode = value; }
+            set
+            {
+                _address.PostalCode = value;
+                this.Modified = true;
+            }
         }
 
         //public DateTime? ValidFrom
@@ -94,7 +118,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public string Type
         {
             get { return _patientAdminService.AddressTypeEnumTable[_address.Type].Value; }
-            set { _address.Type = _patientAdminService.AddressTypeEnumTable[value].Code; }
+            set
+            {
+                _address.Type = _patientAdminService.AddressTypeEnumTable[value].Code;
+                this.Modified = true;
+            }
         }
 
         public string[] TypeChoices
@@ -104,42 +132,26 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void Accept()
         {
-            SaveChanges();
+            this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
         }
 
         public void Cancel()
         {
-            DiscardChanges();
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
         }
 
-        public override bool CanExit()
+        public bool AcceptEnabled
         {
-            DialogBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
-            switch (result)
-            {
-                case DialogBoxAction.Yes:
-                    SaveChanges();
-                    return true;
-                case DialogBoxAction.No:
-                    DiscardChanges();
-                    return true;
-                default:
-                    return false;
-            }
+            get { return this.Modified; }
         }
 
-        private void SaveChanges()
+        public event EventHandler AcceptEnabledChanged
         {
-            // TODO save data here
-
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
         }
 
-        private void DiscardChanges()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-        }
     }
 }

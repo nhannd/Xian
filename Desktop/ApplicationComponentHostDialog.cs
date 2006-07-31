@@ -64,8 +64,8 @@ namespace ClearCanvas.Desktop
             _dialogBox.DialogClosing += new EventHandler<ClosingEventArgs>(_dialogBox_DialogClosing);
         
             // run the dialog as modal
-            DialogBoxAction action = _dialogBox.RunModal();
-            return action == DialogBoxAction.Ok ? ApplicationComponentExitCode.Normal : ApplicationComponentExitCode.Cancelled;
+            _dialogBox.RunModal();
+            return _component.ExitCode;
         }
 
         private void _dialogBox_DialogClosing(object sender, ClosingEventArgs e)

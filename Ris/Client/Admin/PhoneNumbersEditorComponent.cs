@@ -29,6 +29,10 @@ namespace ClearCanvas.Ris.Client.Admin
             _phoneNumber = phoneNumber;
         }
 
+        /// <summary>
+        /// Sets the subject upon which the editor acts
+        /// Not for use by the view
+        /// </summary>
         public TelephoneNumber PhoneNumber
         {
             get { return _phoneNumber; }
@@ -38,31 +42,51 @@ namespace ClearCanvas.Ris.Client.Admin
         public string CountryCode
         {
             get { return _phoneNumber.CountryCode; }
-            set { _phoneNumber.CountryCode = value; }
+            set
+            {
+                _phoneNumber.CountryCode = value;
+                this.Modified = true;
+            }
         }
 
         public string AreaCode
         {
             get { return _phoneNumber.AreaCode; }
-            set { _phoneNumber.AreaCode = value; }
+            set
+            {
+               _phoneNumber.AreaCode = value;
+               this.Modified = true;
+            }
         }
 
         public string Number
         {
             get { return _phoneNumber.Number; }
-            set { _phoneNumber.Number = value; }
+            set
+            {
+                _phoneNumber.Number = value;
+                this.Modified = true;
+            }
         }
 
         public string Extension
         {
             get { return _phoneNumber.Extension; }
-            set { _phoneNumber.Extension = value; }
+            set
+            {
+                _phoneNumber.Extension = value;
+                this.Modified = true;
+            }
         }
 
         public string Use
         {
             get { return _patientAdminService.TelephoneUseEnumTable[_phoneNumber.Use].Value; }
-            set { _phoneNumber.Use = _patientAdminService.TelephoneUseEnumTable[value].Code; }
+            set
+            {
+                _phoneNumber.Use = _patientAdminService.TelephoneUseEnumTable[value].Code;
+                this.Modified = true;
+            }
         }
 
         public string[] UseChoices
@@ -73,7 +97,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public string Equipment
         {
             get { return _patientAdminService.TelephoneEquipmentEnumTable[_phoneNumber.Equipment].Value; }
-            set { _phoneNumber.Equipment = _patientAdminService.TelephoneEquipmentEnumTable[value].Code; }
+            set
+            {
+                _phoneNumber.Equipment = _patientAdminService.TelephoneEquipmentEnumTable[value].Code;
+                this.Modified = true;
+            }
         }
 
         public string[] EquipmentChoices
@@ -83,42 +111,26 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void Accept()
         {
-            SaveChanges();
+            this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
         }
 
         public void Cancel()
         {
-            DiscardChanges();
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
         }
 
-        public override bool CanExit()
+        public bool AcceptEnabled
         {
-            DialogBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
-            switch (result)
-            {
-                case DialogBoxAction.Yes:
-                    SaveChanges();
-                    return true;
-                case DialogBoxAction.No:
-                    DiscardChanges();
-                    return true;
-                default:
-                    return false;
-            }
+            get { return this.Modified; }
         }
 
-        private void SaveChanges()
+        public event EventHandler AcceptEnabledChanged
         {
-            // TODO save data here
-
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
         }
 
-        private void DiscardChanges()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-        }
     }
 }

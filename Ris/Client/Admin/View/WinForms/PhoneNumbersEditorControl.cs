@@ -27,6 +27,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _areaCode.DataBindings.Add("Value", _component, "AreaCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _number.DataBindings.Add("Value", _component, "Number", true, DataSourceUpdateMode.OnPropertyChanged);
             _extension.DataBindings.Add("Value", _component, "Extension", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _acceptButton_Click(object sender, EventArgs e)

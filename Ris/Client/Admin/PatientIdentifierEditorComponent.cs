@@ -33,10 +33,25 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientIdentifier = patientIdentifier;
         }
 
+        /// <summary>
+        /// Sets the subject upon which the editor acts
+        /// Not for use by the view
+        /// </summary>
+        public PatientIdentifier PatientIdentifier
+        {
+            get { return _patientIdentifier; }
+            set { _patientIdentifier = value; }
+        }
+
+
         public string Id
         {
             get { return _patientIdentifier.Id; }
-            set { _patientIdentifier.Id = value; }
+            set
+            {
+                _patientIdentifier.Id = value;
+                this.Modified = true;
+            }
         }
 
         public string[] TypeChoices
@@ -47,7 +62,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public string Type
         {
             get { return _patientAdminService.PatientIdentifierTypeEnumTable[_patientIdentifier.Type].Value; }
-            set { _patientIdentifier.Type = _patientAdminService.PatientIdentifierTypeEnumTable[value].Code; }
+            set
+            {
+                _patientIdentifier.Type = _patientAdminService.PatientIdentifierTypeEnumTable[value].Code;
+                this.Modified = true;
+            }
         }
 
         public string[] AssigningAuthorityChoices
@@ -58,54 +77,34 @@ namespace ClearCanvas.Ris.Client.Admin
         public string AssigningAuthority
         {
             get { return _patientIdentifier.AssigningAuthority; }
-            set { _patientIdentifier.AssigningAuthority = value; }
-        }
-
-        public PatientIdentifier PatientIdentifier
-        {
-            get { return _patientIdentifier; }
-            set { _patientIdentifier = value; }
+            set
+            {
+                _patientIdentifier.AssigningAuthority = value;
+                this.Modified = true;
+            }
         }
 
         public void Accept()
         {
-            SaveChanges();
+            this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
         }
 
         public void Cancel()
         {
-            DiscardChanges();
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
         }
 
-        public override bool CanExit()
+        public bool AcceptEnabled
         {
-            DialogBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
-            switch (result)
-            {
-                case DialogBoxAction.Yes:
-                    SaveChanges();
-                    return true;
-                case DialogBoxAction.No:
-                    DiscardChanges();
-                    return true;
-                default:
-                    return false;
-            }
+            get { return this.Modified; }
         }
 
-        private void SaveChanges()
+        public event EventHandler AcceptEnabledChanged
         {
-            // TODO save data here
-
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
         }
-
-        private void DiscardChanges()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-        }
-
     }
 }
