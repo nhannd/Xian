@@ -29,7 +29,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _dateOfDeath.DataBindings.Add("Value", _component, "TimeOfDeath", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _patientIdentifierList.DataSource = _component.PatientIdentifiers;
-            _patientIdentifierList.ToolbarModel = _component.PatientIdentifierActions;
+            _patientIdentifierList.ToolbarModel = _component.PatientIdentifierToolbarActions;
+            _patientIdentifierList.MenuModel = _component.PatientIdentifierMenuActions;
         }
 
         private void PatientEditorControl_Load(object sender, EventArgs e)

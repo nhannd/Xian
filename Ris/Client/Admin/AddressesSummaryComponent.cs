@@ -80,9 +80,14 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _addresses; }
         }
 
-        public ActionModelNode AddressActions
+        public ActionModelNode AddressListToolbarActions
         {
-            get { return _addressActionHandler.ActionModel; }
+            get { return _addressActionHandler.ToolbarModel; }
+        }
+
+        public ActionModelNode AddressListMenuActions
+        {
+            get { return _addressActionHandler.MenuModel; }
         }
 
         public Address CurrentAddressSelection

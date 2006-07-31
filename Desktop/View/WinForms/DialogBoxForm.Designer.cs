@@ -49,6 +49,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DialogBoxForm";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ApplicationComponentHostDialogForm";
             this.ResumeLayout(false);

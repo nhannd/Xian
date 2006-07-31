@@ -46,32 +46,53 @@ namespace ClearCanvas.Ris.Client.Admin
             #endregion
         }
 
-        private ActionModelRoot _actionModel;
+        private ActionModelRoot _buttonModel;
+        private ActionModelRoot _menuModel;
         private Dictionary<string, ObservableProperty<bool>> _enabledState;
 
         public CrudActionHandler()
         {
-            _actionModel = new ActionModelRoot("");
+            _buttonModel = new ActionModelRoot("");
+            _menuModel = new ActionModelRoot("");
+
             _enabledState = new Dictionary<string, ObservableProperty<bool>>();
 
-            AddAction("Add", Add, "Icons.NewDocumentHS.png");
-            AddAction("Edit", Edit, "Icons.Edit.png");
-            AddAction("Delete", Delete, "Icons.Delete.png");
+            _enabledState.Add("Add", new ObservableProperty<bool>(this, false));
+            _enabledState.Add("Edit", new ObservableProperty<bool>(this, false));
+            _enabledState.Add("Delete", new ObservableProperty<bool>(this, false));
+
+            AddAction(ActionCategory.ToolbarAction, _buttonModel, "Add", Add, "Icons.Add.png");
+            AddAction(ActionCategory.ToolbarAction, _buttonModel, "Edit", Edit, "Icons.Edit.png");
+            AddAction(ActionCategory.ToolbarAction, _buttonModel, "Delete", Delete, "Icons.Delete.png");
+
+            AddAction(ActionCategory.MenuAction, _menuModel, "Add", Add, "Icons.Add.png");
+            AddAction(ActionCategory.MenuAction, _menuModel, "Edit", Edit, "Icons.Edit.png");
+            AddAction(ActionCategory.MenuAction, _menuModel, "Delete", Delete, "Icons.Delete.png");
         }
 
-        public ActionModelRoot ActionModel
+        public ActionModelRoot ToolbarModel
         {
-            get { return _actionModel; }
+            get { return _buttonModel; }
         }
 
-        private void AddAction(string name, ClickHandlerDelegate clickHandler, string icon)
+        public ActionModelRoot MenuModel
         {
-            _enabledState.Add(name, new ObservableProperty<bool>(this, false));
+            get { return _menuModel; }
+        }
 
+        private void AddAction(ActionCategory category, ActionModelRoot model, string name, ClickHandlerDelegate clickHandler, string icon)
+        {
             Path actionPath = Path.ParseAndLocalize(name, new ResourceResolver(this.GetType().Assembly));
 
-            ButtonAction action = new ButtonAction(name, actionPath, this, ClickActionFlags.None);
+            ClickAction action = category == ActionCategory.ToolbarAction ?
+                (ClickAction)new ButtonAction(name, actionPath, this, ClickActionFlags.None)
+                : (ClickAction)new MenuAction(name, actionPath, this, ClickActionFlags.None);
+            
             action.Tooltip = name;
+            if (category == ActionCategory.MenuAction)
+            {
+                action.Label = actionPath.LastSegment.LocalizedText;
+            }
             if (icon != null)
             {
                 action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
@@ -79,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Admin
             action.SetClickHandler(clickHandler);
             action.SetEnabledObservable(_enabledState[name]);
 
-            _actionModel.InsertAction(action);
+            model.InsertAction(action);
         }
 
         public bool AddEnabled

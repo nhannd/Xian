@@ -80,12 +80,12 @@
     <EmbeddedResource Include="Icons\Edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\NewDocumentHS.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\AddPatientMedium.png" />
     <EmbeddedResource Include="Icons\EditPatientMedium.png" />
     <EmbeddedResource Include="Icons\FindPatientMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Add.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

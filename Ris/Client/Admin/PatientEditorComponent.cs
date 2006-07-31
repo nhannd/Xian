@@ -86,9 +86,14 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
         }
 
-        public ActionModelNode PatientIdentifierActions
+        public ActionModelNode PatientIdentifierToolbarActions
         {
-            get { return _patientIdentifiersActionHandler.ActionModel; }
+            get { return _patientIdentifiersActionHandler.ToolbarModel; }
+        }
+
+        public ActionModelNode PatientIdentifierMenuActions
+        {
+            get { return _patientIdentifiersActionHandler.MenuModel; }
         }
 
         public string FamilyName

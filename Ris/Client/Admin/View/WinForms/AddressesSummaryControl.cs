@@ -18,7 +18,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             _addressList.DataSource = _component.Addresses;
-            _addressList.ToolbarModel = _component.AddressActions;
+            _addressList.ToolbarModel = _component.AddressListToolbarActions;
+            _addressList.MenuModel = _component.AddressListMenuActions;
 
         }
 

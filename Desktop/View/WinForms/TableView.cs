@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private event EventHandler _itemDoubleClicked;
         private ActionModelNode _toolbarModel;
+        private ActionModelNode _menuModel;
 
 		public TableView()
 		{
@@ -70,6 +71,20 @@ namespace ClearCanvas.Desktop.View.WinForms
                     {
                         ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
                     }
+                }
+            }
+        }
+
+        public ActionModelNode MenuModel
+        {
+            get { return _menuModel; }
+            set
+            {
+                _menuModel = value;
+                ToolStripBuilder.Clear(_contextMenu.Items);
+                if (_menuModel != null)
+                {
+                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
                 }
             }
         }
@@ -116,6 +131,26 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 EventsHelper.Fire(_itemDoubleClicked, this, new EventArgs());
             }
+        }
+
+        private void _contextMenu_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Opened(object sender, EventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        {
+
         }
 	}
 }

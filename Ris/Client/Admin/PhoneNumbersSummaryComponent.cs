@@ -76,9 +76,14 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _phoneNumbers; }
         }
 
-        public ActionModelNode PhoneNumberActions
+        public ActionModelNode PhoneNumberListToolbarActions
         {
-            get { return _phoneNumberActionHandler.ActionModel; }
+            get { return _phoneNumberActionHandler.ToolbarModel; }
+        }
+
+        public ActionModelNode PhoneNumberListMenuActions
+        {
+            get { return _phoneNumberActionHandler.MenuModel; }
         }
 
         public TelephoneNumber CurrentPhoneNumberSelection
