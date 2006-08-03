@@ -174,6 +174,9 @@ namespace ClearCanvas.Common
 				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs("Finding plugins..."));
 
 				// Create a secondary AppDomain where we can load all the DLLs in the plugin directory
+#if MONO
+				domain = AppDomain.CreateDomain("Secondary");
+#else		
 				Evidence evidence = new Evidence(
 					new object[] { new Zone(SecurityZone.MyComputer) },
 					new object[] { });
@@ -186,7 +189,7 @@ namespace ClearCanvas.Common
 				domain = AppDomain.CreateDomain(
 					"Secondary", evidence, setup,
 					permissions, new StrongName[] { }); 
-				
+#endif			
 				Assembly asm = Assembly.GetExecutingAssembly();
 
 				// Instantiate the finder in the secondary domain
