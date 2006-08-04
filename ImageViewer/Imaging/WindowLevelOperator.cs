@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public static void InstallVOILUTLinear(DicomPresentationImage image)
 		{
+			Platform.CheckForNullReference(image, "image");
+
 			double windowWidth = image.ImageSop.WindowWidth;
 			double windowCenter = image.ImageSop.WindowCenter;
 
@@ -66,6 +68,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			double windowWidth,
 			double windowCenter)
 		{
+			Platform.CheckForNullReference(image, "image");
+
+			if (image.LayerManager.SelectedImageLayer == null ||
+				image.LayerManager.SelectedImageLayer.IsColor ||
+				image.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
+				return;
+
 			GrayscaleLUTPipeline pipeline = image.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
 
 			VOILUTLinear voiLUT = null;

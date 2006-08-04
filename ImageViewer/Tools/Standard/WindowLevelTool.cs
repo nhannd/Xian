@@ -47,10 +47,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			DicomPresentationImage dicomImage = e.SelectedPresentationImage as DicomPresentationImage;
 
-			if (dicomImage == null)
-				return true;
-
-			if (dicomImage.LayerManager.SelectedImageLayer.IsColor)
+			if (dicomImage == null ||
+				dicomImage.LayerManager.SelectedImageLayer == null ||
+				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
+				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
 				return true;
 
 			IGrayscaleLUT lut = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.VoiLUT;
@@ -77,7 +77,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             CodeClock counter = new CodeClock();
 			counter.Start();
 
-			GrayscaleLUTPipeline pipeline = e.SelectedPresentationImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
+			DicomPresentationImage dicomImage = e.SelectedPresentationImage as DicomPresentationImage;
+
+			if (dicomImage == null ||
+				dicomImage.LayerManager.SelectedImageLayer == null ||
+				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
+				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
+				return true;
+
+			GrayscaleLUTPipeline pipeline = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
 			VOILUTLinear voiLUT = pipeline.VoiLUT as VOILUTLinear;
 
 			// This should never happens since we insure that linear VOILUT is
