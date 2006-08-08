@@ -1,5 +1,0 @@
-﻿MenuBar=Main Menu
-MenuWindowCascade=&Cascade
-MenuWindowTileHorizontal=Tile &Horizontal
-MenuWindowTileVertical=Tile &Vertical
-ToolbarToolsStandardStudyCentre=Study Centre
