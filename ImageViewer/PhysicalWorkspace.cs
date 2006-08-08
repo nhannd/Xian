@@ -217,16 +217,16 @@ namespace ClearCanvas.ImageViewer
 
 			this.ImageBoxes.Clear();
 
-			float imageBoxWidth = 1.0f / columns;
-			float imageBoxHeight = 1.0f / rows;
+			double imageBoxWidth = (1.0d / columns);
+			double imageBoxHeight = (1.0d / rows);
 
 			for (int row = 0; row < rows; row++)
 			{
 				for (int column = 0; column < columns; column++)
 				{
-					float x = column * imageBoxWidth;
-					float y = row * imageBoxHeight;
-					RectangleF rect = new RectangleF(x, y, imageBoxWidth, imageBoxHeight);
+					double x = column * imageBoxWidth;
+					double y = row * imageBoxHeight;
+					RectangleF rect = new RectangleF((float)x, (float)y, (float)imageBoxWidth, (float)imageBoxHeight);
 
 					ImageBox imageBox = new ImageBox();
 					imageBox.NormalizedRectangle = rect;

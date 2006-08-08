@@ -464,16 +464,16 @@ namespace ClearCanvas.ImageViewer
 
 			this.Tiles.Clear();
 
-			float tileWidth = 1.0f / numberOfColumns;
-			float tileHeight = 1.0f / numberOfRows;
+			double tileWidth = 1.0d / numberOfColumns;
+			double tileHeight = 1.0d / numberOfRows;
 
 			for (int row = 0; row < numberOfRows; row++)
 			{
 				for (int column = 0; column < numberOfColumns; column++)
 				{
-					float x = column * tileWidth;
-					float y = row * tileHeight;
-					RectangleF rect = new RectangleF(x, y, tileWidth, tileHeight);
+					double x = column * tileWidth;
+					double y = row * tileHeight;
+					RectangleF rect = new RectangleF((float)x, (float)y, (float)tileWidth, (float)tileHeight);
 
 					Tile tile = new Tile();
 					tile.NormalizedRectangle = rect;
