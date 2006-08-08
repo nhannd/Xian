@@ -8,6 +8,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+
+#if MONO
+#else
     /// <summary>
     /// 
     /// </summary>
@@ -107,4 +110,5 @@ namespace ClearCanvas.Desktop
 
         #endregion
      }
+#endif
 }
