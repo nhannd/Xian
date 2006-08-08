@@ -6,7 +6,10 @@ namespace ClearCanvas.Common
 {
 	public class ObservableList<TItem, TItemEventArgs> 
 		: IObservableList<TItem, TItemEventArgs>
-		where TItem : class
+
+		//JC 2006-07-10 Changes for refactoring split
+		// mono does not like the class constraint on an interface
+		//where TItem : class
 		where TItemEventArgs : CollectionEventArgs<TItem>, new()
 	{
 		private List<TItem> m_List = new List<TItem>();
