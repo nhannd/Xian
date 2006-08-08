@@ -2,13 +2,17 @@ using Gtk;
 using System;
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Tools;
-using ClearCanvas.Workstation.Layout.Basic;
-using ClearCanvas.Workstation.View.GTK;
+//using ClearCanvas.ImageViewer.Tools;
+//using ClearCanvas.Workstation.Layout.Basic;
+//using ClearCanvas.Workstation.View.GTK;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Layout.Basic;
+using ClearCanvas.ImageViewer.View.GTK;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic.View.GTK
 {
-	[ExtensionOf(typeof(ClearCanvas.Workstation.Layout.Basic.LayoutToolViewExtensionPoint))]
+	//[ExtensionOf(typeof(ClearCanvas.Workstation.Layout.Basic.LayoutToolViewExtensionPoint))]
+	[ExtensionOf(typeof(ClearCanvas.ImageViewer.Layout.Basic.LayoutToolViewExtensionPoint))]
 	public class LayoutToolView : GtkView, IToolView
 	{
 		private LayoutPanel _layoutPanel;
