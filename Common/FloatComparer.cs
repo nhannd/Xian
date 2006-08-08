@@ -81,6 +81,32 @@ namespace ClearCanvas.Common
 				return false;
 		}
 
+		public static bool IsGreaterThan(float x, float y)
+		{
+			int dummy;
+			const int tolerance = 100;
+
+			int result = Compare(x, y, tolerance, out dummy);
+
+			if (result == 1)
+				return true;
+			else
+				return false;
+		}
+
+		public static bool IsLessThan(float x, float y)
+		{
+			int dummy;
+			const int tolerance = 100;
+
+			int result = Compare(x, y, tolerance, out dummy);
+
+			if (result == -1)
+				return true;
+			else
+				return false;
+		}
+
 		public static bool AreEqual(PointF pt1, PointF pt2)
 		{
 			int dummy;

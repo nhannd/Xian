@@ -125,6 +125,7 @@
     <Compile Include="IObservableList.cs" />
     <Compile Include="IPerformanceCounter.cs" />
     <Compile Include="AttributeExtensionFilter.cs" />
+    <Compile Include="Tests\FloatComparerTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Mathematics\RectF.cs" />
     <Compile Include="Mathematics\Vector.cs" />

@@ -154,6 +154,21 @@ namespace ClearCanvas.ImageViewer.Tests
 		}
 
 		[Test]
+		public void NormalizedRectangleBoundaryConditions()
+		{
+			// We just want to make sure an exception is never thrown
+			for (int n = 1; n < 50; n++)
+			{
+				float x = 1.0f / n;
+
+				RectangleF rect = new RectangleF(x, 0.0f, 1.0f - x, 1.0f);
+
+				ClientArea clientArea = new ClientArea();
+				clientArea.NormalizedRectangle = rect;
+			}
+		}
+
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidParentRectangle01()
 		{
@@ -200,6 +215,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			ClientArea clientArea = new ClientArea();
 			clientArea.ParentRectangle = new Rectangle(0, 1, 1, -1);
 		}
+
 	}
 }
 
