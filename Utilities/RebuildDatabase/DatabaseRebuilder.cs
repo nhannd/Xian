@@ -1,12 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using System.Threading;
+using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.OffisWrapper;
+
 namespace ClearCanvas.Utilities.RebuildDatabase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.IO;
-    using System.Threading;
-    using ClearCanvas.DataStore;
-
     public class DatabaseRebuilder
     {
         public event EventHandler<ImageInsertCompletingEventArgs> ImageInsertCompletingEvent;
@@ -16,18 +18,11 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         public DatabaseRebuilder(String connectionString, String imageStoragePath, Boolean isSearchRecursive)
         {
             _state = RebuilderState.Stopped;
-            _connectionString = connectionString;
             _imageStoragePath = imageStoragePath;
             _isSearchRecursive = isSearchRecursive;
             _fileList = Directory.GetFiles(_imageStoragePath,
                 "*",
                 _isSearchRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-        }
-
-        public String ConnectionString
-        {
-            get { return _connectionString; }
-            private set { _connectionString = value; }
         }
 
         public String ImageStoragePath
@@ -129,28 +124,71 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         protected void DoRebuild()
         {
             StopRequested = false;
+            bool rebuildWasAborted = false;
 
-            DatabaseConnector connector = new DatabaseConnector(new ConnectionString(_connectionString));
-            connector.SetupConnector();
-            foreach (String file in _fileList)
+            foreach (string file in _fileList)
             {
                 OnImageInsertCompletingEvent(new ImageInsertCompletingEventArgs(file));
-                connector.InsertSopInstance(file);
+                
+                InsertSopInstance(file);
+                
                 OnImageInsertCompletedEvent(new ImageInsertCompletedEventArgs(file));
 
                 if (StopRequested)
                 {
                     State = RebuilderState.Stopped;
+                    rebuildWasAborted = true;
                     break;
                 }
+
+                DatabaseFlush();
             }
-            connector.TeardownConnector();
-            OnDatabaseRebuildCompletedEvent(new DatabaseRebuildCompletedEventArgs());
+
+            FinalDatabaseFlush();
+
+            OnDatabaseRebuildCompletedEvent(new DatabaseRebuildCompletedEventArgs(rebuildWasAborted));
+        }
+
+        private void DatabaseFlush()
+        {
+            if (this.DicomStore.GetCachedStudiesCount() > 10)
+                this.DicomStore.Flush();
+        }
+
+        private void FinalDatabaseFlush()
+        {
+            this.DicomStore.Flush();
+        }
+
+        protected void InsertSopInstance(string fileName)
+        {
+            DcmFileFormat file = new DcmFileFormat();
+            OFCondition condition = file.loadFile(fileName);
+            if (!condition.good())
+            {
+                // there was an error reading the file, possibly it's not a DICOM file
+                return;
+            }
+
+            DcmMetaInfo metaInfo = file.getMetaInfo();
+            DcmDataset dataset = file.getDataset();
+            this.DicomStore.InsertSopInstance(metaInfo, dataset, fileName);
+
+            // keep the file object alive until the end of this scope block
+            // otherwise, it'll be GC'd and metaInfo and dataset will be gone
+            // as well, even though they are needed in the InsertSopInstance
+            // and sub methods
+            GC.KeepAlive(file);
+
         }
 
         private DatabaseRebuilder() { }
+        
+        private IDicomPersistentStore DicomStore
+        {
+            get { return _dicomStore; }
+        }
 
-        private String _connectionString;
         private String _imageStoragePath;
         private Boolean _isSearchRecursive;
         private String[] _fileList;
@@ -158,5 +196,6 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         private Object _synchronizationLock = new Object();
         private enum RebuilderState { Stopped, Rebuilding };
         private RebuilderState _state;
+        private IDicomPersistentStore _dicomStore = new DicomImageStore();
     }
 }

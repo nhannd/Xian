@@ -89,16 +89,25 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         private void UpdateProgressBar(ImageInsertCompletingEventArgs args)
         {
             _progressBar.PerformStep();
-            _completedRebuildFile.Text = args.FileName;
+            _completedRebuildFile.Text = args.FileName.Substring(args.FileName.LastIndexOf('\\') + 1);
         }
 
         private void EndRebuild(DatabaseRebuildCompletedEventArgs args)
         {
-            _stopTime = DateTime.Now;
-            TimeSpan duration = _stopTime - _startTime;
-            _stopButton.Enabled = false;
-            _exitButton.Enabled = true;
-            _completedRebuildFile.Text = "Processed " + _rebuilder.NumberOfFiles.ToString() + " files in " + duration.ToString();
+            if (!args.RebulidWasAborted)
+            {
+                _stopTime = DateTime.Now;
+                TimeSpan duration = _stopTime - _startTime;
+                _stopButton.Enabled = false;
+                _exitButton.Enabled = true;
+                _completedRebuildFile.Text = "Processed " + _rebuilder.NumberOfFiles.ToString() + " files in " + duration.ToString();
+            }
+            else
+            {
+                _stopButton.Enabled = false;
+                _exitButton.Enabled = true;
+                _completedRebuildFile.Text = "Rebuild was aborted";
+            }
         }
 
         private DateTime _startTime;

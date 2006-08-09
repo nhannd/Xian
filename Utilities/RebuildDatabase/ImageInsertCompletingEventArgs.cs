@@ -1,10 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ClearCanvas.Utilities.RebuildDatabase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     public class ImageInsertCompletingEventArgs : System.EventArgs
     {
         public ImageInsertCompletingEventArgs(String fileName)
