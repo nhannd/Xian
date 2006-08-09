@@ -14,10 +14,10 @@ namespace ClearCanvas.Dicom.Network
         /// Mandatory constructor.
         /// </summary>
         /// <param name="listeningPort">The listening port as a 32-bit integer.</param>
-        public ListeningPort(Int32 listeningPort)
+        public ListeningPort(int listeningPort)
         {
             // validate the input
-            if (listeningPort < 1 || listeningPort > System.Int32.MaxValue)
+            if (listeningPort < 1 || listeningPort > int.MaxValue)
                 throw new System.ArgumentOutOfRangeException("listeningPort", SR.ExceptionDicomListeningPortOutOfRange);
 
             _listeningPort = listeningPort;
@@ -27,7 +27,7 @@ namespace ClearCanvas.Dicom.Network
         /// Gets the listening port as a 32-bit integer.
         /// </summary>
         /// <returns>The listening port as a 32-bit integer.</returns>
-        public Int32 ToInt32()
+        public int ToInt()
         {
             return _listeningPort;
         }
@@ -37,11 +37,11 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         /// <param name="lp">The ListeningPort object to be casted.</param>
         /// <returns>An integer representing the listening port.</returns>
-        public static implicit operator Int32(ListeningPort lp)
+        public static implicit operator int(ListeningPort lp)
         {
             return lp._listeningPort;
         }
 
-        private System.Int32 _listeningPort;
+        private int _listeningPort;
     }
 }

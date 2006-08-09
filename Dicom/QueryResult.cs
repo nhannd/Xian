@@ -183,15 +183,15 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Gets Number Of Study Related Instances as a number.
         /// </summary>
-        public UInt32 NumberOfStudyRelatedInstances
+        public uint NumberOfStudyRelatedInstances
         {
             get
             {
                 if (ContainsTag(DicomTag.NumberOfStudyRelatedInstances))
                 {
                     String temp = _internalDictionary[DicomTag.NumberOfStudyRelatedInstances];
-                    UInt32 output;
-                    if (UInt32.TryParse(temp, out output))
+                    uint output;
+                    if (uint.TryParse(temp, out output))
                         return output;
                 }
                 return 0;
@@ -201,15 +201,15 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Gets Number of Series Related Instances as a number.
         /// </summary>
-        public UInt32 NumberOfSeriesRelatedInstances
+        public uint NumberOfSeriesRelatedInstances
         {
             get
             {
                 if (this.ContainsTag(DicomTag.NumberOfSeriesRelatedInstances))
                 {
                     String temp = _internalDictionary[DicomTag.NumberOfSeriesRelatedInstances];
-                    UInt32 output;
-                    if (UInt32.TryParse(temp, out output))
+                    uint output;
+                    if (uint.TryParse(temp, out output))
                         return output;
                 }
                 return 0;

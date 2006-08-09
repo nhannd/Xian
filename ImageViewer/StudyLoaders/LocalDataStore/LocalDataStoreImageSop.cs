@@ -1217,12 +1217,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
         }
 
-        public void SetInt32Property(string propertyName, int value)
+        public void SetIntProperty(string propertyName, int value)
         {
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void SetUInt32Property(string propertyName, uint value)
+        public void SetUintProperty(string propertyName, uint value)
         {
             throw new Exception("The method or operation is not implemented.");
         }

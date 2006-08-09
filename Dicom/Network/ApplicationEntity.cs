@@ -30,9 +30,9 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Gets the listening port as a string.
         /// </summary>
-        public Int32 Port
+        public int Port
         {
-            get { return _listeningPort.ToInt32(); }
+            get { return _listeningPort.ToInt(); }
         }
         
         /// <summary>
@@ -40,7 +40,7 @@ namespace ClearCanvas.Dicom.Network
         /// and network connections to the target/remote Application
         /// Entity.
         /// </summary>
-        public UInt16 ConnectionTimeout
+        public ushort ConnectionTimeout
         {
             get { return _connectionTimeout; }
             set { _connectionTimeout = value; }
@@ -50,7 +50,7 @@ namespace ClearCanvas.Dicom.Network
         /// Sets the timeout value for completing network operations
         /// such as a single C-STORE command.
         /// </summary>
-        public UInt16 OperationTimeout
+        public ushort OperationTimeout
         {
             get { return _operationTimeout; }
             set { _operationTimeout = value; }
@@ -77,7 +77,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="aeTitle">The AE Title.</param>
         /// <param name="listenPort">The port on which this AE will listen for incoming associations.</param>
         /// <param name="connectionTimeout">The timeout value for making associations and network connections.</param>
-        public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort, UInt16 connectionTimeout)
+        public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort, ushort connectionTimeout)
             : this(hostname, aeTitle, listenPort)
         {
             _connectionTimeout = connectionTimeout;
@@ -92,7 +92,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="listenPort">The port on which this AE will listen for incoming associations.</param>
         /// <param name="connectionTimeout">The timeout value for making associations and network connections.</param>
         /// <param name="operationTimeout">The timeout value for individual DICOM commands, such as C-STORE.</param>
-        public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort, UInt16 connectionTimeout, UInt16 operationTimeout)
+        public ApplicationEntity(HostName hostname, AETitle aeTitle, ListeningPort listenPort, ushort connectionTimeout, ushort operationTimeout)
             : this(hostname, aeTitle, listenPort, connectionTimeout)
         {
             _operationTimeout = operationTimeout;
@@ -112,7 +112,7 @@ namespace ClearCanvas.Dicom.Network
         private HostName _hostname;
         private AETitle _aeTitle;
         private ListeningPort _listeningPort;
-        private UInt16 _connectionTimeout = 20;
-        private UInt16 _operationTimeout = 180;
+        private ushort _connectionTimeout = 20;
+        private ushort _operationTimeout = 180;
     }
 }

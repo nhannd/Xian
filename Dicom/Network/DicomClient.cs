@@ -107,7 +107,7 @@ namespace ClearCanvas.Dicom.Network
         /// library.
         /// </summary>
         /// <param name="timeout">Timeout period in seconds. Default is 120 seconds.</param>
-        protected static void SetGlobalConnectionTimeout(UInt16 timeout)
+        protected static void SetGlobalConnectionTimeout(ushort timeout)
         {
             OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
@@ -1018,13 +1018,13 @@ namespace ClearCanvas.Dicom.Network
         private int _defaultPDUSize = 16384;
         private int _cEchoRepeats = 7;
 
-        private const UInt16 STATUS_Success = 0x0000;
-        private const UInt16 STATUS_Pending = 0xff00;
-        private const UInt16 STATUS_Warning = 0xb000;
+        private const ushort STATUS_Success = 0x0000;
+        private const ushort STATUS_Pending = 0xff00;
+        private const ushort STATUS_Warning = 0xb000;
 
-        private static bool DICOM_PENDING_STATUS(UInt16 status) { return (((status)&STATUS_Pending) == 0xff00); }
-        private static bool DICOM_WARNING_STATUS(UInt16 status) { return (((status)&STATUS_Warning) == 0xb000); }
-        private static bool DICOM_SUCCESS_STATUS(UInt16 status) { return ( (status) == STATUS_Success ); }
+        private static bool DICOM_PENDING_STATUS(ushort status) { return (((status)&STATUS_Pending) == 0xff00); }
+        private static bool DICOM_WARNING_STATUS(ushort status) { return (((status)&STATUS_Warning) == 0xb000); }
+        private static bool DICOM_SUCCESS_STATUS(ushort status) { return ( (status) == STATUS_Success ); }
         #endregion
 
 

@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _studyLoaderName = value; }
 		}
 
-        public UInt32 NumberOfStudyRelatedInstances
+        public uint NumberOfStudyRelatedInstances
         {
             get { return _numberOfStudyRelatedInstances; }
             set { _numberOfStudyRelatedInstances = value; }
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         private string _studyInstanceUID;
         private string _studyLoaderName;
         private string _modalitiesInStudy;
-        private UInt32 _numberOfStudyRelatedInstances;
+        private uint _numberOfStudyRelatedInstances;
         private ApplicationEntity _server;
         #endregion
 

@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
                 if (0 == item.NumberOfStudyRelatedInstances)
                 {
                     ReadOnlyQueryResultCollection results = client.QuerySopInstance(item.Server, new Uid(item.StudyInstanceUID));
-                    item.NumberOfStudyRelatedInstances = (UInt32) results.Count;
+                    item.NumberOfStudyRelatedInstances = (uint) results.Count;
                 }
 
                 RetrieveProgressForm progressForm = new RetrieveProgressForm(item.NumberOfStudyRelatedInstances);

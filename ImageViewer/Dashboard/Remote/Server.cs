@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
     [SerializableAttribute]
     public class Server : ApplicationEntity
     {
-        public Server(String name, String description, String hostname, String aeTitle, Int32 listenPort)
+        public Server(String name, String description, String hostname, String aeTitle, int listenPort)
             : base(new HostName(hostname), new AETitle(aeTitle), new ListeningPort(listenPort))
         {
             _name = name;
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             get { return base.AE; }
         }
 
-        public Int32 ListeningPort
+        public int ListeningPort
         {
             get { return base.Port; }
         }

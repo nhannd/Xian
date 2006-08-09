@@ -113,14 +113,14 @@ namespace ClearCanvas.Dicom.Network
         /// library.
         /// </summary>
         /// <param name="timeout">Timeout period in seconds.</param>
-        public static void SetGlobalConnectionTimeout(Int16 timeout)
+        public static void SetGlobalConnectionTimeout(ushort timeout)
         {
             if (timeout < 1)
                 throw new System.ArgumentOutOfRangeException("timeout", MySR.ExceptionDicomConnectionTimeoutOutOfRange);
             OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
 
-        public Int16 MaximumAssociations
+        public short MaximumAssociations
         {
             get { return 25; }
         }
@@ -157,11 +157,11 @@ namespace ClearCanvas.Dicom.Network
 
         protected class ThreadList : IList<Thread>
         {
-            public Int16 NumberOfAliveThreads
+            public short NumberOfAliveThreads
             {
                 get
                 {
-                    Int16 count = 0;
+                    short count = 0;
                     foreach (Thread t in _threadList)
                     {
                         if (t.IsAlive)

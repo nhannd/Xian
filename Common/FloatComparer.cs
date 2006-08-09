@@ -47,9 +47,9 @@ namespace ClearCanvas.Common
 			// Convert from sign-magnitude to two's complement form, 
 			// by subtracting from 0x80000000.
 			if (xi < 0)
-				xi = Int32.MinValue - xi;
+				xi = int.MinValue - xi;
 			if (yi < 0)
-				yi = Int32.MinValue - yi;
+				yi = int.MinValue - yi;
 
 			// How many epsilons apart?
 			difference = xi - yi;

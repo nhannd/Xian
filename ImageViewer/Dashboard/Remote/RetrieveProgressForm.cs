@@ -10,14 +10,14 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
 {
     public partial class RetrieveProgressForm : Form
     {
-        public RetrieveProgressForm(UInt32 totalNumberOfImages)
+        public RetrieveProgressForm(uint totalNumberOfImages)
         {
             InitializeComponent();
 
             // set up progress bar
             _progressRetrieve.Visible = true;
             _progressRetrieve.Minimum = 1;
-            _progressRetrieve.Maximum = (Int32) totalNumberOfImages;
+            _progressRetrieve.Maximum = (int) totalNumberOfImages;
             _progressRetrieve.Value = 1;
             _progressRetrieve.Step = 1;
         }

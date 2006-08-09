@@ -19,8 +19,8 @@ namespace ClearCanvas.Dicom
     public interface IDicomPropertySettable
     {
         void SetStringProperty(String propertyName, String value);
-        void SetInt32Property(String propertyName, Int32 value);
-        void SetUInt32Property(String propertyName, UInt32 value);
+        void SetIntProperty(String propertyName, int value);
+        void SetUintProperty(String propertyName, uint value);
         void SetDoubleProperty(String propertyName, Double value);
     }
 }

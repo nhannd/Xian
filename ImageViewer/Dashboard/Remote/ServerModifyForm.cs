@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
         {
             get
             {
-                Int32 port = Int32.Parse(_textListeningPort.Text);
+                int port = int.Parse(_textListeningPort.Text);
                 return new Server(_textName.Text, _textDescription.Text, _textHost.Text, _textAETitle.Text, port);
             }
         }
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             {
                 int dummy;
 
-                if (Int32.TryParse(_textListeningPort.Text, out dummy))
+                if (int.TryParse(_textListeningPort.Text, out dummy))
                     return true;
 
                 return false;

@@ -16,8 +16,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="group">Group Number of tag.</param>
         /// <param name="element">Element Number of tag.</param>
-        public DicomTag(UInt16 group, UInt16 element)
-            : this((UInt32) ((group << 16) | element))
+        public DicomTag(ushort group, ushort element)
+            : this((uint) ((group << 16) | element))
         {
         }
 
@@ -25,7 +25,7 @@ namespace ClearCanvas.Dicom
         /// Constructor with Group and Element represented as a 32-bit integer.
         /// </summary>
         /// <param name="ID">The 32-bit representation of the Group and Element.</param>
-        public DicomTag(UInt32 ID)
+        public DicomTag(uint ID)
         {
             _id = ID;
         }
@@ -33,17 +33,17 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Gets the Group Number of the tag as a 16-bit integer.
         /// </summary>
-        public UInt16 Group
+        public ushort Group
         {
-            get { return ((UInt16) ((_id & 0xffff0000) >> 16)); }
+            get { return ((ushort) ((_id & 0xffff0000) >> 16)); }
         }
 
         /// <summary>
         /// Gets the Element Number of the tag as a 16-bit integer.
         /// </summary>
-        public UInt16 Element
+        public ushort Element
         {
-            get { return ((UInt16) (_id & 0x0000ffff)); }
+            get { return ((ushort) (_id & 0x0000ffff)); }
         }
 
         /// <summary>
@@ -51,9 +51,9 @@ namespace ClearCanvas.Dicom
         /// Group and Element number of the tag.
         /// </summary>
         /// <returns>The Group and Element number as a 32-bit integer.</returns>
-        public override Int32 GetHashCode()
+        public override int GetHashCode()
         {
-            return ((Int32)_id);
+            return ((int)_id);
         }
 
         /// <summary>
@@ -2215,6 +2215,6 @@ namespace ClearCanvas.Dicom
         public static DicomTag ACR_NEMA_2C_OverlayCodeTableLocation { get { return new DicomTag(0x6000, 0x0803); } } /* (0x6000-0x60ff,0x0803) */
         public static DicomTag ACR_NEMA_2C_OverlayBitsForCodeWord { get { return new DicomTag(0x6000, 0x0804); } } /* (0x6000-0x60ff,0x0804) */
 
-        private UInt32 _id = 0;
+        private uint _id = 0;
     }
 }

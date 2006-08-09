@@ -16,10 +16,10 @@ namespace ClearCanvas.Dicom.Network
 
         internal static string GetTextString(ApplicationEntity ae, DicomRuntimeApplicationException e)
         {
-            UInt16 module = e.Module; // module in the OFFIS library 0x06 is dcmnet
-            UInt16 code = e.Code;
-            UInt16 submodule = (UInt16)(code & 0x0f00);
-            UInt16 subcode = (UInt16)(code & 0x00ff);
+            ushort module = e.Module; // module in the OFFIS library 0x06 is dcmnet
+            ushort code = e.Code;
+            ushort submodule = (ushort)(code & 0x0f00);
+            ushort subcode = (ushort)(code & 0x00ff);
 
             if (0x06 != module)
                 throw new System.ArgumentOutOfRangeException("e.Module", SR.ExceptionDicomCannotHandleNonDcmNetModules);
