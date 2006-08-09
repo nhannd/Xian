@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.Services" namespace="ClearCanvas.Dicom.Services">
+  <class name="Study" proxy="Study" table="Study_">
+    <id name="Oid" column="Oid_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version" />
+    <property name="ProcedureCodeSequenceCodingSchemeDesignator" column="ProcedureCodeSequenceCodingSchemeDesignator_" type="String" length="16" />
+	<property name="StudyId" column="StudyId_" type="String" length="16" />
+	<property name="StudyTime" column="StudyTime_" type="DateTime" />
+	<property name="StudyDate" column="StudyDate_" type="DateTime" />
+	<property name="AccessionNumber" column="AccessionNumber_" type="String" length="16" />
+	<property name="StudyInstanceUid" column="StudyInstanceUid_" type="String" length="64" />	
+	<property name="StudyDescription" column="StudyDescription_" type="String" length="64" />
+	<property name="ProcedureCodeSequenceCodeValue" column="ProcedureCodeSequenceCodeValue_" type="String" length="16" />
+	<property name="AdmittingDiagnosesDescription" column="AdmittingDiagnosesDescription_" type="String" length="64" />
+	<one-to-one name="ExtendedTagsDocument" class="ExtendedTagsDocument" />
+    <set name="Series" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="StudyOid_" />
+      <one-to-many class="Series" />
+    </set>
+  </class>
+</hibernate-mapping>
