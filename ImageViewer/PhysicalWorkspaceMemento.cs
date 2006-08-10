@@ -10,10 +10,10 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	internal class PhysicalWorkspaceMemento : IMemento
 	{
-		private LogicalWorkspace m_LogicalWorkspace;
-		private ClientArea m_ClientArea;
-		private ImageBoxCollection m_ImageBoxes;
-		private MementoList m_ImageBoxMementos;
+		private LogicalWorkspace _LogicalWorkspace;
+		private ClientArea _ClientArea;
+		private ImageBoxCollection _ImageBoxes;
+		private MementoList _ImageBoxMementos;
 
 		public PhysicalWorkspaceMemento(
 			LogicalWorkspace logicalWorkspace,
@@ -26,30 +26,30 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(imageBoxes, "imageBoxes");
 			Platform.CheckForNullReference(imageBoxMementos, "imageBoxMementos");
 
-			m_LogicalWorkspace = logicalWorkspace;
-			m_ClientArea = clientArea;
-			m_ImageBoxes = imageBoxes;
-			m_ImageBoxMementos = imageBoxMementos;
+			_LogicalWorkspace = logicalWorkspace;
+			_ClientArea = clientArea;
+			_ImageBoxes = imageBoxes;
+			_ImageBoxMementos = imageBoxMementos;
 		}
 
 		public LogicalWorkspace LogicalWorkspace
 		{
-			get { return m_LogicalWorkspace; }
+			get { return _LogicalWorkspace; }
 		}
 
 		public ClientArea ClientArea
 		{
-			get { return m_ClientArea; }
+			get { return _ClientArea; }
 		}
 
 		public ImageBoxCollection ImageBoxes
 		{
-			get { return m_ImageBoxes; }
+			get { return _ImageBoxes; }
 		}
 
 		public MementoList ImageBoxMementos
 		{
-			get { return m_ImageBoxMementos; }
+			get { return _ImageBoxMementos; }
 		}
 	}
 }

@@ -9,70 +9,70 @@ namespace ClearCanvas.Common.Tests
 {
 	public class PluginSetupTeardown
 	{
-		private static string m_ProjectPath;
-		private static string m_TestDir;
-		private static string m_PluginDir;
+		private static string _ProjectPath;
+		private static string _TestDir;
+		private static string _PluginDir;
 		
-		private static string m_ClearCanvasCommonPlatformPath;
-		private static string m_ClearCanvasViewerCorePath;
-		private static string m_ClearCanvasViewerUIPath;
+		private static string _ClearCanvasCommonPlatformPath;
+		private static string _ClearCanvasViewerCorePath;
+		private static string _ClearCanvasViewerUIPath;
 		
-		private static string m_ConfigFile1Path;
-		private static string m_ConfigFile2Path;
-		private static string m_ConfigFile3Path;
-		private static string m_ConfigFile4Path;
+		private static string _ConfigFile1Path;
+		private static string _ConfigFile2Path;
+		private static string _ConfigFile3Path;
+		private static string _ConfigFile4Path;
 
 		public static void PluginSetup()
 		{
 			InitializePaths();
 
 			// Make dummy plugin directory so PluginManager doesn't complain
-			Directory.CreateDirectory(m_PluginDir);
-			Platform.InstallDir = m_TestDir;
+			Directory.CreateDirectory(_PluginDir);
+			Platform.InstallDir = _TestDir;
 
 			CopyConfigFiles();
 
 			// Form list of plugin paths. Load plugins from where they're built
 			StringCollection pluginFileList = new StringCollection();
-			pluginFileList.Add(m_ClearCanvasViewerCorePath);
-			pluginFileList.Add(m_ClearCanvasViewerUIPath);
+			pluginFileList.Add(_ClearCanvasViewerCorePath);
+			pluginFileList.Add(_ClearCanvasViewerUIPath);
 
 //TODO			Platform.PluginManager.LoadPlugins(pluginFileList);
 		}
 
 		public static void PluginTeardown()
 		{
-			Directory.Delete(m_TestDir, true);
+			Directory.Delete(_TestDir, true);
 		}
 
 		private static void InitializePaths()
 		{
-			m_TestDir = @"c:\test";
-			m_PluginDir = m_TestDir + @"\plugins";
-			m_ProjectPath = @"C:\VSProjects";
+			_TestDir = @"c:\test";
+			_PluginDir = _TestDir + @"\plugins";
+			_ProjectPath = @"C:\VSProjects";
 			
-			m_ConfigFile1Path = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\App.config";
-			m_ConfigFile2Path = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\exceptionhandlingconfiguration.config";
-			m_ConfigFile3Path = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingconfiguration.config";
-			m_ConfigFile4Path = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingdistributorconfiguration.config";
+			_ConfigFile1Path = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\App.config";
+			_ConfigFile2Path = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\exceptionhandlingconfiguration.config";
+			_ConfigFile3Path = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingconfiguration.config";
+			_ConfigFile4Path = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingdistributorconfiguration.config";
 
-			m_ClearCanvasCommonPlatformPath = m_ProjectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
-			m_ClearCanvasViewerCorePath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
-			m_ClearCanvasViewerUIPath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
+			_ClearCanvasCommonPlatformPath = _ProjectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
+			_ClearCanvasViewerCorePath = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
+			_ClearCanvasViewerUIPath = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
 		}
 
 		private static void CopyPluginFiles()
 		{
-			File.Copy(m_ClearCanvasViewerCorePath, m_PluginDir + @"\ClearCanvas.Workstation.Model.dll", true);
-			File.Copy(m_ClearCanvasViewerUIPath, m_PluginDir + @"\ClearCanvas.Workstation.View.dll", true);
+			File.Copy(_ClearCanvasViewerCorePath, _PluginDir + @"\ClearCanvas.Workstation.Model.dll", true);
+			File.Copy(_ClearCanvasViewerUIPath, _PluginDir + @"\ClearCanvas.Workstation.View.dll", true);
 		}
 
 		private static void CopyConfigFiles()
 		{
-			File.Copy(m_ConfigFile1Path, Directory.GetCurrentDirectory() + @"\ClearCanvas.Workstation.Model.dll.config", true);
-			File.Copy(m_ConfigFile2Path, Directory.GetCurrentDirectory() + @"\exceptionhandlingconfiguration.config", true);
-			File.Copy(m_ConfigFile3Path, Directory.GetCurrentDirectory() + @"\loggingconfiguration.config", true);
-			File.Copy(m_ConfigFile4Path, Directory.GetCurrentDirectory() + @"\loggingdistributorconfiguration.config", true);
+			File.Copy(_ConfigFile1Path, Directory.GetCurrentDirectory() + @"\ClearCanvas.Workstation.Model.dll.config", true);
+			File.Copy(_ConfigFile2Path, Directory.GetCurrentDirectory() + @"\exceptionhandlingconfiguration.config", true);
+			File.Copy(_ConfigFile3Path, Directory.GetCurrentDirectory() + @"\loggingconfiguration.config", true);
+			File.Copy(_ConfigFile4Path, Directory.GetCurrentDirectory() + @"\loggingdistributorconfiguration.config", true);
 		}
 
 	}

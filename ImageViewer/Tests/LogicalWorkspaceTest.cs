@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Tests
 	[TestFixture]
 	public class LogicalWorkspaceTest
 	{
-		DisplaySet m_DisplaySet;
+		DisplaySet _DisplaySet;
 
 		public LogicalWorkspaceTest()
 		{
@@ -46,10 +46,10 @@ namespace ClearCanvas.ImageViewer.Tests
 			ws.DisplaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
 			ws.DisplaySets.ItemRemoved += new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
 
-			m_DisplaySet = null;
+			_DisplaySet = null;
 			ws.DisplaySets.Add(ds1);
 			Assert.AreEqual(1, ws.DisplaySets.Count);
-			Assert.AreEqual(ds1, m_DisplaySet);
+			Assert.AreEqual(ds1, _DisplaySet);
 
 			DisplaySet ds2 = new DisplaySet();
 			ws.DisplaySets.Add(ds2);
@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageViewer.Tests
 			ws.DisplaySets.Remove(ds1);
 			Assert.AreEqual(1, ws.DisplaySets.Count);
 
-			m_DisplaySet = null;
+			_DisplaySet = null;
 			ws.DisplaySets.Remove(ds2);
 			Assert.AreEqual(0, ws.DisplaySets.Count);
-			Assert.AreEqual(ds2, m_DisplaySet);
+			Assert.AreEqual(ds2, _DisplaySet);
 		}
 
 		[Test]
@@ -174,12 +174,12 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		private void OnDisplaySetAdded(object sender, DisplaySetEventArgs e)
 		{
-			m_DisplaySet = e.DisplaySet;
+			_DisplaySet = e.DisplaySet;
 		}
 
 		private void OnDisplaySetRemoved(object sender, DisplaySetEventArgs e)
 		{
-			m_DisplaySet = e.DisplaySet;
+			_DisplaySet = e.DisplaySet;
 		}
 	}
 }

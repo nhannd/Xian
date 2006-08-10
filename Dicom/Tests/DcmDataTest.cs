@@ -16,8 +16,8 @@ namespace ClearCanvas.Dicom.Tests
 	[TestFixture]
 	public class DcmDataTest
 	{
-		DcmFileFormat m_FileFormat;
-		DcmDataset m_DataSet;
+		DcmFileFormat _FileFormat;
+		DcmDataset _DataSet;
 
 		public DcmDataTest()
 		{
@@ -27,19 +27,19 @@ namespace ClearCanvas.Dicom.Tests
 		public void Init()
 		{
 			string fileName = @"C:\sampledicomimages\eFilm\1.2.840.113619.2.30.1.1762295590.1623.978668950.113.dcm";
-			m_FileFormat = new DcmFileFormat();
-			OFCondition cond = m_FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
+			_FileFormat = new DcmFileFormat();
+			OFCondition cond = _FileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
 
 			Assert.IsTrue(cond.good());
 
-			m_DataSet = m_FileFormat.getDataset();
+			_DataSet = _FileFormat.getDataset();
 		}
 
 		[Test]
 		public void DCMDump()
 		{
 			DcmObject obj = null;
-			obj = m_DataSet.nextInContainer(null);
+			obj = _DataSet.nextInContainer(null);
 			DcmTag tag = null;
 			string strTagName;
 			string strGroupElement;
@@ -76,7 +76,7 @@ namespace ClearCanvas.Dicom.Tests
 				if (false == tag.isUnknownVR())
 					Console.WriteLine("{0} {1} {2}", strTagName, strGroupElement, strValue);
 
-				obj = m_DataSet.nextInContainer(obj);
+				obj = _DataSet.nextInContainer(obj);
 			}
 		}
 
@@ -84,17 +84,17 @@ namespace ClearCanvas.Dicom.Tests
 		public void GetPixelData()
 		{
 			ushort rows, columns, bitsAllocated, bitsStored;
-			m_DataSet.findAndGetUint16(Dcm.Rows, out rows);
-			m_DataSet.findAndGetUint16(Dcm.Columns, out columns);
-			m_DataSet.findAndGetUint16(Dcm.BitsAllocated, out bitsAllocated);
-			m_DataSet.findAndGetUint16(Dcm.BitsStored, out bitsStored);
+			_DataSet.findAndGetUint16(Dcm.Rows, out rows);
+			_DataSet.findAndGetUint16(Dcm.Columns, out columns);
+			_DataSet.findAndGetUint16(Dcm.BitsAllocated, out bitsAllocated);
+			_DataSet.findAndGetUint16(Dcm.BitsStored, out bitsStored);
 
 			StringBuilder buf = new StringBuilder(64);
-			m_DataSet.findAndGetOFString(Dcm.PhotometricInterpretation, buf);
+			_DataSet.findAndGetOFString(Dcm.PhotometricInterpretation, buf);
 			string photometricInterpretation = buf.ToString();
 
 			IntPtr pPixelData = IntPtr.Zero;
-			m_DataSet.findAndGetUint16Array(Dcm.PixelData, ref pPixelData);
+			_DataSet.findAndGetUint16Array(Dcm.PixelData, ref pPixelData);
 			
 			int stride = columns * bitsAllocated / 8;
 //			Bitmap bmp = new Bitmap(columns, rows, stride, PixelFormat.Format16bppRgb565, pPixelData);

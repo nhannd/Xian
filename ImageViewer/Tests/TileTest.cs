@@ -10,10 +10,10 @@ namespace ClearCanvas.ImageViewer.Tests
 	[TestFixture]
 	public class TileTest
 	{
-		LogicalWorkspace m_Workspace;
-		DisplaySet m_DisplaySet;
+		LogicalWorkspace _Workspace;
+		DisplaySet _DisplaySet;
 
-		ImageDrawingEventArgs m_DrawImageEventArgs;
+		ImageDrawingEventArgs _DrawImageEventArgs;
 
 		public TileTest()
 		{
@@ -22,8 +22,8 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			m_Workspace = new LogicalWorkspace(new ImageWorkspace("studyUID"));
-			m_DisplaySet = new DisplaySet();
+			_Workspace = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			_DisplaySet = new DisplaySet();
 		}
 	
 		[TestFixtureTearDown]
@@ -64,12 +64,12 @@ namespace ClearCanvas.ImageViewer.Tests
 			tile.ImageDrawing += new EventHandler<ImageDrawingEventArgs>(OnDrawImage);
 
 			pi1.Draw(false);
-			Assert.AreEqual(new Rectangle(0,0,50,100), m_DrawImageEventArgs.Tile.ClientRectangle);
+			Assert.AreEqual(new Rectangle(0,0,50,100), _DrawImageEventArgs.Tile.ClientRectangle);
 		}
 
 		private void OnDrawImage(object sender, EventArgs e)
 		{
-			m_DrawImageEventArgs = (ImageDrawingEventArgs) e;
+			_DrawImageEventArgs = (ImageDrawingEventArgs) e;
 		}
 	}
 }

@@ -9,8 +9,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public class LUT : ILUT
 	{
 		// Protected attributes
-		private int m_NumEntries;
-		private int[] m_Table;
+		private int _NumEntries;
+		private int[] _Table;
 
 		// Constructors
 		public LUT(int numEntries)
@@ -21,12 +21,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		// Properties
 		public int NumEntries
 		{
-			get { return m_NumEntries; }
+			get { return _NumEntries; }
 		}
 
 		protected int[] Table
 		{
-			get { return m_Table; }
+			get { return _Table; }
 		}
 
 		// Indexer
@@ -34,25 +34,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, 0, m_NumEntries - 1, this);
-				return m_Table[index];
+				Platform.CheckIndexRange(index, 0, _NumEntries - 1, this);
+				return _Table[index];
 			}
 			set
 			{
-				Platform.CheckIndexRange(index, 0, m_NumEntries - 1, this);
-				m_Table[index] = value;
+				Platform.CheckIndexRange(index, 0, _NumEntries - 1, this);
+				_Table[index] = value;
 			}
 		}
 
 		// Private method
 		private void CreateLUT(int numEntries)
 		{
-			if (m_Table == null)
+			if (_Table == null)
 			{
 				Platform.CheckPositive(numEntries, "numEntries");
 
-				m_NumEntries = numEntries;
-				m_Table = new int[m_NumEntries];
+				_NumEntries = numEntries;
+				_Table = new int[_NumEntries];
 			}
 		}
 	}

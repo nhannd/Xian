@@ -10,7 +10,7 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public class MementoList : IEnumerable<IMemento> 
 	{
-		private List<IMemento> m_Mementos = new List<IMemento>();
+		private List<IMemento> _Mementos = new List<IMemento>();
 
 		public MementoList()
 		{
@@ -18,15 +18,15 @@ namespace ClearCanvas.Desktop
 
 		public int Count
 		{
-			get { return m_Mementos.Count; }
+			get { return _Mementos.Count; }
 		}
 
 		public IMemento this[int index]
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, 0, m_Mementos.Count - 1, this);
-				return m_Mementos[index] as IMemento;
+				Platform.CheckIndexRange(index, 0, _Mementos.Count - 1, this);
+				return _Mementos[index] as IMemento;
 			}
 		}
 
@@ -34,14 +34,14 @@ namespace ClearCanvas.Desktop
 		{
 			Platform.CheckForNullReference(memento, "memento");
 
-			m_Mementos.Add(memento);
+			_Mementos.Add(memento);
 		}
 
 		#region IEnumerable<IMemento> Members
 
 		public IEnumerator<IMemento> GetEnumerator()
 		{
-			return m_Mementos.GetEnumerator();
+			return _Mementos.GetEnumerator();
 		}
 
 		#endregion
@@ -50,7 +50,7 @@ namespace ClearCanvas.Desktop
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_Mementos.GetEnumerator();
+			return _Mementos.GetEnumerator();
 		}
 
 		#endregion

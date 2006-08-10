@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class PointsMemento : IMemento, IEnumerable<PointF>
 	{
-		List<PointF> m_AnchorPoints = new List<PointF>();
+		List<PointF> _AnchorPoints = new List<PointF>();
 
 		public PointsMemento()
 		{
@@ -20,14 +20,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public void Add(PointF point)
 		{
-			m_AnchorPoints.Add(point);
+			_AnchorPoints.Add(point);
 		}
 
 		#region IEnumerable<PointF> Members
 
 		public System.Collections.Generic.IEnumerator<PointF> GetEnumerator()
 		{
-			return m_AnchorPoints.GetEnumerator();
+			return _AnchorPoints.GetEnumerator();
 		}
 
 		#endregion
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_AnchorPoints.GetEnumerator();
+			return _AnchorPoints.GetEnumerator();
 		}
 
 		#endregion

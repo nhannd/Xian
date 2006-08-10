@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Tests
 	[TestFixture]
 	public class PhysicalWorkspaceTest
 	{
-		LogicalWorkspace m_LogicalWorkspace;
+		LogicalWorkspace LogicalWorkspace;
 
 		public PhysicalWorkspaceTest()
 		{
@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			m_LogicalWorkspace = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace = new LogicalWorkspace(new ImageWorkspace("studyUID"));
 		}
 	
 		[TestFixtureTearDown]

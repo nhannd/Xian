@@ -10,8 +10,8 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public class CustomLayer : Layer
 	{
-		private event EventHandler<DrawCustomLayerEventArgs> m_DrawCustomLayerEvent;
-		private bool m_DoubleBuffer;
+		private event EventHandler<DrawCustomLayerEventArgs> _DrawCustomLayerEvent;
+		private bool _DoubleBuffer;
 
 		public CustomLayer()
 		{
@@ -21,24 +21,24 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			add
 			{
-				m_DrawCustomLayerEvent += value;
+				_DrawCustomLayerEvent += value;
 			}
 			remove
 			{
-				m_DrawCustomLayerEvent -= value;
+				_DrawCustomLayerEvent -= value;
 			}
 		}
 
 		public void Draw(DrawCustomLayerEventArgs args)
 		{
 			Platform.CheckForNullReference(args, "args");
-			EventsHelper.Fire(m_DrawCustomLayerEvent, this, args);
+			EventsHelper.Fire(_DrawCustomLayerEvent, this, args);
 		}
 
 		public bool DoubleBuffer
 		{
-			get { return m_DoubleBuffer; }
-			set { m_DoubleBuffer = value; }
+			get { return _DoubleBuffer; }
+			set {_DoubleBuffer = value; }
 		}
 
 		protected override BaseLayerCollection  CreateChildLayers()

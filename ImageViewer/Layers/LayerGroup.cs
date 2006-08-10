@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public sealed class LayerGroup : Layer
 	{
-		private event EventHandler<RectangleChangedEventArgs> m_DestinationRectangleChangedEvent;
+		private event EventHandler<RectangleChangedEventArgs> _DestinationRectangleChangedEvent;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LayerGroup"/> class.
@@ -37,8 +37,8 @@ namespace ClearCanvas.ImageViewer.Layers
 		/// </summary>
 		public event EventHandler<RectangleChangedEventArgs> DestinationRectangleChanged
 		{
-			add { m_DestinationRectangleChangedEvent += value; }
-			remove { m_DestinationRectangleChangedEvent -= value; }
+			add { _DestinationRectangleChangedEvent += value; }
+			remove { _DestinationRectangleChangedEvent -= value; }
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Layers
 						layerGroup.DestinationRectangle = value;
 				}
 
-				EventsHelper.Fire(m_DestinationRectangleChangedEvent, this, new RectangleChangedEventArgs(value));
+				EventsHelper.Fire(_DestinationRectangleChangedEvent, this, new RectangleChangedEventArgs(value));
 			}
 		}
 

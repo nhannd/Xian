@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				// Since the normalized rectangle is (0,0,1,1), the client and
 				// parent rectangles will be the same. We set the *parent* rectangle
-				// in m_ClientArea so that the ClientRectangle will be computed automatically
+				// in _ClientArea so that the ClientRectangle will be computed automatically
 				_clientArea.ParentRectangle = value;
 
 				foreach (ImageBox imageBox in this.ImageBoxes)

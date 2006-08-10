@@ -30,25 +30,25 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
-			this.m_Timer = new System.Windows.Forms.Timer(this.components);
-			this.m_StatusLabel = new System.Windows.Forms.Label();
+			this._Timer = new System.Windows.Forms.Timer(this.components);
+			this._StatusLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// m_Timer
+			// _Timer
 			// 
-			this.m_Timer.Interval = 50;
-			this.m_Timer.Tick += new System.EventHandler(this.m_Timer_Tick);
+			this._Timer.Interval = 50;
+			this._Timer.Tick += new System.EventHandler(this._Timer_Tick);
 			// 
-			// m_StatusLabel
+			// _StatusLabel
 			// 
-			this.m_StatusLabel.AutoEllipsis = true;
-			this.m_StatusLabel.BackColor = System.Drawing.Color.White;
-			this.m_StatusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.m_StatusLabel.Location = new System.Drawing.Point(295, 61);
-			this.m_StatusLabel.Name = "m_StatusLabel";
-			this.m_StatusLabel.Size = new System.Drawing.Size(354, 23);
-			this.m_StatusLabel.TabIndex = 0;
-			this.m_StatusLabel.Text = "Progress text";
+			this._StatusLabel.AutoEllipsis = true;
+			this._StatusLabel.BackColor = System.Drawing.Color.White;
+			this._StatusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._StatusLabel.Location = new System.Drawing.Point(295, 61);
+			this._StatusLabel.Name = "_StatusLabel";
+			this._StatusLabel.Size = new System.Drawing.Size(354, 23);
+			this._StatusLabel.TabIndex = 0;
+			this._StatusLabel.Text = "Progress text";
 			// 
 			// SplashScreen
 			// 
@@ -57,7 +57,7 @@ namespace ClearCanvas.Controls.WinForms
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
-			this.Controls.Add(this.m_StatusLabel);
+			this.Controls.Add(this._StatusLabel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "SplashScreen";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -70,7 +70,7 @@ namespace ClearCanvas.Controls.WinForms
 
 		#endregion
 
-		private System.Windows.Forms.Timer m_Timer;
-		private System.Windows.Forms.Label m_StatusLabel;
+		private System.Windows.Forms.Timer _Timer;
+		private System.Windows.Forms.Label _StatusLabel;
 	}
 }

@@ -6,40 +6,40 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public class GrayscaleLUT : LUT, IGrayscaleLUT
 	{
 		// Protected attributes
-		protected int m_MinInputValue;
-		protected int m_MaxInputValue;
-		protected int m_MinOutputValue;
-		protected int m_MaxOutputValue;
+		protected int _MinInputValue;
+		protected int _MaxInputValue;
+		protected int _MinOutputValue;
+		protected int _MaxOutputValue;
 
 		// Constructor
 		public GrayscaleLUT(
 			int minInputValue,
 			int maxInputValue) : base(maxInputValue - minInputValue + 1)
 		{
-			m_MinInputValue = minInputValue;
-			m_MaxInputValue = maxInputValue;
+			_MinInputValue = minInputValue;
+			_MaxInputValue = maxInputValue;
 		}
 
 		#region IGrayscaleLUT Members
 
 		public int MinInputValue
 		{
-			get { return m_MinInputValue; }
+			get { return _MinInputValue; }
 		}
 
 		public int MaxInputValue
 		{
-			get { return m_MaxInputValue; }
+			get { return _MaxInputValue; }
 		}
 
 		public int MinOutputValue
 		{
-			get { return m_MinOutputValue; }
+			get { return _MinOutputValue; }
 		}
 
 		public int MaxOutputValue
 		{
-			get { return m_MaxOutputValue; }
+			get { return _MaxOutputValue; }
 		}
 
 		#endregion
@@ -49,23 +49,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, m_MinInputValue, m_MaxInputValue, this);
-				return base.Table[index - m_MinInputValue];
+				Platform.CheckIndexRange(index, _MinInputValue, _MaxInputValue, this);
+				return base.Table[index - _MinInputValue];
 
 				/*if (index >= 0)
-					return m_Table[index - m_MinInputValue];
+					return _Table[index - _MinInputValue];
 				else
-					return m_Table[index + m_NumEntries];*/
+					return _Table[index + _NumEntries];*/
 			}
 			set
 			{
-				Platform.CheckIndexRange(index, m_MinInputValue, m_MaxInputValue, this);
-				base.Table[index - m_MinInputValue] = value;
+				Platform.CheckIndexRange(index, _MinInputValue, _MaxInputValue, this);
+				base.Table[index - _MinInputValue] = value;
 
 				/*if (index >= 0)
-					m_Table[index - m_MinInputValue] = value;
+					_Table[index - _MinInputValue] = value;
 				else
-					m_Table[index + m_NumEntries] = value;*/
+					_Table[index + _NumEntries] = value;*/
 			}
 		}
 	}

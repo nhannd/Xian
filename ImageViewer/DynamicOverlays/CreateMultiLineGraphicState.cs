@@ -10,14 +10,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class CreateMultiLineGraphicState : GraphicState
 	{
-		private int m_ControlPointIndex;
-		private int m_NumberOfPointsAnchored = 0;
+		private int _ControlPointIndex;
+		private int _NumberOfPointsAnchored = 0;
 
 		// Create a graphic object
 		public CreateMultiLineGraphicState(InteractiveMultiLineGraphic interactiveGraphic) 
 			: base(interactiveGraphic)
 		{
-			m_ControlPointIndex = 1;
+			_ControlPointIndex = 1;
 		}
 
 		private InteractiveMultiLineGraphic InteractiveGraphic
@@ -29,10 +29,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			m_NumberOfPointsAnchored++;
+			_NumberOfPointsAnchored++;
 
 			// We just started creating
-			if (m_NumberOfPointsAnchored == 1)
+			if (_NumberOfPointsAnchored == 1)
 			{
 				PointF mousePoint = new PointF(e.X, e.Y);
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				this.InteractiveGraphic.ResetCoordinateSystem();
 			}
 			// We're done creating
-			else if (m_NumberOfPointsAnchored == this.InteractiveGraphic.MaximumAnchorPoints)
+			else if (_NumberOfPointsAnchored == this.InteractiveGraphic.MaximumAnchorPoints)
 			{
 				if (this.SupportUndo)
 				{
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
 			}
 			// We're in the middle of creating
-			else if (m_NumberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)
+			else if (_NumberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)
 			{
 				PointF pt = new PointF(e.X, e.Y);
 
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				this.InteractiveGraphic.ControlPoints.Add(pt);
 				this.InteractiveGraphic.ResetCoordinateSystem();
 
-				m_ControlPointIndex = this.InteractiveGraphic.ControlPoints.Count - 1;
+				_ControlPointIndex = this.InteractiveGraphic.ControlPoints.Count - 1;
 			}
 
 			return true;
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			PointF pt = new PointF(e.X, e.Y);
 
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-			this.InteractiveGraphic.ControlPoints[m_ControlPointIndex] = pt;
+			this.InteractiveGraphic.ControlPoints[_ControlPointIndex] = pt;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 

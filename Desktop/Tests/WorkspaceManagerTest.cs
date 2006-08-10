@@ -10,7 +10,7 @@ namespace ClearCanvas.Desktop.Tests
 	[TestFixture]
 	public class WorkspaceManagerTest
 	{
-		StubWorkspace m_Workspace;
+		StubWorkspace _Workspace;
 
 		public WorkspaceManagerTest()
 		{
@@ -33,18 +33,18 @@ namespace ClearCanvas.Desktop.Tests
 			wm.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
 			wm.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
 
-			m_Workspace = null;
+			_Workspace = null;
             StubWorkspace ws = new StubWorkspace();
 			wm.Workspaces.Add(ws);
 			Assert.AreEqual(1, wm.Workspaces.Count);
 			// Verify add event was fired
-			Assert.AreEqual(ws, m_Workspace);
+			Assert.AreEqual(ws, _Workspace);
 
-			m_Workspace = null;
+			_Workspace = null;
 			wm.Workspaces.Remove(ws);
 			Assert.AreEqual(0, wm.Workspaces.Count);
 			// Verify add event was fired
-			Assert.AreEqual(ws, m_Workspace);
+			Assert.AreEqual(ws, _Workspace);
 		}
 
 		[Test]
@@ -180,12 +180,12 @@ namespace ClearCanvas.Desktop.Tests
 
 		private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
 		{
-            m_Workspace = ((WorkspaceEventArgs)e).Workspace as StubWorkspace;
+            _Workspace = ((WorkspaceEventArgs)e).Workspace as StubWorkspace;
 		}
 
 		private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
 		{
-            m_Workspace = ((WorkspaceEventArgs)e).Workspace as StubWorkspace;
+            _Workspace = ((WorkspaceEventArgs)e).Workspace as StubWorkspace;
 		}
 	}
 }

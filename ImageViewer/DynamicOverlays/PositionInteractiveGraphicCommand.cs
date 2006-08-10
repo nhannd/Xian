@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class PositionGraphicCommand : UndoableCommand
 	{
-		private bool m_Create;
+		private bool _Create;
 
 		public PositionGraphicCommand(
 			Graphic graphic, bool create) 
@@ -20,14 +20,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(graphic, "graphic");
 
-			m_Create = create;
+			_Create = create;
 		}
 
 		public override void Execute()
 		{
 			Graphic graphic = base.Originator as Graphic;
 
-			if (m_Create)
+			if (_Create)
 				graphic.Visible = true;
 			else
 				base.Execute();
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			// and thus would never be rendered
 			Graphic graphic = base.Originator as Graphic;
 
-			if (m_Create)
+			if (_Create)
 				graphic.Visible = false;
 			else
 				base.Unexecute();

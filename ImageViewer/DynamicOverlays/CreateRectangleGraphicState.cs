@@ -7,15 +7,15 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class CreateRectangleGraphicState : GraphicState
 	{
-		private int m_ControlPointIndex;
-		private int m_NumberOfPointsAnchored = 1;
+		private int _ControlPointIndex;
+		private int _NumberOfPointsAnchored = 1;
 
 		// Create a graphic object
 		public CreateRectangleGraphicState(InteractiveRectangleGraphic interactiveGraphic) 
 			: base(interactiveGraphic)
 		{
 			// This control point index corresponds to the bottom right control point
-			m_ControlPointIndex = 3;
+			_ControlPointIndex = 3;
 		}
 
 		private InteractiveGraphic InteractiveGraphic
@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 
 			// We just started creating
-			if (m_NumberOfPointsAnchored == 1)
+			if (_NumberOfPointsAnchored == 1)
 			{
 				PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				this.InteractiveGraphic.ControlPoints[3] = mousePoint;
 				this.InteractiveGraphic.ResetCoordinateSystem();
 
-				m_NumberOfPointsAnchored++;
+				_NumberOfPointsAnchored++;
 			}
 			// We're done creating
 			else
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
-			this.InteractiveGraphic.ControlPoints[m_ControlPointIndex] = mousePoint;
+			this.InteractiveGraphic.ControlPoints[_ControlPointIndex] = mousePoint;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 

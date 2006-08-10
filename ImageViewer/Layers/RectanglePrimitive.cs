@@ -12,9 +12,9 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public class RectanglePrimitive : Graphic
 	{
-		private RectangleF m_Rectangle = new RectangleF(0,0,0,0);
-		private event EventHandler<PointChangedEventArgs> m_TopLeftChangedEvent;
-		private event EventHandler<PointChangedEventArgs> m_BottomRightChangedEvent;
+		private RectangleF _Rectangle = new RectangleF(0,0,0,0);
+		private event EventHandler<PointChangedEventArgs> _TopLeftChangedEvent;
+		private event EventHandler<PointChangedEventArgs> _BottomRightChangedEvent;
 
 		public RectanglePrimitive() 
 			: base(true)
@@ -26,11 +26,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return m_Rectangle.Location;
+					return _Rectangle.Location;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(m_Rectangle.Location);
+					return base.SpatialTransform.ConvertToDestination(_Rectangle.Location);
 				}
 			}
 			set
@@ -40,20 +40,20 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					m_Rectangle.Width = m_Rectangle.Right - value.X;
-					m_Rectangle.Height = m_Rectangle.Bottom - value.Y;
-					m_Rectangle.Location = value;
+					_Rectangle.Width = _Rectangle.Right - value.X;
+					_Rectangle.Height = _Rectangle.Bottom - value.Y;
+					_Rectangle.Location = value;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
 
-					m_Rectangle.Width = m_Rectangle.Right - base.SpatialTransform.ConvertToSource(value).X;
-					m_Rectangle.Height = m_Rectangle.Bottom - base.SpatialTransform.ConvertToSource(value).Y;
-					m_Rectangle.Location = base.SpatialTransform.ConvertToSource(value);
+					_Rectangle.Width = _Rectangle.Right - base.SpatialTransform.ConvertToSource(value).X;
+					_Rectangle.Height = _Rectangle.Bottom - base.SpatialTransform.ConvertToSource(value).Y;
+					_Rectangle.Location = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(m_TopLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft, this.CoordinateSystem));
+				EventsHelper.Fire(_TopLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft, this.CoordinateSystem));
 			}
 		}
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			get
 			{
-				PointF bottomRight = new PointF(m_Rectangle.Right, m_Rectangle.Bottom);
+				PointF bottomRight = new PointF(_Rectangle.Right, _Rectangle.Bottom);
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 					return bottomRight;
@@ -78,19 +78,19 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					m_Rectangle.Width = value.X - m_Rectangle.X;
-					m_Rectangle.Height = value.Y - m_Rectangle.Y;
+					_Rectangle.Width = value.X - _Rectangle.X;
+					_Rectangle.Height = value.Y - _Rectangle.Y;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
 					PointF pointSrc = base.SpatialTransform.ConvertToSource(value);
 
-					m_Rectangle.Width = pointSrc.X - m_Rectangle.X;
-					m_Rectangle.Height = pointSrc.Y - m_Rectangle.Y;
+					_Rectangle.Width = pointSrc.X - _Rectangle.X;
+					_Rectangle.Height = pointSrc.Y - _Rectangle.Y;
 				}
 
-				EventsHelper.Fire(m_BottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight, this.CoordinateSystem));
+				EventsHelper.Fire(_BottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight, this.CoordinateSystem));
 			}
 		}
 
@@ -100,14 +100,14 @@ namespace ClearCanvas.ImageViewer.Layers
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					return m_Rectangle.Width;
+					return _Rectangle.Width;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
 
-					PointF topLeft = base.SpatialTransform.ConvertToDestination(m_Rectangle.Location);
-					PointF bottomRight = base.SpatialTransform.ConvertToDestination(new PointF(m_Rectangle.Right, m_Rectangle.Bottom));
+					PointF topLeft = base.SpatialTransform.ConvertToDestination(_Rectangle.Location);
+					PointF bottomRight = base.SpatialTransform.ConvertToDestination(new PointF(_Rectangle.Right, _Rectangle.Bottom));
 
 					return bottomRight.X - topLeft.X;
 				}
@@ -120,14 +120,14 @@ namespace ClearCanvas.ImageViewer.Layers
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					return m_Rectangle.Height;
+					return _Rectangle.Height;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
 
-					PointF topLeft = base.SpatialTransform.ConvertToDestination(m_Rectangle.Location);
-					PointF bottomRight = base.SpatialTransform.ConvertToDestination(new PointF(m_Rectangle.Right, m_Rectangle.Bottom));
+					PointF topLeft = base.SpatialTransform.ConvertToDestination(_Rectangle.Location);
+					PointF bottomRight = base.SpatialTransform.ConvertToDestination(new PointF(_Rectangle.Right, _Rectangle.Bottom));
 
 					return bottomRight.Y - topLeft.Y;
 				}
@@ -136,14 +136,14 @@ namespace ClearCanvas.ImageViewer.Layers
 
 		public event EventHandler<PointChangedEventArgs> TopLeftChanged
 		{
-			add { m_TopLeftChangedEvent += value; }
-			remove { m_TopLeftChangedEvent -= value; }
+			add { _TopLeftChangedEvent += value; }
+			remove { _TopLeftChangedEvent -= value; }
 		}
 
 		public event EventHandler<PointChangedEventArgs> BottomRightChanged
 		{
-			add { m_BottomRightChangedEvent += value; }
-			remove { m_BottomRightChangedEvent -= value; }
+			add { _BottomRightChangedEvent += value; }
+			remove { _BottomRightChangedEvent -= value; }
 		}
 
 		public override bool HitTest(XMouseEventArgs e)
@@ -203,11 +203,11 @@ namespace ClearCanvas.ImageViewer.Layers
 		public bool Contains(PointF point)
 		{
 			if (base.CoordinateSystem == CoordinateSystem.Source)
-				return m_Rectangle.Contains(point);
+				return _Rectangle.Contains(point);
 			else
 			{
 				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-				return m_Rectangle.Contains(base.SpatialTransform.ConvertToSource(point));
+				return _Rectangle.Contains(base.SpatialTransform.ConvertToSource(point));
 			}
 		}
 	}

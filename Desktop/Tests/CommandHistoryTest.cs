@@ -11,10 +11,10 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 	[TestFixture]
 	public class CommandHistoryTest
 	{
-		public static string m_Message;
-		//public string m_CommandAddedEventMessage;
-		//public string m_ReachedCommandHistoryBeginningEventMessage;
-		//public string m_ReachedCommandHistoryEndEventMessage;
+		public static string _Message;
+		//public string _CommandAddedEventMessage;
+		//public string _ReachedCommandHistoryBeginningEventMessage;
+		//public string _ReachedCommandHistoryEndEventMessage;
 
 		public CommandHistoryTest()
 		{
@@ -51,37 +51,37 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 			// Undo all commands we've added 
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand4", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand4", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand3", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand3", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand2", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand2", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand1", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand1", _Message);
 
 			// Try to undo two extra times, even though we should be at the beginning
-			m_Message = String.Empty;
+			_Message = String.Empty;
 			history.Undo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 			history.Undo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 
 			// Redo all commands we've added
 			history.Redo();
-			Assert.AreEqual("Executed TestCommand1", m_Message);
+			Assert.AreEqual("Executed TestCommand1", _Message);
 			history.Redo();
-			Assert.AreEqual("Executed TestCommand2", m_Message);
+			Assert.AreEqual("Executed TestCommand2", _Message);
 			history.Redo();
-			Assert.AreEqual("Executed TestCommand3", m_Message);
+			Assert.AreEqual("Executed TestCommand3", _Message);
 			history.Redo();
-			Assert.AreEqual("Executed TestCommand4", m_Message);
+			Assert.AreEqual("Executed TestCommand4", _Message);
 
 			// Try to redo two extra times, even though we should be at the end
-			m_Message = String.Empty;
+			_Message = String.Empty;
 			history.Redo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 			history.Redo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 
 			// Add another command
 			TestCommand5 cmd5 = new TestCommand5();
@@ -91,11 +91,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 			// Undo a couple times
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand5", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand5", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand4", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand4", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand3", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand3", _Message);
 
 			// Now add a new command
 			TestCommand6 cmd6 = new TestCommand6();
@@ -104,15 +104,15 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 			Assert.AreEqual(3, history.NumCommands);
 			
 			// Try to redo again
-			m_Message = String.Empty;
+			_Message = String.Empty;
 			history.Redo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 
 			// Undo again
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand6", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand6", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand2", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand2", _Message);
 		}
 
 		[Test]
@@ -131,11 +131,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 			Assert.AreEqual(0, history.NumCommands);
 
 			// Try to undo/redo on an empty history
-			m_Message = String.Empty;
+			_Message = String.Empty;
 			history.Undo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 			history.Redo();
-			Assert.AreEqual(String.Empty, m_Message);
+			Assert.AreEqual(String.Empty, _Message);
 		}
 
 		[Test]
@@ -161,11 +161,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 			// Undo all commands
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand4", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand4", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand3", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand3", _Message);
 			history.Undo();
-			Assert.AreEqual("Unexecuted TestCommand2", m_Message);
+			Assert.AreEqual("Unexecuted TestCommand2", _Message);
 
 			// We've undone all the commands; test the boundary
 			// by adding a new one
@@ -177,9 +177,9 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		[Test]
 		public void SubscribeToEvents()
 		{
-			//m_CommandAddedEventMessage = String.Empty;
-			//m_ReachedCommandHistoryBeginningEventMessage = String.Empty;
-			//m_ReachedCommandHistoryEndEventMessage = String.Empty;
+			//_CommandAddedEventMessage = String.Empty;
+			//_ReachedCommandHistoryBeginningEventMessage = String.Empty;
+			//_ReachedCommandHistoryEndEventMessage = String.Empty;
 
 			int maxSize = 3;
 			CommandHistory history = new CommandHistory(maxSize);
@@ -193,27 +193,27 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 			TestCommand3 cmd3 = new TestCommand3();
 
 			history.AddCommand(cmd1);
-			//Assert.AreEqual("TestCommand1", m_CommandAddedEventMessage);
+			//Assert.AreEqual("TestCommand1", _CommandAddedEventMessage);
 			history.AddCommand(cmd2);
-			//Assert.AreEqual("TestCommand2", m_CommandAddedEventMessage);
+			//Assert.AreEqual("TestCommand2", _CommandAddedEventMessage);
 			history.AddCommand(cmd3);
-			//Assert.AreEqual("TestCommand3", m_CommandAddedEventMessage);
+			//Assert.AreEqual("TestCommand3", _CommandAddedEventMessage);
 
 			// Undo them all
 			history.Undo();
-			//Assert.AreEqual(String.Empty, m_ReachedCommandHistoryBeginningEventMessage);
+			//Assert.AreEqual(String.Empty, _ReachedCommandHistoryBeginningEventMessage);
 			history.Undo();
-			//Assert.AreEqual(String.Empty, m_ReachedCommandHistoryBeginningEventMessage);
+			//Assert.AreEqual(String.Empty, _ReachedCommandHistoryBeginningEventMessage);
 			history.Undo();
-			//Assert.AreEqual("ReachedBeginning", m_ReachedCommandHistoryBeginningEventMessage);
+			//Assert.AreEqual("ReachedBeginning", _ReachedCommandHistoryBeginningEventMessage);
 
 			// Redo them all
 			history.Redo();
-			//Assert.AreEqual(String.Empty, m_ReachedCommandHistoryEndEventMessage);
+			//Assert.AreEqual(String.Empty, _ReachedCommandHistoryEndEventMessage);
 			history.Redo();
-			//Assert.AreEqual(String.Empty, m_ReachedCommandHistoryEndEventMessage);
+			//Assert.AreEqual(String.Empty, _ReachedCommandHistoryEndEventMessage);
 			history.Redo();
-			//Assert.AreEqual("ReachedEnd", m_ReachedCommandHistoryEndEventMessage);
+			//Assert.AreEqual("ReachedEnd", _ReachedCommandHistoryEndEventMessage);
 
 		}
 
@@ -221,17 +221,17 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		private void OnCommandAdded(object sender, EventArgs e)
 		{
 			CommandAddedEventArgs args = (CommandAddedEventArgs) e;
-			//m_CommandAddedEventMessage = args.Command.Name;
+			//_CommandAddedEventMessage = args.Command.Name;
 		}*/
 
 /*		private void OnReachedCommandHistoryBeginning(object sender, EventArgs e)
 		{
-			m_ReachedCommandHistoryBeginningEventMessage = "ReachedBeginning";
+			_ReachedCommandHistoryBeginningEventMessage = "ReachedBeginning";
 		}
 
 		private void OnReachedCommandHistoryEnd(object sender, EventArgs e)
 		{
-			m_ReachedCommandHistoryEndEventMessage = "ReachedEnd";
+			_ReachedCommandHistoryEndEventMessage = "ReachedEnd";
 		}
 */	}
 
@@ -245,13 +245,13 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		public override void Execute()
 		{
 			base.Execute();
-			CommandHistoryTest.m_Message = "Executed TestCommand1";
+			CommandHistoryTest._Message = "Executed TestCommand1";
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			CommandHistoryTest.m_Message = "Unexecuted TestCommand1";
+			CommandHistoryTest._Message = "Unexecuted TestCommand1";
 		}
 	}
 
@@ -265,13 +265,13 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		public override void Execute()
 		{
 			base.Execute();
-			CommandHistoryTest.m_Message = "Executed TestCommand2";
+			CommandHistoryTest._Message = "Executed TestCommand2";
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			CommandHistoryTest.m_Message = "Unexecuted TestCommand2";
+			CommandHistoryTest._Message = "Unexecuted TestCommand2";
 		}
 	}
 
@@ -285,13 +285,13 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		public override void Execute()
 		{
 			base.Execute();
-			CommandHistoryTest.m_Message = "Executed TestCommand3";
+			CommandHistoryTest._Message = "Executed TestCommand3";
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			CommandHistoryTest.m_Message = "Unexecuted TestCommand3";
+			CommandHistoryTest._Message = "Unexecuted TestCommand3";
 		}
 	}
 
@@ -305,13 +305,13 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		public override void Execute()
 		{
 			base.Execute();
-			CommandHistoryTest.m_Message = "Executed TestCommand4";
+			CommandHistoryTest._Message = "Executed TestCommand4";
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			CommandHistoryTest.m_Message = "Unexecuted TestCommand4";
+			CommandHistoryTest._Message = "Unexecuted TestCommand4";
 		}
 	}
 
@@ -325,13 +325,13 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		public override void Execute()
 		{
 			base.Execute();
-			CommandHistoryTest.m_Message = "Executed TestCommand5";
+			CommandHistoryTest._Message = "Executed TestCommand5";
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			CommandHistoryTest.m_Message = "Unexecuted TestCommand5";
+			CommandHistoryTest._Message = "Unexecuted TestCommand5";
 		}
 	}
 
@@ -345,13 +345,13 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 		public override void Execute()
 		{
 			base.Execute();
-			CommandHistoryTest.m_Message = "Executed TestCommand6";
+			CommandHistoryTest._Message = "Executed TestCommand6";
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			CommandHistoryTest.m_Message = "Unexecuted TestCommand6";
+			CommandHistoryTest._Message = "Unexecuted TestCommand6";
 		}
 	}
 }

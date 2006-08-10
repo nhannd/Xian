@@ -15,8 +15,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class InteractiveHitTestInfo
 	{
-		private ActiveZones m_ActiveZone;
-		private int m_ControlPoint;
+		private ActiveZones _ActiveZone;
+		private int _ControlPoint;
 
 		public InteractiveHitTestInfo()
 		{
@@ -26,12 +26,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			get
 			{
-				return m_ActiveZone;
+				return _ActiveZone;
 			}
 			set
 			{
 				Platform.CheckForNullReference(value, "ActiveZone");
-				m_ActiveZone = value;
+				_ActiveZone = value;
 			}
 		}
 
@@ -39,11 +39,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			get
 			{
-				return m_ControlPoint;
+				return _ControlPoint;
 			}
 			set
 			{
-				m_ControlPoint = value;
+				_ControlPoint = value;
 			}
 		}
 	}

@@ -351,8 +351,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (!_recalculationRequired)
 				return;
 
-			Platform.CheckForNullReference(_sourceRectangle, "m_SourceRectangle");
-			Platform.CheckForNullReference(_destinationRectangle, "m_DestinationRectangle");
+			Platform.CheckForNullReference(_sourceRectangle, "_SourceRectangle");
+			Platform.CheckForNullReference(_destinationRectangle, "_DestinationRectangle");
 
 			// Don't bother calculating anything if the area of either rectangle is zero
 			if (_sourceRectangle.Width == 0 || _sourceRectangle.Height == 0 ||

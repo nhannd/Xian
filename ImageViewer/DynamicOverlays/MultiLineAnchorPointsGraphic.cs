@@ -13,10 +13,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	public class MultiLineAnchorPointsGraphic 
 		: Graphic, IObservableList<PointF, AnchorPointEventArgs>, IMemorable
 	{
-		private int m_NumberOfPoints = 0;
-		private event EventHandler<AnchorPointEventArgs> m_ItemAddedEvent;
-		private event EventHandler<AnchorPointEventArgs> m_ItemRemovedEvent;
-		private event EventHandler<AnchorPointEventArgs> m_AnchorPointChangedEvent;
+		private int _NumberOfPoints = 0;
+		private event EventHandler<AnchorPointEventArgs> _ItemAddedEvent;
+		private event EventHandler<AnchorPointEventArgs> _ItemRemovedEvent;
+		private event EventHandler<AnchorPointEventArgs> _AnchorPointChangedEvent;
 
 		public MultiLineAnchorPointsGraphic()
 		{
@@ -24,22 +24,22 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public event EventHandler<AnchorPointEventArgs> AnchorPointChangedEvent
 		{
-			add { m_AnchorPointChangedEvent += value; }
-			remove { m_AnchorPointChangedEvent -= value; }
+			add { _AnchorPointChangedEvent += value; }
+			remove { _AnchorPointChangedEvent -= value; }
 		}
 		
 		#region IObservableCollection<PointF, AnchorPointEventArgs> Members
 
 		public event EventHandler<AnchorPointEventArgs> ItemAdded
 		{
-			add { m_ItemAddedEvent += value; }
-			remove { m_ItemAddedEvent -= value; }
+			add { _ItemAddedEvent += value; }
+			remove { _ItemAddedEvent -= value; }
 		}
 
 		public event EventHandler<AnchorPointEventArgs> ItemRemoved
 		{
-			add { m_ItemRemovedEvent += value; }
-			remove { m_ItemRemovedEvent -= value; }
+			add { _ItemRemovedEvent += value; }
+			remove { _ItemRemovedEvent -= value; }
 		}
 
 		#endregion
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public void Add(PointF point)
 		{
-			m_NumberOfPoints++;
+			_NumberOfPoints++;
 
 			if (this.Count == 1)
 			{
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public void Clear()
 		{
 			base.Graphics.Clear();
-			m_NumberOfPoints = 0;
+			_NumberOfPoints = 0;
 		}
 
 		public bool Contains(PointF item)
@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public int Count
 		{
-			get { return m_NumberOfPoints; }
+			get { return _NumberOfPoints; }
 		}
 
 		public bool IsReadOnly
@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		private void NotifyListeners(int anchorPointIndex, PointF anchorPoint)
 		{
-			EventsHelper.Fire(m_AnchorPointChangedEvent, this, new AnchorPointEventArgs(anchorPointIndex, anchorPoint));
+			EventsHelper.Fire(_AnchorPointChangedEvent, this, new AnchorPointEventArgs(anchorPointIndex, anchorPoint));
 		}
 	}
 }

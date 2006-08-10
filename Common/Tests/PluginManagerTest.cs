@@ -12,62 +12,62 @@ namespace ClearCanvas.Common.Tests
 	[TestFixture]
 	public class PluginManagerTest
 	{
-		private string m_TestDir;
-		private string m_RootPluginDir;
-		private string m_Plugin1Dir;
-		private string m_Plugin2Dir;
-		private string m_Plugin3Dir;
-		private string m_ProjectPath;
-		private string m_ClearCanvasViewerPath;
-		private string m_ClearCanvasCommonPlatformPath;
-		private string m_ClearCanvasViewerCorePath;
-		private string m_ClearCanvasViewerUIPath;
+		private string _TestDir;
+		private string _RootPluginDir;
+		private string _Plugin1Dir;
+		private string _Plugin2Dir;
+		private string _Plugin3Dir;
+		private string _ProjectPath;
+		private string _ClearCanvasViewerPath;
+		private string _ClearCanvasCommonPlatformPath;
+		private string _ClearCanvasViewerCorePath;
+		private string _ClearCanvasViewerUIPath;
 
 		public PluginManagerTest()
 		{
-			m_TestDir = @"c:\test";
-			m_RootPluginDir = m_TestDir + @"\plugins";
-			m_Plugin1Dir = m_RootPluginDir + @"\plugin1";
-			m_Plugin2Dir = m_RootPluginDir + @"\plugin2";
-			m_Plugin3Dir = m_RootPluginDir + @"\plugin3";
-			m_ProjectPath = @"C:\VSProjects";
-			m_ClearCanvasViewerPath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\bin\Debug\ClearCanvas.Workstation.exe";
-			m_ClearCanvasCommonPlatformPath = m_ProjectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
-			m_ClearCanvasViewerCorePath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
-			m_ClearCanvasViewerUIPath = m_ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
+			_TestDir = @"c:\test";
+			_RootPluginDir = _TestDir + @"\plugins";
+			_Plugin1Dir = _RootPluginDir + @"\plugin1";
+			_Plugin2Dir = _RootPluginDir + @"\plugin2";
+			_Plugin3Dir = _RootPluginDir + @"\plugin3";
+			_ProjectPath = @"C:\VSProjects";
+			_ClearCanvasViewerPath = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\bin\Debug\ClearCanvas.Workstation.exe";
+			_ClearCanvasCommonPlatformPath = _ProjectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
+			_ClearCanvasViewerCorePath = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
+			_ClearCanvasViewerUIPath = _ProjectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
 		}
 
 		public void CopyPluginFiles()
 		{
-			File.Copy(m_ClearCanvasViewerCorePath, m_Plugin1Dir + @"\ClearCanvas.Workstation.Model.dll", true);
-			File.Copy(m_ClearCanvasViewerUIPath, m_Plugin2Dir + @"\ClearCanvas.Workstation.View.dll", true);
+			File.Copy(_ClearCanvasViewerCorePath, _Plugin1Dir + @"\ClearCanvas.Workstation.Model.dll", true);
+			File.Copy(_ClearCanvasViewerUIPath, _Plugin2Dir + @"\ClearCanvas.Workstation.View.dll", true);
 		}
 
 		[TestFixtureSetUp]
 		public void Init()
 		{
 			// Create plugin directories
-			Directory.CreateDirectory(m_Plugin1Dir);
-			Directory.CreateDirectory(m_Plugin2Dir);
-			Directory.CreateDirectory(m_Plugin3Dir);
+			Directory.CreateDirectory(_Plugin1Dir);
+			Directory.CreateDirectory(_Plugin2Dir);
+			Directory.CreateDirectory(_Plugin3Dir);
 		}
 		
 		[TestFixtureTearDown]
 		public void Cleanup()
 		{
 			// Get rid of the test directory
-			Directory.Delete(m_TestDir, true);
+			Directory.Delete(_TestDir, true);
 		}
 
 		[Test]
 		public void LoadPlugins()
 		{
 			CopyPluginFiles();
-			PluginManager pm = new PluginManager(m_RootPluginDir);
+			PluginManager pm = new PluginManager(_RootPluginDir);
 
 			StringCollection pluginFileList = new StringCollection();
-			pluginFileList.Add(m_ClearCanvasViewerCorePath);
-			pluginFileList.Add(m_ClearCanvasViewerUIPath);
+			pluginFileList.Add(_ClearCanvasViewerCorePath);
+			pluginFileList.Add(_ClearCanvasViewerUIPath);
 
 //TODO			pm.LoadPlugins(pluginFileList);
 

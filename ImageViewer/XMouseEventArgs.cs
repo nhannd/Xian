@@ -8,97 +8,97 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class XMouseEventArgs : EventArgs, ICloneable
 	{
-		private XMouseButtons m_Button;
-		private int m_Clicks;
-		private int m_X;
-		private int m_Y;
-		private int m_Delta;
-		private XKeys m_ModifierKeys;
-		private ImageBox m_SelectedImageBox;
-		private Tile m_SelectedTile;
-		private PresentationImage m_SelectedPresentationImage;
-		private DisplaySet m_SelectedDisplaySet;
+		private XMouseButtons _Button;
+		private int _Clicks;
+		private int _X;
+		private int _Y;
+		private int _Delta;
+		private XKeys _ModifierKeys;
+		private ImageBox _SelectedImageBox;
+		private Tile _SelectedTile;
+		private PresentationImage _SelectedPresentationImage;
+		private DisplaySet _SelectedDisplaySet;
 
 		public XMouseEventArgs(XMouseButtons button, int clicks, int x, int y, int delta, XKeys modifierKeys)
 		{
 			Platform.CheckForNullReference(button, "button");
 			Platform.CheckForNullReference(modifierKeys, "modifierKeys");
 
-			m_Button = button;
-			m_Clicks = clicks;
-			m_X = x;
-			m_Y = y;
-			m_Delta = delta;
-			m_ModifierKeys = modifierKeys;
+			_Button = button;
+			_Clicks = clicks;
+			_X = x;
+			_Y = y;
+			_Delta = delta;
+			_ModifierKeys = modifierKeys;
 		}
 
 		public XMouseButtons Button
 		{
-			get { return m_Button; }
+			get { return _Button; }
 		}
 
 		public int Clicks
 		{
-			get { return m_Clicks; }
+			get { return _Clicks; }
 		}
 
 		public int X
 		{
-			get { return m_X; }
+			get { return _X; }
 		}
 		
 		public int Y
 		{
-			get { return m_Y; }
+			get { return _Y; }
 		}
 		
 		public int Delta
 		{
-			get { return m_Delta; }
+			get { return _Delta; }
 		}
 
 		public XKeys ModifierKeys
 		{
-			get { return m_ModifierKeys; }
+			get { return _ModifierKeys; }
 		}
 
 		public ImageBox SelectedImageBox
 		{
-			get { return m_SelectedImageBox; }
+			get { return _SelectedImageBox; }
 			set 
 			{ 
 				Platform.CheckForNullReference(value, "SelectedImageBox");
-				m_SelectedImageBox = value; 
+				_SelectedImageBox = value; 
 			}
 		}
 		
 		public Tile SelectedTile
 		{
-			get { return m_SelectedTile; }
+			get { return _SelectedTile; }
 			set 
 			{ 
 				Platform.CheckForNullReference(value, "SelectedTile");
-				m_SelectedTile = value; 
+				_SelectedTile = value; 
 			}
 		}
 
 		public PresentationImage SelectedPresentationImage
 		{
-			get { return m_SelectedPresentationImage; }
+			get { return _SelectedPresentationImage; }
 			set 
 			{ 
 				Platform.CheckForNullReference(value, "SelectedPresentationImage");
-				m_SelectedPresentationImage = value; 
+				_SelectedPresentationImage = value; 
 			}
 		}
 
 		public DisplaySet SelectedDisplaySet
 		{
-			get { return m_SelectedDisplaySet; }
+			get { return _SelectedDisplaySet; }
 			set 
 			{ 
 				Platform.CheckForNullReference(value, "SelectedDisplaySet");
-				m_SelectedDisplaySet = value; 
+				_SelectedDisplaySet = value; 
 			}
 		}
 

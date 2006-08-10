@@ -8,8 +8,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class WindowLevelMemento : IMemento
 	{
-		private double m_WindowWidth = 1.0f;
-		private double m_WindowCenter = 0.0f;
+		private double _WindowWidth = 1.0f;
+		private double _WindowCenter = 0.0f;
 
 		public WindowLevelMemento()
 		{
@@ -18,14 +18,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public double WindowWidth
 		{
-			get { return m_WindowWidth; }
-			set { m_WindowWidth = value; }
+			get { return _WindowWidth; }
+			set { _WindowWidth = value; }
 		}
 
 		public double WindowCenter
 		{
-			get { return m_WindowCenter; }
-			set { m_WindowCenter = value; }
+			get { return _WindowCenter; }
+			set { _WindowCenter = value; }
 		}
 
 		public override bool Equals(object obj)

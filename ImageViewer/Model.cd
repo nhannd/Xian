@@ -60,7 +60,7 @@
       <HashCode>AAAAAAAAAABABAACEAAAAAAFAAAACAhBAgAAQAAAAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Field Name="m_History" />
+      <Field Name="History" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="ClearCanvas.Workstation.Model.ImageBox" Collapsed="true">

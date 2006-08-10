@@ -9,13 +9,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	public class SpatialTransformMemento : IMemento
 	{
-		private bool m_ScaleToFit;
-		private float m_Scale;
-		private float m_TranslationX;
-		private float m_TranslationY;
-		private int m_Rotation;
-		private bool m_FlipHorizontal;
-		private bool m_FlipVertical;
+		private bool _ScaleToFit;
+		private float _Scale;
+		private float _TranslationX;
+		private float _TranslationY;
+		private int _Rotation;
+		private bool _FlipHorizontal;
+		private bool _FlipVertical;
 
 		public SpatialTransformMemento()
 		{
@@ -25,11 +25,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_ScaleToFit;
+				return _ScaleToFit;
 			}
 			set
 			{
-				m_ScaleToFit = value;
+				_ScaleToFit = value;
 			}
 		}
 
@@ -37,11 +37,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_Scale;
+				return _Scale;
 			}
 			set
 			{
-				m_Scale = value;
+				_Scale = value;
 			}
 		}
 
@@ -49,11 +49,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_TranslationX;
+				return _TranslationX;
 			}
 			set
 			{
-				m_TranslationX = value;
+				_TranslationX = value;
 			}
 		}
 
@@ -61,11 +61,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_TranslationY;
+				return _TranslationY;
 			}
 			set
 			{
-				m_TranslationY = value;
+				_TranslationY = value;
 			}
 		}
 
@@ -73,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_FlipHorizontal;
+				return _FlipHorizontal;
 			}
 			set
 			{
-				m_FlipHorizontal = value;
+				_FlipHorizontal = value;
 			}
 		}
 
@@ -85,11 +85,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_FlipVertical;
+				return _FlipVertical;
 			}
 			set
 			{
-				m_FlipVertical = value;
+				_FlipVertical = value;
 			}
 		}
 
@@ -97,11 +97,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return m_Rotation;
+				return _Rotation;
 			}
 			set
 			{
-				m_Rotation = value;
+				_Rotation = value;
 			}
 		}
 

@@ -9,8 +9,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	internal class TileMemento : IMemento
 	{
-		private PresentationImage m_PresentationImage;
-		private ClientArea m_ClientArea;
+		private PresentationImage _PresentationImage;
+		private ClientArea _ClientArea;
 
 		public TileMemento(PresentationImage image, ClientArea clientArea)
 		{
@@ -18,18 +18,18 @@ namespace ClearCanvas.ImageViewer
 
 			// image can be null if the Tile is empty, so we don't check for null
 
-			m_PresentationImage = image;
-			m_ClientArea = clientArea;
+			_PresentationImage = image;
+			_ClientArea = clientArea;
 		}
 
 		public PresentationImage PresentationImage
 		{
-			get { return m_PresentationImage; }
+			get { return _PresentationImage; }
 		}
 
 		public ClientArea ClientArea
 		{
-			get { return m_ClientArea; }
+			get { return _ClientArea; }
 		}
 	}
 }

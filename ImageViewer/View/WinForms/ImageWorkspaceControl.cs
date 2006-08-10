@@ -18,8 +18,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-		private PhysicalWorkspace m_PhysicalWorkspace;
-		private IRenderer m_Renderer;
+		private PhysicalWorkspace _PhysicalWorkspace;
+		private IRenderer _Renderer;
 
 		public ImageWorkspaceControl(ImageWorkspace workspace)
 		{
@@ -32,8 +32,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			SetFormProperties();
 			CreateRenderer();
 
-			m_PhysicalWorkspace = workspace.PhysicalWorkspace;
-			m_PhysicalWorkspace.ImageDrawing += new EventHandler<ImageDrawingEventArgs>(OnImageDrawing);
+			_PhysicalWorkspace = workspace.PhysicalWorkspace;
+			_PhysicalWorkspace.ImageDrawing += new EventHandler<ImageDrawingEventArgs>(OnImageDrawing);
 		}
 
 		/// <summary>
@@ -43,8 +43,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			if( disposing )
 			{
-				if (m_Renderer != null)
-					m_Renderer.Dispose();
+				if (_Renderer != null)
+					_Renderer.Dispose();
 
 				if(components != null)
 				{
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private void CreateRenderer()
 		{
             RendererExtensionPoint xp = new RendererExtensionPoint();
-            m_Renderer = (IRenderer)xp.CreateExtension();
+            _Renderer = (IRenderer)xp.CreateExtension();
 		}
 
 		private void SetFormProperties()
@@ -99,37 +99,37 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			m_PhysicalWorkspace.OnMouseDown(ConvertToXMouseEventArgs(e));
+			_PhysicalWorkspace.OnMouseDown(ConvertToXMouseEventArgs(e));
 			base.OnMouseDown(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			m_PhysicalWorkspace.OnMouseMove(ConvertToXMouseEventArgs(e));
+			_PhysicalWorkspace.OnMouseMove(ConvertToXMouseEventArgs(e));
 			base.OnMouseMove(e);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			m_PhysicalWorkspace.OnMouseUp(ConvertToXMouseEventArgs(e));
+			_PhysicalWorkspace.OnMouseUp(ConvertToXMouseEventArgs(e));
 			base.OnMouseUp(e);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			m_PhysicalWorkspace.OnMouseWheel(ConvertToXMouseEventArgs(e));
+			_PhysicalWorkspace.OnMouseWheel(ConvertToXMouseEventArgs(e));
 			base.OnMouseWheel(e);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			m_PhysicalWorkspace.OnKeyDown(ConvertToXKeyEventArgs(e));
+			_PhysicalWorkspace.OnKeyDown(ConvertToXKeyEventArgs(e));
 			base.OnKeyDown(e);
 		}
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			m_PhysicalWorkspace.OnKeyUp(ConvertToXKeyEventArgs(e));
+			_PhysicalWorkspace.OnKeyUp(ConvertToXKeyEventArgs(e));
 			base.OnKeyUp(e);
 		}
 
@@ -138,8 +138,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			string str = String.Format("OnSizeChanged: {0}\n", this.ClientRectangle.ToString());
 			Trace.Write(str);
 
-			m_PhysicalWorkspace.ClientRectangle = this.ClientRectangle;
-			m_PhysicalWorkspace.Draw(false);
+			_PhysicalWorkspace.ClientRectangle = this.ClientRectangle;
+			_PhysicalWorkspace.Draw(false);
 			Invalidate();
 		}
 
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			Region paintRegion = null;
 
-			foreach (ImageBox imageBox in m_PhysicalWorkspace.ImageBoxes)
+			foreach (ImageBox imageBox in _PhysicalWorkspace.ImageBoxes)
 			{
 				foreach (Tile tile in imageBox.Tiles)
 				{
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (paintRegion == null)
 			{
 				// No custom drawable tiles; just paint normally
-				m_Renderer.Paint(e.Graphics, e.ClipRectangle);
+				_Renderer.Paint(e.Graphics, e.ClipRectangle);
 			}
 			else
 			{
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				RectangleF[] paintRects = paintRegion.GetRegionScans(new Matrix());
 
 				foreach (RectangleF rect in paintRects)
-					m_Renderer.Paint(e.Graphics, Rectangle.Round(rect));
+					_Renderer.Paint(e.Graphics, Rectangle.Round(rect));
 
 				paintRegion.Dispose();
 			}
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (customImage != null)
 				graphics = CreateGraphics();
 
-			m_Renderer.Draw(graphics, e);
+			_Renderer.Draw(graphics, e);
 
 			if (graphics != null)
 			{

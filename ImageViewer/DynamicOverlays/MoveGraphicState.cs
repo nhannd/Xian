@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class MoveGraphicState : GraphicState
 	{
-		private PointF m_CurrentPoint = new Point(0,0);
+		private PointF _CurrentPoint = new Point(0,0);
 
 		public MoveGraphicState(StatefulGraphic statefulGraphic)
 			: base(statefulGraphic)
@@ -38,15 +38,15 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			m_CurrentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			_CurrentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
 
 			base.StatefulGraphic.CoordinateSystem = CoordinateSystem.Source;
-			SizeF delta = Graphic.CalcGraphicPositionDelta(base.LastPoint, m_CurrentPoint);
+			SizeF delta = Graphic.CalcGraphicPositionDelta(base.LastPoint, _CurrentPoint);
 			base.StatefulGraphic.Move(delta);
 			base.StatefulGraphic.ResetCoordinateSystem();
 			base.StatefulGraphic.Draw();
 
-			base.LastPoint = m_CurrentPoint;
+			base.LastPoint = _CurrentPoint;
 
 			return true;
 		}

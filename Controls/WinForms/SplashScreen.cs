@@ -15,24 +15,24 @@ namespace ClearCanvas.Controls.WinForms
 	public partial class SplashScreen : Form
 	{
 		// Threading
-		static SplashScreen m_SplashForm = null;
-		static Thread m_Thread = null;
+		static SplashScreen _SplashForm = null;
+		static Thread _Thread = null;
 
 		// Fade in and out.
-		private double m_dblOpacityIncrement = .05;
-		private double m_dblOpacityDecrement = .08;
+		private double _dblOpacityIncrement = .05;
+		private double _dblOpacityDecrement = .08;
 
 		// Status and progress bar
 		static string ms_sStatus;
 
-		static double m_TotalTime = 0;
+		static double _TotalTime = 0;
 
 		public SplashScreen()
 		{
 			InitializeComponent();
-			this.m_StatusLabel.ForeColor = Color.FromArgb(60, 150, 208);
+			this._StatusLabel.ForeColor = Color.FromArgb(60, 150, 208);
 			this.Opacity = .00;
-			m_Timer.Start();
+			_Timer.Start();
 			this.ClientSize = this.BackgroundImage.Size;
 			Control.CheckForIllegalCrossThreadCalls = false;
 		}
@@ -44,13 +44,13 @@ namespace ClearCanvas.Controls.WinForms
 		static public void ShowSplashScreen()
 		{
 			// Make sure it's only launched once.
-			if (m_SplashForm != null)
+			if (_SplashForm != null)
 				return;
 
-			m_Thread = new Thread(new ThreadStart(SplashScreen.ShowForm));
-            m_Thread.IsBackground = true;
-            m_Thread.SetApartmentState(ApartmentState.STA);
-			m_Thread.Start();
+			_Thread = new Thread(new ThreadStart(SplashScreen.ShowForm));
+            _Thread.IsBackground = true;
+            _Thread.SetApartmentState(ApartmentState.STA);
+			_Thread.Start();
 		}
 
 		// A property returning the splash screen instance
@@ -58,27 +58,27 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				return m_SplashForm;
+				return _SplashForm;
 			}
 		}
 
 		// A private entry point for the thread.
 		static private void ShowForm()
 		{
-			m_SplashForm = new SplashScreen();
-			Application.Run(m_SplashForm);
+			_SplashForm = new SplashScreen();
+			Application.Run(_SplashForm);
 		}
 
 		// A static method to close the SplashScreen
 		static public void CloseForm()
 		{
-			if (m_SplashForm != null && m_SplashForm.IsDisposed == false)
+			if (_SplashForm != null && _SplashForm.IsDisposed == false)
 			{
 				// Make it start going away.
-				m_SplashForm.m_dblOpacityIncrement = -m_SplashForm.m_dblOpacityDecrement;
+				_SplashForm._dblOpacityIncrement = -_SplashForm._dblOpacityDecrement;
 			}
-			m_Thread = null;	// we don't need these any more.
-			//m_SplashForm = null;
+			_Thread = null;	// we don't need these any more.
+			//_SplashForm = null;
 		}
 
 		// A static method to set the status and update the reference.
@@ -102,24 +102,24 @@ namespace ClearCanvas.Controls.WinForms
 
 		// Tick Event handler for the Timer control.  Handle fade in and fade out.  Also
 		// handle the smoothed progress bar.
-		private void m_Timer_Tick(object sender, EventArgs e)
+		private void _Timer_Tick(object sender, EventArgs e)
 		{
-			m_StatusLabel.Text = ms_sStatus;
+			_StatusLabel.Text = ms_sStatus;
 
-			if (m_dblOpacityIncrement > 0)
+			if (_dblOpacityIncrement > 0)
 			{
 				if (this.Opacity < 1)
-					this.Opacity += m_dblOpacityIncrement;
+					this.Opacity += _dblOpacityIncrement;
 
 				//fade the form after 5 seconds...loading with native assemblies so hardly take any time at all...
-				m_TotalTime += m_Timer.Interval;
-				if (m_TotalTime > 5000)
+				_TotalTime += _Timer.Interval;
+				if (_TotalTime > 5000)
 					CloseForm();
 			}
 			else
 			{
 				if (this.Opacity > 0)
-					this.Opacity += m_dblOpacityIncrement;
+					this.Opacity += _dblOpacityIncrement;
 				else
 				{
 					this.Close();

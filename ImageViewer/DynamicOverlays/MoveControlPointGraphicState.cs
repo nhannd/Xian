@@ -10,8 +10,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class MoveControlPointGraphicState : GraphicState
 	{
-		private PointF m_CurrentPoint;
-		private int m_ControlPointIndex;
+		private PointF _CurrentPoint;
+		private int _ControlPointIndex;
 
 		// Edit an overlay object control point
 		public MoveControlPointGraphicState(
@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(interactiveGraphic, "interactiveGraphic");
 			Platform.CheckNonNegative(controlPointIndex, "controlPointIndex");
 
-			m_ControlPointIndex = controlPointIndex;
+			_ControlPointIndex = controlPointIndex;
 		}
 
 		private InteractiveGraphic InteractiveGraphic
@@ -53,14 +53,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (base.Command == null)
 				return false;
 
-			m_CurrentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
-			m_CurrentPoint = this.InteractiveGraphic.CalcControlPointPosition(m_ControlPointIndex, base.LastPoint, m_CurrentPoint);
+			_CurrentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			_CurrentPoint = this.InteractiveGraphic.CalcControlPointPosition(_ControlPointIndex, base.LastPoint, _CurrentPoint);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
-			this.InteractiveGraphic.ControlPoints[m_ControlPointIndex] = m_CurrentPoint;
+			this.InteractiveGraphic.ControlPoints[_ControlPointIndex] = _CurrentPoint;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 
-			base.LastPoint = m_CurrentPoint;
+			base.LastPoint = _CurrentPoint;
 
 			return true;
 		}

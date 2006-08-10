@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class ControlPointsGraphic : Graphic, IObservableList<PointF, ControlPointEventArgs>
 	{
-		private event EventHandler<ControlPointEventArgs> m_ControlPointChangedEvent;
+		private event EventHandler<ControlPointEventArgs> _ControlPointChangedEvent;
 
 		public ControlPointsGraphic()
 		{
@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public event EventHandler<ControlPointEventArgs> ControlPointChangedEvent
 		{
-			add { m_ControlPointChangedEvent += value; }
-			remove { m_ControlPointChangedEvent -= value; }
+			add { _ControlPointChangedEvent += value; }
+			remove { _ControlPointChangedEvent -= value; }
 		}
 
 		#region IObservableCollection<PointF,ControlPointEventArgs> Members
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		private void OnControlPointChanged(object sender, ControlPointEventArgs e)
 		{
-			EventsHelper.Fire(m_ControlPointChangedEvent, this, e);
+			EventsHelper.Fire(_ControlPointChangedEvent, this, e);
 		}
 	}
 }

@@ -7,9 +7,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	/// </summary>
 	public class SpatialMeasurementParams
 	{
-		double m_PixelSpacingX;
-		double m_PixelSpacingY;
-		MeasurementUnits m_Units;
+		double _PixelSpacingX;
+		double _PixelSpacingY;
+		MeasurementUnits _Units;
 
 		public enum MeasurementUnits
 		{
@@ -25,11 +25,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			get
 			{
-				return m_PixelSpacingX;
+				return _PixelSpacingX;
 			}
 			set
 			{
-				m_PixelSpacingX = value;
+				_PixelSpacingX = value;
 			}
 		}
 
@@ -37,11 +37,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			get
 			{
-				return m_PixelSpacingY;
+				return _PixelSpacingY;
 			}
 			set
 			{
-				m_PixelSpacingY = value;
+				_PixelSpacingY = value;
 			}
 		}
 
@@ -49,11 +49,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			get
 			{
-				return m_Units;
+				return _Units;
 			}
 			set
 			{
-				m_Units = value;
+				_Units = value;
 			}
 		}
 	}

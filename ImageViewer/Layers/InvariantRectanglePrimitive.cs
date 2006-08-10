@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public class InvariantRectanglePrimitive : InvariantPrimitive
 	{
-		private RectangleF m_Rectangle = new RectangleF(0,0,0,0);
+		private RectangleF _Rectangle = new RectangleF(0,0,0,0);
 
 		public InvariantRectanglePrimitive()
 		{
@@ -32,15 +32,15 @@ namespace ClearCanvas.ImageViewer.Layers
 				}
 				else
 				{
-					return new PointF(base.AnchorPoint.X + m_Rectangle.Location.X, base.AnchorPoint.Y + m_Rectangle.Location.Y);
+					return new PointF(base.AnchorPoint.X + _Rectangle.Location.X, base.AnchorPoint.Y + _Rectangle.Location.Y);
 				}
 			}
 		}
 
 		public PointF InvariantTopLeft
 		{
-			get { return m_Rectangle.Location; }
-			set { m_Rectangle.Location = value; }
+			get { return _Rectangle.Location; }
+			set { _Rectangle.Location = value; }
 		}
 
 		public PointF BottomRight
@@ -68,12 +68,12 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			get
 			{
-				return new PointF(m_Rectangle.X + m_Rectangle.Width, m_Rectangle.Y + m_Rectangle.Height);
+				return new PointF(_Rectangle.X + _Rectangle.Width, _Rectangle.Y + _Rectangle.Height);
 			}
 			set
 			{
-				m_Rectangle.Width = value.X - m_Rectangle.X;
-				m_Rectangle.Height = value.Y - m_Rectangle.Y;
+				_Rectangle.Width = value.X - _Rectangle.X;
+				_Rectangle.Height = value.Y - _Rectangle.Y;
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Layers
 				}
 				else
 				{
-					return m_Rectangle.Width;
+					return _Rectangle.Width;
 				}
 			}
 		}
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Layers
 				}
 				else
 				{
-					return m_Rectangle.Height;
+					return _Rectangle.Height;
 				}
 			}
 		}
