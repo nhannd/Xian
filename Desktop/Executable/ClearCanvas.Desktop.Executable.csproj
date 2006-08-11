@@ -175,6 +175,7 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\ImageViewer\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Renderer\GDI\BilinearInterpolation\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.BilinearInterpolation.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyFinders\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins

@@ -152,6 +152,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			get { return this.PlanarConfiguration == 1; }
 		}
 
+        public bool IsSigned
+        {
+            get { return this.PixelRepresentation != 0; }
+        }
+
 		/// <summary>
 		/// Gets a value indicating whether image is aligned on a 4-byte boundary
 		/// </summary>

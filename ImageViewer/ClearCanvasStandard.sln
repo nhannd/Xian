@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Stu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Codecs", "..\Codecs\ClearCanvas.Codecs.csproj", "{86463672-CB30-41E7-BF90-36AF6CDA6729}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearCanvas.ImageViewer.Renderer.GDI.BilinearInterpolation", "Renderer\GDI\BilinearInterpolation\ClearCanvas.ImageViewer.Renderer.GDI.BilinearInterpolation.vcproj", "{D664F974-7780-481F-9404-45C09035CC1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +197,9 @@ Global
 		{86463672-CB30-41E7-BF90-36AF6CDA6729}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86463672-CB30-41E7-BF90-36AF6CDA6729}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86463672-CB30-41E7-BF90-36AF6CDA6729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D664F974-7780-481F-9404-45C09035CC1F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{D664F974-7780-481F-9404-45C09035CC1F}.Debug|Any CPU.Build.0 = Debug|Win32
+		{D664F974-7780-481F-9404-45C09035CC1F}.Release|Any CPU.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
