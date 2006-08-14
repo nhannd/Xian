@@ -5,7 +5,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer _components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -13,9 +13,9 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (_components != null))
             {
-                components.Dispose();
+                _components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             this._buttonOk.TabIndex = 10;
             this._buttonOk.Text = "OK";
             this._buttonOk.UseVisualStyleBackColor = true;
-            this._buttonOk.Click += new System.EventHandler(this._buttonOk_Click);
+            this._buttonOk.Click += new System.EventHandler(this.ButtonOk_Click);
             // 
             // _buttonCancel
             // 
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             this._buttonCancel.TabIndex = 11;
             this._buttonCancel.Text = "Cancel";
             this._buttonCancel.UseVisualStyleBackColor = true;
-            this._buttonCancel.Click += new System.EventHandler(this._buttonCancel_Click);
+            this._buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // ServerModifyForm
             // 

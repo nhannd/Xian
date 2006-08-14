@@ -24,17 +24,17 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 		{
 			InitializeComponent();
 
-			this.GoToComboBox.Items.Add(_myStudies);
-			this.GoToComboBox.Items.Add(_hardDisk);
-			this.GoToComboBox.Items.Add(_myDocuments);
-			this.GoToComboBox.Items.Add(_desktop);
+			this._goToComboBox.Items.Add(_myStudies);
+			this._goToComboBox.Items.Add(_hardDisk);
+			this._goToComboBox.Items.Add(_myDocuments);
+			this._goToComboBox.Items.Add(_desktop);
 
-			this.ToolStrip.Layout += new LayoutEventHandler(ToolStrip_Layout);
-			this.FileSystemTreeView.AfterSelect += new TreeViewEventHandler(FileSystemTreeView_AfterSelect);
-			this.LoadButton.Click += new EventHandler(OnOpenImage);
-			this.LoadMenuItem.Click += new EventHandler(OnOpenImage);
-			this.GoToComboBox.SelectedIndexChanged += new EventHandler(GoToComboBox_SelectedIndexChanged);
-			this.FileSystemTreeView.MouseDoubleClick += new MouseEventHandler(FileSystemTreeView_MouseDoubleClick);
+			this._toolStrip.Layout += new LayoutEventHandler(ToolStrip_Layout);
+			this._fileSystemTreeView.AfterSelect += new TreeViewEventHandler(FileSystemTreeView_AfterSelect);
+			this._loadButton.Click += new EventHandler(OnOpenImage);
+			this._loadMenuItem.Click += new EventHandler(OnOpenImage);
+			this._goToComboBox.SelectedIndexChanged += new EventHandler(GoToComboBox_SelectedIndexChanged);
+			this._fileSystemTreeView.MouseDoubleClick += new MouseEventHandler(FileSystemTreeView_MouseDoubleClick);
 		}
 
 
@@ -46,8 +46,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 
 		public string HeaderText
 		{
-			get { return this.HeaderLabel.Text; }
-			set { this.HeaderLabel.Text = value; }
+			get { return this._headerLabel.Text; }
+			set { this._headerLabel.Text = value; }
 		}
 
 		public string SelectedPath
@@ -57,18 +57,18 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 
 		public void Initialize()
 		{
-			this.GoToComboBox.SelectedIndex = 0;
+			this._goToComboBox.SelectedIndex = 0;
 		}
 
 		private void LoadDirectory(string directoryPath)
 		{
-			this.FileSystemTreeView.Load(directoryPath);
+			this._fileSystemTreeView.Load(directoryPath);
 
-			TreeNodeCollection nodes = this.FileSystemTreeView.Nodes;
+			TreeNodeCollection nodes = this._fileSystemTreeView.Nodes;
 
 			// Select the root node by default
 			if (nodes.Count > 0)
-				this.FileSystemTreeView.SelectedNode = nodes[0];
+				this._fileSystemTreeView.SelectedNode = nodes[0];
 		}
 
 		private void FileSystemTreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -87,8 +87,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 					_selectedPath = directoryNode.DirectoryInfo.FullName;
 			}
 
-			this.PathBox.Text = _selectedPath;
-			this.PathBox.ToolTipText = _selectedPath;
+			this._pathBox.Text = _selectedPath;
+			this._pathBox.ToolTipText = _selectedPath;
 		}
 
 		private void OnOpenImage(object sender, EventArgs e)
@@ -100,29 +100,29 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 		{
 			// Make the path box fill remaining width of the toolstrip
 			// Code taken from MSDN forums
-			int width = this.ToolStrip.DisplayRectangle.Width;
+			int width = this._toolStrip.DisplayRectangle.Width;
 
-			foreach (ToolStripItem tsi in this.ToolStrip.Items)
+			foreach (ToolStripItem tsi in this._toolStrip.Items)
 			{
-				if (!(tsi == this.PathBox))
+				if (!(tsi == this._pathBox))
 				{
 					width -= tsi.Width;
 					width -= tsi.Margin.Horizontal;
 				}
 			}
 
-			this.PathBox.Width = Math.Max(0, width - this.PathBox.Margin.Horizontal);
+			this._pathBox.Width = Math.Max(0, width - this._pathBox.Margin.Horizontal);
 		}
 
 		private void FileSystemTreeView_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			if (this.FileSystemTreeView.SelectedNode is FileNode)
+			if (this._fileSystemTreeView.SelectedNode is FileNode)
 				EventsHelper.Fire(_openImageEvent, this, EventArgs.Empty);
 		}
 
 		private void GoToComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			string selectedRootFolder = this.GoToComboBox.SelectedItem.ToString();
+			string selectedRootFolder = this._goToComboBox.SelectedItem.ToString();
 			string rootFolder;
 
 			if (selectedRootFolder == _myStudies)

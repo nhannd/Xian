@@ -14,8 +14,8 @@ namespace ClearCanvas.Desktop.Help
 		{
 			InitializeComponent();
 
-			this.CloseButton.ForeColor = Color.FromArgb(60, 150, 208);
-			this.CloseButton.Click += new EventHandler(CloseButton_Click);
+			this._closeButton.ForeColor = Color.FromArgb(60, 150, 208);
+			this._closeButton.Click += new EventHandler(CloseButton_Click);
 		}
 
 		private void CloseButton_Click(object sender, EventArgs e)

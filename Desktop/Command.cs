@@ -4,7 +4,7 @@ namespace ClearCanvas.Desktop
 {
 	public abstract class Command
 	{
-		private string _Name;
+		private string _name;
 
 		public Command()
 		{
@@ -12,8 +12,8 @@ namespace ClearCanvas.Desktop
 
 		public string Name
 		{
-			get { return _Name; }
-			set { _Name = value; }
+			get { return _name; }
+			set { _name = value; }
 		}
 
 		public abstract void Execute();

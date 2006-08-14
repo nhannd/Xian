@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class AnchorPointEventArgs : CollectionEventArgs<PointF>
 	{
-		private int _AnchorPointIndex;
+		private int _anchorPointIndex;
 
 		public AnchorPointEventArgs()
 		{
@@ -19,14 +19,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckNonNegative(anchorPointIndex, "anchorPointIndex");
 
-			_AnchorPointIndex = anchorPointIndex;
+			_anchorPointIndex = anchorPointIndex;
 			base.Item = anchorPoint;
 		}
 
 		public int AnchorPointIndex
 		{
-			get { return _AnchorPointIndex; }
-			set { _AnchorPointIndex = value; }
+			get { return _anchorPointIndex; }
+			set { _anchorPointIndex = value; }
 		}
 
 		public PointF AnchorPoint { get { return base.Item; } }

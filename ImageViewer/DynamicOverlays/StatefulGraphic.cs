@@ -8,9 +8,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public abstract class StatefulGraphic : Graphic
 	{
-		private GraphicState _State;
-		private XMouseEventArgs _MouseArgs;
-		private event EventHandler<GraphicStateChangedEventArgs> _StateChangedEvent;
+		private GraphicState _state;
+		private XMouseEventArgs _mouseArgs;
+		private event EventHandler<GraphicStateChangedEventArgs> _stateChangedEvent;
 
 		public StatefulGraphic()
 		{
@@ -18,39 +18,39 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public GraphicState State
 		{
-			get { return _State; }
+			get { return _state; }
 			set
 			{
 				Platform.CheckForNullReference(value, "State");
 
 				// If it's the same state, then don't do anything
-				if (_State != null)
-					if (_State.GetType() == value.GetType())
+				if (_state != null)
+					if (_state.GetType() == value.GetType())
 						return;
 
 				// Perform any cleanup necessary in the old state
-				if (_State != null)
-					_State.OnExitState(_MouseArgs);
+				if (_state != null)
+					_state.OnExitState(_mouseArgs);
 
 				GraphicStateChangedEventArgs args = new GraphicStateChangedEventArgs();
 
 				// Old state *can* be null, i.e., we're assigning state for the first time,
 				// so there isn't an old state.
-				args.OldState = _State;
+				args.OldState = _state;
 
-				_State = value;
+				_state = value;
 
-				args.NewState = _State;
+				args.NewState = _state;
 
 				if (args.OldState != null)
 				{
 					// Perform any intialization necessary in the new state
-					_State.OnEnterState(_MouseArgs);
+					_state.OnEnterState(_mouseArgs);
 
 					OnStateChanged(args);
 				}
 				
-				Trace.Write(_State.ToString());
+				Trace.Write(_state.ToString());
 			}
 		}
 
@@ -76,8 +76,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public event EventHandler<GraphicStateChangedEventArgs> StateChanged
 		{
-			add { _StateChangedEvent += value; }
-			remove { _StateChangedEvent -= value; }
+			add { _stateChangedEvent += value; }
+			remove { _stateChangedEvent -= value; }
 		}
 
 		public virtual GraphicState CreateCreateState()
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 			Platform.CheckMemberIsSet(this.State, "State");
 
-			_MouseArgs = e;
+			_mouseArgs = e;
 			return this.State.OnMouseDown(e);;
 		}
 
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 			Platform.CheckMemberIsSet(this.State, "State");
 
-			_MouseArgs = e;
+			_mouseArgs = e;
 			return this.State.OnMouseMove(e);
 		}
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 			Platform.CheckMemberIsSet(this.State, "State");
 
-			_MouseArgs = e;
+			_mouseArgs = e;
 			return this.State.OnMouseUp(e);
 		}
 
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public virtual void OnStateChanged(GraphicStateChangedEventArgs e)
 		{
-			EventsHelper.Fire(_StateChangedEvent, this, e);
+			EventsHelper.Fire(_stateChangedEvent, this, e);
 		}
 	}
 }

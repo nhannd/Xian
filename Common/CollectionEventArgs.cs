@@ -5,7 +5,7 @@ namespace ClearCanvas.Common
 {
 	public class CollectionEventArgs<TItem> : EventArgs
 	{
-		private TItem _Item;
+		private TItem _item;
 
 		public CollectionEventArgs()
 		{
@@ -13,8 +13,8 @@ namespace ClearCanvas.Common
 
 		public TItem Item
 		{
-			get { return _Item; }
-			set { _Item = value; }
+			get { return _item; }
+			set { _item = value; }
 		}
 	}
 }

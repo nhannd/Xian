@@ -10,13 +10,13 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	internal class UIEventHandler<TItem> : IUIEventHandler
 	{
-		private IEnumerable<TItem> _Collection;
+		private IEnumerable<TItem> _collection;
 
 		public UIEventHandler(IEnumerable<TItem> collection)
 		{
 			Platform.CheckForNullReference(collection, "collection");
 
-			_Collection = collection;
+			_collection = collection;
 		}
 
 		#region IUIEventHandler Members
@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer
 			IUIEventHandler handler;
 			IClientArea clientArea;
 
-			foreach (TItem item in _Collection)
+			foreach (TItem item in _collection)
 			{
 				if (item != null)
 				{
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer
 			IUIEventHandler handler;
 			IClientArea clientArea;
 
-			foreach (TItem item in _Collection)
+			foreach (TItem item in _collection)
 			{
 				if (item != null)
 				{
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer
 			IUIEventHandler handler;
 			IClientArea clientArea;
 
-			foreach (TItem item in _Collection)
+			foreach (TItem item in _collection)
 			{
 				if (item != null)
 				{

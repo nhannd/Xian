@@ -11,10 +11,10 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public class LinePrimitive : Graphic
 	{
-		private PointF _SrcPt1;
-		private PointF _SrcPt2;
-		private event EventHandler<PointChangedEventArgs> _Pt1ChangedEvent;
-		private event EventHandler<PointChangedEventArgs> _Pt2ChangedEvent;
+		private PointF _srcPt1;
+		private PointF _srcPt2;
+		private event EventHandler<PointChangedEventArgs> _pt1ChangedEvent;
+		private event EventHandler<PointChangedEventArgs> _pt2ChangedEvent;
 
 		public LinePrimitive() :
 			base(true)
@@ -23,14 +23,14 @@ namespace ClearCanvas.ImageViewer.Layers
 
 		public event EventHandler<PointChangedEventArgs> Pt1Changed
 		{
-			add { _Pt1ChangedEvent += value; }
-			remove { _Pt1ChangedEvent -= value; }
+			add { _pt1ChangedEvent += value; }
+			remove { _pt1ChangedEvent -= value; }
 		}
 
 		public event EventHandler<PointChangedEventArgs> Pt2Changed
 		{
-			add { _Pt2ChangedEvent += value; }
-			remove { _Pt2ChangedEvent -= value; }
+			add { _pt2ChangedEvent += value; }
+			remove { _pt2ChangedEvent -= value; }
 		}
 
 		public PointF Pt1
@@ -38,11 +38,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return _SrcPt1;
+					return _srcPt1;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_SrcPt1);
+					return base.SpatialTransform.ConvertToDestination(_srcPt1);
 				}
 			}
 			set
@@ -51,14 +51,14 @@ namespace ClearCanvas.ImageViewer.Layers
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					_SrcPt1 = value;
+					_srcPt1 = value;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					_SrcPt1 = base.SpatialTransform.ConvertToSource(value);
+					_srcPt1 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_Pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt1, this.CoordinateSystem));
+				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt1, this.CoordinateSystem));
 			}
 		}
 
@@ -67,11 +67,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return _SrcPt2;
+					return _srcPt2;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_SrcPt2);
+					return base.SpatialTransform.ConvertToDestination(_srcPt2);
 				}
 			}
 			set
@@ -80,14 +80,14 @@ namespace ClearCanvas.ImageViewer.Layers
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					_SrcPt2 = value;
+					_srcPt2 = value;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					_SrcPt2 = base.SpatialTransform.ConvertToSource(value);
+					_srcPt2 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_Pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt2, this.CoordinateSystem));
+				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt2, this.CoordinateSystem));
 			}
 		}
 
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Layers
 			// But, since this is just a hit test, it's inconsequential, and we don't
 			// want to be doing any complicated processing here since this method is called
 			// whenever the mouse moves.
-			float sourceHitTestDistance = InteractiveGraphic.HitTestDistance / this.SpatialTransform.Scale;
+			float sourceHitTestDistance = InteractiveGraphic._hitTestDistance / this.SpatialTransform.Scale;
 
 			if (distance < sourceHitTestDistance)
 				return true;

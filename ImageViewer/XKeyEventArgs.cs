@@ -8,22 +8,22 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class XKeyEventArgs : EventArgs 
 	{
-		private XKeys _KeyData;
-		private bool _Handled = false;
-		private PresentationImage _SelectedPresentationImage = null;
-		private DisplaySet _SelectedDisplaySet = null;
+		private XKeys _keyData;
+		private bool _handled = false;
+		private PresentationImage _selectedPresentationImage = null;
+		private DisplaySet _selectedDisplaySet = null;
 
 		public XKeyEventArgs (XKeys keyData)
 		{
 			Platform.CheckForNullReference(keyData, "keyData");
-			this._KeyData = keyData;
+			this._keyData = keyData;
 		}
 
 		public virtual bool Alt 
 		{
 			get 
 			{
-				return (_KeyData == XKeys.Alt);
+				return (_keyData == XKeys.Alt);
 			}
 		}
 		
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				return (_KeyData == XKeys.Control);
+				return (_keyData == XKeys.Control);
 			}
 		}
 		
@@ -39,11 +39,11 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				return _Handled;
+				return _handled;
 			}
 			set 
 			{
-				_Handled = value;
+				_handled = value;
 			}
 		}
 		
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				return _KeyData & XKeys.KeyCode;
+				return _keyData & XKeys.KeyCode;
 			}
 		}
 		
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				return _KeyData;
+				return _keyData;
 			}
 		}
 		
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				return Convert.ToInt32(_KeyData);
+				return Convert.ToInt32(_keyData);
 			}
 		}
 		
@@ -77,13 +77,13 @@ namespace ClearCanvas.ImageViewer
 			{
 				XKeys returnKeys = new XKeys();
 				
-				if(_KeyData == XKeys.Alt)
+				if(_keyData == XKeys.Alt)
 					returnKeys = XKeys.Alt;
 				
-				if(_KeyData == XKeys.Control)
+				if(_keyData == XKeys.Control)
 					returnKeys = returnKeys | XKeys.Control;
 				
-				if(_KeyData == XKeys.Shift)
+				if(_keyData == XKeys.Shift)
 					returnKeys = returnKeys | XKeys.Shift;
 				
 				return returnKeys;
@@ -94,27 +94,27 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				return (_KeyData == XKeys.Shift);
+				return (_keyData == XKeys.Shift);
 			}
 		}
 
 		public PresentationImage SelectedPresentationImage
 		{
-			get { return _SelectedPresentationImage; }
+			get { return _selectedPresentationImage; }
 			set 
 			{
 				Platform.CheckForNullReference(value, "SelectedPresentationImage");
-				_SelectedPresentationImage = value; 
+				_selectedPresentationImage = value; 
 			}
 		}
 
 		public DisplaySet SelectedDisplaySet
 		{
-			get { return _SelectedDisplaySet; }
+			get { return _selectedDisplaySet; }
 			set 
 			{
 				Platform.CheckForNullReference(value, "SelectedDisplaySet");
-				_SelectedDisplaySet = value; 
+				_selectedDisplaySet = value; 
 			}
 		}
 	}

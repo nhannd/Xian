@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             }
         }
 
-        private void _buttonOk_Click(object sender, EventArgs e)
+        private void ButtonOk_Click(object sender, EventArgs e)
         {
             if (IsFormDataValid)
             {
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             }
         }
 
-        private void _buttonCancel_Click(object sender, EventArgs e)
+        private void ButtonCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             Close();

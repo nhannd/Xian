@@ -17,16 +17,16 @@ namespace ClearCanvas.Controls.WinForms
         {
             InitializeComponent();
 
-            _checkBox.CheckedChanged += new EventHandler(_checkBox_CheckedChanged);
-            _dateTimePicker.ValueChanged += new EventHandler(_dateTimePicker_ValueChanged);
+            _checkBox.CheckedChanged += new EventHandler(CheckBoxCheckedChangedEventHandler);
+            _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);
         }
 
-        private void  _dateTimePicker_ValueChanged(object sender, EventArgs e)
+        private void  DateTimePickerValueChangedEventHandler(object sender, EventArgs e)
         {
             FireValueChanged();
         }
 
-        private void _checkBox_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxCheckedChangedEventHandler(object sender, EventArgs e)
         {
             _dateTimePicker.Enabled = _checkBox.Checked;
             FireValueChanged();

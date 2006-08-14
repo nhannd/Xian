@@ -40,10 +40,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             DesktopApplication.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
             DesktopApplication.WorkspaceManager.WorkspaceActivated += new EventHandler<WorkspaceEventArgs>(OnWorkspaceActivated);
 
-			_windowManager = new WindowManager(this.toolStripContainer.ContentPanel, this.tabControl);
+			_windowManager = new WindowManager(this._toolStripContainer.ContentPanel, this._tabControl);
 
 			RebuildMenusAndToolbars(null);
-			this.tabControl.ClosePressed += new EventHandler(OnCloseWorkspaceTab);
+			this._tabControl.ClosePressed += new EventHandler(OnCloseWorkspaceTab);
         }
 
 		protected override void OnLoad(EventArgs e)
@@ -184,11 +184,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
 			// Suspend the layouts so we avoid the flicker when we empty
 			// and refill the menus and toolbars
-			this.mainMenu.SuspendLayout();
-			this.toolbar.SuspendLayout();
+			this._mainMenu.SuspendLayout();
+			this._toolbar.SuspendLayout();
 			// very important to clean up the existing ones first
-            ToolStripBuilder.Clear(this.mainMenu.Items);
-            ToolStripBuilder.Clear(this.toolbar.Items);
+            ToolStripBuilder.Clear(this._mainMenu.Items);
+            ToolStripBuilder.Clear(this._toolbar.Items);
 
             _menuModel = new ActionModelRoot(null);
             _toolbarModel = new ActionModelRoot(null);
@@ -202,10 +202,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _toolbarModel.Merge(DesktopApplication.ActiveWorkspace.ToolSet.ToolbarModel);
             }
 
-            ToolStripBuilder.BuildMenu(this.mainMenu.Items, _menuModel.ChildNodes);
-			ToolStripBuilder.BuildToolbar(this.toolbar.Items, _toolbarModel.ChildNodes);
-			this.toolbar.ResumeLayout();
-			this.mainMenu.ResumeLayout();
+            ToolStripBuilder.BuildMenu(this._mainMenu.Items, _menuModel.ChildNodes);
+			ToolStripBuilder.BuildToolbar(this._toolbar.Items, _toolbarModel.ChildNodes);
+			this._toolbar.ResumeLayout();
+			this._mainMenu.ResumeLayout();
 		}
 	}
 }

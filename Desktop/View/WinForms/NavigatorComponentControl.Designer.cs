@@ -5,7 +5,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer _components = null;
 
         /// <summary> 
         /// Clean up any resources being used.
@@ -13,9 +13,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (_components != null))
             {
-                components.Dispose();
+                _components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -28,41 +28,41 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this._splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._treeView = new System.Windows.Forms.TreeView();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._contentPanel = new System.Windows.Forms.Panel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this._flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._backButton = new System.Windows.Forms.Button();
             this._nextButton = new System.Windows.Forms.Button();
             this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._headerStrip = new ClearCanvas.Controls.WinForms.HeaderStrip();
             this._title = new System.Windows.Forms.ToolStripLabel();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
+            this._splitContainer1.Panel1.SuspendLayout();
+            this._splitContainer1.Panel2.SuspendLayout();
+            this._splitContainer1.SuspendLayout();
+            this._tableLayoutPanel1.SuspendLayout();
+            this._flowLayoutPanel1.SuspendLayout();
             this._headerStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
+            this._splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this._splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this._treeView);
+            this._splitContainer1.Panel1.Controls.Add(this._treeView);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer1.Size = new System.Drawing.Size(720, 464);
-            this.splitContainer1.SplitterDistance = 142;
-            this.splitContainer1.TabIndex = 0;
+            this._splitContainer1.Panel2.Controls.Add(this._tableLayoutPanel1);
+            this._splitContainer1.Size = new System.Drawing.Size(720, 464);
+            this._splitContainer1.SplitterDistance = 142;
+            this._splitContainer1.TabIndex = 0;
             // 
             // _treeView
             // 
@@ -76,20 +76,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._contentPanel, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this._headerStrip, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(574, 464);
-            this.tableLayoutPanel1.TabIndex = 0;
+            this._tableLayoutPanel1.ColumnCount = 1;
+            this._tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tableLayoutPanel1.Controls.Add(this._contentPanel, 0, 1);
+            this._tableLayoutPanel1.Controls.Add(this._flowLayoutPanel1, 0, 2);
+            this._tableLayoutPanel1.Controls.Add(this._headerStrip, 0, 0);
+            this._tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this._tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this._tableLayoutPanel1.RowCount = 3;
+            this._tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanel1.Size = new System.Drawing.Size(574, 464);
+            this._tableLayoutPanel1.TabIndex = 0;
             // 
             // _contentPanel
             // 
@@ -101,16 +101,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.Controls.Add(this._cancelButton);
-            this.flowLayoutPanel1.Controls.Add(this._okButton);
-            this.flowLayoutPanel1.Controls.Add(this._nextButton);
-            this.flowLayoutPanel1.Controls.Add(this._backButton);
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(219, 427);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(352, 34);
-            this.flowLayoutPanel1.TabIndex = 2;
+            this._flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._flowLayoutPanel1.Controls.Add(this._cancelButton);
+            this._flowLayoutPanel1.Controls.Add(this._okButton);
+            this._flowLayoutPanel1.Controls.Add(this._nextButton);
+            this._flowLayoutPanel1.Controls.Add(this._backButton);
+            this._flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this._flowLayoutPanel1.Location = new System.Drawing.Point(219, 427);
+            this._flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this._flowLayoutPanel1.Size = new System.Drawing.Size(352, 34);
+            this._flowLayoutPanel1.TabIndex = 2;
             // 
             // _backButton
             // 
@@ -176,14 +176,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this._splitContainer1);
             this.Name = "NavigatorComponentControl";
             this.Size = new System.Drawing.Size(720, 464);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
+            this._splitContainer1.Panel1.ResumeLayout(false);
+            this._splitContainer1.Panel2.ResumeLayout(false);
+            this._splitContainer1.ResumeLayout(false);
+            this._tableLayoutPanel1.ResumeLayout(false);
+            this._flowLayoutPanel1.ResumeLayout(false);
             this._headerStrip.ResumeLayout(false);
             this._headerStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -192,11 +192,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer _splitContainer1;
         private System.Windows.Forms.TreeView _treeView;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel1;
         private System.Windows.Forms.Panel _contentPanel;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel _flowLayoutPanel1;
         private System.Windows.Forms.Button _backButton;
         private System.Windows.Forms.Button _nextButton;
         private System.Windows.Forms.Button _okButton;

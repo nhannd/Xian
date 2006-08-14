@@ -5,15 +5,15 @@ namespace ClearCanvas.ImageViewer
 	public class LinkageChangedEventArgs : EventArgs
 	{
 		// Private attributes
-		private bool _IsLinked;
+		private bool _isLinked;
 
 		// Constructor
 		public LinkageChangedEventArgs(bool isLinked)
 		{
-			_IsLinked = isLinked;
+			_isLinked = isLinked;
 		}
 
 		// Properties
-		public bool IsLinked { get { return _IsLinked; } }
+		public bool IsLinked { get { return _isLinked; } }
 	}
 }

@@ -11,10 +11,10 @@ namespace ClearCanvas.Common.Tests
 	public class FileProcessorTest
 	{
 		// The delegate
-		private FileProcessor.ProcessFile del;
+		private FileProcessor.ProcessFile _del;
 
 		// Root test directory
-		private string TestDir = "c:\\test";
+		private string _testDir = "c:\\test";
 
 		// The delgate function
 		static void PrintPath(string path)
@@ -63,75 +63,75 @@ namespace ClearCanvas.Common.Tests
 		public void Init()
 		{
 			// Assign the delegate
-			del = new FileProcessor.ProcessFile(PrintPath);
+			_del = new FileProcessor.ProcessFile(PrintPath);
 
 			// Delete the old test directory, if it somehow didn't get deleted on teardown
-			if (Directory.Exists(TestDir))
-				Directory.Delete(TestDir, true);
+			if (Directory.Exists(_testDir))
+				Directory.Delete(_testDir, true);
 
 			// Create the new test directory
-			Directory.CreateDirectory(TestDir);
+			Directory.CreateDirectory(_testDir);
 		}
 
 		[TestFixtureTearDown]
 		public void Cleanup()
 		{
 			// Get rid of the test directory
-			Directory.Delete(TestDir, true);
+			Directory.Delete(_testDir, true);
 		}
 
 		[Test]
 		public void Process_EmptyDirectory()
 		{
-			FileProcessor.Process(TestDir, "", del, true);
+			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
 		public void Process_DirectoryWithFilesOnly()
 		{
-			CreateFiles(TestDir, "", 10);
-			FileProcessor.Process(TestDir, "", del, true);
+			CreateFiles(_testDir, "", 10);
+			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
 		public void Process_DirectoryWithSubdirectoriesOnly()
 		{
-			CreateDirectories(TestDir, 3);
-			FileProcessor.Process(TestDir, "", del, true);
+			CreateDirectories(_testDir, 3);
+			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
 		public void Process_DirectoryWithFileAndSubdirectories()
 		{
-			string[] dirList = CreateDirectories(TestDir, 3);
-			CreateFiles(TestDir, "", 5);
+			string[] dirList = CreateDirectories(_testDir, 3);
+			CreateFiles(_testDir, "", 5);
 			CreateFiles(dirList[0], "",  6);
 
-			FileProcessor.Process(TestDir, "", del, true);
+			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
 		public void Process_FileOnly()
 		{
-			string[] fileList = CreateFiles(TestDir, "", 1);
+			string[] fileList = CreateFiles(_testDir, "", 1);
 
-			FileProcessor.Process(fileList[0], "", del, true);
+			FileProcessor.Process(fileList[0], "", _del, true);
 		}
 
 		[Test]
 		public void Process_Wildcards()
 		{
-			CreateFiles(TestDir, ".txt", 5);
-			CreateFiles(TestDir, ".abc", 5);
+			CreateFiles(_testDir, ".txt", 5);
+			CreateFiles(_testDir, ".abc", 5);
 			
-			FileProcessor.Process(TestDir, "*.abc", del, true);
+			FileProcessor.Process(_testDir, "*.abc", _del, true);
 		}
 		
 		[Test]
 		[ExpectedException(typeof(DirectoryNotFoundException))]
 		public void Process_PathDoesNotExist()
 		{
-			FileProcessor.Process("c:\\NoSuchPath", "", del, true);
+			FileProcessor.Process("c:\\NoSuchPath", "", _del, true);
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace ClearCanvas.Common.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void Process_PathEmpty()
 		{
-			FileProcessor.Process("", "", del, true);
+			FileProcessor.Process("", "", _del, true);
 		}
 
 		[Test]

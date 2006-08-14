@@ -5,7 +5,7 @@ namespace ClearCanvas.Controls.WinForms
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer _components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -13,9 +13,9 @@ namespace ClearCanvas.Controls.WinForms
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing && (_components != null))
 			{
-				components.Dispose();
+				_components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -40,7 +40,7 @@ namespace ClearCanvas.Controls.WinForms
 			this._studyDescriptionLabel = new System.Windows.Forms.Label();
 			this._studyDescription = new System.Windows.Forms.TextBox();
 			this._studyDateLabel = new System.Windows.Forms.Label();
-			this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+			this._dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -63,7 +63,7 @@ namespace ClearCanvas.Controls.WinForms
 			this._tableLayoutPanel.Controls.Add(this._studyDescriptionLabel, 0, 3);
 			this._tableLayoutPanel.Controls.Add(this._studyDescription, 1, 3);
 			this._tableLayoutPanel.Controls.Add(this._studyDateLabel, 0, 2);
-			this._tableLayoutPanel.Controls.Add(this.dateTimePicker1, 1, 2);
+			this._tableLayoutPanel.Controls.Add(this._dateTimePicker1, 1, 2);
 			this._tableLayoutPanel.Controls.Add(this._searchButton, 3, 3);
 			this._tableLayoutPanel.Location = new System.Drawing.Point(13, 18);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
@@ -177,11 +177,11 @@ namespace ClearCanvas.Controls.WinForms
 			// 
 			// dateTimePicker1
 			// 
-			this.dateTimePicker1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.dateTimePicker1.Location = new System.Drawing.Point(99, 55);
-			this.dateTimePicker1.Name = "dateTimePicker1";
-			this.dateTimePicker1.Size = new System.Drawing.Size(141, 20);
-			this.dateTimePicker1.TabIndex = 8;
+			this._dateTimePicker1.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._dateTimePicker1.Location = new System.Drawing.Point(99, 55);
+			this._dateTimePicker1.Name = "dateTimePicker1";
+			this._dateTimePicker1.Size = new System.Drawing.Size(141, 20);
+			this._dateTimePicker1.TabIndex = 8;
 			// 
 			// _searchButton
 			// 
@@ -220,7 +220,7 @@ namespace ClearCanvas.Controls.WinForms
 		private System.Windows.Forms.Label _patientIDLabel;
 		private System.Windows.Forms.Label _accessionNumberLabel;
 		private System.Windows.Forms.Label _studyDateLabel;
-		private System.Windows.Forms.DateTimePicker dateTimePicker1;
+		private System.Windows.Forms.DateTimePicker _dateTimePicker1;
 		private System.Windows.Forms.TextBox _accessionNumber;
 		private System.Windows.Forms.Button _searchButton;
 	}

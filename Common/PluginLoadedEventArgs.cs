@@ -7,22 +7,22 @@ namespace ClearCanvas.Common
 	/// </summary>
 	public class PluginLoadedEventArgs : EventArgs
 	{
-		string _Message;
+		string _message;
 
 		public PluginLoadedEventArgs(string message)
 		{
-			_Message = message;
+			_message = message;
 		}
 
 		public string Message
 		{
 			get
 			{
-				return _Message;
+				return _message;
 			}
 			set
 			{
-				_Message = value;
+				_message = value;
 			}
 		}
 	}

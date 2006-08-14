@@ -5,15 +5,15 @@ namespace ClearCanvas.Desktop
 	public class ActivationChangedEventArgs : EventArgs
 	{
 		// Private attributes
-		private bool _IsActivated;
+		private bool _isActivated;
 
 		// Constructor
 		public ActivationChangedEventArgs(bool isActivated)
 		{
-			_IsActivated = isActivated;
+			_isActivated = isActivated;
 		}
 
 		// Properties
-		public bool IsActivated { get { return _IsActivated; } }
+		public bool IsActivated { get { return _isActivated; } }
 	}
 }

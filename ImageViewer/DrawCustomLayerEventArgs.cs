@@ -7,14 +7,14 @@ namespace ClearCanvas.ImageViewer
 	public class DrawCustomLayerEventArgs : EventArgs
 	{
 		private IntPtr _hDC = IntPtr.Zero;
-		private Rectangle _ClientRectangle = new Rectangle(0, 0, 0, 0);
+		private Rectangle _clientRectangle = new Rectangle(0, 0, 0, 0);
 
 		public DrawCustomLayerEventArgs(IntPtr hDC, Rectangle clientRectangle)
 		{
 			Platform.CheckForNullReference(hDC, "hDC");
 
 			_hDC = hDC;
-			_ClientRectangle = clientRectangle;
+			_clientRectangle = clientRectangle;
 		}
 
 		public IntPtr HDC
@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer
 
 		public Rectangle ClientRectangle
 		{
-			get { return _ClientRectangle; }
+			get { return _clientRectangle; }
 		}
 	}
 }

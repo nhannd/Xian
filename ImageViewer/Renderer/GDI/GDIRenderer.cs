@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 	[ExtensionOf(typeof(ClearCanvas.ImageViewer.RendererExtensionPoint))]
     public class GDIRenderer : IRenderer
 	{
-		private static readonly SizeF DropShadowOffset = new SizeF(1, 1);
+		private static readonly SizeF _dropShadowOffset = new SizeF(1, 1);
 
 		// Private attributes
         private ImageBuffer _imageBuffer;
@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 
 			SetDashStyle(line);
 #if MONO
-			Size del = new Size((int)GDIRenderer.DropShadowOffset.Width, (int)GDIRenderer.DropShadowOffset.Height);
+			Size del = new Size((int)GDIRenderer._dropShadowOffset.Width, (int)GDIRenderer._dropShadowOffset.Height);
 
             _finalBuffer.Graphics.DrawLine(
 				_pen,
@@ -312,8 +312,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 #else
 			_finalBuffer.Graphics.DrawLine(
 				_pen,
-				line.Pt1 + GDIRenderer.DropShadowOffset,
-				line.Pt2 + GDIRenderer.DropShadowOffset);
+				line.Pt1 + GDIRenderer._dropShadowOffset,
+				line.Pt2 + GDIRenderer._dropShadowOffset);
 #endif
 
             // Draw line
@@ -351,8 +351,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			
 			_finalBuffer.Graphics.DrawRectangle(
 				_pen,
-				rect.TopLeft.X + offsetX + GDIRenderer.DropShadowOffset.Width,
-				rect.TopLeft.Y + offsetY + GDIRenderer.DropShadowOffset.Height,
+				rect.TopLeft.X + offsetX + GDIRenderer._dropShadowOffset.Width,
+				rect.TopLeft.Y + offsetY + GDIRenderer._dropShadowOffset.Height,
 				Math.Abs(rect.Width),
 				Math.Abs(rect.Height));
 
@@ -382,8 +382,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			
 			_finalBuffer.Graphics.DrawRectangle(
 				_pen,
-				rect.TopLeft.X + GDIRenderer.DropShadowOffset.Width,
-				rect.TopLeft.Y + GDIRenderer.DropShadowOffset.Height,
+				rect.TopLeft.X + GDIRenderer._dropShadowOffset.Width,
+				rect.TopLeft.Y + GDIRenderer._dropShadowOffset.Height,
 				rect.Width,
 				rect.Height);
 
@@ -415,7 +415,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			_brush.Color = Color.Black;
 
 #if MONO
-			Size del = new Size((int)GDIRenderer.DropShadowOffset.Width, (int)GDIRenderer.DropShadowOffset.Height);
+			Size del = new Size((int)GDIRenderer._dropShadowOffset.Width, (int)GDIRenderer._dropShadowOffset.Height);
 
 			_finalBuffer.Graphics.DrawString(
 				textPrimitive.Text,
@@ -427,7 +427,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 				textPrimitive.Text,
 				font,
 				_brush,
-				textPrimitive.AnchorPoint + GDIRenderer.DropShadowOffset);
+				textPrimitive.AnchorPoint + GDIRenderer._dropShadowOffset);
 #endif
 			// Draw text
 			_brush.Color = textPrimitive.Color;

@@ -5,7 +5,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer _components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -13,9 +13,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing && (_components != null))
 			{
-				components.Dispose();
+				_components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -28,14 +28,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
+            this._components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this._dataGridView = new System.Windows.Forms.DataGridView();
             this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this._bindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this._bindingSource = new System.Windows.Forms.BindingSource(this._components);
+            this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this._components);
             ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).BeginInit();
             this._tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).BeginInit();

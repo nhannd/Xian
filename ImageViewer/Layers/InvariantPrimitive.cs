@@ -10,8 +10,8 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public abstract class InvariantPrimitive : Graphic
 	{
-		private PointF _AnchorPoint;
-		private event EventHandler<PointChangedEventArgs> _AnchorPointChangedEvent;
+		private PointF _anchorPoint;
+		private event EventHandler<PointChangedEventArgs> _anchorPointChangedEvent;
 
 		public InvariantPrimitive()
 			: base(true)
@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageViewer.Layers
 
 		public event EventHandler<PointChangedEventArgs> AnchorPointChanged
 		{
-			add { _AnchorPointChangedEvent += value; }
-			remove { _AnchorPointChangedEvent -= value; }
+			add { _anchorPointChangedEvent += value; }
+			remove { _anchorPointChangedEvent -= value; }
 		}
 
 		public PointF AnchorPoint
@@ -30,12 +30,12 @@ namespace ClearCanvas.ImageViewer.Layers
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					return _AnchorPoint;
+					return _anchorPoint;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_AnchorPoint);
+					return base.SpatialTransform.ConvertToDestination(_anchorPoint);
 				}
 			}
 			set
@@ -45,15 +45,15 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					_AnchorPoint = value;
+					_anchorPoint = value;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					_AnchorPoint = base.SpatialTransform.ConvertToSource(value);
+					_anchorPoint = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_AnchorPointChangedEvent, this, new PointChangedEventArgs(this.AnchorPoint, this.CoordinateSystem));
+				EventsHelper.Fire(_anchorPointChangedEvent, this, new PointChangedEventArgs(this.AnchorPoint, this.CoordinateSystem));
 			}
 		}
 

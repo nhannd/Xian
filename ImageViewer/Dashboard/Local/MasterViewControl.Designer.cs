@@ -5,7 +5,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer _components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -13,9 +13,9 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing && (_components != null))
 			{
-				components.Dispose();
+				_components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -28,20 +28,20 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this._textBox1 = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// textBox1
 			// 
-			this.textBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.textBox1.Location = new System.Drawing.Point(11, 13);
-			this.textBox1.Multiline = true;
-			this.textBox1.Name = "textBox1";
-			this.textBox1.ReadOnly = true;
-			this.textBox1.Size = new System.Drawing.Size(154, 60);
-			this.textBox1.TabIndex = 3;
-			this.textBox1.Text = "Select the DICOM images you want to open, or the folders you want to open from, t" +
+			this._textBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+			this._textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._textBox1.Location = new System.Drawing.Point(11, 13);
+			this._textBox1.Multiline = true;
+			this._textBox1.Name = "textBox1";
+			this._textBox1.ReadOnly = true;
+			this._textBox1.Size = new System.Drawing.Size(154, 60);
+			this._textBox1.TabIndex = 3;
+			this._textBox1.Text = "Select the DICOM images you want to open, or the folders you want to open from, t" +
 				"hen click Open.";
 			// 
 			// MasterViewControl
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Controls.Add(this.textBox1);
+			this.Controls.Add(this._textBox1);
 			this.Name = "MasterViewControl";
 			this.Size = new System.Drawing.Size(183, 237);
 			this.ResumeLayout(false);
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Local
 
 		#endregion
 
-		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.TextBox _textBox1;
 
 
 	}

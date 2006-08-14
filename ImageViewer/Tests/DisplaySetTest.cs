@@ -14,16 +14,16 @@ namespace ClearCanvas.ImageViewer.Tests
 		// Constructor
 		public DummyDicomImage()
 		{
-			_Rows = 512;
-			_Columns = 512;
-			_BitsAllocated = 16;
-			_BitsStored = 12;
-			_HighBit = 11;
-			_SamplesPerPixel = 1;
-			_PixelRepresentation = 0;
-			_PlanarConfiguration = 0;
-			_PhotometricInterpretation = "MONOCHROME2";
-			_PixelData = new byte[1];
+			_rows = 512;
+			_columns = 512;
+			_bitsAllocated = 16;
+			_bitsStored = 12;
+			_highBit = 11;
+			_samplesPerPixel = 1;
+			_pixelRepresentation = 0;
+			_planarConfiguration = 0;
+			_photometricInterpretation = "MONOCHROME2";
+			_pixelData = new byte[1];
 
 			CalculateOtherImageParameters();
 		}
@@ -46,11 +46,11 @@ namespace ClearCanvas.ImageViewer.Tests
 	[TestFixture]
 	public class DisplaySetTest
 	{
-		DisplaySet _SelectedDisplaySet;
-		DisplaySet _VisibleDisplaySet;
-		PresentationImage _PresentationImage;
-		DisplaySet _DisplaySet;
-		DicomImage _DicomImage;
+		DisplaySet _selectedDisplaySet;
+		DisplaySet _visibleDisplaySet;
+		PresentationImage _presentationImage;
+		DisplaySet _displaySet;
+		DicomImage _dicomImage;
 
 		public DisplaySetTest()
 		{
@@ -59,8 +59,8 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			_DisplaySet = LogicalWorkspace.CreateDisplaySet();
-			_DicomImage = new DummyDicomImage();
+			_displaySet = LogicalWorkspace.CreateDisplaySet();
+			_dicomImage = new DummyDicomImage();
 		}
 		
 		[TestFixtureTearDown]
@@ -75,14 +75,14 @@ namespace ClearCanvas.ImageViewer.Tests
 			ds.PresentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
 			ds.PresentationImages.ItemRemoved += new EventHandler<PresentationImageEventArgs>(OnPresentationImageRemoved);
 
-			_PresentationImage = null;
-			PresentationImage pi1 = new StandardImage(_DicomImage);
+			_presentationImage = null;
+			PresentationImage pi1 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi1);
 			Assert.AreEqual(1, ds.PresentationImages.Count);
 			// Verify add event was fired
-			Assert.AreEqual(pi1, _PresentationImage);
+			Assert.AreEqual(pi1, _presentationImage);
 
-			PresentationImage pi2 = new StandardImage(_DicomImage);
+			PresentationImage pi2 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi2);
 			Assert.AreEqual(2, ds.PresentationImages.Count);
 
@@ -92,11 +92,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			ds.PresentationImages.Remove(pi1);
 			Assert.AreEqual(1, ds.PresentationImages.Count);
 
-			_PresentationImage = null;
+			_presentationImage = null;
 			ds.PresentationImages.Remove(pi2);
 			Assert.AreEqual(0, ds.PresentationImages.Count);
 			// Verify add event was fired
-			Assert.AreEqual(pi2, _PresentationImage);
+			Assert.AreEqual(pi2, _presentationImage);
 		}
 
 		[Test]
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		{
 			DisplaySet ds = new DisplaySet();
 
-			PresentationImage pi = new StandardImage(_DicomImage);
+			PresentationImage pi = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi);
 			Assert.AreEqual(1, ds.PresentationImages.Count);
 
@@ -117,10 +117,10 @@ namespace ClearCanvas.ImageViewer.Tests
 		{
 			DisplaySet ds = new DisplaySet();
 
-			PresentationImage pi1 = new StandardImage(_DicomImage);
+			PresentationImage pi1 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi1);
 
-			PresentationImage pi2 = new StandardImage(_DicomImage);
+			PresentationImage pi2 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi2);
 
 			foreach (PresentationImage pi in ds.PresentationImages)
@@ -130,29 +130,29 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void SelectPresentationImages()
 		{
-			_SelectedDisplaySet = null;
+			_selectedDisplaySet = null;
 
 			DisplaySet ds = new DisplaySet();
 			//Assert.IsFalse(ds.Selected);
 
 			//ds.SelectionChangedEvent += new EventHandler(OnSelectionChangedEvent);
 
-			PresentationImage pi1 = new StandardImage(_DicomImage);
+			PresentationImage pi1 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi1);
 
 			//pi1.SetSelected(true, SelectionType.Single);
 			//Assert.IsTrue(ds.Selected);
 
 			// Confirm that the selection event fired
-			Assert.AreSame(ds, _SelectedDisplaySet);
-			//Assert.IsTrue(_SelectedDisplaySet.Selected);
+			Assert.AreSame(ds, _selectedDisplaySet);
+			//Assert.IsTrue(_selectedDisplaySet.Selected);
 
 			// Selecting the presentation image also selects the display set that contains it
 			PresentationImage[] piList = null; //ds.SelectedPresentationImages;
 			Assert.AreEqual(1, piList.Length);
 			Assert.AreEqual(pi1, piList[0]);
 
-			PresentationImage pi2 = new StandardImage(_DicomImage);
+			PresentationImage pi2 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi2);
 
 			//pi2.SetSelected(true, SelectionType.Single);
@@ -164,19 +164,19 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void SetVisibility()
 		{
-			_VisibleDisplaySet = null;
+			_visibleDisplaySet = null;
 
 			DisplaySet ds = new DisplaySet();
 			Assert.IsFalse(ds.Visible);
 
 			//ds.VisibilityChangedEvent += new EventHandler(OnVisibilityChangedEvent);
 
-			PresentationImage pi1 = new StandardImage(_DicomImage);
+			PresentationImage pi1 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi1);
 
 			ds.Visible = true;
-			Assert.AreSame(ds, _VisibleDisplaySet);
-			Assert.IsTrue(_VisibleDisplaySet.Visible);
+			Assert.AreSame(ds, _visibleDisplaySet);
+			Assert.IsTrue(_visibleDisplaySet.Visible);
 		}
 
 		[Test]
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			DisplaySet ds = new DisplaySet();
 			Assert.AreEqual(0, ds.PresentationImages.Count);
 
-			PresentationImage pi1 = new StandardImage(_DicomImage);
+			PresentationImage pi1 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi1);
 			Assert.AreEqual(1, ds.PresentationImages.Count);
 
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			DisplaySet ds = new DisplaySet();
 			Assert.AreEqual(0, ds.PresentationImages.Count);
 
-			PresentationImage pi1 = new StandardImage(_DicomImage);
+			PresentationImage pi1 = new StandardImage(_dicomImage);
 			ds.PresentationImages.Add(pi1);
 			Assert.AreEqual(1, ds.PresentationImages.Count);
 
@@ -235,22 +235,22 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		private void OnSelectionChangedEvent(object sender, EventArgs e)
 		{
-			_SelectedDisplaySet = (DisplaySet) sender;
+			_selectedDisplaySet = (DisplaySet) sender;
 		}
 
 		private void OnVisibilityChangedEvent(object sender, EventArgs e)
 		{
-			_VisibleDisplaySet = (DisplaySet) sender;
+			_visibleDisplaySet = (DisplaySet) sender;
 		}
 
 		private void OnPresentationImageAdded(object sender, PresentationImageEventArgs e)
 		{
-			_PresentationImage = e.PresentationImage;
+			_presentationImage = e.PresentationImage;
 		}
 
 		private void OnPresentationImageRemoved(object sender, PresentationImageEventArgs e)
 		{
-			_PresentationImage = e.PresentationImage;
+			_presentationImage = e.PresentationImage;
 		}
 	}*/
 }

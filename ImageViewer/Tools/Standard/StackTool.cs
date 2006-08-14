@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
     public class StackTool : MouseTool
 	{
-		private StackCommand _Command;
-		private int _InitialPresentationImageIndex;
+		private StackCommand _command;
+		private int _initialPresentationImageIndex;
 
 		public StackTool()
             :base(XMouseButtons.Left, true)
@@ -37,13 +37,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (e.SelectedTile == null)
 				return true;
 
-			_Command = new StackCommand(e.SelectedImageBox);
-			_Command.Name = SR.CommandStack;
+			_command = new StackCommand(e.SelectedImageBox);
+			_command.Name = SR.CommandStack;
 
 			// Capture state before stack
-			_Command.BeginState = e.SelectedImageBox.CreateMemento();
+			_command.BeginState = e.SelectedImageBox.CreateMemento();
 
-			_InitialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
+			_initialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
 
 			return true;
 		}
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.OnMouseMove(e);
 
-			if (_Command == null)
+			if (_command == null)
 				return true;
 
 			int increment;
@@ -76,13 +76,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
-			if (_Command == null)
+			if (_command == null)
 				return true;
 
 			// If nothing's changed then just return
-			if (_InitialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
+			if (_initialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
 			{
-				_Command = null;
+				_command = null;
 				return true;
 			}
 
@@ -93,9 +93,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			//e.SelectedImageBox.Draw(false);
 
 			// Capture state after stack
-			_Command.EndState = e.SelectedImageBox.CreateMemento();
+			_command.EndState = e.SelectedImageBox.CreateMemento();
 
-            this.Workspace.CommandHistory.AddCommand(_Command);
+            this.Workspace.CommandHistory.AddCommand(_command);
 
 			return true;
 		}

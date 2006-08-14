@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public abstract class InteractiveGraphic : StatefulGraphic, IMemorable
 	{
-		public static readonly int HitTestDistance = 10;
+		public static readonly int _hitTestDistance = 10;
 
 		private ControlPointsGraphic _controlPoints = new ControlPointsGraphic();
 

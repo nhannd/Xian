@@ -9,12 +9,12 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	internal class ImageBoxMemento : IMemento
 	{
-		private DisplaySet _DisplaySet;
-		private ClientArea _ClientArea;
-		private int _Rows;
-		private int _Columns;
-		private TileCollection _Tiles;
-		private MementoList _TileMementos;
+		private DisplaySet _displaySet;
+		private ClientArea _clientArea;
+		private int _rows;
+		private int _columns;
+		private TileCollection _tiles;
+		private MementoList _tileMementos;
 
 		public ImageBoxMemento(
 			DisplaySet displaySet, 
@@ -32,42 +32,42 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(tiles, "tiles");
 			Platform.CheckForNullReference(tileMementos, "tiles");
 
-			_DisplaySet = displaySet;
-			_ClientArea = clientArea;
-			_Rows = rows;
-			_Columns = columns;
-			_Tiles = tiles;
-			_TileMementos = tileMementos;
+			_displaySet = displaySet;
+			_clientArea = clientArea;
+			_rows = rows;
+			_columns = columns;
+			_tiles = tiles;
+			_tileMementos = tileMementos;
 		}
 
 		public DisplaySet DisplaySet
 		{
-			get { return _DisplaySet; }
+			get { return _displaySet; }
 		}
 
 		public ClientArea ClientArea
 		{
-			get	{ return _ClientArea; }
+			get	{ return _clientArea; }
 		}
 
 		public int Rows
 		{
-			get { return _Rows; }
+			get { return _rows; }
 		}
 
 		public int Columns
 		{
-			get { return _Columns; }
+			get { return _columns; }
 		}
 
 		public TileCollection Tiles
 		{
-			get { return _Tiles; }
+			get { return _tiles; }
 		}
 
 		public MementoList TileMementos
 		{
-			get { return _TileMementos; }
+			get { return _tileMementos; }
 		}
 	}
 }

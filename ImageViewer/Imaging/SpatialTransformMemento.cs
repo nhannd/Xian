@@ -9,13 +9,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	public class SpatialTransformMemento : IMemento
 	{
-		private bool _ScaleToFit;
-		private float _Scale;
-		private float _TranslationX;
-		private float _TranslationY;
-		private int _Rotation;
-		private bool _FlipHorizontal;
-		private bool _FlipVertical;
+		private bool _scaleToFit;
+		private float _scale;
+		private float _translationX;
+		private float _translationY;
+		private int _rotation;
+		private bool _flipHorizontal;
+		private bool _flipVertical;
 
 		public SpatialTransformMemento()
 		{
@@ -25,11 +25,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _ScaleToFit;
+				return _scaleToFit;
 			}
 			set
 			{
-				_ScaleToFit = value;
+				_scaleToFit = value;
 			}
 		}
 
@@ -37,11 +37,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _Scale;
+				return _scale;
 			}
 			set
 			{
-				_Scale = value;
+				_scale = value;
 			}
 		}
 
@@ -49,11 +49,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _TranslationX;
+				return _translationX;
 			}
 			set
 			{
-				_TranslationX = value;
+				_translationX = value;
 			}
 		}
 
@@ -61,11 +61,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _TranslationY;
+				return _translationY;
 			}
 			set
 			{
-				_TranslationY = value;
+				_translationY = value;
 			}
 		}
 
@@ -73,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _FlipHorizontal;
+				return _flipHorizontal;
 			}
 			set
 			{
-				_FlipHorizontal = value;
+				_flipHorizontal = value;
 			}
 		}
 
@@ -85,11 +85,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _FlipVertical;
+				return _flipVertical;
 			}
 			set
 			{
-				_FlipVertical = value;
+				_flipVertical = value;
 			}
 		}
 
@@ -97,11 +97,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return _Rotation;
+				return _rotation;
 			}
 			set
 			{
-				_Rotation = value;
+				_rotation = value;
 			}
 		}
 

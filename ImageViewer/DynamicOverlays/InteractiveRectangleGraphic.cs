@@ -12,10 +12,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class InteractiveRectangleGraphic : InteractiveGraphic
 	{
-		private const int topLeft = 0;
-		private const int topRight = 1;
-		private const int bottomLeft = 2;
-		private const int bottomRight = 3;
+		private const int _topLeft = 0;
+		private const int _topRight = 1;
+		private const int _bottomLeft = 2;
+		private const int _bottomRight = 3;
 
 		private RectanglePrimitive _rectangleGraphic;
 
@@ -119,9 +119,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			Trace.Write(String.Format("OnTopLeftChanged: {0}\n", e.Point.ToString()));
 
-			base.ControlPoints[topLeft] = e.Point;
-			base.ControlPoints[topRight] = new PointF(this.BottomRight.X, this.TopLeft.Y);
-			base.ControlPoints[bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
+			base.ControlPoints[_topLeft] = e.Point;
+			base.ControlPoints[_topRight] = new PointF(this.BottomRight.X, this.TopLeft.Y);
+			base.ControlPoints[_bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
 		}
 
 		protected void OnBottomRightChanged(object sender, PointChangedEventArgs e)
@@ -131,9 +131,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			Trace.Write(String.Format("OnBottomRightChanged: {0}\n", e.Point.ToString()));
 
-			base.ControlPoints[topRight] = new PointF(this.BottomRight.X, this.TopLeft.Y);
-			base.ControlPoints[bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
-			base.ControlPoints[bottomRight] = e.Point;
+			base.ControlPoints[_topRight] = new PointF(this.BottomRight.X, this.TopLeft.Y);
+			base.ControlPoints[_bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
+			base.ControlPoints[_bottomRight] = e.Point;
 		}
 
 		protected override void OnControlPointChanged(object sender, ControlPointEventArgs e)
@@ -145,18 +145,18 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			switch (e.ControlPointIndex)
 			{
-				case topLeft:
+				case _topLeft:
 					this.TopLeft = e.ControlPoint;
 					break;
-				case topRight:
+				case _topRight:
 					this.TopLeft = new PointF(this.TopLeft.X, e.ControlPoint.Y);
 					this.BottomRight = new PointF(e.ControlPoint.X, this.BottomRight.Y);
 				    break;
-				case bottomLeft:
+				case _bottomLeft:
 					this.TopLeft = new PointF(e.ControlPoint.X, this.TopLeft.Y);
 					this.BottomRight = new PointF(this.BottomRight.X, e.ControlPoint.Y);
 				    break;
-				case bottomRight:
+				case _bottomRight:
 					this.BottomRight = e.ControlPoint;
 					break;
 			}

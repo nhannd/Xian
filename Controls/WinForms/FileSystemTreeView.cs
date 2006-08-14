@@ -23,7 +23,7 @@ namespace ClearCanvas.Controls.WinForms
 		private ImageList _imageList = new ImageList();
 		private Hashtable _systemIcons = new Hashtable();
 
-		public static readonly int Folder = 0;
+		public static readonly int _folder = 0;
 
 		public FileSystemTreeView()
 		{
@@ -50,7 +50,7 @@ namespace ClearCanvas.Controls.WinForms
 			Icon folderIcon = new Icon(typeof(FileSystemTreeView), "Icons.folder.ico");
 
 			_imageList.Images.Add(folderIcon);
-			_systemIcons.Add(FileSystemTreeView.Folder, 0);
+			_systemIcons.Add(FileSystemTreeView._folder, 0);
 
 			DirectoryNode node = new DirectoryNode(this, new DirectoryInfo(directoryPath));
 			node.Expand();
@@ -105,7 +105,7 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			this._directoryInfo = directoryInfo;
 
-			this.ImageIndex = FileSystemTreeView.Folder;
+			this.ImageIndex = FileSystemTreeView._folder;
 			this.SelectedImageIndex = this.ImageIndex;
 
 			parent.Nodes.Add(this);
@@ -118,7 +118,7 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			this._directoryInfo = directoryInfo;
 
-			this.ImageIndex = FileSystemTreeView.Folder;
+			this.ImageIndex = FileSystemTreeView._folder;
 			this.SelectedImageIndex = this.ImageIndex;
 
 			treeView.Nodes.Add(this);

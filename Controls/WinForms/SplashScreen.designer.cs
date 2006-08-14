@@ -5,7 +5,7 @@ namespace ClearCanvas.Controls.WinForms
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer _components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -13,9 +13,9 @@ namespace ClearCanvas.Controls.WinForms
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing && (_components != null))
 			{
-				components.Dispose();
+				_components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -28,27 +28,27 @@ namespace ClearCanvas.Controls.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			this._components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
-			this._Timer = new System.Windows.Forms.Timer(this.components);
-			this._StatusLabel = new System.Windows.Forms.Label();
+			this._timer = new System.Windows.Forms.Timer(this._components);
+			this._statusLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// _Timer
+			// _timer
 			// 
-			this._Timer.Interval = 50;
-			this._Timer.Tick += new System.EventHandler(this._Timer_Tick);
+			this._timer.Interval = 50;
+			this._timer.Tick += new System.EventHandler(this._Timer_Tick);
 			// 
-			// _StatusLabel
+			// _statusLabel
 			// 
-			this._StatusLabel.AutoEllipsis = true;
-			this._StatusLabel.BackColor = System.Drawing.Color.White;
-			this._StatusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._StatusLabel.Location = new System.Drawing.Point(295, 61);
-			this._StatusLabel.Name = "_StatusLabel";
-			this._StatusLabel.Size = new System.Drawing.Size(354, 23);
-			this._StatusLabel.TabIndex = 0;
-			this._StatusLabel.Text = "Progress text";
+			this._statusLabel.AutoEllipsis = true;
+			this._statusLabel.BackColor = System.Drawing.Color.White;
+			this._statusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._statusLabel.Location = new System.Drawing.Point(295, 61);
+			this._statusLabel.Name = "_StatusLabel";
+			this._statusLabel.Size = new System.Drawing.Size(354, 23);
+			this._statusLabel.TabIndex = 0;
+			this._statusLabel.Text = "Progress text";
 			// 
 			// SplashScreen
 			// 
@@ -57,7 +57,7 @@ namespace ClearCanvas.Controls.WinForms
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
-			this.Controls.Add(this._StatusLabel);
+			this.Controls.Add(this._statusLabel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "SplashScreen";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -70,7 +70,7 @@ namespace ClearCanvas.Controls.WinForms
 
 		#endregion
 
-		private System.Windows.Forms.Timer _Timer;
-		private System.Windows.Forms.Label _StatusLabel;
+		private System.Windows.Forms.Timer _timer;
+		private System.Windows.Forms.Label _statusLabel;
 	}
 }

@@ -6,13 +6,13 @@ namespace ClearCanvas.ImageViewer
 	public class ImageDrawingEventArgs : EventArgs
 	{
 		// Private attributes
-		private PresentationImage _PresentationImage;
-		private PhysicalWorkspace _PhysicalWorkspace;
-		private ImageBox _ImageBox;
-		private Tile _Tile;
-		private bool _ImageBoxLayoutChanged = false;
-		private bool _TileLayoutChanged = false;
-		private bool _PaintNow = false;
+		private PresentationImage _presentationImage;
+		private PhysicalWorkspace _physicalWorkspace;
+		private ImageBox _imageBox;
+		private Tile _tile;
+		private bool _imageBoxLayoutChanged = false;
+		private bool _tileLayoutChanged = false;
+		private bool _paintNow = false;
 
 		// Constructor
 		public ImageDrawingEventArgs(PresentationImage presentationImage, 
@@ -20,62 +20,62 @@ namespace ClearCanvas.ImageViewer
 		{
 			//Platform.CheckForNullReference(presentationImage, "presentationImage");
 
-			_PresentationImage = presentationImage;
-			_PaintNow = paintNow;
+			_presentationImage = presentationImage;
+			_paintNow = paintNow;
 		}
 
 		// Properties
 		public PresentationImage PresentationImage 
 		{ 
-			get { return _PresentationImage; } 
+			get { return _presentationImage; } 
 		}
 
 		public PhysicalWorkspace PhysicalWorkspace
 		{ 
-			get { return _PhysicalWorkspace; } 
+			get { return _physicalWorkspace; } 
 			set 
 			{
 				Platform.CheckForNullReference(value, "PhysicalWorkapce");
-				_PhysicalWorkspace = value; 
+				_physicalWorkspace = value; 
 			}
 		}
 
 		public ImageBox ImageBox
 		{ 
-			get { return _ImageBox; } 
+			get { return _imageBox; } 
 			set 
 			{ 
 				Platform.CheckForNullReference(value, "ImageBox");
-				_ImageBox = value; 
+				_imageBox = value; 
 			}
 		}
 
 		public Tile Tile
 		{ 
-			get { return _Tile; } 
+			get { return _tile; } 
 			set 
 			{ 
 				Platform.CheckForNullReference(value, "Tile");
-				_Tile = value; 
+				_tile = value; 
 			}
 		}
 
 		public bool ImageBoxLayoutChanged
 		{
-			get { return _ImageBoxLayoutChanged; }
-			set { _ImageBoxLayoutChanged = value; }
+			get { return _imageBoxLayoutChanged; }
+			set { _imageBoxLayoutChanged = value; }
 		}
 
 		public bool TileLayoutChanged
 		{
-			get { return _TileLayoutChanged; }
-			set { _TileLayoutChanged = value; }
+			get { return _tileLayoutChanged; }
+			set { _tileLayoutChanged = value; }
 		}
 
 		public bool PaintNow
 		{
-			get { return _PaintNow; }
-			set { _PaintNow = value; }
+			get { return _paintNow; }
+			set { _paintNow = value; }
 		}
 	}
 }

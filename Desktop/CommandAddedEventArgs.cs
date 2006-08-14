@@ -5,15 +5,15 @@ namespace ClearCanvas.Desktop
 {
 	public class CommandAddedEventArgs : EventArgs
 	{
-		private UndoableCommand _Command;
+		private UndoableCommand _command;
 
 		public CommandAddedEventArgs(UndoableCommand command)
 		{
 			Platform.CheckForNullReference(command, "command");
 
-			_Command = command;
+			_command = command;
 		}
 
-		public UndoableCommand Command { get { return _Command; } }
+		public UndoableCommand Command { get { return _command; } }
 	}
 }

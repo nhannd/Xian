@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	/// </summary>
 	public class ControlPointEventArgs : CollectionEventArgs<PointF>
 	{
-		private int _ControlPointIndex;
+		private int _controlPointIndex;
 		
 		public ControlPointEventArgs()
 		{
@@ -21,14 +21,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckNonNegative(controlPointIndex, "controlPointIndex");
 			Platform.CheckForNullReference(controlPoint, "controlPoint");
 
-			_ControlPointIndex = controlPointIndex;
+			_controlPointIndex = controlPointIndex;
 			base.Item = controlPoint;
 		}
 
 		public int ControlPointIndex
 		{
-			get { return _ControlPointIndex; }
-			set { _ControlPointIndex = value; }
+			get { return _controlPointIndex; }
+			set { _controlPointIndex = value; }
 		}
 
 		public PointF ControlPoint

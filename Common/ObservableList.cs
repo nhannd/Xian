@@ -12,9 +12,9 @@ namespace ClearCanvas.Common
 		//where TItem : class
 		where TItemEventArgs : CollectionEventArgs<TItem>, new()
 	{
-		private List<TItem> _List = new List<TItem>();
-		private event EventHandler<TItemEventArgs> _ItemAddedEvent;
-		private event EventHandler<TItemEventArgs> _ItemRemovedEvent;
+		private List<TItem> _list = new List<TItem>();
+		private event EventHandler<TItemEventArgs> _itemAddedEvent;
+		private event EventHandler<TItemEventArgs> _itemRemovedEvent;
 
 		public ObservableList()
 		{
@@ -31,14 +31,14 @@ namespace ClearCanvas.Common
 
 		public event EventHandler<TItemEventArgs> ItemAdded
 		{
-			add { _ItemAddedEvent += value; }
-			remove { _ItemAddedEvent -= value;	}
+			add { _itemAddedEvent += value; }
+			remove { _itemAddedEvent -= value;	}
 		}
 
 		public event EventHandler<TItemEventArgs> ItemRemoved
 		{
-			add { _ItemRemovedEvent += value; }
-			remove { _ItemRemovedEvent -= value; }
+			add { _itemRemovedEvent += value; }
+			remove { _itemRemovedEvent -= value; }
 		}
 
 		#endregion
@@ -49,17 +49,17 @@ namespace ClearCanvas.Common
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			return _List.IndexOf(item);
+			return _list.IndexOf(item);
 		}
 
 		public void Insert(int index, TItem item)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
 
-			if (_List.Contains(item))
+			if (_list.Contains(item))
 				return;
 
-			_List.Insert(index, item);
+			_list.Insert(index, item);
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = item;
@@ -71,7 +71,7 @@ namespace ClearCanvas.Common
 			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
 
 			TItem itemToRemove = this[index];
-			_List.RemoveAt(index);
+			_list.RemoveAt(index);
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = itemToRemove;
@@ -83,12 +83,12 @@ namespace ClearCanvas.Common
 			get
 			{
 				Platform.CheckIndexRange(index, 0, this.Count - 1, "index");
-				return _List[index];
+				return _list[index];
 			}
 			set
 			{
 				Platform.CheckIndexRange(index, 0, this.Count - 1, "index");
-				_List[index] = value;
+				_list[index] = value;
 			}
 		}
 
@@ -98,10 +98,10 @@ namespace ClearCanvas.Common
 
 		public void Add(TItem item)
 		{
-			if (_List.Contains(item))
+			if (_list.Contains(item))
 				return;
 
-			_List.Add(item);
+			_list.Add(item);
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = item;
@@ -112,9 +112,9 @@ namespace ClearCanvas.Common
 		{
 			// If we don't have any subscribers to the ItemRemovedEvent, then
 			// make it faster and just call Clear().
-			if (_ItemRemovedEvent == null)
+			if (_itemRemovedEvent == null)
 			{
-				_List.Clear();
+				_list.Clear();
 			}
 			// But if we do, then we have to remove items one by one so that
 			// subscribers are notified.
@@ -132,17 +132,17 @@ namespace ClearCanvas.Common
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			return _List.Contains(item);
+			return _list.Contains(item);
 		}
 
 		public void CopyTo(TItem[] array, int arrayIndex)
 		{
-			_List.CopyTo(array, arrayIndex);
+			_list.CopyTo(array, arrayIndex);
 		}
 
 		public int Count
 		{
-			get { return _List.Count; }
+			get { return _list.Count; }
 		}
 
 		public bool IsReadOnly
@@ -154,7 +154,7 @@ namespace ClearCanvas.Common
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			bool result = _List.Remove(item);
+			bool result = _list.Remove(item);
 
 			// Only raise event if the item was actually removed
 			if (result == true)
@@ -173,7 +173,7 @@ namespace ClearCanvas.Common
 
 		public IEnumerator<TItem> GetEnumerator()
 		{
-			return (_List as IEnumerable<TItem>).GetEnumerator();
+			return (_list as IEnumerable<TItem>).GetEnumerator();
 		}
 
 		#endregion
@@ -182,19 +182,19 @@ namespace ClearCanvas.Common
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return _List.GetEnumerator();
+			return _list.GetEnumerator();
 		}
 
 		#endregion
 
 		protected virtual void OnItemAdded(TItemEventArgs e)
 		{
-			EventsHelper.Fire(_ItemAddedEvent, this, e);
+			EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
 
 		protected virtual void OnItemRemoved(TItemEventArgs e)
 		{
-			EventsHelper.Fire(_ItemRemovedEvent, this, e);
+			EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}
 	}
 }

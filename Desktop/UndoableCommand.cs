@@ -7,43 +7,43 @@ namespace ClearCanvas.Desktop
 {
 	public class UndoableCommand : Command
 	{
-		private IMemorable _Originator;
-		private IMemento _BeginState;
-		private IMemento _EndState;
+		private IMemorable _originator;
+		private IMemento _beginState;
+		private IMemento _endState;
 
 		public UndoableCommand(IMemorable originator)
 		{
 			Platform.CheckForNullReference(originator, "originator");
-			_Originator = originator;
+			_originator = originator;
 		}
 
 		protected IMemorable Originator
 		{
-			get { return _Originator; }
+			get { return _originator; }
 		}
 
 		public virtual IMemento BeginState
 		{
-			get { return _BeginState; }
-			set { _BeginState = value; }
+			get { return _beginState; }
+			set { _beginState = value; }
 		}
 
 		public virtual IMemento EndState
 		{
-			get { return _EndState; }
-			set { _EndState = value; }
+			get { return _endState; }
+			set { _endState = value; }
 		}
 
 		public override void Execute()
 		{
-			if (_Originator != null)
-				_Originator.SetMemento(_EndState);
+			if (_originator != null)
+				_originator.SetMemento(_endState);
 		}
 
 		public virtual void Unexecute()
 		{
-			if (_Originator != null)
-				_Originator.SetMemento(_BeginState);
+			if (_originator != null)
+				_originator.SetMemento(_beginState);
 		}
 	}
 }

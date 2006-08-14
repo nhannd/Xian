@@ -16,14 +16,14 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			_ModelPlugin = new WorkstationModel();
-			_ModelPlugin.Start();
+			_modelPlugin = new WorkstationModel();
+			_modelPlugin.Start();
 		}
 		
 		[TestFixtureTearDown]
 		public void Cleanup()
 		{
-			_ModelPlugin.Stop();
+			_modelPlugin.Stop();
 		}
 
 		[Test]
@@ -36,34 +36,34 @@ namespace ClearCanvas.ImageViewer.Tests
 		public void GetMe()
 		{
 			Assert.IsNotNull(WorkstationModel.Me);
-			Assert.AreSame(WorkstationModel.Me, _ModelPlugin);
+			Assert.AreSame(WorkstationModel.Me, _modelPlugin);
 		}
 
 		[Test]
 		public void IsStarted()
 		{
-			_ModelPlugin.Start();
-			Assert.IsTrue(_ModelPlugin.Started);
+			_modelPlugin.Start();
+			Assert.IsTrue(_modelPlugin.Started);
 		}
 
 		[Test]
 		public void IsStopped()
 		{
-			_ModelPlugin.Stop();
-			Assert.IsFalse(_ModelPlugin.Started);
+			_modelPlugin.Stop();
+			Assert.IsFalse(_modelPlugin.Started);
 		}
 
 		[Test]
 		public void GetName()
 		{
-			bool result = (_ModelPlugin.Name == "ClearCanvas.Workstation.Model");
+			bool result = (_modelPlugin.Name == "ClearCanvas.Workstation.Model");
 			Assert.IsTrue(result);
 		}
 
 		[Test]
 		public void GetPluginType()
 		{
-			bool result = (_ModelPlugin.Type == Plugin.PluginType.Model);
+			bool result = (_modelPlugin.Type == Plugin.PluginType.Model);
 			Assert.IsTrue(result);
 		}
  */

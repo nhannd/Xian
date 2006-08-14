@@ -7,19 +7,19 @@ namespace ClearCanvas.Desktop
 	public class CommandHistory 
 	{
 		// Private attributes
-		private List<UndoableCommand> _History = new List<UndoableCommand>();
-		private int _MaxSize = 0;
-		private int _CurrentCommandIndex = -1;
-		private int _LastCommandIndex = -1;
+		private List<UndoableCommand> _history = new List<UndoableCommand>();
+		private int _maxSize = 0;
+		private int _currentCommandIndex = -1;
+		private int _lastCommandIndex = -1;
 
-		private event EventHandler _CurrentCommandChangedEvent;
+		private event EventHandler _currentCommandChangedEvent;
 
 		// Constructor
 		public CommandHistory(int maxSize)
 		{
 			Platform.CheckPositive(maxSize, "maxSize");
 
-			_MaxSize = maxSize;
+			_maxSize = maxSize;
 		}
 
 		// Properties
@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				return _History.Count;
+				return _history.Count;
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				return _MaxSize;
+				return _maxSize;
 			}
 		}
 
@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				return _CurrentCommandIndex;
+				return _currentCommandIndex;
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				return _LastCommandIndex;
+				return _lastCommandIndex;
 			}
 		}
 
@@ -60,11 +60,11 @@ namespace ClearCanvas.Desktop
 		{
 			add
 			{
-				_CurrentCommandChangedEvent += value;
+				_currentCommandChangedEvent += value;
 			}
 			remove
 			{
-				_CurrentCommandChangedEvent -= value;
+				_currentCommandChangedEvent -= value;
 			}
 		}
 
@@ -73,29 +73,29 @@ namespace ClearCanvas.Desktop
 		{
 			Platform.CheckForNullReference(command, "command");
 
-			if (_CurrentCommandIndex < _LastCommandIndex)
+			if (_currentCommandIndex < _lastCommandIndex)
 			{
-				int numCommandsToRemove = _LastCommandIndex - _CurrentCommandIndex;
-				_History.RemoveRange(_CurrentCommandIndex + 1, numCommandsToRemove);
-				_LastCommandIndex -= numCommandsToRemove;
+				int numCommandsToRemove = _lastCommandIndex - _currentCommandIndex;
+				_history.RemoveRange(_currentCommandIndex + 1, numCommandsToRemove);
+				_lastCommandIndex -= numCommandsToRemove;
 			}
 
-			_History.Add(command);
+			_history.Add(command);
 
-			if (NumCommands > _MaxSize)
+			if (NumCommands > _maxSize)
 			{
-				_History.RemoveAt(0);
+				_history.RemoveAt(0);
 
-				if (_CurrentCommandIndex == _LastCommandIndex)
-					_CurrentCommandIndex--;
+				if (_currentCommandIndex == _lastCommandIndex)
+					_currentCommandIndex--;
 
-				_LastCommandIndex--;
+				_lastCommandIndex--;
 			}
 
-			_CurrentCommandIndex++;
-			_LastCommandIndex++;
+			_currentCommandIndex++;
+			_lastCommandIndex++;
 
-			EventsHelper.Fire(_CurrentCommandChangedEvent, this, EventArgs.Empty);
+			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
 		}
 
 		public void Redo()
@@ -103,11 +103,11 @@ namespace ClearCanvas.Desktop
 			if (NumCommands == 0)
 				return;
 
-			if (_CurrentCommandIndex == _LastCommandIndex)
+			if (_currentCommandIndex == _lastCommandIndex)
 				return;
 
-			_CurrentCommandIndex++;
-			UndoableCommand cmd = _History[_CurrentCommandIndex];
+			_currentCommandIndex++;
+			UndoableCommand cmd = _history[_currentCommandIndex];
 
 			try
 			{
@@ -118,7 +118,7 @@ namespace ClearCanvas.Desktop
 				Platform.Log(e, LogLevel.Error);
 			}
 
-			EventsHelper.Fire(_CurrentCommandChangedEvent, this, EventArgs.Empty);
+			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
 		}
 
 		public void Undo()
@@ -126,10 +126,10 @@ namespace ClearCanvas.Desktop
 			if (NumCommands == 0)
 				return;
 
-			if (_CurrentCommandIndex == -1)
+			if (_currentCommandIndex == -1)
 				return;
 
-			UndoableCommand cmd = _History[_CurrentCommandIndex];
+			UndoableCommand cmd = _history[_currentCommandIndex];
 
 			try
 			{
@@ -140,9 +140,9 @@ namespace ClearCanvas.Desktop
 				Platform.Log(e, LogLevel.Error);
 			}
 
-			_CurrentCommandIndex--;
+			_currentCommandIndex--;
 
-			EventsHelper.Fire(_CurrentCommandChangedEvent, this, EventArgs.Empty);
+			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
 		}
 	}
 }

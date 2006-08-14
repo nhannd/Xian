@@ -40,11 +40,11 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// This event is not yet implemented.
         /// </summary>
-        private event EventHandler<SeriesCompletedEventArgs> SeriesCompletedEvent;
+        private event EventHandler<SeriesCompletedEventArgs> _seriesCompletedEvent;
         /// <summary>
         /// This event is not yet implemented.
         /// </summary>
-        private event EventHandler<StudyCompletedEventArgs> StudyCompletedEvent;
+        private event EventHandler<StudyCompletedEventArgs> _studyCompletedEvent;
 
         /// <summary>
         /// Event accessor.
@@ -838,12 +838,12 @@ namespace ClearCanvas.Dicom.Network
 
         protected void OnStudyCompletedEvent(StudyCompletedEventArgs e)
         {
-            EventsHelper.Fire(StudyCompletedEvent, this, e);
+            EventsHelper.Fire(_studyCompletedEvent, this, e);
         }
 
         protected void OnSeriesCompletedEvent(SeriesCompletedEventArgs e)
         {
-            EventsHelper.Fire(SeriesCompletedEvent, this, e);
+            EventsHelper.Fire(_seriesCompletedEvent, this, e);
         }
 
         protected void OnQueryResultReceivedEvent(QueryResultReceivedEventArgs e)

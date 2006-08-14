@@ -32,7 +32,7 @@ namespace ClearCanvas.Common
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = value;
-			OnItemAdded(args);
+			OnItemAddedEventHandler(args);
 		}
 
 		public bool ContainsKey(TKey key)
@@ -54,7 +54,7 @@ namespace ClearCanvas.Common
 
 			// Only raise event if the item was actually removed
 			if (result == true)
-				OnItemRemoved(args);
+				OnItemRemovedEventHandler(args);
 
 			return result;
 		}
@@ -91,7 +91,7 @@ namespace ClearCanvas.Common
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = item.Value;
-			OnItemAdded(args);
+			OnItemAddedEventHandler(args);
 		}
 
 		public void Clear()
@@ -152,7 +152,7 @@ namespace ClearCanvas.Common
 
 			// Only raise event if the item was actually removed
 			if (result == true)
-				OnItemRemoved(args);
+				OnItemRemovedEventHandler(args);
 
 			return result;
 		}
@@ -177,12 +177,12 @@ namespace ClearCanvas.Common
 
 		#endregion
 
-		protected virtual void OnItemAdded(TItemEventArgs e)
+		protected virtual void OnItemAddedEventHandler(TItemEventArgs e)
 		{
 			EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
 
-		protected virtual void OnItemRemoved(TItemEventArgs e)
+        protected virtual void OnItemRemovedEventHandler(TItemEventArgs e)
 		{
 			EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}

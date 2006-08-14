@@ -7,8 +7,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class GraphicStateChangedEventArgs : EventArgs
 	{
-		private GraphicState _OldState;
-		private GraphicState _NewState;
+		private GraphicState _oldState;
+		private GraphicState _newState;
 
 		public GraphicStateChangedEventArgs()
 		{
@@ -17,17 +17,17 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public GraphicState OldState
 		{
-			get { return _OldState; }
-			set { _OldState = value; }
+			get { return _oldState; }
+			set { _oldState = value; }
 		}
 
 		public GraphicState NewState
 		{
-			get { return _NewState; }
+			get { return _newState; }
 			set 
 			{
 				Platform.CheckForNullReference(value, "NewState");
-				_NewState = value; 
+				_newState = value; 
 			}
 		}
 	}

@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
 
             // event handler for when any click occurs on the treeview, to catch the 
             // right-click that would normally open up the context menu
-            _serverTree.Click += new EventHandler(_serverTree_Click);
+            _serverTree.Click += new EventHandler(ServerTree_Click);
 
             InitializeTreeView();
         }
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void _serverTree_Click(object sender, EventArgs e)
+        void ServerTree_Click(object sender, EventArgs e)
         {
             _lastClickedNode = _serverTree.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
         }
