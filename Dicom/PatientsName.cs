@@ -7,9 +7,24 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Encapsulates the DICOM Patient's Name.
     /// </summary>
-    public struct PatientsName
+    public class PatientsName
     {
+        /// <summary>
+        /// Constructor for NHibernate.
+        /// </summary>
+        public PatientsName()
+        {
+        }
 
+        protected virtual string InternalPatientsName
+        {
+            get { return _patientsName; }
+            set
+            {
+                _patientsName = value;
+                BreakApartFirstAndLastName();
+            }
+        }
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -24,20 +39,15 @@ namespace ClearCanvas.Dicom
             //    throw new System.ArgumentOutOfRangeException("patientsName", SR.ExceptionGeneralPatientsNameZeroLength);
 
             _patientsName = patientsName;
-
-            // parse out the first and last names
-            string[] names = _patientsName.Split('^');
-
-            _lastName = (names.GetUpperBound(0) >= 0) ? (names[0]) : "";
-            _firstName = (names.GetUpperBound(0) >= 1) ? (names[1]) : "";
+            BreakApartFirstAndLastName();
         }
 
-        public String LastName
+        public virtual String LastName
         {
             get { return _lastName; }
         }
 
-        public String FirstName
+        public virtual String FirstName
         {
             get { return _firstName; }
         }
@@ -46,7 +56,7 @@ namespace ClearCanvas.Dicom
         /// Gets the Patient's Name as a string.
         /// </summary>
         /// <returns>A string representation of the Patient's Name.</returns>
-        public override string  ToString()
+        public override string ToString()
         {
             return _patientsName;
         }
@@ -59,6 +69,15 @@ namespace ClearCanvas.Dicom
         public static implicit operator String(PatientsName pn)
         {
             return pn.ToString();
+        }
+
+        protected void BreakApartFirstAndLastName()
+        {
+            // parse out the first and last names
+            string[] names = this.InternalPatientsName.Split('^');
+
+            _lastName = (names.GetUpperBound(0) >= 0) ? (names[0]) : "";
+            _firstName = (names.GetUpperBound(0) >= 1) ? (names[1]) : "";
         }
 
         private string _patientsName;

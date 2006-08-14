@@ -14,13 +14,13 @@ namespace ClearCanvas.Dicom.DataStore
             _windowValues = new ArrayList();
         }
 
-        public virtual short SamplesPerPixel
+        public virtual ushort SamplesPerPixel
         {
             get { return _samplesPerPixel; }
             set { _samplesPerPixel = value; }
         }
 
-        public virtual short BitsStored
+        public virtual ushort BitsStored
         {
             get { return _bitsStored; }
             set { _bitsStored = value; }
@@ -32,19 +32,19 @@ namespace ClearCanvas.Dicom.DataStore
             set { _rescaleSlope = value; }
         }
 
-        public virtual int Rows
+        public virtual uint Rows
         {
             get { return _rows; }
             set { _rows = value; }
         }
 
-        public virtual int Columns
+        public virtual uint Columns
         {
             get { return _columns; }
             set { _columns = value; }
         }
 
-        public virtual short PlanarConfiguration
+        public virtual ushort PlanarConfiguration
         {
             get { return _planarConfiguration; }
             set { _planarConfiguration = value; }
@@ -56,19 +56,19 @@ namespace ClearCanvas.Dicom.DataStore
             set { _rescaleIntercept = value; }
         }
 
-        public virtual short PixelRepresentation
+        public virtual ushort PixelRepresentation
         {
             get { return _pixelRepresentation; }
             set { _pixelRepresentation = value; }
         }
 
-        public virtual short BitsAllocated
+        public virtual ushort BitsAllocated
         {
             get { return _bitsAllocated; }
             set { _bitsAllocated = value; }
         }
 
-        public virtual short HighBit
+        public virtual ushort HighBit
         {
             get { return _highBit; }
             set { _highBit = value; }
@@ -126,18 +126,18 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         #region Private members
-        private short _samplesPerPixel;
-        private short _bitsStored;
+        private ushort _samplesPerPixel;
+        private ushort _bitsStored;
         private double _rescaleSlope;
         private PixelSpacing _pixelSpacing;
-        private int _rows;
-        private int _columns;
+        private uint _rows;
+        private uint _columns;
         private PhotometricInterpretation _photometricInterpretation;
-        private short _planarConfiguration;
+        private ushort _planarConfiguration;
         private double _rescaleIntercept;
-        private short _pixelRepresentation;
-        private short _bitsAllocated;
-        private short _highBit;
+        private ushort _pixelRepresentation;
+        private ushort _bitsAllocated;
+        private ushort _highBit;
         private IList _windowValues;
         #endregion
     }

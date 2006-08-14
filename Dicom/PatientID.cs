@@ -7,8 +7,22 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Encapsulates the DICOM Patient ID.
     /// </summary>
-    public struct PatientId
+    public class PatientId
     {
+        /// <summary>
+        /// Mandatory NHibernate constructor.
+        /// </summary>
+        public PatientId()
+        {
+        }
+
+
+        public virtual string InternalPatientId
+        {
+            get { return _patientId; }
+            set { _patientId = value; }
+        }
+
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -36,7 +50,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="pid">The AETitle object to be casted.</param>
         /// <returns>A String representation of the AE Title object.</returns>
-        public static implicit operator String(PatientId pid)
+        public static implicit operator string(PatientId pid)
         {
             return pid.ToString();
         }

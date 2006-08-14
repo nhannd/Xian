@@ -32,7 +32,7 @@ namespace ClearCanvas.Dicom.DataStore
             set { _modality = value; }
         }
 
-        public virtual int SeriesNumber
+        public virtual uint SeriesNumber
         {
             get { return _seriesNumber; }
             set { _seriesNumber = value; }
@@ -99,7 +99,7 @@ namespace ClearCanvas.Dicom.DataStore
         long _seriesOid;
         string _seriesInstanceUid;
         string _modality;
-        int _seriesNumber;
+        uint _seriesNumber;
         string _laterality;
         string _seriesDescription;
         ISet _sopInstances;
@@ -123,7 +123,7 @@ namespace ClearCanvas.Dicom.DataStore
             sop.SetParentSeries(this);
             this.SopInstances.Add(sop);
         }
-
+        
         public void RemoveSopInstance(ISopInstance sop)
         {
             this.SopInstances.Remove(sop);

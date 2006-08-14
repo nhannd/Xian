@@ -75,6 +75,36 @@ namespace ClearCanvas.Dicom.DataStore
             set { _admittingDiagnosesDescription = value; }
         }
 
+        public virtual PatientId PatientId
+        {
+            get { return _patientId; }
+            set { _patientId = value; }
+        }
+
+        //public virtual string InternalPatientId
+        //{
+        //    get { return this.PatientId.ToString(); }
+        //    set { this.PatientId = new PatientId(value); }
+        //}
+
+        public virtual PatientsName PatientsName
+        {
+            get { return _patientsName; }
+            set { _patientsName = value; }
+        }
+
+        public virtual string PatientsSex
+        {
+            get { return _patientsSex; }
+            set { _patientsSex = value; }
+        }
+
+        public virtual string PatientsBirthDate
+        {
+            get { return _patientsBirthDate; }
+            set { _patientsBirthDate = value; }
+        }
+
         public virtual ISet Series
         {
             get { return _series; }
@@ -124,6 +154,10 @@ namespace ClearCanvas.Dicom.DataStore
         string _studyDescription;
         string _procedureCodeSequenceCodeValue;
         string _admittingDiagnosesDescription;
+        PatientId _patientId;
+        PatientsName _patientsName;
+        string _patientsSex;
+        string _patientsBirthDate;
         ISet _series;
         #endregion
         #endregion

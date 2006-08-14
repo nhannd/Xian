@@ -13,5 +13,6 @@ namespace ClearCanvas.Dicom.DataStore
         ISopInstance GetSopInstance(Uid referencedUid);
         ISeries GetSeries(Uid referenceUid);
         IStudy GetStudy(Uid referenceUid);
+        ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey);
     }
 }

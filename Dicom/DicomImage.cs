@@ -186,7 +186,8 @@ namespace ClearCanvas.Dicom
 				this.PixelRepresentation,
 				this.PhotometricInterpretation,
 				this.SamplesPerPixel,
-				this.PlanarConfiguration);
+				this.PlanarConfiguration,
+                _transferSyntaxUid);
 		}
 
         /// <summary>
@@ -199,6 +200,12 @@ namespace ClearCanvas.Dicom
         /// <param name="rows">The Rows tag of the image.</param>
         /// <param name="columns">The Columns tag of the image.</param>
         /// <param name="samplesPerPixel">The Samples Per Pixel tag of the image.</param>
+        /// <param name="bitsStored">The number of bits actually used in the storage of pixel information.</param>
+        /// <param name="pixelRepresentation">The representation of pixels as signed or unsigned using 2's complement.</param>
+        /// <param name="photometricInterpretation">The interpretation of the pixel values into different colour spaces.</param>
+        /// <param name="planarConfiguration">For coloured pixels, the interpretation of the layout of storage, either by colour planes,
+        /// or as RGB triplets.</param>
+        /// <param name="transferSyntaxUid">Transfer Syntax of the image encoding.</param>
         /// <returns>A byte array representing the pixel data. This array's interpretation
         /// should be subject to the various image-defining parameters such as Samples Per Pixel
         /// and Bits Stored.</returns>
@@ -210,7 +217,8 @@ namespace ClearCanvas.Dicom
 			int pixelRepresentation,
 			string photometricInterpretation,
 			int samplesPerPixel,
-			int planarConfiguration)
+			int planarConfiguration, 
+            string transferSyntaxUid)
         {
             // assume that if bitsAllocated, etc. are provided, IsImageParameterSetLoaded is true
             if (!IsDatasetLoaded)
@@ -240,12 +248,12 @@ namespace ClearCanvas.Dicom
                 status = _dataset.findAndDeleteElement(Dcm.PixelData);
 				DicomHelper.CheckReturnValue(status, Dcm.PixelData, out tagExists);
 				
-				if (!_imageCodecMap.IsTransferSyntaxSupported(_transferSyntaxUid))
+				if (!_imageCodecMap.IsTransferSyntaxSupported(transferSyntaxUid))
 					throw new Exception("Transfer syntax not supported");
 
 				try
 				{
-					_pixelData = _imageCodecMap[_transferSyntaxUid].Decode(
+					_pixelData = _imageCodecMap[transferSyntaxUid].Decode(
 						compressedPixelData,
 						rows,
 						columns,

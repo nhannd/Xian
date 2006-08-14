@@ -1,119 +1,120 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.StudyManagement;
+
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using ClearCanvas.Common;
-    using ClearCanvas.Dicom;
-    using ClearCanvas.Dicom.OffisWrapper;
-    using ClearCanvas.ImageViewer.StudyManagement;
 
-	public class LocalDataStoreImageSop : ImageSop, IDicomPropertySettable
+	public class LocalDataStoreImageSop : ImageSop
 	{
 		private FileDicomImage _dicomImage;
+        private ImageSopInstance _dataStoreImageSopInstance;
+        private ClearCanvas.Dicom.DataStore.Study _dataStoreStudy;
+        private ClearCanvas.Dicom.DataStore.Series _dataStoreSeries;
+        static private Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string> _photometricInterpretationMap;
 
-		public LocalDataStoreImageSop(string filename)
+        static LocalDataStoreImageSop()
+        {
+            _photometricInterpretationMap = new Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string>();
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Argb, "ARGB");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Cmyk, "CMYK");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Hsv, "HSV");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Monochrome1, "MONOCHROME1");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Monochrome2, "MONOCHROME2");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.PaletteColor, "PALETTE_COLOR");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Rgb, "RGB");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrFull, "YBR_FULL");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrFull422, "YBR_FULL_422");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrIct, "YBR_ICT");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrPartial420, "YBR_PARTIAL_420");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrPartial422, "YBR_PARTIAL_422");
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrRct, "YBR_RCT");
+        }
+
+        static private Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string> PhotometricInterpretationMap
+        {
+            get { return LocalDataStoreImageSop._photometricInterpretationMap; }
+        }
+
+		public LocalDataStoreImageSop(ImageSopInstance sop)
 		{
-			_dicomImage = new FileDicomImage(filename);
+            _dataStoreImageSopInstance = sop;
+            _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
+            _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as ClearCanvas.Dicom.DataStore.Series;
+			_dicomImage = new FileDicomImage(sop.LocationUri.LocalPath.Substring(12)); // remove the "\\localhost\" part
 		}
+
+        /// <summary>
+        /// Disallow default constructor to be called.
+        /// </summary>
+        private LocalDataStoreImageSop()
+        {
+        }
+
+        private ImageSopInstance DataStoreImageSopInstance
+        {
+            get { return _dataStoreImageSopInstance; }
+            set { throw new Exception("This is not yet implemented."); }
+        }
+
+        private ClearCanvas.Dicom.DataStore.Study DataStoreStudy
+        {
+            get { return _dataStoreStudy; }
+            set { throw new Exception("This is not yet implemented."); }
+        }
+
+        private ClearCanvas.Dicom.DataStore.Series DataStoreSeries
+        {
+            get { return _dataStoreSeries; }
+            set { throw new Exception("This is not yet implemented."); }
+        }
 
 		public override string PatientsName
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+			get { return this.DataStoreStudy.PatientsName; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
-		public override string PatientId
-		{
-			get
-			{
-                if (null != _patientId)
-                    return _patientId;
-                else
-                {
-                    bool tagExists;
-                    _dicomImage.GetTag(Dcm.PatientId, out _patientId, out tagExists);
-                    return _patientId;
-                }
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
+        public override string PatientId
+        {
+            get { return this.DataStoreStudy.PatientId; }
+            set { throw new Exception("This is not yet implemented."); }
+        }
 
 		public override string PatientsBirthDate
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreStudy.PatientsBirthDate; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string PatientsSex
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreStudy.PatientsSex; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyInstanceUID
 		{
-			get
-			{
-                if (null != _studyInstanceUid)
-                    return _studyInstanceUid;
-                else
-                {
-                    bool tagExists;
-                    _dicomImage.GetTag(Dcm.StudyInstanceUID, out _studyInstanceUid, out tagExists);
-                    return _studyInstanceUid;
-                }
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreStudy.StudyInstanceUid; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyDate
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreStudy.StudyDate; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyTime
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
+            get { return this.DataStoreStudy.StudyTime; }
+            set { throw new Exception("This is not yet implemented."); }
+        }
 
 		public override string ReferringPhysiciansName
 		{
@@ -129,26 +130,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string AccessionNumber
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreStudy.AccessionNumber; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyDescription
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreStudy.StudyDescription; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string NameOfPhysiciansReadingStudy
@@ -189,69 +178,38 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string AdditionalPatientsHistory
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get
+            {
+                throw new Exception("The method or operation is not implemented.");
+            }
+            set
+            {
+                throw new Exception("The method or operation is not implemented.");
+            }
 		}
 
 		public override string Modality
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreSeries.Modality; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string SeriesInstanceUID
 		{
-			get
-			{
-                if (null != _seriesInstanceUid)
-                    return _seriesInstanceUid;
-                else
-                {
-                    bool tagExists;
-                    _dicomImage.GetTag(Dcm.SeriesInstanceUID, out _seriesInstanceUid, out tagExists);
-                    return _seriesInstanceUid;
-                }
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreSeries.SeriesInstanceUid; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string SeriesNumber
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return Convert.ToString(this.DataStoreSeries.SeriesNumber); }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string Laterality
 		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreSeries.Laterality; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string SeriesDate
@@ -544,60 +502,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double PixelSpacingX
 		{
-			get
-			{
-                if (null != _pixelSpacingX)
-                    return (double) _pixelSpacingX;
-                else
-                {
-                    bool tagExists;
-                    double pixelSpacingValueX;
-                    _dicomImage.GetTag(Dcm.PixelSpacing, out pixelSpacingValueX, 0, out tagExists);
-
-                    if (tagExists)
-                    {
-                        _pixelSpacingX = pixelSpacingValueX;
-                        return (double)_pixelSpacingX;
-                    }
-                    else
-                    {
-                        return 0.0;
-                    }
-                }
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreImageSopInstance.PixelSpacing.Column; }
+            set { throw new Exception("This is not yet implemented."); }
+       
 		}
 
 		public override double PixelSpacingY
 		{
-			get
-			{
-                if (null != _pixelSpacingY)
-                    return (double) _pixelSpacingY;
-                else
-                {
-                    bool tagExists;
-                    double pixelSpacingY;
-                    _dicomImage.GetTag(Dcm.PixelSpacing, out pixelSpacingY, 1, out tagExists);
-
-                    if (tagExists)
-                    {
-                        _pixelSpacingY = pixelSpacingY;
-                        return (double)_pixelSpacingY;
-                    }
-                    else
-                    {
-                        return 0.0;
-                    }
-                }
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreImageSopInstance.PixelSpacing.Row; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override double ImageOrientationPatientRowX
@@ -758,44 +671,26 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int SamplesPerPixel
 		{
-			get
-			{
-                if (null != _samplesPerPixel)
-                    return (int) _samplesPerPixel;
-                else
-                    return -1;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            get { return this.DataStoreImageSopInstance.SamplesPerPixel; }
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string PhotometricInterpretation
 		{
 			get
 			{
-                if (null != _photometricInterpretation)
-                    return _photometricInterpretation;
+                if (LocalDataStoreImageSop.PhotometricInterpretationMap.ContainsKey(this.DataStoreImageSopInstance.PhotometricInterpretation))
+                    return LocalDataStoreImageSop.PhotometricInterpretationMap[this.DataStoreImageSopInstance.PhotometricInterpretation];
                 else
                     return null;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+            set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override int Rows
 		{
-			get
-			{
-                if (null != _rows)
-                    return (int)_rows;
-                else
-                    return -1;
-			}
-			set
+            get { return Convert.ToInt32(this.DataStoreImageSopInstance.Rows); }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -803,14 +698,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int Columns
 		{
-			get
-			{
-                if (null != _columns)
-                    return (int)_columns;
-                else
-                    return -1;
-			}
-			set
+            get { return Convert.ToInt32(this.DataStoreImageSopInstance.Columns); }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -818,14 +707,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int BitsAllocated
 		{
-			get
-			{
-                if (null != _bitsAllocated)
-                    return (int)_bitsAllocated;
-                else
-                    return -1;
-			}
-			set
+            get { return this.DataStoreImageSopInstance.BitsAllocated; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -833,14 +716,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int BitsStored
 		{
-			get
-			{
-                if (null != _bitsStored)
-                    return (int)_bitsStored;
-                else
-                    return -1;
-			}
-			set
+            get { return this.DataStoreImageSopInstance.BitsStored; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -848,14 +725,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int HighBit
 		{
-			get
-			{
-                if (null != _highBit)
-                    return (int)_highBit;
-                else
-                    return -1;
-			}
-			set
+            get { return this.DataStoreImageSopInstance.HighBit; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -863,14 +734,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int PixelRepresentation
 		{
-			get
-			{
-                if (null != _pixelRepresentation)
-                    return (int)_pixelRepresentation;
-                else
-                    return -1;
-			}
-			set
+            get { return this.DataStoreImageSopInstance.PixelRepresentation; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -878,14 +743,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int PlanarConfiguration
 		{
-			get
-			{
-                if (null != _planarConfiguration)
-                    return (int)_planarConfiguration;
-                else
-                    return -1;
-			}
-			set
+            get { return this.DataStoreImageSopInstance.PlanarConfiguration; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -893,25 +752,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double RescaleIntercept
 		{
-			get
-			{
-                if (null != _rescaleIntercept)
-                    return (double) _rescaleIntercept;
-                else
-                {
-                    bool tagExists;
-                    double rescaleIntercept;
-                    _dicomImage.GetTag(Dcm.RescaleIntercept, out rescaleIntercept, out tagExists);
-                    if (tagExists)
-                    {
-                        _rescaleIntercept = rescaleIntercept;
-                        return (double)_rescaleIntercept;
-                    }
-                    else
-                        return 0.0;
-                }
-			}
-			set
+            get { return this.DataStoreImageSopInstance.RescaleIntercept; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -919,25 +761,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double RescaleSlope
 		{
-			get
-			{
-                if (null != _rescaleSlope)
-                    return (double) _rescaleSlope;
-                else
-                {
-                    bool tagExists;
-                    double rescaleSlope;
-                    _dicomImage.GetTag(Dcm.RescaleSlope, out rescaleSlope, out tagExists);
-                    if (tagExists)
-                    {
-                        _rescaleSlope = rescaleSlope;
-                        return (double)_rescaleSlope;
-                    }
-                    else
-                        return 1.0;
-                }
-			}
-			set
+            get { return this.DataStoreImageSopInstance.RescaleSlope; }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -957,24 +782,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double WindowCenter
 		{
-			get
-			{
-                if (null != _windowCenter)
-                    return (double) _windowCenter;
-                else
+            get
+            {
+                if (this.DataStoreImageSopInstance.WindowValues != null)
                 {
-                    bool tagExists;
-                    double windowCenter;
-                    _dicomImage.GetTag(Dcm.WindowCenter, out windowCenter, out tagExists);
-                    if (tagExists)
-                    {
-                        _windowCenter = windowCenter;
-                        return (double)_windowCenter;
-                    }
-                    else
-                        return 0.0;
+                    return (this.DataStoreImageSopInstance.WindowValues[0] as Window).Center;
                 }
-			}
+                else
+                    return 0.0;
+            }
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -983,25 +799,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double WindowWidth
 		{
-			get
-			{
-                if (null != _windowWidth)
-                    return (double) _windowWidth;
-                else
+            get
+            {
+                if (this.DataStoreImageSopInstance.WindowValues != null)
                 {
-                    bool tagExists;
-                    double windowWidth;
-                    _dicomImage.GetTag(Dcm.WindowWidth, out windowWidth, out tagExists);
-                    if (tagExists)
-                    {
-                        _windowWidth = windowWidth;
-                        return (double)_windowWidth;
-                    }
-                    else
-                        return 0.0;
+                    return (this.DataStoreImageSopInstance.WindowValues[0] as Window).Width;
                 }
-			}
-			set
+                else
+                    return 0.0;
+            }
+            set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -1021,17 +828,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string SopInstanceUID
 		{
-			get
-			{
-                if (null != _sopInstanceUid)
-                    return _sopInstanceUid;
-                else
-                {
-                    bool tagExists;
-                    _dicomImage.GetTag(Dcm.SOPInstanceUID, out _sopInstanceUid, out tagExists);
-                    return _sopInstanceUid;
-                }
-			}
+            get { return this.DataStoreImageSopInstance.SopInstanceUid; }
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -1040,17 +837,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string TransferSyntaxUID
 		{
-			get
-			{
-				if (null != _transferSyntaxUID)
-					return _transferSyntaxUID;
-				else
-				{
-					bool tagExists;
-					_dicomImage.GetTag(Dcm.TransferSyntaxUID, out _transferSyntaxUID, out tagExists);
-					return _transferSyntaxUID;
-				}
-			}
+            get { return this.DataStoreImageSopInstance.TransferSyntaxUid; }
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -1067,7 +854,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				this.PixelRepresentation,
 				this.PhotometricInterpretation,
 				this.SamplesPerPixel,
-				this.PlanarConfiguration);
+				this.PlanarConfiguration,
+                this.TransferSyntaxUID);
 		}
 
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
@@ -1094,145 +882,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
-
-        #region IDicomPropertySettable Members
-
-        public void SetStringProperty(string propertyName, string value)
-        {
-            char[] vmSeparator = { '\\' };
-
-            switch (propertyName)
-            {
-                case "PatientId":
-                    _patientId = value;
-                    break;
-                case "StudyInstanceUid":
-                    _studyInstanceUid = value;
-                    break;
-                case "SeriesInstanceUid":
-                    _seriesInstanceUid = value;
-                    break;
-				case "TransferSyntaxUid":
-					_transferSyntaxUID = value;
-					break;
-				case "PixelSpacing":
-                    if ("" == value)
-                    {
-                        _pixelSpacingX = 0.0;
-                        _pixelSpacingY = 0.0;
-                    }
-                    else
-                    {
-                        string[] vms = value.Split(vmSeparator);
-                        _pixelSpacingY = Convert.ToDouble(vms[0]);  // assuming Y is Row spacing
-                        _pixelSpacingX = Convert.ToDouble(vms[1]);  // assuming X is Column spacing;
-                    }
-                    break;
-                case "SamplesPerPixel":
-                    if ("" == value)
-                        _samplesPerPixel = 1;
-                    else
-                        _samplesPerPixel = Convert.ToInt32(value);
-                    break;
-                case "PhotometricInterpretation":
-                    _photometricInterpretation = value;
-                    break;
-                case "Rows":
-                    if ("" == value)
-                        _rows = 0;
-                    else
-                        _rows = Convert.ToInt32(value);
-                    break;
-                case "Columns":
-                    if ("" == value)
-                        _columns = 0;
-                    else
-                        _columns = Convert.ToInt32(value);
-                    break;
-                case "BitsAllocated":
-                    if ("" == value)
-                        _bitsAllocated = 0;
-                    else
-                        _bitsAllocated = Convert.ToInt32(value);
-                    break;
-                case "BitsStored":
-                    if ("" == value)
-                        _bitsStored = 0;
-                    else
-                        _bitsStored = Convert.ToInt32(value);
-                    break;
-                case "HighBit":
-                    if ("" == value)
-                        _highBit = 0;
-                    else
-                        _highBit = Convert.ToInt32(value);
-                    break;
-                case "PixelRepresentation":
-                    if ("" == value)
-                        _pixelRepresentation = 0;
-                    else
-                        _pixelRepresentation = Convert.ToInt32(value);
-                    break;
-                case "PlanarConfiguration":
-                    if ("" == value)
-                        _planarConfiguration = 0;
-                    else 
-                        _planarConfiguration = Convert.ToInt32(value);
-                    break;
-                case "RescaleIntercept":
-                    if ("" == value)
-                        _rescaleIntercept = 0;
-                    else
-                        _rescaleIntercept = Convert.ToDouble(value);
-                    break;
-                case "RescaleSlope":
-                    if ("" == value)
-                        _rescaleSlope = 0;
-                    else
-                        _rescaleSlope = Convert.ToDouble(value);
-                    break;
-                case "WindowCenter":
-                    if ("" == value)
-                        _windowCenter = 0;
-                    else
-                    {
-                        string[] vms = value.Split(vmSeparator);
-                        _windowCenter = Convert.ToDouble(vms[0]);
-                    }
-                    break;
-                case "WindowWidth":
-                    if ("" == value)
-                        _windowWidth = 0;
-                    else
-                    {
-                        string[] vms = value.Split(vmSeparator);
-                        _windowWidth = Convert.ToDouble(vms[0]);
-                    }
-                    break;
-                case "SopInstanceUid":
-                    _sopInstanceUid = value;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public void SetIntProperty(string propertyName, int value)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public void SetUintProperty(string propertyName, uint value)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public void SetDoubleProperty(string propertyName, double value)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        #endregion
 
 		// MetaData
 		private string _transferSyntaxUID;

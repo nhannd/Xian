@@ -62,6 +62,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClearCanvas.Common, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+    </Reference>
     <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
@@ -128,10 +132,6 @@
     <ProjectReference Include="..\Codecs\ClearCanvas.Codecs.csproj">
       <Project>{86463672-CB30-41E7-BF90-36AF6CDA6729}</Project>
       <Name>ClearCanvas.Codecs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
-      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
-      <Name>ClearCanvas.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

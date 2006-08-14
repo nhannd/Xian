@@ -30,6 +30,22 @@
     <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClearCanvas.Common, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Dicom, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dicom\bin\Debug\ClearCanvas.Dicom.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Dicom.DataStore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dicom\Services\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.ImageViewer, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Debug\ClearCanvas.ImageViewer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -42,24 +58,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
-      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
-      <Name>ClearCanvas.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataStore\ClearCanvas.DataStore.csproj">
-      <Project>{7439F04D-3980-4A3D-A681-71B2A7150B3F}</Project>
-      <Name>ClearCanvas.DataStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
-      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
-      <Name>ClearCanvas.Dicom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
-      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.ImageViewer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

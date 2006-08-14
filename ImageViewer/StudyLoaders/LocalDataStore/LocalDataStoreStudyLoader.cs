@@ -1,15 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.Dicom;
+
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.IO;
-    using ClearCanvas.Common;
-    using ClearCanvas.ImageViewer.StudyManagement;
-	using ClearCanvas.ImageViewer.Imaging;
-	using ClearCanvas.DataStore;
-    using ClearCanvas.Dicom;
-
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyLoaderExtensionPoint))]
     public class LocalDataStoreStudyLoader : StudyLoader
     {
@@ -30,22 +30,27 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         {
             try
             {
-                _connectionString.Load();
-                DatabaseConnector database = new DatabaseConnector(_connectionString);
-                database.SetupConnector();
-                List<LocationUri> locationArray = database.SopInstanceLocationQuery(new Uid(studyUID));
+                IStudy study = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid(studyUID));
+                IEnumerable<ISopInstance> listOfSops = study.GetSopInstances();
 
                 bool errorMessageShown = false;
 
-                foreach (LocationUri locationUri in locationArray)
+                foreach (ISopInstance sop in listOfSops)
                 {
-                    LocalDataStoreImageSop image = new LocalDataStoreImageSop(locationUri.LocationPart);
+                    // TODO: don't just skip non-image sop instances
+                    ImageSopInstance imageObject = sop as ImageSopInstance;
+                    if (null == imageObject)
+                        continue;
 
-                    database.SopInstanceColumnDataLoad(image as IDicomPropertySettable, locationUri);
+                    // skip non local objects
+                    if (!imageObject.LocationUri.IsFile)
+                        continue;
+
+                    LocalDataStoreImageSop localImage = new LocalDataStoreImageSop(imageObject);                  
 
                     try
                     {
-                        ImageWorkspace.StudyManager.StudyTree.AddImage(image);
+                        ImageWorkspace.StudyManager.StudyTree.AddImage(localImage);
                     }
                     catch (ImageValidationException e)
                     {
@@ -60,9 +65,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                         Platform.Log(e, LogLevel.Warn);
                     }
                 }
-                database.TeardownConnector();
             }
-            catch (System.Data.SqlClient.SqlException e)
+            catch (Exception e)
             {
                 // TODO
                 Platform.ShowMessageBox("Can't connect to data store: " + e.ToString());
@@ -71,6 +75,21 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             base.LoadStudy(studyUID);
         }
 
-        private ApplicationConnectionString _connectionString = new ApplicationConnectionString();
+        //private void MapImageObjectToLocalImageObject(ImageSopInstance imageObject, IDicomPropertySettable localImage)
+        //{
+        //    ClearCanvas.Dicom.DataStore.Study study = imageObject.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
+        //    ClearCanvas.Dicom.DataStore.Series series = imageObject.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Series;
+
+        //    // string properties
+        //    localImage.SetStringProperty("PatientId", study.PatientId);
+        //    localImage.SetStringProperty("StudyInstanceUid", study.StudyInstanceUid);
+        //    localImage.SetStringProperty("SeriesInstanceUid", series.SeriesInstanceUid);
+        //    localImage.SetStringProperty("TransferSyntaxUid", imageObject.TransferSyntaxUid);
+        //    localImage.SetStringProperty("SopInstanceUid", imageObject.SopInstanceUid);
+
+        //    // integer properties
+        //    localImage.SetInt32Property("SamplesPerPixel", imageObject.SamplesPerPixel);
+        //    localImage.SetInt32Property("Rows", imageObject.Rows);
+        //}
     }
 }

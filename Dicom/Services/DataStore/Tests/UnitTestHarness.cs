@@ -1,3 +1,4 @@
+#if UNIT_TESTS
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             sop.Columns = 1000;
             sop.HighBit = 11;
             sop.InstanceNumber = 1;
-            sop.LocationUri = @"c:\temp\temp.dcm";
+            sop.LocationUri = new DicomUri(@"c:\temp\temp.dcm");
             sop.PhotometricInterpretation = PhotometricInterpretation.Monochrome1;
             sop.PixelRepresentation = 0;
             sop.Rows = 800;
@@ -245,5 +246,25 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             Assert.IsTrue(2 == count);
             accessor.RemoveStudy(studyFound);
         }
+
+        [Test]
+        public void TestDictionary()
+        {
+            DicomDictionaryContainer container = new DicomDictionaryContainer();
+            DictionaryEntry entry1 = new DictionaryEntry();
+            entry1.TagName = new TagName("TestA");
+            entry1.Path = new Path("Path/Path/Path1");
+            entry1.IsComputed = false;
+            DictionaryEntry entry2 = new DictionaryEntry();
+            entry2.TagName = new TagName("TestB");
+            entry2.Path = new Path("Path/Path/Path2");
+            entry2.IsComputed = false;
+            container.DictionaryEntries.Add(entry1);
+            container.DictionaryEntries.Add(entry2);
+
+            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreDictionary(container);
+            
+        }
     }
 }
+#endif

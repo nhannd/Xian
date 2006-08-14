@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
+  <class name="Series" table="Series_">
+    <id name="SeriesOid" column="SeriesOid_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <property name="SeriesInstanceUid" column="SeriesInstanceUid_" type="string" length="64" />
+	<property name="Modality" column="Modality_" type="string" length="16" />
+	<property name="SeriesNumber" column="SeriesNumber_" type="UInt32" />
+	<property name="Laterality" column="Laterality_" type="string" length="16" />
+	<property name="SeriesDescription" column="SeriesDescription_" type="string" length="64" />
+	<many-to-one name="Study" class="ClearCanvas.Dicom.DataStore.Study, ClearCanvas.Dicom.DataStore" column="StudyOid_" />
+    <set name="SopInstances" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="SeriesOid_" />
+      <one-to-many class="SopInstance" />
+    </set>
+  </class>
+</hibernate-mapping>

@@ -21,6 +21,7 @@ namespace ClearCanvas.Dicom.DataStore
             cfg.Configure(assemblyName + ".cfg.xml");
             cfg.AddAssembly(assemblyName);
             _sessionFactory = cfg.BuildSessionFactory();
+            _currentSession = _sessionFactory.OpenSession();
         }
 
         public static ISession GetCurrentSession()
@@ -54,12 +55,17 @@ namespace ClearCanvas.Dicom.DataStore
 
         public static IDataStore GetIDataStore()
         {
-            return new DataStore(GetSessionFactory());
+            return new DataStore(GetCurrentSession());
         }
 
         public static IDataStoreWriteAccessor GetIDataStoreWriteAccessor()
         {
-            return new DataStoreWriteAccessor(GetSessionFactory());
+            return new DataStoreWriteAccessor(GetCurrentSession());
+        }
+
+        public static IDicomDictionary GetIDicomDictionary()
+        {
+            return new DicomDictionary(GetCurrentSession());
         }
         #endregion
 

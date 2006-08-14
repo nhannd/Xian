@@ -30,6 +30,10 @@
     <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClearCanvas.Dicom.DataStore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dicom\Services\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
+    </Reference>
     <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
@@ -52,10 +56,6 @@
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataStore\ClearCanvas.DataStore.csproj">
-      <Project>{7439F04D-3980-4A3D-A681-71B2A7150B3F}</Project>
-      <Name>ClearCanvas.DataStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
