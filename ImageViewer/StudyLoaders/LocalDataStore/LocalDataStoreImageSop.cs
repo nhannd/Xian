@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         static LocalDataStoreImageSop()
         {
             _photometricInterpretationMap = new Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string>();
+            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Unknown, "UNKNOWN");
             _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Argb, "ARGB");
             _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Cmyk, "CMYK");
             _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Hsv, "HSV");
@@ -76,43 +77,85 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string PatientsName
 		{
-			get { return this.DataStoreStudy.PatientsName; }
+			get 
+            {
+                if (this.DataStoreStudy.PatientsName != null)
+                    return this.DataStoreStudy.PatientsName;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
         public override string PatientId
         {
-            get { return this.DataStoreStudy.PatientId; }
+            get 
+            {
+                if (this.DataStoreStudy.PatientId != null)
+                    return this.DataStoreStudy.PatientId;
+                else
+                    return "";
+            }
+
             set { throw new Exception("This is not yet implemented."); }
         }
 
 		public override string PatientsBirthDate
 		{
-            get { return this.DataStoreStudy.PatientsBirthDate; }
+            get 
+            {
+                if (this.DataStoreStudy.PatientsBirthDate != null)
+                    return this.DataStoreStudy.PatientsBirthDate;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string PatientsSex
 		{
-            get { return this.DataStoreStudy.PatientsSex; }
+            get 
+            {
+                if (this.DataStoreStudy.PatientsSex != null)
+                    return this.DataStoreStudy.PatientsSex;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyInstanceUID
 		{
-            get { return this.DataStoreStudy.StudyInstanceUid; }
+            get 
+            {
+                if (this.DataStoreStudy.StudyInstanceUid != null)
+                    return this.DataStoreStudy.StudyInstanceUid;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyDate
 		{
-            get { return this.DataStoreStudy.StudyDate; }
+            get 
+            {
+                if (this.DataStoreStudy.StudyDate != null)
+                    return this.DataStoreStudy.StudyDate;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyTime
 		{
-            get { return this.DataStoreStudy.StudyTime; }
+            get 
+            {
+                if (this.DataStoreStudy.StudyTime != null)
+                    return this.DataStoreStudy.StudyTime;
+                else return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
         }
 
@@ -130,13 +173,26 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string AccessionNumber
 		{
-            get { return this.DataStoreStudy.AccessionNumber; }
+            get 
+            {
+                if (this.DataStoreStudy.AccessionNumber != null)
+                    return this.DataStoreStudy.AccessionNumber;
+                else 
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string StudyDescription
 		{
-            get { return this.DataStoreStudy.StudyDescription; }
+            get 
+            {
+                if (this.DataStoreStudy.StudyDescription != null)
+                    return this.DataStoreStudy.StudyDescription;
+                else
+                    return "";
+            }
+
             set { throw new Exception("This is not yet implemented."); }
 		}
 
@@ -190,25 +246,49 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string Modality
 		{
-            get { return this.DataStoreSeries.Modality; }
+            get 
+            {
+                if (this.DataStoreSeries.Modality != null)
+                    return this.DataStoreSeries.Modality;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string SeriesInstanceUID
 		{
-            get { return this.DataStoreSeries.SeriesInstanceUid; }
+            get 
+            {
+                if (this.DataStoreSeries.SeriesInstanceUid != null)
+                    return this.DataStoreSeries.SeriesInstanceUid;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string SeriesNumber
 		{
-            get { return Convert.ToString(this.DataStoreSeries.SeriesNumber); }
+            get 
+            {
+                if (this.DataStoreSeries.SeriesNumber != 0)
+                    return Convert.ToString(this.DataStoreSeries.SeriesNumber);
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string Laterality
 		{
-            get { return this.DataStoreSeries.Laterality; }
+            get 
+            {
+                if (this.DataStoreSeries.Laterality != null)
+                    return this.DataStoreSeries.Laterality;
+                else
+                    return "";
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
@@ -502,14 +582,26 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double PixelSpacingX
 		{
-            get { return this.DataStoreImageSopInstance.PixelSpacing.Column; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.PixelSpacing != null)
+                    return this.DataStoreImageSopInstance.PixelSpacing.Column;
+                else
+                    return -1.0;
+            }
             set { throw new Exception("This is not yet implemented."); }
        
 		}
 
 		public override double PixelSpacingY
 		{
-            get { return this.DataStoreImageSopInstance.PixelSpacing.Row; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.PixelSpacing != null)
+                    return this.DataStoreImageSopInstance.PixelSpacing.Row;
+                else
+                    return -1.0;
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
@@ -671,7 +763,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int SamplesPerPixel
 		{
-            get { return this.DataStoreImageSopInstance.SamplesPerPixel; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.SamplesPerPixel != 0)
+                    return this.DataStoreImageSopInstance.SamplesPerPixel;
+                else
+                    return -1;
+            }
             set { throw new Exception("This is not yet implemented."); }
 		}
 
@@ -679,17 +777,20 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-                if (LocalDataStoreImageSop.PhotometricInterpretationMap.ContainsKey(this.DataStoreImageSopInstance.PhotometricInterpretation))
-                    return LocalDataStoreImageSop.PhotometricInterpretationMap[this.DataStoreImageSopInstance.PhotometricInterpretation];
-                else
-                    return null;
+                return LocalDataStoreImageSop.PhotometricInterpretationMap[this.DataStoreImageSopInstance.PhotometricInterpretation];
 			}
             set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override int Rows
 		{
-            get { return Convert.ToInt32(this.DataStoreImageSopInstance.Rows); }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.Rows != 0)
+                    return Convert.ToInt32(this.DataStoreImageSopInstance.Rows);
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -698,7 +799,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int Columns
 		{
-            get { return Convert.ToInt32(this.DataStoreImageSopInstance.Columns); }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.Columns != 0)
+                    return Convert.ToInt32(this.DataStoreImageSopInstance.Columns);
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -707,7 +814,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int BitsAllocated
 		{
-            get { return this.DataStoreImageSopInstance.BitsAllocated; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.BitsAllocated != 0)
+                    return this.DataStoreImageSopInstance.BitsAllocated;
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -716,7 +829,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int BitsStored
 		{
-            get { return this.DataStoreImageSopInstance.BitsStored; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.BitsStored != 0)
+                    return this.DataStoreImageSopInstance.BitsStored;
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -725,7 +844,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int HighBit
 		{
-            get { return this.DataStoreImageSopInstance.HighBit; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.HighBit != 0)
+                    return this.DataStoreImageSopInstance.HighBit;
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -734,7 +859,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int PixelRepresentation
 		{
-            get { return this.DataStoreImageSopInstance.PixelRepresentation; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.PixelRepresentation != 0)
+                    return this.DataStoreImageSopInstance.PixelRepresentation;
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -743,7 +874,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int PlanarConfiguration
 		{
-            get { return this.DataStoreImageSopInstance.PlanarConfiguration; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.PlanarConfiguration != 0)
+                    return this.DataStoreImageSopInstance.PlanarConfiguration;
+                else
+                    return -1;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -752,7 +889,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double RescaleIntercept
 		{
-            get { return this.DataStoreImageSopInstance.RescaleIntercept; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.RescaleIntercept != 0)
+                    return this.DataStoreImageSopInstance.RescaleIntercept;
+                else
+                    return double.NaN;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -761,7 +904,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override double RescaleSlope
 		{
-            get { return this.DataStoreImageSopInstance.RescaleSlope; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.RescaleSlope != 0.0)
+                    return this.DataStoreImageSopInstance.RescaleSlope;
+                else
+                    return double.NaN;
+            }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -784,12 +933,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get
             {
-                if (this.DataStoreImageSopInstance.WindowValues != null)
+                if (this.DataStoreImageSopInstance.WindowValues != null && this.DataStoreImageSopInstance.WindowValues.Count > 0)
                 {
                     return (this.DataStoreImageSopInstance.WindowValues[0] as Window).Center;
                 }
                 else
-                    return 0.0;
+                    return double.NaN;
             }
 			set
 			{
@@ -801,12 +950,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get
             {
-                if (this.DataStoreImageSopInstance.WindowValues != null)
+                if (this.DataStoreImageSopInstance.WindowValues != null && this.DataStoreImageSopInstance.WindowValues.Count > 0)
                 {
                     return (this.DataStoreImageSopInstance.WindowValues[0] as Window).Width;
                 }
                 else
-                    return 0.0;
+                    return double.NaN;
             }
             set
 			{
@@ -828,7 +977,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string SopInstanceUID
 		{
-            get { return this.DataStoreImageSopInstance.SopInstanceUid; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.SopInstanceUid != null)
+                    return this.DataStoreImageSopInstance.SopInstanceUid;
+                else
+                    return "";
+            }
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -837,7 +992,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override string TransferSyntaxUID
 		{
-            get { return this.DataStoreImageSopInstance.TransferSyntaxUid; }
+            get 
+            {
+                if (this.DataStoreImageSopInstance.TransferSyntaxUid != null)
+                    return this.DataStoreImageSopInstance.TransferSyntaxUid;
+                else
+                    return "";
+            }
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -882,102 +1043,5 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
-
-		// MetaData
-		private string _transferSyntaxUID;
-
-        // Patient Module
-		//private string _patientsName;
-		private string _patientId;
-		//private string _patientsBirthDate;
-		//private string _patientsSex;
-
-		//// General Study Module
-		private string _studyInstanceUid;
-		//private string _studyDate;
-		//private string _studyTime;
-		//private string _referringPhysiciansName;
-		//private string _accessionNumber;
-		//private string _studyDescription;
-		//private string _nameOfPhysiciansReadyStudy;
-
-		//// Patient Study Module
-		//private string _admittingDiagnosesDescription;
-		//private string _patientsAge;
-		//private string _additionalPatientsHistory;
-
-		//// General Series Module
-		//private string _modality;
-		private string _seriesInstanceUid;
-		//private string _seriesNumber;
-		//private string _laterality;
-		//private string _seriesDate;
-		//private string _seriesTime;
-		//private string _performingPhysiciansName;
-		//private string _operatorsName;
-		//private string _bodyPartExamined;
-		//private string _patientPosition;
-
-		//// General Equipment Module
-		//private string _manufacturer;
-		//private string _institutionName;
-		//private string _stationName;
-		//private string _institutionalDepartmentName;
-		//private string _manufacturersModelName;
-    	
-		//// General Image Module
-		//private string _instanceNumber;
-		//private string _patientOrientationRows;
-		//private string _patientOrientationColumns;
-		//private string _imageType;
-		//private string _acquisitionNumber;
-		//private string _acquisitionDate;
-		//private string _acquisitionTime;
-		//private string _acquisitionDateTime;
-		//private string _imagesInAcquisition;
-		//private string _imageComments;
-		//private string _lossyImageCompression;
-		//private string _lossyImageCompressionRatio;
-		//private string _presentationLutShape;
-        private string _sopInstanceUid;
-
-	    // Image Plane Module
-        private Nullable<double> _pixelSpacingX;
-        private Nullable<double> _pixelSpacingY;
-		//private Nullable<double> _imageOrientationPatientRowX;
-		//private Nullable<double> _imageOrientationPatientRowY;
-		//private Nullable<double> _imageOrientationPatientRowZ;
-		//private Nullable<double> _imageOrientationPatientColumnX;
-		//private Nullable<double> _imageOrientationPatientColumnY;
-		//private Nullable<double> _imageOrientationPatientColumnZ;
-		//private Nullable<double> _imagePositionPatientX;
-		//private Nullable<double> _imagePositionPatientY;
-		//private Nullable<double> _imagePositionPatientZ;
-		//private Nullable<double> _sliceThickness;
-		//private Nullable<double> _sliceLocation;
-		//private Nullable<double> _pixelAspectRatioX;
-		//private Nullable<double> _pixelAspectRatioY;
-
-	    // Image Pixel Module
-        private Nullable<int> _samplesPerPixel;
-        private string _photometricInterpretation;
-        private Nullable<int> _rows;
-        private Nullable<int> _columns;
-        private Nullable<int> _bitsAllocated;
-        private Nullable<int> _bitsStored;
-        private Nullable<int> _highBit;
-        private Nullable<int> _pixelRepresentation;
-        private Nullable<int> _planarConfiguration;
-
-	    // Modality LUT Module
-        private Nullable<double> _rescaleIntercept;
-        private Nullable<double> _rescaleSlope;
-        //private string _rescaleType;
-
-	    // VOI LUT Module
-        private Nullable<double> _windowCenter;
-        private Nullable<double> _windowWidth;
-        //private Nullable<double> _windowCenterAndWidthExplanation;
-
     }
 }
