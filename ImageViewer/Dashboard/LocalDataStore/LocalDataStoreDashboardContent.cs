@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
     using ClearCanvas.Desktop.Dashboard;
     using ClearCanvas.Controls.WinForms;
     using ClearCanvas.Dicom;
-    using ClearCanvas.DataStore;
+    using ClearCanvas.Dicom.DataStore;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters;
     using System.Runtime.Serialization.Formatters.Binary;
@@ -160,36 +160,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
 
         private void DeleteStudy(StudyItem item)
         {
-            using (new CursorManager(_detailView, Cursors.WaitCursor))
-            {
-                using (DatabaseConnector database = new DatabaseConnector(_connectionString))
-                {
-                    try
-                    {
-                        database.SetupConnector();
-
-                        List<LocationUri> listOfFiles = database.SopInstanceLocationQuery(new Uid(item.StudyInstanceUID));
-                        foreach (LocationUri uri in listOfFiles)
-                        {
-                            // TODO: Don't use literal string comparisons
-                            if ("file" == uri.ProtocolPart)
-                            {
-                                System.IO.File.Delete(uri.LocationPart);
-                            }
-                        }
-
-                        database.DeleteStudy(new Uid(item.StudyInstanceUID));
-                        database.TeardownConnector();
-                    }
-                    catch (System.Data.SqlClient.SqlException e)
-                    {
-						Platform.Log(e, LogLevel.Error);
-                        MessageBox.Show("Can't connect to data store", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
+            // TODO
+            //
         }
-
-        private ApplicationConnectionString _connectionString = new ApplicationConnectionString();
     }
 }

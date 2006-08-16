@@ -100,10 +100,6 @@
       <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
       <Name>ClearCanvas.Controls.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DataStore\ClearCanvas.DataStore.csproj">
-      <Project>{7439F04D-3980-4A3D-A681-71B2A7150B3F}</Project>
-      <Name>ClearCanvas.DataStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>

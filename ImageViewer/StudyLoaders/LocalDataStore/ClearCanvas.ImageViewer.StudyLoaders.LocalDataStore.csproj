@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="ClearCanvas.Dicom.DataStore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dicom\Services\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
+      <HintPath>..\..\..\Dicom\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
     </Reference>
     <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

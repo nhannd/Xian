@@ -1,22 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.Dashboard;
+using ClearCanvas.Controls.WinForms;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using System.Threading;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace ClearCanvas.ImageViewer.Dashboard.Remote
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Windows.Forms;
-    using ClearCanvas.Desktop.Dashboard;
-    using ClearCanvas.Controls.WinForms;
-    using ClearCanvas.ImageViewer.StudyManagement;
-    using ClearCanvas.Dicom;
-    using ClearCanvas.Dicom.Network;
-    using ClearCanvas.DataStore;
-    using ClearCanvas.Common;
-    using ClearCanvas.Desktop;
-    using System.Threading;
-    using System.IO;
-    using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters.Binary;
-
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Desktop.Dashboard.DashboardContentExtensionPoint))]
     public class RemoteDashboardContent : DashboardContent
 	{
@@ -144,9 +143,6 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
                 return;
             }
 
-            // get updated connection string first
-            _connectionString.Load();
-
             DataGridViewSelectedRowCollection selectedRows = _detailView.StudyGridView.DataGridView.SelectedRows;
 
             DataGridViewRow row = selectedRows[0];
@@ -157,20 +153,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
         {
             using (new CursorManager(_detailView, Cursors.WaitCursor))
             {
+                // TODO:
                 // check first to make sure that we can connect to the database
-                using (DatabaseConnector connector = new DatabaseConnector(_connectionString))
-                {
-                    try
-                    {
-                        connector.SetupConnector();
-                        connector.TeardownConnector();
-                    }
-                    catch (System.Data.SqlClient.SqlException e)
-                    {
-                        Platform.ShowMessageBox("Can't connect to data store: " + e.ToString());
-                        return;
-                    }
-                }
 
                 DicomClient client = new DicomClient(new ApplicationEntity(new HostName("localhost"), new AETitle("CCWORKSTN"), new ListeningPort(4000)));
 
@@ -183,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
 
                 RetrieveProgressForm progressForm = new RetrieveProgressForm(item.NumberOfStudyRelatedInstances);
                 progressForm.DisplayText = item.FirstName + " " + item.LastName + " / " + item.StudyDescription + " (" + item.StudyDate + ")";
-                RetrieveThreadObject rto = new RetrieveThreadObject(client, item, _storagePath, progressForm, _connectionString);
+                RetrieveThreadObject rto = new RetrieveThreadObject(client, item, _storagePath, progressForm);
 
                 Thread t = new Thread(new ThreadStart(rto.WorkMethod));
                 t.IsBackground = true;
@@ -195,13 +179,12 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
 
         private class RetrieveThreadObject
         {
-            public RetrieveThreadObject(DicomClient client, StudyItem item, String path, RetrieveProgressForm progressForm, ApplicationConnectionString connectionString)
+            public RetrieveThreadObject(DicomClient client, StudyItem item, String path, RetrieveProgressForm progressForm)
             {
                 _client = client;
                 _item = item;
                 _storagePath = path;
                 _progressForm = progressForm;
-                _connectionString = connectionString;
             }
 
             public void WorkMethod()
@@ -229,21 +212,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
 
             private void NewImageEventHandler(object sender, SopInstanceReceivedEventArgs args)
             {
-                _connectionString.Load();
-                using (DatabaseConnector connector = new DatabaseConnector(_connectionString))
-                {
-                    try
-                    {
-                        connector.SetupConnector();
-                        connector.InsertSopInstance(args.SopFileName);
-                        connector.TeardownConnector();
-                    }
-                    catch (System.Data.SqlClient.SqlException e)
-                    {
-						Platform.Log(e, LogLevel.Error);
-						return;
-                    }
-                }
+                // TODO:
+                // update datastore with new image sop instance
 
                 if (null == _progressForm || !_progressForm.Created)
                     return;
@@ -258,10 +228,8 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote
             private StudyItem _item;
             private RetrieveProgressForm _progressForm;
             private String _storagePath;
-            private ApplicationConnectionString _connectionString;
         }
 
-        private ApplicationConnectionString _connectionString = new ApplicationConnectionString();
         private StoragePath _storagePath = new StoragePath();
 	}
 }

@@ -6,6 +6,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public enum PhotometricInterpretation
     {
+        Unknown = 0,
         Monochrome1,
         Monochrome2,
         PaletteColor,
