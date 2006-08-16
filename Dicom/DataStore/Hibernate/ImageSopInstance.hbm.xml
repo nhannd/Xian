@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
+  <class name="SopInstance" proxy="SopInstance" table="SopInstance_">
+    <id name="Oid" column="Oid_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+	<property name="TransferSyntaxUid" column="TransferSyntaxUid_" type="String" length="64" />
+	<property name="InstanceNumber" column="InstanceNumber_" type="Int32" />
+	<property name="SopInstanceUid" column="SopInstanceUid_" type="String" length="64" />
+	<property name="SopClassUid" column="SopClassUid_" type="String" length="64" />
+	<property name="LocationUri" column="LocationUri_" type="String" />
+	<joined-subclass name="ImageSopInstance" table="ImageSopInstance_">
+		<key column="ImageSopInstanceOid_" />
+		<property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int16" />
+		<property name="BitsStored" column="BitsStored_" type="Int16" />
+		<property name="RescaleSlope" column="RescaleSlope_" type="Double" />
+		<property name="Rows" column="Rows_" type="Int32" />
+		<property name="Columns" column="Columns_" type="Int32" />
+		<property name="PlanarConfiguration" column="PlanarConfiguration_" type="Int16" />
+		<property name="RescaleIntercept" column="RescaleIntercept_" type="Double" />
+		<property name="PixelRepresentation" column="PixelRepresentation_" type="Int16" />
+		<property name="BitsAllocated" column="BitsAllocated_" type="Int16" />
+		<property name="HighBit" column="HighBit_" type="Int16" />
+		<property name="PhotometricInterpretation" column="PhotometricInterpretation_" type="System.Enum" />
+		<component name="PixelSpacing" class="PixelSpacing">
+			<property name="Row" column="Row_" />
+			<property name="Column" column="Column_" />
+		</component>
+		<set name="WindowValues" table="WindowValues_" lazy="false" inverse="true" cascade="all-delete-orphan">
+			<key column="Oid_" />
+			<!--
+			<index column="VM_" />
+			-->
+			<composite-element class="Window">
+				<property name="Width" column="Width_" type="Double" />
+				<property name="Center" column="Center_" type="Double" />
+			</composite-element>
+		</set>
+	</joined-subclass>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
+  <class name="DicomDictionaryContainer" table="DicomDictionaryContainer_">
+    <id name="EntryOid" column="EntryOid_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+	<list name="DictionaryEntries" table="DictionaryEntries_" lazy="false" access="nosetter.camelcase-underscore">
+		<key column="EntryOid_" />
+		<index column="Index_" />
+		<composite-element class="ClearCanvas.Dicom.DataStore.DictionaryEntry, ClearCanvas.Dicom.DataStore">
+			<nested-composite-element name="TagName" class="TagName, ClearCanvas.Dicom.DataStore">
+				<property name="InternalTagName" column="TagName_" type="string" length="64" />
+			</nested-composite-element>
+			<nested-composite-element name="Path" class="Path, ClearCanvas.Dicom.DataStore">
+				<property name="InternalPath" column="Path_" type="string" length="256" />
+			</nested-composite-element>
+			<property name="IsComputed" column="IsComputed_" type="Boolean" />
+		</composite-element>
+	</list>
+  </class>
+</hibernate-mapping>
