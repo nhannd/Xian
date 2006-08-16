@@ -1,23 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
+using System.Windows.Forms;
+using System.IO;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Dashboard;
+using ClearCanvas.Desktop.Dashboard;
+using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.DataStore;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace ClearCanvas.ImageViewer.Dashboard.LocalDataStore
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using System.IO;
-	using ClearCanvas.Common;
-    using ClearCanvas.Desktop;
-    using ClearCanvas.ImageViewer.StudyManagement;
-    using ClearCanvas.ImageViewer.Dashboard;
-    using ClearCanvas.Desktop.Dashboard;
-    using ClearCanvas.Controls.WinForms;
-    using ClearCanvas.Dicom;
-    using ClearCanvas.Dicom.DataStore;
-    using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters;
-    using System.Runtime.Serialization.Formatters.Binary;
-
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.Desktop.Dashboard.DashboardContentExtensionPoint))]
     public class LocalDataStoreDashboardContent : DashboardContent
     {
