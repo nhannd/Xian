@@ -1,6 +1,7 @@
 #if UNIT_TESTS
 
 using System;
+using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ namespace ClearCanvas.Dicom.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			string fileName = @"C:\sampledicomimages\eFilm\1.2.840.113619.2.30.1.1762295590.1623.978668950.113.dcm";
+            string fileName = Directory.GetCurrentDirectory() + @"\..\..\..\..\..\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmDataTest.Init\1.2.840.113619.2.55.1.1762652774.2206.1153255770.288.1.dcm";
 			_fileFormat = new DcmFileFormat();
 			OFCondition cond = _fileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
 

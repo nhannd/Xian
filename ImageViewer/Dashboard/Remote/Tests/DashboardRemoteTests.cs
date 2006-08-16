@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote.Tests
             }
 
             IFormatter formatter = new BinaryFormatter();
-            using (Stream stream = new FileStream(@"C:\temp\Server.bin", FileMode.Create, FileAccess.Write, FileShare.None))
+            using (Stream stream = new FileStream(Directory.GetCurrentDirectory() + @"\..\..\..\..\..\UnitTestFiles\ClearCanvas.ImageViewer.Dashboard.Remote.Test.DashBoardRemoteTests\Server.bin", FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 formatter.Serialize(stream, list);
                 stream.Close();
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Dashboard.Remote.Tests
             List<Server> list2;
 
             formatter = new BinaryFormatter();
-            using (Stream stream = new FileStream(@"C:\temp\Server.bin", FileMode.Open))
+            using (Stream stream = new FileStream(Directory.GetCurrentDirectory() + @"\..\..\..\..\..\UnitTestFiles\ClearCanvas.ImageViewer.Dashboard.Remote.Test.DashBoardRemoteTests\Server.bin", FileMode.Open))
             {
                 list2 = (List<Server>) formatter.Deserialize(stream);
                 stream.Close();

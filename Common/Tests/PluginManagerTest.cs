@@ -25,22 +25,22 @@ namespace ClearCanvas.Common.Tests
 
 		public PluginManagerTest()
 		{
-			_testDir = @"c:\test";
+            _testDir = Directory.GetCurrentDirectory() + @"..\..\..\..\UnitTestFiles\ClearCanvas.Common.Tests.PluginManagerTest.PluginManagerTest";
 			_rootPluginDir = _testDir + @"\plugins";
 			_plugin1Dir = _rootPluginDir + @"\plugin1";
 			_plugin2Dir = _rootPluginDir + @"\plugin2";
 			_plugin3Dir = _rootPluginDir + @"\plugin3";
-			_projectPath = @"C:\VSProjects";
-			_clearCanvasViewerPath = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\bin\Debug\ClearCanvas.Workstation.exe";
-			_clearCanvasCommonPlatformPath = _projectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
-			_clearCanvasViewerCorePath = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
-			_clearCanvasViewerUIPath = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
+            _projectPath = Directory.GetCurrentDirectory() + @"\..\..\..\..\..\..";
+            _clearCanvasViewerPath = _projectPath + @"\Trunk\Desktop\Executable\bin\Debug\ClearCanvas.Desktop.Executable.exe";
+			_clearCanvasCommonPlatformPath = _projectPath + @"\Trunk\Common\bin\Debug\ClearCanvas.Common.dll";
+            _clearCanvasViewerCorePath = _projectPath + @"\Trunk\ImageViewer\bin\Debug\ClearCanvas.ImageViewer.dll";
+            _clearCanvasViewerUIPath = _projectPath + @"\Trunk\ImageViewer\View\WinForms\bin\Debug\ClearCanvas.ImageViewer.View.WinForms.dll";
 		}
 
 		public void CopyPluginFiles()
 		{
-			File.Copy(_clearCanvasViewerCorePath, _plugin1Dir + @"\ClearCanvas.Workstation.Model.dll", true);
-			File.Copy(_clearCanvasViewerUIPath, _plugin2Dir + @"\ClearCanvas.Workstation.View.dll", true);
+            File.Copy(_clearCanvasViewerCorePath, _plugin1Dir + @"\ClearCanvas.ImageViewer.dll", true);
+            File.Copy(_clearCanvasViewerUIPath, _plugin2Dir + @"\ClearCanvas.ImageViewer.View.WinForms.dll", true);
 		}
 
 		[TestFixtureSetUp]

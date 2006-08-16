@@ -14,7 +14,7 @@ namespace ClearCanvas.Common.Tests
 		private FileProcessor.ProcessFile _del;
 
 		// Root test directory
-		private string _testDir = "c:\\test";
+		private string _testDir = Directory.GetCurrentDirectory() + @"..\..\..\..\..\UnitTestFiles\ClearCanvas.Common.Tests.FileProcessorTest";
 
 		// The delgate function
 		static void PrintPath(string path)

@@ -47,32 +47,34 @@ namespace ClearCanvas.Common.Tests
 
 		private static void InitializePaths()
 		{
-			_testDir = @"c:\test";
+            _testDir = Directory.GetCurrentDirectory() + @"..\..\..\..\..\UnitTestFiles\ClearCanvas.Common.Tests.PluginSetupTeardown.InitializePaths";
 			_pluginDir = _testDir + @"\plugins";
-			_projectPath = @"C:\VSProjects";
+            _projectPath = Directory.GetCurrentDirectory() + @"\..\..\..\..";
 			
-			_configFile1Path = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\App.config";
-			_configFile2Path = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\exceptionhandlingconfiguration.config";
-			_configFile3Path = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingconfiguration.config";
-			_configFile4Path = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation\loggingdistributorconfiguration.config";
+			_configFile1Path = _projectPath + @"\Trunk\Desktop\Executable\App.config";
+			//_configFile2Path = _projectPath + @"\Trunk\Desktop\Executable\exceptionhandlingconfiguration.config";
+			_configFile3Path = _projectPath + @"\Trunk\Desktop\Executable\logging.config";
+			//_configFile4Path = _projectPath + @"\Trunk\Desktop\Executable\loggingdistributorconfiguration.config";
 
-			_clearCanvasCommonPlatformPath = _projectPath + @"\ClearCanvas\Trunk\Common\ClearCanvas.Common\bin\Debug\ClearCanvas.Common.dll";
-			_clearCanvasViewerCorePath = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.Model\bin\Debug\ClearCanvas.Workstation.Model.dll";
-			_clearCanvasViewerUIPath = _projectPath + @"\ClearCanvas\Trunk\Viewer\ClearCanvas.Workstation.View\bin\Debug\ClearCanvas.Workstation.View.dll";
+            _clearCanvasCommonPlatformPath = _projectPath + @"\Trunk\Common\bin\Debug\ClearCanvas.Common.dll";
+            _clearCanvasViewerCorePath = _projectPath + @"\Trunk\ImageViewer\bin\Debug\ClearCanvas.ImageViewer.dll";
+            _clearCanvasViewerUIPath = _projectPath + @"\Trunk\ImageViewer\View\WinForms\bin\Debug\ClearCanvas.ImageViewer.View.WinForms.dll";
 		}
 
 		private static void CopyPluginFiles()
 		{
-			File.Copy(_clearCanvasViewerCorePath, _pluginDir + @"\ClearCanvas.Workstation.Model.dll", true);
-			File.Copy(_clearCanvasViewerUIPath, _pluginDir + @"\ClearCanvas.Workstation.View.dll", true);
+            File.Copy(_clearCanvasViewerCorePath, _pluginDir + @"\ClearCanvas.Workstation.Model.dll", true);
+            File.Copy(_clearCanvasViewerUIPath, _pluginDir + @"\ClearCanvas.Workstation.View.dll", true);
 		}
 
 		private static void CopyConfigFiles()
 		{
-			File.Copy(_configFile1Path, Directory.GetCurrentDirectory() + @"\ClearCanvas.Workstation.Model.dll.config", true);
-			File.Copy(_configFile2Path, Directory.GetCurrentDirectory() + @"\exceptionhandlingconfiguration.config", true);
-			File.Copy(_configFile3Path, Directory.GetCurrentDirectory() + @"\loggingconfiguration.config", true);
-			File.Copy(_configFile4Path, Directory.GetCurrentDirectory() + @"\loggingdistributorconfiguration.config", true);
+            //HH - 15/08/06 - Not required since the build already copies config files to Desktop\Executable\bin\Debug\
+            
+            //File.Copy(_configFile1Path, Directory.GetCurrentDirectory() + @"\ClearCanvas.Workstation.Model.dll.config", true);
+            //File.Copy(_configFile2Path, Directory.GetCurrentDirectory() + @"\exceptionhandlingconfiguration.config", true);
+            //File.Copy(_configFile3Path, Directory.GetCurrentDirectory() + @"\loggingconfiguration.config", true);
+            //File.Copy(_configFile4Path, Directory.GetCurrentDirectory() + @"\loggingdistributorconfiguration.config", true);
 		}
 
 	}
