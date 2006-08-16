@@ -38,7 +38,7 @@
     </Reference>
     <Reference Include="ClearCanvas.Dicom.DataStore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dicom\Services\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
+      <HintPath>..\..\Dicom\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
     </Reference>
     <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.9.0.0, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -46,7 +46,7 @@
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\NHibernateContrib-1.0.2.0\bin\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -35,7 +35,7 @@
     </Reference>
     <Reference Include="ClearCanvas.Dicom.DataStore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
+      <HintPath>..\..\DataStore\bin\Debug\ClearCanvas.Dicom.DataStore.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
@@ -43,9 +43,12 @@
     </Reference>
     <Reference Include="NMock2, Version=1.0.2313.18049, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\NMock\NMock2.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\NMock2.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.2.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
