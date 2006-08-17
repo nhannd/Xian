@@ -46,6 +46,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Dashboard.Local", "Dashboard\Local\ClearCanvas.ImageViewer.Dashboard.Local.csproj", "{AD9F87CF-0F30-442D-ACCD-80FACC339F22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Dashboard.LocalDataStore", "Dashboard\LocalDataStore\ClearCanvas.ImageViewer.Dashboard.LocalDataStore.csproj", "{8A3BA1E6-8A41-4196-8058-42C509D9E917}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8} = {3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Dashboard.Remote", "Dashboard\Remote\ClearCanvas.ImageViewer.Dashboard.Remote.csproj", "{E65B6EC8-DD79-4B64-A1E1-CDAD790249F3}"
 EndProject
@@ -87,9 +90,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataStore
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(TextTemplating) = postSolution
-		TextTemplating = 1
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -206,5 +206,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TextTemplating) = postSolution
+		TextTemplating = 1
 	EndGlobalSection
 EndGlobal
