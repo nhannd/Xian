@@ -97,6 +97,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Hibernate\CreateIndices.sql" />
+    <None Include="Hibernate\PopulateDicomDictionary.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AuxiliaryFiles\ripp.sqb" />
+    <None Include="Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" />
+    <EmbeddedResource Include="Hibernate\DicomDictionary.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AuxiliaryFiles\SQLite.NET.dll" />
+    <None Include="AuxiliaryFiles\SQLite3.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
