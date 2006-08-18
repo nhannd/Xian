@@ -25,7 +25,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			ValidateHighBit(image.HighBit);
 			ValidateSamplesPerPixel(image.SamplesPerPixel);
 			ValidatePixelRepresentation(image.PixelRepresentation);
-			ValidatePlanarConfiguration(image.PlanarConfiguration);
 			ValidatePhotometricInterpretation(image.PhotometricInterpretation);
 
 			ValidateImagePropertyRelationships(image);
@@ -48,6 +47,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretationSamplesPerPixel, image.PhotometricInterpretation, image.SamplesPerPixel));
 			}
 
+            if (image.SamplesPerPixel != 1)
+            {
+                if (image.PlanarConfiguration == -1)
+                    throw new ImageValidationException(String.Format(SR.ExceptionInvalidMissingPlanarConfiguration));
+                else if (image.PlanarConfiguration != 0 && image.PlanarConfiguration != 1)
+                    throw new ImageValidationException(String.Format(SR.ExceptionInvalidPlanarConfiguration));
+            }
+            
 			if ((String.Compare(image.PhotometricInterpretation, "RGB") == 0 ||
 				String.Compare(image.PhotometricInterpretation, "HSV") == 0 ||
 				String.Compare(image.PhotometricInterpretation, "YBR_FULL") == 0 ||
@@ -135,12 +142,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (pixelRepresentation != 0 && pixelRepresentation != 1)
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPixelRepresentation, pixelRepresentation));
-		}
-
-		public static void ValidatePlanarConfiguration(int planarConfiguration)
-		{
-			if (planarConfiguration != 0 && planarConfiguration != 1)
-				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPlanarConfiguration, planarConfiguration));
 		}
 
 		public static void ValidatePhotometricInterpretation(string photometricInterpretation)
