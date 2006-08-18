@@ -134,9 +134,20 @@
       md .\plugins
       md .\logs
       md .\studies
+      md .\datastore
+
+      :: Copy database file
+      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" .\datastore
+
+      :: Copy Hibernate configuration file
+      copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" .
 
       :: Copy shared config files
       copy ..\..\Logging.config .
+
+      :: Copy database rebuild utility
+      copy "..\..\..\..\Utilities\RebuildDatabase\bin\$(ConfigurationName)\ClearCanvas.Utilities.RebuildDatabase.exe" .
+      copy "..\..\..\..\Utilities\RebuildDatabase\app.config" .\ClearCanvas.Utilities.RebuildDatabase.exe.config
 
       :: Copy shared libraries
       copy "..\..\..\..\Common\bin\$(ConfigurationName)\*.*" .\Common
@@ -144,6 +155,13 @@
       copy "..\..\..\..\Common\refs\log4net.dll" .\Common
       copy "..\..\..\..\Controls\WinForms\bin\$(ConfigurationName)\ClearCanvas.Controls.WinForms.dll" .\Common
       copy "..\..\..\..\Controls\WinForms\refs\DotNetMagic2005.DLL" .\Common
+      copy "..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" .\Common
+      copy "..\..\..\..\ReferencedAssemblies\Nhibernate.dll" .\Common
+      copy "..\..\..\..\ReferencedAssemblies\Nhibernate.Mapping.Attributes.dll" .\Common
+      copy "..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" .\Common
+      copy "..\..\..\..\Dicom\DataStore\bin\$(ConfigurationName)\ClearCanvas.Dicom.DataStore.dll" .\Common
+      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite3.dll" .\Common
+      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite.NET.dll" .\Common
 
       :: Copy shared plugins
       copy "..\..\..\bin\$(ConfigurationName)\ClearCanvas.Desktop.dll" .\plugins
