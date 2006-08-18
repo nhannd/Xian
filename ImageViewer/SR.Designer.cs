@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Planar Configuration must exist for multi-channel images..
+        /// </summary>
+        public static string ExceptionInvalidMissingPlanarConfiguration {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidMissingPlanarConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid normalized rectangle.  Normalized rectangle coordinates must be between 0.0 and 1.0 with Right &gt; Left, Bottom &gt; Top.
         /// </summary>
         public static string ExceptionInvalidNormalizedRectangle {

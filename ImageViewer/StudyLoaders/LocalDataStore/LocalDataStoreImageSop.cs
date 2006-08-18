@@ -859,13 +859,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override int PixelRepresentation
 		{
-            get 
-            {
-                if (this.DataStoreImageSopInstance.PixelRepresentation != 0)
-                    return this.DataStoreImageSopInstance.PixelRepresentation;
-                else
-                    return -1;
-            }
+            get { return this.DataStoreImageSopInstance.PixelRepresentation; }
             set
 			{
 				throw new Exception("The method or operation is not implemented.");

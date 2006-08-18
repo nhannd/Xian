@@ -4,7 +4,7 @@
 		<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>
 		<property name="hibernate.connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
 		<property name="hibernate.connection.driver_class">NHibernate.Driver.SQLiteDriver</property>
-		<property name="hibernate.connection.connection_string">Data Source=..\datastore\ripp.sqb;Version=3</property>
+		<property name="hibernate.connection.connection_string">Data Source=datastore\ripp.sqb;Version=3</property>
 		<property name="hibernate.query.substitutions">true=1;false=0</property>
 		<!--
 		<property name="hibernate.connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
