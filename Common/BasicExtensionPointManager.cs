@@ -20,7 +20,7 @@ namespace ClearCanvas.Common
 			get { return _listExtensions; }
 		}
 
-		Type InterfaceType
+		private Type InterfaceType
 		{ 
 			get { return typeof(TInterface); }
 		}
