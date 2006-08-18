@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			else
 				_rescaleSlope = rescaleSlope;
 
-			if (rescaleIntercept == double.IsNaN(rescaleIntercept))
+			if (double.IsNaN(rescaleIntercept))
 				_rescaleIntercept = 0;
 			else
 				_rescaleIntercept = rescaleIntercept;
