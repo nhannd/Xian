@@ -20,12 +20,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
 
-			if (rescaleSlope == 0)
+			if (rescaleSlope == 0 || rescaleSlope == double.NaN)
 				_rescaleSlope = 1;
 			else
 				_rescaleSlope = rescaleSlope;
 
-			_rescaleIntercept = rescaleIntercept;
+			if (rescaleIntercept == double.NaN)
+				_rescaleIntercept = 0;
+			else
+				_rescaleIntercept = rescaleIntercept;
 
 			SetInputRange(bitsStored, pixelRepresentation);
 
