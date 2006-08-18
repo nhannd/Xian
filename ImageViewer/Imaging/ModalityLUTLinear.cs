@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
 
-			if (rescaleSlope == 0 || rescaleSlope == double.NaN)
+			if (rescaleSlope == 0 || double.IsNaN(rescaleSlope))
 				_rescaleSlope = 1;
 			else
 				_rescaleSlope = rescaleSlope;
