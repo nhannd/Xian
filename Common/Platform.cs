@@ -6,6 +6,8 @@ using log4net;
 //using log4net.spi;
 using log4net.Config;
 
+using ClearCanvas.Common.Auditing;
+
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
 // This will cause log4net to look for a configuration file
@@ -69,6 +71,7 @@ namespace ClearCanvas.Common
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
         private static IApplicationRoot _applicationRoot;
 		private static IMessageBox _messageBox;
+		private static AuditManager _auditManager;
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
@@ -166,6 +169,23 @@ namespace ClearCanvas.Common
 			get
 			{
                 return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _logDir);
+			}
+		}
+
+		public static AuditManager AuditManager
+		{
+			get
+			{
+				if (_auditManager == null)
+				{
+					lock (_syncRoot)
+					{
+						if (_auditManager == null)
+							_auditManager = new AuditManager();
+					}
+				}
+
+				return _auditManager;
 			}
 		}
 

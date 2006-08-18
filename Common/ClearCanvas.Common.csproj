@@ -70,6 +70,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>refs\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="NMock2, Version=1.0.2313.18049, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\NMock2.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>refs\nunit.framework.dll</HintPath>
@@ -87,9 +91,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Auditing\IAuditMessage.cs" />
+    <Compile Include="BasicExtensionPointManager.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
+    <Compile Include="Auditing\Auditor.cs" />
+    <Compile Include="Auditing\IAuditor.cs" />
     <Compile Include="IObservablePropertyBinding.cs" />
     <Compile Include="DynamicObservablePropertyBinding.cs" />
     <Compile Include="ClassNameExtensionFilter.cs" />
@@ -125,6 +133,7 @@
     <Compile Include="IObservableList.cs" />
     <Compile Include="IPerformanceCounter.cs" />
     <Compile Include="AttributeExtensionFilter.cs" />
+    <Compile Include="Auditing\Tests\AuditingTests.cs" />
     <Compile Include="Tests\FloatComparerTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Mathematics\RectF.cs" />
