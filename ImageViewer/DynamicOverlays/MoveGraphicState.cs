@@ -3,6 +3,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -22,6 +23,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
+			if (e.MouseCapture != null)
+				e.MouseCapture.SetCapture(this, e);
+
 			base.LastPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
 
 			if (this.SupportUndo)
@@ -38,7 +42,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			_currentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			//When moving, graphics are confined to 
+			Point mousePoint = new Point(e.X, e.Y);
+			PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.ParentLayerManager.RootLayerGroup.DestinationRectangle);
+
+			_currentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(mousePoint.X, mousePoint.Y));
 
 			base.StatefulGraphic.CoordinateSystem = CoordinateSystem.Source;
 			SizeF delta = Graphic.CalcGraphicPositionDelta(base.LastPoint, _currentPoint);
@@ -54,6 +62,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
+
+			if (e.MouseCapture != null)
+				e.MouseCapture.ReleaseCapture();
 
 			if (this.SupportUndo)
 			{

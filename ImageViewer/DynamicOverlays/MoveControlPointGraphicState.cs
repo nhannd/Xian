@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -33,6 +34,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
+			if (e.MouseCapture != null)
+				e.MouseCapture.SetCapture(this, e);
+
 			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
 
 			if (this.SupportUndo)
@@ -53,7 +57,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (base.Command == null)
 				return false;
 
-			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			Point mousePoint = new Point(e.X, e.Y);
+			PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.SpatialTransform.DestinationRectangle);
+
+			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(mousePoint.X, mousePoint.Y));
 			_currentPoint = this.InteractiveGraphic.CalcControlPointPosition(_controlPointIndex, base.LastPoint, _currentPoint);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = _currentPoint;
@@ -68,6 +75,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
+
+			if (e.MouseCapture != null)
+				e.MouseCapture.ReleaseCapture();
 
 			if (this.SupportUndo)
 			{

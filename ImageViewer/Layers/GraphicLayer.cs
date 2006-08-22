@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		public GraphicLayer()
 		{
 			this.Graphics.ItemAdded += new EventHandler<LayerEventArgs>(OnGraphicAdded);
+			this.Graphics.ItemRemoved += new EventHandler<LayerEventArgs>(OnGraphicRemoved);
 		}
 
 		/// <summary>
@@ -59,6 +60,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			e.Layer.ParentLayerManager = base.ParentLayerManager;
 			e.Layer.SpatialTransform = base.SpatialTransform;
 			e.Layer.CoordinateSystem = base.CoordinateSystem;
+		}
+
+		private void OnGraphicRemoved(object sender, LayerEventArgs e)
+		{
+			this.ParentLayer.Draw();
 		}
 	}
 }

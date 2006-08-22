@@ -459,6 +459,8 @@ namespace ClearCanvas.ImageViewer
 				numberOfColumns == _columns)
 				return;
 
+			ParentPhysicalWorkspace.ReleaseMouseCapture();
+
 			_rows = numberOfRows;
 			_columns = numberOfColumns;
 

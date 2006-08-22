@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for WindowLevelTool.
 	/// </summary>
     [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-    public class WindowLevelTool : MouseTool
+	public class WindowLevelTool : DynamicActionMouseTool
 	{
 		private UndoableCommand _command;
 		private WindowLevelApplicator _applicator;
@@ -108,6 +108,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
+			base.OnMouseUp(e); 
+			
 			if (_command == null)
 				return true;
 

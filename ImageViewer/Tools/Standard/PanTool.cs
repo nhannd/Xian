@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for PanTool.
 	/// </summary>
     [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-    public class PanTool : MouseTool
+	public class PanTool : DynamicActionMouseTool
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
@@ -69,6 +69,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
+			base.OnMouseUp(e);
+
 			if (_command == null)
 				return true;
 

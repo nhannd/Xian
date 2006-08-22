@@ -4,12 +4,15 @@ using System.Text;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class CreateROIGraphicState : GraphicState
 	{
 		private StatefulGraphic _childGraphic;
+		private IMouseCapture _mouseCapture; //objects with atomic mouse capture (up-down up-down, etc) should store this interface and use it.
+		private bool _deleteROIGraphic = false;
 
 		public CreateROIGraphicState(ROIGraphic roiGraphic)
 			: base(roiGraphic)
@@ -21,9 +24,52 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as ROIGraphic; }
 		}
 
+		private void ReleaseCapture()
+		{
+			//release capture when not in the create state anymore.
+			if (_mouseCapture != null)
+			{
+				//we don't need to know about capture changing anymore.
+				_mouseCapture.NotifyCaptureChanging -= CaptureChanging;
+				
+				if (_mouseCapture.GetCapture() == this)
+					_mouseCapture.ReleaseCapture();
+
+				_mouseCapture = null;
+			}
+
+		}
+
+		private void DeleteROIGraphic()
+		{
+			ReleaseCapture();
+			this.ROIGraphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(this.ROIGraphic);
+		}
+
+		private void CaptureChanging(object sender, MouseCaptureChangingEventArgs e)
+		{
+			//Somebody else has released the capture unexpectedly.
+			DeleteROIGraphic();
+		}
+
 		public override bool OnMouseDown(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
+
+			//set capture on first mouse down.
+			if (_mouseCapture == null && e.MouseCapture != null)
+			{
+				_mouseCapture = e.MouseCapture;
+				_mouseCapture.SetCapture(this, e);
+				_mouseCapture.NotifyCaptureChanging += this.CaptureChanging;
+			}
+
+			if (_mouseCapture != null)
+			{
+				Point mousePoint = new Point(e.X, e.Y);
+				if (!this.StatefulGraphic.SpatialTransform.DestinationRectangle.Contains(mousePoint))
+					_deleteROIGraphic = true;
+			}
 
 			if (_childGraphic == null)
 			{
@@ -62,11 +108,24 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return _childGraphic.OnMouseDown(e);
 		}
 
+		public override bool OnMouseUp(XMouseEventArgs e)
+		{
+			if (_deleteROIGraphic)
+				DeleteROIGraphic();
+			else if (this.ROIGraphic.State != this)
+				ReleaseCapture();
+
+			return false;
+		}
 		public override bool OnMouseMove(XMouseEventArgs e)
 		{
+			Point mousePoint = new Point(e.X, e.Y);
+			PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.SpatialTransform.DestinationRectangle);
+			XMouseEventArgs newMouseEventArgs = new XMouseEventArgs(e.Button, e.Clicks, mousePoint.X, mousePoint.Y, e.Delta, e.ModifierKeys);
+			
 			// Route mouse move message to the child roi object
 			if (_childGraphic != null)
-				return _childGraphic.OnMouseMove(e);
+				return _childGraphic.OnMouseMove(newMouseEventArgs);
 
 			return false;
 		}

@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// 
 	/// </summary>
     [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-    public class StackTool : MouseTool
+	public class StackTool : DynamicActionMouseTool
 	{
 		private StackCommand _command;
 		private int _initialPresentationImageIndex;
@@ -76,6 +76,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
+			base.OnMouseUp(e); 
+			
 			if (_command == null)
 				return true;
 

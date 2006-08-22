@@ -90,6 +90,8 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="DynamicActionMouseTool.cs" />
+    <Compile Include="CaptureUIEventHandler.cs" />
     <Compile Include="ClientArea.cs" />
     <Compile Include="DisplaySet.cs" />
     <Compile Include="DisplaySetCollection.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="Imaging\VOILUTLinear.cs" />
     <Compile Include="Imaging\WindowLevelMemento.cs" />
     <Compile Include="Imaging\WindowLevelOperator.cs" />
+    <Compile Include="IMouseCapture.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IUIEventHandler.cs" />
     <Compile Include="Layers\BaseLayerCollection.cs" />
@@ -205,6 +208,7 @@
     <Compile Include="Layers\Tests\LayerGroupTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
+    <Compile Include="MouseCaptureChangingEventArgs.cs" />
     <Compile Include="MouseTool.cs" />
     <Compile Include="MouseToolMap.cs" />
     <Compile Include="MouseToolMappedEventArgs.cs" />

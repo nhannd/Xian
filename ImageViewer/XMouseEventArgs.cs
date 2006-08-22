@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer
 		private Tile _selectedTile;
 		private PresentationImage _selectedPresentationImage;
 		private DisplaySet _selectedDisplaySet;
+		private IMouseCapture _mouseCapture;
 
 		public XMouseEventArgs(XMouseButtons button, int clicks, int x, int y, int delta, XKeys modifierKeys)
 		{
@@ -100,6 +101,12 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckForNullReference(value, "SelectedDisplaySet");
 				_selectedDisplaySet = value; 
 			}
+		}
+
+		public IMouseCapture MouseCapture
+		{
+			get { return _mouseCapture; }
+			set { _mouseCapture = value; }
 		}
 
 		#region ICloneable Members

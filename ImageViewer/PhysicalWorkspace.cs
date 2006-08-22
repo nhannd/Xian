@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer
 		private int _rows;
 		private int _columns;
 		private bool _isRectangularImageBoxGrid;
+		private CaptureUIEventHandler _captureUIEventHandler = new CaptureUIEventHandler();
 
 		internal PhysicalWorkspace(ImageWorkspace parentWorkspace)
 		{
@@ -211,6 +212,11 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckPositive(rows, "rows");
 			Platform.CheckPositive(columns, "columns");
 
+			if (_rows == rows && _columns == columns)
+				return;
+
+			ReleaseMouseCapture();
+
 			_rows = rows;
 			_columns = columns;
 			_isRectangularImageBoxGrid = true;
@@ -277,7 +283,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			return _uiEventHandler.OnMouseDown(e);
+			if (!_captureUIEventHandler.OnMouseDown(e))
+			{
+				return _uiEventHandler.OnMouseDown(e);
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -291,7 +302,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			return _uiEventHandler.OnMouseMove(e);
+			if (!_captureUIEventHandler.OnMouseMove(e))
+			{
+				return _uiEventHandler.OnMouseMove(e);
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -305,14 +321,24 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			return _uiEventHandler.OnMouseUp(e);
+			if (!_captureUIEventHandler.OnMouseUp(e))
+			{
+				return _uiEventHandler.OnMouseUp(e);
+			}
+
+			return false;
 		}
 
 		public bool OnMouseWheel(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			return _uiEventHandler.OnMouseWheel(e);
+			if (!_captureUIEventHandler.OnMouseWheel(e))
+			{
+				return _uiEventHandler.OnMouseWheel(e);
+			}
+			
+			return false;
 		}
 
 		/// <summary>
@@ -326,7 +352,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			return _uiEventHandler.OnKeyDown(e);
+			if (!_captureUIEventHandler.OnKeyDown(e))
+			{
+				return _uiEventHandler.OnKeyDown(e);
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -340,7 +371,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			return _uiEventHandler.OnKeyUp(e);
+			if (!_captureUIEventHandler.OnKeyUp(e))
+			{
+				return _uiEventHandler.OnKeyUp(e);
+			}
+
+			return false;
 		}
 
 		#endregion
@@ -438,6 +474,11 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			EventsHelper.Fire(_imageDrawingEvent, this, e);
+		}
+
+		public void ReleaseMouseCapture()
+		{
+			_captureUIEventHandler.ReleaseCapture();
 		}
 	}
 }
