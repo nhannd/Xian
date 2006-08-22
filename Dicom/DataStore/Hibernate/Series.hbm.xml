@@ -8,7 +8,7 @@
     </id>
     <property name="SeriesInstanceUid" column="SeriesInstanceUid_" type="string" length="64" />
 	<property name="Modality" column="Modality_" type="string" length="16" />
-	<property name="SeriesNumber" column="SeriesNumber_" type="UInt32" />
+	<property name="SeriesNumber" column="SeriesNumber_" type="Int32" />
 	<property name="Laterality" column="Laterality_" type="string" length="16" />
 	<property name="SeriesDescription" column="SeriesDescription_" type="string" length="64" />
 	<many-to-one name="Study" class="ClearCanvas.Dicom.DataStore.Study, ClearCanvas.Dicom.DataStore" column="StudyOid_" />

@@ -7,7 +7,7 @@
       </generator>
     </id>
 	<property name="TransferSyntaxUid" column="TransferSyntaxUid_" type="string" length="64" />
-	<property name="InstanceNumber" column="InstanceNumber_" type="UInt32" />
+	<property name="InstanceNumber" column="InstanceNumber_" type="Int32" />
 	<property name="SopInstanceUid" column="SopInstanceUid_" type="string" length="64" />
 	<property name="SopClassUid" column="SopClassUid_" type="string" length="64" />
 	<component name="LocationUri" class="DicomUri">
@@ -16,16 +16,16 @@
 	<many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" />
 	<joined-subclass name="ImageSopInstance" table="ImageSopInstance_" proxy="ImageSopInstance">
 		<key column="Oid_" />
-		<property name="SamplesPerPixel" column="SamplesPerPixel_" type="UInt16" />
-		<property name="BitsStored" column="BitsStored_" type="UInt16" />
+		<property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int16" />
+		<property name="BitsStored" column="BitsStored_" type="Int16" />
 		<property name="RescaleSlope" column="RescaleSlope_" type="Double" />
-		<property name="Rows" column="Rows_" type="UInt32" />
-		<property name="Columns" column="Columns_" type="UInt32" />
-		<property name="PlanarConfiguration" column="PlanarConfiguration_" type="UInt16" />
+		<property name="Rows" column="Rows_" type="Int32" />
+		<property name="Columns" column="Columns_" type="Int32" />
+		<property name="PlanarConfiguration" column="PlanarConfiguration_" type="Int16" />
 		<property name="RescaleIntercept" column="RescaleIntercept_" type="Double" />
-		<property name="PixelRepresentation" column="PixelRepresentation_" type="UInt16" />
-		<property name="BitsAllocated" column="BitsAllocated_" type="UInt16" />
-		<property name="HighBit" column="HighBit_" type="UInt16" />
+		<property name="PixelRepresentation" column="PixelRepresentation_" type="Int16" />
+		<property name="BitsAllocated" column="BitsAllocated_" type="Int16" />
+		<property name="HighBit" column="HighBit_" type="Int16" />
 		<property name="PhotometricInterpretation" column="PhotometricInterpretation_" />
 		<component name="PixelSpacing" class="PixelSpacing">
 			<property name="Row" column="Row_" />

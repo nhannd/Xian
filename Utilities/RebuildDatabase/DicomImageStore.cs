@@ -200,8 +200,8 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             if (cond.good())
                 series.SeriesInstanceUid = stringValue.ToString();
 
-            uint integerValue;
-            cond = sopInstanceDataset.findAndGetUint32(Dcm.SeriesNumber, out integerValue);
+            int integerValue;
+            cond = sopInstanceDataset.findAndGetSint32(Dcm.SeriesNumber, out integerValue);
             if (cond.good())
                 series.SeriesNumber = integerValue;
 
@@ -215,8 +215,8 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
         private SopInstance CreateNewSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, string fileName)
         {
-            ushort shortValue;
-            uint integerValue;
+            ushort ushortValue;
+            int integerValue;
             double doubleValue;
             StringBuilder stringValue = new StringBuilder(1024);
 
@@ -225,23 +225,23 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             // ImageSopInstance.
             ImageSopInstance image = new ImageSopInstance();
 
-            OFCondition cond = sopInstanceDataset.findAndGetUint16(Dcm.BitsAllocated, out shortValue);
+            OFCondition cond = sopInstanceDataset.findAndGetUint16(Dcm.BitsAllocated, out ushortValue);
             if (cond.good())
-                image.BitsAllocated = shortValue;
+                image.BitsAllocated = Convert.ToInt32(ushortValue);
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.BitsStored, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.BitsStored, out ushortValue);
             if (cond.good())
-                image.BitsStored = shortValue;
+                image.BitsStored = Convert.ToInt32(ushortValue);
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.Columns, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.Columns, out ushortValue);
             if (cond.good())
-                image.Columns = Convert.ToUInt32(shortValue);
+                image.Columns = Convert.ToInt32(ushortValue);
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.HighBit, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.HighBit, out ushortValue);
             if (cond.good())
-                image.HighBit = shortValue;
+                image.HighBit = Convert.ToInt32(ushortValue);
 
-            cond = sopInstanceDataset.findAndGetUint32(Dcm.InstanceNumber, out integerValue);
+            cond = sopInstanceDataset.findAndGetSint32(Dcm.InstanceNumber, out integerValue);
             if (cond.good())
                 image.InstanceNumber = integerValue;
 
@@ -281,9 +281,9 @@ namespace ClearCanvas.Utilities.RebuildDatabase
                 image.PhotometricInterpretation = pi;
             }
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out ushortValue);
             if (cond.good())
-                image.PixelRepresentation = shortValue;
+                image.PixelRepresentation = Convert.ToInt32(ushortValue);
 
             // TODO: this way of getting the string representations of these arrays
             // and then converting the types to the appropriate double values in an
@@ -298,9 +298,9 @@ namespace ClearCanvas.Utilities.RebuildDatabase
                 image.PixelSpacing = new PixelSpacing(Convert.ToDouble(components[0]), Convert.ToDouble(components[1]));
             }
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out ushortValue);
             if (cond.good())
-                image.PlanarConfiguration = shortValue;
+                image.PlanarConfiguration = Convert.ToInt32(ushortValue);
 
             cond = sopInstanceDataset.findAndGetFloat64(Dcm.RescaleIntercept, out doubleValue);
             if (cond.good())
@@ -310,13 +310,13 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             if (cond.good())
                 image.RescaleSlope = doubleValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.Rows, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.Rows, out ushortValue);
             if (cond.good())
-                image.Rows = Convert.ToUInt32(shortValue);
+                image.Rows = Convert.ToInt32(ushortValue);
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.SamplesPerPixel, out shortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.SamplesPerPixel, out ushortValue);
             if (cond.good())
-                image.SamplesPerPixel = shortValue;
+                image.SamplesPerPixel = Convert.ToInt32(ushortValue);
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.SOPClassUID, stringValue);
             if (cond.good())

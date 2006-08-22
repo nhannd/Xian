@@ -32,7 +32,7 @@ namespace ClearCanvas.Dicom.DataStore
             set { _modality = value; }
         }
 
-        public virtual uint SeriesNumber
+        public virtual int SeriesNumber
         {
             get { return _seriesNumber; }
             set { _seriesNumber = value; }
@@ -99,7 +99,7 @@ namespace ClearCanvas.Dicom.DataStore
         long _seriesOid;
         string _seriesInstanceUid;
         string _modality;
-        uint _seriesNumber;
+        int _seriesNumber;
         string _laterality;
         string _seriesDescription;
         ISet _sopInstances;

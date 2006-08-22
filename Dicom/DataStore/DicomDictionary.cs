@@ -19,6 +19,8 @@ namespace ClearCanvas.Dicom.DataStore
 
             // load the dictionary entries from the database
             Load();
+
+            _session.Close();
         }
 
         #region Private Members

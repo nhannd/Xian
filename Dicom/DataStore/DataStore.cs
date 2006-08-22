@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public sealed partial class DataStore : IDataStore
+    internal sealed partial class DataStore : IDataStore
     {
         #region Handcoded Members
         private DataStore()
@@ -21,7 +21,6 @@ namespace ClearCanvas.Dicom.DataStore
         public DataStore(ISession session) : this()
         {
             _session = session;
-            _dicomDictionary = new DicomDictionary(_session);
         }
 
         #region Private Members
@@ -31,11 +30,6 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _session; }
         }
 
-        static private DicomDictionary _dicomDictionary;
-        static private DicomDictionary DicomDictionary
-        {
-            get { return _dicomDictionary; }
-        }
         #endregion
         #endregion
 
@@ -151,8 +145,8 @@ namespace ClearCanvas.Dicom.DataStore
             IStudy studyFound = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
+                //if (!this.Session.IsConnected)
+                //    this.Session.Reconnect();
 
 
                 IList listOfStudies = this.Session.CreateCriteria(typeof(Study))
@@ -187,7 +181,7 @@ namespace ClearCanvas.Dicom.DataStore
             foreach (DicomTag tag in queryKey.DicomTags)
             {
                 Path path = new Path(tag.ToString());
-                DictionaryEntry column = DataStore.DicomDictionary.GetColumn(path);
+                DictionaryEntry column = DataAbstractionLayer.GetIDicomDictionary().GetColumn(path);
 
                 if (queryKey[tag].Length > 0)
                 {
@@ -232,14 +226,14 @@ namespace ClearCanvas.Dicom.DataStore
                 foreach (PropertyInfo pi in study.GetType().GetProperties())
                 {
                     string fieldName = pi.Name;
-                    if (DataStore.DicomDictionary.Contains(new TagName(fieldName)))
+                    if (DataAbstractionLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
                     {
                         // ensure that property actually has a value
                         object fieldValue = pi.GetValue(study, null);
                         if (null == fieldValue)
                             continue;
 
-                        DictionaryEntry col = DataStore.DicomDictionary.GetColumn(new TagName(fieldName));
+                        DictionaryEntry col = DataAbstractionLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
                         DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
                         result.Add(tag, fieldValue.ToString());
                     }

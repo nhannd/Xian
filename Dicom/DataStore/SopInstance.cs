@@ -38,7 +38,7 @@ namespace ClearCanvas.Dicom.DataStore
             set { _transferSyntaxUid = value; }
         }
 
-        public virtual uint InstanceNumber
+        public virtual int InstanceNumber
         {
             get { return _instanceNumber; }
             set { _instanceNumber = value; }
@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom.DataStore
         string _sopClassUid;
         DicomUri _locationUri;
         string _transferSyntaxUid;
-        uint _instanceNumber;
+        int _instanceNumber;
         Series _parentSeries;
         #endregion
         #endregion
