@@ -101,7 +101,10 @@
     <Compile Include="GDIRenderer.cs" />
     <Compile Include="ImageBuffer.cs" />
     <Compile Include="ImageBufferWin32.cs" />
+    <Compile Include="ImageInterpolatorBilinear.cs" />
+    <Compile Include="ImageInterpolatorBilinearFast.cs" />
     <Compile Include="ImageRenderer.cs" />
+    <Compile Include="ImageInterpolatorNearestNeighbour.cs" />
     <Compile Include="RectangleUtilities.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -113,6 +116,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="Tests\ImageRendererBilinearInterpolationTests.cs" />
     <Compile Include="Tests\RectangleIntersectionTests.cs" />
     <Compile Include="Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Tests\ImageRendererRGBPlanarOrientationTests.cs" />

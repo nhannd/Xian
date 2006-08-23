@@ -13,6 +13,11 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// </summary>
 	public abstract class ImageLayer : Layer
 	{
+		public enum InterpolationMethods { NEAREST_NEIGHBOURS, BILINEAR_FAST, BILINEAR };
+		
+		//default is Nearest Neighbours.
+		private InterpolationMethods _interpolationMethod = InterpolationMethods.NEAREST_NEIGHBOURS;
+
 		private int _sizeInBytes = -1;
 		private int _doubleWordAlignedColumns = -1;
 		private GrayscaleLUTPipeline _grayscaleLUTPipeline;
@@ -152,6 +157,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			get { return this.PlanarConfiguration == 1; }
 		}
 
+        public bool IsSigned
+        {
+            get { return this.PixelRepresentation != 0; }
+        }
+
 		/// <summary>
 		/// Gets a value indicating whether image is aligned on a 4-byte boundary
 		/// </summary>
@@ -224,6 +234,12 @@ namespace ClearCanvas.ImageViewer.Layers
 		protected override BaseLayerCollection CreateChildLayers()
 		{
 			return null;
+		}
+
+		public InterpolationMethods InterpolationMethod
+		{
+			get { return _interpolationMethod; }
+			set { _interpolationMethod = value; }
 		}
 	}
 }

@@ -11,329 +11,149 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
-	public unsafe class ImageRenderer
-	{
-		public static void Render(
-			ImageLayer imageLayer, 
-			IntPtr pDstPixelData,
-			int dstWidth,
-			int dstBytesPerPixel,
-			RectangleF clientRectangle)
-		{
-			if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
-				return;
+    public unsafe class ImageRenderer
+    {
+        public static void Render(
+            ImageLayer imageLayer,
+            IntPtr pDstPixelData,
+            int dstWidth,
+            int dstBytesPerPixel,
+            RectangleF clientRectangle)
+        {
+            if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
+                return;
 
-			Rectangle dstViewableRectangle, srcViewableRectangle;
-			CalculateVisibleRectangles(imageLayer, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
+            Rectangle srcViewableRectangle;
+            Rectangle dstViewableRectangle;
 
-			if (srcViewableRectangle.IsEmpty)
-				return;
+            ImageRenderer.CalculateVisibleRectangles(imageLayer, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
 
-			byte[] srcPixelData = imageLayer.GetPixelData();
+            if (srcViewableRectangle.IsEmpty)
+                return;
 
-			byte[] lutData = null;
-			int srcBytesPerPixel = imageLayer.BitsAllocated / 8;
+            byte[] srcPixelData = imageLayer.GetPixelData();
 
-			if (imageLayer.IsGrayscale)
-				lutData = imageLayer.GrayscaleLUTPipeline.OutputLUT;
+            byte[] lutData = null;
+            int srcBytesPerPixel = imageLayer.BitsAllocated / 8;
 
-			bool swapXY = IsRotated(imageLayer);
+            if (imageLayer.IsGrayscale)
+                lutData = imageLayer.GrayscaleLUTPipeline.OutputLUT;
 
-			//CodeClock clock = new CodeClock();
-			//clock.Start();
+            bool swapXY = ImageRenderer.IsRotated(imageLayer);
 
-			fixed (byte* pSrcPixelData = srcPixelData)
-			{
-				fixed (byte* pLutData = lutData)
-				{
-					StretchNearestNeighbour(
-						srcViewableRectangle,
-						pSrcPixelData,
-						imageLayer.Columns,
-						imageLayer.Rows,
-						srcBytesPerPixel,
-						dstViewableRectangle,
-						(byte*)pDstPixelData,
-						dstWidth,
-						dstBytesPerPixel,
-						swapXY,
-						pLutData,
-						imageLayer.IsColor,
-						imageLayer.IsPlanar);
-				}
-			}
+            fixed (byte* pSrcPixelData = srcPixelData)
+            {
+                fixed (byte* pLutData = lutData)
+                {
+                    //Use this loop code to quickly determine how well a particular interpolator will perform.
 
-			//clock.Stop();
-			//string str = String.Format("Strech: {0}", clock.ToString());
-			//Platform.Log(str);
-		}
+                    //CodeClock clock = new CodeClock();
+                    //clock.Start();
 
-		private static bool IsRotated(ImageLayer imageLayer)
-		{
-			float m12 = imageLayer.SpatialTransform.Transform.Elements[2];
-			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
-		}
+                    //int numimages = 1;
+                    //if (_showMessageBox)
+                    //    numimages = 50;
 
-		private static void CalculateVisibleRectangles(
-			ImageLayer imageLayer, 
-			RectangleF clientRectangle, 
-			out Rectangle dstVisibleRectangle, 
-			out Rectangle srcVisibleRectangle)
-		{
-			Rectangle srcRectangleF = imageLayer.SpatialTransform.SourceRectangle;
-			RectangleF dstRectangleF = imageLayer.SpatialTransform.ConvertToDestination(srcRectangleF);
+                    //for (int i = 0; i < numimages; ++i)
+                    //{
+                        ImageInterpolator.AllocateInterpolator(imageLayer.InterpolationMethod).Interpolate(
+                            srcViewableRectangle,
+                            pSrcPixelData,
+                            imageLayer.Columns,
+                            imageLayer.Rows,
+                            srcBytesPerPixel,
+                            dstViewableRectangle,
+                            (byte*)pDstPixelData,
+                            dstWidth,
+                            dstBytesPerPixel,
+                            swapXY,
+                            pLutData,
+                            imageLayer.IsColor,
+                            imageLayer.IsPlanar,
+                            imageLayer.IsSigned);
+                    //}
 
-			// Find the intersection between the drawable client rectangle and
-			// the transformed destination rectangle
-			RectangleF dstVisibleRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
+                    //clock.Stop();
 
-			if (dstVisibleRectangleF.IsEmpty)
-			{
-				dstVisibleRectangle = Rectangle.Empty;
-				srcVisibleRectangle = Rectangle.Empty;
-				return;
-			}
+                    //string str = String.Format("50x Draw: {0}\n", clock.ToString());
+                    //Trace.Write(str);
+                    //if (_showMessageBox)
+                    //    Platform.ShowMessageBox(str);
 
-			// From that intersection, figure out what portion of the image
-			// is Visible in source coordinates
-			RectangleF srcVisibleRectangleF = imageLayer.SpatialTransform.ConvertToSource(dstVisibleRectangleF);
+                    //_showMessageBox = false;
+                }
+            }
+        }
 
-			dstVisibleRectangle = Rectangle.Round(dstVisibleRectangleF);
-			srcVisibleRectangle = Rectangle.Round(srcVisibleRectangleF);
+        private static bool IsRotated(ImageLayer imageLayer)
+        {
+            float m12 = imageLayer.SpatialTransform.Transform.Elements[2];
+            return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
+        }
 
-			dstVisibleRectangle = RectangleUtilities.MakeRectangleZeroBased(dstVisibleRectangle);
-			srcVisibleRectangle = RectangleUtilities.MakeRectangleZeroBased(srcVisibleRectangle);
-		}
+        private static void CalculateVisibleRectangles(
+            ImageLayer imageLayer,
+            RectangleF clientRectangle,
+            out Rectangle dstVisibleRectangle,
+            out Rectangle srcVisibleRectangle)
+        {
+            Rectangle srcRectangle = imageLayer.SpatialTransform.SourceRectangle;
+            RectangleF dstRectangleF = imageLayer.SpatialTransform.ConvertToDestination(srcRectangle);
 
-		private static void StretchNearestNeighbour(
-			Rectangle srcRegionRect,
-			byte* pSrcPixelData,
-			int srcWidth,
-			int srcHeight,
-			int srcBytesPerPixel,
-			Rectangle dstRegionRect,
-			byte* pDstPixelData,
-			int dstWidth,
-			int dstBytesPerPixel,
-			bool swapXY,
-			byte* pLutData,
-			bool isRGB,
-			bool isPlanar)
-		{
-			int srcRegionHeight = Math.Abs(srcRegionRect.Bottom - srcRegionRect.Top) + 1;
-			int srcRegionWidth = Math.Abs(srcRegionRect.Right - srcRegionRect.Left) + 1;
-			int xSrcStride, ySrcStride;
+            // Find the intersection between the drawable client rectangle and
+            // the transformed destination rectangle
+            RectangleF dstVisibleRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
+            if (dstVisibleRectangleF.IsEmpty)
+            {
+                dstVisibleRectangle = Rectangle.Empty;
+                srcVisibleRectangle = Rectangle.Empty;
+                return;
+            }
 
-			// If the image is RGB triplet, then the x-stride is 3 bytes
-			if (isRGB && !isPlanar)
-			{
-				xSrcStride = 3;
-				ySrcStride = srcWidth * 3;
-			}
-			// Otherwise, it's just the number of bytes per pixel
-			else
-			{
-				xSrcStride = srcBytesPerPixel;
-				ySrcStride = srcWidth * srcBytesPerPixel;
-			}
+            // From that intersection, figure out what portion of the image
+            // is Visible in source coordinates
+            RectangleF srcVisibleRectangleF = imageLayer.SpatialTransform.ConvertToSource(dstVisibleRectangleF);
 
-			int xSrcIncrement = Math.Sign(srcRegionRect.Right - srcRegionRect.Left) * xSrcStride;
-			int ySrcIncrement = Math.Sign(srcRegionRect.Bottom - srcRegionRect.Top) * ySrcStride;
-			pSrcPixelData += (srcRegionRect.Top * ySrcStride) + (srcRegionRect.Left * xSrcStride);
+            dstVisibleRectangle = Rectangle.Round(dstVisibleRectangleF);
+            srcVisibleRectangle = Rectangle.Round(srcVisibleRectangleF);
 
-			int dstRegionHeight, dstRegionWidth,
-				xDstStride, yDstStride,
-				xDstIncrement, yDstIncrement;
+            dstVisibleRectangle = RectangleUtilities.MakeRectangleZeroBased(dstVisibleRectangle);
+            srcVisibleRectangle = RectangleUtilities.MakeRectangleZeroBased(srcVisibleRectangle);
+        }
+    }
 
-			if (swapXY)
-			{
-				dstRegionHeight = Math.Abs(dstRegionRect.Right - dstRegionRect.Left) + 1;
-				dstRegionWidth = Math.Abs(dstRegionRect.Bottom - dstRegionRect.Top) + 1;
-				xDstStride = dstWidth * dstBytesPerPixel;
-				yDstStride = dstBytesPerPixel;
-				xDstIncrement = Math.Sign(dstRegionRect.Bottom - dstRegionRect.Top) * xDstStride;
-				yDstIncrement = Math.Sign(dstRegionRect.Right - dstRegionRect.Left) * yDstStride;
-				pDstPixelData += (dstRegionRect.Top * xDstStride) + (dstRegionRect.Left * yDstStride);
-			}
-			else
-			{
-				dstRegionHeight = Math.Abs(dstRegionRect.Bottom - dstRegionRect.Top) + 1;
-				dstRegionWidth = Math.Abs(dstRegionRect.Right - dstRegionRect.Left) + 1;
-				xDstStride = dstBytesPerPixel;
-				yDstStride = dstWidth * dstBytesPerPixel;
-				xDstIncrement = Math.Sign(dstRegionRect.Right - dstRegionRect.Left) * xDstStride;
-				yDstIncrement = Math.Sign(dstRegionRect.Bottom - dstRegionRect.Top) * yDstStride;
-				pDstPixelData += (dstRegionRect.Top * yDstStride) + (dstRegionRect.Left * xDstStride);
-			}
+    /// <summary>
+    /// A common (abstract) class for creating different interpolators.  Later, we can use an ExtensionPoint.
+    /// </summary>
+    public abstract class ImageInterpolator
+    {
+		public static ImageInterpolator AllocateInterpolator(ImageLayer.InterpolationMethods interpolationMethod)
+        {
+			if (interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR)
+                return new ImageInterpolatorBilinear();
 
-			int ey = srcRegionHeight - dstRegionHeight;
+			if (interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR_FAST)
+				return new ImageInterpolatorBilinearFast();
 
-			int greenOffset, blueOffset;
+            return new ImageInterpolatorNearestNeighbour();
+        }
 
-			if (isPlanar)
-			{
-				greenOffset = srcWidth * srcHeight;
-				blueOffset = greenOffset * 2;
-			}
-			else
-			{
-				greenOffset = 1;
-				blueOffset = 2;
-			}
-
-			for (int y = 0; y < dstRegionHeight; y++)
-			{
-				if (isRGB)
-				{
-					StretchRowNearestNeighbourRGB(
-						pSrcPixelData, 
-						pDstPixelData, 
-						pLutData, 
-						srcRegionWidth, 
-						dstRegionWidth, 
-						xSrcIncrement, 
-						xDstIncrement, 
-						greenOffset, 
-						blueOffset);
-				}
-				else
-				{
-					if (srcBytesPerPixel == 2)
-					{
-						StretchRowNearestNeighbour16(
-							pSrcPixelData, 
-							pDstPixelData, 
-							pLutData, 
-							srcRegionWidth, 
-							dstRegionWidth, 
-							xSrcIncrement, 
-							xDstIncrement);
-					}
-					else if (srcBytesPerPixel == 1)
-					{
-						StretchRowNearestNeighbour8(
-							pSrcPixelData, 
-							pDstPixelData, 
-							pLutData, 
-							srcRegionWidth, 
-							dstRegionWidth, 
-							xSrcIncrement, 
-							xDstIncrement);
-					}
-				}
-
-				while (ey >= 0)
-				{
-					pSrcPixelData += ySrcIncrement;
-					ey -= dstRegionHeight;
-				}
-
-				pDstPixelData += yDstIncrement;
-				ey += srcRegionHeight;
-			}
-		}
-
-		private static void StretchRowNearestNeighbour8(
-			byte* pSrcPixelData,
-			byte* pDstPixelData,
-			byte* pLutData,
-			int srcRegionWidth,
-			int dstRegionWidth,
-			int xSrcIncrement,
-			int xDstIncrement)
-		{
-			byte* pRowSrcPixelData = pSrcPixelData;
-			byte* pRowDstPixelData = pDstPixelData;
-
-			int ex = srcRegionWidth - dstRegionWidth;
-
-			for (int x = 0; x < dstRegionWidth; x++)
-			{
-				byte value = pLutData[*pRowSrcPixelData];
-
-				pRowDstPixelData[0] = value; //B
-				pRowDstPixelData[1] = value; //G
-				pRowDstPixelData[2] = value; //R
-				pRowDstPixelData[3] = 0xff;  //A
-
-				while (ex >= 0)
-				{
-					pRowSrcPixelData += xSrcIncrement;
-					ex -= dstRegionWidth;
-				}
-
-				pRowDstPixelData += xDstIncrement;
-				ex += srcRegionWidth;
-			}
-		}
-
-		private static void StretchRowNearestNeighbour16(
-			byte* pSrcPixelData, 
-			byte* pDstPixelData, 
-			byte* pLutData, 
-			int srcRegionWidth,
-			int dstRegionWidth, 
-			int xSrcIncrement, 
-			int xDstIncrement)
-		{
-			byte* pRowSrcPixelData = pSrcPixelData;
-			byte* pRowDstPixelData = pDstPixelData;
-
-			int ex = srcRegionWidth - dstRegionWidth;
-
-			for (int x = 0; x < dstRegionWidth; x++)
-			{
-				byte value = pLutData[*((ushort*)pRowSrcPixelData)];
-				pRowDstPixelData[0] = value; //B
-				pRowDstPixelData[1] = value; //G
-				pRowDstPixelData[2] = value; //R
-				pRowDstPixelData[3] = 0xff;  //A
-
-				while (ex >= 0)
-				{
-					pRowSrcPixelData += xSrcIncrement;
-					ex -= dstRegionWidth;
-				}
-
-				pRowDstPixelData += xDstIncrement;
-				ex += srcRegionWidth;
-			}
-		}
-
-		private static void StretchRowNearestNeighbourRGB(
-			byte* pSrcPixelData, 
-			byte* pDstPixelData, 
-			byte* pLutData, 
-			int srcRegionWidth, 
-			int dstRegionWidth, 
-			int xSrcIncrement, 
-			int xDstIncrement,
-			int greenOffset, 
-			int blueOffset)
-		{
-			byte* pRowSrcPixelData = pSrcPixelData;
-			byte* pRowDstPixelData = pDstPixelData;
-
-			int ex = srcRegionWidth - dstRegionWidth;
-
-			for (int x = 0; x < dstRegionWidth; x++)
-			{
-				pRowDstPixelData[0] = pRowSrcPixelData[blueOffset]; //B
-				pRowDstPixelData[1] = pRowSrcPixelData[greenOffset]; //G
-				pRowDstPixelData[2] = pRowSrcPixelData[0]; //R
-				pRowDstPixelData[3] = 0xff;  //A
-
-				while (ex >= 0)
-				{
-					pRowSrcPixelData += xSrcIncrement;
-					ex -= dstRegionWidth;
-				}
-
-				pRowDstPixelData += xDstIncrement;
-				ex += srcRegionWidth;
-			}
-		}
-	}
+        public abstract unsafe void Interpolate(
+            Rectangle srcRegionRect,
+            byte* pSrcPixelData,
+            int srcWidth,
+            int srcHeight,
+            int srcBytesPerPixel,
+            Rectangle dstRegionRect,
+            byte* pDstPixelData,
+            int dstWidth,
+            int dstBytesPerPixel,
+            bool swapXY,
+            byte* pLutData,
+            bool isRGB,
+            bool isPlanar,
+            bool IsSigned);
+    }
 }
 
 //string str = String.Format("dstRectangle: {0}", dstRectangleF);
