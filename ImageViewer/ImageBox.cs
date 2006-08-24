@@ -745,5 +745,11 @@ namespace ClearCanvas.ImageViewer
 
 			EventsHelper.Fire(_imageDrawingEvent, this, e);
 		}
+
+		public bool DynamicAction
+		{
+			get { return ParentPhysicalWorkspace.DynamicAction; }
+			set { ParentPhysicalWorkspace.DynamicAction = value; }
+		}
 	}
 }

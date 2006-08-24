@@ -78,6 +78,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.OnMouseUp(e); 
 			
+			e.SelectedImageBox.Draw(true);
+
 			if (_command == null)
 				return true;
 

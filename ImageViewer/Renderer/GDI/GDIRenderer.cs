@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			if (customImage != null)
 				DrawToScreen(customImage, graphics, e.Tile.DrawableClientRectangle);
 			else
-				DrawLayerGroup(e.PresentationImage.LayerManager.RootLayerGroup, e.Tile.DrawableClientRectangle);
+				DrawLayerGroup(e.PresentationImage.LayerManager.RootLayerGroup, e.Tile.DrawableClientRectangle, e.FastDraw);
 		
 			DrawImageBoxFrame(e.ImageBox.ClientRectangle, e.ImageBox.Selected, e.ImageBox.DisplaySet.Linked);
 
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			screenGraphics.ReleaseHdc(hDC);
 		}
 
-		private void DrawLayerGroup(LayerGroup layerGroup, Rectangle drawableTileRectangle)
+		private void DrawLayerGroup(LayerGroup layerGroup, Rectangle drawableTileRectangle, bool fastDraw)
 		{
 			// If the tile has no PresentationImage associated with it (and thus no
 			// LayerGroup), just leave it blank.
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			{
 				if (layer is LayerGroup)
 				{
-					DrawLayerGroup((LayerGroup)layer, drawableTileRectangle);
+					DrawLayerGroup((LayerGroup)layer, drawableTileRectangle, fastDraw);
 				}
 				else
 				{
@@ -206,7 +206,11 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 							_imageBuffer.Graphics.ResetClip();
 
 							if (layer is ImageLayer)
-								DrawImageLayer((ImageLayer)layer, drawableTileRectangle);
+							{
+								ImageLayer imageLayer = (ImageLayer)layer;
+								imageLayer.FastRender = fastDraw;
+								DrawImageLayer(imageLayer, drawableTileRectangle);
+							}
 
 							if (layer is CustomLayer)
 								DrawCustomLayer((CustomLayer)layer, drawableTileRectangle);

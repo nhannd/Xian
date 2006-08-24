@@ -63,6 +63,7 @@ namespace ClearCanvas.ImageViewer
 		private int _columns;
 		private bool _isRectangularImageBoxGrid;
 		private CaptureUIEventHandler _captureUIEventHandler = new CaptureUIEventHandler();
+		private bool _dynamicAction = false;
 
 		internal PhysicalWorkspace(ImageWorkspace parentWorkspace)
 		{
@@ -466,6 +467,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(e, "e");
 
 			e.PhysicalWorkspace = this;
+			e.FastDraw = this.DynamicAction; //tell the renderer to draw fast, whatever that may mean.
 
 			if (_imageBoxLayoutChanged)
 			{
@@ -479,6 +481,20 @@ namespace ClearCanvas.ImageViewer
 		public void ReleaseMouseCapture()
 		{
 			_captureUIEventHandler.ReleaseCapture();
+		}
+
+		/// <summary>
+		/// The reason we set the 'dynamic action' at the physical workspace level is because of tools like the stack tool.
+		/// Take for example, a case where you were stacking in a 2x2 tiled image box.  You would want any draw operations
+		/// in any of those tiles to use a faster interpolation method (because when you stack, all 4 tiles update).
+		/// Also, you could want to synchronize display sets in other image boxes based on patient position.  This scheme
+		/// still works for the other dynamic tools (zoom, pan) because they only redraw the individual tile that is
+		/// being manipulated.
+		/// </summary>
+		public bool DynamicAction
+		{
+			get { return _dynamicAction; }
+			set { _dynamicAction = value; }
 		}
 	}
 }

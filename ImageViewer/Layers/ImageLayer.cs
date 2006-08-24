@@ -16,8 +16,10 @@ namespace ClearCanvas.ImageViewer.Layers
 		public enum InterpolationMethods { NEAREST_NEIGHBOURS, BILINEAR_FAST, BILINEAR };
 		
 		//default is Nearest Neighbours.
-		private InterpolationMethods _interpolationMethod = InterpolationMethods.NEAREST_NEIGHBOURS;
-
+		private InterpolationMethods _normalInterpolationMethod = InterpolationMethods.BILINEAR;
+		private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.NEAREST_NEIGHBOURS;
+		private bool _fastRender = false;
+		
 		private int _sizeInBytes = -1;
 		private int _doubleWordAlignedColumns = -1;
 		private GrayscaleLUTPipeline _grayscaleLUTPipeline;
@@ -236,10 +238,40 @@ namespace ClearCanvas.ImageViewer.Layers
 			return null;
 		}
 
-		public InterpolationMethods InterpolationMethod
+		public bool FastRender
 		{
-			get { return _interpolationMethod; }
-			set { _interpolationMethod = value; }
+			get 
+			{
+				return _fastRender; 
+			}
+			set
+			{
+				_fastRender = value;
+				this.RedrawRequired = true;
+			}
+		}
+
+		public InterpolationMethods FastInterpolationMethod
+		{
+			get { return _fastInterpolationMethod; }
+			set { _fastInterpolationMethod = value; }
+		}
+
+		public InterpolationMethods NormalInterpolationMethod
+		{
+			get { return _normalInterpolationMethod; }
+			set { _normalInterpolationMethod = value; }
+		}
+
+		public virtual InterpolationMethods InterpolationMethod
+		{
+			get
+			{
+				if (_fastRender)
+					return _fastInterpolationMethod;
+
+				return _normalInterpolationMethod;
+			}
 		}
 	}
 }

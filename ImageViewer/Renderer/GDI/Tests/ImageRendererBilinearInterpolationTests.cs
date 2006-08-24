@@ -545,8 +545,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             else if (imageType == ImageTypes.RGB_TRIPLET)
                 _layer = ImageLayerFactory.CreateRGBTripletImageLayer(_srcWidth, _srcHeight);
 
-			_layer.InterpolationMethod = ImageLayer.InterpolationMethods.BILINEAR;
-
 			_layerGroup = new LayerGroup();
             _layerGroup.Layers.Add(_layer);
 

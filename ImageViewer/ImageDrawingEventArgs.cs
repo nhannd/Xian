@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageViewer
 		private bool _imageBoxLayoutChanged = false;
 		private bool _tileLayoutChanged = false;
 		private bool _paintNow = false;
+		private bool _fastDraw = false;
 
 		// Constructor
 		public ImageDrawingEventArgs(PresentationImage presentationImage, 
@@ -76,6 +77,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _paintNow; }
 			set { _paintNow = value; }
+		}
+
+		public bool FastDraw
+		{
+			get { return _fastDraw; }
+			set { _fastDraw = value; }
 		}
 	}
 }

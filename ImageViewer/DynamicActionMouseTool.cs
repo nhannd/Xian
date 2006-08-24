@@ -26,11 +26,15 @@ namespace ClearCanvas.ImageViewer
 			if (e.MouseCapture != null)
 				e.MouseCapture.SetCapture(this, e);
 
+			e.SelectedTile.DynamicAction = true;
+
 			return base.OnMouseDown(e);
 		}
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
+			e.SelectedTile.DynamicAction = false;
+
 			bool returnValue = base.OnMouseUp(e); 
 			
 			if (e.MouseCapture != null)
