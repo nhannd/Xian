@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			// Calculate these values outside of the y-x loop.  Improves speed by a lot.
 			for (int x = 0; x < dstRegionWidth; ++x)
 			{
-				float xSrcPixelCoordinate = srcRegionRectangle.Left + x / xRatio;
+				float xSrcPixelCoordinate = srcRegionRectangle.Left + x * xRatio;
 
 				//a necessary evil, I'm afraid.
 				if (xSrcPixelCoordinate < 0)
