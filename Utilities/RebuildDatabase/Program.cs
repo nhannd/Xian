@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using log4net;
 
 namespace ClearCanvas.Utilities.RebuildDatabase
 {

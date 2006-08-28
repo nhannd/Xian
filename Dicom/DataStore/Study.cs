@@ -81,12 +81,6 @@ namespace ClearCanvas.Dicom.DataStore
             set { _patientId = value; }
         }
 
-        //public virtual string InternalPatientId
-        //{
-        //    get { return this.PatientId.ToString(); }
-        //    set { this.PatientId = new PatientId(value); }
-        //}
-
         public virtual PatientsName PatientsName
         {
             get { return _patientsName; }
@@ -173,7 +167,7 @@ namespace ClearCanvas.Dicom.DataStore
                     sopList.Add(sopInstance);
                 }
             }
-            return sopList.AsReadOnly();   
+            return sopList.AsReadOnly();
         }
 
         public Uid GetStudyInstanceUid()
@@ -189,7 +183,7 @@ namespace ClearCanvas.Dicom.DataStore
 
         public void RemoveSeries(ISeries series)
         {
-            throw new Exception("The method or operation is not implemented.");
+            this.Series.Remove(series);
         }
 
         public IEnumerable<ISeries> GetSeries()
@@ -199,7 +193,8 @@ namespace ClearCanvas.Dicom.DataStore
             {
                 seriesList.Add(series);
             }
-            return seriesList.AsReadOnly();   
+
+            return seriesList.AsReadOnly();
         }
 
         #endregion

@@ -15,7 +15,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         public event EventHandler<ImageInsertCompletedEventArgs> ImageInsertCompletedEvent;
         public event EventHandler<DatabaseRebuildCompletedEventArgs> DatabaseRebuildCompletedEvent;
        
-        public DatabaseRebuilder(String connectionString, String imageStoragePath, Boolean isSearchRecursive)
+        public DatabaseRebuilder(String imageStoragePath, Boolean isSearchRecursive)
         {
             _state = RebuilderState.Stopped;
             _imageStoragePath = imageStoragePath;
@@ -179,7 +179,6 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             // as well, even though they are needed in the InsertSopInstance
             // and sub methods
             GC.KeepAlive(file);
-
         }
 
         private DatabaseRebuilder() { }

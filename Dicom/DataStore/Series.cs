@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Iesi.Collections;
+using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {

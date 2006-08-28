@@ -15,7 +15,6 @@ namespace ClearCanvas.Dicom.DataStore
         #region Private Members
 
         private static readonly ISessionFactory _sessionFactory;
-        //private static Dictionary<int, IDicomDictionary> _dicomDictionaries;
         private static Dictionary<Thread, ISession> _sessions;
         private static Dictionary<ISession, IDataStore> _dataStores;
         private static Dictionary<ISession, IDataStoreWriteAccessor> _dataStoreWriteAccessors;
@@ -42,11 +41,6 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _sessions; }
         }
 
-        //private static Dictionary<int, IDicomDictionary> DicomDictionaries
-        //{
-        //    get { return _dicomDictionaries; }
-        //}
-
         private static Dictionary<ISession, IDataStoreWriteAccessor> DataStoreWriteAccessors
         {
             get { return _dataStoreWriteAccessors; }
@@ -60,7 +54,7 @@ namespace ClearCanvas.Dicom.DataStore
                 List<KeyValuePair<Thread,ISession>> toRemoveArray = new List<KeyValuePair<Thread,ISession>>();
                 foreach (KeyValuePair<Thread, ISession> iterator in DataAbstractionLayer.Sessions)
                 {
-                    if (!iterator.Key.IsAlive)
+                    if (!iterator.Key.IsAlive || !iterator.Value.IsOpen)
                         toRemoveArray.Add(iterator);
                 }
                 foreach (KeyValuePair<Thread, ISession> iterator in toRemoveArray)
@@ -104,20 +98,26 @@ namespace ClearCanvas.Dicom.DataStore
             _dataStoreWriteAccessors = new Dictionary<ISession, IDataStoreWriteAccessor>();
         }
 
-        //public static void StartSession()
-        //{
-        //    // this just creates a new session if necessary
-        //    ISession currentSession = DataAbstractionLayer.CurrentSession;
-        //}
+        public static void CloseCurrentSession()
+        {
+            DataAbstractionLayer.CurrentSession.Close();
+        }
 
-        //public static void EndSession()
-        //{
-        //    ISession currentSession = DataAbstractionLayer.CurrentSession;
-        //    DataAbstractionLayer.DataStores.Remove(currentSession);
-        //    DataAbstractionLayer.DataStoreWriteAccessors.Remove(currentSession);
-        //    currentSession.Close();
-        //    DataAbstractionLayer.Sessions.Remove(Thread.CurrentThread);
-        //}
+        public static void ClearCurrentSession()
+        {
+            DataAbstractionLayer.CurrentSession.Clear();
+        }
+
+        public static void ReconnectCurrentSession()
+        {
+            if (!DataAbstractionLayer.CurrentSession.IsConnected)
+                DataAbstractionLayer.CurrentSession.Reconnect();
+        }
+
+        public static void DisconnectCurrentSession()
+        {
+            DataAbstractionLayer.CurrentSession.Disconnect();
+        }
 
         public static IDataStore GetIDataStore()
         {

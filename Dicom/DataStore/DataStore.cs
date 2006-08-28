@@ -37,70 +37,82 @@ namespace ClearCanvas.Dicom.DataStore
 
         public bool StudyExists(Uid referencedUid)
         {
+            int count = 0;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
+                IEnumerable results = this.Session.Enumerable("select count(study) from Study study " +
+                    "where study.StudyInstanceUid = ?",
+                    referencedUid.ToString(),
+                    NHibernateUtil.String);
 
-                IList studies = this.Session.CreateCriteria(typeof(Study))
-                    .Add(Expression.Eq("StudyInstanceUid", referencedUid.ToString()))
-                    .List();
-
-                return studies.Count > 0;
+                foreach (int number in results)
+                {
+                    count = number;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
-            }            
+            }
+
+            return count > 0;
         }
 
         public bool SeriesExists(Uid referencedUid)
         {
+            int count = 0;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
+                IEnumerable results = this.Session.Enumerable("select count(series) from Series series " +
+                    "where series.SeriesInstanceUid = ?",
+                    referencedUid.ToString(),
+                    NHibernateUtil.String);
 
-                IList seriesList = this.Session.CreateCriteria(typeof(Series))
-                    .Add(Expression.Eq("SeriesInstanceUid", referencedUid.ToString()))
-                    .List();
-
-                return seriesList.Count > 0;
+                foreach (int number in results)
+                {
+                    count = number;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
-            }            
+            }
+
+            return count > 0;
         }
 
         public bool SopInstanceExists(Uid referencedUid)
         {
+            int count = 0;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
+                IEnumerable results = this.Session.Enumerable("select count(sop) from SopInstance sop " +
+                    "where sop.SopInstanceUid = ?",
+                    referencedUid.ToString(),
+                    NHibernateUtil.String);
 
-                IList sops = this.Session.CreateCriteria(typeof(SopInstance))
-                    .Add(Expression.Eq("SopInstanceUid", referencedUid.ToString()))
-                    .List();
-
-                return sops.Count > 0;
+                foreach (int number in results)
+                {
+                    count = number;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
-            }            
+            }
+
+            return count > 0;
         }
 
         public ISopInstance GetSopInstance(Uid referencedUid)
         {
+            if (!SopInstanceExists(referencedUid))
+                return null;
+
             ISopInstance sop = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
-                IList listOfSops = this.Session.CreateCriteria(typeof(SopInstance))
+               IList listOfSops = this.Session.CreateCriteria(typeof(SopInstance))
                     .Add(Expression.Eq("SopInstanceUid", referencedUid.ToString()))
                     .SetFetchMode("WindowValues_", FetchMode.Eager)
                     .List();
@@ -118,15 +130,15 @@ namespace ClearCanvas.Dicom.DataStore
 
         public ISeries GetSeries(Uid referenceUid)
         {
+            if (!SeriesExists(referenceUid))
+                return null;
+
             ISeries series = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 IList listOfSeries = this.Session.CreateCriteria(typeof(Series))
                     .Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
-                    .SetFetchMode("SopInstances", FetchMode.Eager)
+                    .SetFetchMode("SopInstances", FetchMode.Lazy)
                     .List();
 
                 if (null != listOfSeries && listOfSeries.Count > 0)
@@ -142,13 +154,12 @@ namespace ClearCanvas.Dicom.DataStore
 
         public IStudy GetStudy(Uid referenceUid)
         {
+            if (!StudyExists(referenceUid))
+                return null;
+
             IStudy studyFound = null;
             try
             {
-                //if (!this.Session.IsConnected)
-                //    this.Session.Reconnect();
-
-
                 IList listOfStudies = this.Session.CreateCriteria(typeof(Study))
                     .Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
                     .SetFetchMode("Series", FetchMode.Eager)
@@ -202,9 +213,6 @@ namespace ClearCanvas.Dicom.DataStore
             IList studiesFound = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 IQuery query = this.Session.CreateQuery(selectCommandString.ToString());
                 studiesFound = query.List();
             }

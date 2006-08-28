@@ -35,9 +35,6 @@ namespace ClearCanvas.Dicom.DataStore
             IList containers = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 containers = this.Session.CreateCriteria(typeof(DicomDictionaryContainer))
                     .SetFetchMode("DictionaryEntries_", FetchMode.Eager)
                     .List();

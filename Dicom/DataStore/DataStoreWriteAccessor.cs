@@ -19,16 +19,15 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
                 this.Session.SaveOrUpdate(container);
                 tx.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
+
                 throw ex;
             }
         }
@@ -55,16 +54,15 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
                 this.Session.SaveOrUpdate(sop);
                 tx.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
+
                 throw ex;
             }
         }
@@ -90,7 +88,9 @@ namespace ClearCanvas.Dicom.DataStore
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
+
                 throw ex;
             }
         }
@@ -100,16 +100,15 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
                 this.Session.SaveOrUpdate(seriesToStore);
                 tx.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
+
                 throw ex;
             }
         }
@@ -119,16 +118,15 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
                 this.Session.Delete(seriesToRemove);
                 tx.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
+
                 throw ex;
             }
         }
@@ -138,18 +136,16 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
                 this.Session.SaveOrUpdate(study);
                 tx.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
                 throw ex;
-            }                
+            }
         }
 
         public void RemoveStudy(IStudy studyToRemove)
@@ -157,16 +153,15 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
                 this.Session.Delete(studyToRemove);
                 tx.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                if (null != tx)
+                    tx.Rollback();
+
                 throw ex;
             }
         }
