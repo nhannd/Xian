@@ -172,13 +172,32 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
             DcmMetaInfo metaInfo = file.getMetaInfo();
             DcmDataset dataset = file.getDataset();
-            this.DicomStore.InsertSopInstance(metaInfo, dataset, fileName);
+
+            if (ConfirmProcessableFile(metaInfo, dataset))
+            {
+                this.DicomStore.InsertSopInstance(metaInfo, dataset, fileName);
+            }
 
             // keep the file object alive until the end of this scope block
             // otherwise, it'll be GC'd and metaInfo and dataset will be gone
             // as well, even though they are needed in the InsertSopInstance
             // and sub methods
             GC.KeepAlive(file);
+        }
+
+        private bool ConfirmProcessableFile(DcmMetaInfo metaInfo, DcmDataset dataset)
+        {
+            StringBuilder stringValue = new StringBuilder(1024);
+            OFCondition cond;
+            cond = metaInfo.findAndGetOFString(Dcm.MediaStorageSOPClassUID, stringValue);
+            if (cond.good())
+            {
+                // we want to skip Media Storage Directory Storage (DICOMDIR directories)
+                if ("1.2.840.10008.1.3.10" == stringValue.ToString())
+                    return false;
+            }
+
+            return true;
         }
 
         private DatabaseRebuilder() { }
