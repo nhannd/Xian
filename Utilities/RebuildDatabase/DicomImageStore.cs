@@ -265,7 +265,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             if (cond.good())
             {
                 PhotometricInterpretation pi;
-                if (stringValue.ToString() == "RGB")
+                if (stringValue.ToString() == "ARGB")
                     pi = PhotometricInterpretation.Argb;
                 else if (stringValue.ToString() == "CMYK")
                     pi = PhotometricInterpretation.Cmyk;
@@ -314,7 +314,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
                 image.PixelSpacing = new PixelSpacing(Convert.ToDouble(components[0]), Convert.ToDouble(components[1]));
             }
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out ushortValue);
+            cond = sopInstanceDataset.findAndGetUint16(Dcm.PlanarConfiguration, out ushortValue);
             if (cond.good())
                 image.PlanarConfiguration = Convert.ToInt32(ushortValue);
 

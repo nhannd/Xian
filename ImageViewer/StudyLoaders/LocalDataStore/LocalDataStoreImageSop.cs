@@ -870,7 +870,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.PlanarConfiguration != 0)
+                if (this.DataStoreImageSopInstance.PlanarConfiguration == 0 ||
+                    this.DataStoreImageSopInstance.PlanarConfiguration == 1)
                     return this.DataStoreImageSopInstance.PlanarConfiguration;
                 else
                     return -1;
