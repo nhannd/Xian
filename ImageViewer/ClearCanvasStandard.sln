@@ -45,6 +45,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Layout.Basic.View.WinForms", "Layout\Basic\View\WinForms\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.csproj", "{152F7337-3DA3-4047-9E59-01989EEB7030}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.StudyFinders.LocalDataStore", "StudyFinders\LocalDataStore\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.csproj", "{A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8} = {3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
+		{85100D3E-471C-47C9-9687-ABF25F617ED7} = {85100D3E-471C-47C9-9687-ABF25F617ED7}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.StudyFinders.Remote", "StudyFinders\Remote\ClearCanvas.ImageViewer.StudyFinders.Remote.csproj", "{4454D96D-8E43-44CB-987B-FCAFCD98BCC0}"
 EndProject
@@ -65,6 +71,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Explorer", "..\Desktop\Explorer\ClearCanvas.Desktop.Explorer.csproj", "{085823EA-DDAE-4DAF-A99D-17F75A03CF23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Explorer.Local", "Explorer\Local\ClearCanvas.ImageViewer.Explorer.Local.csproj", "{AD9F87CF-0F30-442D-ACCD-80FACC339F22}"
+	ProjectSection(ProjectDependencies) = postProject
+		{085823EA-DDAE-4DAF-A99D-17F75A03CF23} = {085823EA-DDAE-4DAF-A99D-17F75A03CF23}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataStore", "..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj", "{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}"
 EndProject
