@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrowserNode.cs" />
+    <Compile Include="ExtensionBrowserComponent.cs" />
     <Compile Include="ExtensionPointView\ExtensionPointViewExtensionNode.cs" />
     <Compile Include="ExtensionPointView\ExtensionPointViewExtensionPointNode.cs" />
     <Compile Include="ExtensionPointView\ExtensionPointViewExtensionsNode.cs" />

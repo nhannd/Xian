@@ -30,7 +30,7 @@ namespace ClearCanvas.Desktop.Actions
         public string QualifiedActionID(object target)
         {
             // create a fully qualified action ID
-            return string.Format("{0}.{1}", target.GetType().FullName, _actionID);
+            return string.Format("{0}:{1}", target.GetType().FullName, _actionID);
         }
 
         /// <summary>

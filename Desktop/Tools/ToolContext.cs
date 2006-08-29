@@ -8,9 +8,10 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
-    /// Provides methods to allow a tool to interact with its environment.
+    /// Base class for all tool contexts.  Implementations of <see cref="IToolContext"/> are encouraged to
+    /// inherit this class rather than implement the interface directly.
     /// </summary>
-    public class ToolContext : IToolContext
+    public abstract class ToolContext : IToolContext
     {
     }
 }

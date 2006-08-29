@@ -10,8 +10,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardFlipHorizontal")]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardFlipHorizontal")]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardFlipHorizontal")]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipHorizontal")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardFlipHorizontal")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipHorizontalMedium.png", "Icons.FlipHorizontalLarge.png")]
@@ -19,21 +19,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for FlipHorizontalTool.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-	public class FlipHorizontalTool : Tool
+    [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class FlipHorizontalTool : ImageViewerTool
 	{
 		public FlipHorizontalTool()
 		{
 		}
 
-		private ImageWorkspace Workspace
-		{
-			get { return (this.Context as ImageWorkspaceToolContext).Workspace; }
-		}
-
 		public void Activate()
 		{
-            PresentationImage selectedImage = ((ImageWorkspaceToolContext)this.Context).Workspace.SelectedPresentationImage;
+            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			if (selectedImage == null)
 				return;
@@ -59,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Apply the final state to all linked images
 			applicator.SetMemento(command.EndState);
 
-            this.Workspace.CommandHistory.AddCommand(command);
+            this.Context.Viewer.CommandHistory.AddCommand(command);
 		}
 	}
 }

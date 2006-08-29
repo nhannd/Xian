@@ -7,18 +7,18 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Abstract base class providing a default implementation of <see cref="IClickAction"/>.  Action classes should
+    /// Base class providing a default implementation of <see cref="IClickAction"/>.  Action classes should
     /// inherit this class rather than implement <see cref="IClickAction"/> directly.
     /// </summary>
-    public abstract class ClickAction : Action, IClickAction
+    public class ClickAction : Action, IClickAction
     {
         private ClickActionFlags _flags;
         private ClickHandlerDelegate _clickHandler;
 
         private IObservablePropertyBinding<bool> _checkedPropertyBinding;
 
-        public ClickAction(string actionID, ActionCategory category, Path path, object target, ClickActionFlags flags)
-            :base(actionID, category, path, target)
+        public ClickAction(string actionID, ActionPath path, object target, ClickActionFlags flags)
+            :base(actionID, path, target)
         {
             _flags = flags;
         }

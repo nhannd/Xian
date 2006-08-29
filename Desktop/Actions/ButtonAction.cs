@@ -16,8 +16,8 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="path"></param>
         /// <param name="target"></param>
         /// <param name="flags"></param>
-        public ButtonAction(string actionID, Path path, object target, ClickActionFlags flags)
-            : base(actionID, ActionCategory.ToolbarAction, path, target, flags)
+        public ButtonAction(string actionID, ActionPath path, object target, ClickActionFlags flags)
+            : base(actionID, path, target, flags)
         {
         }
     }

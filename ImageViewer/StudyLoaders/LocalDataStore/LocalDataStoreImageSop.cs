@@ -280,6 +280,18 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             set { throw new Exception("This is not yet implemented."); }
 		}
 
+		public override string SeriesDescription
+		{
+			get
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
+			set
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+
 		public override string Laterality
 		{
             get 

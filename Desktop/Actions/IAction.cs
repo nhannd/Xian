@@ -32,14 +32,9 @@ namespace ClearCanvas.Desktop.Actions
         object Target { get; }
 
         /// <summary>
-        /// The UI category into which this action falls.
-        /// </summary>
-        ActionCategory Category { get; }
-
-        /// <summary>
         /// The menu or toolbar path for this action.
         /// </summary>
-        Path Path { get; set; }
+        ActionPath Path { get; set; }
 
         /// <summary>
         /// The label that the action should present in the UI.

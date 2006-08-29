@@ -7,8 +7,9 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardStack")]
@@ -17,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// 
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackTool : DynamicActionMouseTool
 	{
 		private StackCommand _command;
@@ -99,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Capture state after stack
 			_command.EndState = e.SelectedImageBox.CreateMemento();
 
-            this.Workspace.CommandHistory.AddCommand(_command);
+            this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			return true;
 		}

@@ -5,6 +5,7 @@ using System.ComponentModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -26,14 +27,34 @@ namespace ClearCanvas.Desktop
         /// <param name="exitCallback"></param>
         /// <returns></returns>
         public static IWorkspace LaunchAsWorkspace(
+            IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
             ApplicationComponentExitDelegate exitCallback)
         {
-            IExtensionPoint viewExtensionPoint = GetViewExtensionPoint(component.GetType());
-            IWorkspace workspace = new ApplicationComponentHostWorkspace(title, component, viewExtensionPoint, exitCallback);
-            DesktopApplication.WorkspaceManager.Workspaces.Add(workspace);
+            IWorkspace workspace = new ApplicationComponentHostWorkspace(component, title, exitCallback);
+            desktopWindow.WorkspaceManager.Workspaces.Add(workspace);
             return workspace;
+        }
+
+        /// <summary>
+        /// Executes the specified application component in a new shelf.  The exit callback will be invoked
+        /// when the shelf is closed.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <param name="exitCallback"></param>
+        /// <returns></returns>
+        public static IShelf LaunchAsShelf(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            ShelfDisplayHint displayHint,
+            ApplicationComponentExitDelegate exitCallback)
+        {
+            IShelf shelf = new ApplicationComponentHostShelf(title, component, displayHint, exitCallback);
+            desktopWindow.ShelfManager.Shelves.Add(shelf);
+            return shelf;
         }
 
         /// <summary>
@@ -44,42 +65,15 @@ namespace ClearCanvas.Desktop
         /// <param name="title"></param>
         /// <returns></returns>
         public static ApplicationComponentExitCode LaunchAsDialog(
+            IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title)
         {
             ApplicationComponentHostDialog hostDialog = new ApplicationComponentHostDialog(title, component);
-            return hostDialog.RunModal();
-        }
-
-        /// <summary>
-        /// Returns the view extension point associated with the specified application component type by
-        /// looking for an attribute of type <see cref="ApplicationComponentViewAttribute"/>.
-        /// </summary>
-        /// <param name="applicationComponentType"></param>
-        /// <returns></returns>
-        public static IExtensionPoint GetViewExtensionPoint(Type applicationComponentType)
-        {
-            object[] attrs = applicationComponentType.GetCustomAttributes(typeof(ApplicationComponentViewAttribute), false);
-            if (attrs.Length == 0)
-                throw new Exception("View attribute not specified");    //TODO elaborate
-
-            ApplicationComponentViewAttribute viewAttribute = (ApplicationComponentViewAttribute)attrs[0];
-            return (IExtensionPoint)Activator.CreateInstance(viewAttribute.ViewExtensionPointType);
-        }
-
-
-
-        /// <summary>
-        /// This class is intentionally not exposed as an extension point because
-        /// it is not intended that any extensions ever be implemented - it is only
-        /// used by the StubToolContext
-        /// </summary>
-        public class StubToolExtensionPoint : ExtensionPoint<ITool>
-        {
+            return hostDialog.RunModal(desktopWindow);
         }
 
         private IApplicationComponentHost _host;
-        private ToolSet _stubToolSet;
         private ApplicationComponentExitCode _exitCode;
         private bool _modified;
         private event EventHandler _modifiedChanged;
@@ -119,18 +113,14 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Returns an empty <see cref="IToolSet"/>.  Subclasses may override this property if they
-        /// wish to expose a toolset to the framework.
+        /// Returns an empty set of actions.  Subclasses can override this to export
+        /// a desired set of actions.
         /// </summary>
-        public virtual IToolSet ToolSet
+        public virtual IActionSet ExportedActions
         {
             get
             {
-                if (_stubToolSet == null)
-                {
-                    _stubToolSet = new ToolSet(new StubToolExtensionPoint(), new ToolContext());
-                }
-                return _stubToolSet;
+                return new ActionSet();
             }
         }
 

@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				ImageValidator.ValidateStudyInstanceUID(image.StudyInstanceUID);
 
 				if (image.StudyInstanceUID == _studyInstanceUID || _firstImage)
-					ImageWorkspace.StudyManager.StudyTree.AddImage(image);
+					ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
 				else
 					_oneStudyAlreadyLoaded = true;
 			}

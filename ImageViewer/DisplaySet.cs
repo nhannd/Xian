@@ -19,12 +19,23 @@ namespace ClearCanvas.ImageViewer
 		private bool _linked = false;
 		private List<PresentationImage> _linkedPresentationImages = new List<PresentationImage>();
 		private event EventHandler<LinkageChangedEventArgs> _linkageChangedEvent;
+		private string _name;
+
+	
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DisplaySet"/> class.
 		/// </summary>
-		public DisplaySet()
+		public DisplaySet() : this("")
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DisplaySet"/> class.
+		/// </summary>
+		public DisplaySet(string name)
+		{
+			_name = name;
 			_presentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
 			_presentationImages.ItemRemoved += new EventHandler<PresentationImageEventArgs>(OnPresentationImageRemoved);
 		}
@@ -51,14 +62,14 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
 		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
-		public ImageWorkspace ParentWorkspace
+		public IImageViewer ParentViewer
 		{
 			get 
 			{
 				if (this.ParentLogicalWorkspace == null)
 					return null;
 
-				return this.ParentLogicalWorkspace.ParentWorkspace; 
+                return this.ParentLogicalWorkspace.ParentViewer; 
 			}
 		}
 
@@ -78,6 +89,15 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckForNullReference(value, "ParentLogicalWorkspace");
 				_parentLogicalWorkspace = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the display set.
+		/// </summary>
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
 		}
 
 		/// <summary>
@@ -103,7 +123,7 @@ namespace ClearCanvas.ImageViewer
 
 					if (_selected)
 					{
-						this.ParentWorkspace.EventBroker.OnDisplaySetSelected(
+						this.ParentViewer.EventBroker.OnDisplaySetSelected(
 							new DisplaySetSelectedEventArgs(this));
 					}
 				}

@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			{
 				PositionGraphicCommand cmd = base.Command as PositionGraphicCommand;
 				cmd.EndState = this.InteractiveGraphic.CreateMemento();
-				this.InteractiveGraphic.ParentWorkspace.CommandHistory.AddCommand(base.Command);
+				this.InteractiveGraphic.ParentViewer.CommandHistory.AddCommand(base.Command);
 			}
 
 			base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();

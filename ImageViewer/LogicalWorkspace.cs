@@ -15,21 +15,21 @@ namespace ClearCanvas.ImageViewer
 	{
 		private DisplaySetCollection _displaySets = new DisplaySetCollection();
 		private List<DisplaySet> _linkedDisplaySets = new List<DisplaySet>();
-		private ImageWorkspace _parentWorkspace;
+        private IImageViewer _parentViewer;
 
-		internal LogicalWorkspace(ImageWorkspace parentWorkspace)
+        internal LogicalWorkspace(IImageViewer parentViewer)
 		{
-			_parentWorkspace = parentWorkspace;
+            _parentViewer = parentViewer;
 			_displaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
 			_displaySets.ItemRemoved += new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="ImageWorkspace"/>
+        /// Gets the parent <see cref="ImageViewerComponent"/>
 		/// </summary>
-		public ImageWorkspace ParentWorkspace
+        public IImageViewer ParentViewer
 		{
-			get { return _parentWorkspace; }
+			get { return _parentViewer; }
 		}
 
 		/// <summary>

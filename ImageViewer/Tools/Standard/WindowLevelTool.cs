@@ -10,8 +10,9 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardWindowLevel")]
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for WindowLevelTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : DynamicActionMouseTool
 	{
 		private UndoableCommand _command;
@@ -124,8 +125,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			// Apply the final state to all linked images
 			_applicator.SetMemento(_command.EndState);
-			
-			this.Workspace.CommandHistory.AddCommand(_command);
+
+            this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			return true;
 		}

@@ -76,7 +76,7 @@
     <Compile Include="PatientSearchControl.Designer.cs">
       <DependentUpon>PatientSearchControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientSearchToolView.cs" />
+    <Compile Include="PatientSearchComponentView.cs" />
     <Compile Include="PhoneNumberEditorComponentView.cs" />
     <Compile Include="PhoneNumberEditorControl.cs">
       <SubType>UserControl</SubType>

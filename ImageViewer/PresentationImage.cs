@@ -48,14 +48,14 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <value>Can be <b>null</b> if <see cref="PresentationImage"/> has not been
 		/// added to a <see cref="DisplaySet"/>.</value>
-		public ImageWorkspace ParentWorkspace
+		public IImageViewer ParentViewer
 		{
 			get 
 			{
 				if (this.ParentDisplaySet == null)
 					return null;
 
-				return this.ParentDisplaySet.ParentWorkspace; 
+				return this.ParentDisplaySet.ParentViewer; 
 			}
 		}
 
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer
 
 					if (_selected)
 					{
-						this.ParentWorkspace.EventBroker.OnPresentationImageSelected(
+						this.ParentViewer.EventBroker.OnPresentationImageSelected(
 							new PresentationImageSelectedEventArgs(this));
 					}
 				}
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer
 				return;
 
 			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this, paintNow);
-			this.ParentWorkspace.EventBroker.OnImageDrawing(args);
+			this.ParentViewer.EventBroker.OnImageDrawing(args);
 			OnImageDrawing(this, args);
 		}
 
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer
 
             if (!handled)
             {
-				MouseTool tool = this.ParentWorkspace.MouseToolMap[e.Button];
+				MouseTool tool = this.ParentViewer.MouseToolMap[e.Button];
                 if (tool != null)
                 {
                     tool.OnMouseDown(e);
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageViewer
 
             if (!handled)
             {
-				MouseTool tool = this.ParentWorkspace.MouseToolMap[e.Button];
+				MouseTool tool = this.ParentViewer.MouseToolMap[e.Button];
                 if (tool != null)
                 {
                     tool.OnMouseMove(e);
@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer
 
             if (!handled)
             {
-				MouseTool tool = this.ParentWorkspace.MouseToolMap[e.Button];
+				MouseTool tool = this.ParentViewer.MouseToolMap[e.Button];
                 if (tool != null)
                 {
                     tool.OnMouseUp(e);

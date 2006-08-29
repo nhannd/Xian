@@ -4,9 +4,16 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
+    [ExtensionPoint]
+    public class ApplicationComponentHostWorkspaceViewExtensionPoint : ExtensionPoint<IWorkspaceView>
+    {
+    }
+
+    [AssociateView(typeof(ApplicationComponentHostWorkspaceViewExtensionPoint))]
     public class ApplicationComponentHostWorkspace : Workspace
     {
         // implements the host interface, which is exposed to the hosted application component
@@ -22,9 +29,7 @@ namespace ClearCanvas.Desktop
             public void Exit()
             {
                 // close the workspace
-                // pass true, because the component requested the close, therefore there is no need
-                // to call _component.CanClose()
-                _workspace.Close(true);
+                _workspace.DesktopWindow.WorkspaceManager.Workspaces.Remove(_workspace);
             }
 
             public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
@@ -32,53 +37,54 @@ namespace ClearCanvas.Desktop
                 return Platform.ShowMessageBox(message, buttons);
             }
 
-        }
-
-        private IApplicationComponent _component;
-        private IExtensionPoint _componentViewExtPoint;
-        private ApplicationComponentHostWorkspaceView _view;
-        private ApplicationComponentExitDelegate _exitCallback;
-
-
-        internal ApplicationComponentHostWorkspace(string title, IApplicationComponent component,
-            IExtensionPoint componentViewExtPoint, ApplicationComponentExitDelegate exitCallback)
-            :base(title)
-        {
-            _component = component;
-            _componentViewExtPoint = componentViewExtPoint;
-            _exitCallback = exitCallback;
-
-            _component.SetHost(new Host(this));
-            _component.Start();
-        }
-
-
-        public override IWorkspaceView View
-        {
-            get
+            public CommandHistory CommandHistory
             {
-                if (_view == null)
-                {
-                    IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateView(_componentViewExtPoint);
-                    componentView.SetComponent(_component);
-                    _view = new ApplicationComponentHostWorkspaceView(this, componentView);
-                }
-                return _view;
+                get { return _workspace.CommandHistory; }
+            }
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _workspace.DesktopWindow; }
             }
         }
 
-        public override void Close()
+        private IApplicationComponent _component;
+        private ApplicationComponentExitDelegate _exitCallback;
+
+
+        public ApplicationComponentHostWorkspace(
+            IApplicationComponent component,
+            string title,
+            ApplicationComponentExitDelegate exitCallback)
+            :base(title)
         {
-            // try closing, but don't force the component to close
-            Close(false);
+            _component = component;
+            _exitCallback = exitCallback;
+
+            _component.SetHost(new Host(this));
         }
 
-        protected void Close(bool force)
+        public override void Initialize(IDesktopWindow desktopWindow)
         {
-            if (force || _component.CanExit())
+            base.Initialize(desktopWindow);
+            _component.Start();
+        }
+
+        public IApplicationComponent Component
+        {
+            get { return _component; }
+        }
+        
+        public override bool CanClose()
+        {
+            return _component.CanExit();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                // calling the base class will cause the workspace to close
-                base.Close();
+                _component.Stop();
 
                 if (_exitCallback != null)
                 {
@@ -87,14 +93,9 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public override void Cleanup()
+        public override IActionSet Actions
         {
-            _component.Stop();
-        }
-
-        public override IToolSet ToolSet
-        {
-            get { return _component.ToolSet; }
+            get { return _component.ExportedActions; }
         }
     }
 }

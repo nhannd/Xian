@@ -11,7 +11,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public class StockDesktopTools
     {
-        [MenuAction("exit", "MenuFile/MenuFileExitApplication")]
+        [MenuAction("exit", "global-menus/MenuFile/MenuFileExitApplication")]
         [ClickHandler("exit", "ExitApp")]
         [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
         public class ExitAppTool : StockTool
@@ -22,11 +22,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			
 			public void ExitApp()
 			{
-                MainForm.Close();
+                Application.Quit();
 			}
         }
 
-        [MenuAction("closeWorkspace", "MenuFile/MenuFileCloseWorkspace")]
+        [MenuAction("closeWorkspace", "global-menus/MenuFile/MenuFileCloseWorkspace")]
         [ClickHandler("closeWorkspace", "CloseWorkspace")]
         [EnabledStateObserver("closeWorkspace", "Enabled", "EnabledChanged")]
         [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -36,18 +36,29 @@ namespace ClearCanvas.Desktop.View.WinForms
             
             public CloseWorkspaceTool()
             {
-                DesktopApplication.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(Workspaces_Changed);
-                DesktopApplication.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(Workspaces_Changed);
+            }
+
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                this.Context.DesktopWindow.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(Workspaces_Changed);
+                this.Context.DesktopWindow.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(Workspaces_Changed);
             }
 
             public void CloseWorkspace()
             {
-                MainForm.RemoveActiveWorkspace();
+                IDesktopWindow window = this.Context.DesktopWindow;
+                IWorkspace activeWorkspace = window.ActiveWorkspace;
+                if (activeWorkspace != null)
+                {
+                    window.WorkspaceManager.Workspaces.Remove(activeWorkspace);
+                }
             }
 
             public bool Enabled
             {
-                get { return DesktopApplication.WorkspaceManager.Workspaces.Count > 0; }
+                get { return this.Context.DesktopWindow.WorkspaceManager.Workspaces.Count > 0; }
             }
 
             public event EventHandler EnabledChanged

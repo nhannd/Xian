@@ -14,8 +14,10 @@ namespace ClearCanvas.Desktop
     {
         const char SEPARATOR = '/';
 
+        private PathSegment[] _segments;
+
         /// <summary>
-        /// Creates a new <see cref="ActionPath"/> from the specified path string, resolving
+        /// Creates a new <see cref="Path"/> from the specified path string, resolving
         /// resource keys in the path string using the specified <see cref="ResourceResolver"/>.
         /// </summary>
         /// <remarks>
@@ -25,23 +27,17 @@ namespace ClearCanvas.Desktop
         /// </remarks>
         /// <param name="path">The path string to parse</param>
         /// <param name="resolver">The <see cref="ResourceResolver"/> to use for localization</param>
-        /// <returns>A new <see cref="ActionPath"/> object</returns>
-        public static Path ParseAndLocalize(string path, ResourceResolver resolver)
+        public Path(string pathString, ResourceResolver resolver)
         {
-            string[] parts = path.Split(new char[] { SEPARATOR });
+            string[] parts = pathString.Split(new char[] { SEPARATOR });
 
             int n = parts.Length;
-            PathSegment[] segments = new PathSegment[n];
+            _segments = new PathSegment[n];
             for (int i = 0; i < n; i++)
             {
-                segments[i] = new PathSegment(parts[i], resolver.Resolve(parts[i]));
+                _segments[i] = new PathSegment(parts[i], resolver != null ? resolver.Resolve(parts[i]) : parts[i]);
             }
-
-            return new Path(segments);
         }
-
-
-        private PathSegment[] _segments;
 
         /// <summary>
         /// Internal constructor

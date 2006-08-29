@@ -35,14 +35,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._mainMenu = new System.Windows.Forms.MenuStrip();
 			this._toolbar = new System.Windows.Forms.ToolStrip();
 			this._toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-			this._tabControl = new Crownwood.DotNetMagic.Controls.TabControl();
+            this._workspaceTabControl = new Crownwood.DotNetMagic.Controls.TabControl();
 			this._toolStripContainer.ContentPanel.SuspendLayout();
 			this._toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this._toolStripContainer.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// mainMenu
-			// 
+            // 
+            // mainMenu
+            // 
 			this._mainMenu.Dock = System.Windows.Forms.DockStyle.None;
 			this._mainMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
 			this._mainMenu.ImageScalingSize = new System.Drawing.Size(32, 32);
@@ -70,7 +70,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// toolStripContainer.ContentPanel
 			// 
 			this._toolStripContainer.ContentPanel.BackColor = System.Drawing.SystemColors.ControlDark;
-			this._toolStripContainer.ContentPanel.Controls.Add(this._tabControl);
+			this._toolStripContainer.ContentPanel.Controls.Add(this._workspaceTabControl);
 			this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(792, 512);
 			this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._toolStripContainer.Location = new System.Drawing.Point(0, 0);
@@ -86,20 +86,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// tabControl
 			// 
-			this._tabControl.Appearance = Crownwood.DotNetMagic.Controls.VisualAppearance.MultiDocument;
-			this._tabControl.BackColor = System.Drawing.SystemColors.ControlDark;
-			this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._tabControl.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._tabControl.HideTabsMode = Crownwood.DotNetMagic.Controls.HideTabsModes.HideAlways;
-			this._tabControl.IDE2005PixelBorder = false;
-			this._tabControl.Location = new System.Drawing.Point(0, 0);
-			this._tabControl.Name = "tabControl";
-			this._tabControl.OfficeDockSides = false;
-			this._tabControl.ShowDropSelect = false;
-			this._tabControl.Size = new System.Drawing.Size(792, 512);
-			this._tabControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this._tabControl.TabIndex = 0;
-			this._tabControl.TextTips = true;
+			this._workspaceTabControl.Appearance = Crownwood.DotNetMagic.Controls.VisualAppearance.MultiDocument;
+			this._workspaceTabControl.BackColor = System.Drawing.SystemColors.ControlDark;
+			this._workspaceTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._workspaceTabControl.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._workspaceTabControl.HideTabsMode = Crownwood.DotNetMagic.Controls.HideTabsModes.HideAlways;
+			this._workspaceTabControl.IDE2005PixelBorder = false;
+			this._workspaceTabControl.Location = new System.Drawing.Point(0, 0);
+			this._workspaceTabControl.Name = "tabControl";
+			this._workspaceTabControl.OfficeDockSides = false;
+			this._workspaceTabControl.ShowDropSelect = false;
+			this._workspaceTabControl.Size = new System.Drawing.Size(792, 512);
+			this._workspaceTabControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._workspaceTabControl.TabIndex = 0;
+			this._workspaceTabControl.TextTips = true;
 			// 
 			// DesktopForm
 			// 
@@ -126,6 +126,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private MenuStrip _mainMenu;
 		private ToolStrip _toolbar;
 		private ToolStripContainer _toolStripContainer;
-		private Crownwood.DotNetMagic.Controls.TabControl _tabControl;
+		private Crownwood.DotNetMagic.Controls.TabControl _workspaceTabControl;
 	}
 }

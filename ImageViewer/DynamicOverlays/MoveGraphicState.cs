@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (this.SupportUndo)
 			{
 				base.Command.EndState = (base.StatefulGraphic as IMemorable).CreateMemento();
-				this.StatefulGraphic.ParentWorkspace.CommandHistory.AddCommand(base.Command);
+				this.StatefulGraphic.ParentViewer.CommandHistory.AddCommand(base.Command);
 			}
 
 			base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();

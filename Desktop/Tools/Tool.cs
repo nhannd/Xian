@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
+using ClearCanvas.Desktop.Actions;
+
 namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
@@ -12,6 +14,21 @@ namespace ClearCanvas.Desktop.Tools
 	public abstract class Tool : ITool
 	{
         private IToolContext _context;
+        private IActionSet _actions;
+
+        public Tool()
+        {
+        }
+
+        ~Tool()
+        {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _context = null;
+        }
 
         public void SetContext(IToolContext context)
         {
@@ -23,16 +40,37 @@ namespace ClearCanvas.Desktop.Tools
         }
 
         /// <summary>
-        /// Provides a reference to the context in which this tool lives.
+        /// Provides a reference to the context in which the tool is operating.
+        /// May return null if there is no current context.
         /// </summary>
         /// <remarks>
-        /// Do not call attempt to access this property in the constructor.
-        /// It is valid only after the <see cref="SetContext"/> method has been called by
-        /// the framework
+        /// Subclasses will probably want to create a property that wraps this property
+        /// but casts the return value to the expected interface.
         /// </remarks>
-        protected IToolContext Context
+        protected IToolContext ContextBase
         {
             get { return _context; }
         }
+
+        public virtual IActionSet Actions
+        {
+            get
+            {
+                if (_actions == null)
+                {
+                    _actions = new ActionSet(ActionAttributeProcessor.Process(this));
+                }
+                return _actions;
+            }
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
     }
 }

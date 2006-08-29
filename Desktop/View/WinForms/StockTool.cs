@@ -7,30 +7,16 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public abstract class StockTool : Tool
+    public abstract class StockTool : DesktopTool
     {
-        private DesktopView _mainView;
-
         public StockTool()
         {
-			// check if the main view is *the* view implemented by this plugin
-            IDesktopView view = DesktopApplication.View;
-			if(view is DesktopView)
+			if(Application.GuiToolkit != GuiToolkitID.WinForms)
 			{
-				_mainView = (DesktopView)view;
-			}
-			else
-			{
-				// this tool is not supported for other main views
-				// TODO add a message
+				// this tool is not supported for other toolkits
+				// so it should not be created
 				throw new NotSupportedException();
 			}
         }
-
-        protected DesktopForm MainForm
-        {
-            get { return (DesktopForm)_mainView.GuiElement; }
-        }
-
    }
 }

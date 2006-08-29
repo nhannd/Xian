@@ -5,6 +5,7 @@ using System.ComponentModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -40,10 +41,11 @@ namespace ClearCanvas.Desktop
         void SetHost(IApplicationComponentHost host);
 
         /// <summary>
-        /// Allows the component to expose a public set of tools.  Some types
-        /// of host may expose these tools in the user-interface.
+        /// Allows the component to export a set of actions to the host.
+        /// It is up to the host implementation to determine what, if anything,
+        /// is done with the actions.
         /// </summary>
-        IToolSet ToolSet { get; }
+        IActionSet ExportedActions { get; }
 
         /// <summary>
         /// Called by the framework to initialize the component.  This method

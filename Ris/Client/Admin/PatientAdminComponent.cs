@@ -29,9 +29,11 @@ namespace ClearCanvas.Ris.Client.Admin
         event EventHandler SelectedPatientChanged;
 
         ClickHandlerDelegate DefaultActionHandler { get; set; }
+
+        IDesktopWindow DesktopWindow { get; }
     }
 
-    [ApplicationComponentView(typeof(PatientAdminComponentViewExtensionPoint))]
+    [AssociateView(typeof(PatientAdminComponentViewExtensionPoint))]
     public class PatientAdminComponent : ApplicationComponent
     {
         public class PatientAdminToolContext : ToolContext, IPatientAdminToolContext
@@ -59,18 +61,20 @@ namespace ClearCanvas.Ris.Client.Admin
                 get { return _component._defaultActionHandler; }
                 set { _component._defaultActionHandler = value; }
             }
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _component.Host.DesktopWindow; }
+            }
         }
         
-        private ToolSet _toolSet;
         private event EventHandler _workingSetChanged;
         private TableData<PatientProfile> _workingSet;
- 
         private PatientProfile _selectedPatient;
         private event EventHandler _selectedPatientChanged;
-
         private ClickHandlerDelegate _defaultActionHandler;
-
         private IPatientAdminService _patientAdminService;
+        private ToolSet _toolSet;
 
         public PatientAdminComponent()
         {
@@ -87,6 +91,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _workingSet.AddColumn<string>("Name", delegate(PatientProfile p) { return p.Name.Format(); });
             _workingSet.AddColumn<string>("Sex", delegate(PatientProfile p) { return _patientAdminService.SexEnumTable[p.Sex].Value; });
             _workingSet.AddColumn<string>("Date of Birth", delegate(PatientProfile p) { return p.DateOfBirth.Date.ToShortDateString(); });
+
+            _toolSet = new ToolSet(new PatientAdminToolExtensionPoint(), new PatientAdminToolContext(this));
         }
 
         public override void Stop()
@@ -107,18 +113,6 @@ namespace ClearCanvas.Ris.Client.Admin
                 PatientProfile p = _patientAdminService.LoadPatient(oid);
                 // update the patient in the list
                 _workingSet[index] = p;
-            }
-        }
-
-        public override IToolSet ToolSet
-        {
-            get
-            {
-                if (_toolSet == null)
-                {
-                    _toolSet = new ToolSet(new PatientAdminToolExtensionPoint(), new PatientAdminToolContext(this));
-                }
-                return _toolSet;
             }
         }
 

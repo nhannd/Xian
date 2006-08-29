@@ -25,14 +25,14 @@ namespace ClearCanvas.ImageViewer
 			_uiEventHandler = new UIEventHandler<PresentationImage>(this._presentationImages);
 		}
 
-		public ImageWorkspace ParentWorkspace
+        public IImageViewer ParentViewer
 		{
 			get 
 			{
 				if (this.ParentImageBox == null)
 					return null;
 
-				return this.ParentImageBox.ParentWorkspace; 
+				return this.ParentImageBox.ParentViewer; 
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer
 						{
 							this.ParentImageBox.SelectedTile = this;
 							// Tell whoever wants to know that this Tile has been selected
-							this.ParentWorkspace.EventBroker.OnTileSelected(
+							this.ParentViewer.EventBroker.OnTileSelected(
 								new TileSelectedEventArgs(this));
 							// Select the PresentationImage in this Tile
 							this.PresentationImage.Selected = true;

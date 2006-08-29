@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
-    [ApplicationComponentView(typeof(PatientIdentifierEditorComponentViewExtensionPoint))]
+    [AssociateView(typeof(PatientIdentifierEditorComponentViewExtensionPoint))]
     public class PatientIdentifierEditorComponent : ApplicationComponent
     {
         PatientIdentifier _patientIdentifier;

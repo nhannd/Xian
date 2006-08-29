@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Tests
 {
@@ -12,7 +13,7 @@ namespace ClearCanvas.Desktop.Tests
         {
             #region IWorkspaceView Members
 
-            public void SetWorkspace(Workspace workspace)
+            public void SetWorkspace(IWorkspace workspace)
             {
             }
 
@@ -33,29 +34,14 @@ namespace ClearCanvas.Desktop.Tests
             #endregion
         }
 
-        class StubToolsExtensionPoint : ExtensionPoint<ITool>
-        {
-        }
-
-        private IWorkspaceView _view;
-
         public StubWorkspace()
             : base("Stub")
         {
         }
 
-        public override IWorkspaceView View
+        public override IActionSet Actions
         {
-            get { if (_view == null) _view = new StubWorkspaceView(); return _view; }
-        }
-
-        public override void Cleanup()
-        {
-        }
-
-        public override IToolSet ToolSet
-        {
-            get { return new ToolSet(new StubToolsExtensionPoint(), new ToolContext()); }
+            get { return new ActionSet(); }
         }
     }
 }

@@ -46,14 +46,14 @@ namespace ClearCanvas.ImageViewer
 		}
 
 
-		public ImageWorkspace ParentWorkspace
+		public IImageViewer ParentViewer
 		{
 			get 
 			{
 				if (this.ParentPhysicalWorkspace == null)
 					return null;
 
-				return this.ParentPhysicalWorkspace.ParentWorkspace; 
+				return this.ParentPhysicalWorkspace.ParentViewer; 
 			}
 		}
 
@@ -367,9 +367,9 @@ namespace ClearCanvas.ImageViewer
 							_parentPhysicalWorkspace.SelectedImageBox = this;
 							
 							// Tell whoever wants to know that this ImageBox has been selected
-							if (this.ParentWorkspace != null)
+							if (this.ParentViewer != null)
 							{
-								this.ParentWorkspace.EventBroker.OnImageBoxSelected(
+								this.ParentViewer.EventBroker.OnImageBoxSelected(
 									new ImageBoxSelectedEventArgs(this));
 							}
 

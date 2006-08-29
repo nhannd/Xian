@@ -39,11 +39,11 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
+    <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="CrudActionHandler.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientAddEditToolBase.cs" />
-    <Compile Include="PatientAdminLaunchTool.cs" />
     <Compile Include="PatientAdminComponent.cs" />
     <Compile Include="PatientAdminService.cs" />
     <Compile Include="PatientEditorComponent.cs" />

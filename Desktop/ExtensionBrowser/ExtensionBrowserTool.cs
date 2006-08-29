@@ -9,70 +9,36 @@ using ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView;
 
 namespace ClearCanvas.Desktop.ExtensionBrowser
 {
-    [ExtensionPoint()]
-    public class ExtensionBrowserViewExtensionPoint : ExtensionPoint<IToolView>
-    {
-    }
 
 
-    [MenuAction("show", "MenuFile/MenuExtensionBrowser", Flags=ClickActionFlags.CheckAction)]
-    [ClickHandler("show", "ShowHide")]
-    [CheckedStateObserver("show", "IsViewActive", "ViewActivationChanged")]
-
-    [ToolView(typeof(ExtensionBrowserViewExtensionPoint), "TitleExtensionBrowser", ToolViewDisplayHint.DockLeft, "IsViewActive", "ViewActivationChanged")]
+    [MenuAction("show", "global-menus/MenuFile/MenuExtensionBrowser", Flags=ClickActionFlags.CheckAction)]
+    [ClickHandler("show", "Show")]
 
     /// <summary>
     /// Summary description for ExtensionBrowserTool.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class ExtensionBrowserTool : Tool
+    public class ExtensionBrowserTool : DesktopTool
 	{
-        private PluginViewRootNode _pluginViewTree;
-        private ExtensionPointViewRootNode _extPtViewTree;
-
-        private bool _showView;
-        private event EventHandler _viewActivationChanged;
+        private ExtensionBrowserComponent _browser;
 
         public ExtensionBrowserTool()
 		{
-            // create the browser trees here - this will not incur any real cost,
-            // because each level of the browser tree does not load it's children until requested
-            _pluginViewTree = new PluginViewRootNode();
-            _extPtViewTree = new ExtensionPointViewRootNode();
         }
 
-        public PluginViewRootNode PluginTree
+        public void Show()
         {
-            get { return _pluginViewTree; }
-        }
-
-        public ExtensionPointViewRootNode ExtensionPointTree
-        {
-            get { return _extPtViewTree; }
-        }
-
-        public void ShowHide()
-        {
-            this.IsViewActive = !this.IsViewActive;
-        }
-
-        public bool IsViewActive
-        {
-            get { return _showView; }
-            set
+            if (_browser == null)
             {
-                if (_showView != value)
-                {
-                    _showView = value;
-                    EventsHelper.Fire(_viewActivationChanged, this, new EventArgs());
-                }
-            }
-        }
+                _browser = new ExtensionBrowserComponent();
 
-        public event EventHandler ViewActivationChanged
-        {
-            add { _viewActivationChanged += value; }
-            remove { _viewActivationChanged -= value; }
+                ApplicationComponent.LaunchAsShelf(
+                    this.Context.DesktopWindow,
+                    _browser,
+                    SR.TitleExtensionBrowser,
+                    ShelfDisplayHint.DockLeft,
+                    delegate(IApplicationComponent component) { _browser = null; });
+            }
         }
     }
 }

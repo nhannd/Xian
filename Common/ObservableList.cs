@@ -29,13 +29,13 @@ namespace ClearCanvas.Common
 
 		#region IObservableList<TItem, TItemEventArgs> Members
 
-		public event EventHandler<TItemEventArgs> ItemAdded
+		public virtual event EventHandler<TItemEventArgs> ItemAdded
 		{
 			add { _itemAddedEvent += value; }
 			remove { _itemAddedEvent -= value;	}
 		}
 
-		public event EventHandler<TItemEventArgs> ItemRemoved
+		public virtual event EventHandler<TItemEventArgs> ItemRemoved
 		{
 			add { _itemRemovedEvent += value; }
 			remove { _itemRemovedEvent -= value; }
@@ -52,7 +52,7 @@ namespace ClearCanvas.Common
 			return _list.IndexOf(item);
 		}
 
-		public void Insert(int index, TItem item)
+		public virtual void Insert(int index, TItem item)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
 
@@ -66,7 +66,7 @@ namespace ClearCanvas.Common
 			OnItemAdded(args);
 		}
 
-		public void RemoveAt(int index)
+		public virtual void RemoveAt(int index)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
 
@@ -96,7 +96,7 @@ namespace ClearCanvas.Common
 
 		#region ICollection<TItem> Members
 
-		public void Add(TItem item)
+		public virtual void Add(TItem item)
 		{
 			if (_list.Contains(item))
 				return;
@@ -108,7 +108,7 @@ namespace ClearCanvas.Common
 			OnItemAdded(args);
 		}
 
-		public void Clear()
+		public virtual void Clear()
 		{
 			// If we don't have any subscribers to the ItemRemovedEvent, then
 			// make it faster and just call Clear().
@@ -150,7 +150,7 @@ namespace ClearCanvas.Common
 			get { return false; }
 		}
 
-		public bool Remove(TItem item)
+		public virtual bool Remove(TItem item)
 		{
 			Platform.CheckForNullReference(item, "item");
 

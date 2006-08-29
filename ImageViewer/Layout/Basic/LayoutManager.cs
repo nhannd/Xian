@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			LogicalWorkspace logicalWorkspace,
 			string studyInstanceUID)
 		{
-            Study study = ImageWorkspace.StudyManager.StudyTree.GetStudy(studyInstanceUID);
+            Study study = ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID);
 			AddDisplaySets(logicalWorkspace, study);
 		}
 
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			foreach (Series series in study.Series.Values)
 			{
-				DisplaySet displaySet = new DisplaySet();
+				DisplaySet displaySet = new DisplaySet(series.SeriesDescription);
 				AddImages(displaySet, series);
 				logicalWorkspace.DisplaySets.Add(displaySet);
 			}

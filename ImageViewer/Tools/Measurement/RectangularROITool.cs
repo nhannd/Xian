@@ -8,8 +8,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-    [MenuAction("activate", "MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "ToolbarMeasurement/ToolsMeasurementRectangularROI", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolsMeasurementRectangularROI", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolsMeasurementRectangularROI")]
@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     /// <summary>
 	/// Summary description for RulerTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RectangularROITool : MouseTool
 	{
 		public RectangularROITool()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using System.Collections;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -27,6 +28,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _seriesInstanceUID; }
 			set { _seriesInstanceUID = value; }
 		}
+
+		private string _seriesDescription;
+
+		public string SeriesDescription
+		{
+			get 
+			{
+				IEnumerator<KeyValuePair<string, Sop>> pair = this.Sops.GetEnumerator();
+				
+				if (!pair.MoveNext())
+					throw new ApplicationException("No SOPs in this series");
+
+				ImageSop imageSop = pair.Current.Value as ImageSop;
+
+				if (imageSop == null)
+					return String.Empty;
+				else
+					return imageSop.SeriesDescription;
+
+			}
+			set { _seriesDescription = value; }
+		}
+	
 
 		public SopCollection Sops
 		{

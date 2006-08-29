@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void AddAction(ActionCategory category, ActionModelRoot model, string name, ClickHandlerDelegate clickHandler, string icon)
         {
-            Path actionPath = Path.ParseAndLocalize(name, new ResourceResolver(this.GetType().Assembly));
+            ActionPath actionPath = new ActionPath(name, new ResourceResolver(this.GetType().Assembly));
 
             ClickAction action = category == ActionCategory.ToolbarAction ?
                 (ClickAction)new ButtonAction(name, actionPath, this, ClickActionFlags.None)

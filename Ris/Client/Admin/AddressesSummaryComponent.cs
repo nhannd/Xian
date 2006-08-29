@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
-    [ApplicationComponentView(typeof(AddressesSummaryComponentViewExtensionPoint))]
+    [AssociateView(typeof(AddressesSummaryComponentViewExtensionPoint))]
     public class AddressesSummaryComponent : ApplicationComponent
     {
         class AddressActionHandler : CrudActionHandler
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Admin
             address.Country = "Canada";
 
             AddressEditorComponent editor = new AddressEditorComponent(address);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Address...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Address...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _addresses.Add(address);
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Admin
             address.CopyFrom(_currentAddressSelection);
 
             AddressEditorComponent editor = new AddressEditorComponent(address);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Address...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Address...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 // delete and re-insert to ensure that TableView updates correctly

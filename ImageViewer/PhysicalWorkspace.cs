@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer
 	public class PhysicalWorkspace : IDrawable, IUIEventHandler, IMemorable
 	{
 		private ImageBoxCollection _imageBoxes = new ImageBoxCollection();
-		private ImageWorkspace _parentWorkspace;
+		private IImageViewer _parentViewer;
 		private ClientArea _clientArea = new ClientArea();
 		private UIEventHandler<ImageBox> _uiEventHandler;
 		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
@@ -65,11 +65,11 @@ namespace ClearCanvas.ImageViewer
 		private CaptureUIEventHandler _captureUIEventHandler = new CaptureUIEventHandler();
 		private bool _dynamicAction = false;
 
-		internal PhysicalWorkspace(ImageWorkspace parentWorkspace)
+        internal PhysicalWorkspace(IImageViewer parentViewer)
 		{
-			Platform.CheckForNullReference(parentWorkspace, "parentWorkspace");
+            Platform.CheckForNullReference(parentViewer, "parentWorkspace");
 
-			_parentWorkspace = parentWorkspace;
+            _parentViewer = parentViewer;
 			_clientArea.NormalizedRectangle = new RectangleF(0.0f, 0.0f, 1.0f, 1.0f);
 			_uiEventHandler = new UIEventHandler<ImageBox>(this.ImageBoxes);
 			_imageBoxes.ItemAdded += new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
@@ -103,9 +103,9 @@ namespace ClearCanvas.ImageViewer
 			set { _isRectangularImageBoxGrid = value; }
 		}
 
-		public ImageWorkspace ParentWorkspace
+        public IImageViewer ParentViewer
 		{
-			get { return _parentWorkspace; }
+			get { return _parentViewer; }
 		}
 
 		/// <summary>
@@ -116,10 +116,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				if (this.ParentWorkspace == null)
+				if (this.ParentViewer == null)
 					return null;
 
-				return this.ParentWorkspace.LogicalWorkspace; 
+                return this.ParentViewer.LogicalWorkspace; 
 			}
 		}
 

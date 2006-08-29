@@ -9,22 +9,17 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    public abstract class ZoomFixedTool : Tool
+    public abstract class ZoomFixedTool : ImageViewerTool
     {
         public ZoomFixedTool()
 		{
 		}
 
-		private ImageWorkspace Workspace
-		{
-			get { return (this.Context as ImageWorkspaceToolContext).Workspace; }
-		}
-		
 		public abstract void Activate();
 
         protected void ApplyZoom(float scale)
         {
-            PresentationImage selectedImage = ((ImageWorkspaceToolContext)this.Context).Workspace.SelectedPresentationImage;
+            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
             if (selectedImage == null)
                 return;
@@ -43,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             // Apply the final state to all linked images
             applicator.SetMemento(command.EndState);
 
-            this.Workspace.CommandHistory.AddCommand(command);
+            this.Context.Viewer.CommandHistory.AddCommand(command);
         }
    }
 }

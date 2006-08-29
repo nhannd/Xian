@@ -9,18 +9,18 @@ namespace ClearCanvas.Desktop.Actions
     /// Provides services for storing an action model to a file, and rebuilding that action model
     /// from the file.
     /// </summary>
-    internal class ActionModelStore : IDisposable
+    internal class ActionModelStore
     {
         private string _filename;
         private XmlDocument _xmlDoc;
-        private bool _modified;
+        private XmlElement _xmlActionModelsNode;
 
         /// <summary>
         /// Constructs an object on the specified filename.
         /// </summary>
         /// <param name="filename">The file that acts a store</param>
         /// <param name="throwIfNotExist">Specify true to throw an exception if the file does not exist</param>
-        internal ActionModelStore(string filename, bool throwIfNotExist)
+        internal ActionModelStore(string filename)
         {
             _filename = filename;
             _xmlDoc = new XmlDocument();
@@ -29,115 +29,52 @@ namespace ClearCanvas.Desktop.Actions
             {
                 _xmlDoc.Load(_filename);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                if (throwIfNotExist)
-                    throw e;
+                // doesn't exist
             }
-        }
-
-        /// <summary>
-        /// Loads the model with specified model ID, and inserting the specified set of
-        /// actions into the model.
-        /// </summary>
-        /// <param name="id">The ID of the model to load</param>
-        /// <param name="actions">A set of actions to insert into the model</param>
-        /// <returns>The specified action model</returns>
-        public ActionModelRoot Load(string id, IAction[] actions)
-        {
-            ActionModelRoot actionModel = new ActionModelRoot(id);
-            XmlNodeList xmlActionModels = _xmlDoc.GetElementsByTagName("action-model");
-            foreach (XmlElement xmlActionModel in xmlActionModels)
-            {
-                if (xmlActionModel.GetAttribute("id") == id)
-                {
-                    Load(actionModel, xmlActionModel, actions);
-                    return actionModel;
-                }
-            }
-
-            // no stored model, so pass null to the helper method
-            Load(actionModel, null, actions);
-            return actionModel;
-        }
-
-        /// <summary>
-        /// Saves the specified action model to the store.
-        /// </summary>
-        /// <param name="model">The model to save</param>
-        public void Save(ActionModelRoot model)
-        {
-            _modified = true;
 
             // find or create the "action-models" node
-            XmlElement xmlActionModelsNode;
-            if(_xmlDoc.GetElementsByTagName("action-models").Count == 0)
+            if (_xmlDoc.GetElementsByTagName("action-models").Count == 0)
             {
-                xmlActionModelsNode = _xmlDoc.CreateElement("action-models");
-                _xmlDoc.AppendChild(xmlActionModelsNode);
+                _xmlActionModelsNode = _xmlDoc.CreateElement("action-models");
+                _xmlDoc.AppendChild(_xmlActionModelsNode);
             }
-            xmlActionModelsNode = (XmlElement)_xmlDoc.GetElementsByTagName("action-models").Item(0);
-
-            // retrieve the set of action-model nodes
-            XmlNodeList xmlActionModels = xmlActionModelsNode.ChildNodes;    
-
-            // find this model, if it already exists
-            XmlElement xmlThisModel = null;
-            foreach (XmlElement xmlModel in xmlActionModels)
+            else
             {
-                if (xmlModel.GetAttribute("id") == model.ModelID)
-                {
-                    // found this model - remove its child nodes, so that we overwrite it
-                    xmlModel.RemoveAll();
-                    xmlThisModel = xmlModel;
-                    break;
-                }
+                _xmlActionModelsNode = (XmlElement)_xmlDoc.GetElementsByTagName("action-models").Item(0);
             }
-
-            // model was not found - create it
-            if (xmlThisModel == null)
-            {
-                xmlThisModel = _xmlDoc.CreateElement("action-model");
-                xmlActionModelsNode.AppendChild(xmlThisModel);
-            }
-
-            // write this model
-            xmlThisModel.SetAttribute("id", model.ModelID);
-            Save(model, xmlThisModel);
         }
 
         /// <summary>
-        /// Ensures that any previous calls to the <see cref="Save"/> method are written to the file.
+        /// Builds an in-memory action model from the specified XML model and the specified set of actions.
+        /// The actions will be ordered according to the XML model.  Any actions that are not a part of the
+        /// XML model will be appended to memory model and appended to the XML model, and the XML model
+        /// automatically persisted.  Hence a new model that has never before been persisted will be
+        /// added to the store.
         /// </summary>
-        public void Flush()
+        /// <param name="id">The model ID of the model to build</param>
+        /// <param name="actions">The set of actions to include</param>
+        /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
+        public ActionModelRoot BuildAndSynchronize(string id, IActionSet actions)
         {
-            if (_modified)
-            {
-                _xmlDoc.Save(_filename);
-                _modified = false;
-            }
+            XmlElement xmlActionModel = FindXmlActionModel(id) ?? CreateXmlActionModel(id);
+
+            return BuildAndSynchronize(xmlActionModel, actions);
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Builds an in-memory action model from the specified XML model and the specified set of actions.
+        /// The actions will be ordered according to the XML model.  Any actions that are not a part of the
+        /// XML model will be appended to memory model and appended to the XML model.
+        /// </summary>
+        /// <param name="xmlActionModel">an XML "action-model" node</param>
+        /// <param name="actions">the set of that the model should contain</param>
+        /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
+        private ActionModelRoot BuildAndSynchronize(XmlElement xmlActionModel, IActionSet actions)
         {
-            Flush();
-        }
-
-
-        private void Save(ActionModelRoot model, XmlElement xmlActionModel)
-        {
-            IAction[] actions = model.GetActionsInOrder();
-            foreach(IAction action in actions)
-            {
-                XmlElement xmlAction = _xmlDoc.CreateElement("action");
-                xmlAction.SetAttribute("id", action.ActionID);
-                xmlAction.SetAttribute("path", action.Path.ToString());
-                xmlActionModel.AppendChild(xmlAction);
-            }
-        }
-
-        private void Load(ActionModelRoot model, XmlElement xmlActionModel, IAction[] actions)
-        {
+            ActionModelRoot model = new ActionModelRoot(xmlActionModel.GetAttribute("id"));
+            
             // easier to work with the actions in a map
             Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();
             foreach (IAction action in actions)
@@ -146,31 +83,83 @@ namespace ClearCanvas.Desktop.Actions
             }
 
             // process xml model, inserting actions in order
-            if (xmlActionModel != null)
+            foreach (XmlElement xmlAction in xmlActionModel.GetElementsByTagName("action"))
             {
-                foreach (XmlElement xmlAction in xmlActionModel.GetElementsByTagName("action"))
+                string actionID = xmlAction.GetAttribute("id");
+                if (actionMap.ContainsKey(actionID))
                 {
-                    string actionID = xmlAction.GetAttribute("id");
-                    if (actionMap.ContainsKey(actionID))
-                    {
-                        IAction action = actionMap[actionID];
-                        actionMap.Remove(actionID);
+                    IAction action = actionMap[actionID];
+                    actionMap.Remove(actionID);
 
-                        // update the action path from the xml
-                        string path = xmlAction.GetAttribute("path");
-                        action.Path = Path.ParseAndLocalize(path, new ActionResourceResolver(action.Target));
+                    // update the action path from the xml
+                    string path = xmlAction.GetAttribute("path");
+                    action.Path = new ActionPath(path, new ActionResourceResolver(action.Target));
 
-                        // insert the action into the model
-                        model.InsertAction(action);
-                    }
+                    // insert the action into the model
+                    model.InsertAction(action);
                 }
             }
 
-            // insert any actions that were not listed in the xml
-            foreach (IAction action in actionMap.Values)
+            // insert any actions that were not listed in the xml,
+            // and add them to the xml model
+            if (actionMap.Values.Count > 0)
             {
-                model.InsertAction(action);
+                foreach (IAction action in actionMap.Values)
+                {
+                    model.InsertAction(action);
+
+                    AppendActionToXmlModel(xmlActionModel, action);
+                }
+
+                // be sure to save the model since we added stuff
+                _xmlDoc.Save(_filename);
             }
+
+            return model;
+        }
+
+        /// <summary>
+        /// Finds a stored model in the XML doc with the specified model ID.
+        /// </summary>
+        /// <param name="id">The model ID</param>
+        /// <returns>An "action-model" element, or null if not found</returns>
+        private XmlElement FindXmlActionModel(string id)
+        {
+            XmlNodeList xmlActionModels = _xmlActionModelsNode.GetElementsByTagName("action-model");
+            foreach (XmlElement xmlActionModel in xmlActionModels)
+            {
+                if (xmlActionModel.GetAttribute("id") == id)
+                {
+                    return xmlActionModel;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the specified action model in the XML doc.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>An "action-model" element</returns>
+        private XmlElement CreateXmlActionModel(string id)
+        {
+            XmlElement xmlActionModel = _xmlDoc.CreateElement("action-model");
+            xmlActionModel.SetAttribute("id", id);
+            _xmlActionModelsNode.AppendChild(xmlActionModel);
+            return xmlActionModel;
+        }
+
+        /// <summary>
+        /// Appends the specified action to the specified XML action model.
+        /// </summary>
+        /// <param name="xmlActionModel"></param>
+        /// <param name="action"></param>
+        private void AppendActionToXmlModel(XmlElement xmlActionModel, IAction action)
+        {
+            XmlElement xmlAction = _xmlDoc.CreateElement("action");
+            xmlAction.SetAttribute("id", action.ActionID);
+            xmlAction.SetAttribute("path", action.Path.ToString());
+            xmlActionModel.AppendChild(xmlAction);
         }
     }
 }

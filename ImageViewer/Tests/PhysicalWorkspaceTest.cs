@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			_logicalWorkspace = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			_logicalWorkspace = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 		}
 	
 		[TestFixtureTearDown]
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		public void CreateAddGetRemoveImageBox()
 		{
 			// Create the workspace
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.ImageBoxes.Count);
 
 			// Add a couple of image boxes
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void RectangularGrid()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.ImageBoxes.Count);
 
 			ws.ClientRectangle = new Rectangle(0, 0, 100, 200);
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void ClientArea()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 
 			// Test for initial values
 			Rectangle rect0 = new Rectangle(0, 0, 0, 0);
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		public void CallSequence()
 		{
 			// Create workspace
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.ImageBoxes.Count);
 
 			// Set the workspace size
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddNullImageBox()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			ws.ImageBoxes.Add(null);
 		}
 
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void RemoveNullImageBox()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			ws.ImageBoxes.Remove(null);
 		}
 
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooLow()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.ImageBoxes.Count);
 
 			ImageBox box1 = new ImageBox();
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooHigh()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.ImageBoxes.Count);
 
 			ImageBox box1 = new ImageBox();
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeEmptyWorkspace()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.ImageBoxes.Count);
 
 			ImageBox box2 = ws.ImageBoxes[0];
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidGridSize()
 		{
-			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageWorkspace("studyUID"));
+			PhysicalWorkspace ws = new PhysicalWorkspace(new ImageViewerComponent("studyUID"));
 			ws.SetImageBoxGrid(-1, 0);
 		}
 	}

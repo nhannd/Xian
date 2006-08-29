@@ -10,8 +10,9 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardPan")]
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for PanTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PanTool : DynamicActionMouseTool
 	{
 		private UndoableCommand _command;
@@ -85,8 +86,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			// Apply the final state to all linked images
 			_applicator.SetMemento(_command.EndState);
-			
-			this.Workspace.CommandHistory.AddCommand(_command);
+
+            this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			return true;
 		}

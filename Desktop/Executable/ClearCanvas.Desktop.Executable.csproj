@@ -105,6 +105,7 @@
     <ProjectReference Include="..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
       <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
       <Name>ClearCanvas.Controls.WinForms</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -180,16 +181,15 @@ if $(SolutionName) == Ris goto RisModules
 
       :: Copy ImageViewer plugins
       copy "..\..\..\..\Codecs\bin\$(ConfigurationName)\ClearCanvas.Codecs.dll" .\plugins
-      copy "..\..\..\Dashboard\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.dll" .\plugins
-      copy "..\..\..\Dashboard\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.Dashboard.View.WinForms.dll" .\plugins
+      copy "..\..\..\Explorer\bin\$(ConfigurationName)\ClearCanvas.Desktop.Explorer.dll" .\plugins
       copy "..\..\..\..\ImageViewer\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.dll" .\plugins
       copy "..\..\..\..\ImageViewer\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Measurement.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Tools\Standard\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Standard.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Edit\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Edit.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Dashboard\Local\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Dashboard.Local.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Dashboard\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Dashboard.Remote.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Dashboard\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Dashboard.LocalDataStore.dll" .\plugins
+      copy "..\..\..\Edit\bin\$(ConfigurationName)\ClearCanvas.Desktop.Edit.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Explorer\Local\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.dll" .\plugins
+      ::copy "..\..\..\..\ImageViewer\Explorer\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Remote.dll" .\plugins
+      ::copy "..\..\..\..\ImageViewer\Explorer\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.dll" .\plugins
@@ -228,6 +228,12 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\Ris\Client\Admin\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
 
+      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Calendar.dll" .\plugins
+      copy "..\..\..\..\Ris\Client\Calendar\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Calendar.View.WinForms.dll" .\plugins
+
+      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\gcalendar.dll" .\plugins
+      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\gdata.dll" .\plugins
+      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\gextension.dll" .\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

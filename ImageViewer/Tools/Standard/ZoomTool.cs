@@ -10,8 +10,9 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardZoom")]
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for ZoomTool.
 	/// </summary>
-    [ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : DynamicActionMouseTool
 	{
 		private UndoableCommand _command;
@@ -83,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Apply the final state to all linked images
 			_applicator.SetMemento(_command.EndState);
 
-			this.Workspace.CommandHistory.AddCommand(_command);
+            this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			return true;
 		}

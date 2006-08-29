@@ -268,14 +268,14 @@ namespace ClearCanvas.ImageViewer.Layers
 		/// </summary>
 		/// <value>Can be <b>null</b> if the layer has not been added
 		/// to the layer tree  (For example, right after construction.)</value>
-		public ImageWorkspace ParentWorkspace
+		public IImageViewer ParentViewer
 		{
 			get 
 			{
 				if (this.ParentPresentationImage == null)
 					return null;
 
-				return this.ParentPresentationImage.ParentWorkspace; 
+				return this.ParentPresentationImage.ParentViewer; 
 			}
 		}
 

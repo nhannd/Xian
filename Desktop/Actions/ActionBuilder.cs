@@ -39,15 +39,13 @@ namespace ClearCanvas.Desktop.Actions
         public void Apply(ButtonActionAttribute a)
         {
             // assert _action == null
-
-            Path path = Path.ParseAndLocalize(a.Path, _resolver);
-            _action = new ButtonAction(_actionID, path, _actionTarget, a.Flags);
+            _action = new ButtonAction(_actionID, new ActionPath(a.Path, _resolver), _actionTarget, a.Flags);
         }
 
         public void Apply(MenuActionAttribute a)
         {
             // assert _action == null
-            Path path = Path.ParseAndLocalize(a.Path, _resolver);
+            ActionPath path = new ActionPath(a.Path, _resolver);
             _action = new MenuAction(_actionID, path, _actionTarget, a.Flags);
             _action.Label = path.LastSegment.LocalizedText;
 

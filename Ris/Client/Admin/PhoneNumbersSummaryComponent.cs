@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
-    [ApplicationComponentView(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
+    [AssociateView(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
     public class PhoneNumbersSummaryComponent : ApplicationComponent
     {
         class PhoneNumberActionHandler : CrudActionHandler
@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Admin
             phoneNumber.Extension = "N/A";
 
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Phone Number...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _phoneNumbers.Add(phoneNumber);
@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client.Admin
             phoneNumber.CopyFrom(_currentPhoneNumberSelection);
             
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Phone Number...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 // delete and re-insert to ensure that TableView updates correctly

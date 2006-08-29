@@ -9,8 +9,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardReset")]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardReset")]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardReset")]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardReset")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardReset")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.ResetMedium.png", "Icons.ResetLarge.png")]
@@ -19,20 +19,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for ResetTool.
 	/// </summary>
     //[ClearCanvas.Common.ExtensionOf(typeof(ITool))]
-    public class ResetTool : Tool
+    public class ResetTool : ImageViewerTool
     {
 		public ResetTool()
 		{
 		}
 
-		private ImageWorkspace Workspace
-		{
-			get { return (this.Context as ImageWorkspaceToolContext).Workspace; }
-		}
-
 		public void Activate()
 		{
-            PresentationImage selectedImage = ((ImageWorkspaceToolContext)this.Context).Workspace.SelectedPresentationImage;
+            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			SpatialTransformApplicator applicator = new SpatialTransformApplicator(selectedImage);
 			UndoableCommand command = new UndoableCommand(applicator);
@@ -54,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Apply the final state to all linked images
 			applicator.SetMemento(command.EndState);
 
-            this.Workspace.CommandHistory.AddCommand(command);
+            this.Context.Viewer.CommandHistory.AddCommand(command);
 		}
 	}
 }

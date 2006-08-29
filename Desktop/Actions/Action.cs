@@ -13,8 +13,7 @@ namespace ClearCanvas.Desktop.Actions
     public abstract class Action : IAction
     {
         private string _actionID;
-        private ActionCategory _category;
-        private Path _path;
+        private ActionPath _path;
         private object _target;
 
         private string _tooltip;
@@ -23,10 +22,9 @@ namespace ClearCanvas.Desktop.Actions
 
         private IObservablePropertyBinding<bool> _enabledPropertyBinding;
 
-        public Action(string actionID, ActionCategory category, Path pathHint, object target)
+        public Action(string actionID, ActionPath pathHint, object target)
         {
             _actionID = actionID;
-            _category = category;
             _path = pathHint;
             _target = target;
         }
@@ -41,12 +39,7 @@ namespace ClearCanvas.Desktop.Actions
             get { return _target; }
         }
 
-        public ActionCategory Category
-        {
-            get { return _category; }
-        }
-
-        public Path Path
+        public ActionPath Path
         {
             get { return _path; }
             set { _path = value; }

@@ -10,31 +10,31 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     public partial class PatientSearchControl : UserControl
     {
-        private PatientSearchTool _tool;
+        private PatientSearchComponent _component;
 
-        public PatientSearchControl(PatientSearchTool tool)
+        public PatientSearchControl(PatientSearchComponent component)
         {
             InitializeComponent();
-            _tool = tool;
+            _component = component;
 
-            _patientIdentifierType.DataSource = _tool.PatientIdentifierTypeChoices;
-            _patientIdentifierType.DataBindings.Add("Value", _tool, "PatientIdentifierType", true, DataSourceUpdateMode.OnPropertyChanged);
+            _patientIdentifierType.DataSource = _component.PatientIdentifierTypeChoices;
+            _patientIdentifierType.DataBindings.Add("Value", _component, "PatientIdentifierType", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _patientIdentifier.DataBindings.Add("Value", _tool, "PatientIdentifier", true, DataSourceUpdateMode.OnPropertyChanged);
-            _familyName.DataBindings.Add("Value", _tool, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _givenName.DataBindings.Add("Value", _tool, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _patientIdentifier.DataBindings.Add("Value", _component, "PatientIdentifier", true, DataSourceUpdateMode.OnPropertyChanged);
+            _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
             
-            _sex.DataSource = _tool.SexChoices;
-            _sex.DataBindings.Add("Value", _tool, "Sex", true, DataSourceUpdateMode.OnPropertyChanged);
+            _sex.DataSource = _component.SexChoices;
+            _sex.DataBindings.Add("Value", _component, "Sex", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _dateOfBirth.DataBindings.Add("Value", _tool, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
+            _dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _searchButton.DataBindings.Add("Enabled", _tool, "SearchEnabled");
+            _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");
         }
 
         private void _searchButton_Click(object sender, EventArgs e)
         {
-            _tool.Search();
+            _component.Search();
         }
 
     }

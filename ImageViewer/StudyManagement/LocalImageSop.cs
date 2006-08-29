@@ -222,13 +222,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string seriesNumber;
+				_dicomImage.GetTag(Dcm.SeriesNumber, out seriesNumber, out tagExists);
+				return seriesNumber;
 			}
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
 		}
+
+		public override string SeriesDescription
+		{
+			get
+			{
+				bool tagExists;
+				string seriesDescription;
+				_dicomImage.GetTag(Dcm.SeriesDescription, out seriesDescription, out tagExists);
+				return seriesDescription;
+			}
+			set
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+
 
 		public override string Laterality
 		{

@@ -11,13 +11,12 @@ namespace ClearCanvas.Desktop.Actions
     internal static class ActionAttributeProcessor
     {
         /// <summary>
-        /// Processes the set of action attributes declared on a given target class to generate the
+        /// Processes the set of action attributes declared on a given target object to generate the
         /// corresponding set of <see cref="IAction"/> objects.
         /// </summary>
-        /// <param name="actionTarget">The target class on which the attributes are declared, typically a tool.</param>
-        /// <param name="category">The category of actions to process.  Only actions of the specified category are processed.</param>
+        /// <param name="actionTarget">The target object on which the attributes are declared, typically a tool.</param>
         /// <returns>The resulting set of actions, where each action is bound to the target object.</returns>
-        internal static IAction[] Process(object actionTarget, ActionCategory category)
+        internal static IAction[] Process(object actionTarget)
         {
             object[] attributes = actionTarget.GetType().GetCustomAttributes(typeof(ActionAttribute), true);
 
@@ -25,7 +24,7 @@ namespace ClearCanvas.Desktop.Actions
             List<ActionBuilder> actionBuilders = new List<ActionBuilder>();
             foreach (ActionAttribute a in attributes)
             {
-                if (a is ActionInitiatorAttribute && ((ActionInitiatorAttribute)a).Category == category)
+                if (a is ActionInitiatorAttribute)
                 {
                     ActionBuilder actionBuilder = new ActionBuilder(a.QualifiedActionID(actionTarget), actionTarget);
                     a.Apply(actionBuilder);

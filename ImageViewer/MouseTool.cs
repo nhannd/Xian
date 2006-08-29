@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer
     /// and is given the opportunity to respond to mouse events for that button.  Developers 
     /// implementing mouse tools should subclass this class rather than <see cref="Tool"/>.
     /// </remarks>
-	public abstract class MouseTool : Tool, IUIEventHandler
+	public abstract class MouseTool : ImageViewerTool, IUIEventHandler
 	{
 		// Protected attributes
         private XMouseButtons _mouseButton;
@@ -60,14 +60,14 @@ namespace ClearCanvas.ImageViewer
         {
             base.Initialize();
 
-            this.Workspace.MouseToolMap.MouseToolMapped += OnMouseToolMapped;
+            this.Context.Viewer.MouseToolMap.MouseToolMapped += OnMouseToolMapped;
 
             // attempt to honour the initiallyActive request
             // there is no guarantee the request won't be superceded
             // by a request from another tool
             if (_initiallyActive)
             {
-                this.Workspace.MouseToolMap[_mouseButton] = this;
+                this.Context.Viewer.MouseToolMap[_mouseButton] = this;
             }
         }
 
@@ -88,14 +88,6 @@ namespace ClearCanvas.ImageViewer
         {
             add { _activationChangedEvent += value; }
             remove { _activationChangedEvent -= value; }
-        }
-
-        /// <summary>
-        /// The image workspace with which this tool is associated.
-        /// </summary>
-		protected ImageWorkspace Workspace
-        {
-			get { return ((ImageWorkspaceToolContext)Context).Workspace as ImageWorkspace; }
         }
 
         /// <summary>
@@ -144,7 +136,7 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
 		public void Select()
 		{
-            this.Workspace.MouseToolMap[_mouseButton] = this;
+            this.Context.Viewer.MouseToolMap[_mouseButton] = this;
         }
 
         private void OnMouseToolMapped(object sender, MouseToolMappedEventArgs e)

@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void VerifyProperties()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			/*IToolManager mgr = ws as IToolManager;
 
 			Assert.IsNotNull(mgr.CommandHistory);
@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void AddRemoveDisplaySets()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 
 			DisplaySet ds1 = new DisplaySet();
 			ws.DisplaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void AddDuplicateDisplaySet()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 
 			DisplaySet ds = new DisplaySet();
 			ws.DisplaySets.Add(ds);
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void ForEachDisplaySet()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 
 			DisplaySet ds1 = new DisplaySet();
 			ws.DisplaySets.Add(ds1);
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void SelectDisplaySets()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 
 			DisplaySet ds1 = new DisplaySet();
 			ws.DisplaySets.Add(ds1);
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddNullDisplaySet()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			ws.DisplaySets.Add(null);
 		}
 
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void RemoveNullDisplaySet()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			ws.DisplaySets.Remove(null);
 		}
 
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooLow()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.DisplaySets.Count);
 
 			DisplaySet ds1 = new DisplaySet();
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooHigh()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.DisplaySets.Count);
 
 			DisplaySet ds1 = new DisplaySet();
@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeEmptyWorkspace()
 		{
-			LogicalWorkspace ws = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			LogicalWorkspace ws = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			Assert.AreEqual(0, ws.DisplaySets.Count);
 
 			DisplaySet ds2 = ws.DisplaySets[0];

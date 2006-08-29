@@ -135,6 +135,8 @@
     <Compile Include="IClientArea.cs" />
     <Compile Include="ICustomDrawable.cs" />
     <Compile Include="IDrawable.cs" />
+    <Compile Include="IImageViewer.cs" />
+    <Compile Include="IImageViewerToolContext.cs" />
     <Compile Include="ILayoutManager.cs" />
     <Compile Include="ImageBox.cs" />
     <Compile Include="ImageBoxCollection.cs" />
@@ -142,7 +144,8 @@
     <Compile Include="ImageBoxMemento.cs" />
     <Compile Include="ImageBoxSelectedEventArgs.cs" />
     <Compile Include="ImageDrawingEventArgs.cs" />
-    <Compile Include="ImageWorkspace.cs" />
+    <Compile Include="ImageViewerComponent.cs" />
+    <Compile Include="ImageViewerTool.cs" />
     <Compile Include="Imaging\CalculatedGrayscaleLUT.cs" />
     <Compile Include="Imaging\ColorSpaceConverter.cs" />
     <Compile Include="Imaging\ColorMap.cs" />

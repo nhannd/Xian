@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
-    [ApplicationComponentView(typeof(PatientEditorComponentViewExtensionPoint))]
+    [AssociateView(typeof(PatientEditorComponentViewExtensionPoint))]
     public class PatientEditorComponent : ApplicationComponent
     {
         class PatientIdentifiersActionHandler : CrudActionHandler
@@ -214,7 +214,7 @@ namespace ClearCanvas.Ris.Client.Admin
             PatientIdentifier identifier = PatientIdentifier.New();
 
             PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(identifier);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Add Identifier...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Identifier...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _patientIdentifiers.Add(identifier);
@@ -232,7 +232,7 @@ namespace ClearCanvas.Ris.Client.Admin
             identifier.CopyFrom(_currentPatientIdentifierSelection);
 
             PatientIdentifierEditorComponent editor = new PatientIdentifierEditorComponent(identifier);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(editor, "Update Identifier...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Identifier...");
 
             if (exitCode == ApplicationComponentExitCode.Normal)
             {

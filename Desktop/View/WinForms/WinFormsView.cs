@@ -22,7 +22,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 //TODO add a message here
                 throw new NotSupportedException();
             }
-            Application.EnableVisualStyles();
+            System.Windows.Forms.Application.EnableVisualStyles();
         }
 
         /// <summary>

@@ -12,6 +12,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Sets the workspace which the view should look at.
         /// </summary>
-        void SetWorkspace(Workspace workspace);
+        void SetWorkspace(IWorkspace workspace);
 	}
 }

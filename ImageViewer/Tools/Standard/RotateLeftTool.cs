@@ -9,8 +9,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardRotateLeft")]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardRotateLeft")]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardRotateLeft")]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateLeft")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardRotateLeft")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RotateLeftMedium.png", "Icons.RotateLeftLarge.png")]
@@ -18,21 +18,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for RotateLeftTool.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-    public class RotateLeftTool : Tool
+    [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+    public class RotateLeftTool : ImageViewerTool
 	{
 		public RotateLeftTool()
 		{
 		}
 
-		private ImageWorkspace Workspace
-		{
-			get { return (this.Context as ImageWorkspaceToolContext).Workspace; }
-		}
-
 		public void Activate()
 		{
-            PresentationImage selectedImage = ((ImageWorkspaceToolContext)this.Context).Workspace.SelectedPresentationImage;
+            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			if (selectedImage == null)
 				return;
@@ -51,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Apply the final state to all linked images
 			applicator.SetMemento(command.EndState);
 
-            this.Workspace.CommandHistory.AddCommand(command);
+            this.Context.Viewer.CommandHistory.AddCommand(command);
 		}
 	}
 }

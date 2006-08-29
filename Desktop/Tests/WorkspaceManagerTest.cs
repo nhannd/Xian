@@ -29,7 +29,7 @@ namespace ClearCanvas.Desktop.Tests
 		[Test]
 		public void CreateAddRemoveWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 			wm.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
 			wm.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
 
@@ -50,7 +50,7 @@ namespace ClearCanvas.Desktop.Tests
 		[Test]
 		public void AddDuplicateWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 
 			//wm.RemoveAllWorkspaces();
             StubWorkspace ws = new StubWorkspace();
@@ -65,7 +65,7 @@ namespace ClearCanvas.Desktop.Tests
 		[Test]
 		public void RemoveAllWorkspaces()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 
             StubWorkspace ws = new StubWorkspace();
 			wm.Workspaces.Add(ws);
@@ -86,7 +86,7 @@ namespace ClearCanvas.Desktop.Tests
 		[Test]
 		public void ActiveWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 
             StubWorkspace ws1 = new StubWorkspace();
 			wm.Workspaces.Add(ws1);
@@ -112,7 +112,7 @@ namespace ClearCanvas.Desktop.Tests
 		[Test]
 		public void ForEachWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 
             StubWorkspace ws1 = new StubWorkspace();
 			wm.Workspaces.Add(ws1);
@@ -128,7 +128,7 @@ namespace ClearCanvas.Desktop.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddNullWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 			wm.Workspaces.Add(null);
 		}
 
@@ -136,7 +136,7 @@ namespace ClearCanvas.Desktop.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void RemoveNullWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 			wm.Workspaces.Remove(null);
 		}
 
@@ -144,7 +144,7 @@ namespace ClearCanvas.Desktop.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooLow()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 			Assert.AreEqual(0, wm.Workspaces.Count);
 
             StubWorkspace ws1 = new StubWorkspace();
@@ -158,7 +158,7 @@ namespace ClearCanvas.Desktop.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooHigh()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 			Assert.AreEqual(0, wm.Workspaces.Count);
 
             StubWorkspace ws1 = new StubWorkspace();
@@ -172,7 +172,7 @@ namespace ClearCanvas.Desktop.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeEmptyWorkspace()
 		{
-			WorkspaceManager wm = new WorkspaceManager();
+			WorkspaceManager wm = new WorkspaceManager(new DesktopWindow());
 			Assert.AreEqual(0, wm.Workspaces.Count);
 
             StubWorkspace ws2 = wm.Workspaces[-1] as StubWorkspace;

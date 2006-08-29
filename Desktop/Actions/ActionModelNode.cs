@@ -10,13 +10,13 @@ namespace ClearCanvas.Desktop.Actions
     public class ActionModelNode
     {
         private PathSegment _pathSegment;
-        private List<ActionModelNode> _childNodes;
+        private ActionModelNodeList _childNodes;
         private IAction _action; // null if this is not a leaf node
 
         protected ActionModelNode(PathSegment pathSegment)
         {
             _pathSegment = pathSegment;
-            _childNodes = new List<ActionModelNode>();
+            _childNodes = new ActionModelNodeList();
         }
 
         /// <summary>
@@ -57,9 +57,9 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// The set of child nodes of this node.
         /// </summary>
-        public ActionModelNode[] ChildNodes
+        public ActionModelNodeList ChildNodes
         {
-            get { return _childNodes.ToArray(); }
+            get { return _childNodes; }
         }
 
         /// <summary>
@@ -123,15 +123,7 @@ namespace ClearCanvas.Desktop.Actions
 
         protected ActionModelNode FindChild(PathSegment segment)
         {
-            foreach (ActionModelNode child in _childNodes)
-            {
-                // define node equality in terms of the localized text
-                // (eg two menu items with the same name should be the same menu item, 
-                // even if a different resource key was used)
-                if (child.PathSegment.LocalizedText == segment.LocalizedText)
-                    return child;
-            }
-            return null;
+            return _childNodes[segment.LocalizedText];
         }
 
         /// <summary>

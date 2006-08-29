@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// <summary>
 	/// Summary description for ZoomTool.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
+    [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class Zoom4XTool : ZoomFixedTool
 	{
 		public Zoom4XTool()

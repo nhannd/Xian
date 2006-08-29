@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			_workspace = new LogicalWorkspace(new ImageWorkspace("studyUID"));
+			_workspace = new LogicalWorkspace(new ImageViewerComponent("studyUID"));
 			_displaySet = new DisplaySet();
 		}
 	

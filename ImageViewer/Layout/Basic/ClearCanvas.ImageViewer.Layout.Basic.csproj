@@ -90,6 +90,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ImageBoxLayoutCommand.cs" />
+    <Compile Include="LayoutComponent.cs" />
     <Compile Include="LayoutToolViewEventArgs.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LayoutTool.cs" />

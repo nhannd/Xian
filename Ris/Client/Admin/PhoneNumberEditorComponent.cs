@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
-    [ApplicationComponentView(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
+    [AssociateView(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
     public class PhoneNumberEditorComponent : ApplicationComponent
     {
         TelephoneNumber _phoneNumber;

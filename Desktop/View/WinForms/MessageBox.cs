@@ -41,13 +41,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public void Show(string message)
 		{
-			System.Windows.Forms.MessageBox.Show(message, DesktopApplication.ApplicationName);
+			System.Windows.Forms.MessageBox.Show(message, Application.ApplicationName);
 		}
 
         public DialogBoxAction Show(string message, ClearCanvas.Common.MessageBoxActions buttons)
         {
             DialogResult dr = System.Windows.Forms.MessageBox.Show(
-                message, DesktopApplication.ApplicationName, _buttonMap[(int)buttons]);
+                message, Application.ApplicationName, _buttonMap[(int)buttons]);
             return (DialogBoxAction)_resultMap[dr];
         }
 

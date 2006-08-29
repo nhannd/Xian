@@ -31,29 +31,29 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             base.Initialize();
 
-            this.PatientAdminToolContext.DefaultActionHandler = EditPatient;
+            this.Context.DefaultActionHandler = EditPatient;
         }
 
         public bool Enabled
         {
-            get { return this.PatientAdminToolContext.SelectedPatient != null; }
+            get { return this.Context.SelectedPatient != null; }
         }
 
         public event EventHandler EnabledChanged
         {
-            add { this.PatientAdminToolContext.SelectedPatientChanged += value; }
-            remove { this.PatientAdminToolContext.SelectedPatientChanged -= value; }
+            add { this.Context.SelectedPatientChanged += value; }
+            remove { this.Context.SelectedPatientChanged -= value; }
         }
 
         public void EditPatient()
         {
-            long oid = this.PatientAdminToolContext.SelectedPatient.OID;
+            long oid = this.Context.SelectedPatient.OID;
 
             // check for an already open editor
             if (_openEditors.ContainsKey(oid))
             {
                 // activate existing editor
-                _openEditors[oid].IsActivated = true;
+                _openEditors[oid].Activate();
             }
             else
             {

@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
-    [ApplicationComponentView(typeof(AddressesEditorComponentViewExtensionPoint))]
+    [AssociateView(typeof(AddressesEditorComponentViewExtensionPoint))]
     public class AddressEditorComponent : ApplicationComponent
     {
         Address _address;

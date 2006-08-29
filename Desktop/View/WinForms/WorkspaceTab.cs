@@ -18,7 +18,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			Platform.CheckForNullReference(workspace, "workspace");
 
 			_workspace = workspace;
-			this.Control = workspace.View.GuiElement as Control;
+
+            IWorkspaceView view = (IWorkspaceView)ViewFactory.CreateAssociatedView(_workspace.GetType());
+            view.SetWorkspace(_workspace);
+
+			this.Control = view.GuiElement as Control;
 			this.PropertyChanged += new PropChangeHandler(OnPropertyChanged);
 
             this.Title = _workspace.Title;
@@ -40,7 +44,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (prop == Property.Selected)
 			{
 				if (page.Selected)
-					_workspace.IsActivated = true;
+					_workspace.DesktopWindow.WorkspaceManager.ActiveWorkspace = _workspace;
 			}
 		}
 	}

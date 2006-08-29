@@ -10,8 +10,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "MenuTools/MenuToolsStandard/MenuToolsStandardFlipVertical")]
-    [ButtonAction("activate", "ToolbarStandard/ToolbarToolsStandardFlipVertical")]
+    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardFlipVertical")]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipVertical")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardFlipVertical")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipVerticalMedium.png", "Icons.FlipVerticalLarge.png")]
@@ -19,21 +19,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     /// <summary>
 	/// Summary description for FlipVerticalTool.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-    public class FlipVerticalTool : Tool
+    [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+    public class FlipVerticalTool : ImageViewerTool
 	{
 		public FlipVerticalTool()
 		{
 		}
 
-		private ImageWorkspace Workspace
-		{
-			get { return (this.Context as ImageWorkspaceToolContext).Workspace; }
-		}
-
 		public void Activate()
 		{
-            PresentationImage selectedImage = ((ImageWorkspaceToolContext)this.Context).Workspace.SelectedPresentationImage;
+            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			if (selectedImage == null)
 				return;
@@ -61,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Apply the final state to all linked images
 			applicator.SetMemento(command.EndState);
 
-            this.Workspace.CommandHistory.AddCommand(command);
+            this.Context.Viewer.CommandHistory.AddCommand(command);
 		}
 	}
 }

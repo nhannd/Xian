@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
                     try
                     {
-                        ImageWorkspace.StudyManager.StudyTree.AddImage(localImage);
+						ImageViewerComponent.StudyManager.StudyTree.AddImage(localImage);
                     }
                     catch (ImageValidationException e)
                     {

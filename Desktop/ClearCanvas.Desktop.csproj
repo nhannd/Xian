@@ -46,12 +46,27 @@
     <Compile Include="Actions\ActionDecoratorAttribute.cs" />
     <Compile Include="Actions\ActionInitiatorAttribute.cs" />
     <Compile Include="Actions\ActionModelNode.cs" />
+    <Compile Include="Actions\ActionModelNodeList.cs" />
     <Compile Include="Actions\ActionModelRoot.cs" />
     <Compile Include="Actions\ActionModelStore.cs" />
+    <Compile Include="Actions\ActionPath.cs" />
+    <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="Actions\IActionSet.cs" />
+    <Compile Include="ApplicationComponentContainer.cs" />
     <Compile Include="ApplicationComponentHostDialog.cs" />
+    <Compile Include="ApplicationComponentHostShelf.cs" />
     <Compile Include="ClosingEventArgs.cs" />
+    <Compile Include="TabComponentContainer.cs" />
+    <Compile Include="TabPage.cs" />
+    <Compile Include="DesktopTool.cs" />
+    <Compile Include="DesktopWindow.cs" />
     <Compile Include="ExtensionSettings.cs" />
+    <Compile Include="IDesktopWindow.cs" />
+    <Compile Include="IDesktopWindowView.cs" />
     <Compile Include="IDialogBox.cs" />
+    <Compile Include="IShelf.cs" />
+    <Compile Include="IShelfView.cs" />
+    <Compile Include="NavigatorPage.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="PathSegment.cs" />
     <Compile Include="Actions\ActionResourceResolver.cs" />
@@ -74,11 +89,10 @@
     <Compile Include="Actions\MenuActionAttribute.cs" />
     <Compile Include="Actions\StateObserverAttribute.cs" />
     <Compile Include="Actions\TooltipAttribute.cs" />
-    <Compile Include="ActivationChangedEventArgs.cs" />
+    <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />
-    <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
-    <Compile Include="ApplicationComponentViewAttribute.cs" />
+    <Compile Include="AssociateViewAttribute.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommandAddedEventArgs.cs" />
     <Compile Include="CommandHistory.cs" />
@@ -90,11 +104,14 @@
     <Compile Include="IView.cs" />
     <Compile Include="IWorkspace.cs" />
     <Compile Include="IWorkspaceView.cs" />
-    <Compile Include="IDesktopView.cs" />
     <Compile Include="ISelection.cs" />
     <Compile Include="ITableData.cs" />
-    <Compile Include="NavigatorComponent.cs" />
-    <Compile Include="NavigatorNode.cs" />
+    <Compile Include="NavigatorComponentContainer.cs" />
+    <Compile Include="Shelf.cs" />
+    <Compile Include="ShelfCollection.cs" />
+    <Compile Include="ShelfDisplayHint.cs" />
+    <Compile Include="ShelfEventArgs.cs" />
+    <Compile Include="ShelfManager.cs" />
     <Compile Include="TableColumnAttribute.cs" />
     <Compile Include="TableData.cs" />
     <Compile Include="MementoList.cs" />
@@ -112,23 +129,16 @@
     <Compile Include="Tools\ITool.cs" />
     <Compile Include="Tools\IToolContext.cs" />
     <Compile Include="Tools\IToolSet.cs" />
-    <Compile Include="Tools\IToolView.cs" />
     <Compile Include="Tools\Tool.cs" />
-    <Compile Include="Tools\ToolAttribute.cs" />
-    <Compile Include="Tools\ToolAttributeProcessor.cs" />
-    <Compile Include="Tools\ToolBuilder.cs" />
     <Compile Include="Tools\ToolContext.cs" />
     <Compile Include="Tools\ToolSet.cs" />
-    <Compile Include="Tools\ToolViewAttribute.cs" />
-    <Compile Include="Tools\ToolViewDisplayHint.cs" />
-    <Compile Include="Tools\ToolViewProxy.cs" />
     <Compile Include="UndoableCommand.cs" />
     <Compile Include="ViewFactory.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="WorkspaceCollection.cs" />
     <Compile Include="WorkspaceEventArgs.cs" />
     <Compile Include="WorkspaceManager.cs" />
-    <Compile Include="DesktopApplication.cs" />
+    <Compile Include="Application.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -145,6 +155,13 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Actions\Actions.cd" />
+    <None Include="ApplicationComponents.cd" />
+    <None Include="Desktop.cd" />
+    <None Include="GlobalMenusToolbars.cd" />
+    <None Include="Tools\Tools.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

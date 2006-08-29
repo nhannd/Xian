@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Desktop.Actions;
+
 namespace ClearCanvas.Desktop.Tools
 {
     /// <summary>
@@ -9,19 +11,23 @@ namespace ClearCanvas.Desktop.Tools
     /// developers are encouraged to subclass <see cref="Tool"/> rather than implement this interface
     /// directly.
     /// </summary>
-    public interface ITool
+    public interface ITool : IDisposable
     {
         /// <summary>
-        /// Called by the framework when the tool is first loaded, to set its context.
+        /// Called by the framework to set the tool's context.
         /// </summary>
-        /// <param name="context">A context which provides the tool with a sense of its environment.</param>
         void SetContext(IToolContext context);
 
         /// <summary>
         /// Called by the framework to allow the tool to initialize itself.  This method will
-        /// always be called after <see cref="SetContext"/>, because the tool may require access
-        /// to the context in order to properly initialize itself.
+        /// be called after the tool has been created but
         /// </summary>
+        /// <param name="context">The context</param>
         void Initialize();
+
+        /// <summary>
+        /// Gets the set of actions that act on this tool.
+        /// </summary>
+        IActionSet Actions { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -9,23 +10,22 @@ namespace ClearCanvas.Desktop
     /// abstract class <see cref="Workspace"/> rather than implement this interface directly, as
     /// if provides some default functionality.
     /// </summary>
-    public interface IWorkspace
+    public interface IWorkspace : IDisposable
     {
-        /// <summary>
-        /// Indicates that this workspace was closed.  Implementations must fire this
-        /// event when a call to <see cref="IWorkspace.Close()"/> succeeds.
-        /// </summary>
-        event EventHandler WorkspaceClosed;
-
-        /// <summary>
-        /// Indicates that the <see cref="IWorkspace.IsActivated"/> property has changed.
-        /// </summary>
-        event EventHandler<ActivationChangedEventArgs> ActivationChanged;
-
         /// <summary>
         /// Indicates that the <see cref="IWorkspace.Title"/> property has changed.
         /// </summary>
         event EventHandler TitleChanged;
+
+        /// <summary>
+        /// Called by the framework when the workspace is added to a <see cref="WorkspaceManager"/>
+        /// </summary>
+        void Initialize(IDesktopWindow desktopWindow);
+
+        /// <summary>
+        /// Gets the desktop window with which the workspace is associated.
+        /// </summary>
+        IDesktopWindow DesktopWindow { get; }
 
         /// <summary>
         /// Returns the command history for this workspace
@@ -36,7 +36,12 @@ namespace ClearCanvas.Desktop
         /// Returns true if this workspace is currently the active workspace.  Only one workspace
         /// can be active at a given time.
         /// </summary>
-        bool IsActivated { get; set; }
+        bool Active { get; }
+
+        /// <summary>
+        /// Attempts to make this workspace the active workspace.
+        /// </summary>
+        void Activate();
 
         /// <summary>
         /// Returns the title that should be displayed for the workspace in the user-interface
@@ -44,21 +49,16 @@ namespace ClearCanvas.Desktop
         string Title { get; set; }
 
         /// <summary>
-        /// Returns the public tool-set for this workspace.  The actions corresponding to this
-        /// toolset will be integrated into the main menu and toolbars.
+        /// Returns the current action set for this workspace.  These actions
+        /// will be integrated into the main menu and toolbars.
         /// </summary>
-        IToolSet ToolSet { get; }
+        IActionSet Actions { get; }
 
         /// <summary>
-        /// Returns the view for this workspace
+        /// Asks the if it can be closed at this time.  This method should take any necessary action,
+        /// such as asking the user if changes should be saved or discarded, in order to answer
+        /// the question.
         /// </summary>
-        IWorkspaceView View { get; }
-
-        /// <summary>
-        /// Asks the workspace to close.  If this method succeeds, it should fire the
-        /// <see cref="IWorkspace.WorkspaceClosed"/> event in order to notify the <see cref="WorkspaceManager"/>
-        /// that the workspace should be removed.
-        /// </summary>
-        void Close();
+        bool CanClose();
     }
 }

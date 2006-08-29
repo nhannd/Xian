@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract string Modality { get; set; }
 		public abstract string SeriesInstanceUID { get; set; }
 		public abstract string SeriesNumber { get; set; }
+		public abstract string SeriesDescription { get; set; }
 		public abstract string Laterality { get; set; }
 		public abstract string SeriesDate { get; set; }
 		public abstract string SeriesTime { get; set; }

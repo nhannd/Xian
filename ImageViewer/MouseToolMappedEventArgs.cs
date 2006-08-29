@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer
     /// <summary>
     /// Arguments for the <see cref="MouseToolMap.MouseToolMapped"/> event.
     /// </summary>
-    internal class MouseToolMappedEventArgs : EventArgs
+    public class MouseToolMappedEventArgs : EventArgs
     {
         private XMouseButtons _mouseButton;
         private MouseTool _oldTool;

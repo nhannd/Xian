@@ -9,7 +9,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public static class ToolStripBuilder
     {
-        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, ActionModelNode[] nodes)
+        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
             foreach (ActionModelNode node in nodes)
             {
@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public static void BuildMenu(ToolStripItemCollection parentItemCollection, ActionModelNode[] nodes)
+        public static void BuildMenu(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
             foreach (ActionModelNode node in nodes)
             {

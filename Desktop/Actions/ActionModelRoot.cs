@@ -9,6 +9,14 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionModelRoot : ActionModelNode
     {
+        public static ActionModelRoot CreateModel(string namespaze, string modelID, IActionSet actions)
+        {
+            string qualifiedModelID = string.Format("{0}:{1}", namespaze, modelID);
+            ActionModelStore store = new ActionModelStore("actionmodels.xml");
+            return store.BuildAndSynchronize(qualifiedModelID, actions);
+        }
+
+
         private string _modelID;
 
         /// <summary>
@@ -30,9 +38,9 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Inserts the specified set of actions into this model.
+        /// Inserts the specified actions into this model in the specified order.
         /// </summary>
-        /// <param name="actions">The set of actions to insert</param>
+        /// <param name="actions">The actions to insert</param>
         public void InsertActions(IAction[] actions)
         {
             foreach (IAction action in actions)

@@ -2,152 +2,93 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [ExtensionPoint()]
-    public class LayoutToolViewExtensionPoint : ExtensionPoint<IToolView>
-    {
-    }
-
-    [MenuAction("show", "MenuLayout/MenuLayoutLayoutManager", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("show", "ToolbarStandard/MenuLayoutLayoutManager", Flags = ClickActionFlags.CheckAction)]
-    [ClickHandler("show", "ShowHide")]
-    [CheckedStateObserver("show", "IsViewActive", "ViewActivationChanged")]
+    [MenuAction("show", "global-menus/MenuLayout/MenuLayoutLayoutManager")]
+    [ButtonAction("show", "global-toolbars/ToolbarStandard/MenuLayoutLayoutManager")]
+    [ClickHandler("show", "Show")]
     [IconSet("show", IconScheme.Colour, "", "Icons.LayoutMedium.png", "Icons.LayoutLarge.png")]
     [Tooltip("show", "MenuLayoutLayoutManager")]
 
-    [ToolView(typeof(LayoutToolViewExtensionPoint), "Layout Manager", ToolViewDisplayHint.DockLeft | ToolViewDisplayHint.DockAutoHide, "IsViewActive", "ViewActivationChanged")]
-    
     /// <summary>
-	/// Summary description for LayoutCentre.
+    /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
+    /// it so that it reflects the state of the active workspace.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.ImageWorkspaceToolExtensionPoint))]
-	public class LayoutTool : Tool
+    [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class LayoutTool : DesktopTool
 	{
-        // by making these members static we cause the view activation state to be shared across all
-        // instances of LayoutTool (hence across all workspaces)
-        private static bool _showView;
-        private static event EventHandler _viewActivationChangedEvent;
+        private LayoutComponent _layoutComponent;
 
-        private event EventHandler _layoutChanged;
-        
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public LayoutTool()
 		{
         }
 
-		private ImageWorkspace Workspace
-		{
-			get { return (this.Context as ImageWorkspaceToolContext).Workspace; }
-		}
-		
-		public bool IsViewActive
-		{
-			get { return _showView; }
-			set
-			{
-				if (_showView != value)
-				{
-					_showView = value;
-					EventsHelper.Fire(_viewActivationChangedEvent, this, new EventArgs());
-				}
-			}
-		}
-
-		public int ImageBoxRows
-		{
-			get { return this.Workspace.PhysicalWorkspace.Rows; }
-		}
-
-		public int ImageBoxColumns
-		{
-			get { return this.Workspace.PhysicalWorkspace.Columns; }
-		}
-
-		public int TileRows
-		{
-			get { return this.Workspace.PhysicalWorkspace.SelectedImageBox.Rows; }
-		}
-
-		public int TileColumns
-		{
-			get { return this.Workspace.PhysicalWorkspace.SelectedImageBox.Columns; }
-		}
-
-		public event EventHandler ViewActivationChanged
-		{
-			add { _viewActivationChangedEvent += value; }
-			remove { _viewActivationChangedEvent -= value; }
-		}
-
-		public event EventHandler LayoutChanged
-		{
-			add { _layoutChanged += value; }
-			remove { _layoutChanged -= value; }
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-			this.Workspace.EventBroker.ImageBoxSelected += new EventHandler<ImageBoxSelectedEventArgs>(OnImageBoxSelected);
-		}
-
-		public void ShowHide()
-		{
-            this.IsViewActive = !this.IsViewActive;
-		}
-
-        public void LayoutImageBoxes(int imageBoxRows, int imageBoxCols, int tileRows, int tileCols)
+        /// <summary>
+        /// Overridden to subscribe to workspace activation events
+        /// </summary>
+        public override void Initialize()
         {
-			ImageWorkspace imageWorkspace = this.Workspace as ImageWorkspace;
+            base.Initialize();
 
-			if (imageWorkspace == null)
-				return;
-
-            PhysicalWorkspace physicalWorkspace = imageWorkspace.PhysicalWorkspace;
-            ImageBoxLayoutCommand command = new ImageBoxLayoutCommand(physicalWorkspace);
-			command.Name = SR.CommandLayoutImageBoxes;
-            command.BeginState = physicalWorkspace.CreateMemento();
-
-            physicalWorkspace.SetImageBoxGrid(imageBoxRows, imageBoxCols);
-
-            foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
-                imageBox.SetTileGrid(tileRows, tileCols);
-
-            LayoutManager.FillPhysicalWorkspace(physicalWorkspace, physicalWorkspace.LogicalWorkspace);
-            physicalWorkspace.Draw(false);
-
-            command.EndState = physicalWorkspace.CreateMemento();
-
-            this.Workspace.CommandHistory.AddCommand(command);
+            this.Context.DesktopWindow.WorkspaceManager.ActiveWorkspaceChanged += WorkspaceActivatedEventHandler;
         }
 
-        public void LayoutTiles(int tileRows, int tileCols)
-        {
-			ImageWorkspace imageWorkspace = this.Workspace as ImageWorkspace;
+        /// <summary>
+        /// Shows the layout component in a shelf.  Only one layout component will ever be shown
+        /// at a time, so if there is already a layout component showing, this method does nothing
+        /// </summary>
+        public void Show()
+		{
+            // check if a layout component is already displayed
+            if (_layoutComponent == null)
+            {
+                // create and initialize the layout component
+                _layoutComponent = new LayoutComponent();
+                _layoutComponent.Subject = GetSubjectImageViewer();
 
-			if (imageWorkspace == null)
-				return;
-
-			ImageBox imageBox = imageWorkspace.PhysicalWorkspace.SelectedImageBox;
-            TileLayoutCommand command = new TileLayoutCommand(imageBox);
-			command.Name = SR.CommandLayoutTiles;
-            command.BeginState = imageBox.CreateMemento();
-
-            int index = imageBox.TopLeftPresentationImageIndex;
-
-            imageBox.SetTileGrid(tileRows, tileCols);
-            imageBox.TopLeftPresentationImageIndex = index;
-            imageBox.Draw(false);
-
-            command.EndState = imageBox.CreateMemento();
-
-            this.Workspace.CommandHistory.AddCommand(command);
+                // launch the layout component in a shelf
+                // note that the component is thrown away when the shelf is closed by the user
+                ApplicationComponent.LaunchAsShelf(
+                    this.Context.DesktopWindow,
+                    _layoutComponent,
+                    SR.MenuLayoutLayoutManager,
+                    ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
+                    delegate(IApplicationComponent component) { _layoutComponent = null; });
+            }
         }
 
-		private void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
-		{
-			EventsHelper.Fire(_layoutChanged, this, new EventArgs());
-		}
+        /// <summary>
+        /// Associate the layout component with the active workspace
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WorkspaceActivatedEventHandler(object sender, WorkspaceActivationChangedEventArgs e)
+        {
+            if (_layoutComponent != null)
+            {
+                _layoutComponent.Subject = GetSubjectImageViewer();
+            }
+        }
+
+        /// <summary>
+        /// Gets a reference to the <see cref="IImageViewer"/> hosted by the active workspace,
+        /// if it exists, otherwise null.
+        /// </summary>
+        /// <returns></returns>
+        private IImageViewer GetSubjectImageViewer()
+        {
+            IWorkspace workspace = this.Context.DesktopWindow.ActiveWorkspace;
+            if(workspace is ApplicationComponentHostWorkspace
+                && ((ApplicationComponentHostWorkspace)workspace).Component is IImageViewer)
+            {
+                return (IImageViewer)((ApplicationComponentHostWorkspace)workspace).Component;
+            }
+            return null;
+        }
 	}
 }

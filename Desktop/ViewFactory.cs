@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Creates a view extension that matches GUI toolkit of the main workstation view.
+        /// Creates a view extension that matches GUI toolkit currently in use.
         /// </summary>
         /// <param name="extensionPoint">The view extension point.</param>
         /// <returns>The view object that was created.</returns>
@@ -36,13 +36,26 @@ namespace ClearCanvas.Desktop
         /// <exception cref="InvalidOperationException">The main workstation view has not yet been created.</exception>
         public static IView CreateView(IExtensionPoint extensionPoint)
         {
-            IDesktopView desktopView = DesktopApplication.View;
-            if (desktopView == null)
-            {
-                throw new InvalidOperationException(SR.ExceptionDesktopViewNotCreated);
-            }
+            return CreateView(extensionPoint, Application.GuiToolkit);
+        }
 
-            return CreateView(extensionPoint, desktopView.GuiToolkitID);
+        /// <summary>
+        /// Creates a view extension based on the view extension point that is associated with the specified
+        /// model type.  The model type is any type that has a <see cref="AssociateViewAttribute"/> attribute
+        /// specified.
+        /// </summary>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        public static IView CreateAssociatedView(Type modelType)
+        {
+            object[] attrs = modelType.GetCustomAttributes(typeof(AssociateViewAttribute), true);
+            if (attrs.Length == 0)
+                throw new Exception("AssociateViewAttribute not specified");    //TODO elaborate
+
+            AssociateViewAttribute viewAttribute = (AssociateViewAttribute)attrs[0];
+            IExtensionPoint viewExtPoint = (IExtensionPoint)Activator.CreateInstance(viewAttribute.ViewExtensionPointType);
+
+            return CreateView(viewExtPoint);
         }
     }
 }

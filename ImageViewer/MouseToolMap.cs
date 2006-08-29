@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer
     /// The <see cref="MouseTool"/> class works in conjuction with this class to control
     /// the mapping of mouse tools to mouse buttons.
     /// </remarks>
-	internal class MouseToolMap
+	public class MouseToolMap
 	{
         private event EventHandler<MouseToolMappedEventArgs> _mouseToolMapped;
         private Dictionary<XMouseButtons, MouseTool> _toolMap = new Dictionary<XMouseButtons, MouseTool>();
@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
         /// <param name="mouseButton">A mouse button.</param>
         /// <returns>The mouse tool associated with the specified mouse button.</returns>
-        internal MouseTool this[XMouseButtons mouseButton]
+        public MouseTool this[XMouseButtons mouseButton]
         {
             get 
 			{
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer
         /// <summary>
         /// Fired when a mouse button mapping changes.
         /// </summary>
-        internal event EventHandler<MouseToolMappedEventArgs> MouseToolMapped
+        public event EventHandler<MouseToolMappedEventArgs> MouseToolMapped
         {
             add { _mouseToolMapped += value; }
             remove { _mouseToolMapped -= value; }

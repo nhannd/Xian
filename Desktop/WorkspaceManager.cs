@@ -12,19 +12,34 @@ namespace ClearCanvas.Desktop
 	/// <b>WorkspaceManager</b> manages a collection of <see cref="Workspace"/> objects.
 	/// It is accessed via the <see cref="ModelPlugin.WorkspaceManager"/> static property.  
 	/// </remarks>
-	public class WorkspaceManager
+	public class WorkspaceManager : IDisposable
 	{
-		private WorkspaceCollection _workspaces = new WorkspaceCollection();
-		private event EventHandler<WorkspaceEventArgs> _workspaceActivatedEvent;
+        private IDesktopWindow _desktopWindow;
+        private event EventHandler<WorkspaceActivationChangedEventArgs> _activeWorkspaceChanged;
 		private IWorkspace _activeWorkspace;
+        private WorkspaceCollection _workspaces;
 
-		internal WorkspaceManager()
+		internal WorkspaceManager(IDesktopWindow desktopWindow)
 		{
-			_workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
-			_workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
+            _desktopWindow = desktopWindow;
+            _workspaces = new WorkspaceCollection(this);
 		}
 
-		public WorkspaceCollection Workspaces
+        ~WorkspaceManager()
+        {
+            Dispose(false);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            foreach (IWorkspace workspace in _workspaces)
+            {
+                workspace.Dispose();
+            }
+            _workspaces.Clear();
+        }
+
+        public WorkspaceCollection Workspaces
 		{
 			get { return _workspaces; }
 		}
@@ -33,8 +48,9 @@ namespace ClearCanvas.Desktop
 		/// Gets or sets the currently active <see cref="Workspace"/>.
 		/// </summary>
 		/// <remarks>
-		/// Cannot be set to <b>null</b>; there must always be an active workspace. By default,
-		/// when a new workspace is added, that workspace is set as active.
+        /// This property may return <b>null</b> in the case where there are no workspaces.  However,
+        /// attempting to set it to <b>null</b> will throw an exception; there must always be an active workspace.
+        /// When a new workspace is added, that workspace is set as active.
 		/// </remarks>
 		/// <value>The currently active <see cref="Workspace"/> or <b>null</b> if
 		/// there are no workspaces in the <see cref="WorkspaceManager"/>.</value>
@@ -43,75 +59,63 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				if (this.Workspaces.Count == 0)
-					return null;
-
-				Platform.CheckMemberIsSet(_activeWorkspace, "ActiveWorkspace");
-
 				return _activeWorkspace;
 			}
-			private set
+			set
 			{
-				Platform.CheckForNullReference(value, "ActiveWorkspace");
-
 				// Don't bother if nothing's changed
-				if (_activeWorkspace == value)
-					return;
+                if (value != _activeWorkspace)
+                {
+                    if (value == null)
+                        throw new ArgumentNullException("Cannot set the active workspace to null");
 
-				// Set the existing active workspace to inactive
-				if (_activeWorkspace != null)
-					_activeWorkspace.IsActivated = false;
-
-				// Set the new active workspace
-				_activeWorkspace = value;
-
-				// Let everyone know there's a new active workspace
-				EventsHelper.Fire(_workspaceActivatedEvent, this, new WorkspaceEventArgs(_activeWorkspace));
+                    InternalSetActiveWorkspace(value);
+                }
 			}
 		}
 
 		/// <summary>
-		/// Occurs when a <see cref="Workspace"/> is activated using the <see cref="ActiveWorkspace"/> property.
+		/// Occurs when the value of the <see cref="ActiveWorkspace"/> property changes.
 		/// </summary>
 		/// <remarks>The event handler receives an argument of type <see cref="WorkspaceEventArgs"/>.</remarks>
-		public event EventHandler<WorkspaceEventArgs> WorkspaceActivated
+        public event EventHandler<WorkspaceActivationChangedEventArgs> ActiveWorkspaceChanged
 		{
-			add { _workspaceActivatedEvent += value; }
-			remove { _workspaceActivatedEvent -= value; }
+			add { _activeWorkspaceChanged += value; }
+			remove { _activeWorkspaceChanged -= value; }
 		}
 
-		private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
+		internal void WorkspaceAdded(IWorkspace workspace)
 		{
-			e.Workspace.ActivationChanged += OnActivationChanged;
-            e.Workspace.WorkspaceClosed += OnWorkspaceClosed;
-			// Set the workspace just added to active
-			e.Workspace.IsActivated = true;
+            // initialize the new workspace and make it the active workspace
+            workspace.Initialize(_desktopWindow);
+            this.ActiveWorkspace = workspace;
 		}
 
-		private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
+        internal void WorkspaceRemoved(IWorkspace workspace)
 		{
-			e.Workspace.ActivationChanged -= OnActivationChanged;
-            e.Workspace.WorkspaceClosed -= OnWorkspaceClosed;
+            // dispose of the workspace
+            workspace.Dispose();
 
-			// Make sure that we remove the reference to the last active workspace so
-			// it can be swept up by the garbage collector			
-			if (this.Workspaces.Count == 0)
-				_activeWorkspace = null;
+			// Make sure to set the active workspace to null if there are no more workspaces
+			if (_workspaces.Count == 0)
+                InternalSetActiveWorkspace(null);
 		}
 
-		private void OnActivationChanged(object sender, ActivationChangedEventArgs e)
-		{
-			this.ActiveWorkspace = sender as Workspace;
-		}
-
-        /// <summary>
-        /// The workspace was closed, so remove it from the collection
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnWorkspaceClosed(object sender, EventArgs e)
+        private void InternalSetActiveWorkspace(IWorkspace workspace)
         {
-            _workspaces.Remove((IWorkspace)sender);
+            IWorkspace old = _activeWorkspace;
+            _activeWorkspace = workspace;
+
+            EventsHelper.Fire(_activeWorkspaceChanged, this, new WorkspaceActivationChangedEventArgs(_activeWorkspace, old));
         }
-	}
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
+    }
 }

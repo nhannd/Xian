@@ -60,10 +60,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     if (_toolStrip.RightToLeft == RightToLeft.Yes)
                     {
-                        ActionModelNode[] childNodesCopy = new ActionModelNode[_toolbarModel.ChildNodes.Length];
-                        for (int i = 0; i < _toolbarModel.ChildNodes.Length; i++)
+                        ActionModelNode[] childNodesCopy = new ActionModelNode[_toolbarModel.ChildNodes.Count];
+                        for (int i = 0; i < _toolbarModel.ChildNodes.Count; i++)
                         {
-                                childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
+                            childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
                         }
                         ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy);
                     }

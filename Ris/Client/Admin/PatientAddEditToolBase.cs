@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         protected IWorkspace OpenPatient(string title, PatientProfile patient)
         {
-            NavigatorComponent navigator = new NavigatorComponent();
+            NavigatorComponentContainer navigator = new NavigatorComponentContainer();
 
             PatientEditorComponent patientEditor = new PatientEditorComponent();
             patientEditor.Subject = patient;
@@ -24,25 +24,26 @@ namespace ClearCanvas.Ris.Client.Admin
             PhoneNumbersSummaryComponent phoneNumbersSummary = new PhoneNumbersSummaryComponent();
             phoneNumbersSummary.Subject = patient;
 
-            navigator.Nodes.Add(new NavigatorNode("Patient", patientEditor));
-            navigator.Nodes.Add(new NavigatorNode("Patient/Addresses", addressesSummary));
-            navigator.Nodes.Add(new NavigatorNode("Patient/Phone Numbers", phoneNumbersSummary));
+            navigator.Pages.Add(new NavigatorPage("Patient", patientEditor));
+            navigator.Pages.Add(new NavigatorPage("Patient/Addresses", addressesSummary));
+            navigator.Pages.Add(new NavigatorPage("Patient/Phone Numbers", phoneNumbersSummary));
 
-            return ApplicationComponent.LaunchAsWorkspace(navigator, title, PatientEditorExited);
+            return ApplicationComponent.LaunchAsWorkspace(
+                this.Context.DesktopWindow, navigator, title, PatientEditorExited);
         }
 
         private void PatientEditorExited(IApplicationComponent component)
         {
-            NavigatorComponent navigator = (NavigatorComponent)component;
-            PatientEditorComponent patientEditor = (PatientEditorComponent)navigator.Nodes[0].Component;
+            NavigatorComponentContainer navigator = (NavigatorComponentContainer)component;
+            PatientEditorComponent patientEditor = (PatientEditorComponent)navigator.Pages[0].Component;
             EditorClosed(patientEditor.Subject, component.ExitCode);
         }
 
         protected abstract void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode);
 
-        protected IPatientAdminToolContext PatientAdminToolContext
+        protected IPatientAdminToolContext Context
         {
-            get { return (IPatientAdminToolContext)this.Context; }
+            get { return (IPatientAdminToolContext)this.ContextBase; }
         }
     }
 }

@@ -26,5 +26,15 @@ namespace ClearCanvas.Desktop
         /// <param name="buttons"></param>
         /// <returns></returns>
         DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
+
+        /// <summary>
+        /// Provides component with access to the relevant <see cref="CommandHistory"/>.
+        /// </summary>
+        CommandHistory CommandHistory { get; }
+
+        /// <summary>
+        /// Provides component with access to the desktop window in which it is running.
+        /// </summary>
+        IDesktopWindow DesktopWindow { get; }
     }
 }

@@ -7,25 +7,17 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
-	/// <summary>
-	/// Models how images are logically and physically organized.
-	/// </summary>
-	/// <remarks>
-	/// A <b>Workspace</b> is comprised of a <see cref="LogicalWorkspace"/> and a
-	/// <see cref="PhysicalWorkspace"/> and thus models how images are logically
-	/// and physically organized.  Each <b>Workspace</b> also has its own set of
-	/// workspace tools and <see cref="CommandHistory"/>.  This allows workspaces to
-	/// function independently of each other.
-	/// </remarks>
+    /// <summary>
+    /// Abstract base class providing most of the implementation of <see cref="IWorkspace"/>.  Concrete workspace
+    /// classes are encourage to extend this class rather than implement <see cref="IWorkspace"/> directly.
+    /// </summary>
 	public abstract class Workspace : IWorkspace
 	{
+        private IDesktopWindow _desktopWindow;
 		private string _title;
-		private bool _isActivated;
 		private CommandHistory _commandHistory;
 
-		private event EventHandler<ActivationChangedEventArgs> _activationChangedEvent;
         private event EventHandler _titleChanged;
-        private event EventHandler _workspaceClosed;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Workspace"/> class.
@@ -33,15 +25,34 @@ namespace ClearCanvas.Desktop
 		public Workspace(string title)
 		{
             _title = title;
-			CreateCommandHistory();
-		}
+            _commandHistory = new CommandHistory(100);
+        }
+
+        ~Workspace()
+        {
+            Dispose(false);
+        }
+
+        #region IWorkspace Members
+
+
+        public virtual void Initialize(IDesktopWindow desktopWindow)
+        {
+            _desktopWindow = desktopWindow;
+        }
+
+
+        public IDesktopWindow DesktopWindow
+        {
+            get { return _desktopWindow; }
+        }
 
         /// <summary>
         /// Gets or sets the title of this workspace.  The title will be displayed in the user-interface
         /// </summary>
 		public string Title
 		{
-			get { return _title; }
+            get { return _title; }
             set
             {
                 if (value != _title)
@@ -52,18 +63,17 @@ namespace ClearCanvas.Desktop
             }
 		}
 
-		public virtual bool IsActivated
+        public virtual void Activate()
+        {
+            if (_desktopWindow == null)
+                throw new InvalidOperationException();
+
+            _desktopWindow.WorkspaceManager.ActiveWorkspace = this;
+        }
+
+		public bool Active
 		{
-			get { return _isActivated; }
-			set
-			{
-				if (_isActivated != value)
-				{
-					_isActivated = value;
-                    this.ToolSet.Activate(_isActivated);
-					EventsHelper.Fire(_activationChangedEvent, this, new ActivationChangedEventArgs(value));
-				}
-			}
+            get { return (_desktopWindow == null) ? false : (_desktopWindow.ActiveWorkspace == this); }
 		}
 
 		/// <summary>
@@ -75,21 +85,10 @@ namespace ClearCanvas.Desktop
 			get { return _commandHistory; }
 		}
 
-        public abstract IToolSet ToolSet
+        public abstract IActionSet Actions
         {
             get;
         }
-
-		public abstract IWorkspaceView View
-		{
-			get;
-		}
-
-		public event EventHandler<ActivationChangedEventArgs> ActivationChanged
-		{
-			add { _activationChangedEvent += value; }
-			remove { _activationChangedEvent -= value; }
-		}
 
         /// <summary>
         /// Fired when the title of the workspace is changed
@@ -100,24 +99,24 @@ namespace ClearCanvas.Desktop
             remove { _titleChanged -= value; }
         }
 
-        public event EventHandler WorkspaceClosed
+        protected virtual void Dispose(bool disposing)
         {
-            add { _workspaceClosed += value; }
-            remove { _workspaceClosed -= value; }
         }
 
-        public virtual void Close()
+        public virtual bool CanClose()
         {
-            Cleanup();
-            EventsHelper.Fire(_workspaceClosed, this, new EventArgs());
+            return true;
         }
 
-		public abstract void Cleanup();
+        #endregion
 
-		private void CreateCommandHistory()
-		{
-			int maxHistorySize = 100;
-			_commandHistory = new CommandHistory(maxHistorySize);
-		}
-	}
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
+    }
 }
