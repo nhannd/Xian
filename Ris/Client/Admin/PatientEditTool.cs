@@ -71,6 +71,19 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        protected IPatientAdminToolContext Context
+        {
+            get { return (IPatientAdminToolContext)this.ContextBase; }
+        }
+
+        protected override IDesktopWindow DesktopWindow
+        {
+            get
+            { 
+                return this.Context.DesktopWindow;
+            }
+        }
+
         protected override void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode)
         {
             if (exitCode == ApplicationComponentExitCode.Normal)

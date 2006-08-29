@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Admin
             navigator.Pages.Add(new NavigatorPage("Patient/Phone Numbers", phoneNumbersSummary));
 
             return ApplicationComponent.LaunchAsWorkspace(
-                this.Context.DesktopWindow, navigator, title, PatientEditorExited);
+                this.DesktopWindow, navigator, title, PatientEditorExited);
         }
 
         private void PatientEditorExited(IApplicationComponent component)
@@ -39,11 +39,8 @@ namespace ClearCanvas.Ris.Client.Admin
             EditorClosed(patientEditor.Subject, component.ExitCode);
         }
 
-        protected abstract void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode);
+        protected abstract IDesktopWindow DesktopWindow { get; }
 
-        protected IPatientAdminToolContext Context
-        {
-            get { return (IPatientAdminToolContext)this.ContextBase; }
-        }
+        protected abstract void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode);
     }
 }

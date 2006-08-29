@@ -25,6 +25,14 @@ namespace ClearCanvas.Ris.Client.Admin
             OpenPatient("New Patient", PatientProfile.New());
         }
 
+        protected override IDesktopWindow DesktopWindow
+        {
+            get
+            {
+                return ((IDesktopToolContext)this.ContextBase).DesktopWindow;
+            }
+        }
+
         protected override void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode)
         {
             if (exitCode == ApplicationComponentExitCode.Normal)
