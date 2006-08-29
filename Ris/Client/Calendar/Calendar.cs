@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Calendar
 {
     public class Calendar {
 
-        const string CALENDAR_URI = "http://www.google.com/calendar/feeds/jresnick@gmail.com/private-ca61e391382563ce142e9a009701f992/full";
+        const string CALENDAR_URI = "http://www.google.com/calendar/feeds/.... place your personal calender URI here";
 
         private CalendarService _service;
 
