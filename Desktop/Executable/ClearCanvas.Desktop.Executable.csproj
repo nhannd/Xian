@@ -137,18 +137,8 @@
       md .\studies
       md .\datastore
 
-      :: Copy database file
-      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" .\datastore
-
-      :: Copy Hibernate configuration file
-      copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" .
-
       :: Copy shared config files
       copy ..\..\Logging.config .
-
-      :: Copy database rebuild utility
-      copy "..\..\..\..\Utilities\RebuildDatabase\bin\$(ConfigurationName)\ClearCanvas.Utilities.RebuildDatabase.exe" .
-      copy "..\..\..\..\Utilities\RebuildDatabase\app.config" .\ClearCanvas.Utilities.RebuildDatabase.exe.config
 
       :: Copy shared libraries
       copy "..\..\..\..\Common\bin\$(ConfigurationName)\*.*" .\Common
@@ -172,6 +162,16 @@
       copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" .\plugins
 
 if $(SolutionName) == Ris goto RisModules
+
+      :: Copy database file
+      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" .\datastore
+
+      :: Copy Hibernate configuration file
+      copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" .
+
+      :: Copy database rebuild utility
+      copy "..\..\..\..\Utilities\RebuildDatabase\bin\$(ConfigurationName)\ClearCanvas.Utilities.RebuildDatabase.exe" .
+      copy "..\..\..\..\Utilities\RebuildDatabase\app.config" .\ClearCanvas.Utilities.RebuildDatabase.exe.config
 
       :: Copy Dicom assemblies	
       copy "..\..\..\..\Dicom\bin\$(ConfigurationName)\ClearCanvas.Dicom.dll" .\Common
@@ -227,13 +227,6 @@ if $(SolutionName) == Ris goto RisModules
       :: Ris
       copy "..\..\..\..\Ris\Client\Admin\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
-
-      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Calendar.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Calendar\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Calendar.View.WinForms.dll" .\plugins
-
-      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\gcalendar.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\gdata.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Calendar\bin\$(ConfigurationName)\gextension.dll" .\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
