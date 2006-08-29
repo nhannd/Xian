@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Admin
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        IList<Patient> ListPatients(PatientSearchCriteria criteria);
+        IList<PatientProfile> ListPatients(PatientProfileSearchCriteria criteria);
 
         /// <summary>
         /// Loads the specified patient, including collections and related entities
@@ -21,25 +21,25 @@ namespace ClearCanvas.Ris.Client.Admin
         /// </summary>
         /// <param name="oid"></param>
         /// <returns></returns>
-        Patient LoadPatientDetails(long oid);
+        PatientProfile LoadPatientDetails(long oid);
 
         /// <summary>
         /// Loads the specified patient.
         /// </summary>
         /// <param name="oid"></param>
         /// <returns></returns>
-        Patient LoadPatient(long oid);
+        PatientProfile LoadPatient(long oid);
 
         /// <summary>
         /// Add a new patient to the system
         /// </summary>
         /// <param name="patient"></param>
-        void AddNewPatient(Patient patient);
+        void AddNewPatient(PatientProfile patient);
 
         /// <summary>
         /// Updates an existing patient
         /// </summary>
         /// <param name="patient"></param>
-        void UpdatePatient(Patient patient);
+        void UpdatePatient(PatientProfile patient);
     }
 }

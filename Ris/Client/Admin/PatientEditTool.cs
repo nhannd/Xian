@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 // 2. the editor should operate on a copy
                 // 3. it may need patient details that were not loaded when the patients were listed
                 IPatientAdminService service = ApplicationContext.GetService<IPatientAdminService>();
-                Patient patient = service.LoadPatientDetails(oid);
+                PatientProfile patient = service.LoadPatientDetails(oid);
 
                 // create a new editing workspace
                 string title = string.Format("Edit Patient - {0}", patient.Name.Format());
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        protected override void EditorClosed(Patient patient, ApplicationComponentExitCode exitCode)
+        protected override void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode)
         {
             if (exitCode == ApplicationComponentExitCode.Normal)
             {

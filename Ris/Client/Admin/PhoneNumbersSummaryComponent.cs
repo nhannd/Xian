@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private Patient _patient;
+        private PatientProfile _patient;
         private IPatientAdminService _patientAdminService;
         private TableData<TelephoneNumber> _phoneNumbers;
         private TelephoneNumber _currentPhoneNumberSelection;
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _phoneNumberActionHandler.AddEnabled = true;
         }
 
-        public Patient Subject
+        public PatientProfile Subject
         {
             get { return _patient; }
             set { _patient = value; }
@@ -164,7 +164,7 @@ namespace ClearCanvas.Ris.Client.Admin
             if (this.Host.ShowMessageBox("Are you sure you want to delete this phone number?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary TelephoneNumber otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong TelephoneNumber being removed from the Patient
+                //  resulting in the wrong TelephoneNumber being removed from the PatientProfile
                 TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
                 _phoneNumbers.Remove(toBeRemoved);
                 _patient.TelephoneNumbers.Remove(toBeRemoved);

@@ -21,16 +21,16 @@ namespace ClearCanvas.Ris.Client.Admin
         #region IPatientAdminService Members
 
         [ReadOperation]
-        public IList<Patient> ListPatients(PatientSearchCriteria criteria)
+        public IList<PatientProfile> ListPatients(PatientProfileSearchCriteria criteria)
         {
-            return this.GetPatientBroker().Find(criteria);
+            return this.GetPatientProfileBroker().Find(criteria);
         }
 
         [ReadOperation]
-        public Patient LoadPatient(long oid)
+        public PatientProfile LoadPatient(long oid)
         {
-            IPatientBroker broker = this.GetPatientBroker();
-            Patient patient = broker.Find(oid);
+            IPatientProfileBroker broker = this.GetPatientProfileBroker();
+            PatientProfile patient = broker.Find(oid);
 
             // load all relevant collections
             broker.LoadRelated(patient, patient.Identifiers);
@@ -38,10 +38,10 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         [ReadOperation]
-        public Patient LoadPatientDetails(long oid)
+        public PatientProfile LoadPatientDetails(long oid)
         {
-            IPatientBroker broker = this.GetPatientBroker();
-            Patient patient = broker.Find(oid);
+            IPatientProfileBroker broker = this.GetPatientProfileBroker();
+            PatientProfile patient = broker.Find(oid);
 
             // load all relevant collections
             broker.LoadRelated(patient, patient.Identifiers);
@@ -52,15 +52,15 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         [UpdateOperation]
-        public void AddNewPatient(Patient patient)
+        public void AddNewPatient(PatientProfile patient)
         {
-            this.GetPatientBroker().Store(patient);
+            this.GetPatientProfileBroker().Store(patient);
         }
 
         [UpdateOperation]
-        public void UpdatePatient(Patient patient)
+        public void UpdatePatient(PatientProfile patient)
         {
-            this.GetPatientBroker().Store(patient);
+            this.GetPatientProfileBroker().Store(patient);
         }
 
         #endregion

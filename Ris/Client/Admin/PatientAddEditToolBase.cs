@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     public abstract class PatientAddEditToolBase : Tool
     {
-        protected IWorkspace OpenPatient(string title, Patient patient)
+        protected IWorkspace OpenPatient(string title, PatientProfile patient)
         {
             NavigatorComponent navigator = new NavigatorComponent();
 
@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Admin
             EditorClosed(patientEditor.Subject, component.ExitCode);
         }
 
-        protected abstract void EditorClosed(Patient patient, ApplicationComponentExitCode exitCode);
+        protected abstract void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode);
 
         protected IPatientAdminToolContext PatientAdminToolContext
         {

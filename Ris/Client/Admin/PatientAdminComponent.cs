@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
     public interface IPatientAdminToolContext : IToolContext
     {
-        Patient SelectedPatient { get; }
+        PatientProfile SelectedPatient { get; }
         event EventHandler SelectedPatientChanged;
 
         ClickHandlerDelegate DefaultActionHandler { get; set; }
@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 remove { _component._selectedPatientChanged -= value; }
             }
 
-            public Patient SelectedPatient
+            public PatientProfile SelectedPatient
             {
                 get { return _component._selectedPatient; }
             }
@@ -63,9 +63,9 @@ namespace ClearCanvas.Ris.Client.Admin
         
         private ToolSet _toolSet;
         private event EventHandler _workingSetChanged;
-        private TableData<Patient> _workingSet;
+        private TableData<PatientProfile> _workingSet;
  
-        private Patient _selectedPatient;
+        private PatientProfile _selectedPatient;
         private event EventHandler _selectedPatientChanged;
 
         private ClickHandlerDelegate _defaultActionHandler;
@@ -80,18 +80,18 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _patientAdminService.PatientChanged += _patientAdminService_PatientChanged;
+            _patientAdminService.PatientProfileChanged += _patientAdminService_PatientChanged;
 
-            _workingSet = new TableData<Patient>();
-            _workingSet.AddColumn<string>("MRN", delegate(Patient p) { return p.GetMrn() != null ? p.GetMrn().Id : ""; });
-            _workingSet.AddColumn<string>("Name", delegate(Patient p) { return p.Name.Format(); });
-            _workingSet.AddColumn<string>("Sex", delegate(Patient p) { return _patientAdminService.SexEnumTable[p.Sex].Value; });
-            _workingSet.AddColumn<string>("Date of Birth", delegate(Patient p) { return p.DateOfBirth.Date.ToShortDateString(); });
+            _workingSet = new TableData<PatientProfile>();
+            _workingSet.AddColumn<string>("MRN", delegate(PatientProfile p) { return p.GetMrn() != null ? p.GetMrn().Id : ""; });
+            _workingSet.AddColumn<string>("Name", delegate(PatientProfile p) { return p.Name.Format(); });
+            _workingSet.AddColumn<string>("Sex", delegate(PatientProfile p) { return _patientAdminService.SexEnumTable[p.Sex].Value; });
+            _workingSet.AddColumn<string>("Date of Birth", delegate(PatientProfile p) { return p.DateOfBirth.Date.ToShortDateString(); });
         }
 
         public override void Stop()
         {
-            _patientAdminService.PatientChanged -= _patientAdminService_PatientChanged;
+            _patientAdminService.PatientProfileChanged -= _patientAdminService_PatientChanged;
 
             base.Stop();
         }
@@ -101,10 +101,10 @@ namespace ClearCanvas.Ris.Client.Admin
             long oid = e.Change.EntityOID;
 
             // check if the patient with this oid is in the list
-            int index = _workingSet.FindIndex(delegate(Patient p) { return p.OID == oid; });
+            int index = _workingSet.FindIndex(delegate(PatientProfile p) { return p.OID == oid; });
             if (index > -1)
             {
-                Patient p = _patientAdminService.LoadPatient(oid);
+                PatientProfile p = _patientAdminService.LoadPatient(oid);
                 // update the patient in the list
                 _workingSet[index] = p;
             }
@@ -122,18 +122,18 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public void SetSearchCriteria(PatientSearchCriteria criteria)
+        public void SetSearchCriteria(PatientProfileSearchCriteria criteria)
         {
             /* create some fake data
-            List<Patient> data = new List<Patient>();
+            List<PatientProfile> data = new List<PatientProfile>();
 
-            Patient p1 = Patient.New();
+            PatientProfile p1 = PatientProfile.New();
             p1.Name.FamilyName = "Bean";
             p1.Name.GivenName = "Jim";
             p1.PatientId = "1122";
             data.Add(p1);
 
-            Patient p2 = Patient.New();
+            PatientProfile p2 = PatientProfile.New();
             p2.Name.FamilyName = "Jones";
             p2.Name.GivenName = "Sally";
             p2.PatientId = "3344";
@@ -144,9 +144,9 @@ namespace ClearCanvas.Ris.Client.Admin
              * */
 
             // obtain a list of patients matching the specified criteria
-            IList<Patient> patients = _patientAdminService.ListPatients(criteria);
+            IList<PatientProfile> patients = _patientAdminService.ListPatients(criteria);
             _workingSet.Clear();
-            foreach (Patient patient in patients)
+            foreach (PatientProfile patient in patients)
                 _workingSet.Add(patient);
 
             EventsHelper.Fire(_workingSetChanged, this, new EventArgs());
@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void SetSelection(ISelection selection)
         {
-            _selectedPatient = (Patient)selection.Item;
+            _selectedPatient = (PatientProfile)selection.Item;
             EventsHelper.Fire(_selectedPatientChanged, this, new EventArgs());
         }
     }

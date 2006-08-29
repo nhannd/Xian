@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 
 
-        private Patient _patient;
+        private PatientProfile _patient;
         private IPatientAdminService _patientAdminService;
         private TableData<PatientIdentifier> _patientIdentifiers;
         private PatientIdentifier _currentPatientIdentifierSelection;
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public PatientEditorComponent()
         {
-            _patient = Patient.New();
+            _patient = PatientProfile.New();
             _patientIdentifiers = new TableData<PatientIdentifier>();
 
             _patientIdentifiers.AddColumn<string>("Type", delegate(PatientIdentifier pi) { return _patientAdminService.PatientIdentifierTypeEnumTable[pi.Type].Value; });
@@ -71,10 +71,10 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         /// <summary>
-        /// Gets or sets the subject (e.g Patient) that this editor operates on.  This property
+        /// Gets or sets the subject (e.g PatientProfile) that this editor operates on.  This property
         /// should never be used by the view.
         /// </summary>
-        public Patient Subject
+        public PatientProfile Subject
         {
             get { return _patient; }
             set { _patient = value; }
@@ -246,7 +246,7 @@ namespace ClearCanvas.Ris.Client.Admin
             if (this.Host.ShowMessageBox("Are you sure you want to delete this identifier", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary PatientIdentifier otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong Identifier being removed from the Patient
+                //  resulting in the wrong Identifier being removed from the PatientProfile
                 PatientIdentifier toBeRemoved = _currentPatientIdentifierSelection;
                 _patientIdentifiers.Remove(toBeRemoved);
                 _patient.Identifiers.Remove(toBeRemoved);

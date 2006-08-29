@@ -187,9 +187,9 @@ namespace ClearCanvas.Ris.Client.Admin
             this.SearchEnabled = _patientIdentifier != null || _familyName != null || _givenName != null || _dateOfBirth != null;
         }
 
-        private PatientSearchCriteria BuildCriteria()
+        private PatientProfileSearchCriteria BuildCriteria()
         {
-            PatientSearchCriteria criteria = new PatientSearchCriteria();
+            PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             if (_patientIdentifier != null)
             {
                 criteria.Identifiers.Id.Like(_patientIdentifier + "%");

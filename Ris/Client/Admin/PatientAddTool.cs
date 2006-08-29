@@ -22,10 +22,10 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         public void AddPatient()
         {
-            OpenPatient("New Patient", Patient.New());
+            OpenPatient("New Patient", PatientProfile.New());
         }
 
-        protected override void EditorClosed(Patient patient, ApplicationComponentExitCode exitCode)
+        protected override void EditorClosed(PatientProfile patient, ApplicationComponentExitCode exitCode)
         {
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
