@@ -1,4 +1,4 @@
-namespace ClearCanvas.ImageViewer.Explorer.Local
+namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 {
 	partial class LocalImageExplorerControl
 	{

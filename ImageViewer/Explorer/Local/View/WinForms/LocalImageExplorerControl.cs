@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using ClearCanvas.Controls.WinForms.FileBrowser.ShellDll;
 using ClearCanvas.Controls.WinForms;
 
-namespace ClearCanvas.ImageViewer.Explorer.Local
+namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 {
 	public partial class LocalImageExplorerControl : UserControl
 	{

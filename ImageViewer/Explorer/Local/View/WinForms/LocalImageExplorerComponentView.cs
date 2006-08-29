@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 using System.Windows.Forms;
 
-namespace ClearCanvas.ImageViewer.Explorer.Local
+namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 {
 	[ExtensionOf(typeof(LocalImageExplorerComponentViewExtensionPoint))]
 	public class LocalImageExplorerComponentView : WinFormsView, IApplicationComponentView

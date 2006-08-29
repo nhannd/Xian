@@ -188,6 +188,7 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\ImageViewer\Tools\Standard\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Standard.dll" .\plugins
       copy "..\..\..\Edit\bin\$(ConfigurationName)\ClearCanvas.Desktop.Edit.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Explorer\Local\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Explorer\Local\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" .\plugins
       ::copy "..\..\..\..\ImageViewer\Explorer\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Remote.dll" .\plugins
       ::copy "..\..\..\..\ImageViewer\Explorer\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.dll" .\plugins
