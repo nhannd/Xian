@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
-    public partial interface IPatientBroker : IEntityBroker<Patient, PatientSearchCriteria>
+    public partial interface IPatientProfileBroker : IEntityBroker<PatientProfile, PatientProfileSearchCriteria>
     {
     }
 }

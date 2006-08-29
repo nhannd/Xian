@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <class name="Patient" proxy="Patient" table="Patient_">
+  <class name="PatientProfile" proxy="PatientProfile" table="PatientProfile_">
     <id name="OID" column="OID" type="Int64">
       <generator class="hilo">
         <param name="max_lo">100</param>
@@ -9,7 +9,7 @@
     <version name="Version" column="Version"/>
 
     <set name="Identifiers" lazy="false" fetch="join" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
-      <key column="PatientOID_"/>
+      <key column="PatientProfileOID_"/>
       <composite-element class="PatientIdentifier">
         <property name="Id" column="Id_" type="String" length="30" not-null="true"/>
         <property name="AssigningAuthority" column="AssigningAuthority_" type="String" length="100" not-null="true"/>
@@ -29,7 +29,7 @@
     <property name="DeathIndicator" column="DeathIndicator_" type="Boolean" not-null="true"/>
     <property name="TimeOfDeath" column="TimeOfDeath_" type="DateTime" not-null="false"/>
     <set name="TelephoneNumbers" lazy="true" table="PatientTelephoneNumber_" access="nosetter.camelcase-underscore">
-      <key column="PatientOID_"/>
+      <key column="PatientProfileOID_"/>
       <composite-element class="TelephoneNumber">
         <property name="CountryCode" column="CountryCode_" type="String" length="10" not-null="true"/>
         <property name="AreaCode" column="AreaCode_" type="String" length="10" not-null="true"/>
@@ -40,7 +40,7 @@
       </composite-element>
     </set>
     <set name="Addresses" table="PatientAddress_" lazy="true" access="nosetter.camelcase-underscore">
-      <key column="PatientOID_"/>
+      <key column="PatientProfileOID_"/>
       <composite-element class="Address">
         <property name="Street" column="Street_" type="String" length="100" not-null="true"/>
         <property name="City" column="City_" type="String" length="50" not-null="true"/>

@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Healthcare
 {
-    public partial class PatientSearchCriteria : SearchCriteria
+    public partial class PatientProfileSearchCriteria : SearchCriteria
     {
         private PatientIdentifierSearchCriteria _identifiers = new PatientIdentifierSearchCriteria();
 

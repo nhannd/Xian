@@ -39,14 +39,13 @@
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
-    <Compile Include="Brokers\PatientBroker.cs" />
+    <Compile Include="Brokers\PatientProfileBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Patient.hbm.xml" />
     <EmbeddedResource Include="PatientIdentifierTypeEnum.hbm.xml" />
     <EmbeddedResource Include="SexEnum.hbm.xml" />
     <EmbeddedResource Include="TelephoneEquipmentEnum.hbm.xml" />
@@ -72,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AddressTypeEnum.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PatientProfile.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

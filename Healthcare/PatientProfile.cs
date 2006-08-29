@@ -10,18 +10,18 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// Patient entity
+    /// PatientProfile entity
     /// </summary>
-	public partial class Patient : Entity
+	public partial class PatientProfile : Entity
 	{
 		/// <summary>
 		/// Factory method
 		/// </summary>
-		public static Patient New()
+		public static PatientProfile New()
 		{
 			// add any object initialization code here
 			// the signature of the New() method may be freely changed as needed
-			Patient patient = new Patient();
+			PatientProfile patient = new PatientProfile();
             patient._sex = Sex.U;   // default to Unknown
             return patient;
 		}
