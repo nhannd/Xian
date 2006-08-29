@@ -11,8 +11,8 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [ButtonAction("edit", "PatientAdminToolbar/Edit")]
-    [ClickHandler("edit", "EditPatient")]
+    [ButtonAction("edit", "global-menus/PatientAdminToolbar/Edit")]
+    [ClickHandler("edit", "global-toolbars/EditPatient")]
     [EnabledStateObserver("edit", "Enabled", "EnabledChanged")]
     [Tooltip("edit", "Edit Patient")]
     [IconSet("edit", IconScheme.Colour, "Icons.EditPatientMedium.png", "Icons.EditPatientMedium.png", "Icons.EditPatientMedium.png")]
