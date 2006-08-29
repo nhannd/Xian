@@ -42,9 +42,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Admi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Admin.View.WinForms", "Client\Admin\View\WinForms\ClearCanvas.Ris.Client.Admin.View.WinForms.csproj", "{B15108DE-ED83-4385-9E79-01D3DC8B0AE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.View.WinForms", "..\ImageViewer\View\WinForms\ClearCanvas.ImageViewer.View.WinForms.csproj", "{1B8C0C00-F5E4-42B6-A389-B01717AF9460}"
-EndProject
 Global
+	GlobalSection(TextTemplating) = postSolution
+		TextTemplating = 1
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -106,15 +107,8 @@ Global
 		{B15108DE-ED83-4385-9E79-01D3DC8B0AE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B15108DE-ED83-4385-9E79-01D3DC8B0AE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B15108DE-ED83-4385-9E79-01D3DC8B0AE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B8C0C00-F5E4-42B6-A389-B01717AF9460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B8C0C00-F5E4-42B6-A389-B01717AF9460}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B8C0C00-F5E4-42B6-A389-B01717AF9460}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B8C0C00-F5E4-42B6-A389-B01717AF9460}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(TextTemplating) = postSolution
-		TextTemplating = 1
 	EndGlobalSection
 EndGlobal
