@@ -5,7 +5,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
