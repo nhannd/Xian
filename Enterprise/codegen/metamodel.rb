@@ -1,5 +1,30 @@
 require 'rexml/document'
 
+# NHibernate elements that result in C# fields
+NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','component','map','set','idbag']
+
+# NHibernate collection elements supported by this code generator
+NHIBERNATE_COLLECTION_TYPES = ['map', 'set', 'idbag']
+
+# NHibernate to C# type mappings
+DATATYPE_MAPPINGS =
+{
+	'map' => 'IDictionary',
+	'set' => 'ISet',
+	'idbag' => 'ICollection',
+	'String' => 'string',
+	'Boolean' => 'bool'
+}
+
+# C# datatype initializers
+DATATYPE_INITIALIZERS = 
+{
+	'IDictionary' => 'new Hashtable()',
+	'ISet' => 'new HybridSet()',
+	'ICollection' => 'new List()',
+	'DateTime' => 'DateTime.Now'
+}
+
 class ElementDef
   def namespace
   end
@@ -139,7 +164,7 @@ class EntityDef < ClassDef
     @superClassName = superClassName
     @isSubClass = (superClassName != "Entity")
     classNode.each_element do |fieldNode|
-      processField(fieldNode) if(['property', 'map','set','many-to-one','component'].include?(fieldNode.name))
+      processField(fieldNode) if(NHIBERNATE_FIELD_TYPES.include?(fieldNode.name))
     end
   end
 end
@@ -148,39 +173,45 @@ class ComponentDef < ClassDef
   def initialize(model, componentNode)
     super(model, Model.fixDataType(componentNode.attributes['class']))
     componentNode.each_element do |fieldNode|
-      processField(fieldNode) if(['property', 'map','set','many-to-one','component'].include?(fieldNode.name))
+      processField(fieldNode) if(NHIBERNATE_FIELD_TYPES.include?(fieldNode.name))
     end
   end
 end
 
 # represents the definition of a field within a ClassDef
 class FieldDef
-  @@dataTypes = {'map' => 'IDictionary', 'set' => 'ISet', 'String' => 'string', 'Boolean' => 'bool'}
-  @@initialValues = { 'IDictionary' => 'new Hashtable()', 'ISet' => 'new HybridSet()', 'DateTime' => 'DateTime.Now'}
-
   attr_reader :fieldName, :accessorName, :dataType, :readOnly, :isCollection, :isComponent, :initialValue
 
   def initialize(fieldNode)
       @accessorName = fieldNode.attributes['name']
       @fieldName = "_" + @accessorName[0..0].downcase + @accessorName[1..-1]
       
-      #if 'not-null' attribute is omitted, the default value is false (eg. the column is nullable)
+	#if 'not-null' attribute is omitted, the default value is false (eg. the column is nullable)
       nullable = (fieldNode.attributes['not-null'] == nil || fieldNode.attributes['not-null'] == 'false')
+
+	# is this field a collection?
+      @isCollection = NHIBERNATE_COLLECTION_TYPES.include?(fieldNode.name)
       
-      if(fieldNode.name == "property")
-        @dataType = Model.fixDataType(fieldNode.attributes['type'])
-	    @dataType << "?" if(@dataType == 'DateTime' && nullable)
-      elsif(['many-to-one', 'component'].include?(fieldNode.name))
-        @dataType = Model.fixDataType(fieldNode.attributes['class'])
-      elsif(fieldNode.name == "map")
-        @dataType = "IDictionary"
-      elsif(fieldNode.name == "set")
-        @dataType = "ISet"
-      end
       
-      @readOnly = @isCollection = ['map', 'set'].include?(fieldNode.name)
+	# get the raw datatype,  from either the node name itself, or the 'class' or 'type' attribute
+      # the call to fixDataType will simply remove assembly name qualifiers, etc
+	@dataType = @isCollection ? fieldNode.name :
+				Model.fixDataType(['many-to-one', 'component'].include?(fieldNode.name) ? fieldNode.attributes['class'] :
+					fieldNode.attributes['type'])
+ 
+      # map the datatype if possible, otherwise assume that the raw datatype is a valid C# type
+      @dataType = DATATYPE_MAPPINGS[@dataType] || @dataType
+      
+      # special handling of DateTime, because we need to support nullable
+	@dataType << "?" if(@dataType == 'DateTime' && nullable)
+      
+      # all collection properties are read-only
+      @readOnly = @isCollection
+      
       @isComponent = (fieldNode.name == 'component')
-      @initialValue = @@initialValues[@dataType] || ("#{@dataType}.New()" if @isComponent)
+      
+      # determine the C# initializer for the field
+      @initialValue = DATATYPE_INITIALIZERS[@dataType] || ("#{@dataType}.New()" if @isComponent)
   end
 end
 
