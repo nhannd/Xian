@@ -9,27 +9,34 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
 
-#if MONO
-#else
+#if !MONO
+    public interface ITableColumn<TItem>
+    {
+        string Name { get; }
+        Type ColumnType { get; }
+        float WidthFactor { get; }
+        bool ReadOnly { get; }
+        object GetValue(TItem item);
+        void SetValue(TItem item, object value);
+    }
+
+    
     /// <summary>
-    /// 
+    /// Useful generic implementation of <see cref="ITableData"/>
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TItem">The type of item that the table will display</typeparam>
     public class TableData<TItem> : BindingList<TItem>, ITableData
     {
-        public delegate object ColumnValueGetDelegate<TObject>(TObject obj);
         public delegate bool FindDelegate<TObject>(TObject obj);
 
         internal class PropertyDescriptorEx : PropertyDescriptor
         {
-            private Type _columnType;
-            private ColumnValueGetDelegate<TItem> _valueGetDelegate;
+            private ITableColumn<TItem> _column;
 
-            internal PropertyDescriptorEx(string name, Type columnType, ColumnValueGetDelegate<TItem> valueGetDelegate)
-                : base(name, new Attribute[] { })
+            internal PropertyDescriptorEx(ITableColumn<TItem> column)
+                : base(column.Name, new Attribute[] { })
             {
-                _columnType = columnType;
-                _valueGetDelegate = valueGetDelegate;
+                _column = column;
             }
 
             public override bool CanResetValue(object component)
@@ -44,25 +51,25 @@ namespace ClearCanvas.Desktop
 
             public override object GetValue(object component)
             {
-                return _valueGetDelegate((TItem)component);
+                return _column.GetValue((TItem)component);
+            }
+
+            public override void SetValue(object component, object value)
+            {
+                _column.SetValue((TItem)component, value);
             }
 
             public override bool IsReadOnly
             {
-                get { return true; }
+                get { return _column.ReadOnly; }
             }
 
             public override Type PropertyType
             {
-                get { return _columnType; }
+                get { return _column.ColumnType; }
             }
 
             public override void ResetValue(object component)
-            {
-                throw new NotSupportedException();
-            }
-
-            public override void SetValue(object component, object value)
             {
                 throw new NotSupportedException();
             }
@@ -73,16 +80,33 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        private List<PropertyDescriptor> _properties;
+        class ColumnList : ObservableList<ITableColumn<TItem>, CollectionEventArgs<ITableColumn<TItem>>>
+        {
+        }
+
+
+        private ColumnList _columns;
+        private Dictionary<ITableColumn<TItem>, PropertyDescriptor> _propertyDescriptors;
+
 
         public TableData()
         {
-            _properties = new List<PropertyDescriptor>();
+            _propertyDescriptors = new Dictionary<ITableColumn<TItem>, PropertyDescriptor>();
+
+            _columns = new ColumnList();
+            _columns.ItemAdded += delegate(object sender, CollectionEventArgs<ITableColumn<TItem>> args)
+                {
+                    _propertyDescriptors.Add(args.Item, new PropertyDescriptorEx(args.Item));
+                };
+            _columns.ItemRemoved += delegate(object sender, CollectionEventArgs<ITableColumn<TItem>> args)
+                {
+                    _propertyDescriptors.Remove(args.Item);
+                };
         }
 
-        public void AddColumn<TColumnType>(string columnName, ColumnValueGetDelegate<TItem> valueGetDelegate)
+        public IList<ITableColumn<TItem>> Columns
         {
-            _properties.Add(new PropertyDescriptorEx(columnName, typeof(TColumnType), valueGetDelegate));
+            get { return _columns; }
         }
 
         public int FindIndex(FindDelegate<TItem> findDelegate)
@@ -100,7 +124,13 @@ namespace ClearCanvas.Desktop
 
         public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)
         {
-            return new PropertyDescriptorCollection(_properties.ToArray());
+            List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
+            foreach (ITableColumn<TItem> column in _columns)
+            {
+                properties.Add(_propertyDescriptors[column]);
+            }
+
+            return new PropertyDescriptorCollection(properties.ToArray());
         }
 
         public string GetListName(PropertyDescriptor[] listAccessors)
