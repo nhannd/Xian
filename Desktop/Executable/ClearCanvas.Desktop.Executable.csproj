@@ -226,6 +226,7 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\Healthcare\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
 
       :: Ris
+      copy "..\..\..\..\Ris\Services\bin\$(ConfigurationName)\ClearCanvas.Ris.Services.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Admin\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
 </PostBuildEvent>
