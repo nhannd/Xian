@@ -9,7 +9,7 @@ using ClearCanvas.Healthcare.Brokers;
 
 using Iesi.Collections;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Services
 {
     [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
     public class PatientAdminService : HealthcareServiceLayer, IPatientAdminService

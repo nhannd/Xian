@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Client.Admin
 {

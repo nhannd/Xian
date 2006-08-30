@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Healthcare;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Services
 {
     public interface IPatientAdminService : IHealthcareServiceLayer
     {
