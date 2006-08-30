@@ -88,10 +88,10 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientAdminService.PatientProfileChanged += _patientAdminService_PatientChanged;
 
             _workingSet = new TableData<PatientProfile>();
-            _workingSet.AddColumn<string>("MRN", delegate(PatientProfile p) { return p.GetMrn() != null ? p.GetMrn().Id : ""; });
-            _workingSet.AddColumn<string>("Name", delegate(PatientProfile p) { return p.Name.Format(); });
-            _workingSet.AddColumn<string>("Sex", delegate(PatientProfile p) { return _patientAdminService.SexEnumTable[p.Sex].Value; });
-            _workingSet.AddColumn<string>("Date of Birth", delegate(PatientProfile p) { return p.DateOfBirth.Date.ToShortDateString(); });
+            _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("MRN", delegate(PatientProfile p) { return p.GetMrn() != null ? p.GetMrn().Id : ""; }));
+            _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Name", delegate(PatientProfile p) { return p.Name.Format(); }));
+            _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Sex", delegate(PatientProfile p) { return _patientAdminService.SexEnumTable[p.Sex].Value; }));
+            _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Date of Birth", delegate(PatientProfile p) { return p.DateOfBirth.Date.ToShortDateString(); }));
 
             _toolSet = new ToolSet(new PatientAdminToolExtensionPoint(), new PatientAdminToolContext(this));
         }

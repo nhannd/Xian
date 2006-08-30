@@ -61,9 +61,9 @@ namespace ClearCanvas.Ris.Client.Admin
             _patient = PatientProfile.New();
             _patientIdentifiers = new TableData<PatientIdentifier>();
 
-            _patientIdentifiers.AddColumn<string>("Type", delegate(PatientIdentifier pi) { return _patientAdminService.PatientIdentifierTypeEnumTable[pi.Type].Value; });
-            _patientIdentifiers.AddColumn<string>("ID", delegate(PatientIdentifier pi) { return pi.Id; });
-            _patientIdentifiers.AddColumn<string>("Assigning Authority", delegate(PatientIdentifier pi) { return pi.AssigningAuthority; });
+            _patientIdentifiers.Columns.Add(new TableColumn<PatientIdentifier, string>("Type", delegate(PatientIdentifier pi) { return _patientAdminService.PatientIdentifierTypeEnumTable[pi.Type].Value; }));
+            _patientIdentifiers.Columns.Add(new TableColumn<PatientIdentifier, string>("ID", delegate(PatientIdentifier pi) { return pi.Id; }));
+            _patientIdentifiers.Columns.Add(new TableColumn<PatientIdentifier, string>("Assigning Authority", delegate(PatientIdentifier pi) { return pi.AssigningAuthority; }));
 
             _patientIdentifiersActionHandler = new PatientIdentifiersActionHandler(this);
 

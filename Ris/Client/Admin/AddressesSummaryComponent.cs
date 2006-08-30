@@ -56,12 +56,14 @@ namespace ClearCanvas.Ris.Client.Admin
             _addresses = new TableData<Address>();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
 
-            _addresses.AddColumn<string>("Type", delegate(Address a) { return _patientAdminService.AddressTypeEnumTable[a.Type].Value; });
-            _addresses.AddColumn<string>("Street", delegate(Address a) { return a.Street; });
-            _addresses.AddColumn<string>("City", delegate(Address a) { return a.City; });
-            _addresses.AddColumn<string>("Province", delegate(Address a) { return a.Province; });
-            _addresses.AddColumn<string>("PostalCode", delegate(Address a) { return a.PostalCode; });
-            _addresses.AddColumn<string>("Country", delegate(Address a) { return a.Country; });
+
+            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _patientAdminService.AddressTypeEnumTable[a.Type].Value; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _patientAdminService.AddressTypeEnumTable[a.Type].Value; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Street", delegate(Address a) { return a.Street; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("City", delegate(Address a) { return a.City; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Province", delegate(Address a) { return a.Province; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("PostalCode", delegate(Address a) { return a.PostalCode; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Country", delegate(Address a) { return a.Country; }));
             //_addresses.AddColumn<string>("ValidFrom", delegate(Address a) { return a.ValidFrom; });
             //_addresses.AddColumn<string>("ValidUntil", delegate(Address a) { return a.ValidUntil; });
 
