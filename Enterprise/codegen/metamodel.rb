@@ -21,7 +21,7 @@ DATATYPE_INITIALIZERS =
 {
 	'IDictionary' => 'new Hashtable()',
 	'ISet' => 'new HybridSet()',
-	'ICollection' => 'new List()',
+	'ICollection' => 'new ArrayList()',
 	'DateTime' => 'DateTime.Now'
 }
 
