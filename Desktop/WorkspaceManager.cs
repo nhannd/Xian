@@ -6,12 +6,8 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop 
 {
 	/// <summary>
-	/// Manages workspaces.
-	/// </summary>
-	/// <remarks>
-	/// <b>WorkspaceManager</b> manages a collection of <see cref="Workspace"/> objects.
-	/// It is accessed via the <see cref="ModelPlugin.WorkspaceManager"/> static property.  
-	/// </remarks>
+    /// Manages a collection of <see cref="IWorkspace"/> objects.
+    /// </summary>
 	public class WorkspaceManager : IDisposable
 	{
         private IDesktopWindow _desktopWindow;
@@ -25,34 +21,46 @@ namespace ClearCanvas.Desktop
             _workspaces = new WorkspaceCollection(this);
 		}
 
-        ~WorkspaceManager()
-        {
-            Dispose(false);
-        }
-
+        /// <summary>
+        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// </summary>
+        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         protected void Dispose(bool disposing)
         {
-            foreach (IWorkspace workspace in _workspaces)
+            if (disposing)
             {
-                workspace.Dispose();
+                foreach (IWorkspace workspace in _workspaces)
+                {
+                    try
+                    {
+                        workspace.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(e);
+                    }
+                }
+                _workspaces.Clear();
             }
-            _workspaces.Clear();
         }
 
+        /// <summary>
+        /// The collection of <see cref="IShelf"/> objects that are currently being managed
+        /// </summary>
         public WorkspaceCollection Workspaces
 		{
 			get { return _workspaces; }
 		}
 
 		/// <summary>
-		/// Gets or sets the currently active <see cref="Workspace"/>.
+		/// Gets or sets the currently active <see cref="IWorkspace"/>.
 		/// </summary>
 		/// <remarks>
         /// This property may return <b>null</b> in the case where there are no workspaces.  However,
         /// attempting to set it to <b>null</b> will throw an exception; there must always be an active workspace.
         /// When a new workspace is added, that workspace is set as active.
 		/// </remarks>
-		/// <value>The currently active <see cref="Workspace"/> or <b>null</b> if
+		/// <value>The currently active workspace or <b>null</b> if
 		/// there are no workspaces in the <see cref="WorkspaceManager"/>.</value>
 		/// <exception cref="ArgumentNullException"><paramref name="ActiveWorkspace"/> is set to <b>null</b>.</exception>
 		public IWorkspace ActiveWorkspace
@@ -77,7 +85,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Occurs when the value of the <see cref="ActiveWorkspace"/> property changes.
 		/// </summary>
-		/// <remarks>The event handler receives an argument of type <see cref="WorkspaceEventArgs"/>.</remarks>
+        /// <remarks>The event handler receives an argument of type <see cref="WorkspaceActivationChangedEventArgs"/>.</remarks>
         public event EventHandler<WorkspaceActivationChangedEventArgs> ActiveWorkspaceChanged
 		{
 			add { _activeWorkspaceChanged += value; }
@@ -113,7 +121,16 @@ namespace ClearCanvas.Desktop
 
         public void Dispose()
         {
-            Dispose(true);
+            try
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            catch (Exception e)
+            {
+                // shouldn't throw anything from inside Dispose()
+                Platform.Log(e);
+            }
         }
 
         #endregion

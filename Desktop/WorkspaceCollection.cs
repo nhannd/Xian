@@ -5,10 +5,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-	/// <summary>
-	/// Summary description for WorkspaceCollection.
-	/// </summary>
-	public class WorkspaceCollection : ObservableList<IWorkspace, WorkspaceEventArgs>
+    /// <summary>
+    /// A collection of <see cref="IWorkspace"/> objects, used by <see cref="WorkspaceManager"/>
+    /// </summary>
+    public class WorkspaceCollection : ObservableList<IWorkspace, WorkspaceEventArgs>
 	{
         private WorkspaceManager _owner;
 

@@ -5,10 +5,9 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Desktop
 {
-#if MONO
-#else
+#if !MONO
     /// <summary>
-    /// Defines the public interface for a table data source (data that is
+    /// Defines the interface for a table data source (data that is
     /// displayed on the screen in the form of a table)
     /// </summary>
     public interface ITableData : IBindingList, ITypedList

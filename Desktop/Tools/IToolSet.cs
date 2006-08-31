@@ -4,7 +4,10 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Tools
 {
-    public interface IToolSet
+    /// <summary>
+    /// Defines the external interface to a tool set, which manages a set of tools
+    /// </summary>
+    public interface IToolSet : IDisposable
     {
         /// <summary>
         /// Gets the tools contained in this tool set

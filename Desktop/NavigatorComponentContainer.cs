@@ -190,7 +190,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Returns the current set of pages.
+        /// Accesses the list of pages
         /// </summary>
         public IList<NavigatorPage> Pages
         {

@@ -22,12 +22,29 @@ namespace ClearCanvas.Desktop.Actions
 
         private IObservablePropertyBinding<bool> _enabledPropertyBinding;
 
-        public Action(string actionID, ActionPath pathHint, object target)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID">The logical action ID</param>
+        /// <param name="pathHint">The action path</param>
+        /// <param name="target"></param>
+        public Action(string actionID, ActionPath path, object target)
         {
             _actionID = actionID;
-            _path = pathHint;
+            _path = path;
             _target = target;
         }
+
+        /// <summary>
+        /// Sets the observable property that this action monitors for its enablement state
+        /// </summary>
+        /// <param name="enabledPropertyBinding">The property to monitor</param>
+        public void SetEnabledObservable(IObservablePropertyBinding<bool> enabledPropertyBinding)
+        {
+            _enabledPropertyBinding = enabledPropertyBinding;
+        }
+
+        #region IAction members
 
         public string ActionID
         {
@@ -86,9 +103,7 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        public void SetEnabledObservable(IObservablePropertyBinding<bool> enabledPropertyBinding)
-        {
-            _enabledPropertyBinding = enabledPropertyBinding;
-        }
+        #endregion
+
     }
 }

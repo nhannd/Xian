@@ -16,32 +16,28 @@ namespace ClearCanvas.Desktop.Tools
         private IToolContext _context;
         private IActionSet _actions;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Tool()
         {
         }
 
-        ~Tool()
-        {
-            Dispose(false);
-        }
-
+        /// <summary>
+        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// </summary>
+        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         protected virtual void Dispose(bool disposing)
         {
-            _context = null;
-        }
-
-        public void SetContext(IToolContext context)
-        {
-            _context = context;
-        }
-
-        public virtual void Initialize()
-        {
+            if (disposing)
+            {
+                _context = null;
+            }
         }
 
         /// <summary>
-        /// Provides a reference to the context in which the tool is operating.
-        /// May return null if there is no current context.
+        /// Provides a reference to the context in which the tool is operating. Attempting to access this property
+        /// before <see cref="SetContext"/> has been called (e.g in the constructor of this tool) will return null.
         /// </summary>
         /// <remarks>
         /// Subclasses will probably want to create a property that wraps this property
@@ -50,6 +46,18 @@ namespace ClearCanvas.Desktop.Tools
         protected IToolContext ContextBase
         {
             get { return _context; }
+        }
+
+        #region ITool members
+
+        public void SetContext(IToolContext context)
+        {
+            _context = context;
+        }
+
+        public virtual void Initialize()
+        {
+            // nothing to do
         }
 
         public virtual IActionSet Actions
@@ -64,11 +72,22 @@ namespace ClearCanvas.Desktop.Tools
             }
         }
 
+        #endregion
+
         #region IDisposable Members
 
         public void Dispose()
         {
-            Dispose(true);
+            try
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            catch (Exception e)
+            {
+                // shouldn't throw anything from inside Dispose()
+                Platform.Log(e);
+            }
         }
 
         #endregion

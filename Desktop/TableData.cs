@@ -10,17 +10,6 @@ namespace ClearCanvas.Desktop
 {
 
 #if !MONO
-    public interface ITableColumn<TItem>
-    {
-        string Name { get; }
-        Type ColumnType { get; }
-        float WidthFactor { get; }
-        bool ReadOnly { get; }
-        object GetValue(TItem item);
-        void SetValue(TItem item, object value);
-    }
-
-    
     /// <summary>
     /// Useful generic implementation of <see cref="ITableData"/>
     /// </summary>
@@ -88,7 +77,9 @@ namespace ClearCanvas.Desktop
         private ColumnList _columns;
         private Dictionary<ITableColumn<TItem>, PropertyDescriptor> _propertyDescriptors;
 
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public TableData()
         {
             _propertyDescriptors = new Dictionary<ITableColumn<TItem>, PropertyDescriptor>();
@@ -104,11 +95,21 @@ namespace ClearCanvas.Desktop
                 };
         }
 
+        /// <summary>
+        /// Accesses the list of columns that describe this table data.  Use this property to add
+        /// <see cref="TableColumn"/> objects.
+        /// </summary>
         public IList<ITableColumn<TItem>> Columns
         {
             get { return _columns; }
         }
 
+        /// <summary>
+        /// Searches the rows for an item that meets the criteria of the specified delegate and returns
+        /// the index of the first such item.
+        /// </summary>
+        /// <param name="findDelegate">A delegate that accepts an item and returns a boolean to indicate if the item is the item sought</param>
+        /// <returns>The index of the first matching item, or -1 if no matching items are found</returns>
         public int FindIndex(FindDelegate<TItem> findDelegate)
         {
             for(int i = 0; i < this.Count; i++)

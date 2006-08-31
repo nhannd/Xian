@@ -5,12 +5,12 @@ using System.Text;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Extends the <see cref="IView"/> interface for views that look at workspaces.
+    /// Defines the interface for a view onto a workspace, as seen by the desktop.
     /// </summary>
     public interface IWorkspaceView : IView
 	{
         /// <summary>
-        /// Sets the workspace which the view should look at.
+        /// Sets the workspace which the view looks at.
         /// </summary>
         void SetWorkspace(IWorkspace workspace);
 	}

@@ -23,8 +23,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Exposes the underlying UI component that implements this view.  The type of the object
-        /// is dependent upon the GUI toolkit.  A parent view will typically know how to cast
+        /// Exposes the underlying UI component that provides this view.  The type of the object
+        /// is dependent upon the GUI toolkit.  A parent view will know how to cast
         /// this object appropriately.
         /// </summary>
         object GuiElement

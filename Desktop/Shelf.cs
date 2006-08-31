@@ -6,6 +6,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Abstract class that provides the base implementation of <see cref="IShelf"/>.
+    /// </summary>
     public abstract class Shelf : IShelf
     {
         private IDesktopWindow _desktopWindow;
@@ -19,13 +22,13 @@ namespace ClearCanvas.Desktop
             _displayHint = displayHint;
         }
 
-        ~Shelf()
-        {
-            Dispose(false);
-        }
-
+        /// <summary>
+        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// </summary>
+        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         protected virtual void Dispose(bool disposing)
         {
+            // nothing to do
         }
 
         #region IShelf Members
@@ -74,7 +77,16 @@ namespace ClearCanvas.Desktop
 
         public void Dispose()
         {
-            Dispose(true);
+            try
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            catch (Exception e)
+            {
+                // shouldn't throw anything from inside Dispose()
+                Platform.Log(e);
+            }
         }
 
         #endregion

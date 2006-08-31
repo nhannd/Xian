@@ -6,6 +6,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// A collection of <see cref="IShelf"/> objects, used by <see cref="ShelfManager"/>
+    /// </summary>
     public class ShelfCollection : ObservableList<IShelf, ShelfEventArgs>
     {
         private ShelfManager _owner;

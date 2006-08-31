@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Flags that indicate how a shelf should be displayed
+    /// </summary>
     [Flags]
     public enum ShelfDisplayHint
     {

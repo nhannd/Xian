@@ -8,10 +8,9 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Abstract base class providing most of the implementation of <see cref="IWorkspace"/>.  Concrete workspace
-    /// classes are encourage to extend this class rather than implement <see cref="IWorkspace"/> directly.
+    /// Abstract class that provides the base implementation of <see cref="IWorkspace"/>.
     /// </summary>
-	public abstract class Workspace : IWorkspace
+    public abstract class Workspace : IWorkspace
 	{
         private IDesktopWindow _desktopWindow;
 		private string _title;
@@ -26,11 +25,6 @@ namespace ClearCanvas.Desktop
 		{
             _title = title;
             _commandHistory = new CommandHistory(100);
-        }
-
-        ~Workspace()
-        {
-            Dispose(false);
         }
 
         #region IWorkspace Members
@@ -99,8 +93,13 @@ namespace ClearCanvas.Desktop
             remove { _titleChanged -= value; }
         }
 
+        /// <summary>
+        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// </summary>
+        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         protected virtual void Dispose(bool disposing)
         {
+            // nothing to do
         }
 
         public virtual bool CanClose()
@@ -114,7 +113,16 @@ namespace ClearCanvas.Desktop
 
         public void Dispose()
         {
-            Dispose(true);
+            try
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            catch (Exception e)
+            {
+                // shouldn't throw anything from inside Dispose()
+                Platform.Log(e);
+            }
         }
 
         #endregion

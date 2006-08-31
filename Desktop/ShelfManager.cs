@@ -2,8 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common;
+
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Manages a collection of <see cref="IShelf"/> objects.
+    /// </summary>
     public class ShelfManager : IDisposable
     {
         private ShelfCollection _shelves;
@@ -18,20 +23,33 @@ namespace ClearCanvas.Desktop
             _desktopWindow = desktopWindow;
 	    }
 
-        ~ShelfManager()
-        {
-            Dispose(false);
-        }
-
+        /// <summary>
+        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// </summary>
+        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         private void Dispose(bool disposing)
         {
-            foreach (IShelf shelf in _shelves)
+            if (disposing)
             {
-                shelf.Dispose();
+                foreach (IShelf shelf in _shelves)
+                {
+                    // important that we don't throw any exceptions from this method
+                    try
+                    {
+                        shelf.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(e);
+                    }
+                }
+                _shelves.Clear();
             }
-            _shelves.Clear();
         }
 
+        /// <summary>
+        /// The collection of <see cref="IShelf"/> objects that are currently being managed
+        /// </summary>
         public ShelfCollection Shelves
         {
             get { return _shelves; }
@@ -52,7 +70,16 @@ namespace ClearCanvas.Desktop
 
         public void Dispose()
         {
-            Dispose(true);
+            try
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            catch (Exception e)
+            {
+                // shouldn't throw anything from inside Dispose()
+                Platform.Log(e);
+            }
         }
 
         #endregion

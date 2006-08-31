@@ -8,7 +8,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Represents a single page in a <see cref="NavigatorComponent"/>.
+    /// Represents a single page in a <see cref="NavigatorComponentContainer"/>.
     /// </summary>
     public class NavigatorPage
     {

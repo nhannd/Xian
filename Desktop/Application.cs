@@ -16,7 +16,9 @@ namespace ClearCanvas.Desktop
     }
 
 
-
+    /// <summary>
+    /// Singleton class that represents the desktop application as a whole.
+    /// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class Application : IApplicationRoot
     {
@@ -26,7 +28,7 @@ namespace ClearCanvas.Desktop
         private IDesktopWindowView _view;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WorkstationModel"/> class.
+        /// Initializes a new instance of the <see cref="Application"/> class.
         /// </summary>
         public Application()
         {
@@ -63,16 +65,25 @@ namespace ClearCanvas.Desktop
             _window.Dispose();
         }
 
+        /// <summary>
+        /// The name of the application
+        /// </summary>
         public static string ApplicationName
         {
             get { return SR.ApplicationName; }
         }
 
+        /// <summary>
+        /// The current version of the application
+        /// </summary>
         public static string ApplicationVersion
         {
             get { return SR.ApplicationVersion; }
         }
 
+        /// <summary>
+        /// The <see cref="GuiToolkitID"/> of the GUI toolkit that is currently in use
+        /// </summary>
         public static GuiToolkitID GuiToolkit
         {
             get
@@ -97,6 +108,9 @@ namespace ClearCanvas.Desktop
             return (IDialogBox)xp.CreateExtension(new AttributeExtensionFilter(testAttr));
         }
 
+        /// <summary>
+        /// Quits the application
+        /// </summary>
         public static void Quit()
         {
             _instance._view.QuitMessagePump();

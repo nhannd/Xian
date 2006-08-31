@@ -5,7 +5,7 @@ using System.Text;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Represents a single segment of an <see cref="ActionPath"/>.
+    /// Represents a single segment of a <see cref="Path"/>.
     /// </summary>
     public class PathSegment
     {

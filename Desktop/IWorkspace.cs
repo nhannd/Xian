@@ -6,9 +6,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines the public interface for a workspace.  Implementations should preferably extend the
-    /// abstract class <see cref="Workspace"/> rather than implement this interface directly, as
-    /// if provides some default functionality.
+    /// Defines the interface to a workspace as seen by the desktop.
     /// </summary>
     public interface IWorkspace : IDisposable
     {

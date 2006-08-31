@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Defines the interface to a shelf as seen by the desktop.
+    /// </summary>
     public interface IShelf : IDisposable
     {
 

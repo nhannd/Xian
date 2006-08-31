@@ -8,11 +8,17 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Define an extension point for a view onto this workspace
+    /// </summary>
     [ExtensionPoint]
     public class ApplicationComponentHostWorkspaceViewExtensionPoint : ExtensionPoint<IWorkspaceView>
     {
     }
 
+    /// <summary>
+    /// Hosts an application component in a workspace.  See <see cref="ApplicationComponent.LaunchAsWorkspace"/>.
+    /// </summary>
     [AssociateView(typeof(ApplicationComponentHostWorkspaceViewExtensionPoint))]
     public class ApplicationComponentHostWorkspace : Workspace
     {
@@ -64,17 +70,22 @@ namespace ClearCanvas.Desktop
             _component.SetHost(new Host(this));
         }
 
+        /// <summary>
+        /// Gets the hosted component
+        /// </summary>
+        public IApplicationComponent Component
+        {
+            get { return _component; }
+        }
+
+        #region IWorkspace Members
+
         public override void Initialize(IDesktopWindow desktopWindow)
         {
             base.Initialize(desktopWindow);
             _component.Start();
         }
 
-        public IApplicationComponent Component
-        {
-            get { return _component; }
-        }
-        
         public override bool CanClose()
         {
             return _component.CanExit();
@@ -97,5 +108,7 @@ namespace ClearCanvas.Desktop
         {
             get { return _component.ExportedActions; }
         }
+
+        #endregion
     }
 }

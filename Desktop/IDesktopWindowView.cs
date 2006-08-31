@@ -5,7 +5,8 @@ using System.Text;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines the interface for the main view of the workstation.
+    /// Defines the interface for a view onto a <see cref="IDesktopWindow"/>, as seen by the <see cref="Application"/>.
+    /// This interface is preliminary and subject to change.
     /// </summary>
     public interface IDesktopWindowView : IView
     {

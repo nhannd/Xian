@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Creates a view extension based on the view extension point that is associated with the specified
-        /// model type.  The model type is any type that has a <see cref="AssociateViewAttribute"/> attribute
+        /// model type.  The model type is any class that has a <see cref="AssociateViewAttribute"/> attribute
         /// specified.
         /// </summary>
         /// <param name="modelType"></param>

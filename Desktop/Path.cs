@@ -7,8 +7,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Represents an action path.  An action path specifies the location of an action within
-    /// a menu or toolbar hierarchy.
+    /// Represents a path.
     /// </summary>
     public class Path
     {

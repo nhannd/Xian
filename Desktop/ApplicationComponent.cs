@@ -9,12 +9,16 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Provides a callback when an application component exits
+    /// </summary>
+    /// <param name="component">The component that exited</param>
     public delegate void ApplicationComponentExitDelegate(IApplicationComponent component);    
     
     /// <summary>
     /// Abstract base class for all application components.  Components should extend this class
-    /// rather than implement <see cref="IApplicationComponent"/> directly, as it provides default
-    /// implementations that behave well in most situations.
+    /// rather than implement <see cref="IApplicationComponent"/> directly, as it provides a default
+    /// implementation suitable for most situations.
     /// </summary>
     public abstract class ApplicationComponent : IApplicationComponent
     {
@@ -22,10 +26,11 @@ namespace ClearCanvas.Desktop
         /// Executes the specified application component in a new workspace.  The exit callback will be invoked
         /// when the workspace is closed.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="exitCallback"></param>
-        /// <returns></returns>
+        /// <param name="desktopWindow">The desktop window in which the workspace will run</param>
+        /// <param name="component">The application component to launch</param>
+        /// <param name="title">The title of the workspace</param>
+        /// <param name="exitCallback">The callback to invoke when the workspace is closed</param>
+        /// <returns>The workspace that is hosting the component</returns>
         public static IWorkspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -41,10 +46,12 @@ namespace ClearCanvas.Desktop
         /// Executes the specified application component in a new shelf.  The exit callback will be invoked
         /// when the shelf is closed.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="exitCallback"></param>
-        /// <returns></returns>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run</param>
+        /// <param name="component">The application component to launch</param>
+        /// <param name="title">The title of the shelf</param>
+        /// <param name="displayHint">A hint as to how the shelf should initially be displayed</param>
+        /// <param name="exitCallback">The callback to invoke when the shelf is closed</param>
+        /// <returns>The shelf that is hosting the component</returns>
         public static IShelf LaunchAsShelf(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -61,8 +68,9 @@ namespace ClearCanvas.Desktop
         /// Executes the specified application component in a modal dialog box.  This call will block until
         /// the dialog box is closed.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run</param>
+        /// <param name="component">The application component to launch</param>
+        /// <param name="title">The title of the shelf</param>
         /// <returns></returns>
         public static ApplicationComponentExitCode LaunchAsDialog(
             IDesktopWindow desktopWindow,
@@ -78,6 +86,9 @@ namespace ClearCanvas.Desktop
         private bool _modified;
         private event EventHandler _modifiedChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
@@ -107,6 +118,11 @@ namespace ClearCanvas.Desktop
 
         #region IApplicationComponent Members
 
+        /// <summary>
+        /// Default implementation of <see cref="IApplicationComponent.SetHost"/>
+        /// Called by the framework to initialize this component with access to its host
+        /// </summary>
+        /// <param name="host">The host in which the component is running</param>
         public void SetHost(IApplicationComponentHost host)
         {
             _host = host;

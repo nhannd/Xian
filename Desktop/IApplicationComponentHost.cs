@@ -22,9 +22,9 @@ namespace ClearCanvas.Desktop
         /// Asks the host to display a message box to the user.  It is preferable for application
         /// components to use this method, rather than accessing the lower-level platform methods.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
+        /// <param name="message">The message to display</param>
+        /// <param name="buttons">The buttons to display</param>
+        /// <returns>A result indicating which button the user pressed</returns>
         DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
 
         /// <summary>

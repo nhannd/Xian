@@ -14,6 +14,9 @@ namespace ClearCanvas.Desktop
     {
     }
 
+    /// <summary>
+    /// Hosts an application component in a shelf.  See <see cref="ApplicationComponent.LaunchAsShelf"/>.
+    /// </summary>
     [AssociateView(typeof(ApplicationComponentHostShelfViewExtensionPoint))]
     public class ApplicationComponentHostShelf : Shelf
     {
@@ -69,15 +72,20 @@ namespace ClearCanvas.Desktop
             _component.SetHost(new Host(this));
         }
 
+        /// <summary>
+        /// Gets the hosted component
+        /// </summary>
+        public IApplicationComponent Component
+        {
+            get { return _component; }
+        }
+
+        #region IShelf Members
+
         public override void Initialize(IDesktopWindow desktopWindow)
         {
             base.Initialize(desktopWindow);
             _component.Start();
-        }
-
-        public IApplicationComponent Component
-        {
-            get { return _component; }
         }
 
         protected override void Dispose(bool disposing)
@@ -92,5 +100,7 @@ namespace ClearCanvas.Desktop
                 }
             }
         }
+
+        #endregion
     }
 }
