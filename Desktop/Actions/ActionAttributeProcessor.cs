@@ -6,7 +6,7 @@ namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
     /// Provides methods for processing the set of action attributes declared on a given target
-    /// class, which is typically a tool.
+    /// object, which is typically a tool.
     /// </summary>
     internal static class ActionAttributeProcessor
     {

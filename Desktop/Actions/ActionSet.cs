@@ -4,16 +4,25 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Actions
 {
-
+    /// <summary>
+    /// Default implementation of <see cref="IActionSet"/>
+    /// </summary>
     public class ActionSet : IActionSet
     {
         private List<IAction> _actions;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ActionSet()
             : this(null)
         {
         }
 
+        /// <summary>
+        /// Constructs an action set containing all actions in the specified <see cref="IEnumerable"/>.
+        /// </summary>
+        /// <param name="actions"></param>
         public ActionSet(IEnumerable<IAction> actions)
         {
             _actions = new List<IAction>();
@@ -21,6 +30,8 @@ namespace ClearCanvas.Desktop.Actions
             if(actions != null)
                 _actions.AddRange(actions);
         }
+
+        #region IActionSet members
 
         public IActionSet Select(ActionSelectorDelegate selector)
         {
@@ -38,13 +49,15 @@ namespace ClearCanvas.Desktop.Actions
             get { return _actions.Count; }
         }
 
-        public IActionSet Add(IActionSet other)
+        public IActionSet Union(IActionSet other)
         {
             List<IAction> union = new List<IAction>();
             union.AddRange(this);
             union.AddRange(other);
             return new ActionSet(union);
         }
+
+        #endregion
 
         #region IEnumerable<IAction> Members
 

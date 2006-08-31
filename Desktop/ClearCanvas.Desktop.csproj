@@ -42,7 +42,6 @@
     <Compile Include="Actions\ActionAttributeProcessor.cs" />
     <Compile Include="Actions\ActionBuilder.cs" />
     <Compile Include="Actions\ActionBuilderException.cs" />
-    <Compile Include="Actions\ActionCategory.cs" />
     <Compile Include="Actions\ActionDecoratorAttribute.cs" />
     <Compile Include="Actions\ActionInitiatorAttribute.cs" />
     <Compile Include="Actions\ActionModelNode.cs" />

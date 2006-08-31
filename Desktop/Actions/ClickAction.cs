@@ -7,8 +7,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Base class providing a default implementation of <see cref="IClickAction"/>.  Action classes should
-    /// inherit this class rather than implement <see cref="IClickAction"/> directly.
+    /// Default implementation of <see cref="IClickAction"/>.
     /// </summary>
     public class ClickAction : Action, IClickAction
     {
@@ -17,11 +16,39 @@ namespace ClearCanvas.Desktop.Actions
 
         private IObservablePropertyBinding<bool> _checkedPropertyBinding;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID">The fully qualified action ID</param>
+        /// <param name="path">The action path</param>
+        /// <param name="flags">Flags that control the style of the action</param>
+        /// <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources</param>
         public ClickAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resourceResolver)
             : base(actionID, path, resourceResolver)
         {
             _flags = flags;
         }
+
+        /// <summary>
+        /// Sets the observable property that this action monitors for its checked state
+        /// </summary>
+        /// <param name="enabledPropertyBinding">The property to monitor</param>
+        public void SetCheckedObservable(IObservablePropertyBinding<bool> checkedPropertyBinding)
+        {
+            _checkedPropertyBinding = checkedPropertyBinding;
+        }
+
+        /// <summary>
+        /// Sets the delegate that will respond when this action is clicked.
+        /// </summary>
+        /// <param name="clickHandler"></param>
+        public void SetClickHandler(ClickHandlerDelegate clickHandler)
+        {
+            _clickHandler = clickHandler;
+        }
+
+
+        #region IClickAction members
 
         public bool IsCheckAction
         {
@@ -59,14 +86,7 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        public void SetCheckedObservable(IObservablePropertyBinding<bool> checkedPropertyBinding)
-        {
-            _checkedPropertyBinding = checkedPropertyBinding;
-        }
+        #endregion
 
-        public void SetClickHandler(ClickHandlerDelegate clickHandler)
-        {
-            _clickHandler = clickHandler;
-        }
     }
 }

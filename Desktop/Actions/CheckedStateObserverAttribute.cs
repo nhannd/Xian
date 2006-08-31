@@ -8,10 +8,10 @@ namespace ClearCanvas.Desktop.Actions
     /// Declares an observer binding for the checked state of an action.
     /// </summary>
     /// <remarks>
-    /// This attribute causes the enabled state of the action specified by the action ID to be
-    /// bound to the state of the specified property on the tool.  The property name must
-    /// refer to a public boolean property on the target tool that has get access.  The change event name
-    /// must refer to a public event on the tool that will fire whenever the state of the property
+    /// This attribute causes the checked state of the action specified by the action ID to be
+    /// bound to the state of the specified property on the class to which this attribute applies.
+    /// The property name must refer to a public boolean property on the target class that has get access.
+    /// The change event name must refer to a public event on the class that will fire whenever the state of the property
     /// changes.
     /// </remarks>
     public class CheckedStateObserverAttribute : StateObserverAttribute

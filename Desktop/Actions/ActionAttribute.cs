@@ -5,8 +5,7 @@ using System.Text;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Abstract base class for the set of attributes that are used to specify actions on 
-    /// tools.
+    /// Abstract base class for the set of attributes that are used to specify actions declaratively 
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
     public abstract class ActionAttribute : Attribute

@@ -9,14 +9,9 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public abstract class ActionInitiatorAttribute : ActionAttribute
     {
-        private ActionCategory _category;
-        
-        public ActionInitiatorAttribute(string actionID, ActionCategory category)
+        public ActionInitiatorAttribute(string actionID)
             : base(actionID)
         {
-            _category = category;
         }
-
-        public ActionCategory Category { get { return _category; } }
     }
 }

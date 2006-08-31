@@ -9,6 +9,16 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionModelRoot : ActionModelNode
     {
+        /// <summary>
+        /// Creates the action model with the specified namespace and modelID, using the specified
+        /// set of actions as input.  If an action model specification for the namespace/modelID
+        /// does not exist, it will be created.  If it does it exist, it will be used as guidance
+        /// in constructing the action model tree.
+        /// </summary>
+        /// <param name="namespaze">A namespace to qualify the model ID, typically the class name of the calling class is a good choice</param>
+        /// <param name="modelID">The model ID, typically the <see cref="ActionPath.Site"/> value is a good choice</param>
+        /// <param name="actions">The set of actions from which to construct the model</param>
+        /// <returns>An action model tree</returns>
         public static ActionModelRoot CreateModel(string namespaze, string modelID, IActionSet actions)
         {
             string qualifiedModelID = string.Format("{0}:{1}", namespaze, modelID);
@@ -17,24 +27,12 @@ namespace ClearCanvas.Desktop.Actions
         }
 
 
-        private string _modelID;
-
         /// <summary>
-        /// Constructs an action model with the specified ID.
+        /// Constructor
         /// </summary>
-        /// <param name="modelID">The ID of the model</param>
-        public ActionModelRoot(string modelID)
+        public ActionModelRoot()
             :base(null)
         {
-            _modelID = modelID;
-        }
-
-        /// <summary>
-        /// The model ID of this action model.
-        /// </summary>
-        public string ModelID
-        {
-            get { return _modelID; }
         }
 
         /// <summary>
@@ -60,7 +58,7 @@ namespace ClearCanvas.Desktop.Actions
         
         protected override ActionModelNode CreateNode(PathSegment pathSegment)
         {
-            return new ActionModelRoot(_modelID);
+            return new ActionModelRoot();
         }
 
     }

@@ -207,7 +207,7 @@ namespace ClearCanvas.Desktop
 
             if (this.ActiveWorkspace != null)
             {
-                actions = actions.Add(this.ActiveWorkspace.Actions.Select(selector));
+                actions = actions.Union(this.ActiveWorkspace.Actions.Select(selector));
             }
 
             return ActionModelRoot.CreateModel(typeof(DesktopWindow).FullName, site, actions).ChildNodes[site];

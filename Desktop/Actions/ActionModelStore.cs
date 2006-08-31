@@ -6,7 +6,7 @@ using System.Xml;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Provides services for storing an action model to a file, and rebuilding that action model
+    /// Provides services for storing an action model to an XML file, and rebuilding that action model
     /// from the file.
     /// </summary>
     internal class ActionModelStore
@@ -73,7 +73,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
         private ActionModelRoot BuildAndSynchronize(XmlElement xmlActionModel, IActionSet actions)
         {
-            ActionModelRoot model = new ActionModelRoot(xmlActionModel.GetAttribute("id"));
+            ActionModelRoot model = new ActionModelRoot();
             
             // easier to work with the actions in a map
             Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();

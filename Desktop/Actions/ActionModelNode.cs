@@ -13,6 +13,10 @@ namespace ClearCanvas.Desktop.Actions
         private ActionModelNodeList _childNodes;
         private IAction _action; // null if this is not a leaf node
 
+        /// <summary>
+        /// Protected constructor
+        /// </summary>
+        /// <param name="pathSegment">The segment of the action path to which this node corresponds</param>
         protected ActionModelNode(PathSegment pathSegment)
         {
             _pathSegment = pathSegment;

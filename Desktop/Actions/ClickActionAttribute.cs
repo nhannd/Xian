@@ -5,16 +5,15 @@ using System.Text;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Abstract base class for the set of attributes that are used to declare "click" actions on 
-    /// tools.
+    /// Abstract base class for the set of attributes that are used to declare "click" actions.
     /// </summary>
     public abstract class ClickActionAttribute : ActionInitiatorAttribute
     {
         private string _path;
         private ClickActionFlags _flags;
 
-        public ClickActionAttribute(string actionID, string path, ActionCategory category)
-            :base(actionID, category)
+        public ClickActionAttribute(string actionID, string path)
+            :base(actionID)
         {
             _path = path;
             _flags = ClickActionFlags.None; // default value, will override if named parameter is specified

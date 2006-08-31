@@ -52,8 +52,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public CrudActionHandler()
         {
-            _buttonModel = new ActionModelRoot("");
-            _menuModel = new ActionModelRoot("");
+            _buttonModel = new ActionModelRoot();
+            _menuModel = new ActionModelRoot();
 
             _enabledState = new Dictionary<string, ObservableProperty<bool>>();
 
@@ -61,13 +61,13 @@ namespace ClearCanvas.Ris.Client.Admin
             _enabledState.Add("Edit", new ObservableProperty<bool>(this, false));
             _enabledState.Add("Delete", new ObservableProperty<bool>(this, false));
 
-            AddAction(ActionCategory.ToolbarAction, _buttonModel, "Add", Add, "Icons.Add.png");
-            AddAction(ActionCategory.ToolbarAction, _buttonModel, "Edit", Edit, "Icons.Edit.png");
-            AddAction(ActionCategory.ToolbarAction, _buttonModel, "Delete", Delete, "Icons.Delete.png");
+            AddAction(_buttonModel, "Add", Add, "Icons.Add.png", false);
+            AddAction(_buttonModel, "Edit", Edit, "Icons.Edit.png", false);
+            AddAction(_buttonModel, "Delete", Delete, "Icons.Delete.png", false);
 
-            AddAction(ActionCategory.MenuAction, _menuModel, "Add", Add, "Icons.Add.png");
-            AddAction(ActionCategory.MenuAction, _menuModel, "Edit", Edit, "Icons.Edit.png");
-            AddAction(ActionCategory.MenuAction, _menuModel, "Delete", Delete, "Icons.Delete.png");
+            AddAction(_menuModel, "Add", Add, "Icons.Add.png", true);
+            AddAction(_menuModel, "Edit", Edit, "Icons.Edit.png", true);
+            AddAction(_menuModel, "Delete", Delete, "Icons.Delete.png", true);
         }
 
         public ActionModelRoot ToolbarModel
@@ -80,17 +80,15 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _menuModel; }
         }
 
-        private void AddAction(ActionCategory category, ActionModelRoot model, string name, ClickHandlerDelegate clickHandler, string icon)
+        private void AddAction(ActionModelRoot model, string name, ClickHandlerDelegate clickHandler, string icon, bool showLabel)
         {
             IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
             ActionPath actionPath = new ActionPath(name, resolver);
 
-            ClickAction action = category == ActionCategory.ToolbarAction ?
-                (ClickAction)new ButtonAction(name, actionPath, ClickActionFlags.None, resolver)
-                : (ClickAction)new MenuAction(name, actionPath, ClickActionFlags.None, resolver);
+            ClickAction action = new ClickAction(name, actionPath, ClickActionFlags.None, resolver);
             
             action.Tooltip = name;
-            if (category == ActionCategory.MenuAction)
+            if (showLabel)
             {
                 action.Label = actionPath.LastSegment.LocalizedText;
             }
