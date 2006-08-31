@@ -9,16 +9,13 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	[ExtensionPoint()]
-	public class DicomExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public class StudyBrowserComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	[AssociateView(typeof(DicomExplorerComponentViewExtensionPoint))]
-	public class DicomExplorerComponent : ApplicationComponent
+	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
+	public class StudyBrowserComponent : ApplicationComponent
 	{
-		public DicomExplorerComponent()
-		{
-			
-		}
+
 	}
 }

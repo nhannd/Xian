@@ -56,6 +56,10 @@
     <Compile Include="ApplicationComponentHostDialog.cs" />
     <Compile Include="ApplicationComponentHostShelf.cs" />
     <Compile Include="ClosingEventArgs.cs" />
+    <Compile Include="SplitComponentContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SplitPane.cs" />
     <Compile Include="TabComponentContainer.cs" />
     <Compile Include="TabPage.cs" />
     <Compile Include="DesktopTool.cs" />

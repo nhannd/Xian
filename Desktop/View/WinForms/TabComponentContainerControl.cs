@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-//using Crownwood.DotNetMagic.Controls;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -26,9 +25,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				_tabControl.TabPages.Add(tabPageUI);
 			}
-
-			//_tabControl.SelectedIndex = 0;
 		}
-
 	}
 }

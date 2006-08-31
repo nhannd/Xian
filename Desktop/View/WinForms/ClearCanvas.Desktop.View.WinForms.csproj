@@ -28,10 +28,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetMagic2005, Version=4.1.0.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Controls\WinForms\refs\DotNetMagic2005.DLL</HintPath>
-    </Reference>
+    <Reference Include="DotNetMagic2005, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -48,6 +45,13 @@
     </Compile>
     <Compile Include="ApplicationComponentHostShelfView.cs" />
     <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="SplitComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SplitComponentContainerControl.Designer.cs">
+      <DependentUpon>SplitComponentContainerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SplitComponentContainerView.cs" />
     <Compile Include="TabComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -86,9 +90,6 @@
     </Compile>
     <Compile Include="ToolStripBuilder.cs" />
     <Compile Include="WinFormsView.cs" />
-    <Compile Include="WorkspaceTab.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="DesktopForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +97,9 @@
       <DependentUpon>DesktopForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DesktopView.cs" />
+    <Compile Include="WorkspaceTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WorkspaceViewManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +113,10 @@
     <EmbeddedResource Include="NavigatorComponentContainerControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>NavigatorComponentContainerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplitComponentContainerControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SplitComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>

@@ -145,7 +145,7 @@
       copy "..\..\..\..\Common\refs\nunit.framework.dll" .\Common 
       copy "..\..\..\..\Common\refs\log4net.dll" .\Common
       copy "..\..\..\..\Controls\WinForms\bin\$(ConfigurationName)\ClearCanvas.Controls.WinForms.dll" .\Common
-      copy "..\..\..\..\Controls\WinForms\refs\DotNetMagic2005.DLL" .\Common
+      copy "..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL" .\Common
       copy "..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" .\Common
       copy "..\..\..\..\ReferencedAssemblies\Nhibernate.dll" .\Common
       copy "..\..\..\..\ReferencedAssemblies\Nhibernate.Mapping.Attributes.dll" .\Common
@@ -189,8 +189,8 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\Edit\bin\$(ConfigurationName)\ClearCanvas.Desktop.Edit.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Explorer\Local\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Explorer\Local\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" .\plugins
-      ::copy "..\..\..\..\ImageViewer\Explorer\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Remote.dll" .\plugins
-      ::copy "..\..\..\..\ImageViewer\Explorer\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.LocalDataStore.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Explorer\Dicom\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" .\plugins
       copy "..\..\..\..\ImageViewer\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.dll" .\plugins

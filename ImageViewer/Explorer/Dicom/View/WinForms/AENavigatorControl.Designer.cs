@@ -1,6 +1,6 @@
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
-	partial class DicomExplorerControl
+	partial class AENavigatorControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -28,10 +28,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
+			this.SuspendLayout();
+			// 
+			// AENavigatorControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Name = "AENavigatorControl";
+			this.Size = new System.Drawing.Size(399, 492);
+			this.ResumeLayout(false);
+
 		}
 
 		#endregion
+
 	}
 }

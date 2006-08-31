@@ -8,13 +8,13 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
-	[ExtensionOf(typeof(DicomExplorerComponentViewExtensionPoint))]
-	public class DicomExplorerComponentView : WinFormsView, IApplicationComponentView
+	[ExtensionOf(typeof(StudyBrowserComponentViewExtensionPoint))]
+	public class StudyBrowserComponentView : WinFormsView, IApplicationComponentView
 	{
 		private Control _control;
-		private DicomExplorerComponent _component;
+		private StudyBrowserComponent _component;
 
-		public DicomExplorerComponentView()
+		public StudyBrowserComponentView()
 		{
 
 		}
@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			{
 				if (_control == null)
 				{
-					_control = new DicomExplorerControl(_component);
+					_control = new StudyBrowserControl(_component);
 				}
 				return _control;
 			}
@@ -35,9 +35,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		public void SetComponent(IApplicationComponent component)
 		{
-			_component = component as DicomExplorerComponent;
+			_component = component as StudyBrowserComponent;
 		}
 
-		#endregion
+		#endregion	
 	}
 }

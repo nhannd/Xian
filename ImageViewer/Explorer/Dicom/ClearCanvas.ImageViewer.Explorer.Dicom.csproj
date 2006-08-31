@@ -33,9 +33,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AENavigatorComponent.cs" />
     <Compile Include="DicomExplorer.cs" />
-    <Compile Include="DicomExplorerComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StudyBrowserComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

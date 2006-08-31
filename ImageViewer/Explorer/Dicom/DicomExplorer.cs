@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ExtensionOf(typeof(HealthcareArtifactExplorerExtensionPoint))]
 	public class DicomExplorer : IHealthcareArtifactExplorer
 	{
-		DicomExplorerComponent _component;
+		private SplitComponentContainer _splitComponentContainer;
 
 		public DicomExplorer()
 		{
@@ -28,10 +28,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_component == null)
-					_component = new DicomExplorerComponent();
+				if (_splitComponentContainer == null)
+				{
+					AENavigatorComponent aeNavigator = new AENavigatorComponent();
+					StudyBrowserComponent studyBrowser = new StudyBrowserComponent();
+					SplitPane leftPane = new SplitPane("AE Navigator", aeNavigator);
+					SplitPane rightPane = new SplitPane("Study Browser", studyBrowser);
+					_splitComponentContainer = new SplitComponentContainer(leftPane, rightPane);
+				}
 
-				return _component as IApplicationComponent;
+				return _splitComponentContainer as IApplicationComponent;
 			}
 		}
 

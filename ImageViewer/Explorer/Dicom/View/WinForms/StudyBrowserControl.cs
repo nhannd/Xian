@@ -8,11 +8,9 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
-	public partial class DicomExplorerControl : UserControl
+	public partial class StudyBrowserControl : UserControl
 	{
-		private DicomExplorerComponent _component;
-
-		public DicomExplorerControl(DicomExplorerComponent component)
+		public StudyBrowserControl(StudyBrowserComponent component)
 		{
 			InitializeComponent();
 		}
