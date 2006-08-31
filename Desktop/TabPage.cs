@@ -22,6 +22,8 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public TabPage(string name, IApplicationComponent component)
         {
+			Platform.CheckForNullReference(component, "component");
+
 			_name = name;
             _component = component;
         }
@@ -45,7 +47,16 @@ namespace ClearCanvas.Desktop
         public TabComponentContainer.PageHost ComponentHost
         {
             get { return _host; }
-            set { _host = value; }
+            set 
+			{
+				Platform.CheckForNullReference(value, "ComponentHost");
+				_host = value; 
+			}
         }
+
+		public override string ToString()
+		{
+			return this.Name;
+		}
     }
 }

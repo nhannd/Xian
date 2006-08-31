@@ -37,6 +37,9 @@ namespace ClearCanvas.Desktop
             string title,
             ApplicationComponentExitDelegate exitCallback)
         {
+			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+			Platform.CheckForNullReference(component, "component");
+
             IWorkspace workspace = new ApplicationComponentHostWorkspace(component, title, exitCallback);
             desktopWindow.WorkspaceManager.Workspaces.Add(workspace);
             return workspace;
@@ -125,6 +128,7 @@ namespace ClearCanvas.Desktop
         /// <param name="host">The host in which the component is running</param>
         public void SetHost(IApplicationComponentHost host)
         {
+			Platform.CheckForNullReference(host, "host");
             _host = host;
         }
 

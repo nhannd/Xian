@@ -17,6 +17,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public void SetComponent(IApplicationComponent component)
         {
+			Platform.CheckForNullReference(component, "component");
             _component = (TabComponentContainer)component;
         }
 

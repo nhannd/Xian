@@ -18,6 +18,7 @@ namespace ClearCanvas.Desktop
 
             internal Host(ApplicationComponentHostDialog owner)
             {
+				Platform.CheckForNullReference(owner, "owner");
                 _owner = owner;
             }
 
@@ -58,12 +59,14 @@ namespace ClearCanvas.Desktop
 
         internal ApplicationComponentHostDialog(string title, IApplicationComponent component)
         {
+			Platform.CheckForNullReference(component, "component");
             _title = title;
             _component = component;
         }
 
         internal ApplicationComponentExitCode RunModal(IDesktopWindow desktopWindow)
         {
+			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             _desktopWindow = desktopWindow;
 
             // start the component

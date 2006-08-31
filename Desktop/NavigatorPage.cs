@@ -52,5 +52,10 @@ namespace ClearCanvas.Desktop
             get { return _host; }
             set { _host = value; }
         }
+
+		public override string ToString()
+		{
+			return this.Path.ToString();
+		}
     }
 }

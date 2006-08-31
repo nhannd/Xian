@@ -152,9 +152,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 				e.Cancel = true;
 
 				RemoveWorkspace(page.Workspace);
-
-				string str = String.Format("Workspaces: {0}", _desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Count);
-				System.Diagnostics.Trace.Write(str);
 			}
 			catch (Exception ex)
 			{

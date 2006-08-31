@@ -57,10 +57,14 @@ namespace ClearCanvas.Desktop.Explorer
 					TabPage tabPage = new TabPage(explorer.Name, explorer.Component);
 					_tabComponentContainer.Pages.Add(tabPage);
 				}
-			}
 
-			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, _tabComponentContainer, "Explorer", null);
-			//ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow, _tabComponentContainer, "Explorer", ShelfDisplayHint.DockTop, null);
+				ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow, 
+					_tabComponentContainer, 
+					"Explorer", 
+					delegate { _tabComponentContainer = null; });
+
+			}
 		}
 
 	}

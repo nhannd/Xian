@@ -29,6 +29,7 @@ namespace ClearCanvas.Desktop
 
             internal Host(ApplicationComponentHostWorkspace workspace)
             {
+				Platform.CheckForNullReference(workspace, "workspace");
                 _workspace = workspace;
             }
 
@@ -64,6 +65,7 @@ namespace ClearCanvas.Desktop
             ApplicationComponentExitDelegate exitCallback)
             :base(title)
         {
+			Platform.CheckForNullReference(component, "component");
             _component = component;
             _exitCallback = exitCallback;
 
@@ -82,7 +84,9 @@ namespace ClearCanvas.Desktop
 
         public override void Initialize(IDesktopWindow desktopWindow)
         {
-            base.Initialize(desktopWindow);
+			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+			
+			base.Initialize(desktopWindow);
             _component.Start();
         }
 

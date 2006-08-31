@@ -156,11 +156,14 @@ namespace ClearCanvas.Desktop
             get { return _pages[_current]; }
             set
             {
-                int i = _pages.IndexOf(value);
-                if (i > -1 && i != _current)
-                {
-                    MoveTo(i);
-                }
+				if (this.CurrentPage != value)
+				{
+					int i = _pages.IndexOf(value);
+					if (i > -1 && i != _current)
+					{
+						MoveTo(i);
+					}
+				}
             }
         }
 
