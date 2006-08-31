@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer
         private IClickAction CreateDisplaySetAction(DisplaySet displaySet, int index)
         {
             ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/{0}", displaySet.Name), null);
-            MenuAction action = new MenuAction(string.Format("display{0}", index), path, this, ClickActionFlags.None);
+            MenuAction action = new MenuAction(string.Format("display{0}", index), path, ClickActionFlags.None, null);
             action.Label = displaySet.Name;
             action.SetClickHandler(
                 delegate()

@@ -101,6 +101,7 @@
     <Compile Include="IObservablePropertyBinding.cs" />
     <Compile Include="DynamicObservablePropertyBinding.cs" />
     <Compile Include="ClassNameExtensionFilter.cs" />
+    <Compile Include="IResourceResolver.cs" />
     <Compile Include="ISessionManager.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">

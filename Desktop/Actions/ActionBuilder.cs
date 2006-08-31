@@ -39,14 +39,14 @@ namespace ClearCanvas.Desktop.Actions
         public void Apply(ButtonActionAttribute a)
         {
             // assert _action == null
-            _action = new ButtonAction(_actionID, new ActionPath(a.Path, _resolver), _actionTarget, a.Flags);
+            _action = new ButtonAction(_actionID, new ActionPath(a.Path, _resolver), a.Flags, _resolver);
         }
 
         public void Apply(MenuActionAttribute a)
         {
             // assert _action == null
             ActionPath path = new ActionPath(a.Path, _resolver);
-            _action = new MenuAction(_actionID, path, _actionTarget, a.Flags);
+            _action = new MenuAction(_actionID, path, a.Flags, _resolver);
             _action.Label = path.LastSegment.LocalizedText;
 
         }
@@ -86,7 +86,7 @@ namespace ClearCanvas.Desktop.Actions
         public void Apply(TooltipAttribute a)
         {
             // assert _action != null
-            _action.Tooltip = _resolver.Resolve(a.TooltipText);
+            _action.Tooltip = _resolver.LocalizeString(a.TooltipText);
         }
 
         public void Apply(CheckedStateObserverAttribute a)

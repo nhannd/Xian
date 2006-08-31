@@ -26,7 +26,7 @@ namespace ClearCanvas.Desktop
         /// </remarks>
         /// <param name="path">The path string to parse</param>
         /// <param name="resolver">The <see cref="ResourceResolver"/> to use for localization</param>
-        public Path(string pathString, ResourceResolver resolver)
+        public Path(string pathString, IResourceResolver resolver)
         {
             string[] parts = pathString.Split(new char[] { SEPARATOR });
 
@@ -34,7 +34,7 @@ namespace ClearCanvas.Desktop
             _segments = new PathSegment[n];
             for (int i = 0; i < n; i++)
             {
-                _segments[i] = new PathSegment(parts[i], resolver != null ? resolver.Resolve(parts[i]) : parts[i]);
+                _segments[i] = new PathSegment(parts[i], resolver != null ? resolver.LocalizeString(parts[i]) : parts[i]);
             }
         }
 

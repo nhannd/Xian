@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -16,8 +17,8 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="path"></param>
         /// <param name="target"></param>
         /// <param name="flags"></param>
-        public ButtonAction(string actionID, ActionPath path, object target, ClickActionFlags flags)
-            : base(actionID, path, target, flags)
+        public ButtonAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resourceResolver)
+            : base(actionID, path, flags, resourceResolver)
         {
         }
     }

@@ -26,12 +26,6 @@ namespace ClearCanvas.Desktop.Actions
         string ActionID { get; }
 
         /// <summary>
-        /// The target object to which this action is bound, typically an object
-        /// of type <see cref="ClearCanvas.Workstation.Model.Tools.ITool"/>.
-        /// </summary>
-        object Target { get; }
-
-        /// <summary>
         /// The menu or toolbar path for this action.
         /// </summary>
         ActionPath Path { get; set; }
@@ -55,5 +49,11 @@ namespace ClearCanvas.Desktop.Actions
         /// The enablement state that the action should present in the UI.
         /// </summary>
         bool Enabled { get; }
+
+        /// <summary>
+        /// Gets the resource resolver associated with this action, that will be used to resolve
+        /// action path and icon resources when required.
+        /// </summary>
+        IResourceResolver ResourceResolver { get; }
    }
 }

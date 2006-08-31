@@ -34,11 +34,11 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _action.Click();
             };
 
-            if (_action.IconSet != null)
+            if (_action.IconSet != null && _action.ResourceResolver != null)
             {
                 try
                 {
-                    this.Image = IconFactory.CreateIcon(_action.Target.GetType(), _action.IconSet.MediumIcon);
+                    this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
                 }
                 catch (Exception e)
                 {

@@ -10,7 +10,7 @@ namespace ClearCanvas.Desktop.Actions
         public const string GlobalMenus = "global-menus";
         public const string GlobalToolbars = "global-toolbars";
 
-        public ActionPath(string pathString, ResourceResolver resolver)
+        public ActionPath(string pathString, IResourceResolver resolver)
             :base(pathString, resolver)
         {
         }

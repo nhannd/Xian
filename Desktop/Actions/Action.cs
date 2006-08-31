@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop.Actions
     {
         private string _actionID;
         private ActionPath _path;
-        private object _target;
+        private IResourceResolver _resourceResolver;
 
         private string _tooltip;
         private IconSet _iconSet;
@@ -28,11 +28,11 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="actionID">The logical action ID</param>
         /// <param name="pathHint">The action path</param>
         /// <param name="target"></param>
-        public Action(string actionID, ActionPath path, object target)
+        public Action(string actionID, ActionPath path, IResourceResolver resourceResolver)
         {
             _actionID = actionID;
             _path = path;
-            _target = target;
+            _resourceResolver = resourceResolver;
         }
 
         /// <summary>
@@ -51,9 +51,9 @@ namespace ClearCanvas.Desktop.Actions
             get { return _actionID; }
         }
 
-        public object Target
+        public IResourceResolver ResourceResolver
         {
-            get { return _target; }
+            get { return _resourceResolver; }
         }
 
         public ActionPath Path

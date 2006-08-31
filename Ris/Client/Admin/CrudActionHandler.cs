@@ -82,11 +82,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void AddAction(ActionCategory category, ActionModelRoot model, string name, ClickHandlerDelegate clickHandler, string icon)
         {
-            ActionPath actionPath = new ActionPath(name, new ResourceResolver(this.GetType().Assembly));
+            IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+            ActionPath actionPath = new ActionPath(name, resolver);
 
             ClickAction action = category == ActionCategory.ToolbarAction ?
-                (ClickAction)new ButtonAction(name, actionPath, this, ClickActionFlags.None)
-                : (ClickAction)new MenuAction(name, actionPath, this, ClickActionFlags.None);
+                (ClickAction)new ButtonAction(name, actionPath, ClickActionFlags.None, resolver)
+                : (ClickAction)new MenuAction(name, actionPath, ClickActionFlags.None, resolver);
             
             action.Tooltip = name;
             if (category == ActionCategory.MenuAction)

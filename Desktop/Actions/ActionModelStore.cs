@@ -93,7 +93,7 @@ namespace ClearCanvas.Desktop.Actions
 
                     // update the action path from the xml
                     string path = xmlAction.GetAttribute("path");
-                    action.Path = new ActionPath(path, new ActionResourceResolver(action.Target));
+                    action.Path = new ActionPath(path, action.ResourceResolver);
 
                     // insert the action into the model
                     model.InsertAction(action);

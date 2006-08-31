@@ -2,26 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Reflection;
+using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public static class IconFactory
     {
         /// <summary>
-        /// Creates a bitmap from a resource embedded in an assembly, and prepares it to be used
-        /// as an icon on a toolbar or menu.
+        /// Attempts to create an icon using the specified image resource and resource resolver.
         /// </summary>
-        /// <param name="assemblyDefiningType">Any type that resides in the same assembly as the embedded resource</param>
-        /// <param name="resource">The name of the resource (e.g. MyIcon.bmp)</param>
-        /// <returns>A Bitmap loaded with the specified resource</returns>
-        /// <remarks>
-        /// If the resource is not found within the specified assembly, an exception will be thrown.
-        /// </remarks>
-        public static Bitmap CreateIcon(Type assemblyLocatingType, string resource)
+        /// <param name="resource">The name of the image resource</param>
+        /// <param name="resolver">A resource resolver</param>
+        /// <returns>a bitmap constructed from the specified image resource</returns>
+        public static Bitmap CreateIcon(string resource, IResourceResolver resolver)
         {
-            Bitmap icon = new Bitmap(assemblyLocatingType, resource);
-            icon.MakeTransparent(Color.Red);
-            return icon;
+            return new Bitmap(resolver.OpenResource(resource));
         }
     }
 }
