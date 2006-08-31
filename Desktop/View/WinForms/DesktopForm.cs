@@ -48,6 +48,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _dockingManager = new DockingManager(this._toolStripContainer.ContentPanel, VisualStyle.Office2003);
             _dockingManager.ActiveColor = SystemColors.Control;
             _dockingManager.InnerControl = _tabbedGroups;
+			_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
 
 			_workspaceViewManager = new WorkspaceViewManager(this, _tabbedGroups);
 			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);

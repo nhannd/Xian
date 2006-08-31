@@ -34,6 +34,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			try
 			{
 				RebuildMenusAndToolbars();
+				_tabbedGroups.DisplayTabMode = DisplayTabModes.ShowAll;
 				// Add the new tab
 				WorkspaceTabPage workspaceTab = new WorkspaceTabPage(workspace);
 				workspaceTab.Selected = true;
@@ -68,6 +69,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 // out to prevent references to workspace from being retained.  Will
                 // do that when I deal with the memory allocation ticket #86.
                 GC.Collect();
+
+				if (tabPages.Count == 0)
+					_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
             }
             catch (Exception ex)
             {
