@@ -41,25 +41,5 @@ namespace ClearCanvas.Healthcare {
             }
             return null;
         }
-
-        public void AddAddress(Address address)
-        {
-            _addresses.Add(address);
-        }
-
-        public void RemoveAddress(Address address)
-        {
-            _addresses.Remove(address);
-        }
-
-        public void AddTelephoneNumber(TelephoneNumber phoneNumber)
-        {
-            _telephoneNumbers.Add(phoneNumber);
-        }
-
-        public void RemoveTelephoneNumber(TelephoneNumber phoneNumber)
-        {
-            _telephoneNumbers.Remove(phoneNumber);
-        }
     }
 }

@@ -32,8 +32,8 @@ namespace ClearCanvas.Healthcare {
             _province = source.Province;
             _country = source.Country;
             _postalCode = source.PostalCode;
-            //_validFrom = source.ValidFrom;
-            //_validUntil = source.ValidUntil;
+            _validFrom = source.ValidFrom;
+            _validUntil = source.ValidUntil;
         }
 	}
 }

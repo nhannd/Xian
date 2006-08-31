@@ -86,7 +86,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._validFrom.Size = new System.Drawing.Size(135, 41);
             this._validFrom.TabIndex = 1;
             this._validFrom.Value = new System.DateTime(2006, 7, 26, 16, 37, 8, 953);
-            this._validFrom.Visible = false;
             // 
             // _validUntil
             // 
@@ -99,7 +98,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._validUntil.Size = new System.Drawing.Size(136, 41);
             this._validUntil.TabIndex = 2;
             this._validUntil.Value = new System.DateTime(2006, 7, 26, 16, 37, 6, 765);
-            this._validUntil.Visible = false;
             // 
             // _type
             // 
@@ -202,12 +200,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.flowLayoutPanel1.Size = new System.Drawing.Size(551, 30);
             this.flowLayoutPanel1.TabIndex = 8;
             // 
-            // AddressesEditorControl
+            // AddressEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "AddressesEditorControl";
+            this.Name = "AddressEditorControl";
             this.Size = new System.Drawing.Size(557, 171);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

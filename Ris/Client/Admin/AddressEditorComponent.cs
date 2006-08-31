@@ -105,17 +105,23 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        //public DateTime? ValidFrom
-        //{
-        //    get { return _address.ValidFrom; }
-        //    set { _address.ValidFrom = value; }
-        //}
+        public DateTime? ValidFrom
+        {
+            get { return _address.ValidFrom; }
+            set { 
+                _address.ValidFrom = value;
+                this.Modified = true;
+            }
+        }
 
-        //public DateTime? ValidUntil
-        //{
-        //    get { return _address.ValidUntil; }
-        //    set { _address.ValidUntil = value; }
-        //}
+        public DateTime? ValidUntil
+        {
+            get { return _address.ValidUntil; }
+            set { 
+                _address.ValidUntil = value;
+                this.Modified = true;
+            }
+        }
 
         public string Type
         {

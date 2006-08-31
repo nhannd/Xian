@@ -58,8 +58,8 @@
         <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="true"/>
         <property name="Country" column="Country_" type="String" length="50" not-null="true"/>
         <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
-        <!--<property name="ValidFrom" column="ValidFrom_" type="DateTime" not-null="false"/>
-        <property name="ValidUntil" column="ValidUntil_" type="DateTime" not-null="false"/>-->
+        <property name="ValidFrom" column="ValidFrom_" type="DateTime" not-null="false"/>
+        <property name="ValidUntil" column="ValidUntil_" type="DateTime" not-null="false"/>
       </composite-element>
     </idbag>
     <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true"/>

@@ -64,8 +64,10 @@ namespace ClearCanvas.Ris.Client.Admin
             _addresses.Columns.Add(new TableColumn<Address, string>("Province", delegate(Address a) { return a.Province; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("PostalCode", delegate(Address a) { return a.PostalCode; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Country", delegate(Address a) { return a.Country; }));
-            //_addresses.AddColumn<string>("ValidFrom", delegate(Address a) { return a.ValidFrom; });
-            //_addresses.AddColumn<string>("ValidUntil", delegate(Address a) { return a.ValidUntil; });
+            //_addresses.Columns.Add(new TableColumn<Address, DateTime?>("ValidFrom", delegate(Address a) { return a.ValidFrom; }));
+            //_addresses.Columns.Add(new TableColumn<Address, DateTime?>("ValidUntil", delegate(Address a) { return a.ValidUntil; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("ValidFrom", delegate(Address a) { return a.ValidFrom.HasValue ? ((DateTime)a.ValidFrom).ToShortDateString() : "N/A"; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("ValidUntil", delegate(Address a) { return a.ValidUntil.HasValue ? ((DateTime)a.ValidUntil).ToShortDateString() : "N/A"; }));
 
             _addressActionHandler = new AddressActionHandler(this);
 
