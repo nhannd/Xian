@@ -177,6 +177,24 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
+        /// Calls the <see cref="IWorkspace.CanClose"/> method on all existing workspaces. If any workspace
+        /// returns false, this method returns false.
+        /// </summary>
+        /// <returns>True if all workspaces indicate they are in a closable state, otherwise false</returns>
+        public bool CanClose()
+        {
+            foreach (IWorkspace workspace in this.WorkspaceManager.Workspaces)
+            {
+                // make this workspace active, so the user is not confused if it brings up a message box
+                workspace.Activate();
+
+                if (!workspace.CanClose())
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Builds the action model for the specified action site.
         /// </summary>
         /// <param name="site"></param>

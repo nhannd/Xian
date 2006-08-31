@@ -164,7 +164,6 @@
     <None Include="Actions\Actions.cd" />
     <None Include="ApplicationComponents.cd" />
     <None Include="Desktop.cd" />
-    <None Include="GlobalMenusToolbars.cd" />
     <None Include="Tools\Tools.cd" />
   </ItemGroup>
   <ItemGroup>

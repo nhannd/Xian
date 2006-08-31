@@ -35,5 +35,13 @@ namespace ClearCanvas.Desktop
         /// Gets the associated workspace manager
         /// </summary>
         WorkspaceManager WorkspaceManager { get; }
+
+        /// <summary>
+        /// Asks the desktop window if it is in a closable state.  The desktop window may take any actions
+        /// in this method that are necessary to decide whether or not it can be closed, including prompting
+        /// the user to save data, etc.
+        /// </summary>
+        /// <returns></returns>
+        bool CanClose();
     }
 }

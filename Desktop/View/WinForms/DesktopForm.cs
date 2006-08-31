@@ -69,7 +69,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			SaveWindowSettings();
+            if (_desktopWindow.CanClose())
+            {
+                SaveWindowSettings();
+            }
+            else
+            {
+                // cancel the request
+                e.Cancel = true;
+            }
 
 			base.OnClosing(e);
 		}
