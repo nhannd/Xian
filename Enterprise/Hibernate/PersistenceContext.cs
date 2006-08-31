@@ -36,11 +36,6 @@ namespace ClearCanvas.Enterprise.Hibernate
             _readOnly = readOnly;
         }
 
-        ~PersistenceContext()
-        {
-            Dispose(false);
-        }
-
         public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
         {
             BrokerExtensionPoint xp = new BrokerExtensionPoint();
@@ -81,7 +76,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         protected virtual void Dispose(bool disposing)
         {
-            Close();
+            if (disposing)
+            {
+                Close();
+            }
         }
 
         protected DefaultInterceptor Interceptor
