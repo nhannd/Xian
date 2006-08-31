@@ -25,6 +25,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				_tabControl.TabPages.Add(tabPageUI);
 			}
+
 		}
+
 	}
 }

@@ -14,96 +14,169 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	class WorkspaceViewManager
 	{
-		private Crownwood.DotNetMagic.Controls.TabControl _tabControl;
+		private DesktopForm _desktopForm;
+		private TabbedGroups _tabbedGroups;
 
-		public WorkspaceViewManager(Panel panel, Crownwood.DotNetMagic.Controls.TabControl tabControl)
+		public WorkspaceViewManager(DesktopForm desktopForm, TabbedGroups tabbedGroups)
 		{
-			Platform.CheckForNullReference(panel, "panel");
-			Platform.CheckForNullReference(tabControl, "tabControl");
+			Platform.CheckForNullReference(desktopForm, "desktopForm");
+			Platform.CheckForNullReference(tabbedGroups, "tabbedGroups");
 
-            _tabControl = tabControl;
+			_desktopForm = desktopForm;
+            _tabbedGroups = tabbedGroups;
+
+			_tabbedGroups.PageCloseRequest += new TabbedGroups.PageCloseRequestHandler(OnTabbedGroupPageClosePressed);
+			_tabbedGroups.PageChanged += new TabbedGroups.PageChangeHandler(OnTabbedGroupPageChanged);
 		}
 
 		public void AddWorkpace(IWorkspace workspace)
 		{
-			// Add the new tab
-			WorkspaceTab workspaceTab = new WorkspaceTab(workspace);
-			workspaceTab.Selected = true;
-			_tabControl.TabPages.Add(workspaceTab);
-
-			// Change the appearance of the tab control from grey to something lighter
-			// when we have at least one tab
-			if (_tabControl.TabPages.Count == 1)
+			try
 			{
-				_tabControl.HideTabsMode = HideTabsModes.ShowAlways;
-				_tabControl.BackColor = SystemColors.ControlLightLight;
-				_tabControl.ControlTopOffset = 2;
-				_tabControl.ControlLeftOffset = 2;
-				_tabControl.ControlBottomOffset = 2;
-				_tabControl.ControlRightOffset = 2;
-
-				if (_tabControl.Style == VisualStyle.IDE2005)
-					_tabControl.IDE2005PixelBorder = true;
-				else if (_tabControl.Style == VisualStyle.Office2003)
-					_tabControl.OfficePixelBorder = true;
+				RebuildMenusAndToolbars();
+				// Add the new tab
+				WorkspaceTabPage workspaceTab = new WorkspaceTabPage(workspace);
+				workspaceTab.Selected = true;
+				_tabbedGroups.ActiveLeaf.TabPages.Add(workspaceTab);
 			}
+			catch (Exception ex)
+			{
+				Platform.Log(ex, LogLevel.Error);
+				throw;
+			}
+
 		}
 
 		public void RemoveWorkspace(IWorkspace workspace)
 		{
-            // Find the tab that owns the workspace and remove it
-            WorkspaceTab tab = FindTabForWorkspace(workspace);
-            if (tab != null)
-            {
-                _tabControl.TabPages.Remove(tab);
-            }
+			if (workspace == null || _tabbedGroups.RootSequence == null)
+				return;
 
-			// If we have no more tabs left, revert to the plain gray look of the tab control
-			// when we first started the app
-			if (_tabControl.TabPages.Count == 0)
+			try
 			{
-				_tabControl.HideTabsMode = HideTabsModes.HideAlways;
-				_tabControl.BackColor = SystemColors.ControlDark;
-				_tabControl.ControlTopOffset = 0;
-				_tabControl.ControlLeftOffset = 0;
-				_tabControl.ControlBottomOffset = 0;
-				_tabControl.ControlRightOffset = 0;
+				// Remove the tab
+				TabPageCollection tabPages;
+				WorkspaceTabPage tabPage = FindTabPage(_tabbedGroups.RootSequence, workspace, out tabPages)
+					as WorkspaceTabPage;
 
-				if (_tabControl.Style == VisualStyle.IDE2005)
-					_tabControl.IDE2005PixelBorder = false;
-				else if (_tabControl.Style == VisualStyle.Office2003)
-					_tabControl.OfficePixelBorder = false;
+				if (tabPage == null)
+					return;
 
-				// We MUST do this because of a bug in DotNetMagic where the TabControl
-				// has a private member field called _oldPage that doesn't get nulled
-				// when all the pages have been removed via TabPages.Remove.  Fortunately
-				// Clear() does set _oldPage to null, so we do it here when all the pages
-				// have been removed.
-				_tabControl.TabPages.Clear();
+				tabPages.Remove(tabPage);
+
+				// Remove workspace from the model
+				_desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Remove(workspace);
+
+				// TODO: We probably need to go into the TabControls and clear them
+				// out to prevent references to workspace from being retained.  Will
+				// do that when I deal with the memory allocation ticket #86.
+				GC.Collect();
 			}
+			catch (Exception ex)
+			{
+				Platform.Log(ex, LogLevel.Error);
+				throw;
+			}
+
 		}
 
 		public void ActivateWorkspace(IWorkspace workspace)
 		{
-            // Find the tab that owns the workspace and activate it
-            WorkspaceTab tab = FindTabForWorkspace(workspace);
-            if (tab != null)
-            {
-                tab.Selected = true;
-            }
+			if (workspace == null || _tabbedGroups.RootSequence == null)
+				return;
+
+			// When the active workspace changes we need to rebuild
+			// the menu and toolbars to reflect the tools in use for the active workspace
+			try
+			{
+				RebuildMenusAndToolbars();
+
+				// Find the tab that owns the workspace and activate it
+				TabPageCollection collection;
+				WorkspaceTabPage tab = FindTabPage(_tabbedGroups.RootSequence, workspace, out collection) as WorkspaceTabPage;
+				if (tab != null)
+				{
+					tab.Selected = true;
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(ex, LogLevel.Error);
+				throw;
+			}
 		}
 
-        private WorkspaceTab FindTabForWorkspace(IWorkspace workspace)
-        {
-            // Find the tab that owns the workspace and remove it
-            foreach (WorkspaceTab workspaceTab in _tabControl.TabPages)
-            {
-                if (workspaceTab.Workspace == workspace)
-                {
-                    return workspaceTab;
-                }
-            }
-            return null;
-        }
+		private Crownwood.DotNetMagic.Controls.TabPage FindTabPage(
+			TabGroupSequence nodeGroup, 
+			IWorkspace workspace,
+			out TabPageCollection containingCollection)
+		{
+			for (int i = 0; i < nodeGroup.Count; i++)
+			{
+				TabGroupBase node = nodeGroup[i];
+
+				if (node.IsSequence)
+				{
+					Crownwood.DotNetMagic.Controls.TabPage page = FindTabPage(node as TabGroupSequence, workspace, out containingCollection);
+
+					if (page != null)
+						return page;
+				}
+
+				if (node.IsLeaf)
+				{
+					TabGroupLeaf leaf = node as TabGroupLeaf;
+
+					foreach (WorkspaceTabPage page in leaf.TabPages)
+					{
+						if (page.Workspace == workspace)
+						{
+							containingCollection = leaf.TabPages;
+							return page;
+						}
+					}
+				}
+			}
+
+			containingCollection = null;
+			return null;
+		}
+
+		private void OnTabbedGroupPageClosePressed(TabbedGroups groups, TGCloseRequestEventArgs e)
+		{
+			try
+			{
+				WorkspaceTabPage page = e.TabPage as WorkspaceTabPage;
+				// We cancel so that DotNetMagic doesn't remove the tab; we want
+				// to do that manually
+				e.Cancel = true;
+
+				RemoveWorkspace(page.Workspace);
+
+				string str = String.Format("Workspaces: {0}", _desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Count);
+				System.Diagnostics.Trace.Write(str);
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(ex, LogLevel.Error);
+			}
+		}
+
+		private void OnTabbedGroupPageChanged(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage tp)
+		{
+			// Check for case when the last page in the group has been deleted
+			if (tp == null)
+				return;
+
+			WorkspaceTabPage page = tp as WorkspaceTabPage;
+			WorkspaceManager workspaceManager = page.Workspace.DesktopWindow.WorkspaceManager;
+			workspaceManager.ActiveWorkspace = page.Workspace;
+		}
+
+		private void RebuildMenusAndToolbars()
+		{
+			_desktopForm.RebuildMenusAndToolbars();
+		}
+
 	}
 }

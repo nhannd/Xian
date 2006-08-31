@@ -20,17 +20,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class DesktopForm : Form
     {
-        private IDesktopWindow _window;
+        private IDesktopWindow _desktopWindow;
 
-        //private ActionModelRoot _menuModel;
-        //private ActionModelRoot _toolbarModel;
-		private WorkspaceViewManager _workspaceViewManager;
+ 		private WorkspaceViewManager _workspaceViewManager;
         private ShelfViewManager _shelfViewManager;
-        private DockingManager _dockingManager;
 
-        public DesktopForm(IDesktopWindow window)
+		private DockingManager _dockingManager;
+
+        public DesktopForm(IDesktopWindow desktopWindow)
         {
-            _window = window;
+            _desktopWindow = desktopWindow;
 
 			if (SplashScreen.SplashForm != null)
 				SplashScreen.SplashForm.Owner = this;
@@ -42,21 +41,24 @@ namespace ClearCanvas.Desktop.View.WinForms
  
             // Subscribe to WorkspaceManager events so we know when workspaces are being
             // added, removed and activated
-            _window.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
-            _window.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
-            _window.WorkspaceManager.ActiveWorkspaceChanged += new EventHandler<WorkspaceActivationChangedEventArgs>(OnWorkspaceActivated);
-
-			_workspaceViewManager = new WorkspaceViewManager(this._toolStripContainer.ContentPanel, this._workspaceTabControl);
+            _desktopWindow.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
+            _desktopWindow.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
+            _desktopWindow.WorkspaceManager.ActiveWorkspaceChanged += new EventHandler<WorkspaceActivationChangedEventArgs>(OnWorkspaceActivated);
 
             _dockingManager = new DockingManager(this._toolStripContainer.ContentPanel, VisualStyle.Office2003);
             _dockingManager.ActiveColor = SystemColors.Control;
-            _dockingManager.InnerControl = _workspaceTabControl;
+            _dockingManager.InnerControl = _tabbedGroups;
 
-            _shelfViewManager = new ShelfViewManager(_window.ShelfManager, _dockingManager);
+			_workspaceViewManager = new WorkspaceViewManager(this, _tabbedGroups);
+			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);
 
-			RebuildMenusAndToolbars(null);
-			this._workspaceTabControl.ClosePressed += new EventHandler(OnWorkspaceTabClosePressed);
+			RebuildMenusAndToolbars();
         }
+
+		internal IDesktopWindow DesktopWindow
+		{
+			get { return _desktopWindow; }
+		}
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -130,78 +132,25 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
         {
-            try
-            {
-                RebuildMenusAndToolbars(e.Workspace);
-				_workspaceViewManager.AddWorkpace(e.Workspace);
+			_workspaceViewManager.AddWorkpace(e.Workspace);
 
-                // When we add a new workspace, we need to
-                _shelfViewManager.HideShelves();  
-            }
-            catch (Exception ex)
-            {
-				Platform.Log(ex, LogLevel.Error);
-			}
+            // When we add a new workspace, we need to
+            _shelfViewManager.HideShelves();  
         }
 
         // This is the event handler for when a workspace is removed from the
         // WorkspaceManager.  Not to be confused with OnCloseWorkspaceTab
         private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
         {
-            try
-            {
-                // If the form that owns the workspace that was removed is still around, close it
-                // (if the command was invoked from the menu, the form will not have closed
-                // on its own)
-				_workspaceViewManager.RemoveWorkspace(e.Workspace);
-			}
-            catch (Exception ex)
-            {
-				Platform.Log(ex, LogLevel.Error);
-			}
+			_workspaceViewManager.RemoveWorkspace(e.Workspace);
         }
 
         private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
         {
-            try
-            {
-                // When the active workspace changes we need to rebuild
-                // the menu and toolbars to reflect the tools in use for the active workspace
-                RebuildMenusAndToolbars(e.ActivatedWorkspace);
-                _workspaceViewManager.ActivateWorkspace(e.ActivatedWorkspace);
-            }
-            catch (Exception ex)
-            {
-				Platform.Log(ex, LogLevel.Error);
-			}
+            _workspaceViewManager.ActivateWorkspace(e.ActivatedWorkspace);
         }
 
-        private void OnWorkspaceTabClosePressed(object sender, EventArgs e)
-		{
-			try
-			{
-                if (RemoveActiveWorkspace())
-                {
-                    RebuildMenusAndToolbars(_window.ActiveWorkspace);
-                    GC.Collect();
-                }
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(ex, LogLevel.Error);
-			}
-		}
-		
-        /// <summary>
-        /// Tries to remove the active workspace
-        /// </summary>
-        /// <returns>True if the workspace was actually removed</returns>
-		internal bool RemoveActiveWorkspace()
-        {
-            return _window.WorkspaceManager.Workspaces.Remove(_window.ActiveWorkspace);
-		}
-
-        private void RebuildMenusAndToolbars(IWorkspace activeWorkspace)
+        internal void RebuildMenusAndToolbars()
         {
 			// Suspend the layouts so we avoid the flicker when we empty
 			// and refill the menus and toolbars
@@ -210,26 +159,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// very important to clean up the existing ones first
             ToolStripBuilder.Clear(this._mainMenu.Items);
             ToolStripBuilder.Clear(this._toolbar.Items);
-/*
-            _menuModel = new ActionModelRoot(null);
-            _toolbarModel = new ActionModelRoot(null);
 
-            _menuModel.Merge(DesktopApplication.ToolSet.MenuModel);
-            _toolbarModel.Merge(DesktopApplication.ToolSet.ToolbarModel);
+            if (_desktopWindow.MenuModel != null)
+            {
+                ToolStripBuilder.BuildMenu(this._mainMenu.Items, _desktopWindow.MenuModel.ChildNodes);
+            }
 
-            if (activeWorkspace != null)
+            if (_desktopWindow.ToolbarModel != null)
             {
-                _menuModel.Merge(DesktopApplication.ActiveWorkspace.ToolSet.MenuModel);
-                _toolbarModel.Merge(DesktopApplication.ActiveWorkspace.ToolSet.ToolbarModel);
-            }
-*/
-            if (_window.MenuModel != null)
-            {
-                ToolStripBuilder.BuildMenu(this._mainMenu.Items, _window.MenuModel.ChildNodes);
-            }
-            if (_window.ToolbarModel != null)
-            {
-                ToolStripBuilder.BuildToolbar(this._toolbar.Items, _window.ToolbarModel.ChildNodes);
+                ToolStripBuilder.BuildToolbar(this._toolbar.Items, _desktopWindow.ToolbarModel.ChildNodes);
             }
 
 			this._toolbar.ResumeLayout();
