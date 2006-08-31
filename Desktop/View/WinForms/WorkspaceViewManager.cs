@@ -29,7 +29,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_tabbedGroups.PageChanged += new TabbedGroups.PageChangeHandler(OnTabbedGroupPageChanged);
 		}
 
-		public void AddWorkpace(IWorkspace workspace)
+		public void AddWorkpaceTab(IWorkspace workspace)
 		{
 			try
 			{
@@ -47,38 +47,34 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		}
 
-		public void RemoveWorkspace(IWorkspace workspace)
-		{
-			if (workspace == null || _tabbedGroups.RootSequence == null)
-				return;
+        public void RemoveWorkspaceTab(IWorkspace workspace)
+        {
+            if (workspace == null || _tabbedGroups.RootSequence == null)
+                return;
 
-			try
-			{
-				// Remove the tab
-				TabPageCollection tabPages;
-				WorkspaceTabPage tabPage = FindTabPage(_tabbedGroups.RootSequence, workspace, out tabPages)
-					as WorkspaceTabPage;
+            try
+            {
+                // Remove the tab
+                TabPageCollection tabPages;
+                WorkspaceTabPage tabPage = FindTabPage(_tabbedGroups.RootSequence, workspace, out tabPages)
+                    as WorkspaceTabPage;
 
-				if (tabPage == null)
-					return;
+                if (tabPage == null)
+                    return;
 
-				tabPages.Remove(tabPage);
+                tabPages.Remove(tabPage);
 
-				// Remove workspace from the model
-				_desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Remove(workspace);
-
-				// TODO: We probably need to go into the TabControls and clear them
-				// out to prevent references to workspace from being retained.  Will
-				// do that when I deal with the memory allocation ticket #86.
-				GC.Collect();
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(ex, LogLevel.Error);
-				throw;
-			}
-
-		}
+                // TODO: We probably need to go into the TabControls and clear them
+                // out to prevent references to workspace from being retained.  Will
+                // do that when I deal with the memory allocation ticket #86.
+                GC.Collect();
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(ex, LogLevel.Error);
+                throw;
+            }
+        }
 
 		public void ActivateWorkspace(IWorkspace workspace)
 		{
@@ -147,11 +143,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			try
 			{
 				WorkspaceTabPage page = e.TabPage as WorkspaceTabPage;
+
 				// We cancel so that DotNetMagic doesn't remove the tab; we want
-				// to do that manually
+				// to do that manually, and only if the workspace is successfully removed
 				e.Cancel = true;
 
-				RemoveWorkspace(page.Workspace);
+                // Try to remove workspace from the model (this may not succeed)
+                _desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Remove(page.Workspace);
 			}
 			catch (Exception ex)
 			{

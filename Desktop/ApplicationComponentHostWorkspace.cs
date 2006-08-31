@@ -35,6 +35,8 @@ namespace ClearCanvas.Desktop
 
             public void Exit()
             {
+                _workspace._exitRequestedByComponent = true;
+
                 // close the workspace
                 _workspace.DesktopWindow.WorkspaceManager.Workspaces.Remove(_workspace);
             }
@@ -57,6 +59,7 @@ namespace ClearCanvas.Desktop
 
         private IApplicationComponent _component;
         private ApplicationComponentExitDelegate _exitCallback;
+        private bool _exitRequestedByComponent;
 
 
         public ApplicationComponentHostWorkspace(
@@ -92,7 +95,7 @@ namespace ClearCanvas.Desktop
 
         public override bool CanClose()
         {
-            return _component.CanExit();
+            return _exitRequestedByComponent || _component.CanExit();
         }
 
         protected override void Dispose(bool disposing)

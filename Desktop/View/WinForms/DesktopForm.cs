@@ -132,7 +132,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
         {
-			_workspaceViewManager.AddWorkpace(e.Workspace);
+			_workspaceViewManager.AddWorkpaceTab(e.Workspace);
 
             // When we add a new workspace, we need to
             _shelfViewManager.HideShelves();  
@@ -142,7 +142,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         // WorkspaceManager.  Not to be confused with OnCloseWorkspaceTab
         private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
         {
-			_workspaceViewManager.RemoveWorkspace(e.Workspace);
+			_workspaceViewManager.RemoveWorkspaceTab(e.Workspace);
         }
 
         private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
