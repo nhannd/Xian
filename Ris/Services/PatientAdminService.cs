@@ -54,12 +54,14 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void AddNewPatient(PatientProfile patient)
         {
+            this.GetPatientBroker().Store(patient.Patient);
             this.GetPatientProfileBroker().Store(patient);
         }
 
         [UpdateOperation]
         public void UpdatePatient(PatientProfile patient)
         {
+            this.GetPatientBroker().Store(patient.Patient);
             this.GetPatientProfileBroker().Store(patient);
         }
 

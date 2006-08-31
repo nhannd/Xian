@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="Patient" proxy="Patient" table="Patient_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <set name="Profiles" lazy="true" inverse="true" access="nosetter.camelcase-underscore">
+      <key column="PatientOID_"/>
+      <one-to-many class="PatientProfile"/>
+    </set>
+  </class>
+</hibernate-mapping>

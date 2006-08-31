@@ -21,9 +21,10 @@ namespace ClearCanvas.Healthcare {
 		{
 			// add any object initialization code here
 			// the signature of the New() method may be freely changed as needed
-			PatientProfile patient = new PatientProfile();
-            patient._sex = Sex.U;   // default to Unknown
-            return patient;
+			PatientProfile patientProfile = new PatientProfile();
+            Patient.New().AddProfile(patientProfile);
+            patientProfile._sex = Sex.U;   // default to Unknown
+            return patientProfile;
 		}
 
         /// <summary>
@@ -40,5 +41,25 @@ namespace ClearCanvas.Healthcare {
             }
             return null;
         }
-	}
+
+        public void AddAddress(Address address)
+        {
+            _addresses.Add(address);
+        }
+
+        public void RemoveAddress(Address address)
+        {
+            _addresses.Remove(address);
+        }
+
+        public void AddTelephoneNumber(TelephoneNumber phoneNumber)
+        {
+            _telephoneNumbers.Add(phoneNumber);
+        }
+
+        public void RemoveTelephoneNumber(TelephoneNumber phoneNumber)
+        {
+            _telephoneNumbers.Remove(phoneNumber);
+        }
+    }
 }

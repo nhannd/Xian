@@ -1,19 +1,21 @@
 require 'rexml/document'
 
 # NHibernate elements that result in C# fields
-NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','component','map','set','idbag']
+NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','component','map','set','idbag', 'bag', 'list']
 
 # NHibernate collection elements supported by this code generator
-NHIBERNATE_COLLECTION_TYPES = ['map', 'set', 'idbag']
+NHIBERNATE_COLLECTION_TYPES = ['map', 'set', 'idbag', 'bag', 'list']
 
 # NHibernate to C# type mappings
 DATATYPE_MAPPINGS =
 {
 	'map' => 'IDictionary',
 	'set' => 'ISet',
-	'idbag' => 'ICollection',
+	'idbag' => 'IList',
 	'String' => 'string',
-	'Boolean' => 'bool'
+	'Boolean' => 'bool',
+	'bag' => 'IList',
+	'list' => 'IList'
 }
 
 # C# datatype initializers
@@ -21,7 +23,7 @@ DATATYPE_INITIALIZERS =
 {
 	'IDictionary' => 'new Hashtable()',
 	'ISet' => 'new HybridSet()',
-	'ICollection' => 'new ArrayList()',
+	'IList' => 'new ArrayList()',
 	'DateTime' => 'DateTime.Now'
 }
 

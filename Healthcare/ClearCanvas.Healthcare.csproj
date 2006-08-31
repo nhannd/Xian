@@ -42,9 +42,11 @@
     <Compile Include="AddressType.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
+    <Compile Include="Patient.cs" />
     <Compile Include="PatientIdentifier.cs" />
     <Compile Include="PatientIdentifierType.cs" />
     <Compile Include="PatientProfile.cs" />
+    <Compile Include="PatientProfileMatch.cs" />
     <Compile Include="PatientProfileSearchCriteria.cs" />
     <Compile Include="PersonName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
