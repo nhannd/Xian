@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.Actions
         /// Protected constructor
         /// </summary>
         /// <param name="site">The site to which this model corresponds</param>
-        protected ActionModelRoot(string site)
+        public ActionModelRoot(string site)
             : base(null)
         {
             _site = site;

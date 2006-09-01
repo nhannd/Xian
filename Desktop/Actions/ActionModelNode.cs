@@ -100,10 +100,8 @@ namespace ClearCanvas.Desktop.Actions
         protected void InsertAction(IAction action, int pathDepth)
         {
             int segmentCount = action.Path.Segments.Length;
-
-            // if there is not at least one path item, the action can't be inserted
-            if (segmentCount == 0)
-                return;
+            if (segmentCount < 2)
+                throw new ArgumentException("Invalid action path.  Path must have 2 or more segments.");
 
             PathSegment segment = action.Path.Segments[pathDepth];
             if (pathDepth + 1 == segmentCount)

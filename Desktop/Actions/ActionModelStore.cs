@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.Actions
         {
             string id = string.Format("{0}:{1}", namespaze, site);
             XmlElement xmlActionModel = FindXmlActionModel(id) ?? CreateXmlActionModel(id);
-            return BuildAndSynchronize(xmlActionModel, actions);
+            return BuildAndSynchronize(site, xmlActionModel, actions);
         }
 
         /// <summary>
@@ -72,9 +72,9 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="xmlActionModel">an XML "action-model" node</param>
         /// <param name="actions">the set of that the model should contain</param>
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
-        private ActionModelRoot BuildAndSynchronize(XmlElement xmlActionModel, IActionSet actions)
+        private ActionModelRoot BuildAndSynchronize(string site, XmlElement xmlActionModel, IActionSet actions)
         {
-            ActionModelRoot model = new ActionModelRoot();
+            ActionModelRoot model = new ActionModelRoot(site);
             
             // easier to work with the actions in a map
             Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();
