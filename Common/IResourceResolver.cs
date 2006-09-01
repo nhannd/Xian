@@ -3,6 +3,11 @@ using System.IO;
 
 namespace ClearCanvas.Common
 {
+    /// <summary>
+    /// Defines an interface that provides resource resolution services.  Resource resolution in this context
+    /// involves accepting an unqualified or partially qualified resource name as input and attempting to fully
+    /// qualify the name so as to resolve the resource.
+    /// </summary>
     public interface IResourceResolver
     {
         /// <summary>

@@ -8,15 +8,14 @@ using System.IO;
 namespace ClearCanvas.Common
 {
     /// <summary>
-    /// Utility class that provides runtime string resource resolution services.
+    /// Default implementation of <see cref="IResourceResolver"/>.  Resolves resources by searching the set of
+    /// assemblies (specified in the constructor) in order for a matching resource.
     /// </summary>
-    /// <remarks>
-    /// This class searches a specified set of assemblies for classes named SR,
-    /// and searches the properties of the SR classes for a property with a matching name.
-    /// </remarks>
     public class ResourceResolver : IResourceResolver
     {
-        private static Dictionary<Assembly, List<Type>> _mapAsmToSRclass = new Dictionary<Assembly,List<Type>>();
+        /// <summary>
+        /// Cache of string resource managers for each assembly
+        /// </summary>
         private static Dictionary<Assembly, List<ResourceManager>> _mapStringResourceManagers = new Dictionary<Assembly, List<ResourceManager>>();
 
         private Assembly[] _assemblies;
@@ -56,7 +55,7 @@ namespace ClearCanvas.Common
             {
                 try
                 {
-                    string localized = ResolveStringResource(unqualifiedStringKey, asm);
+                    string localized = LocalizeString(unqualifiedStringKey, asm);
                     if (localized != null)
                     {
                         return localized;
@@ -110,17 +109,31 @@ namespace ClearCanvas.Common
             throw new MissingManifestResourceException("Resource not found");
         }
 
-        private string ResolveStringResource(string str, Assembly asm)
+        /// <summary>
+        /// Attempts to localize the specified string table key from the specified assembly, checking all
+        /// string resource file in arbitrary order.  The first match is returned, or null if no matches
+        /// are found.
+        /// </summary>
+        /// <param name="stringTableKey">The string table key to localize</param>
+        /// <param name="asm">The assembly to look in</param>
+        /// <returns>The first string table entry that matches the specified key, or null if no matches are found</returns>
+        private string LocalizeString(string stringTableKey, Assembly asm)
         {
             foreach (ResourceManager resourceManager in GetStringResourceManagers(asm))
             {
-                string resolved = resourceManager.GetString(str);
+                string resolved = resourceManager.GetString(stringTableKey);
                 if (resolved != null)
                     return resolved;
             }
             return null;
         }
 
+        /// <summary>
+        /// Returns a list of <see cref="ResourceManager"/>, one for each string resource file that is present
+        /// in the specified assembly.  The resource manager can then be used to localize strings.
+        /// </summary>
+        /// <param name="asm"></param>
+        /// <returns></returns>
         private static List<ResourceManager> GetStringResourceManagers(Assembly asm)
         {
             if (!_mapStringResourceManagers.ContainsKey(asm))
@@ -135,6 +148,12 @@ namespace ClearCanvas.Common
             return _mapStringResourceManagers[asm];
         }
 
+        /// <summary>
+        /// Searches the specified assembly for resource files whose names end with the specified string.
+        /// </summary>
+        /// <param name="asm">The assembly to search</param>
+        /// <param name="endingWith">The string to match the end of the resource name with</param>
+        /// <returns></returns>
         private static string[] GetResourcesEndingWith(Assembly asm, string endingWith)
         {
             List<string> stringResources = new List<string>();
