@@ -36,7 +36,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						_aeNavigator = new AENavigatorComponent();
 
 					if (_studyBrowser == null)
+					{
 						_studyBrowser = new StudyBrowserComponent();
+						_studyBrowser.StudyFinder = ImageViewerComponent.StudyManager.StudyFinders["My DataStore"];
+						_studyBrowser.StudyLoader = ImageViewerComponent.StudyManager.StudyLoaders["My DataStore"];
+					}
 
 					SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);
 					SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser);

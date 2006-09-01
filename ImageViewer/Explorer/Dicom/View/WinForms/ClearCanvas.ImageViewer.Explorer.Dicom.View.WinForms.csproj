@@ -55,6 +55,12 @@
     <Compile Include="StudyBrowserControl.Designer.cs">
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="StudySearchForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StudySearchForm.designer.cs">
+      <DependentUpon>StudySearchForm.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -73,6 +79,10 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\ClearCanvas.ImageViewer.csproj">
+      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
+      <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
       <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
@@ -86,6 +96,10 @@
     <EmbeddedResource Include="StudyBrowserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StudySearchForm.resx">
+      <DependentUpon>StudySearchForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
