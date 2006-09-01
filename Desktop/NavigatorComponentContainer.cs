@@ -60,6 +60,7 @@ namespace ClearCanvas.Desktop
                 {
                     _page.Component.SetHost(this);
                     _page.Component.Start();
+					_started = true;
                 }
             }
 

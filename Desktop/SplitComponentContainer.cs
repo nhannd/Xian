@@ -27,6 +27,9 @@ namespace ClearCanvas.Desktop
 				SplitComponentContainer owner,
 				SplitPane pane)
             {
+				Platform.CheckForNullReference(owner, "owner");
+				Platform.CheckForNullReference(pane, "pane");
+
                 _owner = owner;
 				_pane = pane;
                 _started = false;
@@ -48,6 +51,7 @@ namespace ClearCanvas.Desktop
                 {
                     _pane.Component.SetHost(this);
                     _pane.Component.Start();
+					_started = true;
                 }
             }
 
@@ -123,7 +127,10 @@ namespace ClearCanvas.Desktop
 
 		public override void Start()
         {
-            base.Start();
+			base.Start();
+
+			_leftPane.ComponentHost.Start();
+			_rightPane.ComponentHost.Start();
         }
 
         public override void Stop()
