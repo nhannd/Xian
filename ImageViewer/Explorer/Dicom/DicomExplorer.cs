@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						_studyBrowser = new StudyBrowserComponent();
 						_studyBrowser.StudyFinder = ImageViewerComponent.StudyManager.StudyFinders["My DataStore"];
 						_studyBrowser.StudyLoader = ImageViewerComponent.StudyManager.StudyLoaders["My DataStore"];
+						_studyBrowser.Title = "Search My Local Datastore";
 					}
 
 					SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);

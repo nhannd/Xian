@@ -36,6 +36,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studySearchForm.AccessionNumber.DataBindings.Add("Text", _bindingSource, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studySearchForm.PatientId.DataBindings.Add("Text", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studySearchForm.StudyDescription.DataBindings.Add("Text", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_titleBar.DataBindings.Add("Text", _bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
@@ -56,6 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_studyBrowserComponent.Search();
+
 			}
 		}
 	}
