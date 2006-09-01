@@ -5,17 +5,59 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
+	[ExtensionPoint()]
+	public class StudyBrowserToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
 	[ExtensionPoint()]
 	public class StudyBrowserComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
+	public interface IStudyBrowserToolContext : IToolContext
+	{
+		StudyBrowserComponent StudyBrowserComponent { get; }
+
+		ClickHandlerDelegate DefaultActionHandler { get; set; }
+
+		IDesktopWindow DesktopWindow { get; }
+	}
+	
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
 	public class StudyBrowserComponent : ApplicationComponent
 	{
+		public class StudyBrowserToolContext : ToolContext, IStudyBrowserToolContext
+		{
+			StudyBrowserComponent _component;
+
+			public StudyBrowserToolContext(StudyBrowserComponent component)
+			{
+				Platform.CheckForNullReference(component, "component");
+				_component = component;
+			}
+
+			public StudyBrowserComponent StudyBrowserComponent
+			{
+				get { return _component; }
+			}
+
+			public ClickHandlerDelegate DefaultActionHandler
+			{
+				get { return _component._defaultActionHandler; }
+				set { _component._defaultActionHandler = value; }
+			}
+			
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+		}
 	
 		#region Fields
 
@@ -32,7 +74,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _studyDescription = "";
 
 		private ISelection _currentSelection;
-		
+		private event EventHandler _selectedStudyChanged;
+		private ClickHandlerDelegate _defaultActionHandler;
+		private ToolSet _toolSet;
+
+		private ActionModelRoot _toolbarModel;
+		private ActionModelRoot _contextMenuModel;
+
 		#endregion
 
 		public IStudyFinder StudyFinder
@@ -51,7 +99,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get { return _studyList; }
 		}
-		
+
+		public ActionModelRoot ToolbarModel
+		{
+			get { return _toolbarModel; }
+		}
+
+		public ActionModelRoot ContextMenuModel
+		{
+			get { return _contextMenuModel; }
+		}
+	
+
 		public string Title
 		{
 			get { return _title; }
@@ -88,10 +147,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set { _studyDescription = value; }
 		}
 
-		public ISelection CurrentSelection
+		public StudyItem SelectedStudy
 		{
-			get { return _currentSelection;}
-			set { _currentSelection = value;}
+			get { return _currentSelection.Item as StudyItem; }
+		}
+
+		public event EventHandler SelectedStudyChanged
+		{
+			add { _selectedStudyChanged += value; }
+			remove { _selectedStudyChanged -= value; }
 		}
 
 		#region IApplicationComponent overrides
@@ -103,6 +167,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyList = new TableData<StudyItem>();
 
 			AddColumns();
+
+			_toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
+			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
+			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
 		}
 
 		public override void Stop()
@@ -141,21 +209,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Open()
 		{
-			StudyItem selectedStudy = _currentSelection.Item as StudyItem;
-
-			if (selectedStudy == null)
+			if (this.SelectedStudy == null)
 				return;
 
-			string studyInstanceUid = selectedStudy.StudyInstanceUID;
-			string label = String.Format("{0}, {1} | {2}", 
-				selectedStudy.LastName, 
-				selectedStudy.FirstName,
-				selectedStudy.PatientId);
+			string studyInstanceUid = this.SelectedStudy.StudyInstanceUID;
+			string label = String.Format("{0}, {1} | {2}",
+				this.SelectedStudy.LastName,
+				this.SelectedStudy.FirstName,
+				this.SelectedStudy.PatientId);
 
 			_studyLoader.LoadStudy(studyInstanceUid);
 
 			ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
 			ApplicationComponent.LaunchAsWorkspace(this.Host.DesktopWindow, imageViewer, label, null);
+		}
+
+		public void ItemDoubleClick()
+		{
+			if (_defaultActionHandler != null)
+			{
+				_defaultActionHandler();
+			}
+		}
+
+		public void SetSelection(ISelection selection)
+		{
+			if (_currentSelection != selection)
+			{
+				_currentSelection = selection;
+				EventsHelper.Fire(_selectedStudyChanged, this, EventArgs.Empty);
+			}
 		}
 
 		private void AddColumns()

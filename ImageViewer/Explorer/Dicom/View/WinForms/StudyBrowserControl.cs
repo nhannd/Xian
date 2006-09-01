@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_studyBrowserComponent = component;
 			_studyTableView.DataSource = _studyBrowserComponent.StudyList;
+			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
 			_studyTableView.SelectionChanged += new EventHandler(OnStudyTableViewSelectionChanged);
 			_studyTableView.ItemDoubleClicked += new EventHandler(OnStudyTableViewDoubleClick);
 			_studySearchForm.SearchClicked += new EventHandler(OnSearchClicked);
@@ -42,14 +43,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
 		{
-			_studyBrowserComponent.CurrentSelection = _studyTableView.CurrentSelection;
+			_studyBrowserComponent.SetSelection(_studyTableView.CurrentSelection);
 		}
 
 		void OnStudyTableViewDoubleClick(object sender, EventArgs e)
 		{
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
-				_studyBrowserComponent.Open();
+				_studyBrowserComponent.ItemDoubleClick();
 			}
 		}
 
@@ -58,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_studyBrowserComponent.Search();
-
 			}
 		}
 	}
