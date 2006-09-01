@@ -201,16 +201,13 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         private ActionModelNode GetActionModel(string site)
         {
-            ActionSelectorDelegate selector = delegate(IAction action) { return (action.Path.Site == site); };
-
-            IActionSet actions = this.DesktopTools.Actions.Select(selector);
-
+            IActionSet actions = this.DesktopTools.Actions;
             if (this.ActiveWorkspace != null)
             {
-                actions = actions.Union(this.ActiveWorkspace.Actions.Select(selector));
+                actions = actions.Union(this.ActiveWorkspace.Actions);
             }
 
-            return ActionModelRoot.CreateModel(typeof(DesktopWindow).FullName, site, actions).ChildNodes[site];
+            return ActionModelRoot.CreateModel(typeof(DesktopWindow).FullName, site, actions);
         }
 
 

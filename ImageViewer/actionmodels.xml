@@ -1,6 +1,6 @@
 <action-models>
   <action-model id="ClearCanvas.Desktop.DesktopWindow:global-menus">
-    <action id="ClearCanvas.Desktop.Dashboard.DashboardTool:activate" path="global-menus/MenuFile/MenuFileSearch" />
+    <action id="ClearCanvas.Desktop.Explorer.ExplorerTool:show" path="global-menus/MenuFile/MenuFileSearch" />
     <action id="ClearCanvas.Desktop.ExtensionBrowser.ExtensionBrowserTool:show" path="global-menus/MenuFile/MenuExtensionBrowser" />
     <action id="ClearCanvas.Desktop.View.WinForms.StockDesktopTools+CloseWorkspaceTool:closeWorkspace" path="global-menus/MenuFile/MenuFileCloseWorkspace" />
     <action id="ClearCanvas.Desktop.View.WinForms.StockDesktopTools+ExitAppTool:exit" path="global-menus/MenuFile/MenuFileExitApplication" />
@@ -20,7 +20,7 @@
     <action id="ClearCanvas.Desktop.Help.HelpTool:activate" path="global-menus/MenuHelp/MenuHelpAbout" />
   </action-model>
   <action-model id="ClearCanvas.Desktop.DesktopWindow:global-toolbars">
-    <action id="ClearCanvas.Desktop.Dashboard.DashboardTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardStudyCentre" />
+    <action id="ClearCanvas.Desktop.Explorer.ExplorerTool:show" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardStudyCentre" />
     <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:redo" path="global-toolbars/ToolbarStandard/ToolbarStandardRedo" />
     <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:undo" path="global-toolbars/ToolbarStandard/ToolbarStandardUndo" />
     <action id="ClearCanvas.ImageViewer.Layout.Basic.LayoutTool:show" path="global-toolbars/ToolbarStandard/MenuLayoutLayoutManager" />
@@ -34,5 +34,11 @@
     <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateRightTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateRight" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-toolbars/ToolbarMeasurement/ToolsMeasurementRectangularROI" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-toolbars/ToolbarMeasurement/ToolsMeasurementRuler" />
+  </action-model>
+  <action-model id="ClearCanvas.ImageViewer.ImageViewerComponent:imageviewer-contextmenu">
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="imageviewer-contextmenu/MenuToolsStandardStack" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="imageviewer-contextmenu/MenuToolsStandardWindowLevel" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="imageviewer-contextmenu/MenuToolsStandardPan" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="imageviewer-contextmenu/MenuToolsStandardZoom" />
   </action-model>
 </action-models>

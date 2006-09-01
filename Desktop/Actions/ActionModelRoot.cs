@@ -10,29 +10,45 @@ namespace ClearCanvas.Desktop.Actions
     public class ActionModelRoot : ActionModelNode
     {
         /// <summary>
-        /// Creates the action model with the specified namespace and modelID, using the specified
-        /// set of actions as input.  If an action model specification for the namespace/modelID
+        /// Creates the action model with the specified namespace and site, using the specified
+        /// set of actions as input.  If an action model specification for the namespace/site
         /// does not exist, it will be created.  If it does it exist, it will be used as guidance
         /// in constructing the action model tree.
         /// </summary>
-        /// <param name="namespaze">A namespace to qualify the model ID, typically the class name of the calling class is a good choice</param>
-        /// <param name="modelID">The model ID, typically the <see cref="ActionPath.Site"/> value is a good choice</param>
+        /// <param name="namespaze">A namespace to qualify the site, typically the class name of the calling class is a good choice</param>
+        /// <param name="site">The site (<see cref="ActionPath.Site"/>)</param>
         /// <param name="actions">The set of actions from which to construct the model</param>
         /// <returns>An action model tree</returns>
-        public static ActionModelRoot CreateModel(string namespaze, string modelID, IActionSet actions)
+        public static ActionModelRoot CreateModel(string namespaze, string site, IActionSet actions)
         {
-            string qualifiedModelID = string.Format("{0}:{1}", namespaze, modelID);
             ActionModelStore store = new ActionModelStore("actionmodels.xml");
-            return store.BuildAndSynchronize(qualifiedModelID, actions);
+            return store.BuildAndSynchronize(namespaze, site, actions.Select(delegate(IAction action) { return action.Path.Site == site; }));
         }
+
+        private string _site;
 
 
         /// <summary>
         /// Constructor
         /// </summary>
         public ActionModelRoot()
-            :base(null)
+            :this(null)
         {
+        }
+
+        /// <summary>
+        /// Protected constructor
+        /// </summary>
+        /// <param name="site">The site to which this model corresponds</param>
+        protected ActionModelRoot(string site)
+            : base(null)
+        {
+            _site = site;
+        }
+
+        public string Site
+        {
+            get { return _site; }
         }
 
         /// <summary>
@@ -53,7 +69,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="action">The action to insert</param>
         public void InsertAction(IAction action)
         {
-            InsertAction(action, 0);
+            InsertAction(action, 1);
         }
         
         protected override ActionModelNode CreateNode(PathSegment pathSegment)

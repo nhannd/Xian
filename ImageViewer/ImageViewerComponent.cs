@@ -119,15 +119,12 @@ namespace ClearCanvas.ImageViewer
         {
             get
             {
-                IActionSet contextMenuActions = _toolSet.Actions.Select(
-                    delegate(IAction action) { return action.Path.Site == "imageviewer-contextmenu"; });
-
-                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", contextMenuActions);
+                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 
                 // insert dynamic items into model here
                 model.InsertActions(GetDisplaySetActions());
 
-                return model.ChildNodes["imageviewer-contextmenu"];
+                return model;
             }
         }
 

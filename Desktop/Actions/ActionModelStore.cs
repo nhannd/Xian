@@ -53,13 +53,14 @@ namespace ClearCanvas.Desktop.Actions
         /// automatically persisted.  Hence a new model that has never before been persisted will be
         /// added to the store.
         /// </summary>
-        /// <param name="id">The model ID of the model to build</param>
+        /// <param name="namespaze">A namespace to qualify the site</param>
+        /// <param name="site">The site</param>
         /// <param name="actions">The set of actions to include</param>
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
-        public ActionModelRoot BuildAndSynchronize(string id, IActionSet actions)
+        public ActionModelRoot BuildAndSynchronize(string namespaze, string site, IActionSet actions)
         {
+            string id = string.Format("{0}:{1}", namespaze, site);
             XmlElement xmlActionModel = FindXmlActionModel(id) ?? CreateXmlActionModel(id);
-
             return BuildAndSynchronize(xmlActionModel, actions);
         }
 

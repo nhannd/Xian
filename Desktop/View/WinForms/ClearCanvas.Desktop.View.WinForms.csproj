@@ -70,7 +70,6 @@
       <DependentUpon>DialogBoxForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DialogBox.cs" />
-    <Compile Include="ApplicationComponentView.cs" />
     <Compile Include="IconFactory.cs" />
     <Compile Include="MessageBox.cs" />
     <Compile Include="NavigatorComponentContainerControl.cs">

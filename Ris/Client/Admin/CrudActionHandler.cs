@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private void AddAction(ActionModelRoot model, string name, ClickHandlerDelegate clickHandler, string icon, bool showLabel)
         {
             IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-            ActionPath actionPath = new ActionPath(name, resolver);
+            ActionPath actionPath = new ActionPath(string.Format("root/{0}", name), resolver);
 
             ClickAction action = new ClickAction(name, actionPath, ClickActionFlags.None, resolver);
             
