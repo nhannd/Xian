@@ -284,7 +284,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				return "TODO!!";
+				//throw new Exception("The method or operation is not implemented.");
 			}
 			set
 			{
