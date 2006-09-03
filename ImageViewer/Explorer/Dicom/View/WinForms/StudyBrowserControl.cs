@@ -25,6 +25,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyBrowserComponent = component;
 			_studyTableView.DataSource = _studyBrowserComponent.StudyList;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
+			_studyTableView.MenuModel = _studyBrowserComponent.ContextMenuModel;
 			_studyTableView.SelectionChanged += new EventHandler(OnStudyTableViewSelectionChanged);
 			_studyTableView.ItemDoubleClicked += new EventHandler(OnStudyTableViewDoubleClick);
 			_studySearchForm.SearchClicked += new EventHandler(OnSearchClicked);
