@@ -224,6 +224,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			ApplicationComponent.LaunchAsWorkspace(this.Host.DesktopWindow, imageViewer, label, null);
 		}
 
+		public void Delete()
+		{
+			// TODO
+		}
+
 		public void ItemDoubleClick()
 		{
 			if (_defaultActionHandler != null)

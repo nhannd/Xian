@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AENavigatorComponent.cs" />
+    <Compile Include="StudyBrowserTool.cs" />
     <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomExplorer.cs" />
     <Compile Include="OpenStudyTool.cs" />
