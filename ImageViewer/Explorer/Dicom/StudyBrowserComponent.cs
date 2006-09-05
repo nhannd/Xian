@@ -209,6 +209,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Open()
 		{
+			Platform.CheckMemberIsSet(_studyLoader, "studyLoader");
+
 			if (this.SelectedStudy == null)
 				return;
 
