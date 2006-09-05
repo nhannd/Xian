@@ -581,7 +581,11 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseWheel(XMouseEventArgs e)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			Platform.CheckForNullReference(e, "e");
+
+			e.SelectedImageBox = this;
+
+			return _uiEventHandler.OnMouseWheel(e);
 		}
 
 		public bool OnKeyDown(XKeyEventArgs e)

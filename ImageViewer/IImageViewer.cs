@@ -63,7 +63,9 @@ namespace ClearCanvas.ImageViewer
         /// property gets an index that stores which mouse buttons are currently
         /// mapped to which MMT.
         /// </remarks>
-        MouseToolMap MouseToolMap { get; }
+        MouseButtonToolMap MouseButtonToolMap { get; }
+
+		MouseWheelToolMap MouseWheelToolMap { get; }
 
         /// <summary>
         /// Gets the <see cref="CommandHistory"/>.

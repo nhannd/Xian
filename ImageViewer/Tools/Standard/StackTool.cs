@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private int _initialPresentationImageIndex;
 
 		public StackTool()
-            :base(XMouseButtons.Left, true)
+            :base(XMouseButtons.Left, true, true)
 		{
 		}
 
@@ -53,9 +53,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.OnMouseMove(e);
 
-			if (_command == null)
-				return true;
-
 			int increment;
 
 			if (base.DeltaY > 0)
@@ -63,14 +60,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			else
 				increment = -1;
 
-			e.SelectedTile.PresentationImageIndex += increment;
-			//e.SelectedTile.PresentationImage.Draw(true);
+			Tile selectedTile = e.SelectedTile;
+			ImageBox selectedImageBox = e.SelectedImageBox;
 
-			int tileIndex = e.SelectedImageBox.Tiles.IndexOf(e.SelectedTile);
-			int topLeftPresentationIndex = e.SelectedTile.PresentationImageIndex - tileIndex;
-
-			e.SelectedImageBox.TopLeftPresentationImageIndex = topLeftPresentationIndex;
-			e.SelectedImageBox.Draw(true);
+			AdvanceImage(increment, selectedTile, selectedImageBox);
 
 			return true;
 		}
@@ -109,6 +102,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			Platform.CheckForNullReference(e, "e");
 
+			//int increment;
+
+			//if (e.Delta > 0)
+			//    increment = -1;
+			//else
+			//    increment = 1;
+
+			//Tile selectedTile = e.SelectedTile;
+			//ImageBox selectedImageBox = e.SelectedImageBox;
+
+			//AdvanceImage(increment, selectedTile, selectedImageBox);
+
 			return true;
 		}
 
@@ -124,5 +129,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
+
+		private void AdvanceImage(int increment, Tile selectedTile, ImageBox selectedImageBox)
+		{
+			selectedTile.PresentationImageIndex += increment;
+			//selectedTile.PresentationImage.Draw(true);
+
+			int tileIndex = selectedImageBox.Tiles.IndexOf(selectedTile);
+			int topLeftPresentationIndex = selectedTile.PresentationImageIndex - tileIndex;
+
+			selectedImageBox.TopLeftPresentationImageIndex = topLeftPresentationIndex;
+			selectedImageBox.Draw(true);
+		}
     }
 }

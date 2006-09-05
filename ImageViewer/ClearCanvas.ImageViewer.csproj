@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="MouseWheelToolMappedEventArgs.cs" />
     <Compile Include="DynamicActionMouseTool.cs" />
     <Compile Include="CaptureUIEventHandler.cs" />
     <Compile Include="ClientArea.cs" />
@@ -211,10 +212,11 @@
     <Compile Include="Layers\Tests\LayerGroupTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
+    <Compile Include="MouseButtonToolMap.cs" />
+    <Compile Include="MouseButtonToolMappedEventArgs.cs" />
     <Compile Include="MouseCaptureChangingEventArgs.cs" />
     <Compile Include="MouseTool.cs" />
-    <Compile Include="MouseToolMap.cs" />
-    <Compile Include="MouseToolMappedEventArgs.cs" />
+    <Compile Include="MouseWheelToolMap.cs" />
     <Compile Include="PhysicalWorkspace.cs" />
     <Compile Include="PhysicalWorkspaceMemento.cs" />
     <Compile Include="PresentationImage.cs" />
@@ -301,9 +303,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="actionmodels.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DynamicOverlays\Tests\" />

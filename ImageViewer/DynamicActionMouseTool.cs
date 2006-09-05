@@ -11,13 +11,16 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DynamicActionMouseTool : MouseTool
 	{
-        public DynamicActionMouseTool(XMouseButtons mouseButton, bool initiallyActive)
-			: base(mouseButton, initiallyActive)
+        public DynamicActionMouseTool(
+			XMouseButtons mouseButton, 
+			bool useMouseWheel, 
+			bool initiallyActive)
+			: base(mouseButton, useMouseWheel, initiallyActive)
 		{
         }
 
         public DynamicActionMouseTool(XMouseButtons mouseButton)
-            : base(mouseButton, false)
+            : base(mouseButton)
         {
         }
 

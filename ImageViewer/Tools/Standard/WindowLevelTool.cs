@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private WindowLevelApplicator _applicator;
 
 		public WindowLevelTool()
-            :base(XMouseButtons.Right, true)
+            :base(XMouseButtons.Middle, false, true)
 		{
         }
 

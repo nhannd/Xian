@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			//physicalWorkspace[0].SetTileGrid(2,2);
 			physicalWorkspace.ImageBoxes[0].SetTileGrid(1,1);
-			physicalWorkspace.ImageBoxes[1].SetTileGrid(2,2);
+			physicalWorkspace.ImageBoxes[1].SetTileGrid(1,1);
 			//physicalWorkspace[2].SetTileGrid(3,4);
 		}
 

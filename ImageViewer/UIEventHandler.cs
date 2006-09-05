@@ -104,7 +104,29 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseWheel(XMouseEventArgs e)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			Platform.CheckForNullReference(e, "e");
+
+			IUIEventHandler handler;
+			IClientArea clientArea;
+
+			foreach (TItem item in _collection)
+			{
+				if (item != null)
+				{
+					clientArea = item as IClientArea;
+					handler = item as IUIEventHandler;
+
+					if (clientArea != null)
+					{
+						if (clientArea.DrawableClientRectangle.Contains(e.X, e.Y))
+							return handler.OnMouseWheel(e);
+					}
+					else
+						return handler.OnMouseWheel(e);
+				}
+			}
+
+			return false;
 		}
 
 		public bool OnKeyDown(XKeyEventArgs e)

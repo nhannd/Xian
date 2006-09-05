@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public PanTool()
-            :base(XMouseButtons.Left, false)
+            :base(XMouseButtons.Left, false, false)
 		{
 		}
 

@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer
 
             if (!handled)
             {
-				MouseTool tool = this.ParentViewer.MouseToolMap[e.Button];
+				MouseTool tool = this.ParentViewer.MouseButtonToolMap[e.Button];
                 if (tool != null)
                 {
                     tool.OnMouseDown(e);
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageViewer
 
             if (!handled)
             {
-				MouseTool tool = this.ParentViewer.MouseToolMap[e.Button];
+				MouseTool tool = this.ParentViewer.MouseButtonToolMap[e.Button];
                 if (tool != null)
                 {
                     tool.OnMouseMove(e);
@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer
 
             if (!handled)
             {
-				MouseTool tool = this.ParentViewer.MouseToolMap[e.Button];
+				MouseTool tool = this.ParentViewer.MouseButtonToolMap[e.Button];
                 if (tool != null)
                 {
                     tool.OnMouseUp(e);
@@ -239,7 +239,23 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseWheel(XMouseEventArgs e)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			Platform.CheckForNullReference(e, "e");
+
+			e.SelectedPresentationImage = this;
+			e.SelectedDisplaySet = this.ParentDisplaySet;
+
+			bool handled = this.LayerManager.RootLayerGroup.OnMouseWheel(e);
+
+			if (!handled)
+			{
+				MouseTool tool = this.ParentViewer.MouseWheelToolMap.MouseTool;
+				if (tool != null)
+				{
+					tool.OnMouseWheel(e);
+				}
+			}
+
+			return true;
 		}
 
 		public bool OnKeyDown(XKeyEventArgs e)

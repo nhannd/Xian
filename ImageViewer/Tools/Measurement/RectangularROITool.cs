@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     public class RectangularROITool : MouseTool
 	{
 		public RectangularROITool()
-            :base(XMouseButtons.Right, false)
+            :base(XMouseButtons.Left, false, false)
 		{
 		}
 

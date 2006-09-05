@@ -62,10 +62,10 @@ namespace ClearCanvas.ImageViewer
         private PhysicalWorkspace _physicalWorkspace;
         private ILayoutManager _layoutManager;
         private EventBroker _eventBroker;
-        private MouseToolMap _currentMappableModalTools = new MouseToolMap();
+        private MouseButtonToolMap _mouseButtonToolMap;
+		private MouseWheelToolMap _mouseWheelToolMap;
         private string _studyInstanceUID;
         private ToolSet _toolSet;
-
 
         public ImageViewerComponent(string studyInstanceUID)
         {
@@ -119,12 +119,12 @@ namespace ClearCanvas.ImageViewer
         {
             get
             {
-                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
+				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 
-                // insert dynamic items into model here
-                model.InsertActions(GetDisplaySetActions());
+				// insert dynamic items into model here
+				model.InsertActions(GetDisplaySetActions());
 
-                return model;
+				return model;
             }
         }
 
@@ -236,10 +236,27 @@ namespace ClearCanvas.ImageViewer
         /// property gets an index that stores which mouse buttons are currently
         /// mapped to which MMT.
         /// </remarks>
-        public MouseToolMap MouseToolMap
+        public MouseButtonToolMap MouseButtonToolMap
         {
-            get { return _currentMappableModalTools; }
+            get 
+			{
+				if (_mouseButtonToolMap == null)
+					_mouseButtonToolMap = new MouseButtonToolMap();
+
+				return _mouseButtonToolMap; 
+			}
         }
+
+		public MouseWheelToolMap MouseWheelToolMap
+		{
+			get 
+			{
+				if (_mouseWheelToolMap == null)
+					_mouseWheelToolMap = new MouseWheelToolMap();
+
+				return _mouseWheelToolMap; 
+			}
+		}
 
         private void CreateLayoutManager()
         {

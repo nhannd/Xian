@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
-            :base(XMouseButtons.Right, false)
+            :base(XMouseButtons.Middle, true, false)
 		{
 		}
 
@@ -52,9 +52,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool OnMouseMove(XMouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-
-			if (_command == null)
-				return true;
 
 			SpatialTransform spatialTransform = e.SelectedPresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
 			spatialTransform.ScaleToFit = false;
@@ -92,6 +89,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool OnMouseWheel(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
+
+			//SpatialTransform spatialTransform = e.SelectedPresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
+			//spatialTransform.ScaleToFit = false;
+			//spatialTransform.Scale += (float)e.Delta * 0.001f;
+			//spatialTransform.Calculate();
+			//e.SelectedPresentationImage.Draw(true);
 
 			return true;
 		}
