@@ -9,7 +9,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    public abstract class ZoomFixedTool : ImageViewerTool
+    public abstract class ZoomFixedTool : Tool<IImageViewerToolContext>
     {
         public ZoomFixedTool()
 		{

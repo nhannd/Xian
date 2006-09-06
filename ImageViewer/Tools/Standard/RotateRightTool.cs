@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for RotateRightTool.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RotateRightTool : ImageViewerTool
+    public class RotateRightTool : Tool<IImageViewerToolContext>
 	{
 		public RotateRightTool()
 		{

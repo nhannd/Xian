@@ -63,7 +63,6 @@
     <Compile Include="TabComponentContainer.cs" />
     <Compile Include="TableColumn.cs" />
     <Compile Include="TabPage.cs" />
-    <Compile Include="DesktopTool.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="ExtensionSettings.cs" />
     <Compile Include="IDesktopWindow.cs" />
@@ -94,6 +93,7 @@
     <Compile Include="Actions\MenuActionAttribute.cs" />
     <Compile Include="Actions\StateObserverAttribute.cs" />
     <Compile Include="Actions\TooltipAttribute.cs" />
+    <Compile Include="Tools\ToolBase.cs" />
     <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />

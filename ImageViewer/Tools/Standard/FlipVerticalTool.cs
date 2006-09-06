@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for FlipVerticalTool.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class FlipVerticalTool : ImageViewerTool
+    public class FlipVerticalTool : Tool<IImageViewerToolContext>
 	{
 		public FlipVerticalTool()
 		{

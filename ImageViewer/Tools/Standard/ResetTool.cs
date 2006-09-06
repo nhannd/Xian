@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for ResetTool.
 	/// </summary>
     //[ClearCanvas.Common.ExtensionOf(typeof(ITool))]
-    public class ResetTool : ImageViewerTool
+    public class ResetTool : Tool<IImageViewerToolContext>
     {
 		public ResetTool()
 		{

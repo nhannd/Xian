@@ -146,7 +146,6 @@
     <Compile Include="ImageBoxSelectedEventArgs.cs" />
     <Compile Include="ImageDrawingEventArgs.cs" />
     <Compile Include="ImageViewerComponent.cs" />
-    <Compile Include="ImageViewerTool.cs" />
     <Compile Include="Imaging\CalculatedGrayscaleLUT.cs" />
     <Compile Include="Imaging\ColorSpaceConverter.cs" />
     <Compile Include="Imaging\ColorMap.cs" />

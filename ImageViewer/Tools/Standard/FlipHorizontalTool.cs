@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// Summary description for FlipHorizontalTool.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class FlipHorizontalTool : ImageViewerTool
+    public class FlipHorizontalTool : Tool<IImageViewerToolContext>
 	{
 		public FlipHorizontalTool()
 		{

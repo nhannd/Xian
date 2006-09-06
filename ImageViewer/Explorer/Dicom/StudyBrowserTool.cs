@@ -9,7 +9,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	public class StudyBrowserTool : Tool
+    public class StudyBrowserTool : Tool<IStudyBrowserToolContext>
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
@@ -17,11 +17,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public StudyBrowserTool()
 		{
 
-		}
-
-		protected IStudyBrowserToolContext Context
-		{
-			get { return this.ContextBase as IStudyBrowserToolContext; }
 		}
 
 		public override void Initialize()

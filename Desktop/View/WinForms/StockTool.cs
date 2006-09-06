@@ -7,7 +7,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public abstract class StockTool : DesktopTool
+    public abstract class StockTool : Tool<IDesktopToolContext>
     {
         public StockTool()
         {

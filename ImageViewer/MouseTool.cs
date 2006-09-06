@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer
     /// and is given the opportunity to respond to mouse events for that button.  Developers 
     /// implementing mouse tools should subclass this class rather than <see cref="Tool"/>.
     /// </remarks>
-	public abstract class MouseTool : ImageViewerTool, IUIEventHandler
+    public abstract class MouseTool : Tool<IImageViewerToolContext>, IUIEventHandler
 	{
 		// Protected attributes
         private XMouseButtons _mouseButton;

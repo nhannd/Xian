@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [ClickHandler("show", "Show")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PatientSearchTool : DesktopTool
+    public class PatientSearchTool : Tool<IDesktopToolContext>
     {
 
         private PatientSearchComponent _searchComponent;

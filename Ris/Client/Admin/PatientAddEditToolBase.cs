@@ -10,7 +10,7 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    public abstract class PatientAddEditToolBase : Tool
+    public abstract class PatientAddEditToolBase : ToolBase
     {
         protected IWorkspace OpenPatient(string title, PatientProfile patient)
         {

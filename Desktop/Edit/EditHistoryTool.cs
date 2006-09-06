@@ -23,7 +23,7 @@ namespace ClearCanvas.Desktop.Edit
     [Tooltip("redo", "ToolbarStandardRedo")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class EditHistoryTool : DesktopTool
+    public class EditHistoryTool : Tool<IDesktopToolContext>
     {
         private bool _undoEnabled;
         private event EventHandler _undoEnabledChangedEvent;

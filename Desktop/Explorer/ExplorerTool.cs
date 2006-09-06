@@ -19,7 +19,7 @@ namespace ClearCanvas.Desktop.Explorer
 	[IconSet("show", IconScheme.Colour, "", "Icons.DashboardMedium.png", "Icons.DashboardLarge.png")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class ExplorerTool : DesktopTool
+    public class ExplorerTool : Tool<IDesktopToolContext>
 	{
 		TabComponentContainer _tabComponentContainer;
 		List<IHealthcareArtifactExplorer> _healthcareArtifactExplorers;

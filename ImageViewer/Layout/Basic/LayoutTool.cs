@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class LayoutTool : DesktopTool
+    public class LayoutTool : Tool<IDesktopToolContext>
 	{
         private LayoutComponent _layoutComponent;
 

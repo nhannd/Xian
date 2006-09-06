@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
     /// Summary description for ExtensionBrowserTool.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class ExtensionBrowserTool : DesktopTool
+    public class ExtensionBrowserTool : Tool<IDesktopToolContext>
 	{
         private ExtensionBrowserComponent _browser;
 

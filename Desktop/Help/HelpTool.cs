@@ -12,7 +12,7 @@ namespace ClearCanvas.Desktop.Help
 	/// Summary description for Help.
 	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class HelpTool : Tool
+    public class HelpTool : Tool<IDesktopToolContext>
 	{
 		public HelpTool()
 		{
