@@ -161,6 +161,9 @@
       copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.dll" .\plugins
       copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" .\plugins
 
+      :: Copy config files
+      copy "..\..\..\Actions\actionmodels.xml .
+
 if $(SolutionName) == Ris goto RisModules
 
       :: Copy database file
@@ -199,8 +202,6 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins
 
-      :: Copy config files
-      copy ..\..\..\..\ImageViewer\actionmodels.xml .
 
       :: Important to exit here - do not copy the Ris Modules
       exit
