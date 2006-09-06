@@ -6,8 +6,8 @@ namespace ClearCanvas.ImageViewer
 {
 	public class AnnotationManager
 	{
-		AnnotationItemProviderManager _annotationItemProviderManager;
-		AnnotationConfigurationManager _annotationConfigurationManager;
+		private AnnotationItemProviderManager _annotationItemProviderManager;
+		private AnnotationConfigurationManager _annotationConfigurationManager;
 
 		public AnnotationManager()
 		{

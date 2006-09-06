@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer
 
 	public class AnnotationItemProviderManager  : BasicExtensionPointManager<IAnnotationItemProvider>
 	{
-		bool _isLoaded = false;
+		private bool _isLoaded = false;
 
 		public AnnotationItemProviderManager()
 		{
