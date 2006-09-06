@@ -22,7 +22,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	public interface IStudyBrowserToolContext : IToolContext
 	{
-		StudyBrowserComponent StudyBrowserComponent { get; }
+		StudyItem SelectedStudy { get; }
+
+		event EventHandler SelectedStudyChanged;
+
+		IStudyLoader StudyLoader { get; }
 
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
@@ -42,10 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_component = component;
 			}
 
-			public StudyBrowserComponent StudyBrowserComponent
-			{
-				get { return _component; }
-			}
+			#region IStudyBrowserToolContext Members
 
 			public ClickHandlerDelegate DefaultActionHandler
 			{
@@ -57,6 +58,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				get { return _component.Host.DesktopWindow; }
 			}
+
+			public StudyItem SelectedStudy
+			{
+				get { return _component.SelectedStudy; }
+			}
+
+			public event EventHandler SelectedStudyChanged
+			{
+				add { _component.SelectedStudyChanged += value; }
+				remove { _component.SelectedStudyChanged -= value; }
+			}
+
+			public IStudyLoader StudyLoader
+			{
+				get { return _component.StudyLoader; }
+			}
+
+			#endregion
 		}
 	
 		#region Fields
@@ -205,30 +224,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.LastName = "";
 			this.AccessionNumber = "";
 			this.StudyDescription = "";
-		}
-
-		public void Open()
-		{
-			Platform.CheckMemberIsSet(_studyLoader, "studyLoader");
-
-			if (this.SelectedStudy == null)
-				return;
-
-			string studyInstanceUid = this.SelectedStudy.StudyInstanceUID;
-			string label = String.Format("{0}, {1} | {2}",
-				this.SelectedStudy.LastName,
-				this.SelectedStudy.FirstName,
-				this.SelectedStudy.PatientId);
-
-			_studyLoader.LoadStudy(studyInstanceUid);
-
-			ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
-			ApplicationComponent.LaunchAsWorkspace(this.Host.DesktopWindow, imageViewer, label, null);
-		}
-
-		public void Delete()
-		{
-			// TODO
 		}
 
 		public void ItemDoubleClick()

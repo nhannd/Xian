@@ -25,7 +25,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void DeleteStudy()
 		{
-			this.Context.StudyBrowserComponent.Delete();
 		}
 
 	}

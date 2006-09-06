@@ -22,12 +22,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public override void Initialize()
 		{
 			base.Initialize();
-			this.Context.StudyBrowserComponent.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
+			this.Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
 		}
 
 		void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			if (this.Context.StudyBrowserComponent.SelectedStudy != null)
+			if (this.Context.SelectedStudy != null)
 				this.Enabled = true;
 			else
 				this.Enabled = false;

@@ -31,7 +31,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void OpenStudy()
 		{
-			this.Context.StudyBrowserComponent.Open();
+			if (this.Context.SelectedStudy == null)
+				return;
+
+			string studyInstanceUid = this.Context.SelectedStudy.StudyInstanceUID;
+			string label = String.Format("{0}, {1} | {2}",
+				this.Context.SelectedStudy.LastName,
+				this.Context.SelectedStudy.FirstName,
+				this.Context.SelectedStudy.PatientId);
+
+			this.Context.StudyLoader.LoadStudy(studyInstanceUid);
+
+			ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
+			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);
 		}
 	}
 }
