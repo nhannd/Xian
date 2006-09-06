@@ -6,6 +6,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
@@ -16,6 +17,7 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
     public class GDIRenderer : IRenderer
 	{
 		private static readonly SizeF _dropShadowOffset = new SizeF(1, 1);
+		private static readonly ushort _minimumFontSizeInPixels = 4;
 
 		// Private attributes
         private ImageBuffer _imageBuffer;
@@ -69,7 +71,9 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 				DrawToScreen(customImage, graphics, e.Tile.DrawableClientRectangle);
 			else
 				DrawLayerGroup(e.PresentationImage.LayerManager.RootLayerGroup, e.Tile.DrawableClientRectangle, e.FastDraw);
-		
+
+			DrawTextOverlay(e.PresentationImage, e.Tile.DrawableClientRectangle, e.Tile.AnnotationBoxes);
+
 			DrawImageBoxFrame(e.ImageBox.ClientRectangle, e.ImageBox.Selected, e.ImageBox.DisplaySet.Linked);
 
 			// Only bother drawing the tile boxes if there is more than one tile in the image box
@@ -485,6 +489,99 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 			_pen.DashStyle = DashStyle.Solid;
 			
 			_finalBuffer.Graphics.DrawRectangle(_pen, frameRectangle);
+		}
+
+		private void DrawTextOverlay(PresentationImage presentationImage, Rectangle rectangle, IEnumerable<AnnotationBox> annotationBoxes)
+		{
+			if (annotationBoxes == null)
+				return;
+
+			foreach (AnnotationBox annotationBox in annotationBoxes)
+			{
+				string annotationText = annotationBox.GetAnnotationText(presentationImage);
+				//don't waste the CPU cycles.
+				if (string.IsNullOrEmpty(annotationText))
+					continue;
+
+				DrawAnnotationBox(annotationText, rectangle, annotationBox);
+			}
+		}
+
+		private void DrawAnnotationBox(string annotationText, Rectangle rectangle, AnnotationBox annotationBox)
+		{
+			ClientArea clientArea = new ClientArea();
+			clientArea.ParentRectangle = rectangle;
+			clientArea.NormalizedRectangle = annotationBox.NormalizedRectangle;
+			Rectangle clientRectangle = clientArea.ClientRectangle;
+
+			//Deflate the client rectangle by 4 pixels to allow some space 
+			//between neighbouring rectangles whose borders coincide.
+			Rectangle.Inflate(clientRectangle, -4, -4);
+
+			int fontSize = (clientRectangle.Height / annotationBox.NumberOfLines) - 1;
+			
+			//don't draw it if it's too small to read, anyway.
+			if (fontSize < _minimumFontSizeInPixels)
+				return;
+
+			StringFormat format = new StringFormat();
+			
+			if (annotationBox.Truncation == AnnotationBox.TruncationBehaviour.TRUNCATE)
+				format.Trimming = StringTrimming.Character;
+			else
+				format.Trimming = StringTrimming.EllipsisCharacter;
+
+			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.FAR)
+				format.Alignment = StringAlignment.Far;
+			else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.CENTRE)
+				format.Alignment = StringAlignment.Center;
+			else
+				format.Alignment = StringAlignment.Near;
+
+			//allow p's and q's, etc to extend slightly beyond the bounding rectangle.
+			format.FormatFlags = StringFormatFlags.NoClip;
+
+			if (annotationBox.NumberOfLines == 1)
+				format.FormatFlags |= StringFormatFlags.NoWrap;
+				
+			FontStyle style = FontStyle.Regular;
+			if (annotationBox.Bold)
+				style |= FontStyle.Bold;
+			if (annotationBox.Italics)
+				style |= FontStyle.Italic;
+
+			Font font;
+			try
+			{
+				font = new Font(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel);
+			}
+			catch
+			{
+				font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+			}
+			
+			// Draw drop shadow
+			_brush.Color = Color.Black;
+			clientRectangle.Offset(1, 1);
+
+			_finalBuffer.Graphics.DrawString(
+				annotationText,
+				font,
+				_brush,
+				clientRectangle,
+				format);
+			
+			_brush.Color = Color.FromName(annotationBox.Color);
+			clientRectangle.Offset(-1, -1); 
+			
+			_finalBuffer.Graphics.DrawString(
+				annotationText,
+				font,
+				_brush,
+				clientRectangle,
+				format);
+
+			font.Dispose();
 		}
 
 		private void SetDashStyle(Graphic graphic)

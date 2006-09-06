@@ -31,8 +31,10 @@ namespace ClearCanvas.ImageViewer
     {
         // study manager is shared amongst all image workspaces
         private static StudyManager _studyManager;
-
-
+		
+		// annotation manager is shared amongst all image workspaces
+		private static AnnotationManager _annotationManager;
+		
         internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
         {
             private ImageViewerComponent _component;
@@ -255,6 +257,17 @@ namespace ClearCanvas.ImageViewer
 					_mouseWheelToolMap = new MouseWheelToolMap();
 
 				return _mouseWheelToolMap; 
+			}
+		}
+
+		public static AnnotationManager AnnotationManager
+		{
+			get
+			{
+				if (_annotationManager == null)
+					_annotationManager = new AnnotationManager();
+
+				return _annotationManager;
 			}
 		}
 

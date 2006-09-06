@@ -1,0 +1,164 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A7C78084-947E-4955-9473-9F186B760AEC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.ImageViewer.TextOverlay</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.TextOverlay</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AnnotationItemProvider.cs" />
+    <Compile Include="Dicom\DicomDateAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomDateTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomDoubleAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomDoubleArrayAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomStringAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomOrientationAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomStringArrayAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\DateOfLastCalibrationAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\DeviceSerialNumberAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\GeneralEquipmentAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralEquipment\InstitutionAddressAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\InstitutionalDepartmentNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\InstitutionNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\ManufacturerAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\ManufacturersModelNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\SoftwareVersionsAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\SpatialResolutionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\StationNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralEquipment\TimeOfLastCalibrationAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\AcquisitionDateAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\AcquisitionDateTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\AcquisitionNumberAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\AcquisitionTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\ContentDateAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\ContentTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\DerivationDescriptionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\GeneralImageAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralImage\ImageCommentsAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\ImagesInAcquisitionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\ImageTypeAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\InstanceNumberAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\LossyImageCompressionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\LossyImageCompressionRatioAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\PatientOrientationAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralImage\QualityControlImageAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\BodyPartExaminedAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\GeneralSeriesAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralSeries\LateralityAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\ModalityAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\OperatorsNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\PatientPositionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\PerformedProcedureStepDescriptionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\PerformingPhysiciansNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\ProtocolNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\SeriesDateAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\SeriesDescriptionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\SeriesNumberAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralSeries\SeriesTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralStudy\AccessionNumberAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralStudy\GeneralStudyAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralStudy\ReferringPhysiciansNameAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralStudy\StudyDateAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralStudy\StudyDescriptionAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralStudy\StudyIdAnnotationItem.cs" />
+    <Compile Include="Dicom\GeneralStudy\StudyTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\ImagePlane\ImageOrientationPatientAnnotationItem.cs" />
+    <Compile Include="Dicom\ImagePlane\ImagePlaneAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\ImagePlane\ImagePositionPatientAnnotationItem.cs" />
+    <Compile Include="Dicom\ImagePlane\PixelSpacingAnnotationItem.cs" />
+    <Compile Include="Dicom\ImagePlane\SliceLocationAnnotationItem.cs" />
+    <Compile Include="Dicom\ImagePlane\SliceThicknessAnnotationItem.cs" />
+    <Compile Include="Dicom\PatientStudy\AdditionalPatientsHistoryAnnotationItem.cs" />
+    <Compile Include="AnnotationItem.cs" />
+    <Compile Include="Dicom\PatientStudy\PatientStudyAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\Patient\EthnicGroupAnnotationItem.cs" />
+    <Compile Include="Dicom\PatientStudy\OccupationAnnotationItem.cs" />
+    <Compile Include="Dicom\Patient\PatientAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\Patient\PatientCommentsAnnotationItem.cs" />
+    <Compile Include="Dicom\Patient\PatientIdAnnotationItem.cs" />
+    <Compile Include="Dicom\PatientStudy\PatientsAgeAnnotationItem.cs" />
+    <Compile Include="Dicom\Patient\PatientsBirthDateAnnotationItem.cs" />
+    <Compile Include="Dicom\Patient\PatientsBirthTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\Patient\PatientsSexAnnotationItem.cs" />
+    <Compile Include="Dicom\Patient\PatientsNameAnnotationItem.cs" />
+    <Compile Include="Dicom\PatientStudy\PatientsSizeAnnotationItem.cs" />
+    <Compile Include="Dicom\PatientStudy\PatientsWeightAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomPersonNameAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomTimeAnnotationItem.cs" />
+    <Compile Include="Dicom\DicomYesNoAnnotationItem.cs" />
+    <Compile Include="Presentation\AppliedLutAnnotationItem.cs" />
+    <Compile Include="Presentation\PresentationAnnotationItemProvider.cs" />
+    <Compile Include="Presentation\ZoomAnnotationItem.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClearCanvas.ImageViewer.csproj">
+      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
+      <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

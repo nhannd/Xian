@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.ImageViewer.Imaging;
+
+namespace ClearCanvas.ImageViewer.TextOverlay.Presentation
+{
+	/// <summary>
+	/// Describes whatever Lut is currently applied to a presentation image.
+	/// </summary>
+	/// <remarks>
+	/// At first glance, you might think this belongs in the Dicom namespace within this project.
+	/// However, the information in the Dicom header only applies to the initial presentation of
+	/// the image and is not representative of the current state of the image in the viewport.
+	/// The user could have changed the W/L, applied a custom Data Lut, or a Lut from a related
+	/// Grayscale Presentation State object could be applied.
+	/// </remarks>
+	internal class AppliedLutAnnotationItem : AnnotationItem
+	{
+		public AppliedLutAnnotationItem(IAnnotationItemProvider ownerProvider)
+			: base("Presentation.AppliedLut", ownerProvider)
+		{
+		}
+
+		public override string GetAnnotationText(PresentationImage presentationImage)
+		{
+			string strAnnotationText = String.Empty;
+
+			GrayscaleLUTPipeline pipeline = presentationImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
+			if (pipeline != null)
+			{
+				IGrayscaleLUT voiLut = pipeline.VoiLUT;
+
+				if (voiLut != null)
+				{
+					strAnnotationText = "Unknown";
+
+					VOILUTLinear linearLut = (VOILUTLinear)voiLut;
+					if (linearLut != null)
+						strAnnotationText = String.Format("{0}/{1}", linearLut.WindowWidth, linearLut.WindowCenter);
+				}
+			}
+
+			return strAnnotationText;
+		}
+	}
+}

@@ -201,6 +201,7 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\ImageViewer\StudyFinders\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins
+      copy "..\..\..\..\ImageViewer\TextOverlay\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.TextOverlay.dll" .\plugins
 
 
       :: Important to exit here - do not copy the Ris Modules

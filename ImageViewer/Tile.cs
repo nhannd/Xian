@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -364,6 +365,22 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return ParentImageBox.DynamicAction; }
 			set { ParentImageBox.DynamicAction = value; }
+		}
+
+		public AnnotationManager AnnotationManager
+		{ 
+			get { return ImageViewerComponent.AnnotationManager; }
+		}
+
+		public IEnumerable<AnnotationBox> AnnotationBoxes
+		{
+			get
+			{
+				if (AnnotationManager != null)
+					return AnnotationManager.GetAnnotationBoxes(PresentationImage);
+
+				return null;
+			}
 		}
 	}
 }

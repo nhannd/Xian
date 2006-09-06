@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// Summary description for ClientArea.
 	/// </summary>
-	internal class ClientArea 
+	public class ClientArea 
 	{
 		// Private attributes
 		private Rectangle _clientRectangle = new Rectangle(0, 0, 0, 0);
