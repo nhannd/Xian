@@ -231,6 +231,8 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\Ris\Services\bin\$(ConfigurationName)\ClearCanvas.Ris.Services.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Admin\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
+      copy "..\..\..\..\Ris\Client\Adt\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Adt.dll" .\plugins
+      copy "..\..\..\..\Ris\Client\Adt\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" .\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
