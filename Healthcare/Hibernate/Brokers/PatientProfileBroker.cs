@@ -24,9 +24,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             // select statement
             
             HqlQuery query = HqlQuery.FromSearchCriteria(
-                "from PatientProfile p left join fetch p.Identifiers i",
-                new string[] { "p", "i" },
-                new SearchCriteria[] { criteria, criteria.Identifiers },
+                "from PatientProfile p",
+                new string[] { "p"},
+                new SearchCriteria[] { criteria },
                 page);
 
             IList<PatientProfile> results = MakeTypeSafe(ExecuteHql(query));

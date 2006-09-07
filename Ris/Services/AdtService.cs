@@ -27,6 +27,7 @@ namespace ClearCanvas.Ris.Services
         internal AdtService(IExtensionPoint xp)
         {
             _strategy = (IPatientReconciliationStrategy)xp.CreateExtension();
+            _strategy.Broker = GetPatientProfileBroker();
         }
 
         #region IAdtService Members
@@ -69,7 +70,7 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void ReconcilePatients(Patient patient, PatientProfile toBeReconciled)
         {
-            PatientIdentifier mrnToBeReconciled = toBeReconciled.GetMrn();
+            PatientIdentifier mrnToBeReconciled = toBeReconciled.MRN;
             if( mrnToBeReconciled != null &&
                 PatientHasProfileForSite(patient, mrnToBeReconciled.AssigningAuthority) == true )
             {
@@ -92,7 +93,7 @@ namespace ClearCanvas.Ris.Services
         {
             foreach (PatientProfile profile in patient.Profiles)
             {
-                PatientIdentifier id = profile.GetMrn();
+                PatientIdentifier id = profile.MRN;
                 if (id != null && 
                     id.AssigningAuthority == site)
                 {

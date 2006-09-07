@@ -147,6 +147,7 @@ namespace ClearCanvas.Ris.Services.Tests
             IList<PatientProfileMatch> reconciliationMatches = _adtService.FindPatientReconciliationMatches(profile);
 
             Assert.AreEqual(4, reconciliationMatches.Count);
+
             Assert.AreEqual(firstNameDiffers, reconciliationMatches[0].PatientProfile);
             Assert.AreEqual(lastNameDiffers, reconciliationMatches[1].PatientProfile);
             Assert.AreEqual(healthcardDiffers, reconciliationMatches[2].PatientProfile);
@@ -246,11 +247,9 @@ namespace ClearCanvas.Ris.Services.Tests
     {
         public TestPatientProfile(string mrn, string site, string HC, string LastName, string GivenName, DateTime dob) : base()
         {
-            PatientIdentifier id1 = new TestPatientIdentifier(mrn, site, PatientIdentifierType.MR);
-            this.Identifiers.Add(id1);
 
-            PatientIdentifier id2 = new TestPatientIdentifier(HC, "Ontario", PatientIdentifierType.HC);
-            this.Identifiers.Add(id2);
+            this.MRN = new TestPatientIdentifier(mrn, site);
+            this.Healthcard = new TestPatientIdentifier(HC, "Ontario");
 
             this.Name.FamilyName = LastName;
             this.Name.GivenName = GivenName;
@@ -268,20 +267,19 @@ namespace ClearCanvas.Ris.Services.Tests
 
     public class TestPatientIdentifier : PatientIdentifier
     {
-        public TestPatientIdentifier(string id, string authority, PatientIdentifierType type) : base()
+        public TestPatientIdentifier(string id, string authority) : base()
         {
             this.Id = id;
             this.AssigningAuthority = authority;
-            this.Type = type;
         }
 
         public TestPatientIdentifier(string id)  
-            : this(id, "SiteA", PatientIdentifierType.MR)
+            : this(id, "SiteA")
         {         
         }
 
         public TestPatientIdentifier()
-            : this("1234", "SiteA", PatientIdentifierType.MR)
+            : this("1234", "SiteA")
         {
         }
     }

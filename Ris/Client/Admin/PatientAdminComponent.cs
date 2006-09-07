@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientAdminService.PatientProfileChanged += _patientAdminService_PatientChanged;
 
             _workingSet = new TableData<PatientProfile>();
-            _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("MRN", delegate(PatientProfile p) { return p.GetMrn() != null ? p.GetMrn().Id : ""; }));
+            _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("MRN", delegate(PatientProfile p) { return p.MRN != null ? p.MRN.Id : ""; }));
             _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Name", delegate(PatientProfile p) { return p.Name.Format(); }));
             _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Sex", delegate(PatientProfile p) { return _patientAdminService.SexEnumTable[p.Sex].Value; }));
             _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Date of Birth", delegate(PatientProfile p) { return p.DateOfBirth.Date.ToShortDateString(); }));

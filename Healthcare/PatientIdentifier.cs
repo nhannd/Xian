@@ -22,7 +22,6 @@ namespace ClearCanvas.Healthcare {
 			// add any object initialization code here
 			// the signature of the New() method may be freely changed as needed
             PatientIdentifier patientIdentifier = new PatientIdentifier();
-            patientIdentifier.Type = PatientIdentifierType.MR;
             patientIdentifier.AssigningAuthority = "UHN";
             return patientIdentifier;
 		}
@@ -31,7 +30,6 @@ namespace ClearCanvas.Healthcare {
         {
             _id = source.Id;
             _assigningAuthority = source.AssigningAuthority;
-            _type = source.Type;
         }
 	}
 }

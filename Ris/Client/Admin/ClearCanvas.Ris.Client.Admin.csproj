@@ -46,7 +46,6 @@
     <Compile Include="PatientAdminComponent.cs" />
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientEditTool.cs" />
-    <Compile Include="PatientIdentifierEditorComponent.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />

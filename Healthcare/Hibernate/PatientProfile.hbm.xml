@@ -8,6 +8,7 @@
     </id>
     <version name="Version" column="Version_"/>
 
+    <!--
     <set name="Identifiers" lazy="false" fetch="join" table="PatientIdentifier_" access="nosetter.camelcase-underscore">
       <key column="PatientProfileOID_"/>
       <composite-element class="PatientIdentifier">
@@ -16,6 +17,15 @@
         <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.PatientIdentifierTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
       </composite-element>
     </set>
+    -->
+    <component name="MRN" class="PatientIdentifier">
+      <property name ="Id" column="MrnId_" type="String" length="30" not-null="true"/>
+      <property name="AssigningAuthority" column="MrnAssigningAuthority_" type="String" length="100" not-null="true"/>
+    </component>
+    <component name="Healthcard" class="PatientIdentifier">
+      <property name ="Id" column="HealthcardId_" type="String" length="30" not-null="true"/>
+      <property name="AssigningAuthority" column="HealthcardAssigningAuthority_" type="String" length="100" not-null="true"/>
+    </component>
     <component name="Name" class="PersonName">
       <property name="FamilyName" column="FamilyName_" type="String" length="40" not-null="true"/>
       <property name="GivenName" column="GivenName_" type="String" length="40" not-null="true"/>

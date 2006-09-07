@@ -28,39 +28,19 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
             _dateOfDeath.DataBindings.Add("Value", _component, "TimeOfDeath", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _patientIdentifierList.DataSource = _component.PatientIdentifiers;
-            _patientIdentifierList.ToolbarModel = _component.PatientIdentifierToolbarActions;
-            _patientIdentifierList.MenuModel = _component.PatientIdentifierMenuActions;
+            _mrn.DataBindings.Add("Value", _component, "MrnID", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _mrnSite.DataSource = _component.MrnSiteChoices;
+            _mrnSite.DataBindings.Add("Value", _component, "MrnSite", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _healthcard.DataBindings.Add("Value", _component, "HealthcardID", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _healthcardProvince.DataSource = _component.HealthcardProvinceChoices;
+            _healthcardProvince.DataBindings.Add("Value", _component, "HealthcardProvince", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void PatientEditorControl_Load(object sender, EventArgs e)
         {
-            _component.LoadIdentifierTable();
-        }
-
-        private void _patientIdentifierList_SelectionChanged(object sender, EventArgs e)
-        {
-            _component.SetSelectedIdentifier(_patientIdentifierList.CurrentSelection);
-        }
-
-        private void _identiferAddButton_Click(object sender, EventArgs e)
-        {
-            _component.AddIdentifer();
-        }
-
-        private void _identifierUpdateButton_Click(object sender, EventArgs e)
-        {
-            _component.UpdateSelectedIdentifier();
-        }
-
-        private void _patientIdentifierList_ItemDoubleClicked(object sender, EventArgs e)
-        {
-            _component.UpdateSelectedIdentifier();
-        }
-
-        private void _identifierDeleteButton_Click(object sender, EventArgs e)
-        {
-            _component.DeleteSelectedIdentifier();
         }
     }
 }

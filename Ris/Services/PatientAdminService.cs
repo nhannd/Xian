@@ -32,8 +32,6 @@ namespace ClearCanvas.Ris.Services
             IPatientProfileBroker broker = this.GetPatientProfileBroker();
             PatientProfile patient = broker.Find(oid);
 
-            // load all relevant collections
-            broker.LoadRelated(patient, patient.Identifiers);
             return patient;
         }
 
@@ -44,7 +42,6 @@ namespace ClearCanvas.Ris.Services
             PatientProfile patient = broker.Find(oid);
 
             // load all relevant collections
-            broker.LoadRelated(patient, patient.Identifiers);
             broker.LoadRelated(patient, patient.Addresses);
             broker.LoadRelated(patient, patient.TelephoneNumbers);
 

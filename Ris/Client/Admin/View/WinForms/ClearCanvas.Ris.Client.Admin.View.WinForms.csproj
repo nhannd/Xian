@@ -63,13 +63,6 @@
     <Compile Include="PatientEditorControl.Designer.cs">
       <DependentUpon>PatientEditorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientIdentifierEditorComponentView.cs" />
-    <Compile Include="PatientIdentifierEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PatientIdentifierEditorControl.Designer.cs">
-      <DependentUpon>PatientIdentifierEditorControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="PatientSearchControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -134,10 +127,6 @@
     <EmbeddedResource Include="PatientEditorControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PatientEditorControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PatientIdentifierEditorControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PatientIdentifierEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientSearchControl.resx">
       <SubType>Designer</SubType>
