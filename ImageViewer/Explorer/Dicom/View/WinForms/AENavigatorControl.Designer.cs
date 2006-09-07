@@ -28,20 +28,32 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.SuspendLayout();
-			// 
-			// AENavigatorControl
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Name = "AENavigatorControl";
-			this.Size = new System.Drawing.Size(399, 492);
-			this.ResumeLayout(false);
+            this._aeserverTreeForm1 = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.AEServerTreeForm();
+            this.SuspendLayout();
+            // 
+            // _aeserverTreeForm1
+            // 
+            this._aeserverTreeForm1.Location = new System.Drawing.Point(4, 15);
+            this._aeserverTreeForm1.Name = "_aeserverTreeForm1";
+            this._aeserverTreeForm1.Size = new System.Drawing.Size(244, 388);
+            this._aeserverTreeForm1.TabIndex = 0;
+            // 
+            // AENavigatorControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this._aeserverTreeForm1);
+            this.Name = "AENavigatorControl";
+            this.Size = new System.Drawing.Size(399, 492);
+            this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-	}
+        private AEServerTreeForm _aeserverTreeForm1;
+
+
+    }
 }
