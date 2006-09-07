@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AENavigatorComponent.cs" />
+    <Compile Include="SendStudyTool.cs" />
     <Compile Include="StudyBrowserTool.cs" />
     <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomExplorer.cs" />
@@ -65,6 +66,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteStudySmall.png" />
     <EmbeddedResource Include="Icons\OpenStudySmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SendStudySmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
