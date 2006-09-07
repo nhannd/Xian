@@ -27,7 +27,6 @@ namespace ClearCanvas.Ris.Services
         internal AdtService(IExtensionPoint xp)
         {
             _strategy = (IPatientReconciliationStrategy)xp.CreateExtension();
-            _strategy.Broker = GetPatientProfileBroker();
         }
 
         #region IAdtService Members
