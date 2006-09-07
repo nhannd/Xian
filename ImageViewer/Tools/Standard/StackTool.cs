@@ -72,8 +72,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.OnMouseUp(e); 
 			
-			e.SelectedImageBox.Draw(true);
-
 			if (_command == null)
 				return true;
 
@@ -141,5 +139,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			selectedImageBox.TopLeftPresentationImageIndex = topLeftPresentationIndex;
 			selectedImageBox.Draw(true);
 		}
-    }
+	
+		protected override void OnDynamicActionStopped(XMouseEventArgs e)
+		{
+			//stack tool changes the state of all tiles in the imagebox, so redraw the image box.
+			e.SelectedImageBox.Draw(true);
+		}
+	}
 }

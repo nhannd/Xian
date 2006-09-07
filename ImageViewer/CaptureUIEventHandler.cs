@@ -57,11 +57,13 @@ namespace ClearCanvas.ImageViewer
 		public void SetCapture(IUIEventHandler eventHandler, XMouseEventArgs e)
 		{
 			IUIEventHandler oldCapture = _captureEventHandler;
+			XMouseEventArgs oldMouseEventArgs = _captureEventArgs;
+
 			_captureEventHandler = eventHandler;
 			_captureEventArgs = e;
 
 			if (oldCapture != _captureEventHandler)
-				EventsHelper.Fire(NotifyCaptureChanging, this, new MouseCaptureChangingEventArgs(oldCapture, _captureEventHandler)); 
+				EventsHelper.Fire(NotifyCaptureChanging, this, new MouseCaptureChangingEventArgs(oldCapture, _captureEventHandler, oldMouseEventArgs, _captureEventArgs)); 
 
 		}
 
@@ -71,7 +73,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public void ReleaseCapture()
 		{
-			EventsHelper.Fire(NotifyCaptureChanging, this, new MouseCaptureChangingEventArgs(_captureEventHandler, null));
+			EventsHelper.Fire(NotifyCaptureChanging, this, new MouseCaptureChangingEventArgs(_captureEventHandler, null, _captureEventArgs, null));
 
 			_captureEventHandler = null;
 			_captureEventArgs = null;

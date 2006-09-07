@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DynamicActionMouseTool : MouseTool
 	{
-        public DynamicActionMouseTool(
+		public DynamicActionMouseTool(
 			XMouseButtons mouseButton, 
 			bool useMouseWheel, 
 			bool initiallyActive)
@@ -27,23 +27,41 @@ namespace ClearCanvas.ImageViewer
 		public override bool OnMouseDown(XMouseEventArgs e)
 		{
 			if (e.MouseCapture != null)
+			{
 				e.MouseCapture.SetCapture(this, e);
+				e.MouseCapture.NotifyCaptureChanging += OnCaptureChanging;
 
-			e.SelectedTile.DynamicAction = true;
+				e.SelectedImageBox.ParentPhysicalWorkspace.DynamicAction = true;
+			}
 
 			return base.OnMouseDown(e);
 		}
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
-			e.SelectedTile.DynamicAction = false;
+			bool returnValue = base.OnMouseUp(e);
 
-			bool returnValue = base.OnMouseUp(e); 
-			
+			// releasing the capture will fire the OnCaptureChanging eventHandler,
+			// which will end the 'dynamic action' state.
 			if (e.MouseCapture != null)
 				e.MouseCapture.ReleaseCapture();
 
 			return returnValue;
+		}
+
+		protected virtual void OnDynamicActionStopped(XMouseEventArgs e)
+		{
+			//By default, just redraw the selected tile.
+			e.SelectedTile.Draw(true);
+		}
+
+		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
+		{
+			e.LosingMouseEventArgs.MouseCapture.NotifyCaptureChanging -= OnCaptureChanging;
+
+			e.LosingMouseEventArgs.SelectedImageBox.ParentPhysicalWorkspace.DynamicAction = false;
+
+			OnDynamicActionStopped(e.LosingMouseEventArgs);
 		}
 	}
 }

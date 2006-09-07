@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (_mouseCapture != null)
 			{
 				//we don't need to know about capture changing anymore.
-				_mouseCapture.NotifyCaptureChanging -= CaptureChanging;
+				_mouseCapture.NotifyCaptureChanging -= OnCaptureChanging;
 				
 				if (_mouseCapture.GetCapture() == this)
 					_mouseCapture.ReleaseCapture();
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.ROIGraphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(this.ROIGraphic);
 		}
 
-		private void CaptureChanging(object sender, MouseCaptureChangingEventArgs e)
+		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
 		{
 			//Somebody else has released the capture unexpectedly.
 			DeleteROIGraphic();
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			{
 				_mouseCapture = e.MouseCapture;
 				_mouseCapture.SetCapture(this, e);
-				_mouseCapture.NotifyCaptureChanging += this.CaptureChanging;
+				_mouseCapture.NotifyCaptureChanging += this.OnCaptureChanging;
 			}
 
 			if (_mouseCapture != null)

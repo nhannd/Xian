@@ -11,6 +11,18 @@ namespace ClearCanvas.ImageViewer
 	{
 		IUIEventHandler _eventHandlerLosingCapture;
 		IUIEventHandler _eventHandlerGainingCapture;
+		private XMouseEventArgs _losingMouseEventArgs;
+		private XMouseEventArgs _gainingMouseEventArgs;
+
+		public XMouseEventArgs LosingMouseEventArgs
+		{
+			get { return _losingMouseEventArgs; }
+		}
+
+		public XMouseEventArgs GainingMouseEventArgs
+		{
+			get { return _gainingMouseEventArgs; }
+		}
 
 		public IUIEventHandler UIEventHandlerLosingCapture
 		{
@@ -22,10 +34,17 @@ namespace ClearCanvas.ImageViewer
 			get { return _eventHandlerGainingCapture; }
 		}
 
-		public MouseCaptureChangingEventArgs(IUIEventHandler eventHandlerLosingCapture, IUIEventHandler eventHandlerGainingCapture)
+		public MouseCaptureChangingEventArgs(
+			IUIEventHandler eventHandlerLosingCapture,
+			IUIEventHandler eventHandlerGainingCapture,
+			XMouseEventArgs losingMouseEventArgs,
+			XMouseEventArgs gainingMouseEventArgs)
 		{
 			_eventHandlerLosingCapture = eventHandlerLosingCapture;
 			_eventHandlerGainingCapture = eventHandlerGainingCapture;
+
+			_losingMouseEventArgs = losingMouseEventArgs;
+			_gainingMouseEventArgs = gainingMouseEventArgs;
 		}
 	}
 }
