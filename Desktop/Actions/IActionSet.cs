@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop.Actions
 {
-    public delegate bool ActionSelectorDelegate(IAction action);
-
     /// <summary>
     /// Represents an unordered set of actions.
     /// </summary>
@@ -16,11 +14,11 @@ namespace ClearCanvas.Desktop.Actions
         int Count { get; }
 
         /// <summary>
-        /// Returns a subset of this set containing only the elements for which the selector returns true.
+        /// Returns a subset of this set containing only the elements for which the predicate is true.
         /// </summary>
         /// <param name="selector"></param>
         /// <returns></returns>
-        IActionSet Select(ActionSelectorDelegate selector);
+        IActionSet Select(Predicate<IAction> predicate);
 
         /// <summary>
         /// Returns a set that corresponds to the union of this set with another set.

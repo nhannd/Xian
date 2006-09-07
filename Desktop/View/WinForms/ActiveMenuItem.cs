@@ -43,8 +43,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
                 catch (Exception e)
                 {
-                    // TODO the icon was either null or not found - log some helpful message 
-                    throw e;
+                    // the icon was either null or not found - log some helpful message
+                    Platform.Log(e);
                 }
             }
         }

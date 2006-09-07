@@ -33,12 +33,12 @@ namespace ClearCanvas.Desktop.Actions
 
         #region IActionSet members
 
-        public IActionSet Select(ActionSelectorDelegate selector)
+        public IActionSet Select(Predicate<IAction> predicate)
         {
             List<IAction> subset = new List<IAction>();
             foreach (IAction action in _actions)
             {
-                if (selector(action))
+                if (predicate(action))
                     subset.Add(action);
             }
             return new ActionSet(subset);
