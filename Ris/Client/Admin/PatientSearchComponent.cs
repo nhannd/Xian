@@ -169,7 +169,14 @@ namespace ClearCanvas.Ris.Client.Admin
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             if (_patientIdentifier != null)
             {
-                criteria.MRN.Id.Like(_patientIdentifier + "%");
+                if (_patientIdentifierType == ClearCanvas.Healthcare.PatientIdentifierType.MR)
+                {
+                    criteria.MRN.Id.Like(_patientIdentifier + "%");
+                }
+                else if (_patientIdentifierType == ClearCanvas.Healthcare.PatientIdentifierType.HC)
+                {
+                    criteria.Healthcard.Id.Like(_patientIdentifier + "%");
+                }
             }
 
             if (_familyName != null)

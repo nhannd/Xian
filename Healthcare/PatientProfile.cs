@@ -26,20 +26,5 @@ namespace ClearCanvas.Healthcare {
             patientProfile._sex = Sex.U;   // default to Unknown
             return patientProfile;
 		}
-
-        ///// <summary>
-        ///// Returns the Mrn, assuming one exists, or null if none exists.
-        ///// This method will need to change in future to deal with multiple Mrns. 
-        ///// </summary>
-        ///// <returns></returns>
-        //public virtual PatientIdentifier GetMrn()
-        //{
-        //    foreach(PatientIdentifier identifier in _identifiers)
-        //    {
-        //        if(identifier.Type == PatientIdentifierType.MR)
-        //            return identifier;
-        //    }
-        //    return null;
-        //}
     }
 }
