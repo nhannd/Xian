@@ -55,6 +55,7 @@
     <Compile Include="PersistenceException.cs" />
     <Compile Include="SearchResultPage.cs" />
     <Compile Include="SessionManager.cs" />
+    <Compile Include="Tests\ServiceLayerTestHelper.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="ITransactionMonitor.cs" />
     <Compile Include="Session.cs" />
