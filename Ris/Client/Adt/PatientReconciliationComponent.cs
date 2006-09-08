@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private string _healthcard;
         private string _familyName;
         private string _givenName;
+        private string _error;
 
         private PatientProfileTableData _searchResults;
         private PatientProfileTableData _alternateProfiles;
@@ -36,6 +37,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfile _selectedSearchResult;
 
         private IAdtService _adtService;
+
+        public event EventHandler ErrorChanged;
 
 
 
@@ -92,6 +95,12 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _givenName = value; }
         }
 
+        public string Error
+        {
+            get { return _error; }
+            private set { _error = value; }
+        }
+
         public ITableData SearchResults
         {
             get { return _searchResults; }
@@ -135,16 +144,29 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Reconcile()
         {
+            _error = "";
+            IList<PatientProfile> checkedProfiles = new List<PatientProfile>();
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationCandidateProfiles)
             {
                 if (entry.Checked)
                 {
-                    _adtService.ReconcilePatients(_selectedSearchResult, entry.ProfileMatch.PatientProfile);
+                    checkedProfiles.Add(entry.ProfileMatch.PatientProfile);
                 }
             }
+            try
+            {
+                _adtService.ReconcilePatients(_selectedSearchResult.Patient, checkedProfiles);
+            }
+            catch (PatientReconciliationException e)
+            {
+                Console.WriteLine(e.ToString());
+                Error = e.Message;
+                ErrorChanged(this, new EventArgs());
+                
+            }
 
-            //RefreshAlternateProfiles();
-            //RefreshReconciliationCandidates();
+            RefreshAlternateProfiles();
+            RefreshReconciliationCandidates();
         }
 
 

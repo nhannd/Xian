@@ -34,6 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _healthcardField.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);
             _familyNameField.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
             _givenNameField.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _error.DataBindings.Add("Value", _component, "Error", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _searchButton_Click(object sender, EventArgs e)
