@@ -188,8 +188,11 @@ namespace ClearCanvas.ImageViewer
 			set
 			{
 				// Don't bother if the existing value is the same as the new value
-				if (_displaySet == value)
-					return;
+				// and if the tile layout hasn't changed.  Note that if the tile
+				// layout has changed, then we can't just return, since we
+				// need to reassign the images to all the tiles.
+				if (_displaySet == value && !_tileLayoutChanged)
+				    return;
 
 				if (_displaySet != null)
 				{
@@ -315,7 +318,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return _displaySet.PresentationImages.IndexOf(this.TopLeftPresentationImage);
+				if (this.TopLeftPresentationImage == null)
+					return -1;
+				else
+					return _displaySet.PresentationImages.IndexOf(this.TopLeftPresentationImage);
 			}
 			set
 			{
@@ -455,7 +461,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckPositive(numberOfColumns, "numberOfColumns");
 
 			// Don't bother if nothing's changed.
-			if (numberOfRows == _rows && 
+			if (numberOfRows == _rows &&
 				numberOfColumns == _columns)
 				return;
 
