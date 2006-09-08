@@ -8,7 +8,7 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <set name="Profiles" lazy="true" inverse="true" access="nosetter.camelcase-underscore">
+    <set name="Profiles" lazy="true" inverse="true" cascade="all" access="nosetter.camelcase-underscore">
       <key column="PatientOID_"/>
       <one-to-many class="PatientProfile"/>
     </set>

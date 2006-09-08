@@ -17,8 +17,16 @@ namespace ClearCanvas.Ris.Services
     [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
     public class AdtService : HealthcareServiceLayer, IAdtService
     {
+        private IExtensionPoint _strategyExtensionPoint;
+
         public AdtService()
+            :this(new PatientReconciliationStrategyExtensionPoint())
         {
+        }
+
+        internal AdtService(IExtensionPoint strategyExtensionPoint)
+        {
+            _strategyExtensionPoint = strategyExtensionPoint;
         }
 
         #region IAdtService Members
@@ -32,8 +40,7 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<PatientProfileMatch> FindPatientReconciliationMatches(PatientProfile patientProfile)
         {
-            PatientReconciliationStrategyExtensionPoint xp = new PatientReconciliationStrategyExtensionPoint();
-            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)xp.CreateExtension();
+            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)_strategyExtensionPoint.CreateExtension();
 
             return strategy.FindReconciliationMatches(patientProfile, GetPatientProfileBroker());
         }
@@ -90,8 +97,9 @@ namespace ClearCanvas.Ris.Services
             }
 
             // perform some additional validation on the profile?
-            patient.Profiles.Add(toBeReconciled);
-            toBeReconciled.Patient = patient;
+            patient.AddProfile(toBeReconciled);
+
+            GetPatientProfileBroker().Store(patient);
         }
 
         private static bool PatientHasProfileForSite(Patient patient, string site)

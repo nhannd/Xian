@@ -12,7 +12,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             this.Columns.Add(
                new TableColumn<ReconciliationCandidateTableEntry, bool>("R",
-                   delegate(ReconciliationCandidateTableEntry item) { return item.Checked; }));
+                   delegate(ReconciliationCandidateTableEntry item) { return item.Checked; },
+                   delegate(ReconciliationCandidateTableEntry item, bool value) { item.Checked = value; }));
             this.Columns.Add(
                 new TableColumn<ReconciliationCandidateTableEntry, string>("Score",
                     delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.Score.ToString(); }));
