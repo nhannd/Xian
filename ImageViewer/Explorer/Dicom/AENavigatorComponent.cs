@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private static String _myServersTitle = "My Servers";
         private static String _myDatastoreTitle = "My DataStore";
+        private static String _newServerName = "NewServer";
         private static String _emptyNodeName = "emptynode";
 
         private string _activeNode;
@@ -96,6 +97,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return AENavigatorComponent._myDatastoreTitle; }
         }
 
+        public static String NewServerName
+        {
+            get { return AENavigatorComponent._newServerName; }
+            set { AENavigatorComponent._newServerName = value; }
+        }
+
         public static String EmptyNodeName
         {
             get { return AENavigatorComponent._emptyNodeName; }
@@ -141,7 +148,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Add()
         {
-            // to do
+            UpdateServerSetting();
+            _serverPool.SetNewServer(NewServerName);
+            LoadServerSetting();
+            _serverSelected = _serverPool.Currentserver;
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
 
         public void DataStoreEvent()
@@ -253,14 +264,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _serverPool.Currentserverid = -1;
             ClearServerSetting();
             _serverTreeView = new ServerViewRootNode(_serverPool);
-            /*_studyList = new TableData<StudyItem>();
-
-            AddColumns();
-
-            _toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
-            _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
-            _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
-            */
         }
 
         public override void Stop()

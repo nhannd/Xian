@@ -69,7 +69,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-        public List<AEServer> GetChildServers(int n)
+        public void SetNewServer(string svrName)
+        {
+            _currentserver = null;
+            _currentserverid = -1;
+            if (svrName == null || svrName.Equals("") || _serverlist == null)
+                return;
+
+            _currentserver = new AEServer(svrName, "/ServerGroup/", "", "1.1.1.1", "AETitle", 100);
+            _currentserverid = _serverlist.Count;
+            _serverlist.Add(_currentserver);
+            SaveServerSettings();
+        }
+
+        public List<AEServer> GetChildServers(int n) 
         {
             List<AEServer> childList = new List<AEServer>();
             if (_serverlist == null || n < 0 || n >= _serverlist.Count)

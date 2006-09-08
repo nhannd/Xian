@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._serverAE.Location = new System.Drawing.Point(69, 282);
             this._serverAE.Name = "_serverAE";
             this._serverAE.Size = new System.Drawing.Size(172, 20);
-            this._serverAE.TabIndex = 12;
+            this._serverAE.TabIndex = 3;
             // 
             // _serverPort
             // 
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._serverPort.Location = new System.Drawing.Point(70, 337);
             this._serverPort.Name = "_serverPort";
             this._serverPort.Size = new System.Drawing.Size(171, 20);
-            this._serverPort.TabIndex = 13;
+            this._serverPort.TabIndex = 5;
             // 
             // AEServerTreeForm
             // 

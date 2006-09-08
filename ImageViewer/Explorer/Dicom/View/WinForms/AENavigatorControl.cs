@@ -60,11 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         void AeserverTree_Click(object sender, EventArgs e)
         {
-            if (_lastClickedNode != null && !_lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle)
-                && !_aeserverTreeForm1.ServerName.Text.Equals("") && !_lastClickedNode.Text.Equals(_aeserverTreeForm1.ServerName.Text))
-            {
-                _lastClickedNode.Text = _aeserverTreeForm1.ServerName.Text;
-            }
+            UpdateServerNodeName();
 
             _lastClickedNode = _aeserverTreeForm1.AeserverTree.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
             if (_lastClickedNode == null)
@@ -128,6 +124,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         void OnAddClicked(object sender, EventArgs e)
         {
+            TreeNode newNode = new TreeNode(AENavigatorComponent.NewServerName);
+            _aeserverTreeForm1.AeserverTree.Nodes[1].Nodes.Add(newNode);
+            _aeserverTreeForm1.AeserverTree.SelectedNode = newNode;
+
+            UpdateServerNodeName();
+
+            _lastClickedNode = newNode;
             using (new CursorManager(this, Cursors.WaitCursor))
             {
                 _aenavigatorComponent.Add();
@@ -138,8 +141,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         {
             using (new CursorManager(this, Cursors.WaitCursor))
             {
-                _aenavigatorComponent.Add();
+                _aenavigatorComponent.Delete();
             }
         }
+
+        private void UpdateServerNodeName()
+        {
+            if (_lastClickedNode != null && !_lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle)
+                && !_lastClickedNode.Text.Equals(AENavigatorComponent.MyServersTitle)
+                && !_aeserverTreeForm1.ServerName.Text.Equals("") && !_lastClickedNode.Text.Equals(_aeserverTreeForm1.ServerName.Text))
+            {
+                _lastClickedNode.Text = _aeserverTreeForm1.ServerName.Text;
+            }
+        }
+
     }
 }

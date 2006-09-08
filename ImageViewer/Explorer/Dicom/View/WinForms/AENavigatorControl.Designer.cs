@@ -32,18 +32,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this._btnAdd = new System.Windows.Forms.ToolStripButton();
             this._btnDelete = new System.Windows.Forms.ToolStripButton();
+            this.titleBar1 = new Crownwood.DotNetMagic.Controls.TitleBar();
             this._aeserverTreeForm1 = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.AEServerTreeForm();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
+            this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._btnAdd,
             this._btnDelete});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(247, 25);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(302, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(56, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -65,11 +68,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._btnDelete.Size = new System.Drawing.Size(23, 22);
             this._btnDelete.Text = "toolStripButton1";
             // 
+            // titleBar1
+            // 
+            this.titleBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.titleBar1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleBar1.Location = new System.Drawing.Point(-1, -1);
+            this.titleBar1.MouseOverColor = System.Drawing.Color.Empty;
+            this.titleBar1.Name = "titleBar1";
+            this.titleBar1.Size = new System.Drawing.Size(304, 23);
+            this.titleBar1.TabIndex = 2;
+            this.titleBar1.Text = "Servers";
+            // 
             // _aeserverTreeForm1
             // 
             this._aeserverTreeForm1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._aeserverTreeForm1.Location = new System.Drawing.Point(2, 19);
+            this._aeserverTreeForm1.Location = new System.Drawing.Point(2, 44);
             this._aeserverTreeForm1.Name = "_aeserverTreeForm1";
             this._aeserverTreeForm1.Size = new System.Drawing.Size(297, 365);
             this._aeserverTreeForm1.TabIndex = 0;
@@ -79,10 +94,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.titleBar1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this._aeserverTreeForm1);
             this.Name = "AENavigatorControl";
-            this.Size = new System.Drawing.Size(302, 409);
+            this.Size = new System.Drawing.Size(302, 442);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -96,6 +112,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton _btnAdd;
         private System.Windows.Forms.ToolStripButton _btnDelete;
+        private Crownwood.DotNetMagic.Controls.TitleBar titleBar1;
 
 
     }
