@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private IPatientAdminService _patientAdminService;
 
         private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
-        private string[] _dummySiteChoices = new string[] { "UHN", "MSH" };
+        private string[] _dummySiteChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
 
         public PatientEditorComponent()
         {
