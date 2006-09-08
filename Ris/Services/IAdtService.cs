@@ -41,5 +41,12 @@ namespace ClearCanvas.Ris.Services
         /// <param name="patient"></param>
         /// <param name="toBeReconciled"></param>
         void ReconcilePatients(Patient patient, PatientProfile toBeReconciled);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <param name="toBeReconciled"></param>
+        void ReconcilePatients(Patient patient, IList<PatientProfile> toBeReconciled);
     }
 }

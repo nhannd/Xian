@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get { return _patient.DateOfBirth; }
             set { 
-                _patient.DateOfBirth = value;
+                _patient.DateOfBirth = new DateTime(value.Year, value.Month, value.Day);
                 this.Modified = true;
             }
         }

@@ -11,8 +11,6 @@ namespace ClearCanvas.Ris.Services
     [ExtensionOf(typeof(PatientReconciliationStrategyExtensionPoint))]
     public class DefaultPatientReconciliationStrategy : IPatientReconciliationStrategy
     {
-        private IPatientProfileBroker _broker;
-
         #region IPatientReconciliationStrategy Members
 
         public IList<PatientProfileMatch> FindReconciliationMatches(PatientProfile patient, IPatientProfileBroker broker)

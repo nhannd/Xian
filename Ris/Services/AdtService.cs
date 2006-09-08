@@ -42,6 +42,14 @@ namespace ClearCanvas.Ris.Services
         {
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)_strategyExtensionPoint.CreateExtension();
 
+            // Reload the PatientProfile so that the following call to load related works
+            // If the PatientProfile is not reloaded within this context, nHibernate will attempt to create a second PatientProfile with the
+            // same OID, which results in an exception being thrown.
+            patientProfile = GetPatientProfileBroker().Find(patientProfile.OID);
+
+            Patient patient = patientProfile.Patient;
+            GetPatientBroker().LoadRelated(patient, patient.Profiles);
+
             return strategy.FindReconciliationMatches(patientProfile, GetPatientProfileBroker());
         }
 
@@ -76,30 +84,43 @@ namespace ClearCanvas.Ris.Services
             {
                 throw new PatientReconciliationException("Patients are the same");
             }
-            DoReconciliation(toBeKept.Patient, toBeReconciled);
+            IList<PatientProfile> list = new List<PatientProfile>();
+            list.Add(toBeReconciled);
+            DoReconciliation(toBeKept.Patient, list);
         }
 
         [UpdateOperation]
         public void ReconcilePatients(Patient patient, PatientProfile toBeReconciled)
         {
-            DoReconciliation(patient, toBeReconciled);
+            IList<PatientProfile> list = new List<PatientProfile>();
+            list.Add(toBeReconciled);
+            DoReconciliation(patient, list);
+        }
+
+        [UpdateOperation]
+        public void ReconcilePatients(Patient patient, IList<PatientProfile> toBeReconciled)
+        {
+                DoReconciliation(patient, toBeReconciled);
         }
 
         #endregion
 
-        private void DoReconciliation(Patient patient, PatientProfile toBeReconciled)
+        private void DoReconciliation(Patient patient, IList<PatientProfile> toBeReconciled)
         {
-            PatientIdentifier mrnToBeReconciled = toBeReconciled.MRN;
-            if (mrnToBeReconciled != null &&
-                PatientHasProfileForSite(patient, mrnToBeReconciled.AssigningAuthority) == true)
+            foreach (PatientProfile profile in toBeReconciled)
             {
-                throw new PatientReconciliationException("Patient already has identifier for site " + mrnToBeReconciled.AssigningAuthority);
+                PatientIdentifier mrnToBeReconciled = profile.MRN;
+                if (mrnToBeReconciled != null &&
+                    PatientHasProfileForSite(patient, mrnToBeReconciled.AssigningAuthority) == true)
+                {
+                    throw new PatientReconciliationException("Patient already has identifier for site " + mrnToBeReconciled.AssigningAuthority);
+                }
+
+                // perform some additional validation on the profile?
+                patient.AddProfile(profile);
             }
 
-            // perform some additional validation on the profile?
-            patient.AddProfile(toBeReconciled);
-
-            GetPatientProfileBroker().Store(patient);
+            GetPatientBroker().Store(patient);
         }
 
         private static bool PatientHasProfileForSite(Patient patient, string site)

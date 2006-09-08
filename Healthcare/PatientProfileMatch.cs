@@ -38,7 +38,16 @@ namespace ClearCanvas.Healthcare
             IList<PatientProfileMatch> matchList = new List<PatientProfileMatch>();
             foreach (PatientProfile profile in profileList)
             {
-                if (!profile.Equals(self))
+                bool found = false;
+                foreach (PatientProfile existing in self.Patient.Profiles)
+                {
+                    if (profile.Equals(existing))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found == false)
                 {
                     matchList.Add(new PatientProfileMatch(profile, score));
                 }
