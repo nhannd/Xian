@@ -110,6 +110,10 @@ namespace ClearCanvas.Ris.Client.Adt
         public void Search()
         {
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
+            if (_mrn != null)
+                criteria.MRN.Id.Like(_mrn + "%");
+            if (_healthcard != null)
+                criteria.Healthcard.Id.Like(_healthcard + "%");
             if (_familyName != null)
                 criteria.Name.FamilyName.Like(_familyName + "%");
             if (_givenName != null)
@@ -135,7 +139,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (entry.Checked)
                 {
-                    _adtService.ReconcilePatients(_selectedSearchResult, entry.PatientProfileMatch.PatientProfile);
+                    _adtService.ReconcilePatients(_selectedSearchResult, entry.ProfileMatch.PatientProfile);
                 }
             }
 

@@ -46,6 +46,9 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<PatientProfile> ListReconciledPatientProfiles(PatientProfile patientProfile)
         {
+            Patient patient = patientProfile.Patient;
+            GetPatientBroker().LoadRelated(patient, patient.Profiles);
+
             IList<PatientProfile> reconciledProfiles = new List<PatientProfile>();
             foreach (PatientProfile profile in patientProfile.Patient.Profiles)
             {
