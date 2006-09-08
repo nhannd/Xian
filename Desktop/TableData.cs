@@ -16,8 +16,6 @@ namespace ClearCanvas.Desktop
     /// <typeparam name="TItem">The type of item that the table will display</typeparam>
     public class TableData<TItem> : BindingList<TItem>, ITableData
     {
-        public delegate bool FindDelegate<TObject>(TObject obj);
-
         internal class PropertyDescriptorEx : PropertyDescriptor
         {
             private ITableColumn<TItem> _column;
@@ -110,7 +108,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <param name="findDelegate">A delegate that accepts an item and returns a boolean to indicate if the item is the item sought</param>
         /// <returns>The index of the first matching item, or -1 if no matching items are found</returns>
-        public int FindIndex(FindDelegate<TItem> findDelegate)
+        public int FindIndex(Predicate<TItem> findDelegate)
         {
             for(int i = 0; i < this.Count; i++)
             {
@@ -118,6 +116,14 @@ namespace ClearCanvas.Desktop
                     return i;
             }
             return -1;
+        }
+
+        public void AddRange(IEnumerable<TItem> enumerable)
+        {
+            foreach (TItem item in enumerable)
+            {
+                this.Add(item);
+            }
         }
 
 
