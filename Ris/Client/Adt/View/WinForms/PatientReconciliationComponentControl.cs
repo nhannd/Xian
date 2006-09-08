@@ -51,5 +51,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                 _component.SetSelectedSearchResults(_searchResultsTable.CurrentSelection);
             }
         }
+
+        private void _reconcileButton_Click(object sender, EventArgs e)
+        {
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.Reconcile();
+            }
+        }
     }
 }

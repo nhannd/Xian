@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this._reconcileButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _mrnField
@@ -155,10 +156,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.label3.TabIndex = 10;
             this.label3.Text = "Search Results";
             // 
+            // _reconcileButton
+            // 
+            this._reconcileButton.Location = new System.Drawing.Point(908, 574);
+            this._reconcileButton.Name = "_reconcileButton";
+            this._reconcileButton.Size = new System.Drawing.Size(113, 23);
+            this._reconcileButton.TabIndex = 11;
+            this._reconcileButton.Text = "Reconcile";
+            this._reconcileButton.UseVisualStyleBackColor = true;
+            this._reconcileButton.Click += new System.EventHandler(this._reconcileButton_Click);
+            // 
             // PatientReconciliationComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._reconcileButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -171,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this._healthcardField);
             this.Controls.Add(this._mrnField);
             this.Name = "PatientReconciliationComponentControl";
-            this.Size = new System.Drawing.Size(1080, 609);
+            this.Size = new System.Drawing.Size(1164, 609);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -190,5 +202,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button _reconcileButton;
     }
 }

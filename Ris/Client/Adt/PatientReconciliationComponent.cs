@@ -4,12 +4,16 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
     /// Extension point for views onto <see cref="PatientReconciliationComponent"/>
     /// </summary>
+    [ExtensionPoint]
     public class PatientReconciliationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
@@ -27,7 +31,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private PatientProfileTableData _searchResults;
         private PatientProfileTableData _alternateProfiles;
-        private ITableData _reconciliationCandidateProfiles;
+        private ReconciliationCandidateTableData _reconciliationCandidateProfiles;
+
+        private PatientProfile _selectedSearchResult;
+
+        private IAdtService _adtService;
 
 
 
@@ -46,15 +54,15 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
 
-            _searchResults = new PatientProfileTableData();
-            _alternateProfiles = new PatientProfileTableData();
-            _reconciliationCandidateProfiles = new PatientProfileTableData();
+            _adtService = ApplicationContext.GetService<IAdtService>();
+
+            _searchResults = new PatientProfileTableData(_adtService);
+            _alternateProfiles = new PatientProfileTableData(_adtService);
+            _reconciliationCandidateProfiles = new ReconciliationCandidateTableData(_adtService);
         }
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
@@ -101,12 +109,68 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Search()
         {
+            PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
+            if (_familyName != null)
+                criteria.Name.FamilyName.Like(_familyName + "%");
+            if (_givenName != null)
+                criteria.Name.GivenName.Like(_givenName + "%");
+
+            IList<PatientProfile> profiles = _adtService.ListPatientProfiles(criteria);
+
+            _searchResults.Clear();
+            _searchResults.AddRange(profiles);
         }
 
         public void SetSelectedSearchResults(ISelection selection)
         {
+            _selectedSearchResult = (PatientProfile)selection.Item;
+
+            RefreshAlternateProfiles();
+            //RefreshReconciliationCandidates();
         }
 
+        public void Reconcile()
+        {
+            foreach (ReconciliationCandidateTableEntry entry in _reconciliationCandidateProfiles)
+            {
+                if (entry.Checked)
+                {
+                    _adtService.ReconcilePatients(_selectedSearchResult, entry.PatientProfileMatch.PatientProfile);
+                }
+            }
+
+            //RefreshAlternateProfiles();
+            //RefreshReconciliationCandidates();
+        }
+
+
         #endregion
+
+        private void RefreshAlternateProfiles()
+        {
+            _alternateProfiles.Clear();
+
+            if (_selectedSearchResult != null)
+            {
+                IList<PatientProfile> alternates = _adtService.ListReconciledPatientProfiles(_selectedSearchResult);
+                _alternateProfiles.AddRange(alternates);
+            }
+        }
+
+        private void RefreshReconciliationCandidates()
+        {
+            _reconciliationCandidateProfiles.Clear();
+
+            if (_selectedSearchResult != null)
+            {
+                IList<PatientProfileMatch> matches = _adtService.FindPatientReconciliationMatches(_selectedSearchResult);
+                foreach (PatientProfileMatch match in matches)
+                {
+                    _reconciliationCandidateProfiles.Add(new ReconciliationCandidateTableEntry(match));
+                }
+            }
+        }
+
+
     }
 }
