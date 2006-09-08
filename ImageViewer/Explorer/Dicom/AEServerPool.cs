@@ -52,6 +52,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
+        public void SetCurrentServerByName(string svrName)
+        {
+            _currentserver = null;
+            _currentserverid = -1;
+            if (svrName == null || svrName.Equals("") || _serverlist == null)
+                return;
+
+            for (int i = 0; i < _serverlist.Count; i++)
+            {
+                if (!_serverlist[i].Servername.Equals(svrName))
+                    continue;
+                _currentserver = _serverlist[i];
+                _currentserverid = i;
+                break;
+            }
+        }
+
+        public List<AEServer> GetChildServers(int n)
+        {
+            List<AEServer> childList = new List<AEServer>();
+            if (_serverlist == null || n < 0 || n >= _serverlist.Count)
+                return childList;
+            String serverPath = _serverlist[n].Serverpath;
+            for (int i = 0; i < _serverlist.Count; i++)
+            {
+                if (i == n || !_serverlist[i].Serverpath.StartsWith(serverPath))
+                    continue;
+                childList.Add(_serverlist[i]);
+            }
+            return childList;
+        }
+
         public AEServer Currentserver
         {
             get { return _currentserver; }

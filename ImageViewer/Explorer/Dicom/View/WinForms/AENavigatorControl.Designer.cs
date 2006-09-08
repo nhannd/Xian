@@ -28,14 +28,50 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AENavigatorControl));
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this._btnAdd = new System.Windows.Forms.ToolStripButton();
+            this._btnDelete = new System.Windows.Forms.ToolStripButton();
             this._aeserverTreeForm1 = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.AEServerTreeForm();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._btnAdd,
+            this._btnDelete});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(302, 25);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // _btnAdd
+            // 
+            this._btnAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._btnAdd.Image = ((System.Drawing.Image)(resources.GetObject("_btnAdd.Image")));
+            this._btnAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._btnAdd.Name = "_btnAdd";
+            this._btnAdd.Size = new System.Drawing.Size(23, 22);
+            this._btnAdd.Text = "toolStripButton1";
+            // 
+            // _btnDelete
+            // 
+            this._btnDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("_btnDelete.Image")));
+            this._btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._btnDelete.Name = "_btnDelete";
+            this._btnDelete.Size = new System.Drawing.Size(23, 22);
+            this._btnDelete.Text = "toolStripButton1";
             // 
             // _aeserverTreeForm1
             // 
-            this._aeserverTreeForm1.Location = new System.Drawing.Point(4, 15);
+            this._aeserverTreeForm1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._aeserverTreeForm1.Location = new System.Drawing.Point(2, 19);
             this._aeserverTreeForm1.Name = "_aeserverTreeForm1";
-            this._aeserverTreeForm1.Size = new System.Drawing.Size(244, 388);
+            this._aeserverTreeForm1.Size = new System.Drawing.Size(297, 365);
             this._aeserverTreeForm1.TabIndex = 0;
             // 
             // AENavigatorControl
@@ -43,16 +79,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this._aeserverTreeForm1);
             this.Name = "AENavigatorControl";
-            this.Size = new System.Drawing.Size(399, 492);
+            this.Size = new System.Drawing.Size(302, 409);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
 		#endregion
 
         private AEServerTreeForm _aeserverTreeForm1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton _btnAdd;
+        private System.Windows.Forms.ToolStripButton _btnDelete;
 
 
     }

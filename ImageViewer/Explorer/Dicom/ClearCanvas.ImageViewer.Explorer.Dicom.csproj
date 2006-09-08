@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetMagic2005, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -39,7 +43,12 @@
     <Compile Include="AEServer.cs" />
     <Compile Include="AEServerPool.cs" />
     <Compile Include="AEServerSettings.cs" />
+    <Compile Include="BrowserNode.cs" />
+    <Compile Include="IBrowserNode.cs" />
     <Compile Include="SendStudyTool.cs" />
+    <Compile Include="ServerPath.cs" />
+    <Compile Include="ServerViewRootNode.cs" />
+    <Compile Include="ServerViewServerNode.cs" />
     <Compile Include="StudyBrowserTool.cs" />
     <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomExplorer.cs" />

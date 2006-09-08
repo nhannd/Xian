@@ -45,11 +45,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             get { return _aeserverTree; }
         }
 
-        public event EventHandler UpdateClicked
-        {
-            add { _btnUpdate.Click += value; }
-            remove { _btnUpdate.Click -= value; }
-        }
-
     }
 }

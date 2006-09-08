@@ -22,126 +22,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[AssociateView(typeof(AENavigatorComponentViewExtensionPoint))]
 	public class AENavigatorComponent : ApplicationComponent
 	{
-        public void Update()
-        {
-            UpdateServerSetting();
-        }
-
-        public void ClearServerSetting()
-        {
-            this.ServerName = "";
-            this.ServerPath = "";
-            this.ServerDesc = "";
-            this.ServerAE = "";
-            this.ServerHost = "";
-            this.ServerPort = "";
-        }
-
-        public static bool IsInteger(string theValue)
-        {
-            try
-            {
-                Convert.ToInt32(theValue);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public void LoadServerSetting()
-        {
-            if (_serverPool == null)
-                _serverPool = new AEServerPool();
-            if (_serverPool.Currentserver == null)
-            {
-                ClearServerSetting();
-            }
-            else if (_serverPool.Currentserver.Servername.Equals(EmptyNodeName))
-            {
-                _serverPool.Currentserver = null;
-                _serverPool.Currentserverid = -1;
-                ClearServerSetting();
-            }
-            else
-            {
-                this.ServerName = _serverPool.Currentserver.Servername;
-                this.ServerDesc = _serverPool.Currentserver.Description;
-                this.ServerAE = _serverPool.Currentserver.AE;
-                this.ServerHost = _serverPool.Currentserver.Host;
-                this.ServerPort = _serverPool.Currentserver.Port.ToString();
-            }
-        }
-
-        public bool UpdateServerSetting()
-        {
-            //update server setting
-            if (_serverPool.Currentserver == null || _serverPool.Serverlist == null
-               || _serverPool.Currentserverid < 0
-               || _serverPool.Currentserverid >= _serverPool.Serverlist.Count)
-                return true;
-            if (_serverPool.Currentserver.Servername.Equals(this.ServerName)
-                    && _serverPool.Currentserver.Description.Equals(this.ServerDesc)
-                    && _serverPool.Currentserver.AE.Equals(this.ServerAE)
-                    && _serverPool.Currentserver.Host.Equals(this.ServerHost)
-                    && _serverPool.Currentserver.Port.ToString().Equals(this.ServerPort))
-                return true;
-
-            if (!IsInteger(this.ServerPort))
-            {
-                StringBuilder msgText = new StringBuilder();
-                msgText.AppendFormat("The Port value ({0}) should be a integer. \r\n\r\nPlease input an integer data.", this.ServerPort);
-                MessageBox.Show(msgText.ToString(), "Port Value Error");
-                return false;
-            }
-
-
-            // to do: check valid value of _textPort.Text first
-            _serverPool.Currentserver = new AEServer(this.ServerName, _serverPool.Currentserver.Serverpath, this.ServerDesc, this.ServerHost, this.ServerAE, int.Parse(this.ServerPort));
-            _serverPool.Serverlist[_serverPool.Currentserverid] = _serverPool.Currentserver;
-            _serverPool.SaveServerSettings();
-            //ResetTreeNode(_lastClickedNode, _serverPool.Currentserver);
-            return true;
-        }
-
-
-        #region IApplicationComponent overrides
-
-        public override void Start()
-        {
-            base.Start();
-
-            _serverPool = new AEServerPool();
-            _serverPool.Currentserver = _serverPool.Serverlist[0];
-            _serverPool.Currentserverid = 0;
-            LoadServerSetting();
-            /*_studyList = new TableData<StudyItem>();
-
-            AddColumns();
-
-            _toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
-            _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
-            _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
-            */
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #endregion
-
         #region Fields
 
         private AEServerPool _serverPool;
-        //private ContextMenuStrip _treeContextMenu;
-        //private ContextMenuStrip _nodeContextMenu;
-        //private ContextMenuStrip _groupContextMenu;
+        private AEServer _serverSelected;
+        private ServerViewRootNode _serverTreeView;
+        private event EventHandler _selectedServerChanged;
+        private event EventHandler _dataStoreSelected;
+
         private static String _myServersTitle = "My Servers";
         private static String _myDatastoreTitle = "My DataStore";
         private static String _emptyNodeName = "emptynode";
+
+        private string _activeNode;
+        private string _activePath;
 
         private string _serverName = "";
         private string _serverPath = "";
@@ -150,10 +44,46 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private string _serverHost = "";
         private string _serverPort = "";
 
+        public string ActiveNode
+        {
+            get { return _activeNode; }
+            set { _activeNode = value; }
+        }
+
+        public string ActivePath
+        {
+            get { return _activePath; }
+            set { _activePath = value; }
+        }
+
+        public event EventHandler SelectedServerChanged
+        {
+            add { _selectedServerChanged += value; }
+            remove { _selectedServerChanged -= value; }
+        }
+
+        public event EventHandler DataStoreSelected
+        {
+            add { _dataStoreSelected += value; }
+            remove { _dataStoreSelected -= value; }
+        }
+
+        public AEServer ServerSelected
+        {
+            get { return _serverSelected; }
+            set { _serverSelected = value; }
+        }
+
         public AEServerPool ServerPool
         {
             get { return _serverPool; }
             set { _serverPool = value; }
+        }
+
+        public ServerViewRootNode ServerTreeView
+        {
+            get { return _serverTreeView; }
+            set { _serverTreeView = value; }
         }
 
         public static String MyServersTitle
@@ -208,5 +138,137 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         }
 
         #endregion
+
+        public void Add()
+        {
+            // to do
+        }
+
+        public void DataStoreEvent()
+        {
+            UpdateServerSetting();
+            _serverPool.Currentserver = null;
+            _serverPool.Currentserverid = -1;
+            _serverSelected = null;
+            LoadServerSetting();
+            EventsHelper.Fire(_dataStoreSelected, this, EventArgs.Empty);
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+        }
+
+        public void Delete()
+        {
+            // to do 
+        }
+
+        public void SelectChanged(String nodeName)
+        {
+            UpdateServerSetting();
+            _serverPool.SetCurrentServerByName(nodeName);
+            LoadServerSetting();
+            _serverSelected = _serverPool.Currentserver;
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+        }
+
+        public void Update()
+        {
+            UpdateServerSetting();
+        }
+
+        private void ClearServerSetting()
+        {
+            this.ServerName = "";
+            this.ServerPath = "";
+            this.ServerDesc = "";
+            this.ServerAE = "";
+            this.ServerHost = "";
+            this.ServerPort = "";
+        }
+
+        private void LoadServerSetting()
+        {
+            if (_serverPool == null)
+                _serverPool = new AEServerPool();
+            if (_serverPool.Currentserver == null)
+            {
+                ClearServerSetting();
+            }
+            else if (_serverPool.Currentserver.Servername.Equals(EmptyNodeName))
+            {
+                _serverPool.Currentserver = null;
+                _serverPool.Currentserverid = -1;
+                ClearServerSetting();
+            }
+            else
+            {
+                this.ServerName = _serverPool.Currentserver.Servername;
+                this.ServerDesc = _serverPool.Currentserver.Description;
+                this.ServerAE = _serverPool.Currentserver.AE;
+                this.ServerHost = _serverPool.Currentserver.Host;
+                this.ServerPort = _serverPool.Currentserver.Port.ToString();
+            }
+        }
+
+        private bool UpdateServerSetting()
+        {
+            //update server setting
+            if (_serverPool.Currentserver == null || _serverPool.Serverlist == null
+               || _serverPool.Currentserverid < 0
+               || _serverPool.Currentserverid >= _serverPool.Serverlist.Count)
+                return true;
+            if (_serverPool.Currentserver.Servername.Equals(this.ServerName)
+                    && _serverPool.Currentserver.Description.Equals(this.ServerDesc)
+                    && _serverPool.Currentserver.AE.Equals(this.ServerAE)
+                    && _serverPool.Currentserver.Host.Equals(this.ServerHost)
+                    && _serverPool.Currentserver.Port.ToString().Equals(this.ServerPort))
+                return true;
+
+            int iport = 0;
+            try
+            {
+                iport = int.Parse(this.ServerPort);
+            }
+            catch
+            {
+                StringBuilder msgText = new StringBuilder();
+                msgText.AppendFormat("The Port value ({0}) should be a integer. \r\n\r\nPlease input an integer data.", this.ServerPort);
+                MessageBox.Show(msgText.ToString(), "Port Value Error");
+                return false;
+            }
+
+            _serverPool.Currentserver = new AEServer(this.ServerName, _serverPool.Currentserver.Serverpath, this.ServerDesc, this.ServerHost, this.ServerAE, iport);
+            _serverPool.Serverlist[_serverPool.Currentserverid] = _serverPool.Currentserver;
+            _serverPool.SaveServerSettings();
+            return true;
+        }
+
+
+        #region IApplicationComponent overrides
+
+        public override void Start()
+        {
+            base.Start();
+
+            _serverPool = new AEServerPool();
+            _serverPool.Currentserver = null;
+            _serverPool.Currentserverid = -1;
+            ClearServerSetting();
+            _serverTreeView = new ServerViewRootNode(_serverPool);
+            /*_studyList = new TableData<StudyItem>();
+
+            AddColumns();
+
+            _toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
+            _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
+            _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
+            */
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+        }
+
+        #endregion
+
     }
 }
