@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 
 		protected override string GetFinalString(string dicomString)
 		{
-			DateTime dateTime = DateTime.ParseExact(dicomString, "YYYYMMDD", new CultureInfo(""));
+			DateTime dateTime = DateTime.ParseExact(dicomString, "yyyyMMdd", new CultureInfo(""));
 			dicomString = dateTime.ToShortDateString();
 			return dicomString;
 		}

@@ -7,16 +7,17 @@ using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.GeneralSeries
 {
-	internal class LateralityNumberAnnotationItem : DicomStringAnnotationItem
+	internal class LateralityAnnotationItem : DicomStringAnnotationItem
 	{
-		public LateralityNumberAnnotationItem(IAnnotationItemProvider ownerProvider)
+		public LateralityAnnotationItem(IAnnotationItemProvider ownerProvider)
 			: base("GeneralSeries.Laterality", ownerProvider)
 		{
 		}
 
-		protected override string GetStoredDicomValue(DicomPresentationImage dicomPresentationImage)
+		protected override void GetStoredDicomValue(DicomPresentationImage dicomPresentationImage, out string dicomValue, out bool storedValueExists)
 		{
-			return dicomPresentationImage.ImageSop.Laterality;
+			storedValueExists = true;
+			dicomValue = dicomPresentationImage.ImageSop.Laterality;
 		}
 
 		protected override DcmTagKey DicomTag

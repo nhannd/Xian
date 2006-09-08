@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.ImagePlane
 		}
 
 		protected override double[] GetStoredDicomValues(DicomPresentationImage dicomPresentationImage)
-		{ 
+		{
 			double[] arrayDoubles = new double[2];
 
 			arrayDoubles[0] = dicomPresentationImage.ImageSop.PixelSpacingX;

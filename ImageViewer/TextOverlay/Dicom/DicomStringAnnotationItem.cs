@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 {
@@ -15,9 +16,10 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 
 		protected abstract DcmTagKey DicomTag { get; }
 		
-		protected virtual string GetStoredDicomValue(DicomPresentationImage dicomPresentationImage)
+		protected virtual void GetStoredDicomValue(DicomPresentationImage dicomPresentationImage, out string dicomValue, out bool storedValueExists)
 		{
-			throw new Exception("No appropriate stored property exists.");
+			storedValueExists = false;
+			dicomValue = String.Empty;
 		}
 
 		protected virtual string GetFinalString(string dicomString)
@@ -32,21 +34,28 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 			{
 				try
 				{
-					string dicomString = GetStoredDicomValue(dicomPresentationImage);
-					return this.GetFinalString(dicomString);
-				}
-				catch
-				{
-					try
-					{
-						bool tagExists = false;
-						string dicomString = String.Empty;
-						dicomPresentationImage.ImageSop.GetTag(this.DicomTag, out dicomString, out tagExists);
+					string dicomString = String.Empty;
+					bool storedValueExists = true;
+					GetStoredDicomValue(dicomPresentationImage, out dicomString, out storedValueExists);
+					if (storedValueExists)
 						return this.GetFinalString(dicomString);
-					}
-					catch
-					{
-					}
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
+				}
+
+				try
+				{
+					string dicomString = String.Empty;
+					bool tagExists = true;
+					dicomPresentationImage.ImageSop.GetTag(this.DicomTag, out dicomString, out tagExists);
+					if (tagExists)
+						return this.GetFinalString(dicomString);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
 				}
 			}
 

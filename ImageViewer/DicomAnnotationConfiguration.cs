@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -28,19 +29,22 @@ namespace ClearCanvas.ImageViewer
 				if (dicomImage.ImageSop.Modality == _modality)
 					return true;
 			}
-			catch
+			catch (Exception e)
 			{
-				try
-				{
-					string modality = String.Empty;
-					bool success = false;
-					dicomImage.ImageSop.GetTag(Dcm.Modality, out modality, out success);
-					if (modality == _modality)
-						return true;
-				}
-				catch
-				{
-				}
+				Platform.Log(e);
+			}
+
+			try
+			{
+				string modality = String.Empty;
+				bool tagExists = false;
+				dicomImage.ImageSop.GetTag(Dcm.Modality, out modality, out tagExists);
+				if (modality == _modality)
+					return true;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
 			}
 
 			return false;

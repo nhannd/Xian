@@ -14,9 +14,15 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.ImagePlane
 		{
 		}
 
-		protected override double GetStoredDicomValue(DicomPresentationImage dicomPresentationImage)
+		protected override void GetStoredDicomValue(DicomPresentationImage dicomPresentationImage, out double storedDicomValue, out bool storedValueExists)
 		{
-			return dicomPresentationImage.ImageSop.SliceThickness;
+			storedValueExists = false;
+			storedDicomValue = 0.0;
+
+			//!! Uncomment once this item has been implemented in ImageSop class(es).
+
+			//storedValueExists = true;
+			//storedDicomValue = dicomPresentationImage.ImageSop.SliceThickness;
 		}
 
 		protected override DcmTagKey DicomTag

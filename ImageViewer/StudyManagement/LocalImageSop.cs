@@ -21,7 +21,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string patientsName;
+				_dicomImage.GetTag(Dcm.PatientsName, out patientsName, out tagExists);
+				return patientsName;
 			}
 			set
 			{
@@ -48,7 +51,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string patientsBirthDate;
+				_dicomImage.GetTag(Dcm.PatientsBirthDate, out patientsBirthDate, out tagExists);
+				return patientsBirthDate;
 			}
 			set
 			{
@@ -60,7 +66,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string patientsSex;
+				_dicomImage.GetTag(Dcm.PatientsSex, out patientsSex, out tagExists);
+				return patientsSex;
 			}
 			set
 			{
@@ -87,7 +96,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string studyDate;
+				_dicomImage.GetTag(Dcm.StudyDate, out studyDate, out tagExists);
+				return studyDate;
 			}
 			set
 			{
@@ -99,7 +111,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string studyTime;
+				_dicomImage.GetTag(Dcm.StudyTime, out studyTime, out tagExists);
+				return studyTime;
 			}
 			set
 			{
@@ -123,7 +138,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string accessionNumber;
+				_dicomImage.GetTag(Dcm.AccessionNumber, out accessionNumber, out tagExists);
+				return accessionNumber;
 			}
 			set
 			{
@@ -135,7 +153,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string studyDescription;
+				_dicomImage.GetTag(Dcm.StudyDescription, out studyDescription, out tagExists);
+				return studyDescription;
 			}
 			set
 			{
@@ -195,7 +216,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string modality;
+				_dicomImage.GetTag(Dcm.Modality, out modality, out tagExists);
+				return modality;
 			}
 			set
 			{
@@ -253,7 +277,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string laterality;
+				_dicomImage.GetTag(Dcm.Laterality, out laterality, out tagExists);
+				return laterality;
 			}
 			set
 			{
@@ -397,7 +424,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string instanceNumber;
+				_dicomImage.GetTag(Dcm.InstanceNumber, out instanceNumber, out tagExists);
+				return instanceNumber;
 			}
 			set
 			{

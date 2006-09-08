@@ -18,16 +18,19 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.ImagePlane
 
 		protected override double[] GetStoredDicomValues(DicomPresentationImage dicomPresentationImage)
 		{
-			double[] arrayDoubles = new double[6];
+			return null;
 
-			arrayDoubles[0] = dicomPresentationImage.ImageSop.ImageOrientationPatientRowX;
-			arrayDoubles[1] = dicomPresentationImage.ImageSop.ImageOrientationPatientRowY;
-			arrayDoubles[2] = dicomPresentationImage.ImageSop.ImageOrientationPatientRowZ;
-			arrayDoubles[3] = dicomPresentationImage.ImageSop.ImageOrientationPatientColumnX;
-			arrayDoubles[4] = dicomPresentationImage.ImageSop.ImageOrientationPatientColumnY;
-			arrayDoubles[5] = dicomPresentationImage.ImageSop.ImageOrientationPatientColumnZ;
+			//!! Uncomment once this item has been implemented in ImageSop class(es).
+			//double[] arrayDoubles = new double[6];
 
-			return arrayDoubles;
+			//arrayDoubles[0] = dicomPresentationImage.ImageSop.ImageOrientationPatientRowX;
+			//arrayDoubles[1] = dicomPresentationImage.ImageSop.ImageOrientationPatientRowY;
+			//arrayDoubles[2] = dicomPresentationImage.ImageSop.ImageOrientationPatientRowZ;
+			//arrayDoubles[3] = dicomPresentationImage.ImageSop.ImageOrientationPatientColumnX;
+			//arrayDoubles[4] = dicomPresentationImage.ImageSop.ImageOrientationPatientColumnY;
+			//arrayDoubles[5] = dicomPresentationImage.ImageSop.ImageOrientationPatientColumnZ;
+
+			//return arrayDoubles;
 		}
 
 		protected override DcmTagKey DicomTag

@@ -18,13 +18,16 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.ImagePlane
 
 		protected override double[] GetStoredDicomValues(DicomPresentationImage dicomPresentationImage)
 		{
-			double[] arrayDoubles = new double[3];
+			return null;
+			//!! Uncomment once this item has been implemented in ImageSop class(es).
 			
-			arrayDoubles[0] = dicomPresentationImage.ImageSop.ImagePositionPatientX;
-			arrayDoubles[1] = dicomPresentationImage.ImageSop.ImagePositionPatientY;
-			arrayDoubles[2] = dicomPresentationImage.ImageSop.ImagePositionPatientZ;
+			//double[] arrayDoubles = new double[3];
+			
+			//arrayDoubles[0] = dicomPresentationImage.ImageSop.ImagePositionPatientX;
+			//arrayDoubles[1] = dicomPresentationImage.ImageSop.ImagePositionPatientY;
+			//arrayDoubles[2] = dicomPresentationImage.ImageSop.ImagePositionPatientZ;
 
-			return arrayDoubles;
+			//return arrayDoubles;
 		}
 
 		protected override string GetFinalString(double[] arrayDoubles)

@@ -18,7 +18,10 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.GeneralImage
 
 		protected override string[] GetStoredDicomValues(DicomPresentationImage dicomPresentationImage)
 		{
-			return dicomPresentationImage.ImageSop.LossyImageCompressionRatio.Split('\\');
+			return null;
+
+			//!! Uncomment once this item has been implemented in ImageSop class(es).
+			//return dicomPresentationImage.ImageSop.LossyImageCompressionRatio.Split('\\');
 		}
 
 		protected override DcmTagKey DicomTag

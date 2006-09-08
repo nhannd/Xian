@@ -15,12 +15,10 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 
 		protected override string GetFinalString(string dicomString)
 		{
-			if (Convert.ToInt32(dicomString) == 0)
-				dicomString = "No";
+			if (Convert.ToByte(dicomString) == 0)
+				return "No";
 			else
-				dicomString = "Yes";
-
-			return dicomString;
+				return "Yes";
 		}
 	}
 }

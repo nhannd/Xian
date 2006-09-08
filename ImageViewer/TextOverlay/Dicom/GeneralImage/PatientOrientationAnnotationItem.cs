@@ -18,10 +18,13 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.GeneralImage
 
 		protected override string[] GetStoredDicomValues(DicomPresentationImage dicomPresentationImage)
 		{
-			string[] arrayStrings = new string[2];
-			arrayStrings[0] = dicomPresentationImage.ImageSop.PatientOrientationRows;
-			arrayStrings[1] = dicomPresentationImage.ImageSop.PatientOrientationColumns;
-			return arrayStrings;
+			return null;
+
+			//!! Uncomment once this item has been implemented in ImageSop class(es).
+			//string[] arrayStrings = new string[2];
+			//arrayStrings[0] = dicomPresentationImage.ImageSop.PatientOrientationRows;
+			//arrayStrings[1] = dicomPresentationImage.ImageSop.PatientOrientationColumns;
+			//return arrayStrings;
 		}
 
 		protected override DcmTagKey DicomTag

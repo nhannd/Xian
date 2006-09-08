@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.GeneralSeries
 				List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
 
 				annotationItems.Add((IAnnotationItem)new BodyPartExaminedAnnotationItem(this));
-				annotationItems.Add((IAnnotationItem)new LateralityNumberAnnotationItem(this));
+				annotationItems.Add((IAnnotationItem)new LateralityAnnotationItem(this));
 				annotationItems.Add((IAnnotationItem)new ModalityAnnotationItem(this));
 				annotationItems.Add((IAnnotationItem)new OperatorsNameAnnotationItem(this));
 				annotationItems.Add((IAnnotationItem)new PatientPositionAnnotationItem(this));

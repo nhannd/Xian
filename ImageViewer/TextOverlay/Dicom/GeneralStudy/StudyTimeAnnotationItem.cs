@@ -14,9 +14,10 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom.GeneralStudy
 		{
 		}
 
-		protected override string GetStoredDicomValue(DicomPresentationImage dicomPresentationImage)
+		protected override void GetStoredDicomValue(DicomPresentationImage dicomPresentationImage, out string dicomValue, out bool storedValueExists)
 		{
-			return dicomPresentationImage.ImageSop.StudyTime;
+			storedValueExists = true;
+			dicomValue = dicomPresentationImage.ImageSop.StudyTime;
 		}
 
 		protected override DcmTagKey DicomTag

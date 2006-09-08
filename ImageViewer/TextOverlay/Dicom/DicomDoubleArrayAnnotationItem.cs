@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 {
@@ -17,13 +18,14 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 
 		protected virtual double[] GetStoredDicomValues(DicomPresentationImage dicomPresentationImage)
 		{
-			throw new Exception("No appropriate stored property(s) exists.");
+			return null;
 		}
 
 		protected virtual string GetFinalString(double[] arrayDoubles)
 		{
 			//by default, return the values put back together 'dicom-encoded'.
 			string dicomString = String.Empty;
+
 			foreach (double value in arrayDoubles)
 			{
 				if (dicomString.Length > 0)
@@ -43,44 +45,47 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 				try
 				{
 					double[] dicomDoubles = GetStoredDicomValues(dicomPresentationImage);
-					return GetFinalString(dicomDoubles);
+					if (dicomDoubles != null)
+						GetFinalString(dicomDoubles);
 				}
-				catch
+				catch (Exception e)
 				{
-					try
-					{
-						//!! This needs to be rewritten once support is properly added in the DICOM module for VM > 1.
-						throw new NotSupportedException();
-						
-						//bool tagExists = true;
-						//List<double> dicomDoubles = new List<double>();
-						//uint index = 0;
+					Platform.Log(e);
+				}
 
-						//DcmTagKey dicomTag = this.DicomTag;
+				try
+				{
+					//!! This needs to be rewritten once support is properly added in the DICOM module for VM > 1.
+					
+					//bool tagExists = true;
+					//List<double> dicomDoubles = new List<double>();
+					//uint index = 0;
 
-						//while (tagExists)
-						//{
-						//    double dicomDouble = 0.0;
-						//    try
-						//    {
-						//        dicomPresentationImage.ImageSop.GetTag(dicomTag, out dicomDouble, index, out tagExists);
-						//    }
-						//    catch
-						//    {
-						//        tagExists = false;
-						//    }
+					//DcmTagKey dicomTag = this.DicomTag;
 
-						//    if (tagExists)
-						//        dicomDoubles.Add(dicomDouble);
+					//while (tagExists)
+					//{
+					//    double dicomDouble = 0.0;
+					//    try
+					//    {
+					//        dicomPresentationImage.ImageSop.GetTag(dicomTag, out dicomDouble, index, out tagExists);
+					//    }
+					//    catch
+					//    {
+					//        tagExists = false;
+					//    }
 
-						//    ++index;
-						//}
+					//    if (tagExists)
+					//        dicomDoubles.Add(dicomDouble);
 
-						//return GetFinalString(dicomDoubles.ToArray());
-					}
-					catch
-					{
-					}
+					//    ++index;
+					//}
+
+					//return GetFinalString(dicomDoubles.ToArray());
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
 				}
 			}
 

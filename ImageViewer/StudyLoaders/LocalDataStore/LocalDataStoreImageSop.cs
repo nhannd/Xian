@@ -441,7 +441,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				if (this.DataStoreImageSopInstance.InstanceNumber != 0)
+					return Convert.ToString(this.DataStoreImageSopInstance.InstanceNumber);
+				else
+					return "";
 			}
 			set
 			{
