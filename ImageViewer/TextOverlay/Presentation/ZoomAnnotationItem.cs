@@ -15,6 +15,9 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Presentation
 
 		public override string GetAnnotationText(PresentationImage presentationImage)
 		{
+			if (presentationImage == null)
+				return string.Empty;
+
 			string strAnnotationText = String.Empty;
 
 			try

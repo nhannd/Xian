@@ -29,6 +29,9 @@ namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 
 		public override string GetAnnotationText(PresentationImage presentationImage)
 		{
+			if (presentationImage == null)
+				return string.Empty;
+
 			DicomPresentationImage dicomPresentationImage = (DicomPresentationImage)presentationImage;
 			if (dicomPresentationImage != null)
 			{

@@ -38,13 +38,13 @@ namespace ClearCanvas.ImageViewer
 		{
 			"", "", "", "", "", 
 			"", "", "", "", 
-			"Presentation.Zoom",
-			"Presentation.AppliedLut",
+			"Dicom.GeneralSeries.Laterality",
 			"Dicom.GeneralSeries.SeriesDescription",
 			"Dicom.GeneralSeries.ProtocolName",
 			"Dicom.GeneralSeries.SeriesNumber",
 			"Dicom.GeneralImage.InstanceNumber",
-			"Dicom.GeneralSeries.Laterality"
+			"Presentation.Zoom",
+			"Presentation.AppliedLut"
 		};
 
 		private string[] _AssignmentsBottomRight = 
@@ -145,6 +145,11 @@ namespace ClearCanvas.ImageViewer
 				RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
 				AnnotationBox newBox = new AnnotationBox(normalizedRectangle);
 				newBox.AnnotationItem = ItemFromIdentifier(_AssignmentsBottomLeft[i]);
+				if (i > numberOfBoxesPerQuadrant - 5)
+				{
+					newBox.ConfigurationOptions = new AnnotationItemConfigurationOptions();
+					newBox.ConfigurationOptions.ShowLabel = true;
+				}
 
 				annotationBoxes.Add(newBox); 
 				y -= boxheight;
