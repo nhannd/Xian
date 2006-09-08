@@ -28,14 +28,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			if (_imageLoader == null)
 				_imageLoader = new LocalImageLoader();
 
-			string studyInstanceUID = _imageLoader.Load(path);
+			string studyInstanceUID;
 
-			if (studyInstanceUID == "" ||
-				ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID) == null)
-			{
-				Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
-				return;
-			}
+			studyInstanceUID = _imageLoader.Load(path);
 
 			ImageViewerComponent viewer = new ImageViewerComponent(studyInstanceUID);
 			ApplicationComponent.LaunchAsWorkspace(this.Host.DesktopWindow, viewer, "Study", null);

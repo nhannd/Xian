@@ -28,12 +28,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
         public override void LoadStudy(string studyUID)
         {
-            try
+			bool atLeastOneImageFailedToLoad = false;
+
+			try
             {
+
                 IStudy study = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid(studyUID));
                 IEnumerable<ISopInstance> listOfSops = study.GetSopInstances();
-
-                bool errorMessageShown = false;
+				int imagesLoaded = 0;
 
                 foreach (ISopInstance sop in listOfSops)
                 {
@@ -51,25 +53,34 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                     try
                     {
 						ImageViewerComponent.StudyManager.StudyTree.AddImage(localImage);
+						imagesLoaded++;
                     }
                     catch (ImageValidationException e)
                     {
-                        // Only bug the user once...
-                        if (!errorMessageShown)
-                        {
-                            Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
-                            errorMessageShown = true;
-                        }
+						atLeastOneImageFailedToLoad = true;
 
-                        // ...but log everytime
                         Platform.Log(e, LogLevel.Warn);
                     }
                 }
+
+				bool studyCouldNotBeLoaded = (imagesLoaded == 0);
+
+				if (atLeastOneImageFailedToLoad || studyCouldNotBeLoaded)
+				{
+					OpenStudyException e = new OpenStudyException("An error occurred while opening the study");
+					e.AtLeastOneImageFailedToLoad = atLeastOneImageFailedToLoad;
+					e.StudyCouldNotBeLoaded = studyCouldNotBeLoaded;
+					throw e;
+				}
             }
             catch (Exception e)
             {
-                // TODO
-                Platform.ShowMessageBox("Can't connect to data store: " + e.ToString());
+				// We probably have a database error.  Make note of the exception as an inner exception.
+				OpenStudyException ex = new OpenStudyException("An error occurred while opening the study", e);
+				ex.StudyCouldNotBeLoaded = true;
+				ex.AtLeastOneImageFailedToLoad = true;
+
+				throw ex;
             }
 
             base.LoadStudy(studyUID);

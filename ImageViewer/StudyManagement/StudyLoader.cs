@@ -19,21 +19,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public virtual void LoadStudy(string studyInstanceUID)
 		{
-            /*
-             * 
-             * Showing a message box here isn't a good idea
-            if (studyInstanceUID == "" ||
-                ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID) == null)
-			{
-				Platform.ShowMessageBox(SR.ErrorUnableToLoadStudy);
-				return;
-			}
-
-             * 
-             * This responsibility should be moved out of here
-			ImageWorkspace ws = new ImageWorkspace(studyInstanceUID);
-			DesktopApplication.WorkspaceManager.Workspaces.Add(ws);
-             */
 		}
 	}
 }

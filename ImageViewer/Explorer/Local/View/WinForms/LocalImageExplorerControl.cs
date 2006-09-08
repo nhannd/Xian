@@ -5,8 +5,10 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.Controls.WinForms.FileBrowser.ShellDll;
 using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 {
@@ -27,10 +29,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		void OnItemOpened(object sender, EventArgs e)
 		{
-			using (new CursorManager(this, Cursors.WaitCursor))
+			try
 			{
-				ShellItem shellItem = _fileBrowser.SelectedItem;
-				_component.Load(shellItem.Path);
+				using (new CursorManager(this, Cursors.WaitCursor))
+				{
+					ShellItem shellItem = _fileBrowser.SelectedItem;
+					_component.Load(shellItem.Path);
+				}
+			}
+			catch (OpenStudyException ex)
+			{
+				if (ex.StudyCouldNotBeLoaded)
+				{
+					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
+					return;
+				}
+
+				if (ex.AtLeastOneImageFailedToLoad)
+				{
+					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
+					return;
+				}
 			}
 		}
 

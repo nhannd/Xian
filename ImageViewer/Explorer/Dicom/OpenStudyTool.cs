@@ -40,7 +40,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				this.Context.SelectedStudy.FirstName,
 				this.Context.SelectedStudy.PatientId);
 
-			this.Context.StudyLoader.LoadStudy(studyInstanceUid);
+			try
+			{
+				this.Context.StudyLoader.LoadStudy(studyInstanceUid);
+
+			}
+			catch (OpenStudyException e)
+			{
+				if (e.StudyCouldNotBeLoaded)
+				{
+					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
+					return;
+				}
+
+				if (e.AtLeastOneImageFailedToLoad)
+				{
+					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
+					return;
+				}
+
+				return;
+			}
 
 			ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
 			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);

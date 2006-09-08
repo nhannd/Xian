@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private bool _firstImage;
 		private bool _atLeastOneImageFailedToLoad;
 		private bool _oneStudyAlreadyLoaded;
+		private Exception _innerException;
 
 		public LocalImageLoader()
 		{
@@ -22,14 +23,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public string Load(string path)
 		{
-			//string path;
-
-			//if(Platform.IsUnixPlatform) {
-			//    path = "/home/jonathan/ClearCanvas/SampleData/" + studyUID;
-			//} else {
-			//    path = "C:\\TestImages\\By UID\\" + studyUID;
-			//}
-
 			_firstImage = true;
 			_atLeastOneImageFailedToLoad = false;
 			_studyInstanceUID = "";
@@ -38,8 +31,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(AddImage);
 			FileProcessor.Process(path, "*.dcm", process, true);
 
-			if (_atLeastOneImageFailedToLoad)
-				Platform.ShowMessageBox(SR.ErrorAtLeastOneImageFailedToLoad);
+			if (_atLeastOneImageFailedToLoad || _studyInstanceUID == "")
+			{
+				OpenStudyException e = new OpenStudyException("An error occurred while opening the study", _innerException);
+
+				e.AtLeastOneImageFailedToLoad = _atLeastOneImageFailedToLoad;
+				e.StudyCouldNotBeLoaded = (_studyInstanceUID == "");
+
+				throw e;
+			}
 
 			return _studyInstanceUID;
 		}
@@ -68,6 +68,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				// 1) file is not a valid DICOM image
 				// 2) file is a valid DICOM image, but its image parameters are invalid
 				// 3) file is a valid DICOM image, but we can't handle this type of DICOM image
+
+				_innerException = e;
 
 				_atLeastOneImageFailedToLoad = true;
 				Platform.Log(e, LogLevel.Error);

@@ -227,6 +227,7 @@
     <Compile Include="MouseCaptureChangingEventArgs.cs" />
     <Compile Include="MouseTool.cs" />
     <Compile Include="MouseWheelToolMap.cs" />
+    <Compile Include="OpenStudyException.cs" />
     <Compile Include="PhysicalWorkspace.cs" />
     <Compile Include="PhysicalWorkspaceMemento.cs" />
     <Compile Include="PresentationImage.cs" />
