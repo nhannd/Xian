@@ -19,29 +19,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <returns></returns>
         public override IList<PatientProfile> Find(PatientProfileSearchCriteria criteria, SearchResultPage page)
         {
-            // note use of "join fetch" - this is important to ensure that the patient identifiers are fetched
-            // along with the patient in a single select statement, rather than having to execute a subsequent
-            // select statement
-            
             HqlQuery query = HqlQuery.FromSearchCriteria(
-                "from PatientProfile p",
+                "from PatientProfile p join fetch p.Patient",
                 new string[] { "p"},
                 new SearchCriteria[] { criteria },
                 page);
 
-            IList<PatientProfile> results = MakeTypeSafe(ExecuteHql(query));
-
-            // due to use of "join fetch", the result set may contain duplicates
-            // (this is a fundamental limitation of SQL)
-            // these should be removed
-            List<PatientProfile> filtered = new List<PatientProfile>();
-            foreach(PatientProfile p in results)
-            {
-                if(!filtered.Contains(p))
-                    filtered.Add(p);
-            }
-
-            return filtered;
+            return MakeTypeSafe(ExecuteHql(query));
         }
     }
 }

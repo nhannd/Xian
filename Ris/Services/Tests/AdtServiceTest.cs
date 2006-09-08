@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Services.Tests
 
             Expect.Once.On(_mockReconciliationStrategyXP).Method("CreateExtension").Will(Return.Value(new DefaultPatientReconciliationStrategy()));
 
-            _adtService = new AdtService(_mockReconciliationStrategyXP);
+            //_adtService = new AdtService(_mockReconciliationStrategyXP);
             ServiceLayerTestHelper.SetServiceLayerPersistenceContext((AdtService)_adtService, _mockPersistanceContext);
         }
 

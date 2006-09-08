@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _selectedSearchResult = (PatientProfile)selection.Item;
 
             RefreshAlternateProfiles();
-            //RefreshReconciliationCandidates();
+            RefreshReconciliationCandidates();
         }
 
         public void Reconcile()

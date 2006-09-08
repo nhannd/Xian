@@ -72,6 +72,6 @@
         <property name="ValidUntil" column="ValidUntil_" type="DateTime" not-null="false"/>
       </composite-element>
     </idbag>
-    <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true"/>
+    <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true" fetch="join"/>
   </class>
 </hibernate-mapping>

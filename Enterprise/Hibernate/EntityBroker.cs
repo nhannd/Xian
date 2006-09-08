@@ -78,10 +78,15 @@ namespace ClearCanvas.Enterprise.Hibernate
             // if the entity is not part of the current session, re-attach
             if (!this.Context.Session.Contains(entity))
             {
-                this.Context.Session.Lock(entity, LockMode.None);
+                // NHibernate docs say to use LockMode.Read in this scenario - not sure why
+                this.Context.Session.Lock(entity, LockMode.Read);
             }
 
-            NHibernateUtil.Initialize(property);
+            // if the property is not initialized, initialized it
+            if (!NHibernateUtil.IsInitialized(property))
+            {
+                NHibernateUtil.Initialize(property);
+            }
         }
 
         protected IList<TEntity> MakeTypeSafe(IList list)

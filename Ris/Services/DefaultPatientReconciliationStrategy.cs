@@ -60,12 +60,6 @@ namespace ClearCanvas.Ris.Services
             return matches;
         }
 
-        public void ReconcilePatient(Patient patient, PatientProfile profileToBeReconciled, IPatientBroker patientBroker, IPatientProfileBroker patientProfileBroker)
-        {
-            patient.Profiles.Add(profileToBeReconciled);
-            profileToBeReconciled.Patient = patient;
-        }
-
         #endregion
     }
 }

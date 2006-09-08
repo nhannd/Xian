@@ -17,16 +17,8 @@ namespace ClearCanvas.Ris.Services
     [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
     public class AdtService : HealthcareServiceLayer, IAdtService
     {
-        private IPatientReconciliationStrategy _strategy;
-
         public AdtService()
-            : this(new PatientReconciliationStrategyExtensionPoint())
         {
-        }
-
-        internal AdtService(IExtensionPoint xp)
-        {
-            _strategy = (IPatientReconciliationStrategy)xp.CreateExtension();
         }
 
         #region IAdtService Members
@@ -40,23 +32,33 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<PatientProfileMatch> FindPatientReconciliationMatches(PatientProfile patientProfile)
         {
-            return _strategy.FindReconciliationMatches(patientProfile, GetPatientProfileBroker());
+            PatientReconciliationStrategyExtensionPoint xp = new PatientReconciliationStrategyExtensionPoint();
+            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)xp.CreateExtension();
+
+            return strategy.FindReconciliationMatches(patientProfile, GetPatientProfileBroker());
         }
 
         [ReadOperation]
         public IList<PatientProfile> ListReconciledPatientProfiles(PatientProfile patientProfile)
         {
             Patient patient = patientProfile.Patient;
+
+            // ensure that the profiles collection is loaded
             GetPatientBroker().LoadRelated(patient, patient.Profiles);
 
+            // exclude the reference profile from the list of returned profiles
             IList<PatientProfile> reconciledProfiles = new List<PatientProfile>();
-            foreach (PatientProfile profile in patientProfile.Patient.Profiles)
+            foreach (PatientProfile profile in patient.Profiles)
             {
-                reconciledProfiles.Add(profile);
+                if(!profile.MRN.Equals(patientProfile.MRN))
+                {
+                    reconciledProfiles.Add(profile);
+                }
             }
             return reconciledProfiles;
         }
 
+        [UpdateOperation]
         public void ReconcilePatients(PatientProfile toBeKept, PatientProfile toBeReconciled)
         {
             if( toBeKept == null )
@@ -67,21 +69,12 @@ namespace ClearCanvas.Ris.Services
             {
                 throw new PatientReconciliationException("Patients are the same");
             }
-            ReconcilePatients(toBeKept.Patient, toBeReconciled);
+            DoReconciliation(toBeKept.Patient, toBeReconciled);
         }
 
         [UpdateOperation]
         public void ReconcilePatients(Patient patient, PatientProfile toBeReconciled)
         {
-            PatientIdentifier mrnToBeReconciled = toBeReconciled.MRN;
-            if( mrnToBeReconciled != null &&
-                PatientHasProfileForSite(patient, mrnToBeReconciled.AssigningAuthority) == true )
-            {
-                throw new PatientReconciliationException("Patient already has identifier for site " + mrnToBeReconciled.AssigningAuthority);
-            }
-
-            // perform some additional validation on the profile?
-
             DoReconciliation(patient, toBeReconciled);
         }
 
@@ -89,7 +82,16 @@ namespace ClearCanvas.Ris.Services
 
         private void DoReconciliation(Patient patient, PatientProfile toBeReconciled)
         {
-            _strategy.ReconcilePatient(patient, toBeReconciled, GetPatientBroker(), GetPatientProfileBroker());
+            PatientIdentifier mrnToBeReconciled = toBeReconciled.MRN;
+            if (mrnToBeReconciled != null &&
+                PatientHasProfileForSite(patient, mrnToBeReconciled.AssigningAuthority) == true)
+            {
+                throw new PatientReconciliationException("Patient already has identifier for site " + mrnToBeReconciled.AssigningAuthority);
+            }
+
+            // perform some additional validation on the profile?
+            patient.Profiles.Add(toBeReconciled);
+            toBeReconciled.Patient = patient;
         }
 
         private static bool PatientHasProfileForSite(Patient patient, string site)

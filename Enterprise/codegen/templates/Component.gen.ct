@@ -13,7 +13,7 @@ namespace <%= @model.namespace %> {
     /// <%= @className %> component
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public partial class <%= @className %>
+	public partial class <%= @className %> : IEquatable<<%= @className %>>
 	{
        	#region Private fields
        	
@@ -51,6 +51,36 @@ namespace <%= @model.namespace %> {
 	  	}
 	  	<% end %>
 	  	
+	  	#endregion
+	  	
+	  	#region IEquatable methods
+	  	
+	  	public bool Equals(<%= @className %> that)
+		{
+			return (that != null) &&
+	  	<% @fields.each do |f| %>
+			((this.<%= f.fieldName %> == default(<%= f.dataType %>)) ? (that.<%= f.fieldName %> == default(<%= f.dataType %>)) : this.<%= f.fieldName %>.Equals(that.<%= f.fieldName %>)) &&
+	  	<% end %>
+				true;
+		}
+	  	
+	  	#endregion
+	  	
+	  	#region Object overrides
+	  	
+	  	public override bool Equals(object that)
+		{
+			return this.Equals(that as <%= @className %>);
+		}
+		
+		public override int GetHashCode()
+		{
+			return
+	  	<% @fields.each do |f| %>
+				(<%= f.fieldName %> == default(<%= f.dataType %>) ? 0 : <%= f.fieldName %>.GetHashCode()) ^
+	  	<% end %>
+				0;
+		}		
 	  	#endregion
 	}
 }
