@@ -37,11 +37,13 @@ namespace ClearCanvas.Ris.Services
             return GetPatientProfileBroker().Find(criteria);
         }
 
+        [ReadOperation]
         public IList<PatientProfileMatch> FindPatientReconciliationMatches(PatientProfile patientProfile)
         {
-            return _strategy.FindReconciliationMatches(patientProfile);
+            return _strategy.FindReconciliationMatches(patientProfile, GetPatientProfileBroker());
         }
 
+        [ReadOperation]
         public IList<PatientProfile> ListReconciledPatientProfiles(PatientProfile patientProfile)
         {
             IList<PatientProfile> reconciledProfiles = new List<PatientProfile>();
@@ -52,7 +54,6 @@ namespace ClearCanvas.Ris.Services
             return reconciledProfiles;
         }
 
-        [UpdateOperation]
         public void ReconcilePatients(PatientProfile toBeKept, PatientProfile toBeReconciled)
         {
             if( toBeKept == null )
@@ -85,7 +86,7 @@ namespace ClearCanvas.Ris.Services
 
         private void DoReconciliation(Patient patient, PatientProfile toBeReconciled)
         {
-            _strategy.ReconcilePatient(patient, toBeReconciled);
+            _strategy.ReconcilePatient(patient, toBeReconciled, GetPatientBroker(), GetPatientProfileBroker());
         }
 
         private static bool PatientHasProfileForSite(Patient patient, string site)

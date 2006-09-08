@@ -20,6 +20,7 @@ namespace ClearCanvas.Ris.Services.Tests
     {
         private Mockery _mocks;
         private IPatientProfileBroker _mockPatientProfileBroker;
+        private IPatientBroker _mockPatientBroker;
         private IPersistenceContext _mockPersistanceContext;
         private IExtensionPoint _mockReconciliationStrategyXP;
         private IAdtService _adtService;
@@ -36,6 +37,7 @@ namespace ClearCanvas.Ris.Services.Tests
         {
             _mocks = new Mockery();
             _mockPatientProfileBroker = _mocks.NewMock<IPatientProfileBroker>();
+            _mockPatientBroker = _mocks.NewMock<IPatientBroker>();
             _mockPersistanceContext = _mocks.NewMock<IPersistenceContext>();
             _mockReconciliationStrategyXP = _mocks.NewMock<IExtensionPoint>();
 
@@ -54,13 +56,15 @@ namespace ClearCanvas.Ris.Services.Tests
             // First Name differs
             PatientProfile pat1b = new TestPatientProfile("805 1B", "SiteB", "6200 1", "Redmond", "Rob", new DateTime(1978, 10, 5));
             // Last name differs 
-            PatientProfile pat1c = new TestPatientProfile("805 1E", "SiteF", "6200 1", "Redman", "Robert", new DateTime(1978, 10, 5));
+            PatientProfile pat1c = new TestPatientProfile("805 1C", "SiteC", "6200 1", "Redman", "Robert", new DateTime(1978, 10, 5));
             // Healthcard differs
-            PatientProfile pat1d = new TestPatientProfile("805 1C", "SiteC", "6200 11", "Redmond", "Robert", new DateTime(1978, 10, 5));
+            PatientProfile pat1d = new TestPatientProfile("805 1D", "SiteD", "6200 11", "Redmond", "Robert", new DateTime(1978, 10, 5));
             // DOB differs
-            PatientProfile pat1e = new TestPatientProfile("805 1D", "SiteD", "6200 1", "Redmond", "Robert", new DateTime(1978, 5, 10));
+            PatientProfile pat1e = new TestPatientProfile("805 1E", "SiteE", "6200 1", "Redmond", "Robert", new DateTime(1978, 5, 10));
+            // only site differs
+            PatientProfile pat1f = new TestPatientProfile("805 1F", "SiteF", "6200 1", "Redmond", "Robert", new DateTime(1978, 5, 10));
             // Duplicate site 
-            PatientProfile pat1x = new TestPatientProfile("805 1E", "SiteA", "6200 1", "Redmond", "Robert", new DateTime(1978, 10, 5));
+            PatientProfile pat1x = new TestPatientProfile("805 1X", "SiteA", "6200 1", "Redmond", "Robert", new DateTime(1978, 10, 5));
 
             PatientProfile pat2a = new TestPatientProfile("805 2", "SiteA", "6200 2", "Resnick", "Jonathan", new DateTime(1978, 10, 5));
             PatientProfile pat3a = new TestPatientProfile("805 3", "SiteA", "6200 3", "Chau", "Clinton", new DateTime(1978, 10, 5));
@@ -73,6 +77,7 @@ namespace ClearCanvas.Ris.Services.Tests
             _persistedProfiles.Add(pat1c);
             _persistedProfiles.Add(pat1d);
             _persistedProfiles.Add(pat1e);
+            _persistedProfiles.Add(pat1f);
             _persistedProfiles.Add(pat1x);
             _persistedProfiles.Add(pat2a);
             _persistedProfiles.Add(pat3a);
@@ -87,6 +92,7 @@ namespace ClearCanvas.Ris.Services.Tests
             _persistedPatients.Add(pat1c.Patient);
             _persistedPatients.Add(pat1d.Patient);
             _persistedPatients.Add(pat1e.Patient);
+            _persistedPatients.Add(pat1f.Patient);
             _persistedPatients.Add(pat1x.Patient);
             _persistedPatients.Add(pat2a.Patient);
             _persistedPatients.Add(pat3a.Patient);
@@ -106,13 +112,14 @@ namespace ClearCanvas.Ris.Services.Tests
 
             IList<PatientProfile> profiles = _adtService.ListPatientProfiles(criteria);
 
-            Assert.AreEqual(6, profiles.Count);
+            Assert.AreEqual(7, profiles.Count);
             Assert.AreEqual(_persistedProfiles[0], profiles[0]);
             Assert.AreEqual(_persistedProfiles[1], profiles[1]);
             Assert.AreEqual(_persistedProfiles[2], profiles[2]);
             Assert.AreEqual(_persistedProfiles[3], profiles[3]);
             Assert.AreEqual(_persistedProfiles[4], profiles[4]);
             Assert.AreEqual(_persistedProfiles[5], profiles[5]);
+            Assert.AreEqual(_persistedProfiles[6], profiles[6]);
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
@@ -138,25 +145,53 @@ namespace ClearCanvas.Ris.Services.Tests
         [Test]
         public void CanListReconciliationMatchesFromPatient()
         {
-            PatientProfile profile = _persistedProfiles[0];
+            PatientProfile profile = _persistedProfiles[0];  
             PatientProfile firstNameDiffers = _persistedProfiles[1];
             PatientProfile lastNameDiffers = _persistedProfiles[2];
             PatientProfile healthcardDiffers = _persistedProfiles[3];
             PatientProfile dobDiffers = _persistedProfiles[4];
-          
+            PatientProfile onlySiteDiffers = _persistedProfiles[5];
+
+            Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+
+            IList<PatientProfile> highMatches = new List<PatientProfile>();
+            highMatches.Add(profile);
+            highMatches.Add(onlySiteDiffers);  //f
+
+            IList<PatientProfile> moderateMatchesViaName = new List<PatientProfile>();
+            moderateMatchesViaName.Add(profile);
+            moderateMatchesViaName.Add(healthcardDiffers);  //d
+            moderateMatchesViaName.Add(onlySiteDiffers);  //f
+
+            IList<PatientProfile> moderateMatchesViaHealthcard = new List<PatientProfile>();
+            moderateMatchesViaHealthcard.Add(profile);
+            moderateMatchesViaHealthcard.Add(firstNameDiffers);  //b
+            moderateMatchesViaHealthcard.Add(lastNameDiffers);   //c
+            moderateMatchesViaHealthcard.Add(dobDiffers);        //e
+            moderateMatchesViaHealthcard.Add(onlySiteDiffers);   //f
+
+            using (_mocks.Ordered)
+            { 
+                Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(highMatches));
+                Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(moderateMatchesViaName));
+                Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(moderateMatchesViaHealthcard));
+            }
+
             IList<PatientProfileMatch> reconciliationMatches = _adtService.FindPatientReconciliationMatches(profile);
 
-            Assert.AreEqual(4, reconciliationMatches.Count);
+            Assert.AreEqual(5, reconciliationMatches.Count);
 
-            Assert.AreEqual(firstNameDiffers, reconciliationMatches[0].PatientProfile);
-            Assert.AreEqual(lastNameDiffers, reconciliationMatches[1].PatientProfile);
-            Assert.AreEqual(healthcardDiffers, reconciliationMatches[2].PatientProfile);
-            Assert.AreEqual(dobDiffers, reconciliationMatches[3].PatientProfile);
+            Assert.AreEqual(onlySiteDiffers, reconciliationMatches[0].PatientProfile);
+            Assert.AreEqual(healthcardDiffers, reconciliationMatches[1].PatientProfile);
+            Assert.AreEqual(firstNameDiffers, reconciliationMatches[2].PatientProfile);
+            Assert.AreEqual(lastNameDiffers, reconciliationMatches[3].PatientProfile);
+            Assert.AreEqual(dobDiffers, reconciliationMatches[4].PatientProfile);
 
-            Assert.AreEqual(1, reconciliationMatches[0].Score);
-            Assert.AreEqual(1, reconciliationMatches[1].Score);
-            Assert.AreEqual(1, reconciliationMatches[2].Score);
-            Assert.AreEqual(1, reconciliationMatches[3].Score);
+            Assert.AreEqual(PatientProfileMatch.ScoreValue.High, reconciliationMatches[0].Score);
+            Assert.AreEqual(PatientProfileMatch.ScoreValue.Moderate, reconciliationMatches[1].Score);
+            Assert.AreEqual(PatientProfileMatch.ScoreValue.Moderate, reconciliationMatches[2].Score);
+            Assert.AreEqual(PatientProfileMatch.ScoreValue.Moderate, reconciliationMatches[3].Score);
+            Assert.AreEqual(PatientProfileMatch.ScoreValue.Moderate, reconciliationMatches[4].Score);
 
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
@@ -167,14 +202,23 @@ namespace ClearCanvas.Ris.Services.Tests
             PatientProfile toBeKept = _persistedProfiles[0];
             PatientProfile toBeReconciled = _persistedProfiles[1];
 
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+            }
+
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
 
             PatientProfile[] profiles = new PatientProfile[toBeKept.Patient.Profiles.Count];
             toBeKept.Patient.Profiles.CopyTo(profiles, 0);
+
             Assert.AreEqual(toBeKept.Patient, toBeReconciled.Patient);
             Assert.AreEqual(toBeKept.Patient.Profiles.Count, 2);
             Assert.AreEqual(profiles[0], toBeKept);
             Assert.AreEqual(profiles[1], toBeReconciled);
+
+            _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
         [Test]
@@ -182,6 +226,12 @@ namespace ClearCanvas.Ris.Services.Tests
         {
             Patient toBeKept = _persistedPatients[0];
             PatientProfile toBeReconciled = _persistedProfiles[1];
+
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+            }
 
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
 
@@ -193,8 +243,14 @@ namespace ClearCanvas.Ris.Services.Tests
             Assert.AreEqual(_persistedProfiles[0], profiles[0]);
             Assert.AreEqual(_persistedProfiles[1], profiles[1]);
 
-            
+
             toBeReconciled = _persistedProfiles[2];
+
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+            }
 
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
 
@@ -209,6 +265,12 @@ namespace ClearCanvas.Ris.Services.Tests
 
             toBeReconciled = _persistedProfiles[3];
 
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+            }
+
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
 
             profiles = new PatientProfile[toBeKept.Profiles.Count];
@@ -220,6 +282,8 @@ namespace ClearCanvas.Ris.Services.Tests
             Assert.AreEqual(_persistedProfiles[1], profiles[1]);
             Assert.AreEqual(_persistedProfiles[2], profiles[2]);
             Assert.AreEqual(_persistedProfiles[3], profiles[3]);
+
+            _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
         [Test]
@@ -262,6 +326,11 @@ namespace ClearCanvas.Ris.Services.Tests
         public TestPatientProfile()
             : this("1234", "SiteA", "6200 123456", "Test", "Patient", new DateTime(2006, 1, 1))
         {
+        }
+
+        public override string ToString()
+        {
+            return MRN.Id + " " + Healthcard.Id + " " + Name.FamilyName + " " + Name.GivenName;
         }
     }
 

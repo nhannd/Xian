@@ -13,15 +13,13 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="patient"></param>
         /// <returns></returns>
-        IList<PatientProfileMatch> FindReconciliationMatches(PatientProfile patient);
+        IList<PatientProfileMatch> FindReconciliationMatches(PatientProfile patient, IPatientProfileBroker broker);
         
         /// <summary>
         /// 
         /// </summary>
         /// <param name="patient"></param>
         /// <param name="profileToBeReconciled"></param>
-        void ReconcilePatient(Patient patient, PatientProfile profileToBeReconciled);
-
-        IPatientProfileBroker Broker { get; set; }
+        void ReconcilePatient(Patient patient, PatientProfile profileToBeReconciled, IPatientBroker patientBroker, IPatientProfileBroker patientProfileBroker);
     }
 }
