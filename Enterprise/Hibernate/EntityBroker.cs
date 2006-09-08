@@ -76,11 +76,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         public virtual void LoadRelated(TEntity entity, object property)
         {
             // if the entity is not part of the current session, re-attach
-            if (!this.Context.Session.Contains(entity))
-            {
-                // NHibernate docs say to use LockMode.Read in this scenario - not sure why
-                this.Context.Session.Lock(entity, LockMode.Read);
-            }
+            this.Context.Reattach(entity);
 
             // if the property is not initialized, initialized it
             if (!NHibernateUtil.IsInitialized(property))

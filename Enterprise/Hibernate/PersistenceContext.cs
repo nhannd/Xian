@@ -44,6 +44,16 @@ namespace ClearCanvas.Enterprise.Hibernate
             return broker;
         }
 
+        public void Reattach(Entity entity)
+        {
+            // if the entity is not part of the current session, re-attach
+            if (!this.Session.Contains(entity))
+            {
+                // NHibernate docs say to use LockMode.Read in this scenario - not sure why
+                this.Session.Lock(entity, LockMode.Read);
+            }
+        }
+
         /// <summary>
         /// True if this object is read-only.
         /// </summary>

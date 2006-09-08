@@ -21,6 +21,12 @@ namespace ClearCanvas.Enterprise
         TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker;
 
         /// <summary>
+        /// Re-attaches a disconnected entity to this context.
+        /// </summary>
+        /// <param name="entity"></param>
+        void Reattach(Entity entity);
+
+        /// <summary>
         /// Closes this persistence context.  No further work can be performed.
         /// </summary>
         void Close();
