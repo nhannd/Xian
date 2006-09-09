@@ -92,6 +92,12 @@ namespace ClearCanvas.Dicom.DataStore
         {
             return this.Series;
         }
+ 
+        public DicomUri GetLocationUri()
+        {
+            return this.LocationUri;
+        }
+
         #endregion
     }
 }

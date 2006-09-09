@@ -1,6 +1,7 @@
 #if UNIT_TESTS
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
@@ -8,6 +9,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.DataStore;
 using NMock2;
+using NHibernate;
 
 namespace ClearCanvas.Dicom.Services.Tests
 {
@@ -391,6 +393,149 @@ namespace ClearCanvas.Dicom.Services.Tests
         }
 
         [Test]
+        public void TestParcelSend()
+        {
+            ApplicationEntity destinationAE = new ApplicationEntity(new HostName("testhost"),
+                                    new AETitle("TEST_SERVER"),
+                                    new ListeningPort(13000));
+
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+
+            Uid studyReference = new Uid("1.2.8.999.999.999.999.3333");
+            ISopInstance mockSopInstance1 = _mocks.NewMock<ISopInstance>();
+            ISopInstance mockSopInstance2 = _mocks.NewMock<ISopInstance>();
+            ISopInstance mockSopInstance3 = _mocks.NewMock<ISopInstance>();
+            ISopInstance mockSopInstance4 = _mocks.NewMock<ISopInstance>();
+            ISopInstance mockSopInstance5 = _mocks.NewMock<ISopInstance>();
+            ISopInstance[] sopInstances = new ISopInstance[] { mockSopInstance1, mockSopInstance2, mockSopInstance3,
+                mockSopInstance4, mockSopInstance5 };
+            Uid transferSyntax = new Uid("1.2.840.10008.1.2");
+            Uid sopClass = new Uid("1.2.840.10008.5.1.4.1.1.1");
+            IDicomSender dicomSender = _mocks.NewMock<IDicomSender>(); 
+
+            Expect.Once.On(_mockDataStore).Method("StudyExists").With(Is.EqualTo(studyReference)).Will(Return.Value(true));
+            Expect.Once.On(_mockDataStore).Method("GetStudy").With(Is.EqualTo(studyReference)).Will(Return.Value(_mockStudy));
+            Expect.Once.On(_mockStudy).Method("GetSopInstances").WithNoArguments().Will(Return.Value(sopInstances));
+            Expect.Once.On(dicomSender).Method("SetSourceApplicationEntity").With(Is.EqualTo(_testingAE));
+            Expect.Once.On(dicomSender).Method("SetDestinationApplicationEntity").With(Is.EqualTo(destinationAE));
+            Expect.Once.On(dicomSender).Method("Send").WithAnyArguments();
+            Expect.Once.On(mockSopInstance1).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
+            Expect.Once.On(mockSopInstance1).Method("GetSopClassUid").WithNoArguments().Will(Return.Value(sopClass));
+            Expect.Once.On(mockSopInstance2).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
+            Expect.Once.On(mockSopInstance2).Method("GetSopClassUid").WithNoArguments().Will(Return.Value(sopClass));
+            Expect.Once.On(mockSopInstance2).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance1)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance3).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
+            Expect.Once.On(mockSopInstance3).Method("GetSopClassUid").WithNoArguments().Will(Return.Value(sopClass));
+            Expect.Once.On(mockSopInstance3).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance1)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance3).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance2)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance4).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
+            Expect.Once.On(mockSopInstance4).Method("GetSopClassUid").WithNoArguments().Will(Return.Value(sopClass));
+            Expect.Once.On(mockSopInstance4).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance1)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance4).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance2)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance4).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance3)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance5).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
+            Expect.Once.On(mockSopInstance5).Method("GetSopClassUid").WithNoArguments().Will(Return.Value(sopClass));
+            Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance1)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance2)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance3)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance4)).Will(Return.Value(false));
+
+            int includedObjectCount = aParcel.Include(studyReference);
+            aParcel.StartSend(dicomSender);
+            _mocks.VerifyAllExpectationsHaveBeenMet();
+        }
+    }
+
+    [TestFixture]
+    public class SendQueueTests
+    {
+        private Mockery _mocks;
+        private ISessionFactory _mockSessionFactory;
+        private ISession _mockSession;
+        private IParcel _mockParcel;
+        private ApplicationEntity _testingAE = new ApplicationEntity(new HostName("localhost"),
+                                                    new AETitle("TEST_AE"),
+                                                    new ListeningPort(12000));
+
+        [SetUp]
+        public void Setup()
+        {
+            _mocks = new Mockery();
+            _mockSessionFactory = _mocks.NewMock<ISessionFactory>();
+            _mockSession = _mocks.NewMock<ISession>();
+            _mockParcel = _mocks.NewMock<IParcel>();
+        }
+
+        [Test]
+        public void GetBackAListOfParcels()
+        {
+            IList mockList = new ArrayList();
+            mockList.Add(_mocks.NewMock<IParcel>());
+            mockList.Add(_mocks.NewMock<IParcel>());
+            mockList.Add(_mocks.NewMock<IParcel>());
+
+            Expect.Once.On(_mockSessionFactory).Method("OpenSession").WithNoArguments().Will(Return.Value(_mockSession));
+            Expect.Once.On(_mockSession).Method("Find").With(Is.StringContaining("from Parcel")).Will(Return.Value(mockList));
+            Expect.Once.On(_mockSession).Method("Close").WithNoArguments();
+            ISendQueueService sendQueue = new SendQueue(_mockSessionFactory);
+            IEnumerable<IParcel> listOfParcels = sendQueue.GetParcels();
+
+            int count = 0;
+            foreach (IParcel p in listOfParcels) ++count;
+            Assert.IsTrue(3 == count);
+            _mocks.VerifyAllExpectationsHaveBeenMet();
+        }
+
+        [Test]
+        public void GetBackAListOfIncompleteParcels()
+        {
+            IList mockList = new ArrayList();
+            mockList.Add(_mocks.NewMock<IParcel>());
+            mockList.Add(_mocks.NewMock<IParcel>());
+            mockList.Add(_mocks.NewMock<IParcel>());
+
+            Expect.Once.On(_mockSessionFactory).Method("OpenSession").WithNoArguments().Will(Return.Value(_mockSession));
+            Expect.Once.On(_mockSession).Method("Find").With(Is.StringContaining("from Parcel as parcel where parcel.ParcelTransferState != ?"), ParcelTransferState.Completed, NHibernateUtil.Int16);//.Will(Return.Value(mockList));
+            Expect.Once.On(_mockSession).Method("Close").WithNoArguments();
+            ISendQueueService sendQueue = new SendQueue(_mockSessionFactory);
+            IEnumerable<IParcel> listOfParcels = sendQueue.GetSendIncompleteParcels();
+
+            int count = 0;
+            foreach (IParcel p in listOfParcels) ++count;
+            Assert.IsTrue(3 == count);
+            _mocks.VerifyAllExpectationsHaveBeenMet();
+        }
+
+        [Test]
+        public void UpdateParcelStateToDatabase()
+        {
+            ApplicationEntity destination = new ApplicationEntity(new HostName("testhost"),
+                new AETitle("TEST_SERVER"),
+                new ListeningPort(13000));
+            ApplicationEntity source = new ApplicationEntity(new HostName("tester"),
+                new AETitle("TEST_SOURCE"),
+                new ListeningPort(14000));
+
+            IParcel aParcel = DicomServicesLayer.GetISendQueueService().CreateNewParcel(source, destination);
+            ITransaction mockTransaction = _mocks.NewMock<ITransaction>();
+
+            Expect.Once.On(_mockSessionFactory).Method("OpenSession").WithNoArguments().Will(Return.Value(_mockSession));
+            Expect.Once.On(_mockSession).Method("BeginTransaction").WithNoArguments().Will(Return.Value(mockTransaction));
+            Expect.Once.On(_mockSession).Method("Update").With(Is.EqualTo(aParcel));
+            Expect.Once.On(mockTransaction).Method("Commit").WithNoArguments();
+            Expect.Once.On(_mockSession).Method("Close").WithNoArguments();
+            ISendQueueService sendQueue = new SendQueue(_mockSessionFactory);
+            sendQueue.UpdateParcel(aParcel);
+
+            _mocks.VerifyAllExpectationsHaveBeenMet();
+
+        }
+    }
+
+    [TestFixture]
+    public class ZebraResourceDependentTests
+    {
+        [Test]
         public void TestPackagingOfParcel()
         {
             ApplicationEntity destinationAE = new ApplicationEntity(new HostName("testhost"),
@@ -402,7 +547,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                 new ListeningPort(12000));
 
             IParcel aParcel = new Parcel(sourceAE, destinationAE);
-            
+
             // populate database with test study
             Study study = new Study();
             study.StudyDescription = "Test Study";
@@ -451,23 +596,57 @@ namespace ClearCanvas.Dicom.Services.Tests
             study.AddSeries(series);
             study.AddSeries(series2);
 
-            IDataStoreWriteAccessor accessor = DataAbstractionLayer.GetIDataStoreWriteAccessor();
-            accessor.StoreStudy(study);
+            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreStudy(study);
+            DataAbstractionLayer.ClearCurrentSession();
+            DataAbstractionLayer.CloseCurrentSession();
 
             aParcel.Include(new Uid("3.1.4.1.5.9.2"));
 
-            ISendQueueService queue = DicomServicesLayer.GetISendQueueService();
-            queue.Add(aParcel);
+            DicomServicesLayer.GetISendQueueService().Add(aParcel);
 
-            IDataStore dataStore = DataAbstractionLayer.GetIDataStore();
-            IStudy studyFound = dataStore.GetStudy(new Uid("3.1.4.1.5.9.2"));
+            IStudy studyFound = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid("3.1.4.1.5.9.2"));
 
             // we're done, get rid of study
-            accessor.RemoveStudy(studyFound);
-            queue.Remove(aParcel);
+            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveStudy(studyFound);
+            DataAbstractionLayer.ClearCurrentSession();
+            DataAbstractionLayer.CloseCurrentSession();
+
+            DicomServicesLayer.GetISendQueueService().Remove(aParcel);
+        }
+
+        [Test]
+        public void TestSend()
+        {
+            while (true)
+            {
+                IEnumerable<IParcel> parcels = DicomServicesLayer.GetISendQueueService().GetSendIncompleteParcels();
+
+                if (null != parcels)
+                {
+                    foreach (IParcel parcel in parcels)
+                    {
+                        ParcelTransferState state = parcel.GetState();
+                        switch (state)
+                        {
+                            case ParcelTransferState.CancelRequested:
+                                break;
+                            case ParcelTransferState.InProgress:
+                                break;
+                            case ParcelTransferState.PauseRequested:
+                                break;
+                            case ParcelTransferState.Pending:
+                                parcel.StartSend(DicomServicesLayer.GetIDicomSender());
+                                break;
+                            case ParcelTransferState.Unknown:
+                                break;
+                        }
+                    }
+                }
+
+                System.Threading.Thread.Sleep(500);
+            }
         }
     }
-
 }
 
 #endif

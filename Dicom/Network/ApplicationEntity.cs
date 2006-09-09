@@ -17,6 +17,7 @@ namespace ClearCanvas.Dicom.Network
         public String Host
         {
             get { return _hostname.ToString(); }
+            private set { _hostname = new HostName(value); }
         }
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace ClearCanvas.Dicom.Network
         public String AE
         {
             get { return _aeTitle.ToString(); }
+            private set { _aeTitle = new AETitle(value); }
         }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace ClearCanvas.Dicom.Network
         public int Port
         {
             get { return _listeningPort.ToInt(); }
+            private set { _listeningPort = new ListeningPort(value); }
         }
         
         /// <summary>
@@ -96,6 +99,13 @@ namespace ClearCanvas.Dicom.Network
             : this(hostname, aeTitle, listenPort, connectionTimeout)
         {
             _operationTimeout = operationTimeout;
+        }
+
+        /// <summary>
+        /// Mandatory parameterless constructor for Hibernate
+        /// </summary>
+        private ApplicationEntity()
+        {
         }
 
         /// <summary>

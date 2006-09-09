@@ -8,7 +8,11 @@ namespace ClearCanvas.Dicom.Services
     public interface ISendQueueService
     {
         IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE);
+        IEnumerable<IParcel> GetParcels();
+        IEnumerable<IParcel> GetSendIncompleteParcels();
         void Add(IParcel aParcel);
         void Remove(IParcel aParcel);
+        void UpdateParcel(IParcel aParcel);
+        void LoadAllReferences(IParcel aParcel);
     }
 }

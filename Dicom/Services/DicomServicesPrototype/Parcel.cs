@@ -28,10 +28,18 @@ namespace ClearCanvas.Dicom.Services
 
         public virtual IDataStore DataStore
         {
-            get
-            {
-                return DataAbstractionLayer.GetIDataStore();
-            }
+            get { return DataAbstractionLayer.GetIDataStore(); }
+        }
+
+        public bool IsSendCompleted
+        {
+            get { return this.ParcelTransferState == ParcelTransferState.Completed; }
+        }
+
+        public ParcelTransferState ParcelTransferState
+        {
+            get { return _parcelTransferState; }
+            private set { _parcelTransferState = value; }
         }
 
         protected virtual long ParcelOid
@@ -66,6 +74,115 @@ namespace ClearCanvas.Dicom.Services
         {
             get { return _sopInstances; }
         }
+
+
+        #region Internal and Private members
+        private void AddTransferSyntax(Uid newTransferSyntax)
+        {
+            string foundMatch = Parcel.Find((this.TransferSyntaxes as List<string>), newTransferSyntax);
+
+            if (null == foundMatch)
+            {
+                (this.TransferSyntaxes as List<string>).Add(newTransferSyntax);
+            }
+        }
+
+        private void AddSopClass(Uid newSopClass)
+        {
+            string foundMatch = Parcel.Find((this.SopClasses as List<string>), newSopClass);
+
+            if (null == foundMatch)
+            {
+                (this.SopClasses as List<string>).Add(newSopClass);
+            }
+        }
+
+        private void AddSopInstance(ISopInstance sop)
+        {
+            ISopInstance foundSop = (this.SopInstances as List<ISopInstance>).Find(
+                    delegate(ISopInstance iteratedSop)
+                    {
+                        if (null != iteratedSop)
+                            return sop.IsIdenticalTo(iteratedSop);
+                        else
+                            return false;
+                    }
+                );
+
+            if (null == foundSop)
+                (this.SopInstances as List<ISopInstance>).Add(sop);
+        }
+
+        private void AddSopInstanceIntoParcel(ISopInstance sop)
+        {
+            Uid transferSyntax = sop.GetTransferSyntaxUid();
+            Uid sopClass = sop.GetSopClassUid();
+            AddTransferSyntax(transferSyntax);
+            AddSopClass(sopClass);
+            AddSopInstance(sop);
+        }
+
+        private static string Find(List<string> listOfStrings, string stringToFind)
+        {
+            return listOfStrings.Find(
+                delegate(string nextString)
+                {
+                    return nextString == stringToFind;
+                }
+            );
+        }
+
+        private IEnumerable<string> SopInstanceFilenamesList
+        {
+            get
+            {
+                List<string> sops = new List<string>();
+                foreach (ISopInstance sop in _sopInstances)
+                {
+                    sops.Add(sop.GetLocationUri().LocalDiskPath);
+                }
+                return sops.AsReadOnly();
+            }
+        }
+
+        private IEnumerable<string> SopClassesList
+        {
+            get
+            {
+                List<string> sopClasses = new List<string>();
+                foreach (string sopClass in _sopClasses)
+                {
+                    sopClasses.Add(sopClass);
+                }
+
+                return sopClasses.AsReadOnly();
+            }
+        }
+
+        private IEnumerable<string> TransferSyntaxesList
+        {
+            get
+            {
+                List<string> transferSyntaxes = new List<string>();
+                foreach (string transferSyntax in _transferSyntaxes)
+                {
+                    transferSyntaxes.Add(transferSyntax);
+                }
+
+                return transferSyntaxes.AsReadOnly();
+            }
+        }
+
+        private ApplicationEntity _destinationAE;
+        private ApplicationEntity _sourceAE;
+        private IList _transferSyntaxes;
+        private IList _sopClasses;
+        private IList _sopInstances;
+        private long _parcelOid;
+        private IDicomSender _dicomSender;
+        private ParcelTransferState _parcelTransferState = ParcelTransferState.Pending;
+
+        #endregion
 
         #region IParcel Members
 
@@ -126,70 +243,39 @@ namespace ClearCanvas.Dicom.Services
             return afterIncludeObjectCount - currentObjectCount;
         }
 
-        #endregion
-
-        #region Internal and Private members
-        private void AddTransferSyntax(Uid newTransferSyntax)
+        public ParcelTransferState GetState()
         {
-            string foundMatch = Parcel.Find((this.TransferSyntaxes as List<string>), newTransferSyntax);
-
-            if (null == foundMatch)
-            {
-                (this.TransferSyntaxes as List<string>).Add(newTransferSyntax);
-            }
+            return this.ParcelTransferState;
         }
 
-        private void AddSopClass(Uid newSopClass)
+        public void StartSend(IDicomSender dicomSender)
         {
-            string foundMatch = Parcel.Find((this.SopClasses as List<string>), newSopClass);
-
-            if (null == foundMatch)
-            {
-                (this.SopClasses as List<string>).Add(newSopClass);
-            }
+            _dicomSender = dicomSender;
+            _dicomSender.SetSourceApplicationEntity(this.SourceAE);
+            _dicomSender.SetDestinationApplicationEntity(this.DestinationAE);
+            _dicomSender.Send(this.SopInstanceFilenamesList, this.SopClassesList, this.TransferSyntaxesList);
         }
 
-        private void AddSopInstance(ISopInstance sop)
+        public void StopSend()
         {
-            ISopInstance foundSop = (this.SopInstances as List<ISopInstance>).Find(
-                    delegate(ISopInstance iteratedSop)
-                    {
-                        if (null != iteratedSop)
-                            return sop.IsIdenticalTo(iteratedSop);
-                        else
-                            return false;
-                    }
-                );
-
-            if (null == foundSop)
-                (this.SopInstances as List<ISopInstance>).Add(sop);
+            throw new Exception("The method or operation is not implemented.");
         }
 
-        private void AddSopInstanceIntoParcel(ISopInstance sop)
+        public int GetToSendObjectCount()
         {
-            Uid transferSyntax = sop.GetTransferSyntaxUid();
-            Uid sopClass = sop.GetSopClassUid();
-            AddTransferSyntax(transferSyntax);
-            AddSopClass(sopClass);
-            AddSopInstance(sop);
+            throw new Exception("The method or operation is not implemented.");
         }
 
-        private static string Find(List<string> listOfStrings, string stringToFind)
+        public int SentObjectCount()
         {
-            return listOfStrings.Find(
-                delegate(string nextString)
-                {
-                    return nextString == stringToFind;
-                }
-            );
+            throw new Exception("The method or operation is not implemented.");
         }
 
-        private ApplicationEntity _destinationAE;
-        private ApplicationEntity _sourceAE;
-        private IList _transferSyntaxes;
-        private IList _sopClasses;
-        private IList _sopInstances;
-        private long _parcelOid;
+        public IEnumerable<string> GetReferencedSopInstanceFileNames()
+        {
+            return this.SopInstanceFilenamesList;
+        }
+
         #endregion
     }
 }

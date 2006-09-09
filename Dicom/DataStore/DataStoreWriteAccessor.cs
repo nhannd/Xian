@@ -72,9 +72,6 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
-                if (!this.Session.IsConnected)
-                    this.Session.Reconnect();
-
                 tx = this.Session.BeginTransaction();
 
                 // remove the child sop instance from the parent series' collection

@@ -9,7 +9,7 @@ using NHibernate.Mapping.Attributes;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public sealed partial class DataAbstractionLayer 
+    public partial class DataAbstractionLayer : IDisposable
     {
         #region Handcoded Members
         #region Private Members
@@ -156,6 +156,18 @@ namespace ClearCanvas.Dicom.DataStore
 
             return _dicomDictionary;
         }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            DataAbstractionLayer.ClearCurrentSession();
+            DataAbstractionLayer.CloseCurrentSession();
+            DataAbstractionLayer.CloseSessionFactory();
+        }
+
         #endregion
     }
 }

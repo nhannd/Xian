@@ -66,6 +66,16 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
+        public string LocalDiskPath
+        {
+            get
+            {
+                if (null != this.InternalUriObject && this.InternalUriObject.IsFile)
+                    return this.InternalUriObject.LocalPath.Substring(12);      // remove the "\\localhost\" part
+                else
+                    return null;
+            }
+        }
 
         public override string ToString()
         {

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             _dataStoreImageSopInstance = sop;
             _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
             _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as ClearCanvas.Dicom.DataStore.Series;
-			_dicomImage = new FileDicomImage(sop.LocationUri.LocalPath.Substring(12)); // remove the "\\localhost\" part
+			_dicomImage = new FileDicomImage(sop.LocationUri.LocalDiskPath);
 		}
 
         /// <summary>
