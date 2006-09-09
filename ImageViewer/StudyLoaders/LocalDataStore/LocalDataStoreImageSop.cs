@@ -284,13 +284,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				return "TODO!!";
-				//throw new Exception("The method or operation is not implemented.");
+				if (this.DataStoreSeries.SeriesDescription != null)
+					return this.DataStoreSeries.SeriesDescription;
+				else
+					return "";
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
+			set { throw new Exception("This is not yet implemented."); }
 		}
 
 		public override string Laterality
