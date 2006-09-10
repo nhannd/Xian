@@ -58,20 +58,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._tableLayoutPanel.Controls.Add(this._accessionNumber, 3, 0);
 			this._tableLayoutPanel.Controls.Add(this._lastNameLabel, 0, 1);
 			this._tableLayoutPanel.Controls.Add(this._lastName, 1, 1);
-			this._tableLayoutPanel.Controls.Add(this._firstNameLabel, 2, 1);
 			this._tableLayoutPanel.Controls.Add(this._firstName, 3, 1);
 			this._tableLayoutPanel.Controls.Add(this._studyDescriptionLabel, 0, 3);
 			this._tableLayoutPanel.Controls.Add(this._studyDescription, 1, 3);
 			this._tableLayoutPanel.Controls.Add(this._studyDateLabel, 0, 2);
 			this._tableLayoutPanel.Controls.Add(this._dateTimePicker1, 1, 2);
 			this._tableLayoutPanel.Controls.Add(this._searchButton, 3, 3);
-			this._tableLayoutPanel.Location = new System.Drawing.Point(13, 18);
+			this._tableLayoutPanel.Controls.Add(this._firstNameLabel, 2, 1);
+			this._tableLayoutPanel.Location = new System.Drawing.Point(12, 18);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
 			this._tableLayoutPanel.RowCount = 4;
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.Size = new System.Drawing.Size(469, 106);
 			this._tableLayoutPanel.TabIndex = 1;
 			// 
@@ -175,11 +175,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._studyDateLabel.TabIndex = 3;
 			this._studyDateLabel.Text = "Study Date";
 			// 
-			// dateTimePicker1
+			// _dateTimePicker1
 			// 
 			this._dateTimePicker1.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._dateTimePicker1.Location = new System.Drawing.Point(99, 55);
-			this._dateTimePicker1.Name = "dateTimePicker1";
+			this._dateTimePicker1.Name = "_dateTimePicker1";
 			this._dateTimePicker1.Size = new System.Drawing.Size(141, 20);
 			this._dateTimePicker1.TabIndex = 8;
 			// 

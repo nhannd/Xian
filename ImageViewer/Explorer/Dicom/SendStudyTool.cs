@@ -9,12 +9,12 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[ButtonAction("send", "dicomstudybrowser-toolbar/Send")]
-	[MenuAction("send", "dicomstudybrowser-contextmenu/Send")]
-	[ClickHandler("send", "SendStudy")]
-	[EnabledStateObserver("send", "Enabled", "EnabledChanged")]
-	[Tooltip("send", "Send Study")]
-	[IconSet("send", IconScheme.Colour, "Icons.SendStudySmall.png", "Icons.SendStudySmall.png", "Icons.SendStudySmall.png")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/Send")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/Send")]
+	[ClickHandler("activate", "SendStudy")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "Send Study")]
+	[IconSet("activate", IconScheme.Colour, "Icons.SendStudySmall.png", "Icons.SendStudySmall.png", "Icons.SendStudySmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class SendStudyTool : StudyBrowserTool
 	{
@@ -26,6 +26,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public void SendStudy()
 		{
 			Platform.ShowMessageBox("Not yet implemented!");
+		}
+
+		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
+		{
+			if (this.Context.LastSearchedServer.Host == "localhost")
+				base.OnSelectedStudyChanged(sender, e);
+		}
+
+		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
+		{
+			if (this.Context.LastSearchedServer.Host == "localhost")
+				this.Enabled = true;
+			else
+				this.Enabled = false;
 		}
 	}
 }

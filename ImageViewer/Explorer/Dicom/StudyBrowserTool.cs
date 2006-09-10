@@ -9,7 +9,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    public class StudyBrowserTool : Tool<IStudyBrowserToolContext>
+    public abstract class StudyBrowserTool : Tool<IStudyBrowserToolContext>
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
@@ -23,15 +23,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			base.Initialize();
 			this.Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
+			this.Context.LastSearchedServerChanged += new EventHandler(OnLastSearchedServerChanged);
 		}
 
-		void OnSelectedStudyChanged(object sender, EventArgs e)
+		protected virtual void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
 			if (this.Context.SelectedStudy != null)
 				this.Enabled = true;
 			else
 				this.Enabled = false;
 		}
+
+		protected abstract void OnLastSearchedServerChanged(object sender, EventArgs e);
 
 		public bool Enabled
 		{

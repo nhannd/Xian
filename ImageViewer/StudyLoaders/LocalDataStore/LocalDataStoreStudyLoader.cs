@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         {
             get
             {
-                return "My DataStore";
+                return "DICOM_LOCAL";
             }
         }
 

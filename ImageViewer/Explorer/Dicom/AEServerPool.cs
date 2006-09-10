@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             else
             {
-                _serverlist.Add(new AEServer("MyAEServer", "/ServerGroup/", "", "111.1.1.1", "MyAETitle", 100));
+                _serverlist.Add(new AEServer("My Datastore", "/ServerGroup/", "", "localhost", "MyAETitle", 100));
                 SaveServerSettings();
             }
         }

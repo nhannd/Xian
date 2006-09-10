@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			InitializeComponent();
 
 			_studyBrowserComponent = component;
+
 			_studyTableView.DataSource = _studyBrowserComponent.StudyList;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
 			_studyTableView.MenuModel = _studyBrowserComponent.ContextMenuModel;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studySearchForm.PatientId.DataBindings.Add("Text", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studySearchForm.StudyDescription.DataBindings.Add("Text", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_titleBar.DataBindings.Add("Text", _bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
+			_titleBar.DataBindings.Add("Text", _studyBrowserComponent, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
@@ -59,7 +60,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		{
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
-				_studyBrowserComponent.Search();
+				try
+				{
+					_studyBrowserComponent.Search();
+				}
+				catch (Exception ex)
+				{
+					Platform.ShowMessageBox("Unable to query server");
+				}
 			}
 		}
 	}

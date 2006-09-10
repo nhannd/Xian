@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
         {
             get
             {
-                return "My DataStore";
+                return "DICOM_LOCAL";
             }
         }
 
         public override StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams)
         {
-            throw new Exception("The method or operation is not implemented.");
+			return Query(queryParams);
         }
 
         public override StudyItemList Query(QueryParameters queryParams)
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
                 //item.ModalitiesInStudy = result.ModalitiesInStudy;
                 item.AccessionNumber = result.AccessionNumber;
                 item.StudyInstanceUID = result.StudyInstanceUid.ToString();
-                item.StudyLoaderName = "My DataStore";
+                item.StudyLoaderName = this.Name;
 
                 studyItemList.Add(item);
             }

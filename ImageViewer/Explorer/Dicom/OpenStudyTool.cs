@@ -9,12 +9,12 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[ButtonAction("open", "dicomstudybrowser-toolbar/Open")]
-	[MenuAction("open", "dicomstudybrowser-contextmenu/Open")]
-	[ClickHandler("open", "OpenStudy")]
-	[EnabledStateObserver("open", "Enabled", "EnabledChanged")]
-	[Tooltip("open", "Open Study")]
-	[IconSet("open", IconScheme.Colour, "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/Open")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/Open")]
+	[ClickHandler("activate", "OpenStudy")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "Open Study")]
+	[IconSet("activate", IconScheme.Colour, "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{
@@ -64,6 +64,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
 			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);
+		}
+
+		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
+		{
+			if (this.Context.LastSearchedServer.Host == "localhost")
+				base.OnSelectedStudyChanged(sender, e);
+		}
+
+		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
+		{
+			if (this.Context.LastSearchedServer.Host == "localhost")
+				this.Enabled = true;
+			else
+				this.Enabled = false;
 		}
 	}
 }

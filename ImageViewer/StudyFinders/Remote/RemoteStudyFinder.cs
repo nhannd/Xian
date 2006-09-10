@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 		{
 			get
 			{
-				return "My PACS Network";
+				return "DICOM_REMOTE";
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
                 item.StudyDescription = result.StudyDescription;
                 //item.ModalitiesInStudy = result.ModalitiesInStudy;
                 item.AccessionNumber = result.AccessionNumber;
-                item.StudyLoaderName = "My PACS Network";
+                item.StudyLoaderName = this.Name;
                 item.Server = _selectedServer;
                 item.StudyInstanceUID = result.StudyInstanceUid.ToString();
                 if (result.ContainsTag(DicomTag.NumberOfStudyRelatedInstances))

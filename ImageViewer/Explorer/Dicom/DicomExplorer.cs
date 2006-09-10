@@ -4,6 +4,8 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -31,27 +33,46 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get
 			{
 				if (_splitComponentContainer == null)
-				{
-					if (_aeNavigator == null)
-						_aeNavigator = new AENavigatorComponent();
-
-					if (_studyBrowser == null)
-					{
-						_studyBrowser = new StudyBrowserComponent();
-						_studyBrowser.StudyFinder = ImageViewerComponent.StudyManager.StudyFinders["My DataStore"];
-						_studyBrowser.StudyLoader = ImageViewerComponent.StudyManager.StudyLoaders["My DataStore"];
-						_studyBrowser.Title = "Search My Local Datastore";
-					}
-
-					SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);
-					SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser);
-					_splitComponentContainer = new SplitComponentContainer(leftPane, rightPane);
-				}
+					CreateComponentContainer();
 
 				return _splitComponentContainer as IApplicationComponent;
 			}
 		}
 
 		#endregion
+
+		private void CreateComponentContainer()
+		{
+			if (_aeNavigator == null)
+				_aeNavigator = new AENavigatorComponent();
+
+			_aeNavigator.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
+
+			if (_studyBrowser == null)
+				_studyBrowser = new StudyBrowserComponent();
+
+			_studyBrowser.SelectServer(GetLocalAE());
+
+			SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);
+			SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser);
+			_splitComponentContainer = new SplitComponentContainer(leftPane, rightPane);
+		}
+
+		void OnSelectedServerChanged(object sender, EventArgs e)
+		{
+			// TODO: Remove this hack once AENavigator.Selected returns non
+			// null for local machine
+			if (_aeNavigator.ServerSelected == null)
+				_studyBrowser.SelectServer(GetLocalAE());
+			else
+				_studyBrowser.SelectServer(_aeNavigator.ServerSelected);
+		}
+
+		// TODO: Remove this hack once AENavigator.Selected returns non
+		// null for local machine
+		private AEServer GetLocalAE()
+		{
+			return new AEServer("My Datastore", "", "", new HostName("localhost"), new AETitle("CC"), new ListeningPort(4000));
+		}
 	}
 }
