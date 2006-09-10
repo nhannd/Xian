@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.Services;
 
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -32,7 +33,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle("CCWORKSTN"), new ListeningPort(4000));
+			LocalAESettings myAESettings = new LocalAESettings();
+			ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+
 			using (DicomClient client = new DicomClient(me))
 			{
 				AEServer server = this.Context.LastSearchedServer;

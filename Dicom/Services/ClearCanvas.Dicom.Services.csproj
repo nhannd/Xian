@@ -61,6 +61,7 @@
     <Compile Include="IParcel.cs" />
     <Compile Include="ISendQueueService.cs" />
     <Compile Include="ISendService.cs" />
+    <Compile Include="LocalAESettings.cs" />
     <Compile Include="Parcel.cs" />
     <Compile Include="ParcelTransferState.cs" />
     <Compile Include="Sender.cs" />

@@ -7,6 +7,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
     using ClearCanvas.ImageViewer.StudyManagement;
     using ClearCanvas.Dicom;
     using ClearCanvas.Dicom.Network;
+	using ClearCanvas.Dicom.Services;
 
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]
     public class RemoteStudyFinder : StudyFinder
@@ -71,8 +72,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         protected ReadOnlyQueryResultCollection Query(ApplicationEntity server, QueryKey queryKey)
         {
-            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle("CCWORKSTN"), new ListeningPort(4000));
-            using (DicomClient client = new DicomClient(me))
+			LocalAESettings myAESettings = new LocalAESettings();
+            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+
+			using (DicomClient client = new DicomClient(me))
             {
                 ReadOnlyQueryResultCollection results = client.Query(server, queryKey);
                 return results;
