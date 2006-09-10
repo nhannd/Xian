@@ -29,6 +29,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void RetrieveStudy()
 		{
+			if (this.Context.SelectedStudy == null)
+				return;
+
 			ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle("CCWORKSTN"), new ListeningPort(4000));
 			using (DicomClient client = new DicomClient(me))
 			{
@@ -40,12 +43,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			if (this.Context.LastSearchedServer.Host != "localhost")
-				base.OnSelectedStudyChanged(sender, e);
+			// If the results aren't from a remote machine, then we don't
+			// even care whether a study has been selected or not
+			if (this.Context.LastSearchedServer.Host == "localhost")
+				return;
+
+			base.OnSelectedStudyChanged(sender, e);
 		}
 
 		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
 		{
+			// If no study is selected then we don't even care whether
+			// the last searched server has changed.
+			if (this.Context.SelectedStudy == null)
+				return;
+
 			if (this.Context.LastSearchedServer.Host == "localhost")
 				this.Enabled = false;
 			else

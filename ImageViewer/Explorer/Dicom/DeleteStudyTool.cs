@@ -28,12 +28,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void DeleteStudy()
 		{
+			if (this.Context.SelectedStudy == null)
+				return;
+
 			Uid studyUid = new Uid(this.Context.SelectedStudy.StudyInstanceUID);
 			IStudy study = DataAbstractionLayer.GetIDataStore().GetStudy(studyUid);
 
 			try
 			{
 				DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveStudy(study);
+				DataAbstractionLayer.ClearCurrentSession();
+				DataAbstractionLayer.CloseCurrentSession();
 			}
 			catch (Exception e)
 			{
@@ -46,12 +51,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			if (this.Context.LastSearchedServer.Host == "localhost")
-				base.OnSelectedStudyChanged(sender, e);
+			// If the results aren't from the local machine, then we don't
+			// even care whether a study has been selected or not
+			if (this.Context.LastSearchedServer.Host != "localhost")
+				return;
+
+			base.OnSelectedStudyChanged(sender, e);
 		}
 
 		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
 		{
+			// If no study is selected then we don't even care whether
+			// the last searched server has changed.
+			if (this.Context.SelectedStudy == null)
+				return;
+
 			if (this.Context.LastSearchedServer.Host == "localhost")
 				this.Enabled = true;
 			else
