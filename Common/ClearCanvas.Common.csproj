@@ -94,6 +94,7 @@
     <Compile Include="Auditing\IAuditMessage.cs" />
     <Compile Include="BasicExtensionPointManager.cs" />
     <Compile Include="ExtensionPoint.cs" />
+    <Compile Include="ExtensionSettings.cs" />
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Auditing\Auditor.cs" />

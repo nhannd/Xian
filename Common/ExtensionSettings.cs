@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 
-namespace ClearCanvas.Desktop
+namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// Currently empty, but in the future, methods may be added that, for example

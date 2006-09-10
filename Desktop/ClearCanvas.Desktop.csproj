@@ -64,7 +64,6 @@
     <Compile Include="TableColumn.cs" />
     <Compile Include="TabPage.cs" />
     <Compile Include="DesktopWindow.cs" />
-    <Compile Include="ExtensionSettings.cs" />
     <Compile Include="IDesktopWindow.cs" />
     <Compile Include="IDesktopWindowView.cs" />
     <Compile Include="IDialogBox.cs" />
