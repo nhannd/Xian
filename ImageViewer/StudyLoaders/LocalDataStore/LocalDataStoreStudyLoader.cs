@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			try
             {
 
-                IStudy study = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid(studyUID));
+                IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyUID));
                 IEnumerable<ISopInstance> listOfSops = study.GetSopInstances();
 				int imagesLoaded = 0;
 

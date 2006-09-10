@@ -26,9 +26,9 @@ namespace ClearCanvas.Dicom.Services
             _sopInstances = new List<ISopInstance>();
         }
 
-        public virtual IDataStore DataStore
+        public virtual IDataStoreReader DataStoreReader
         {
-            get { return DataAbstractionLayer.GetIDataStore(); }
+            get { return DataAccessLayer.GetIDataStoreReader(); }
         }
 
         public bool IsSendCompleted
@@ -201,27 +201,27 @@ namespace ClearCanvas.Dicom.Services
             int currentObjectCount = (this.SopInstances as List<ISopInstance>).Count;
 
             // search for study that matches Uid
-            if (!this.DataStore.StudyExists(referencedUid))
+            if (!this.DataStoreReader.StudyExists(referencedUid))
             {
 
                 // search for series that matches Uid
-                if (!this.DataStore.SeriesExists(referencedUid))
+                if (!this.DataStoreReader.SeriesExists(referencedUid))
                 {
                     // search for SOP instance that matches Uid
-                    if (!this.DataStore.SopInstanceExists(referencedUid))
+                    if (!this.DataStoreReader.SopInstanceExists(referencedUid))
                     {
                         return 0;
                     }
                     else
                     {
                         // get the SopInstance object
-                        ISopInstance sop = this.DataStore.GetSopInstance(referencedUid);
+                        ISopInstance sop = this.DataStoreReader.GetSopInstance(referencedUid);
                         AddSopInstanceIntoParcel(sop);
                     }
                 }
                 else // series was found
                 {
-                    ISeries series = this.DataStore.GetSeries(referencedUid);
+                    ISeries series = this.DataStoreReader.GetSeries(referencedUid);
                     IEnumerable<ISopInstance> sops = series.GetSopInstances();
                     foreach (ISopInstance sop in sops)
                     {
@@ -231,7 +231,7 @@ namespace ClearCanvas.Dicom.Services
             }
             else // study was found
             {
-                IStudy study = this.DataStore.GetStudy(referencedUid);
+                IStudy study = this.DataStoreReader.GetStudy(referencedUid);
                 IEnumerable<ISopInstance> sops = study.GetSopInstances();
                 foreach (ISopInstance sop in sops)
                 {
@@ -254,6 +254,8 @@ namespace ClearCanvas.Dicom.Services
             _dicomSender.SetSourceApplicationEntity(this.SourceAE);
             _dicomSender.SetDestinationApplicationEntity(this.DestinationAE);
             _dicomSender.Send(this.SopInstanceFilenamesList, this.SopClassesList, this.TransferSyntaxesList);
+            this.ParcelTransferState = ParcelTransferState.Completed;
+            DicomServicesLayer.GetISendQueueService().UpdateParcel(this);
         }
 
         public void StopSend()

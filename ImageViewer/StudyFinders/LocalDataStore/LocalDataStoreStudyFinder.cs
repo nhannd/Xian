@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
         {
             try
             {
-                ReadOnlyQueryResultCollection results = DataAbstractionLayer.GetIDataStore().StudyQuery(queryKey);
+                ReadOnlyQueryResultCollection results = DataAccessLayer.GetIDataStoreReader().StudyQuery(queryKey);
                 return results;
             }
             catch (System.Data.SqlClient.SqlException e)

@@ -36,7 +36,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// This event is not yet implemented.
         /// </summary>
-        //private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
+        // private event EventHandler<ObjectSendingProgressUpdatedEventArgs> _objectSendingProgressUpdatedEvent;
         /// <summary>
         /// This event is not yet implemented.
         /// </summary>
@@ -95,6 +95,9 @@ namespace ClearCanvas.Dicom.Network
 
             // same goes for the store callback helper
             _storeCallbackHelper = new StoreCallbackHelper(this);
+
+            // same goes for the store scu callback helper
+            _storeScuCallbackHelper = new StoreScuCallbackHelper(this);
 
             _queryResults = new QueryResultList();
 
@@ -994,8 +997,6 @@ namespace ClearCanvas.Dicom.Network
                 InteropStoreScuCallbackInfo callbackInfo = new InteropStoreScuCallbackInfo(interopStoreScuCallbackInfo, false);
                 T_DIMSE_C_StoreRQ request = callbackInfo.Request;
                 T_DIMSE_StoreProgress progress = callbackInfo.Progress;
-
-
             }
 
             private StoreScuCallbackHelperDelegate _storeScuCallbackHelperDelegate;
@@ -1013,6 +1014,7 @@ namespace ClearCanvas.Dicom.Network
 
         private QueryCallbackHelper _queryCallbackHelper;
         private StoreCallbackHelper _storeCallbackHelper;
+        private StoreScuCallbackHelper _storeScuCallbackHelper;
         private QueryResultList _queryResults;
         private ApplicationEntity _myOwnAE;
         private int _defaultPDUSize = 16384;

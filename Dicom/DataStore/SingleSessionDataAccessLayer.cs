@@ -9,15 +9,15 @@ using NHibernate.Mapping.Attributes;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public partial class DataAbstractionLayer : IDisposable
+    public partial class SingleSessionDataAccessLayer : IDisposable
     {
         #region Handcoded Members
         #region Private Members
 
         private static readonly ISessionFactory _sessionFactory;
         private static Dictionary<Thread, ISession> _sessions;
-        private static Dictionary<ISession, IDataStore> _dataStores;
-        private static Dictionary<ISession, IDataStoreWriteAccessor> _dataStoreWriteAccessors;
+        private static Dictionary<ISession, IDataStoreReader> _dataStores;
+        private static Dictionary<ISession, IDataStoreWriter> _dataStoreWriteAccessors;
         private static IDicomDictionary _dicomDictionary;
 
         private static void CloseSessionFactory()
@@ -31,7 +31,7 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _sessionFactory; }
         }
 
-        private static Dictionary<ISession, IDataStore> DataStores
+        private static Dictionary<ISession, IDataStoreReader> DataStores
         {
             get { return _dataStores; }
         }
@@ -41,7 +41,7 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _sessions; }
         }
 
-        private static Dictionary<ISession, IDataStoreWriteAccessor> DataStoreWriteAccessors
+        private static Dictionary<ISession, IDataStoreWriter> DataStoreWriteAccessors
         {
             get { return _dataStoreWriteAccessors; }
         }
@@ -52,7 +52,7 @@ namespace ClearCanvas.Dicom.DataStore
             {
                 // look for stale sessions and get rid of them
                 List<KeyValuePair<Thread,ISession>> toRemoveArray = new List<KeyValuePair<Thread,ISession>>();
-                foreach (KeyValuePair<Thread, ISession> iterator in DataAbstractionLayer.Sessions)
+                foreach (KeyValuePair<Thread, ISession> iterator in SingleSessionDataAccessLayer.Sessions)
                 {
                     if (!iterator.Key.IsAlive || !iterator.Value.IsOpen)
                         toRemoveArray.Add(iterator);
@@ -60,24 +60,24 @@ namespace ClearCanvas.Dicom.DataStore
                 foreach (KeyValuePair<Thread, ISession> iterator in toRemoveArray)
                 {
                     // get rid of session-dependent objects that we remember about
-                    DataAbstractionLayer.DataStores.Remove(iterator.Value);
-                    DataAbstractionLayer.DataStoreWriteAccessors.Remove(iterator.Value);
+                    SingleSessionDataAccessLayer.DataStores.Remove(iterator.Value);
+                    SingleSessionDataAccessLayer.DataStoreWriteAccessors.Remove(iterator.Value);
 
                     // close the session and get rid of the session that we remember about
                     iterator.Value.Close();
-                    DataAbstractionLayer.Sessions.Remove(iterator.Key);
+                    SingleSessionDataAccessLayer.Sessions.Remove(iterator.Key);
                 }
                 toRemoveArray.Clear();
 
                 Thread currentThread = Thread.CurrentThread;
-                if (DataAbstractionLayer.Sessions.ContainsKey(currentThread))
+                if (SingleSessionDataAccessLayer.Sessions.ContainsKey(currentThread))
                 {
-                    return DataAbstractionLayer.Sessions[currentThread];
+                    return SingleSessionDataAccessLayer.Sessions[currentThread];
                 }
                 else
                 {
-                    ISession newSession = DataAbstractionLayer.SessionFactory.OpenSession();
-                    DataAbstractionLayer.Sessions.Add(currentThread, newSession);
+                    ISession newSession = SingleSessionDataAccessLayer.SessionFactory.OpenSession();
+                    SingleSessionDataAccessLayer.Sessions.Add(currentThread, newSession);
                     return newSession;
                 }
             }
@@ -85,7 +85,7 @@ namespace ClearCanvas.Dicom.DataStore
 
         #endregion
 
-        static DataAbstractionLayer()
+        static SingleSessionDataAccessLayer()
         {
             Configuration cfg = new Configuration();
             string assemblyName = MethodBase.GetCurrentMethod().DeclaringType.Assembly.GetName().Name;
@@ -94,57 +94,57 @@ namespace ClearCanvas.Dicom.DataStore
             _sessionFactory = cfg.BuildSessionFactory();
 
             _sessions = new Dictionary<Thread, ISession>();
-            _dataStores = new Dictionary<ISession, IDataStore>();
-            _dataStoreWriteAccessors = new Dictionary<ISession, IDataStoreWriteAccessor>();
+            _dataStores = new Dictionary<ISession, IDataStoreReader>();
+            _dataStoreWriteAccessors = new Dictionary<ISession, IDataStoreWriter>();
         }
 
         public static void CloseCurrentSession()
         {
-            DataAbstractionLayer.CurrentSession.Close();
+            SingleSessionDataAccessLayer.CurrentSession.Close();
         }
 
         public static void ClearCurrentSession()
         {
-            DataAbstractionLayer.CurrentSession.Clear();
+            SingleSessionDataAccessLayer.CurrentSession.Clear();
         }
 
         public static void ReconnectCurrentSession()
         {
-            if (!DataAbstractionLayer.CurrentSession.IsConnected)
-                DataAbstractionLayer.CurrentSession.Reconnect();
+            if (!SingleSessionDataAccessLayer.CurrentSession.IsConnected)
+                SingleSessionDataAccessLayer.CurrentSession.Reconnect();
         }
 
         public static void DisconnectCurrentSession()
         {
-            DataAbstractionLayer.CurrentSession.Disconnect();
+            SingleSessionDataAccessLayer.CurrentSession.Disconnect();
         }
 
-        public static IDataStore GetIDataStore()
+        public static IDataStoreReader GetIDataStoreReader()
         {
-            ISession session = DataAbstractionLayer.CurrentSession;
-            if (DataAbstractionLayer.DataStores.ContainsKey(session))
+            ISession session = SingleSessionDataAccessLayer.CurrentSession;
+            if (SingleSessionDataAccessLayer.DataStores.ContainsKey(session))
             {
-                return DataAbstractionLayer.DataStores[session];
+                return SingleSessionDataAccessLayer.DataStores[session];
             }
             else
             {
-                IDataStore dataStore = new DataStore(session);
-                DataAbstractionLayer.DataStores.Add(session, dataStore);
+                IDataStoreReader dataStore = new SingleSessionDataStoreReader(session);
+                SingleSessionDataAccessLayer.DataStores.Add(session, dataStore);
                 return dataStore;
             }
         }
 
-        public static IDataStoreWriteAccessor GetIDataStoreWriteAccessor()
+        public static IDataStoreWriter GetIDataStoreWriter()
         {
-            ISession session = DataAbstractionLayer.CurrentSession;
-            if (DataAbstractionLayer.DataStoreWriteAccessors.ContainsKey(session))
+            ISession session = SingleSessionDataAccessLayer.CurrentSession;
+            if (SingleSessionDataAccessLayer.DataStoreWriteAccessors.ContainsKey(session))
             {
-                return DataAbstractionLayer.DataStoreWriteAccessors[session];
+                return SingleSessionDataAccessLayer.DataStoreWriteAccessors[session];
             }
             else
             {
-                IDataStoreWriteAccessor dataStoreWriteAccessor = new DataStoreWriteAccessor(session);
-                DataAbstractionLayer.DataStoreWriteAccessors.Add(session, dataStoreWriteAccessor);
+                IDataStoreWriter dataStoreWriteAccessor = new SingleSessionDataStoreWriter(session);
+                SingleSessionDataAccessLayer.DataStoreWriteAccessors.Add(session, dataStoreWriteAccessor);
                 return dataStoreWriteAccessor;
             }
         }
@@ -152,7 +152,7 @@ namespace ClearCanvas.Dicom.DataStore
         public static IDicomDictionary GetIDicomDictionary()
         {
             if (null == _dicomDictionary)
-                _dicomDictionary = new DicomDictionary(DataAbstractionLayer.SessionFactory.OpenSession());
+                _dicomDictionary = new DicomDictionary(SingleSessionDataAccessLayer.SessionFactory.OpenSession());
 
             return _dicomDictionary;
         }
@@ -163,9 +163,9 @@ namespace ClearCanvas.Dicom.DataStore
 
         public void Dispose()
         {
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
-            DataAbstractionLayer.CloseSessionFactory();
+            SingleSessionDataAccessLayer.ClearCurrentSession();
+            SingleSessionDataAccessLayer.CloseCurrentSession();
+            SingleSessionDataAccessLayer.CloseSessionFactory();
         }
 
         #endregion

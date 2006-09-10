@@ -13,6 +13,5 @@ namespace ClearCanvas.Dicom.Services
         void Add(IParcel aParcel);
         void Remove(IParcel aParcel);
         void UpdateParcel(IParcel aParcel);
-        void LoadAllReferences(IParcel aParcel);
     }
 }

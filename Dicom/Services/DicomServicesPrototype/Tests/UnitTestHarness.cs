@@ -86,7 +86,7 @@ namespace ClearCanvas.Dicom.Services.Tests
     {
         private Mockery _mocks;
         private IStudy _mockStudy;
-        private IDataStore _mockDataStore;
+        private IDataStoreReader _mockDataStore;
         private ISeries _mockSeries;
         private ApplicationEntity _testingAE = new ApplicationEntity(new HostName("localhost"),
                                             new AETitle("TEST_AE"),
@@ -94,17 +94,17 @@ namespace ClearCanvas.Dicom.Services.Tests
 
         public class TestParcel : Parcel
         {
-            public TestParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, IDataStore dataStore) : base(sourceAE, destinationAE)
+            public TestParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, IDataStoreReader dataStore) : base(sourceAE, destinationAE)
             {
-                _mockDataStore = dataStore;
+                _mockDataStoreReader = dataStore;
             }
 
-            public override IDataStore DataStore
+            public override IDataStoreReader DataStoreReader
             {
-                get { return _mockDataStore; }
+                get { return _mockDataStoreReader; }
             }
 
-            private IDataStore _mockDataStore;
+            private IDataStoreReader _mockDataStoreReader;
         }
 
         [SetUp]
@@ -112,7 +112,7 @@ namespace ClearCanvas.Dicom.Services.Tests
         {
             _mocks = new Mockery();
             _mockStudy = _mocks.NewMock<IStudy>();
-            _mockDataStore = _mocks.NewMock<IDataStore>();
+            _mockDataStore = _mocks.NewMock<IDataStoreReader>();
             _mockSeries = _mocks.NewMock<ISeries>();
         }
 
@@ -439,6 +439,11 @@ namespace ClearCanvas.Dicom.Services.Tests
             Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance2)).Will(Return.Value(false));
             Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance3)).Will(Return.Value(false));
             Expect.Once.On(mockSopInstance5).Method("IsIdenticalTo").With(Is.EqualTo(mockSopInstance4)).Will(Return.Value(false));
+            Expect.Once.On(mockSopInstance1).Method("GetLocationUri").WithNoArguments().Will(Return.Value(new DicomUri("file://localhost/C:/temp/file1")));
+            Expect.Once.On(mockSopInstance2).Method("GetLocationUri").WithNoArguments().Will(Return.Value(new DicomUri("file://localhost/C:/temp/file2")));
+            Expect.Once.On(mockSopInstance3).Method("GetLocationUri").WithNoArguments().Will(Return.Value(new DicomUri("file://localhost/C:/temp/file3")));
+            Expect.Once.On(mockSopInstance4).Method("GetLocationUri").WithNoArguments().Will(Return.Value(new DicomUri("file://localhost/C:/temp/file4")));
+            Expect.Once.On(mockSopInstance5).Method("GetLocationUri").WithNoArguments().Will(Return.Value(new DicomUri("file://localhost/C:/temp/file5")));
 
             int includedObjectCount = aParcel.Include(studyReference);
             aParcel.StartSend(dicomSender);
@@ -596,20 +601,16 @@ namespace ClearCanvas.Dicom.Services.Tests
             study.AddSeries(series);
             study.AddSeries(series2);
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreStudy(study);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreStudy(study);
 
             aParcel.Include(new Uid("3.1.4.1.5.9.2"));
 
             DicomServicesLayer.GetISendQueueService().Add(aParcel);
 
-            IStudy studyFound = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid("3.1.4.1.5.9.2"));
+            IStudy studyFound = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid("3.1.4.1.5.9.2"));
 
             // we're done, get rid of study
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveStudy(studyFound);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().RemoveStudy(studyFound);
 
             DicomServicesLayer.GetISendQueueService().Remove(aParcel);
         }

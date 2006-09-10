@@ -6,10 +6,10 @@ using NHibernate.Expression;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    internal class DataStoreWriteAccessor : IDataStoreWriteAccessor
+    internal class SingleSessionDataStoreWriter : IDataStoreWriter
     {
         #region Handcoded Members
-        public DataStoreWriteAccessor(ISession session)
+        public SingleSessionDataStoreWriter(ISession session)
         {
             _session = session;
         }

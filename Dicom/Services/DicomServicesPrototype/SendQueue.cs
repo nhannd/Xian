@@ -30,19 +30,19 @@ namespace ClearCanvas.Dicom.Services
         public void Add(IParcel aParcel)
         {
             ISession session = null;
-            ITransaction tx = null;
+            ITransaction transaction = null;
             try
             {
                 session = this.SessionFactory.OpenSession();
 
-                tx = session.BeginTransaction();
+                transaction = session.BeginTransaction();
                 session.SaveOrUpdate(aParcel);
-                tx.Commit();
+                transaction.Commit();
                 session.Close();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                transaction.Rollback();
                 throw ex;
             }
             finally
@@ -54,18 +54,18 @@ namespace ClearCanvas.Dicom.Services
         public void Remove(IParcel aParcel)
         {
             ISession session = null;
-            ITransaction tx = null;
+            ITransaction transaction = null;
             try
             {
                 session = this.SessionFactory.OpenSession();
 
-                tx = session.BeginTransaction();
+                transaction = session.BeginTransaction();
                 session.Delete(aParcel);
-                tx.Commit();
+                transaction.Commit();
             }
             catch (Exception ex)
             {
-                tx.Rollback();
+                transaction.Rollback();
                 throw ex;
             }
             finally
@@ -117,14 +117,18 @@ namespace ClearCanvas.Dicom.Services
                     NHibernateUtil.Int16);
                 if (listOfParcels.Count <= 0)
                     return null;
+
+                foreach (IParcel parcel in listOfParcels)
+                {
+                    // workaround: fetching isn't being done automatically even though 'lazy' is set to false
+                    // so here, we access the list of sop instance filenames as a means of indirectly causing
+                    // a fetch to occur
+                    IEnumerable<string> listOfFileNames = parcel.GetReferencedSopInstanceFileNames();
+                    returningParcels.Add(parcel);
+                }
             }
             catch { throw; }
             finally { session.Close(); }
-
-            foreach (IParcel parcel in listOfParcels)
-            {
-                returningParcels.Add(parcel);
-            }
 
             return returningParcels;
         }
@@ -132,18 +136,17 @@ namespace ClearCanvas.Dicom.Services
         public void UpdateParcel(IParcel aParcel)
         {
             ISession session = null;
-            ITransaction tx = null;
+            ITransaction transaction = null;
             try
             {
                 session = this.SessionFactory.OpenSession();
-                tx = session.BeginTransaction();
-                session.Lock(aParcel, LockMode.Read);
+                transaction = session.BeginTransaction();
                 session.Update(aParcel);
-                tx.Commit();
+                transaction.Commit();
             }
             catch 
             {
-                tx.Rollback();
+                transaction.Rollback();
                 throw; 
             }
             finally { session.Close(); }
@@ -152,19 +155,19 @@ namespace ClearCanvas.Dicom.Services
         public void LoadAllReferences(IParcel aParcel)
         {
             ISession session = null;
-            ITransaction tx = null;
+            ITransaction transaction = null;
             try
             {
                 session = this.SessionFactory.OpenSession();
-                tx = session.BeginTransaction();
+                transaction = session.BeginTransaction();
                 session.Lock(aParcel, LockMode.Read);
                 NHibernateUtil.Initialize(aParcel);
                 aParcel.GetReferencedSopInstanceFileNames();
-                tx.Commit();
+                transaction.Commit();
             }
             catch
             {
-                tx.Rollback();
+                transaction.Rollback();
                 throw;
             }
             finally { session.Close(); }

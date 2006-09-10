@@ -32,13 +32,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return;
 
 			Uid studyUid = new Uid(this.Context.SelectedStudy.StudyInstanceUID);
-			IStudy study = DataAbstractionLayer.GetIDataStore().GetStudy(studyUid);
+			IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(studyUid);
 
 			try
 			{
-				DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveStudy(study);
-				DataAbstractionLayer.ClearCurrentSession();
-				DataAbstractionLayer.CloseCurrentSession();
+				DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
 			}
 			catch (Exception e)
 			{

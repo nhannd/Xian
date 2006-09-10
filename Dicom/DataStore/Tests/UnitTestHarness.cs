@@ -23,7 +23,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
         [Test]
         public void CreateNewImage()
         {
-            ImageSopInstance sop = DataAbstractionLayer.GetIDataStoreWriteAccessor().NewImageSopInstance() as ImageSopInstance;
+            ImageSopInstance sop = DataAccessLayer.GetIDataStoreWriter().NewImageSopInstance() as ImageSopInstance;
 
             sop.BitsAllocated = 16;
             sop.BitsStored = 12;
@@ -49,11 +49,9 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             Assert.IsTrue(1000.5 == (sop.WindowValues[0] as Window).Width);
             Assert.IsTrue(1500 == (sop.WindowValues[1] as Window).Center);
   
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreSopInstance(sop);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreSopInstance(sop);
             
-            ImageSopInstance sop2 = DataAbstractionLayer.GetIDataStore().GetSopInstance(new Uid(sop.SopInstanceUid)) as ImageSopInstance;
+            ImageSopInstance sop2 = DataAccessLayer.GetIDataStoreReader().GetSopInstance(new Uid(sop.SopInstanceUid)) as ImageSopInstance;
 
             // test state after storing to database
             Assert.IsTrue("1.2.840.10008.5.1.4.1.1.1" == sop2.SopClassUid);
@@ -61,9 +59,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             Assert.IsTrue(1000 == sop2.Columns);
             Assert.IsTrue(1000.5 == (sop2.WindowValues[0] as Window).Width);
             Assert.IsTrue(1500 == (sop2.WindowValues[1] as Window).Center);
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveSopInstance(sop2);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().RemoveSopInstance(sop2);
         }
 
         [Test]
@@ -72,19 +68,15 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             Uid sopInstanceReference = new Uid("1.2.840.23432234.1425132452.2134124123432");
 
             // check for existence before a new sop is created
-            Assert.IsFalse(DataAbstractionLayer.GetIDataStore().SopInstanceExists(sopInstanceReference));
+            Assert.IsFalse(DataAccessLayer.GetIDataStoreReader().SopInstanceExists(sopInstanceReference));
 
             ImageSopInstance sop = new ImageSopInstance();
             sop.SopInstanceUid = sopInstanceReference.ToString();
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreSopInstance(sop);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreSopInstance(sop);
 
-            Assert.IsTrue(DataAbstractionLayer.GetIDataStore().SopInstanceExists(sopInstanceReference));
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveSopInstance(sop);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            Assert.IsTrue(DataAccessLayer.GetIDataStoreReader().SopInstanceExists(sopInstanceReference));
+            DataAccessLayer.GetIDataStoreWriter().RemoveSopInstance(sop);
         }
 
         [Test]
@@ -103,11 +95,9 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             series.AddSopInstance(sop1);
             series.AddSopInstance(sop2);
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreSeries(series);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreSeries(series);
             
-            Series series2 = DataAbstractionLayer.GetIDataStore().GetSeries(new Uid("1.2.3.4.5.6")) as Series;
+            Series series2 = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6")) as Series;
 
             int count = 0;
             foreach (ISopInstance sop in series2.GetSopInstances())
@@ -116,9 +106,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             }
 
             Assert.IsTrue(2 == count);
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveSeries(series2);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().RemoveSeries(series2);
         }
 
         [Test]
@@ -137,11 +125,10 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             series.AddSopInstance(sop1);
             series.AddSopInstance(sop2);
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreSeries(series);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreSeries(series);
+
             
-            ISeries seriesLoaded = DataAbstractionLayer.GetIDataStore().GetSeries(new Uid("1.2.3.4.5.6"));
+            ISeries seriesLoaded = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6"));
 
             ImageSopInstance sop3 = new ImageSopInstance();
             sop3.SopInstanceUid = "9.9.9.3";
@@ -152,11 +139,10 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             seriesLoaded.AddSopInstance(sop3);
             seriesLoaded.AddSopInstance(sop4);
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreSeries(seriesLoaded);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreSeries(seriesLoaded);
+
             
-            ISeries seriesCheck = DataAbstractionLayer.GetIDataStore().GetSeries(new Uid("1.2.3.4.5.6"));
+            ISeries seriesCheck = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6"));
 
             int count = 0;
             foreach (ISopInstance sop in seriesCheck.GetSopInstances())
@@ -169,11 +155,9 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             // remove the two
             seriesCheck.RemoveSopInstance(sop3);
             seriesCheck.RemoveSopInstance(sop4);
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreSeries(seriesCheck);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreSeries(seriesCheck);
             
-            ISeries seriesRecheck = DataAbstractionLayer.GetIDataStore().GetSeries(new Uid("1.2.3.4.5.6"));
+            ISeries seriesRecheck = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6"));
 
             count = 0;
             foreach (ISopInstance sop in seriesRecheck.GetSopInstances())
@@ -182,9 +166,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             }
 
             Assert.IsTrue(2 == count);
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveSeries(seriesRecheck);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().RemoveSeries(seriesRecheck);
         }
 
         [Test]
@@ -227,11 +209,9 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             study.AddSeries(series);
             study.AddSeries(series2);
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreStudy(study);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().StoreStudy(study);
             
-            IStudy studyFound = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid("3.1.4.1.5.9.2"));
+            IStudy studyFound = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid("3.1.4.1.5.9.2"));
 
             int count = 0;
             foreach (ISeries seriesFound in studyFound.GetSeries())
@@ -258,9 +238,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             }
 
             Assert.IsTrue(2 == count);
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().RemoveStudy(studyFound);
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            DataAccessLayer.GetIDataStoreWriter().RemoveStudy(studyFound);
         }
 
         [Ignore]
@@ -279,7 +257,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             container.DictionaryEntries.Add(entry1);
             container.DictionaryEntries.Add(entry2);
 
-            DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreDictionary(container);
+            DataAccessLayer.GetIDataStoreWriter().StoreDictionary(container);
         }
     }
 }

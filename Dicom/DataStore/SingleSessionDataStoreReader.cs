@@ -10,15 +10,15 @@ using System.Reflection;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    internal sealed partial class DataStore : IDataStore
+    internal sealed partial class SingleSessionDataStoreReader : IDataStoreReader
     {
         #region Handcoded Members
-        private DataStore()
+        private SingleSessionDataStoreReader()
         {
             
         }
 
-        public DataStore(ISession session) : this()
+        public SingleSessionDataStoreReader(ISession session) : this()
         {
             _session = session;
         }
@@ -192,7 +192,7 @@ namespace ClearCanvas.Dicom.DataStore
             foreach (DicomTag tag in queryKey.DicomTags)
             {
                 Path path = new Path(tag.ToString());
-                DictionaryEntry column = DataAbstractionLayer.GetIDicomDictionary().GetColumn(path);
+                DictionaryEntry column = SingleSessionDataAccessLayer.GetIDicomDictionary().GetColumn(path);
 
                 if (queryKey[tag].Length > 0)
                 {
@@ -234,14 +234,14 @@ namespace ClearCanvas.Dicom.DataStore
                 foreach (PropertyInfo pi in study.GetType().GetProperties())
                 {
                     string fieldName = pi.Name;
-                    if (DataAbstractionLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
+                    if (SingleSessionDataAccessLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
                     {
                         // ensure that property actually has a value
                         object fieldValue = pi.GetValue(study, null);
                         if (null == fieldValue)
                             continue;
 
-                        DictionaryEntry col = DataAbstractionLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
+                        DictionaryEntry col = SingleSessionDataAccessLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
                         DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
                         result.Add(tag, fieldValue.ToString());
                     }

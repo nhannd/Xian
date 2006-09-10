@@ -1,18 +1,16 @@
-#if UNIT_TESTS
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.IO;
+using NUnit.Framework;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Text;
-    using ClearCanvas.Dicom.Network;
-    using NUnit.Framework;
-    using ClearCanvas.Dicom;
-    using System.Threading;
-    using System.IO;
-
-    [TestFixture]
+   [TestFixture]
     public class DcmNetTest
     {   
         [TestFixtureSetUp]
@@ -353,8 +351,8 @@ namespace ClearCanvas.Dicom.Tests
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(4000));
 
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+                new AETitle("STORESCP"), new ListeningPort(12000));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
@@ -398,5 +396,3 @@ namespace ClearCanvas.Dicom.Tests
         #endregion
     }
 }
-
-#endif

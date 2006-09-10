@@ -28,7 +28,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         {
             foreach (KeyValuePair<string, Study> pair in this.StudyCache)
             {
-                DataAbstractionLayer.GetIDataStoreWriteAccessor().StoreStudy(pair.Value);
+                SingleSessionDataAccessLayer.GetIDataStoreWriter().StoreStudy(pair.Value);
             }
             
             this.SeriesCache.Clear();
@@ -40,15 +40,15 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             // the next time we try to do a query (on the next image rebuild), the Session
             // seems closed, even though its state declares that it is not closed.
             // The hack is to close the current session after flushing occurs, and then
-            // the DataAbstractionLayer will detect closed sessions, and open a new one
+            // the SingleSessionDataAccessLayer will detect closed sessions, and open a new one
             // when that occurs.
             // Addendum:
             // The hack employed worked, except that subsequent queries on objects that
             // did not exist in the database, on UIDs, would take very very very long.
             // A workaround to this, is to clear the session of domain objects explicitly
             // before closing the session.
-            DataAbstractionLayer.ClearCurrentSession();
-            DataAbstractionLayer.CloseCurrentSession();
+            SingleSessionDataAccessLayer.ClearCurrentSession();
+            SingleSessionDataAccessLayer.CloseCurrentSession();
         }
 
         public int GetCachedStudiesCount()
@@ -72,7 +72,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
                 if (null == study)
                 {
                     // we haven't come across this study yet, so let's see if it already exists in the DataStore
-                    study = DataAbstractionLayer.GetIDataStore().GetStudy(new Uid(studyInstanceUid.ToString())) as Study;
+                    study = SingleSessionDataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyInstanceUid.ToString())) as Study;
                     if (null == study)
                     {
                         // the study doesn't exist in the data store either
@@ -114,7 +114,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
                 if (null == series)
                 {
                     // we haven't come across this study yet, so let's see if it already exists in the DataStore
-                    series = DataAbstractionLayer.GetIDataStore().GetSeries(new Uid(seriesInstanceUid.ToString())) as Series;
+                    series = SingleSessionDataAccessLayer.GetIDataStoreReader().GetSeries(new Uid(seriesInstanceUid.ToString())) as Series;
                     if (null == series)
                     {
                         // the study doesn't exist in the data store either
