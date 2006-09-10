@@ -65,10 +65,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 tabPages.Remove(tabPage);
 
-                // TODO: We probably need to go into the TabControls and clear them
-                // out to prevent references to workspace from being retained.  Will
-                // do that when I deal with the memory allocation ticket #86.
                 GC.Collect();
+				GC.WaitForPendingFinalizers();
+				//string str = String.Format("Memory: {0}", GC.GetTotalMemory(false));
+				//Platform.Log(str);
 
 				if (tabPages.Count == 0)
 					_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
