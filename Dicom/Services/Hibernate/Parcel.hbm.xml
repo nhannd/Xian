@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.Services" namespace="ClearCanvas.Dicom.Services">
+  <class name="Parcel" proxy="Parcel" table="Parcel_">
+    <id name="ParcelOid" column="ParcelOid_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+	<property name="ParcelTransferState" column="ParcelTransferState_" type="Int16" />
+	<component name="DestinationAE" class="ClearCanvas.Dicom.Network.ApplicationEntity, ClearCanvas.Dicom">
+		<property name="Host" column="DestinationAEHost_" />
+		<property name="AE" column="DestinationAEAE_" />
+		<property name="Port"  column="DestinationAEPort_" />
+		<property name="ConnectionTimeout" column="DestinationAEConnectionTimeout_" />
+		<property name="OperationTimeout" column="DestinationAEOperationTimeout_" />
+	</component>
+	<component name="SourceAE" class="ClearCanvas.Dicom.Network.ApplicationEntity, ClearCanvas.Dicom">
+		<property name="Host" column="SourceAEHost_" />
+		<property name="AE" column="SourceAEAE_" />
+		<property name="Port"  column="SourceAEPort_" />
+		<property name="ConnectionTimeout" column="SourceAEConnectionTimeout_" />
+		<property name="OperationTimeout" column="SourceAEOperationTimeout_" />
+	</component>
+	<list name="TransferSyntaxes" table="TransferSyntaxes_" lazy="false" access="nosetter.camelcase-underscore">
+		<key column="ParcelOid_" />
+		<index column="Index_" /> 
+		<element column="TransferSyntax_" type="String" />
+	</list>
+	<list name="SopClasses" table="SopClasses_" lazy="false" access="nosetter.camelcase-underscore">
+		<key column="ParcelOid_" />
+		<index column="Index_" /> 
+		<element column="SopClass_" type="String" />
+	</list>
+	<list name="SopInstances" table="SopInstances_" lazy="false" access="nosetter.camelcase-underscore">
+		<key column="ParcelOid_" />
+		<index column="Index_" /> 
+		<many-to-many class="ClearCanvas.Dicom.DataStore.SopInstance, ClearCanvas.Dicom.DataStore" column="ReferencedSopInstance_" fetch="select" />
+	</list>
+  </class>
+</hibernate-mapping>
