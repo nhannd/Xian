@@ -151,6 +151,7 @@
       copy "..\..\..\..\ReferencedAssemblies\Nhibernate.Mapping.Attributes.dll" .\Common
       copy "..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" .\Common
       copy "..\..\..\..\Dicom\DataStore\bin\$(ConfigurationName)\ClearCanvas.Dicom.DataStore.dll" .\Common
+      copy "..\..\..\..\Dicom\Services\bin\$(ConfigurationName)\ClearCanvas.Dicom.Services.dll" .\Common
       copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite3.dll" .\Common
       copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite.NET.dll" .\Common
 
