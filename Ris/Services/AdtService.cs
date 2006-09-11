@@ -73,6 +73,13 @@ namespace ClearCanvas.Ris.Services
             return reconciledProfiles;
         }
 
+        [ReadOperation]
+        public void LoadPatientProfiles(Patient patient)
+        {
+            // ensure that the profiles collection is loaded
+            GetPatientBroker().LoadRelated(patient, patient.Profiles);
+        }
+
         //[UpdateOperation]
         //public void ReconcilePatients(PatientProfile toBeKept, PatientProfile toBeReconciled)
         //{

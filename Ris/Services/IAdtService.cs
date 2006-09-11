@@ -14,6 +14,9 @@ namespace ClearCanvas.Ris.Services
         /// <returns></returns>
         IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
 
+        void LoadPatientProfiles(Patient patient);
+
+
         /// <summary>
         /// 
         /// </summary>

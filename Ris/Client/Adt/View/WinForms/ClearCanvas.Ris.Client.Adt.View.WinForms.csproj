@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfirmReconciliationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ConfirmReconciliationComponentControl.Designer.cs">
+      <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConfirmReconciliationComponentView.cs" />
     <Compile Include="PatientReconciliationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +76,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ConfirmReconciliationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PatientReconciliationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PatientReconciliationComponentControl.cs</DependentUpon>

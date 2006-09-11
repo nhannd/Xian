@@ -145,28 +145,38 @@ namespace ClearCanvas.Ris.Client.Adt
         public void Reconcile()
         {
             _error = "";
-            IList<PatientProfile> checkedProfiles = new List<PatientProfile>();
+            IList<Patient> checkedPatients = new List<Patient>();
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationCandidateProfiles)
             {
-                if (entry.Checked)
+                if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.Patient))
                 {
-                    checkedProfiles.Add(entry.ProfileMatch.PatientProfile);
+                    checkedPatients.Add(entry.ProfileMatch.PatientProfile.Patient);
                 }
             }
-            try
-            {
-                _adtService.ReconcilePatients(_selectedSearchResult.Patient, checkedProfiles);
-            }
-            catch (PatientReconciliationException e)
-            {
-                Console.WriteLine(e.ToString());
-                Error = e.Message;
-                ErrorChanged(this, new EventArgs());
-                
-            }
 
-            RefreshAlternateProfiles();
-            RefreshReconciliationCandidates();
+            // confirmation
+            ConfirmReconciliationComponent confirmComponent = new ConfirmReconciliationComponent(_selectedSearchResult.Patient, checkedPatients);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                this.Host.DesktopWindow, confirmComponent, "Confirm Reconciliation");
+
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+
+                try
+                {
+                    _adtService.ReconcilePatient(_selectedSearchResult.Patient, checkedPatients);
+                }
+                catch (PatientReconciliationException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    Error = e.Message;
+                    ErrorChanged(this, new EventArgs());
+
+                }
+
+                RefreshAlternateProfiles();
+                RefreshReconciliationCandidates();
+            }
         }
 
 
