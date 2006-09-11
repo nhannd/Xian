@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetMagic2005, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>

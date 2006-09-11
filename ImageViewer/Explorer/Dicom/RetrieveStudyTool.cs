@@ -11,6 +11,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Services;
 using System.IO;
+using ClearCanvas.Dicom.OffisWrapper;
 
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -61,8 +62,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					Platform.ShowMessageBox("Unable to create storage directory; cannot retrieve study");
 				}
 
+				client.SopInstanceReceived += new EventHandler<SopInstanceReceivedEventArgs>(OnSopInstanceReceived);
 				client.Retrieve(server, studyUid, myAESettings.DicomStoragePath);
 			}
+		}
+
+		void OnSopInstanceReceived(object sender, SopInstanceReceivedEventArgs e)
+		{
+			InsertSopInstance(e.SopFileName);
 		}
 
 		private void CreateStorageDirectory(string path)
@@ -75,6 +82,48 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			if (this.Context.LastSearchedServer.Host != "localhost")
 				this.Context.DefaultActionHandler = RetrieveStudy;
+		}
+
+		private void InsertSopInstance(string fileName)
+		{
+			DcmFileFormat file = new DcmFileFormat();
+			OFCondition condition = file.loadFile(fileName);
+			if (!condition.good())
+			{
+				// there was an error reading the file, possibly it's not a DICOM file
+				return;
+			}
+
+			DcmMetaInfo metaInfo = file.getMetaInfo();
+			DcmDataset dataset = file.getDataset();
+
+			if (ConfirmProcessableFile(metaInfo, dataset))
+			{
+				IDicomPersistentStore dicomStore = DataAccessLayer.GetIDicomPersistentStore(); 
+				dicomStore.InsertSopInstance(metaInfo, dataset, fileName);
+				dicomStore.Flush();
+			}
+
+			// keep the file object alive until the end of this scope block
+			// otherwise, it'll be GC'd and metaInfo and dataset will be gone
+			// as well, even though they are needed in the InsertSopInstance
+			// and sub methods
+			GC.KeepAlive(file);
+		}
+
+		private bool ConfirmProcessableFile(DcmMetaInfo metaInfo, DcmDataset dataset)
+		{
+			StringBuilder stringValue = new StringBuilder(1024);
+			OFCondition cond;
+			cond = metaInfo.findAndGetOFString(Dcm.MediaStorageSOPClassUID, stringValue);
+			if (cond.good())
+			{
+				// we want to skip Media Storage Directory Storage (DICOMDIR directories)
+				if ("1.2.840.10008.1.3.10" == stringValue.ToString())
+					return false;
+			}
+
+			return true;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
