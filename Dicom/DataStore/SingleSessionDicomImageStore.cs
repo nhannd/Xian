@@ -10,7 +10,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
     /// <summary>
     /// Assumes that the objects have non-null and valid UIDs.
     /// </summary>
-    public class DicomImageStore : IDicomPersistentStore
+    public class SingleSessionDicomImageStore : IDicomPersistentStore
     {
         #region IDicomPersistentStore Members
 

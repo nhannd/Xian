@@ -123,5 +123,9 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
+        public static IDicomPersistentStore GetIDicomPersistentStore()
+        {
+            return new DicomImageStore();
+        }
     }
 }

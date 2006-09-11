@@ -33,6 +33,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\bin\Debug\ClearCanvas.Dicom.dll</HintPath>
     </Reference>
+    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
@@ -67,11 +71,13 @@
     <Compile Include="DataStoreWriter.cs" />
     <Compile Include="DicomDictionary.cs" />
     <Compile Include="DicomDictionaryContainer.cs" />
+    <Compile Include="DicomImageStore.cs" />
     <Compile Include="DicomUri.cs" />
     <Compile Include="DictionaryEntry.cs" />
     <Compile Include="IDataStoreReader.cs" />
     <Compile Include="IDataStoreWriter.cs" />
     <Compile Include="IDicomDictionary.cs" />
+    <Compile Include="IDicomPersistentStore.cs" />
     <Compile Include="ImageSopInstance.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />
@@ -84,6 +90,7 @@
     <Compile Include="SingleSessionDataAccessLayer.cs" />
     <Compile Include="SingleSessionDataStoreReader.cs" />
     <Compile Include="SingleSessionDataStoreWriter.cs" />
+    <Compile Include="SingleSessionDicomImageStore.cs" />
     <Compile Include="SopInstance.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="TagName.cs" />

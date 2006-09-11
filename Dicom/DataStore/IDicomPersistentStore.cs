@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.OffisWrapper;
 
-namespace ClearCanvas.Utilities.RebuildDatabase
+namespace ClearCanvas.Dicom.DataStore
 {
     public interface IDicomPersistentStore
     {

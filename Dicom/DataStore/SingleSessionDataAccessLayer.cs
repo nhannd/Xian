@@ -157,6 +157,11 @@ namespace ClearCanvas.Dicom.DataStore
             return _dicomDictionary;
         }
 
+        public static IDicomPersistentStore GetIDicomPersistentStore()
+        {
+            return new DicomImageStore();
+        }
+
         #endregion
 
         #region IDisposable Members

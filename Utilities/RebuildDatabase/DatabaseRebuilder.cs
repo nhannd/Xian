@@ -214,6 +214,6 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         private Object _synchronizationLock = new Object();
         private enum RebuilderState { Stopped, Rebuilding };
         private RebuilderState _state;
-        private IDicomPersistentStore _dicomStore = new DicomImageStore();
+        private IDicomPersistentStore _dicomStore = SingleSessionDataAccessLayer.GetIDicomPersistentStore();
     }
 }

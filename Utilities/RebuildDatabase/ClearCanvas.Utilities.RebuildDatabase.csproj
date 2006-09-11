@@ -66,8 +66,6 @@
   <ItemGroup>
     <Compile Include="DatabaseRebuildCompletedEventArgs.cs" />
     <Compile Include="DatabaseRebuilder.cs" />
-    <Compile Include="DicomImageStore.cs" />
-    <Compile Include="IDicomPersistentStore.cs" />
     <Compile Include="ImageInsertCompletedEventArgs.cs" />
     <Compile Include="ImageInsertCompletingEventArgs.cs" />
     <Compile Include="RebuildDatabaseForm.cs">
