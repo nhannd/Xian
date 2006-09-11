@@ -146,13 +146,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #endregion
 
-        public void Add()
+        public string AddServer()
         {
+            Random r = new Random();
+            string tstamp = r.Next(10000).ToString();
             UpdateServerSetting();
-            _serverPool.SetNewServer(NewServerName);
+            _serverPool.SetNewServer(NewServerName, tstamp);
             LoadServerSetting();
             _serverSelected = _serverPool.Currentserver;
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+            return NewServerName+tstamp;
         }
 
         public void DataStoreEvent()
@@ -166,9 +169,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
 
-        public void Delete()
+        public bool DeleteServer()
         {
-            // to do 
+            if (_serverPool.Currentserver == null || _serverPool.Currentserverid < 0 || _serverPool.Currentserverid >= _serverPool.Serverlist.Count)
+                return false;
+            _serverPool.Serverlist.RemoveAt(_serverPool.Currentserverid);
+            _serverPool.Currentserver = null;
+            _serverPool.Currentserverid = -1;
+            _serverPool.SaveServerSettings();
+            LoadServerSetting();
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+            return true;
         }
 
         public void SelectChanged(String nodeName)
@@ -233,25 +244,154 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     && _serverPool.Currentserver.Port.ToString().Equals(this.ServerPort))
                 return true;
 
-            int iport = 0;
-            try
-            {
-                iport = int.Parse(this.ServerPort);
-            }
-            catch
-            {
-                StringBuilder msgText = new StringBuilder();
-                msgText.AppendFormat("The Port value ({0}) should be a integer. \r\n\r\nPlease input an integer data.", this.ServerPort);
-                MessageBox.Show(msgText.ToString(), "Port Value Error");
-                return false;
-            }
-
-            _serverPool.Currentserver = new AEServer(this.ServerName, _serverPool.Currentserver.Serverpath, this.ServerDesc, this.ServerHost, this.ServerAE, iport);
+            _serverPool.Currentserver = new AEServer(this.ServerName, _serverPool.Currentserver.Serverpath, this.ServerDesc, this.ServerHost, this.ServerAE, int.Parse(this.ServerPort));
             _serverPool.Serverlist[_serverPool.Currentserverid] = _serverPool.Currentserver;
             _serverPool.SaveServerSettings();
             return true;
         }
 
+        public void ServerSettingError(ServerSettingItem sitem, int errorvalue)
+        {
+            if(errorvalue == -1)
+            {
+                StringBuilder msgText = new StringBuilder();
+                msgText.AppendFormat("The value of {0} should not be blank. \r\n\r\nPlease try again.", sitem.ToString());
+                MessageBox.Show(msgText.ToString(), "Blank Value Error");
+            }
+            else if (errorvalue == -2)
+            {
+                StringBuilder msgText = new StringBuilder();
+                msgText.AppendFormat("The Port value should be a integer. \r\n\r\nPlease input an integer data.");
+                MessageBox.Show(msgText.ToString(), "Port Value Error");
+            }
+            else if (errorvalue <= -1000000)
+            {
+                int i = (-1 * errorvalue) - 1000000;
+                if (i < 0 || i >= _serverPool.Serverlist.Count || i == _serverPool.Currentserverid)
+                    return;
+                StringBuilder msgText = new StringBuilder();
+                switch (sitem)
+                {
+                    case ServerSettingItem.ServerName:
+                        msgText.AppendFormat("The Saver Name ({0}) exists under {1}\r\n\r\nServer Name: {2}\r\nAE Title: {3}\r\nHost: {4}\r\n\r\nPlease choose another server name.",
+                            _serverPool.Serverlist[i].Servername, _serverPool.Serverlist[i].Serverpath, _serverPool.Serverlist[i].Servername,
+                            _serverPool.Serverlist[i].AE, _serverPool.Serverlist[i].Host);
+                        MessageBox.Show(msgText.ToString(), "Server Name Error");
+                        break;
+                    case ServerSettingItem.AE:
+                        msgText.AppendFormat("The AE Title ({0}) exists under {1}\r\n\r\nServer Name: {2}\r\nAE Title: {3}\r\nHost: {4}\r\n\r\nPlease choose another server name.",
+                            _serverPool.Serverlist[i].AE, _serverPool.Serverlist[i].Serverpath, _serverPool.Serverlist[i].Servername,
+                            _serverPool.Serverlist[i].AE, _serverPool.Serverlist[i].Host);
+                        MessageBox.Show(msgText.ToString(), "AE Title Error");
+                        break;
+                    case ServerSettingItem.Host:
+                        msgText.AppendFormat("The Saver Host ({0}) exists under {1}\r\n\r\nServer Name: {2}\r\nAE Title: {3}\r\nHost: {4}\r\n\r\nPlease choose another server name.",
+                            _serverPool.Serverlist[i].Host, _serverPool.Serverlist[i].Serverpath, _serverPool.Serverlist[i].Servername,
+                            _serverPool.Serverlist[i].AE, _serverPool.Serverlist[i].Host);
+                        MessageBox.Show(msgText.ToString(), "Server Host Error");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public bool ServerDeleteConfirm()
+        {
+            DialogResult dr = MessageBox.Show("Do you really want to remove this server?", "Remove Server", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+                return true;
+            return false;
+        }
+
+        public int IsServerSettingValid(ServerSettingItem sitem, string svalue, bool chkchangeonly)
+        {
+            if (_serverPool.Currentserver == null)
+                return 1;
+
+            if (svalue == null || svalue.Equals(""))
+            {
+                switch (sitem)
+                {
+                    case ServerSettingItem.ServerName:
+                        this.ServerName = _serverPool.Currentserver.Servername;
+                        break;
+                    case ServerSettingItem.AE:
+                        this.ServerAE = _serverPool.Currentserver.AE;
+                        break;
+                    case ServerSettingItem.Host:
+                        this.ServerHost = _serverPool.Currentserver.Host;
+                        break;
+                    case ServerSettingItem.Port:
+                        this.ServerPort = _serverPool.Currentserver.Port.ToString();
+                        break;
+                    default:
+                        throw new System.Exception("Unexpected condition in figuring out which server setting item was updated");
+                        //return false;
+                }
+                return -1;
+            }
+
+            switch (sitem)
+            {
+                case ServerSettingItem.ServerName:
+                    if (chkchangeonly && this.ServerName.Equals(_serverPool.Currentserver.Servername))
+                        return 2;
+                    for (int i = 0; i < _serverPool.Serverlist.Count; i++)
+                    {
+                        if (i == _serverPool.Currentserverid || _serverPool.Serverlist[i].Servername.Equals(EmptyNodeName))
+                            continue;
+                        if (this.ServerName.Equals(_serverPool.Serverlist[i].Servername))
+                        {
+                            this.ServerName = _serverPool.Currentserver.Servername;
+                            return -1000000 - i;
+                        }
+                    }
+                    return 3;
+                case ServerSettingItem.AE:
+                    if (chkchangeonly && this.ServerAE.Equals(_serverPool.Currentserver.AE))
+                        return 4;
+                    for (int i = 0; i < _serverPool.Serverlist.Count; i++)
+                    {
+                        if (i == _serverPool.Currentserverid || _serverPool.Serverlist[i].Servername.Equals(EmptyNodeName))
+                            continue;
+                        if (this.ServerAE.Equals(_serverPool.Serverlist[i].AE))
+                        {
+                            this.ServerAE = _serverPool.Currentserver.AE;
+                            return -1000000 - i;
+                        }
+                    }
+                    return 5;
+                case ServerSettingItem.Host:
+                    if (chkchangeonly && this.ServerHost.Equals(_serverPool.Currentserver.Host))
+                        return 6;
+                    for (int i = 0; i < _serverPool.Serverlist.Count; i++)
+                    {
+                        if (i == _serverPool.Currentserverid || _serverPool.Serverlist[i].Servername.Equals(EmptyNodeName))
+                            continue;
+                        if (this.ServerHost.Equals(_serverPool.Serverlist[i].Host))
+                        {
+                            this.ServerHost = _serverPool.Currentserver.Host;
+                            return -1000000 - i;
+                        }
+                    }
+                    return 7;
+                case ServerSettingItem.Port:
+                    try
+                    {
+                        int.Parse(this.ServerPort);
+                    }
+                    catch
+                    {
+                        this.ServerPort = _serverPool.Currentserver.Port.ToString();
+                        return -2;
+                    }
+                    return 8;
+                default: 
+                    //throw new System.Exception("Unexpected condition in figuring out which server setting item was updated");
+                    return -3;
+            }
+        }
 
         #region IApplicationComponent overrides
 
@@ -274,4 +414,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         #endregion
 
     }
+
+    public enum ServerSettingItem
+    {
+        ServerName,
+        ServerPath,
+        Descrition,
+        AE,
+        Host,
+        Port
+    }
+
 }

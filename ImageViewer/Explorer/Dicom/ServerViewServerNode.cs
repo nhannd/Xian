@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void CreateChildNodes()
         {
-            int i = 0;
+            //int i = 0;
             //AddChild(new PluginViewExtensionPointsNode(_plugin));
             //AddChild(new PluginViewExtensionsNode(_plugin));
         }

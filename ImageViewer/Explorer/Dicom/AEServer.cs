@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return base.AE; }
         }
 
-        public int Port
+        public new int Port
         {
             get { return base.Port; }
         }
