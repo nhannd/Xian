@@ -233,11 +233,10 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Adt\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Adt.dll" .\plugins
       copy "..\..\..\..\Ris\Client\Adt\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" .\plugins
+     
+      ::Nop so that VS doesn't complain if the last copy fails
+      echo Done
 
-      copy "..\..\..\..\Samples\XmppClient\bin\$(ConfigurationName)\ClearCanvas.Samples.XmppClient.dll" .\plugins
-      copy "..\..\..\..\Samples\XmppClient\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Samples.XmppClient.View.WinForms.dll" .\plugins
-      copy "..\..\..\..\Samples\XmppClient\agsXMPP.dll" .\plugins
-      copy "..\..\..\..\Samples\XmppClient\agsXMPP.ui.dll" .\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
