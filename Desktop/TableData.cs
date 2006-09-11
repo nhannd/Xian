@@ -126,6 +126,15 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        public void AddRange(IEnumerable enumerable)
+        {
+            foreach (TItem item in enumerable)
+            {
+                this.Add(item);
+            }
+        }
+
+
 
         #region ITypedList Members
 

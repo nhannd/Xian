@@ -29,21 +29,10 @@ namespace ClearCanvas.Desktop
         /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         private void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && _shelves != null)
             {
-                foreach (IShelf shelf in _shelves)
-                {
-                    // important that we don't throw any exceptions from this method
-                    try
-                    {
-                        shelf.Dispose();
-                    }
-                    catch (Exception e)
-                    {
-                        Platform.Log(e);
-                    }
-                }
                 _shelves.Clear();
+                _shelves = null;
             }
         }
 

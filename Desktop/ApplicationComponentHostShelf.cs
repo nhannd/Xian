@@ -93,7 +93,7 @@ namespace ClearCanvas.Desktop
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && _component != null)
             {
                 _component.Stop();
 
@@ -101,6 +101,8 @@ namespace ClearCanvas.Desktop
                 {
                     _exitCallback(_component);
                 }
+
+                _component = null;
             }
         }
 

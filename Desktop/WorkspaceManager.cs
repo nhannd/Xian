@@ -27,20 +27,10 @@ namespace ClearCanvas.Desktop
         /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         protected void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && _workspaces != null)
             {
-                foreach (IWorkspace workspace in _workspaces)
-                {
-                    try
-                    {
-                        workspace.Dispose();
-                    }
-                    catch (Exception e)
-                    {
-                        Platform.Log(e);
-                    }
-                }
                 _workspaces.Clear();
+                _workspaces = null;
             }
         }
 
