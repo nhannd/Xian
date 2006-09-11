@@ -280,8 +280,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
 
-			//string patientsName = _lastName + GetWildcard() + "^" + _firstName + GetWildcard();
-			string patientsName = _lastName + GetWildcard();
+			string patientsName = _lastName + GetWildcard() + "^" + _firstName + GetWildcard();
 			string patientID = _patientID + GetWildcard();
 			string accessionNumber = _accessionNumber + GetWildcard();
 			string studyDescription = _studyDescription + GetWildcard();
