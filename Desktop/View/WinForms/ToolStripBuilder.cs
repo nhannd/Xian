@@ -18,6 +18,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // this is a leaf node (terminal menu item)
                     ToolStripButton button = new ActiveToolbarButton((IClickAction)node.Action);
                     button.Tag = node;
+					// By default, only display the image on the button
+					button.DisplayStyle = ToolStripItemDisplayStyle.Image;
                     parentItemCollection.Add(button);
                 }
                 else

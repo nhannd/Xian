@@ -61,11 +61,11 @@ namespace ClearCanvas.Desktop.Explorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Study Centre.
+        ///   Looks up a localized string similar to Explorer.
         /// </summary>
-        public static string ToolbarToolsStandardStudyCentre {
+        public static string ToolbarToolsStandardExplorer {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardStudyCentre", resourceCulture);
+                return ResourceManager.GetString("ToolbarToolsStandardExplorer", resourceCulture);
             }
         }
     }

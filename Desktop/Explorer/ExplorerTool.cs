@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop.Explorer
 	}
 
     [MenuAction("show", "global-menus/MenuFile/MenuFileSearch")]
-	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarToolsStandardStudyCentre")]
+	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarToolsStandardExplorer")]
 	[ClickHandler("show", "Show")]
 	[IconSet("show", IconScheme.Colour, "", "Icons.DashboardMedium.png", "Icons.DashboardLarge.png")]
 

@@ -43,6 +43,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private event EventHandler _itemDoubleClicked;
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
+		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
 
 		public TableView()
 		{
@@ -71,6 +72,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                     {
                         ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
                     }
+
+					foreach (ToolStripItem item in _toolStrip.Items)
+						item.DisplayStyle = _toolStripItemDisplayStyle;
                 }
             }
         }
@@ -104,6 +108,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _toolStrip.RightToLeft; }
             set { _toolStrip.RightToLeft = value; }
         }
+
+		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+		{
+			get { return _toolStripItemDisplayStyle; }
+			set { _toolStripItemDisplayStyle = value; }
+		}
 
         /// <summary>
         /// Returns the current selection

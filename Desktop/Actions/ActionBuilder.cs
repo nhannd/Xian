@@ -39,8 +39,10 @@ namespace ClearCanvas.Desktop.Actions
         public void Apply(ButtonActionAttribute a)
         {
             // assert _action == null
-            _action = new ButtonAction(_actionID, new ActionPath(a.Path, _resolver), a.Flags, _resolver);
-        }
+			ActionPath path = new ActionPath(a.Path, _resolver);
+			_action = new ButtonAction(_actionID, path, a.Flags, _resolver);
+			_action.Label = path.LastSegment.LocalizedText;
+		}
 
         public void Apply(MenuActionAttribute a)
         {
