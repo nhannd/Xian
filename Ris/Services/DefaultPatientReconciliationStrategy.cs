@@ -55,9 +55,49 @@ namespace ClearCanvas.Ris.Services
             matches = PatientProfileMatch.Join(highMatches, moderateMatchesViaName);
             matches = PatientProfileMatch.Join(matches, moderateMatchesViaHealthcard);
 
+            RemoveConflicts(patient.Patient, matches);
+
             return matches;
         }
 
         #endregion
+
+        private void RemoveConflicts(Patient patient, IList<PatientProfileMatch> matches)
+        {
+            IList<PatientProfileMatch> conflicts = new List<PatientProfileMatch>();
+            foreach (PatientProfile existingReconciledProfile in patient.Profiles)
+            {
+                IdentifyConflictsForSiteFromProposedMatches(existingReconciledProfile, matches, conflicts);
+            }
+            foreach (PatientProfileMatch conflict in conflicts)
+            {
+                matches.Remove(conflict);
+            }
+        }
+
+        private static void IdentifyConflictsForSiteFromProposedMatches(PatientProfile existingReconciledProfile, IList<PatientProfileMatch> matches, IList<PatientProfileMatch> conflicts)
+        {
+            String existingMRN = existingReconciledProfile.MRN.AssigningAuthority;
+            foreach (PatientProfileMatch proposedMatch in matches)
+            {
+                if (proposedMatch.PatientProfile.MRN.AssigningAuthority == existingMRN)
+                {
+                    conflicts.Add(proposedMatch);
+                    RemoveAllProfilesRelatedToConflict(proposedMatch, matches, conflicts);
+                }
+            }
+        }
+
+        private static void RemoveAllProfilesRelatedToConflict(PatientProfileMatch proposedMatch, IList<PatientProfileMatch> matches, IList<PatientProfileMatch> conflicts)
+        {
+            foreach (PatientProfileMatch otherProfilesInConflictingPatient in matches)
+            {
+                if (otherProfilesInConflictingPatient.PatientProfile.Patient == proposedMatch.PatientProfile.Patient)
+                {
+                    conflicts.Add(otherProfilesInConflictingPatient);
+                }
+            }
+        }
+
     }
 }

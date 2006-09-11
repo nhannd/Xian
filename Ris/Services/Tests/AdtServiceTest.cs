@@ -218,115 +218,115 @@ namespace ClearCanvas.Ris.Services.Tests
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
-        [Test]
-        public void CanReconcilePatientProfileWithPatientProfile()
-        {
-            PatientProfile toBeKept = _persistedProfiles[0];
-            PatientProfile toBeReconciled = _persistedProfiles[1];
+        //[Test]
+        //public void CanReconcilePatientProfileWithPatientProfile()
+        //{
+        //    PatientProfile toBeKept = _persistedProfiles[0];
+        //    PatientProfile toBeReconciled = _persistedProfiles[1];
 
-            using (_mocks.Ordered)
-            {
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPatientBroker).Method("Store");
-            }
+        //    using (_mocks.Ordered)
+        //    {
+        //        Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+        //        Expect.Once.On(_mockPatientBroker).Method("Store");
+        //    }
 
-            _adtService.ReconcilePatients(toBeKept, toBeReconciled);
+        //    _adtService.ReconcilePatients(toBeKept, toBeReconciled);
 
-            PatientProfile[] profiles = new PatientProfile[toBeKept.Patient.Profiles.Count];
-            toBeKept.Patient.Profiles.CopyTo(profiles, 0);
+        //    PatientProfile[] profiles = new PatientProfile[toBeKept.Patient.Profiles.Count];
+        //    toBeKept.Patient.Profiles.CopyTo(profiles, 0);
 
-            Assert.AreEqual(toBeKept.Patient, toBeReconciled.Patient);
-            Assert.AreEqual(toBeKept.Patient.Profiles.Count, 2);
-            Assert.AreEqual(profiles[0], toBeKept);
-            Assert.AreEqual(profiles[1], toBeReconciled);
+        //    Assert.AreEqual(toBeKept.Patient, toBeReconciled.Patient);
+        //    Assert.AreEqual(toBeKept.Patient.Profiles.Count, 2);
+        //    Assert.AreEqual(profiles[0], toBeKept);
+        //    Assert.AreEqual(profiles[1], toBeReconciled);
 
-            _mocks.VerifyAllExpectationsHaveBeenMet();
-        }
+        //    _mocks.VerifyAllExpectationsHaveBeenMet();
+        //}
 
-        [Test]
-        public void CanReconcilePatientProfileWithPatient()
-        {
-            Patient toBeKept = _persistedPatients[0];
-            PatientProfile toBeReconciled = _persistedProfiles[1];
+        //[Test]
+        //public void CanReconcilePatientProfileWithPatient()
+        //{
+        //    Patient toBeKept = _persistedPatients[0];
+        //    PatientProfile toBeReconciled = _persistedProfiles[1];
 
-            using (_mocks.Ordered)
-            {
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPatientBroker).Method("Store");
-            }
+        //    using (_mocks.Ordered)
+        //    {
+        //        Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+        //        Expect.Once.On(_mockPatientBroker).Method("Store");
+        //    }
 
-            _adtService.ReconcilePatients(toBeKept, toBeReconciled);
+        //    _adtService.ReconcilePatients(toBeKept, toBeReconciled);
 
-            PatientProfile[] profiles = new PatientProfile[toBeKept.Profiles.Count];
-            toBeKept.Profiles.CopyTo(profiles, 0);
+        //    PatientProfile[] profiles = new PatientProfile[toBeKept.Profiles.Count];
+        //    toBeKept.Profiles.CopyTo(profiles, 0);
 
-            Assert.AreEqual(toBeKept, toBeReconciled.Patient);
-            Assert.AreEqual(2, toBeKept.Profiles.Count);
-            Assert.AreEqual(_persistedProfiles[0], profiles[0]);
-            Assert.AreEqual(_persistedProfiles[1], profiles[1]);
-
-
-            toBeReconciled = _persistedProfiles[2];
-
-            using (_mocks.Ordered)
-            {
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPatientBroker).Method("Store");
-            }
-
-            _adtService.ReconcilePatients(toBeKept, toBeReconciled);
-
-            profiles = new PatientProfile[toBeKept.Profiles.Count];
-            toBeKept.Profiles.CopyTo(profiles, 0);
-
-            Assert.AreEqual(toBeKept, toBeReconciled.Patient);
-            Assert.AreEqual(3, toBeKept.Profiles.Count);
-            Assert.AreEqual(_persistedProfiles[0], profiles[0]);
-            Assert.AreEqual(_persistedProfiles[1], profiles[1]);
-            Assert.AreEqual(_persistedProfiles[2], profiles[2]);
-
-            toBeReconciled = _persistedProfiles[3];
-
-            using (_mocks.Ordered)
-            {
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPatientBroker).Method("Store");
-            }
-
-            _adtService.ReconcilePatients(toBeKept, toBeReconciled);
-
-            profiles = new PatientProfile[toBeKept.Profiles.Count];
-            toBeKept.Profiles.CopyTo(profiles, 0);
-
-            Assert.AreEqual(toBeKept, toBeReconciled.Patient);
-            Assert.AreEqual(4, toBeKept.Profiles.Count);
-            Assert.AreEqual(_persistedProfiles[0], profiles[0]);
-            Assert.AreEqual(_persistedProfiles[1], profiles[1]);
-            Assert.AreEqual(_persistedProfiles[2], profiles[2]);
-            Assert.AreEqual(_persistedProfiles[3], profiles[3]);
-
-            _mocks.VerifyAllExpectationsHaveBeenMet();
-        }
-
-        [Test]
-        [ExpectedException(typeof(PatientReconciliationException))]
-        public void CannotReconcileProfileWithItself()
-        {
-            PatientProfile profile = new TestPatientProfile();
-
-            _adtService.ReconcilePatients(profile, profile);
-        }
+        //    Assert.AreEqual(toBeKept, toBeReconciled.Patient);
+        //    Assert.AreEqual(2, toBeKept.Profiles.Count);
+        //    Assert.AreEqual(_persistedProfiles[0], profiles[0]);
+        //    Assert.AreEqual(_persistedProfiles[1], profiles[1]);
 
 
-        [Test]
-        [ExpectedException(typeof(PatientReconciliationException))]
-        public void CannotReconcilePatientsWithSameIdentifierSite()
-        {
-            PatientProfile toBeKept = new TestPatientProfile();
-            PatientProfile toBeReconciled = new TestPatientProfile();
+        //    toBeReconciled = _persistedProfiles[2];
 
-            _adtService.ReconcilePatients(toBeKept, toBeReconciled);
-        }
+        //    using (_mocks.Ordered)
+        //    {
+        //        Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+        //        Expect.Once.On(_mockPatientBroker).Method("Store");
+        //    }
+
+        //    _adtService.ReconcilePatients(toBeKept, toBeReconciled);
+
+        //    profiles = new PatientProfile[toBeKept.Profiles.Count];
+        //    toBeKept.Profiles.CopyTo(profiles, 0);
+
+        //    Assert.AreEqual(toBeKept, toBeReconciled.Patient);
+        //    Assert.AreEqual(3, toBeKept.Profiles.Count);
+        //    Assert.AreEqual(_persistedProfiles[0], profiles[0]);
+        //    Assert.AreEqual(_persistedProfiles[1], profiles[1]);
+        //    Assert.AreEqual(_persistedProfiles[2], profiles[2]);
+
+        //    toBeReconciled = _persistedProfiles[3];
+
+        //    using (_mocks.Ordered)
+        //    {
+        //        Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+        //        Expect.Once.On(_mockPatientBroker).Method("Store");
+        //    }
+
+        //    _adtService.ReconcilePatients(toBeKept, toBeReconciled);
+
+        //    profiles = new PatientProfile[toBeKept.Profiles.Count];
+        //    toBeKept.Profiles.CopyTo(profiles, 0);
+
+        //    Assert.AreEqual(toBeKept, toBeReconciled.Patient);
+        //    Assert.AreEqual(4, toBeKept.Profiles.Count);
+        //    Assert.AreEqual(_persistedProfiles[0], profiles[0]);
+        //    Assert.AreEqual(_persistedProfiles[1], profiles[1]);
+        //    Assert.AreEqual(_persistedProfiles[2], profiles[2]);
+        //    Assert.AreEqual(_persistedProfiles[3], profiles[3]);
+
+        //    _mocks.VerifyAllExpectationsHaveBeenMet();
+        //}
+
+        //[Test]
+        //[ExpectedException(typeof(PatientReconciliationException))]
+        //public void CannotReconcileProfileWithItself()
+        //{
+        //    PatientProfile profile = new TestPatientProfile();
+
+        //    _adtService.ReconcilePatients(profile, profile);
+        //}
+
+
+        //[Test]
+        //[ExpectedException(typeof(PatientReconciliationException))]
+        //public void CannotReconcilePatientsWithSameIdentifierSite()
+        //{
+        //    PatientProfile toBeKept = new TestPatientProfile();
+        //    PatientProfile toBeReconciled = new TestPatientProfile();
+
+        //    _adtService.ReconcilePatients(toBeKept, toBeReconciled);
+        //}
     }
 
     public class TestPatientProfile : PatientProfile
