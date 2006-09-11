@@ -35,13 +35,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._accessionNumber = new System.Windows.Forms.TextBox();
 			this._lastNameLabel = new System.Windows.Forms.Label();
 			this._lastName = new System.Windows.Forms.TextBox();
-			this._firstNameLabel = new System.Windows.Forms.Label();
 			this._firstName = new System.Windows.Forms.TextBox();
 			this._studyDescriptionLabel = new System.Windows.Forms.Label();
 			this._studyDescription = new System.Windows.Forms.TextBox();
 			this._studyDateLabel = new System.Windows.Forms.Label();
 			this._dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
 			this._searchButton = new System.Windows.Forms.Button();
+			this._firstNameLabel = new System.Windows.Forms.Label();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._accessionNumber.Location = new System.Drawing.Point(315, 3);
 			this._accessionNumber.Name = "_accessionNumber";
 			this._accessionNumber.Size = new System.Drawing.Size(151, 20);
-			this._accessionNumber.TabIndex = 9;
+			this._accessionNumber.TabIndex = 1;
 			// 
 			// _lastNameLabel
 			// 
@@ -127,17 +127,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._lastName.Location = new System.Drawing.Point(99, 29);
 			this._lastName.Name = "_lastName";
 			this._lastName.Size = new System.Drawing.Size(141, 20);
-			this._lastName.TabIndex = 3;
-			// 
-			// _firstNameLabel
-			// 
-			this._firstNameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this._firstNameLabel.AutoSize = true;
-			this._firstNameLabel.Location = new System.Drawing.Point(246, 32);
-			this._firstNameLabel.Name = "_firstNameLabel";
-			this._firstNameLabel.Size = new System.Drawing.Size(57, 13);
-			this._firstNameLabel.TabIndex = 4;
-			this._firstNameLabel.Text = "First Name";
+			this._lastName.TabIndex = 2;
 			// 
 			// _firstName
 			// 
@@ -145,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._firstName.Location = new System.Drawing.Point(315, 29);
 			this._firstName.Name = "_firstName";
 			this._firstName.Size = new System.Drawing.Size(151, 20);
-			this._firstName.TabIndex = 5;
+			this._firstName.TabIndex = 3;
 			// 
 			// _studyDescriptionLabel
 			// 
@@ -163,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._studyDescription.Location = new System.Drawing.Point(99, 82);
 			this._studyDescription.Name = "_studyDescription";
 			this._studyDescription.Size = new System.Drawing.Size(141, 20);
-			this._studyDescription.TabIndex = 7;
+			this._studyDescription.TabIndex = 5;
 			// 
 			// _studyDateLabel
 			// 
@@ -181,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._dateTimePicker1.Location = new System.Drawing.Point(99, 55);
 			this._dateTimePicker1.Name = "_dateTimePicker1";
 			this._dateTimePicker1.Size = new System.Drawing.Size(141, 20);
-			this._dateTimePicker1.TabIndex = 8;
+			this._dateTimePicker1.TabIndex = 4;
 			// 
 			// _searchButton
 			// 
@@ -189,9 +179,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchButton.Location = new System.Drawing.Point(353, 81);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(75, 22);
-			this._searchButton.TabIndex = 10;
+			this._searchButton.TabIndex = 6;
 			this._searchButton.Text = "Search";
 			this._searchButton.UseVisualStyleBackColor = true;
+			// 
+			// _firstNameLabel
+			// 
+			this._firstNameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._firstNameLabel.AutoSize = true;
+			this._firstNameLabel.Location = new System.Drawing.Point(246, 32);
+			this._firstNameLabel.Name = "_firstNameLabel";
+			this._firstNameLabel.Size = new System.Drawing.Size(57, 13);
+			this._firstNameLabel.TabIndex = 4;
+			this._firstNameLabel.Text = "First Name";
 			// 
 			// StudySearchForm
 			// 
