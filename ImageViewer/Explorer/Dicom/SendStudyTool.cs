@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		}
 
-		public void SendStudy()
+		private void SendStudy()
 		{
 			if (this.Context.SelectedStudy == null)
 				return;

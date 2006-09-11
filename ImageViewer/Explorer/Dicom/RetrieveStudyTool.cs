@@ -29,7 +29,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		}
 
-		public void RetrieveStudy()
+		public override void Initialize()
+		{
+			SetDoubleClickHandler();
+
+			base.Initialize();
+		}
+
+		private void RetrieveStudy()
 		{
 			if (this.Context.SelectedStudy == null)
 				return;
@@ -51,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 				catch
 				{
-					Platform.ShowMessageBox("Unable to create storage directory");
+					Platform.ShowMessageBox("Unable to create storage directory; cannot retrieve study");
 				}
 
 				client.Retrieve(server, studyUid, myAESettings.DicomStoragePath);
@@ -62,6 +69,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
+		}
+
+		private void SetDoubleClickHandler()
+		{
+			if (this.Context.LastSearchedServer.Host != "localhost")
+				this.Context.DefaultActionHandler = RetrieveStudy;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
@@ -85,6 +98,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				this.Enabled = false;
 			else
 				this.Enabled = true;
+
+			SetDoubleClickHandler();
 		}
 	}
 }

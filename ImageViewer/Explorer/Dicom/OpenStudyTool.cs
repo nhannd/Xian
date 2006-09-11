@@ -25,11 +25,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Initialize()
 		{
-			this.Context.DefaultActionHandler = OpenStudy;
+			SetDoubleClickHandler();
+
 			base.Initialize();
 		}
 
-		public void OpenStudy()
+		private void OpenStudy()
 		{
 			if (this.Context.SelectedStudy == null)
 				return;
@@ -66,6 +67,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);
 		}
 
+		private void SetDoubleClickHandler()
+		{
+			if (this.Context.LastSearchedServer.Host == "localhost")
+				this.Context.DefaultActionHandler = OpenStudy;
+		}
+
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
 			// If the results aren't from the local machine, then we don't
@@ -87,6 +94,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				this.Enabled = true;
 			else
 				this.Enabled = false;
+
+			SetDoubleClickHandler();
 		}
 	}
 }

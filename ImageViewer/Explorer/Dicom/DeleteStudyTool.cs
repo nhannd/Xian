@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		}
 
-		public void DeleteStudy()
+		private void DeleteStudy()
 		{
 			if (this.Context.SelectedStudy == null)
 				return;
