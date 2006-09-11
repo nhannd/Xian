@@ -30,6 +30,14 @@ namespace ClearCanvas.Dicom.Services
 			get { return (int)this["Port"]; }
 			set { this["AETitle"] = value; }
 		}
+
+		[ApplicationScopedSettingAttribute()]
+		[DefaultSettingValueAttribute(".\\dicom")]
+		public string DicomStoragePath
+		{
+			get { return (string)this["DicomStoragePath"]; }
+			set { this["DicomStoragePath"] = value; }
+		}
 	}
 }
 

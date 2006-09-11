@@ -64,7 +64,6 @@ namespace ClearCanvas.Common
 	{
 		private static string _installDir = null;
 		private static string _pluginDir = "plugins";
-		private static string _studyDir = "studies";
 		private static string _logDir = "logs";
 		private static volatile PluginManager _pluginManager;
 		private static object _syncRoot = new Object();
@@ -148,17 +147,6 @@ namespace ClearCanvas.Common
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the study directory.
-		/// </summary>
-		/// <value>The fully qualified study directory.</value>
-		public static string StudyDir
-		{
-			get
-			{
-                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _studyDir);
-			}
-		}
 
 		/// <summary>
 		/// Gets or sets the log directory.

@@ -10,6 +10,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Services;
+using System.IO;
 
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -40,8 +41,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				AEServer server = this.Context.LastSearchedServer;
 				Uid studyUid = new Uid(this.Context.SelectedStudy.StudyInstanceUID);
-				client.Retrieve(server, studyUid, "c:\\TestImages");
+
+				// Try to create the storage directory if it doesn't already exist.
+				// Ideally, this code should eventually be removed when the
+				// directory is handled properly by the dicom.services layer.
+				try
+				{
+					CreateStorageDirectory(myAESettings.DicomStoragePath);
+				}
+				catch
+				{
+					Platform.ShowMessageBox("Unable to create storage directory");
+				}
+
+				client.Retrieve(server, studyUid, myAESettings.DicomStoragePath);
 			}
+		}
+
+		private void CreateStorageDirectory(string path)
+		{
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

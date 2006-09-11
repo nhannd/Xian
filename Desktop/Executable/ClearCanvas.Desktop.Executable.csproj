@@ -134,7 +134,6 @@
       md .\common
       md .\plugins
       md .\logs
-      md .\studies
       md .\datastore
 
       :: Copy shared config files
