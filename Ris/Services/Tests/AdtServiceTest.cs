@@ -41,10 +41,9 @@ namespace ClearCanvas.Ris.Services.Tests
             _mockPersistanceContext = _mocks.NewMock<IPersistenceContext>();
             _mockReconciliationStrategyXP = _mocks.NewMock<IExtensionPoint>();
 
-            Expect.Once.On(_mockReconciliationStrategyXP).Method("CreateExtension").Will(Return.Value(new DefaultPatientReconciliationStrategy()));
-
             _adtService = new AdtService(_mockReconciliationStrategyXP);
             ServiceLayerTestHelper.SetServiceLayerPersistenceContext((AdtService)_adtService, _mockPersistanceContext);
+            _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
         [SetUp]
@@ -133,12 +132,27 @@ namespace ClearCanvas.Ris.Services.Tests
             patient.AddProfile(profile2);
             profile2.Patient = patient;
 
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPatientBroker).Method("LoadRelated").Will(Return.Value(null));
+            }
+
             IList<PatientProfile> reconciledPatientsFromProfile1 = _adtService.ListReconciledPatientProfiles(profile1);
+
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPatientBroker).Method("LoadRelated").Will(Return.Value(null));
+            }
+
             IList<PatientProfile> reconciledPatientsFromProfile2 = _adtService.ListReconciledPatientProfiles(profile2);
 
-            Assert.AreEqual(reconciledPatientsFromProfile1.Count, reconciledPatientsFromProfile2.Count);
-            Assert.AreEqual(reconciledPatientsFromProfile1[0], reconciledPatientsFromProfile2[0]);
-            Assert.AreEqual(reconciledPatientsFromProfile1[1], reconciledPatientsFromProfile2[1]);
+            Assert.AreEqual(1, reconciledPatientsFromProfile1.Count);
+            Assert.AreEqual(1, reconciledPatientsFromProfile2.Count);
+            Assert.AreEqual(profile2, reconciledPatientsFromProfile1[0]);
+            Assert.AreEqual(profile1, reconciledPatientsFromProfile2[0]);
+
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
@@ -152,7 +166,14 @@ namespace ClearCanvas.Ris.Services.Tests
             PatientProfile dobDiffers = _persistedProfiles[4];
             PatientProfile onlySiteDiffers = _persistedProfiles[5];
 
-            Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+            using (_mocks.Ordered)
+            {
+                Expect.Once.On(_mockReconciliationStrategyXP).Method("CreateExtension").Will(Return.Value(new DefaultPatientReconciliationStrategy()));
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+                Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(profile));
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
+                Expect.Once.On(_mockPatientBroker).Method("LoadRelated");
+            }
 
             IList<PatientProfile> highMatches = new List<PatientProfile>();
             highMatches.Add(profile);
@@ -171,7 +192,8 @@ namespace ClearCanvas.Ris.Services.Tests
             moderateMatchesViaHealthcard.Add(onlySiteDiffers);   //f
 
             using (_mocks.Ordered)
-            { 
+            {
+                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
                 Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(highMatches));
                 Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(moderateMatchesViaName));
                 Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(moderateMatchesViaHealthcard));
@@ -205,7 +227,7 @@ namespace ClearCanvas.Ris.Services.Tests
             using (_mocks.Ordered)
             {
                 Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+                Expect.Once.On(_mockPatientBroker).Method("Store");
             }
 
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
@@ -230,7 +252,7 @@ namespace ClearCanvas.Ris.Services.Tests
             using (_mocks.Ordered)
             {
                 Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+                Expect.Once.On(_mockPatientBroker).Method("Store");
             }
 
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
@@ -249,7 +271,7 @@ namespace ClearCanvas.Ris.Services.Tests
             using (_mocks.Ordered)
             {
                 Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+                Expect.Once.On(_mockPatientBroker).Method("Store");
             }
 
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
@@ -268,7 +290,7 @@ namespace ClearCanvas.Ris.Services.Tests
             using (_mocks.Ordered)
             {
                 Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientBroker));
-                Expect.Once.On(_mockPersistanceContext).Method("GetBroker").Will(Return.Value(_mockPatientProfileBroker));
+                Expect.Once.On(_mockPatientBroker).Method("Store");
             }
 
             _adtService.ReconcilePatients(toBeKept, toBeReconciled);
