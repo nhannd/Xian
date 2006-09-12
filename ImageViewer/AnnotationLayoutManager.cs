@@ -131,6 +131,9 @@ namespace ClearCanvas.ImageViewer
 				AnnotationBox newBox = new AnnotationBox(normalizedRectangle);
 				newBox.AnnotationItem = ItemFromIdentifier(_AssignmentsTopRight[i]);
 
+				newBox.Color = "Green";
+				newBox.Font = "Times New Roman";
+				newBox.Italics = true;
 				newBox.Justification = AnnotationBox.JustificationBehaviour.FAR;
 
 				annotationBoxes.Add(newBox);
@@ -145,6 +148,10 @@ namespace ClearCanvas.ImageViewer
 				RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
 				AnnotationBox newBox = new AnnotationBox(normalizedRectangle);
 				newBox.AnnotationItem = ItemFromIdentifier(_AssignmentsBottomLeft[i]);
+
+				newBox.Color = "Red";
+				newBox.Font = "Century Gothic";
+				
 				if (i > numberOfBoxesPerQuadrant - 5)
 				{
 					newBox.ConfigurationOptions = new AnnotationItemConfigurationOptions();
@@ -164,9 +171,9 @@ namespace ClearCanvas.ImageViewer
 				AnnotationBox newBox = new AnnotationBox(normalizedRectangle);
 				newBox.AnnotationItem = ItemFromIdentifier(_AssignmentsBottomRight[i]);
 
-				//newBox.Color = "Blue";
-				//newBox.Italics = true;
-				//newBox.Truncation = AnnotationBox.TruncationBehaviour.TRUNCATE; 
+				newBox.Color = "Blue";
+
+				newBox.Font = "Courier New";
 				newBox.NumberOfLines = 2; 
 				newBox.Justification = AnnotationBox.JustificationBehaviour.FAR;
 
