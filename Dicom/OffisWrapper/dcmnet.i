@@ -247,10 +247,18 @@ struct InteropStoreCallbackInfo
 	DcmDataset* ImageDataset;
 };
 
+struct StoreScuFileCountProgressInfo
+{
+	int TotalCount;
+	int CurrentCount;
+};
+
 struct InteropStoreScuCallbackInfo
 {
     T_DIMSE_StoreProgress * Progress;
     T_DIMSE_C_StoreRQ * Request;
+	int CurrentCount;
+	int TotalCount;
 };
 
 struct InteropFindScpCallbackInfo
@@ -386,26 +394,29 @@ SWIGEXPORT void SWIGSTDCALL RegisterMoveCallbackHelper_OffisDcm(MoveCallbackHelp
 //--------------------------------------------------------------
 
 static void
-StoreScuProgressCallback(void * /*callbackData*/,
+StoreScuProgressCallback(void * progressInfo,
     T_DIMSE_StoreProgress *progress,
     T_DIMSE_C_StoreRQ * req)
 {
 	// should fire off image received event
 	if (NULL != CSharpStoreCallbackHelperCallback)
 	{
+		StoreScuFileCountProgressInfo* pInfo = (StoreScuFileCountProgressInfo*) progressInfo;
 		InteropStoreScuCallbackInfo info;
 
 		// prepare the transmission of data 
 		bzero((char*)&info, sizeof(info));
 		info.Progress = progress;
 		info.Request = req;
+		info.TotalCount = pInfo->TotalCount;
+		info.CurrentCount = pInfo->CurrentCount;
 
 		CSharpStoreScuCallbackHelperCallback(&info);
 	}
 }
 
 static OFCondition
-StoreScu(T_ASC_Association * assoc, const char *fname)
+StoreScu(T_ASC_Association * assoc, const char *fname, int currentCount, int totalCount)
     /*
      * This function will read all the information from the given file,
      * figure out a corresponding presentation context which will be used
@@ -465,9 +476,13 @@ StoreScu(T_ASC_Association * assoc, const char *fname)
     req.DataSetType = DIMSE_DATASET_PRESENT;
     req.Priority = DIMSE_PRIORITY_LOW;
 
+	StoreScuFileCountProgressInfo progressInfo;
+	progressInfo.TotalCount = totalCount;
+	progressInfo.CurrentCount = currentCount;
+	 
     /* finally conduct transmission of data */
     cond = DIMSE_storeUser(assoc, presId, &req,
-        NULL, dcmff.getDataset(), StoreScuProgressCallback, NULL,
+        NULL, dcmff.getDataset(), StoreScuProgressCallback, &progressInfo,
         DIMSE_BLOCKING, 0,
         &rsp, &statusDetail, NULL, DU_fileSize(fname));
 
@@ -1883,9 +1898,11 @@ struct T_ASC_Association
 		std::vector<string >::iterator iter = fileNameList.begin();
 		std::vector<string >::iterator enditer = fileNameList.end();
 
+		int currentCount = 1;
+		int totalCount = fileNameList.size();
 		while ((iter != enditer) && (cond == EC_Normal)) // compare with EC_Normal since DUL_PEERREQUESTEDRELEASE is also good()
 		{
-			cond = StoreScu(self, (*iter).c_str());
+			cond = StoreScu(self, (*iter).c_str(), currentCount, totalCount);
 
 			// don't increment the iterator if cond is not EC_Normal so that we can get the file name
 			if (cond == EC_Normal)

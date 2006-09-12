@@ -5,7 +5,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 
-namespace ClearCanvas.Utilities.RebuildDatabase
+namespace ClearCanvas.Dicom.DataStore
 {
     /// <summary>
     /// Assumes that the objects have non-null and valid UIDs.

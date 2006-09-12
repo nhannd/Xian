@@ -48,16 +48,16 @@ namespace ClearCanvas.Dicom.Services
             set { _parcelOid = value; }
         }
 
-        protected virtual ApplicationEntity DestinationAE
+        public virtual ApplicationEntity DestinationAE
         {
             get { return _destinationAE; }
-            set { _destinationAE = value; }
+            private set { _destinationAE = value; }
         }
 
-        protected virtual ApplicationEntity SourceAE
+        public  virtual ApplicationEntity SourceAE
         {
             get { return _sourceAE; }
-            set { _sourceAE = value; }
+            private set { _sourceAE = value; }
         }
 
         internal virtual IList TransferSyntaxes
@@ -74,7 +74,6 @@ namespace ClearCanvas.Dicom.Services
         {
             get { return _sopInstances; }
         }
-
 
         #region Internal and Private members
         private void AddTransferSyntax(Uid newTransferSyntax)
@@ -181,6 +180,13 @@ namespace ClearCanvas.Dicom.Services
         private long _parcelOid;
         private IDicomSender _dicomSender;
         private ParcelTransferState _parcelTransferState = ParcelTransferState.Pending;
+        private string _description;
+
+        public virtual string Description
+        {
+            get { return _description; }
+            private set { _description = value; }
+        }
 
         #endregion
 
@@ -217,6 +223,9 @@ namespace ClearCanvas.Dicom.Services
                         // get the SopInstance object
                         ISopInstance sop = this.DataStoreReader.GetSopInstance(referencedUid);
                         AddSopInstanceIntoParcel(sop);
+
+                        // set description
+                        this.Description = sop.GetLocationUri().LocalDiskPath;
                     }
                 }
                 else // series was found
@@ -227,6 +236,14 @@ namespace ClearCanvas.Dicom.Services
                     {
                         AddSopInstanceIntoParcel(sop);
                     }
+
+                    // set description
+                    Series concreteSeries = series as Series;
+                    if (null != concreteSeries)
+                    {
+                        this.Description = concreteSeries.SeriesDescription + " [" +
+                            concreteSeries.Modality + "]";
+                    }
                 }
             }
             else // study was found
@@ -236,6 +253,14 @@ namespace ClearCanvas.Dicom.Services
                 foreach (ISopInstance sop in sops)
                 {
                     AddSopInstanceIntoParcel(sop);
+                }
+
+                // set description
+                Study concreteStudy = study as Study;
+                if (null != concreteStudy)
+                {
+                    this.Description = concreteStudy.PatientId + "/" + concreteStudy.PatientsName +
+                        " [" + concreteStudy.StudyDate + "/" + concreteStudy.StudyDescription + "]";
                 }
             }
 
@@ -253,6 +278,10 @@ namespace ClearCanvas.Dicom.Services
             _dicomSender = dicomSender;
             _dicomSender.SetSourceApplicationEntity(this.SourceAE);
             _dicomSender.SetDestinationApplicationEntity(this.DestinationAE);
+
+            this.ParcelTransferState = ParcelTransferState.InProgress;
+            DicomServicesLayer.GetISendQueueService().UpdateParcel(this);
+
             _dicomSender.Send(this.SopInstanceFilenamesList, this.SopClassesList, this.TransferSyntaxesList);
             this.ParcelTransferState = ParcelTransferState.Completed;
             DicomServicesLayer.GetISendQueueService().UpdateParcel(this);
@@ -265,12 +294,12 @@ namespace ClearCanvas.Dicom.Services
 
         public int GetToSendObjectCount()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return this.SopInstances.Count;
         }
 
         public int SentObjectCount()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return 0;
         }
 
         public IEnumerable<string> GetReferencedSopInstanceFileNames()

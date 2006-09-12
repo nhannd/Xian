@@ -159,6 +159,7 @@ namespace ClearCanvas.Dicom.DataStore
 
         public IEnumerable<ISopInstance> GetSopInstances()
         {
+            DataAccessLayer.GetIDataStoreReader().InitializeAssociatedObject(this, this.Series);
             List<ISopInstance> sopList = new List<ISopInstance>();
             foreach (ISeries series in this.Series)
             {

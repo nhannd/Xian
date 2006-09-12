@@ -12,13 +12,13 @@ namespace ClearCanvas.Dicom.Network
     /// Argument type that encapsulates data pertinent to a
     /// the progress of sending objects (using C-STORE)
     /// </summary>
-    class ObjectSendingProgressUpdatedEventArgs : EventArgs
+    class SendProgressUpdatedEventArgs : EventArgs
     {
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
         /// <param name="results">The object containing the results from the query.</param>
-        public ObjectSendingProgressUpdatedEventArgs(ReadOnlyQueryResultCollection results)
+        public SendProgressUpdatedEventArgs(ReadOnlyQueryResultCollection results)
         {
         }
 

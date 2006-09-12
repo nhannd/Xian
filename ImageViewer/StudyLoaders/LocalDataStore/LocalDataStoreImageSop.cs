@@ -16,31 +16,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         private ImageSopInstance _dataStoreImageSopInstance;
         private ClearCanvas.Dicom.DataStore.Study _dataStoreStudy;
         private ClearCanvas.Dicom.DataStore.Series _dataStoreSeries;
-        static private Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string> _photometricInterpretationMap;
-
-        static LocalDataStoreImageSop()
-        {
-            _photometricInterpretationMap = new Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string>();
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Unknown, "UNKNOWN");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Argb, "ARGB");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Cmyk, "CMYK");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Hsv, "HSV");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Monochrome1, "MONOCHROME1");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Monochrome2, "MONOCHROME2");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.PaletteColor, "PALETTE_COLOR");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.Rgb, "RGB");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrFull, "YBR_FULL");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrFull422, "YBR_FULL_422");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrIct, "YBR_ICT");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrPartial420, "YBR_PARTIAL_420");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrPartial422, "YBR_PARTIAL_422");
-            _photometricInterpretationMap.Add(ClearCanvas.Dicom.DataStore.PhotometricInterpretation.YbrRct, "YBR_RCT");
-        }
-
-        static private Dictionary<ClearCanvas.Dicom.DataStore.PhotometricInterpretation, string> PhotometricInterpretationMap
-        {
-            get { return LocalDataStoreImageSop._photometricInterpretationMap; }
-        }
 
 		public LocalDataStoreImageSop(ImageSopInstance sop)
 		{
@@ -792,7 +767,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-                return LocalDataStoreImageSop.PhotometricInterpretationMap[this.DataStoreImageSopInstance.PhotometricInterpretation];
+                return PhotometricInterpretationHelper.GetString(this.DataStoreImageSopInstance.PhotometricInterpretation);
 			}
             set { throw new Exception("This is not yet implemented."); }
 		}

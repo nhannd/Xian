@@ -12,6 +12,7 @@ namespace ClearCanvas.Dicom.DataStore
         bool SopInstanceExists(Uid referencedUid);
         ISopInstance GetSopInstance(Uid referencedUid);
         ISeries GetSeries(Uid referenceUid);
+        void InitializeAssociatedObject(object primaryObject, object associatedObject);
         IStudy GetStudy(Uid referenceUid);
         ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey);
     }

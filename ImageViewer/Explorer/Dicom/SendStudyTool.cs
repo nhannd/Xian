@@ -6,6 +6,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -28,7 +31,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			Platform.ShowMessageBox("Not yet implemented!");
+            if (this.Context.SelectedServer == null)
+                return;
+
+        	LocalAESettings myAESettings = new LocalAESettings();
+            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+            DicomServicesLayer.GetISendService(me).Send(new Uid(this.Context.SelectedStudy.StudyInstanceUID), this.Context.SelectedServer);
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

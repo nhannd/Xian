@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using NHibernate;
+using NHibernate.Collection;
 using NHibernate.Expression;
 using Iesi.Collections;
 
@@ -210,6 +211,42 @@ namespace ClearCanvas.Dicom.DataStore
             }
 
             return series;
+        }
+
+        public void InitializeAssociatedObject(object primaryObject, object associatedObject)
+        {
+            // TODO: specific cases of check for whether the child object
+            // has already been initialized, and skipping if it has. If 
+            // we are using v1.2 of NHibernate or later, there should be
+            // a WasInitialized property that can be checked
+            PersistentCollection associatedCollection = associatedObject as PersistentCollection;
+            if (null != associatedCollection)
+            {
+                if (associatedCollection.WasInitialized)
+                    return;
+            }
+
+            ISession session = null;
+            ITransaction transaction = null;
+            try
+            {
+                session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
+
+                session.Lock(primaryObject, LockMode.Read);
+                NHibernateUtil.Initialize(associatedObject);
+            }
+            catch (Exception ex)
+            {
+                if (null != transaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (null != session)
+                    session.Close();
+            }
         }
 
         public IStudy GetStudy(Uid referenceUid)

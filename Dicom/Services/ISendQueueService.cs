@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Dicom.Network;
+
 namespace ClearCanvas.Dicom.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using ClearCanvas.Dicom.Network;
-
+    /// <summary>
+    /// Manipulate the queue directly with operations that create, add and remove parcels from
+    /// the queue
+    /// </summary>
     public interface ISendQueueService
     {
         IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE);

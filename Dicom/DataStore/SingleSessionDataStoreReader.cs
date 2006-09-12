@@ -252,6 +252,24 @@ namespace ClearCanvas.Dicom.DataStore
             return new ReadOnlyQueryResultCollection(results); 
         }
 
+        public void InitializeAssociatedObject(object parentObject, object childObject)
+        {
+            // TODO: specific cases of check for whether the child object
+            // has already been initialized, and skipping if it has. If 
+            // we are using v1.2 of NHibernate or later, there should be
+            // a WasInitialized property that can be checked
+
+            try
+            {
+                this.Session.Lock(parentObject, LockMode.Read);
+                NHibernateUtil.Initialize(childObject);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         #endregion
     }
 }

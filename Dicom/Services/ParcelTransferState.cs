@@ -32,4 +32,29 @@ namespace ClearCanvas.Dicom.Services
         Completed,
         Error
     }
+
+    public class ParcelTransferStateHelper
+    {
+        static private Dictionary<ParcelTransferState, string> _dictionaryParcelTransferState;
+        static ParcelTransferStateHelper()
+        {
+            _dictionaryParcelTransferState = new Dictionary<ParcelTransferState, string>();
+            _dictionaryParcelTransferState.Add(ParcelTransferState.Cancelled, "Cancelled");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.CancelRequested, "Cancel Requested");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.Completed, "Completed");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.Error, "Error");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.InProgress, "In Progress");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.Paused, "Paused");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.PauseRequested, "Pause Requested");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.Pending, "Pending");
+            _dictionaryParcelTransferState.Add(ParcelTransferState.Unknown, "Unknown");
+        }
+        static public string GetString(ParcelTransferState state)
+        {
+            if (_dictionaryParcelTransferState.ContainsKey(state))
+                return _dictionaryParcelTransferState[state];
+            else
+                return null;
+        }
+    }
 }

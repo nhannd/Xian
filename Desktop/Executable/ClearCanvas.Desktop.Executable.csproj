@@ -150,7 +150,6 @@
       copy "..\..\..\..\ReferencedAssemblies\Nhibernate.Mapping.Attributes.dll" .\Common
       copy "..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" .\Common
       copy "..\..\..\..\Dicom\DataStore\bin\$(ConfigurationName)\ClearCanvas.Dicom.DataStore.dll" .\Common
-      copy "..\..\..\..\Dicom\Services\bin\$(ConfigurationName)\ClearCanvas.Dicom.Services.dll" .\Common
       copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite3.dll" .\Common
       copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite.NET.dll" .\Common
 
@@ -202,7 +201,8 @@ if $(SolutionName) == Ris goto RisModules
       copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins
       copy "..\..\..\..\ImageViewer\TextOverlay\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.TextOverlay.dll" .\plugins
-
+      copy "..\..\..\..\Dicom\Services\bin\$(ConfigurationName)\ClearCanvas.Dicom.Services.dll" .\plugins
+      copy "..\..\..\..\Dicom\Services\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Dicom.Services.View.WinForms.dll" .\plugins
 
       :: Important to exit here - do not copy the Ris Modules
       exit

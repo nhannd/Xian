@@ -7,6 +7,7 @@
       </generator>
     </id>
 	<property name="ParcelTransferState" column="ParcelTransferState_" type="Int16" />
+	<property name="Description" column="Description_" type="String" />
 	<component name="DestinationAE" class="ClearCanvas.Dicom.Network.ApplicationEntity, ClearCanvas.Dicom">
 		<property name="Host" column="DestinationAEHost_" />
 		<property name="AE" column="DestinationAEAE_" />

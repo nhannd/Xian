@@ -111,6 +111,8 @@ namespace ClearCanvas.Dicom.DataStore
 
         public IEnumerable<ISopInstance> GetSopInstances()
         {
+            DataAccessLayer.GetIDataStoreReader().InitializeAssociatedObject(this, this.SopInstances);
+
             List<ISopInstance> sops = new List<ISopInstance>();
             foreach (ImageSopInstance sop in this.SopInstances)
             {

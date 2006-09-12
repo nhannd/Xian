@@ -12,7 +12,7 @@
 	<property name="Laterality" column="Laterality_" type="string" length="16" />
 	<property name="SeriesDescription" column="SeriesDescription_" type="string" length="64" />
 	<many-to-one name="Study" class="ClearCanvas.Dicom.DataStore.Study, ClearCanvas.Dicom.DataStore" column="StudyOid_" />
-    <set name="SopInstances" lazy="false" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <set name="SopInstances" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="SeriesOid_" />
       <one-to-many class="SopInstance" />
     </set>
