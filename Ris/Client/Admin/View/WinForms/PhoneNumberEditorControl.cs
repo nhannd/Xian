@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    public partial class PhoneNumberEditorControl : UserControl
+    public partial class PhoneNumberEditorControl : CustomUserControl
     {
         private PhoneNumberEditorComponent _component;
 

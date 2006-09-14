@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    public partial class AddressEditorControl : UserControl
+    public partial class AddressEditorControl : CustomUserControl
     {
         private AddressEditorComponent _component;
 

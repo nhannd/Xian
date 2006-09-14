@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sourceTable.Margin = new System.Windows.Forms.Padding(4);
             this._sourceTable.MenuModel = null;
             this._sourceTable.Name = "_sourceTable";
+            this._sourceTable.ReadOnly = true;
             this._sourceTable.Size = new System.Drawing.Size(720, 209);
             this._sourceTable.TabIndex = 0;
             this._sourceTable.ToolbarModel = null;
@@ -56,6 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._targetTable.Margin = new System.Windows.Forms.Padding(4);
             this._targetTable.MenuModel = null;
             this._targetTable.Name = "_targetTable";
+            this._targetTable.ReadOnly = true;
             this._targetTable.Size = new System.Drawing.Size(720, 214);
             this._targetTable.TabIndex = 1;
             this._targetTable.ToolbarModel = null;
@@ -102,8 +104,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // ConfirmReconciliationComponentControl
             // 
+            this.AcceptButton = this._continueButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this._cancelButton;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this._continueButton);

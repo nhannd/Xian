@@ -6,13 +6,14 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="PatientReconciliationComponent"/>
     /// </summary>
-    public partial class PatientReconciliationComponentControl : UserControl
+    public partial class PatientReconciliationComponentControl : CustomUserControl
     {
         private PatientReconciliationComponent _component;
 
