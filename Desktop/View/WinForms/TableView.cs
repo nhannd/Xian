@@ -151,7 +151,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _contextMenu_Opening(object sender, CancelEventArgs e)
         {
+			// Find the row we're on
+			Point pt = _dataGridView.PointToClient(DataGridView.MousePosition);
+			DataGridView.HitTestInfo info = _dataGridView.HitTest(pt.X, pt.Y);
 
+			// If only one row is selected, assume that the user's intent
+			// is not to multiselect, so deselect the selected row.  If multiple
+			// rows are selected we don't want to deselect anything, since the
+			// user's intent is to perform a context menu operation on all
+			// selected rows.
+			if (_dataGridView.SelectedRows.Count == 1)
+			{
+				foreach (DataGridViewRow row in _dataGridView.SelectedRows)
+					row.Selected = false;
+			}
+
+			// Now select the new row
+			_dataGridView.Rows[info.RowIndex].Selected = true;
         }
 
         private void _contextMenu_Opened(object sender, EventArgs e)
