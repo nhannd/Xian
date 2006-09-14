@@ -10,7 +10,7 @@ using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public partial class NavigatorComponentContainerControl : UserControl
+    public partial class NavigatorComponentContainerControl : CustomUserControl
     {
         private NavigatorComponentContainer _component;
         private Dictionary<NavigatorPage, TreeNode> _nodeMap;
@@ -61,7 +61,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _okButton_Click(object sender, EventArgs e)
         {
-            _component.Accept();
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.Accept();
+            }
         }
 
         private void _nextButton_Click(object sender, EventArgs e)

@@ -50,6 +50,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 		}
 
+        public bool ReadOnly
+        {
+            get { return _dataGridView.ReadOnly; }
+            set { _dataGridView.ReadOnly = value; }
+        }
+
         public ActionModelNode ToolbarModel
         {
             get { return _toolbarModel;  }

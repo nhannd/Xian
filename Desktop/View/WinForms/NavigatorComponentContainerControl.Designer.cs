@@ -33,10 +33,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._contentPanel = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._backButton = new System.Windows.Forms.Button();
-            this._nextButton = new System.Windows.Forms.Button();
-            this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
+            this._okButton = new System.Windows.Forms.Button();
+            this._nextButton = new System.Windows.Forms.Button();
+            this._backButton = new System.Windows.Forms.Button();
             this._headerStrip = new ClearCanvas.Controls.WinForms.HeaderStrip();
             this._title = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -112,25 +112,15 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.flowLayoutPanel1.Size = new System.Drawing.Size(352, 34);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
-            // _backButton
+            // _cancelButton
             // 
-            this._backButton.Location = new System.Drawing.Point(31, 3);
-            this._backButton.Name = "_backButton";
-            this._backButton.Size = new System.Drawing.Size(75, 23);
-            this._backButton.TabIndex = 0;
-            this._backButton.Text = "< Back";
-            this._backButton.UseVisualStyleBackColor = true;
-            this._backButton.Click += new System.EventHandler(this._backButton_Click);
-            // 
-            // _nextButton
-            // 
-            this._nextButton.Location = new System.Drawing.Point(112, 3);
-            this._nextButton.Name = "_nextButton";
-            this._nextButton.Size = new System.Drawing.Size(75, 23);
-            this._nextButton.TabIndex = 1;
-            this._nextButton.Text = "Next >";
-            this._nextButton.UseVisualStyleBackColor = true;
-            this._nextButton.Click += new System.EventHandler(this._nextButton_Click);
+            this._cancelButton.Location = new System.Drawing.Point(274, 3);
+            this._cancelButton.Name = "_cancelButton";
+            this._cancelButton.Size = new System.Drawing.Size(75, 23);
+            this._cancelButton.TabIndex = 3;
+            this._cancelButton.Text = "Cancel";
+            this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
             // _okButton
             // 
@@ -142,15 +132,25 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._okButton.UseVisualStyleBackColor = true;
             this._okButton.Click += new System.EventHandler(this._okButton_Click);
             // 
-            // _cancelButton
+            // _nextButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(274, 3);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 3;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+            this._nextButton.Location = new System.Drawing.Point(112, 3);
+            this._nextButton.Name = "_nextButton";
+            this._nextButton.Size = new System.Drawing.Size(75, 23);
+            this._nextButton.TabIndex = 1;
+            this._nextButton.Text = "Next >";
+            this._nextButton.UseVisualStyleBackColor = true;
+            this._nextButton.Click += new System.EventHandler(this._nextButton_Click);
+            // 
+            // _backButton
+            // 
+            this._backButton.Location = new System.Drawing.Point(31, 3);
+            this._backButton.Name = "_backButton";
+            this._backButton.Size = new System.Drawing.Size(75, 23);
+            this._backButton.TabIndex = 0;
+            this._backButton.Text = "< Back";
+            this._backButton.UseVisualStyleBackColor = true;
+            this._backButton.Click += new System.EventHandler(this._backButton_Click);
             // 
             // _headerStrip
             // 
@@ -172,12 +172,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._title.Size = new System.Drawing.Size(46, 43);
             this._title.Text = "title";
             // 
-            // NavigatorComponentControl
+            // NavigatorComponentContainerControl
             // 
+            this.AcceptButton = this._okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this._cancelButton;
             this.Controls.Add(this.splitContainer1);
-            this.Name = "NavigatorComponentControl";
+            this.Name = "NavigatorComponentContainerControl";
             this.Size = new System.Drawing.Size(720, 464);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

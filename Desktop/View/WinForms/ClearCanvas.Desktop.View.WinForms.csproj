@@ -48,6 +48,9 @@
     </Compile>
     <Compile Include="ApplicationComponentHostShelfView.cs" />
     <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="CustomUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SplitComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
