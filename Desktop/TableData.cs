@@ -75,6 +75,10 @@ namespace ClearCanvas.Desktop
         private ColumnList _columns;
         private Dictionary<ITableColumn<TItem>, PropertyDescriptor> _propertyDescriptors;
 
+        private ListSortDirection _sortDirection;
+        private bool _isSorted;
+        private PropertyDescriptor _sortProperty;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -118,6 +122,10 @@ namespace ClearCanvas.Desktop
             return -1;
         }
 
+        /// <summary>
+        /// Adds all items in the specified enumerable
+        /// </summary>
+        /// <param name="enumerable"></param>
         public void AddRange(IEnumerable<TItem> enumerable)
         {
             foreach (TItem item in enumerable)
@@ -126,6 +134,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Adds all items in the specified enumerable
+        /// </summary>
+        /// <param name="enumerable"></param>
         public void AddRange(IEnumerable enumerable)
         {
             foreach (TItem item in enumerable)
@@ -133,8 +145,6 @@ namespace ClearCanvas.Desktop
                 this.Add(item);
             }
         }
-
-
 
         #region ITypedList Members
 
@@ -155,6 +165,64 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
+
+        #region BindingList<T> overrides
+
+        protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
+        {
+            ITableColumn<TItem> column = FindColumnForPropertyDesc(prop);
+            if (column != null)
+            {
+                _sortDirection = direction;
+                _sortProperty = prop;
+
+                List<TItem> listRef = (List<TItem>)this.Items;
+                listRef.Sort(column.GetComparer(_sortDirection == ListSortDirection.Ascending));
+                _isSorted = true;
+
+                // notify that the list has been sorted
+                OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+            }
+        }
+
+        protected override void RemoveSortCore()
+        {
+            _isSorted = false;
+            _sortProperty = null;
+        }
+
+        protected override bool SupportsSortingCore
+        {
+            get { return true; }
+        }
+
+        protected override bool IsSortedCore
+        {
+            get { return _isSorted; }
+        }
+
+        protected override ListSortDirection SortDirectionCore
+        {
+            get { return _sortDirection; }
+        }
+
+        protected override PropertyDescriptor SortPropertyCore
+        {
+            get { return _sortProperty; }
+        }
+
+        #endregion
+
+
+        private ITableColumn<TItem> FindColumnForPropertyDesc(PropertyDescriptor prop)
+        {
+            foreach (KeyValuePair<ITableColumn<TItem>, PropertyDescriptor> kvp in _propertyDescriptors)
+            {
+                if (kvp.Value == prop)
+                    return kvp.Key;
+            }
+            return null;
+        }
      }
 #endif
 }

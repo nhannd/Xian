@@ -44,5 +44,12 @@ namespace ClearCanvas.Desktop
         /// <param name="item">The item on which the value is to be set</param>
         /// <param name="value">The value</param>
         void SetValue(TItem item, object value);
+
+        /// <summary>
+        /// Get a comparer that can be used to sort items in the specified direction
+        /// </summary>
+        /// <param name="ascending"></param>
+        /// <returns></returns>
+        IComparer<TItem> GetComparer(bool ascending);
     }
 }

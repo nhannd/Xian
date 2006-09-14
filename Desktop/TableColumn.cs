@@ -12,6 +12,51 @@ namespace ClearCanvas.Desktop
     public class TableColumn<TItem, TColumn> : ITableColumn<TItem>
     {
         /// <summary>
+        /// Provides comparison based on the column value, assuming TColumn implements IComparable
+        /// </summary>
+        class ValueComparer : Comparer<TItem>
+        {
+            private bool _ascending;
+            private TableColumn<TItem, TColumn> _column;
+
+            public ValueComparer(TableColumn<TItem, TColumn> column, bool ascending)
+            {
+                _column = column;
+                _ascending = ascending;
+            }
+
+            public override int Compare(TItem x, TItem y)
+            {
+                // assumes TColumn implements IComparable
+                return ((IComparable)_column.GetValue(x)).CompareTo(_column.GetValue(y)) * (_ascending ? 1 : -1);
+            }
+        }
+
+        /// <summary>
+        /// Provides comparison based on the <see cref="Comparison<TItem>"/> specified for the column.
+        /// </summary>
+        class CustomComparer : Comparer<TItem>
+        {
+            private bool _ascending;
+            private TableColumn<TItem, TColumn> _column;
+
+            public CustomComparer(TableColumn<TItem, TColumn> column, bool ascending)
+            {
+                _column = column;
+                _ascending = ascending;
+            }
+
+            public override int Compare(TItem x, TItem y)
+            {
+                return _column._comparison(x, y);
+            }
+        }
+
+
+
+
+
+        /// <summary>
         /// Delegate that is used to pull the value of a column from an object.
         /// </summary>
         /// <typeparam name="TObject">The type of the object</typeparam>
@@ -35,6 +80,31 @@ namespace ClearCanvas.Desktop
         private GetColumnValueDelegate<TItem, TColumn> _valueGetter;
         private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
 
+        private Comparison<TItem> _comparison;
+
+
+        /// <summary>
+        /// Constructs a table column
+        /// </summary>
+        /// <param name="columnName">The name of the column</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
+        public TableColumn(
+            string columnName,
+            GetColumnValueDelegate<TItem, TColumn> valueGetter,
+            SetColumnValueDelegate<TItem, TColumn> valueSetter,
+            float widthFactor,
+            Comparison<TItem> comparison)
+        {
+            _name = columnName;
+            _widthFactor = widthFactor;
+            _valueGetter = valueGetter;
+            _valueSetter = valueSetter;
+            _comparison = comparison;
+        }
+
         /// <summary>
         /// Constructs a table column
         /// </summary>
@@ -47,11 +117,8 @@ namespace ClearCanvas.Desktop
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
             float widthFactor)
+            :this(columnName, valueGetter, valueSetter, widthFactor, null)
         {
-            _name = columnName;
-            _widthFactor = widthFactor;
-            _valueGetter = valueGetter;
-            _valueSetter = valueSetter;
         }
 
         /// <summary>
@@ -87,6 +154,12 @@ namespace ClearCanvas.Desktop
         {
         }
 
+        public Comparison<TItem> Comparison
+        {
+            get { return _comparison; }
+            set { _comparison = value; }
+        }
+
         #region ITableColumn members
 
         public string Name
@@ -117,6 +190,14 @@ namespace ClearCanvas.Desktop
         public void SetValue(TItem item, object value)
         {
             _valueSetter(item, (TColumn)value);
+        }
+
+        public IComparer<TItem> GetComparer(bool ascending)
+        {
+            if(_comparison != null)
+                return new CustomComparer(this, ascending);
+            else
+                return new ValueComparer(this, ascending);
         }
 
         #endregion
