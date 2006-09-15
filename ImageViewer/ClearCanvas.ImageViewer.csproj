@@ -91,6 +91,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="AnnotationConfiguration.cs" />
+    <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
     <Compile Include="MouseWheelToolMappedEventArgs.cs" />
     <Compile Include="AnnotationConfigurationManager.cs" />
     <Compile Include="AnnotationItemConfigurationOptions.cs" />

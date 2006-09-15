@@ -53,12 +53,34 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			Platform.CheckForNullReference(image, "image");
 
+			int pixelRepresentation = image.ImageSop.PixelRepresentation;
+			int bitsStored = image.ImageSop.BitsStored;
+
+			ImageValidator.ValidateBitsStored(bitsStored);
+			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
+
 			double windowWidth = image.ImageSop.WindowWidth;
 			double windowCenter = image.ImageSop.WindowCenter;
 
-			// Window width has to be at least 1
-			if (windowWidth == 0)
-				windowWidth = 1;
+			//Window Width must be non-zero according to DICOM.
+			//Otherwise, we want to do something simple (pick 2^BitsStored).
+			if (windowWidth == 0 || double.IsNaN(windowWidth))
+			{
+				windowWidth = 1 << ((int)bitsStored);
+			}
+
+			//If Window Center is invalid, calculate a value based on the Window Width.
+			if (double.IsNaN(windowCenter))
+			{
+				if (pixelRepresentation == 0)
+				{
+					windowCenter = ((int)windowWidth) >> 1;
+				}
+				else
+				{
+					windowCenter = 0;
+				}
+			}
 
 			WindowLevelOperator.InstallVOILUTLinear(image, windowWidth, windowCenter);
 		}
