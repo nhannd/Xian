@@ -12,48 +12,24 @@ namespace ClearCanvas.Desktop
     public class TableColumn<TItem, TColumn> : ITableColumn<TItem>
     {
         /// <summary>
-        /// Provides comparison based on the column value, assuming TColumn implements IComparable
+        /// Comparer for sorting operations
         /// </summary>
-        class ValueComparer : Comparer<TItem>
+        class SortComparer : Comparer<TItem>
         {
-            private bool _ascending;
-            private TableColumn<TItem, TColumn> _column;
+            private int _direction;
+            private Comparison<TItem> _comp;
 
-            public ValueComparer(TableColumn<TItem, TColumn> column, bool ascending)
+            public SortComparer(TableColumn<TItem, TColumn> column, bool ascending)
             {
-                _column = column;
-                _ascending = ascending;
+                _comp = column.Comparison;
+                _direction = ascending ? 1 : -1;
             }
 
             public override int Compare(TItem x, TItem y)
             {
-                // assumes TColumn implements IComparable
-                return ((IComparable)_column.GetValue(x)).CompareTo(_column.GetValue(y)) * (_ascending ? 1 : -1);
+                return _comp(x, y) * _direction;
             }
         }
-
-        /// <summary>
-        /// Provides comparison based on the <see cref="Comparison<TItem>"/> specified for the column.
-        /// </summary>
-        class CustomComparer : Comparer<TItem>
-        {
-            private bool _ascending;
-            private TableColumn<TItem, TColumn> _column;
-
-            public CustomComparer(TableColumn<TItem, TColumn> column, bool ascending)
-            {
-                _column = column;
-                _ascending = ascending;
-            }
-
-            public override int Compare(TItem x, TItem y)
-            {
-                return _column._comparison(x, y);
-            }
-        }
-
-
-
 
 
         /// <summary>
@@ -103,6 +79,16 @@ namespace ClearCanvas.Desktop
             _valueGetter = valueGetter;
             _valueSetter = valueSetter;
             _comparison = comparison;
+
+            // if no comparison operator was specified, assign a default comparison
+            if (_comparison == null)
+            {
+                // if TColumn implements IComparable, can compare by column value
+                if (typeof(IComparable).IsAssignableFrom(typeof(TColumn)))
+                    _comparison = ValueComparsion;
+                else
+                    _comparison = NopComparison;    // no comparison is possible
+            }
         }
 
         /// <summary>
@@ -194,12 +180,31 @@ namespace ClearCanvas.Desktop
 
         public IComparer<TItem> GetComparer(bool ascending)
         {
-            if(_comparison != null)
-                return new CustomComparer(this, ascending);
-            else
-                return new ValueComparer(this, ascending);
+            return new SortComparer(this, ascending);
         }
 
         #endregion
+
+        /// <summary>
+        /// Default comparison used when TColumn is IComparable
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private int ValueComparsion(TItem x, TItem y)
+        {
+            return ((IComparable)GetValue(x)).CompareTo(GetValue(y));
+        }
+
+        /// <summary>
+        /// Default comparison used when TColumn is not IComparable (in which case, sorting is not possible)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private int NopComparison(TItem x, TItem y)
+        {
+            return 0;
+        }
     }
 }
