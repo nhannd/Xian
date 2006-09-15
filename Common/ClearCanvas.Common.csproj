@@ -173,6 +173,8 @@
     <Compile Include="Tests\PluginSetupTeardown.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\BlockingQueue.cs" />
+    <Compile Include="Utilities\InterthreadMarshaler.cs" />
     <Compile Include="Utilities\PointUtilities.cs" />
     <Compile Include="Win32PerformanceCounter.cs" />
   </ItemGroup>
