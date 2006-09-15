@@ -51,20 +51,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from the local machine, then we don't
 			// even care whether a study has been selected or not
-			if (this.Context.LastSearchedServer.Host != "localhost")
+			if (this.Context.SelectedServer.Host != "localhost")
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
 		}
 
-		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
+		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
 			// If no study is selected then we don't even care whether
 			// the last searched server has changed.
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			if (this.Context.LastSearchedServer.Host == "localhost")
+			if (this.Context.SelectedServer.Host == "localhost")
 				this.Enabled = true;
 			else
 				this.Enabled = false;

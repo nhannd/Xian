@@ -168,6 +168,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _dateTimePicker1
 			// 
 			this._dateTimePicker1.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._dateTimePicker1.Enabled = false;
 			this._dateTimePicker1.Location = new System.Drawing.Point(99, 55);
 			this._dateTimePicker1.Name = "_dateTimePicker1";
 			this._dateTimePicker1.Size = new System.Drawing.Size(141, 20);

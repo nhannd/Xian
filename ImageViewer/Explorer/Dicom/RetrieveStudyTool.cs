@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			using (DicomClient client = new DicomClient(me))
 			{
-				AEServer server = this.Context.LastSearchedServer;
+				AEServer server = this.Context.SelectedServer;
 				Uid studyUid = new Uid(this.Context.SelectedStudy.StudyInstanceUID);
 
 				// Try to create the storage directory if it doesn't already exist.
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (this.Context.LastSearchedServer.Host != "localhost")
+			if (this.Context.SelectedServer.Host != "localhost")
 				this.Context.DefaultActionHandler = RetrieveStudy;
 		}
 
@@ -130,20 +130,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from a remote machine, then we don't
 			// even care whether a study has been selected or not
-			if (this.Context.LastSearchedServer.Host == "localhost")
+			if (this.Context.SelectedServer.Host == "localhost")
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
 		}
 
-		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
+		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
 			// If no study is selected then we don't even care whether
 			// the last searched server has changed.
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			if (this.Context.LastSearchedServer.Host == "localhost")
+			if (this.Context.SelectedServer.Host == "localhost")
 				this.Enabled = false;
 			else
 				this.Enabled = true;

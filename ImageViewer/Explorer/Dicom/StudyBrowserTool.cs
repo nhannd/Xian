@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			base.Initialize();
 			this.Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
-			this.Context.LastSearchedServerChanged += new EventHandler(OnLastSearchedServerChanged);
+			this.Context.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 		}
 
 		protected virtual void OnSelectedStudyChanged(object sender, EventArgs e)
@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				this.Enabled = false;
 		}
 
-		protected abstract void OnLastSearchedServerChanged(object sender, EventArgs e);
+		protected abstract void OnSelectedServerChanged(object sender, EventArgs e);
 
 		public bool Enabled
 		{

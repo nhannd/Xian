@@ -28,15 +28,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		AEServer SelectedServer { get; }
 
-		AEServer LastSearchedServer { get; }
-
 		event EventHandler SelectedStudyChanged;
 
 		event EventHandler SelectedServerChanged;
-
-		event EventHandler LastSearchedServerChanged;
-
-		IStudyLoader StudyLoader { get; }
 
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
@@ -70,11 +64,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				get { return _component._selectedServer; }
 			}
 
-			public AEServer LastSearchedServer
-			{
-				get { return _component._lastSearchedServer; }
-			}
-
 			public event EventHandler SelectedStudyChanged
 			{
 				add { _component.SelectedStudyChanged += value; }
@@ -85,12 +74,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				add { _component.SelectedServerChanged += value; }
 				remove { _component.SelectedServerChanged -= value; }
-			}
-
-			public event EventHandler LastSearchedServerChanged
-			{
-				add { _component.LastSearchedServerChanged += value; }
-				remove { _component.LastSearchedServerChanged -= value; }
 			}
 
 			public ClickHandlerDelegate DefaultActionHandler
@@ -104,11 +87,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				get { return _component.Host.DesktopWindow; }
 			}
 
-			public IStudyLoader StudyLoader
-			{
-				get { return _component._studyLoader; }
-			}
-
 			public void RefreshStudyList()
 			{
 				_component.Search();
@@ -116,14 +94,78 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			#endregion
 		}
+
+		public class SearchResult
+		{
+			private TableData<StudyItem> _studyList;
+			private string _resultsTitle = "";
+			private string _lastName = "";
+			private string _firstName = "";
+			private string _patientID = "";
+			private string _accessionNumber = "";
+			private string _studyDescription = "";
+
+			public SearchResult()
+			{
+
+			}
+
+			public TableData<StudyItem> StudyList
+			{
+				get 
+				{
+					if (_studyList == null)
+						_studyList = new TableData<StudyItem>();
+
+					return _studyList; 
+				}
+			}
+
+			public string ResultsTitle
+			{
+				get { return _resultsTitle; }
+				set { _resultsTitle = value; }
+			}
+
+			public string AccessionNumber
+			{
+				get { return _accessionNumber; }
+				set { _accessionNumber = value; }
+			}
+
+			public string PatientID
+			{
+				get { return _patientID; }
+				set { _patientID = value; }
+			}
+
+			public string FirstName
+			{
+				get { return _firstName; }
+				set	{ _firstName = value; }
+			}
+
+			public string LastName
+			{
+				get { return _lastName; }
+				set { _lastName = value; }
+			}
+
+			public string StudyDescription
+			{
+				get { return _studyDescription; }
+				set { _studyDescription = value; }
+			}
+		}
 	
 		#region Fields
 
 		private IStudyFinder _studyFinder;
-		private IStudyLoader _studyLoader;
-		private TableData<StudyItem> _studyList;
+		private Dictionary<string, SearchResult> _searchResults;
+		private TableData<StudyItem> _currentStudyList;
 
-		private string _title;
+		private string _searchTitle;
+		private string _resultsTitle;
 
 		private string _lastName = "";
 		private string _firstName = "";
@@ -139,9 +181,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private AEServer _selectedServer;
 		private event EventHandler _selectedServerChangedEvent;
 
-		private AEServer _lastSearchedServer;
-		private event EventHandler _lastSearchedServerChangedEvent;
-
 		private ActionModelRoot _toolbarModel;
 		private ActionModelRoot _contextMenuModel;
 
@@ -153,9 +192,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#endregion
 
+		public StudyBrowserComponent()
+		{
+			_searchResults = new Dictionary<string, SearchResult>();
+		}
+
 		public TableData<StudyItem> StudyList
 		{
-			get { return _studyList; }
+			get { return _currentStudyList; }
+			set
+			{
+				_currentStudyList = value;
+				OnPropertyChanged("StudyList");
+			}
 		}
 
 		public ActionModelRoot ToolbarModel
@@ -167,15 +216,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get { return _contextMenuModel; }
 		}
-	
 
-		public string Title
+		public string SearchTitle
 		{
-			get { return _title; }
-			set 
+			get { return _searchTitle; }
+			set
 			{ 
-				_title = value;
-				OnPropertyChanged("Title");
+				_searchTitle = value;
+				OnPropertyChanged("SearchTitle");
+			}
+		}
+
+		public string ResultsTitle
+		{
+			get { return _resultsTitle; }
+			set
+			{
+				_resultsTitle = value;
+				OnPropertyChanged("ResultsTitle");
 			}
 		}
 
@@ -231,7 +289,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private StudyItem SelectedStudy
 		{
-			get { return _currentSelection.Item as StudyItem; }
+			get 
+			{
+				if (_currentSelection == null)
+					return null;
+
+				return _currentSelection.Item as StudyItem; 
+			}
 		}
 
 		private event EventHandler SelectedStudyChanged
@@ -240,16 +304,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _selectedStudyChangedEvent -= value; }
 		}
 
-		private event EventHandler SelectedServerChanged
+		public event EventHandler SelectedServerChanged
 		{
 			add { _selectedServerChangedEvent += value; }
 			remove { _selectedServerChangedEvent -= value; }
-		}
-
-		private event EventHandler LastSearchedServerChanged
-		{
-			add { _lastSearchedServerChangedEvent += value; }
-			remove { _lastSearchedServerChangedEvent -= value; }
 		}
 
 		#region IApplicationComponent overrides
@@ -258,15 +316,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			base.Start();
 
-			_studyList = new TableData<StudyItem>();
-
-			AddColumns();
-
 			_toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
-			_studyLoader = ImageViewerComponent.StudyManager.StudyLoaders["DICOM_LOCAL"];
-			_title = "Search";
+			this.SearchTitle = "Search";
 		}
 
 		public override void Stop()
@@ -276,11 +329,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#endregion
 
+		public void SelectServer(AEServer selectedServer)
+		{
+			if (_selectedServer == selectedServer)
+				return;
+
+			_selectedServer = selectedServer;
+
+			if (selectedServer.Host == "localhost")
+				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_LOCAL"];
+			else
+				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_REMOTE"];
+
+			if (!_searchResults.ContainsKey(_selectedServer.Servername))
+			{
+				SearchResult searchResult = new SearchResult();
+				searchResult.ResultsTitle = String.Format("{0}", _selectedServer.Servername);
+				AddColumns(searchResult.StudyList);
+
+				_searchResults.Add(_selectedServer.Servername, searchResult);
+			}
+
+			UpdateView();
+
+			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
+		}
+
 		public void Search()
 		{
 			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
 
 			string patientsName = _lastName + GetWildcard() + "^" + _firstName + GetWildcard();
+			//string patientsName = _lastName + GetWildcard();
 			string patientID = _patientID + GetWildcard();
 			string accessionNumber = _accessionNumber + GetWildcard();
 			string studyDescription = _studyDescription + GetWildcard();
@@ -303,18 +383,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				throw;
 			}
 
-			_studyList.Clear();
+			this.ResultsTitle = String.Format("{0} studies found on {1}", studyItemList.Count, _selectedServer.Servername);
+			UpdateComponent();
 
 			foreach (StudyItem item in studyItemList)
-				_studyList.Add(item);
-
-			this.Title = String.Format("Search Results from {0}", _selectedServer.Servername);
-
-			if (_selectedServer != _lastSearchedServer)
-			{
-				_lastSearchedServer = _selectedServer;
-				EventsHelper.Fire(_lastSearchedServerChangedEvent, this, EventArgs.Empty);
-			}
+				_searchResults[_selectedServer.Servername].StudyList.Add(item);
 		}
 
 		public void Clear()
@@ -343,49 +416,62 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public void SelectServer(AEServer selectedServer)
+		private void UpdateComponent()
 		{
-			_selectedServer = selectedServer;
-
-			if (_lastSearchedServer == null)
-				_lastSearchedServer = selectedServer;
-
-			if (selectedServer.Host == "localhost")
-				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_LOCAL"];
-			else
-				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_REMOTE"];
-
-			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
+			_searchResults[_selectedServer.Servername].ResultsTitle = this.ResultsTitle;
+			_searchResults[_selectedServer.Servername].PatientID = this.PatientID;
+			_searchResults[_selectedServer.Servername].LastName = this.LastName;
+			_searchResults[_selectedServer.Servername].FirstName = this.FirstName;
+			_searchResults[_selectedServer.Servername].AccessionNumber = this.AccessionNumber;
+			_searchResults[_selectedServer.Servername].StudyDescription = this.StudyDescription;
+			_searchResults[_selectedServer.Servername].StudyList.Clear();
 		}
 
-		private void AddColumns()
+		private void UpdateView()
 		{
-			_studyList.Columns.Add(
+			this.ResultsTitle = _searchResults[_selectedServer.Servername].ResultsTitle;
+			this.StudyList = _searchResults[_selectedServer.Servername].StudyList;
+
+			//this.PatientID = _searchResults[_selectedServer.Servername].PatientID;
+			//this.LastName = _searchResults[_selectedServer.Servername].LastName;
+			//this.FirstName = _searchResults[_selectedServer.Servername].FirstName;
+			//this.AccessionNumber = _searchResults[_selectedServer.Servername].AccessionNumber;
+			//this.StudyDescription = _searchResults[_selectedServer.Servername].StudyDescription;
+		}
+
+		private void AddColumns(TableData<StudyItem> studyList)
+		{
+			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Patient ID",
 					delegate(StudyItem item) { return item.PatientId; }
 					));
-			_studyList.Columns.Add(
+			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Last Name",
 					delegate(StudyItem item) { return item.LastName; }
 					));
-			_studyList.Columns.Add(
+			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"First Name",
 					delegate(StudyItem item) { return item.FirstName; }
 					));
-			_studyList.Columns.Add(
+			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Accession Number",
 					delegate(StudyItem item) { return item.AccessionNumber; }
 					));
-			_studyList.Columns.Add(
+			studyList.Columns.Add(
+				new TableColumn<StudyItem, string>(
+					"Study Date",
+					delegate(StudyItem item) { return item.StudyDate; }
+					));
+			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"DOB",
 					delegate(StudyItem item) { return item.PatientsBirthDate; }
 					));
-			_studyList.Columns.Add(
+			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Description",
 					delegate(StudyItem item) { return item.StudyDescription; }

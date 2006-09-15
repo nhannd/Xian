@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			InitializeComponent();
 
 			_studyBrowserComponent = component;
+			_studyBrowserComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 
 			_studyTableView.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			_studyTableView.DataSource = _studyBrowserComponent.StudyList;
@@ -41,7 +42,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studySearchForm.PatientId.DataBindings.Add("Text", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studySearchForm.StudyDescription.DataBindings.Add("Text", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_titleBar.DataBindings.Add("Text", _studyBrowserComponent, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
+			_searchTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "SearchTitle", true, DataSourceUpdateMode.OnPropertyChanged);
+			_resultsTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "ResultsTitle", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		void OnSelectedServerChanged(object sender, EventArgs e)
+		{
+			_studyTableView.DataSource = _studyBrowserComponent.StudyList;
 		}
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)

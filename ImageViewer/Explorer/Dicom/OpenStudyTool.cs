@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -43,8 +44,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			try
 			{
-				this.Context.StudyLoader.LoadStudy(studyInstanceUid);
-
+				IStudyLoader studyLoader = ImageViewerComponent.StudyManager.StudyLoaders["DICOM_LOCAL"];
+				studyLoader.LoadStudy(studyInstanceUid);
 			}
 			catch (OpenStudyException e)
 			{
@@ -69,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (this.Context.LastSearchedServer.Host == "localhost")
+			if (this.Context.SelectedServer.Host == "localhost")
 				this.Context.DefaultActionHandler = OpenStudy;
 		}
 
@@ -77,20 +78,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from the local machine, then we don't
 			// even care whether a study has been selected or not
-			if (this.Context.LastSearchedServer.Host != "localhost")
+			if (this.Context.SelectedServer.Host != "localhost")
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
 		}
 
-		protected override void OnLastSearchedServerChanged(object sender, EventArgs e)
+		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
 			// If no study is selected then we don't even care whether
 			// the last searched server has changed.
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			if (this.Context.LastSearchedServer.Host == "localhost")
+			if (this.Context.SelectedServer.Host == "localhost")
 				this.Enabled = true;
 			else
 				this.Enabled = false;
