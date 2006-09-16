@@ -48,6 +48,13 @@
     </Compile>
     <Compile Include="ApplicationComponentHostShelfView.cs" />
     <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="DialogComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DialogComponentContainerControl.Designer.cs">
+      <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogComponentContainerView.cs" />
     <Compile Include="CustomUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -118,6 +125,10 @@
     <EmbeddedResource Include="DialogBoxForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DialogBoxForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogComponentContainerControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NavigatorComponentContainerControl.resx">
       <SubType>Designer</SubType>

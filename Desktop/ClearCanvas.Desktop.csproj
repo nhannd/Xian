@@ -55,6 +55,8 @@
     <Compile Include="ApplicationComponentHostDialog.cs" />
     <Compile Include="ApplicationComponentHostShelf.cs" />
     <Compile Include="ClosingEventArgs.cs" />
+    <Compile Include="DialogContent.cs" />
+    <Compile Include="DialogComponentContainer.cs" />
     <Compile Include="ITableColumn.cs" />
     <Compile Include="SplitComponentContainer.cs">
       <SubType>Code</SubType>

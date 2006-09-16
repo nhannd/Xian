@@ -35,12 +35,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (this.Context.SelectedServer == null)
                 return;
 
+			AENavigatorComponent aeNavigator = new AENavigatorComponent();
+			DialogContent content = new DialogContent(aeNavigator);
+			DialogComponentContainer dialogContainer = new DialogComponentContainer(content);
+
+			ApplicationComponentExitCode code =
+				ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow, 
+					dialogContainer, 
+					"Send Study");
+
+			if (code == ApplicationComponentExitCode.Cancelled)
+				return;
+
+			ApplicationEntity destinationAE = aeNavigator.ServerSelected;
+
+			if (destinationAE == null)
+			{
+				Platform.ShowMessageBox("Destination has not been selected");
+				return;
+			}
+
         	LocalAESettings myAESettings = new LocalAESettings();
             ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
 
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
-				DicomServicesLayer.GetISendService(me).Send(new Uid(item.StudyInstanceUID), this.Context.SelectedServer);
+				DicomServicesLayer.GetISendService(me).Send(new Uid(item.StudyInstanceUID), destinationAE);
 			}
 		}
 
