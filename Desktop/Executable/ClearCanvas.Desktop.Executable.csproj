@@ -89,6 +89,9 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="Logging.config" />
+    <None Include="PostBuild.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -126,117 +129,6 @@
   <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>
     <PreBuildEvent />
-    <PostBuildEvent>
-      :: Delete contents of plugin directory
-      del /Q .\plugins\*.*
-
-      :: Make required directories
-      md .\common
-      md .\plugins
-      md .\logs
-      md .\datastore
-
-      :: Copy shared config files
-      copy ..\..\Logging.config .
-
-      :: Copy shared libraries
-      copy "..\..\..\..\Common\bin\$(ConfigurationName)\*.*" .\Common
-      copy "..\..\..\..\Common\refs\nunit.framework.dll" .\Common 
-      copy "..\..\..\..\Common\refs\log4net.dll" .\Common
-      copy "..\..\..\..\Controls\WinForms\bin\$(ConfigurationName)\ClearCanvas.Controls.WinForms.dll" .\Common
-      copy "..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL" .\Common
-      copy "..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" .\Common
-      copy "..\..\..\..\ReferencedAssemblies\Nhibernate.dll" .\Common
-      copy "..\..\..\..\ReferencedAssemblies\Nhibernate.Mapping.Attributes.dll" .\Common
-      copy "..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" .\Common
-      copy "..\..\..\..\Dicom\DataStore\bin\$(ConfigurationName)\ClearCanvas.Dicom.DataStore.dll" .\Common
-      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite3.dll" .\Common
-      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite.NET.dll" .\Common
-
-      :: Copy shared plugins
-      copy "..\..\..\bin\$(ConfigurationName)\ClearCanvas.Desktop.dll" .\plugins
-      copy "..\..\..\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.View.WinForms.dll" .\plugins
-      copy "..\..\..\Help\bin\$(ConfigurationName)\ClearCanvas.Desktop.Help.dll" .\plugins
-      copy "..\..\..\ExtensionBrowser\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.dll" .\plugins
-      copy "..\..\..\ExtensionBrowser\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" .\plugins
-
-      :: Copy config files
-      copy "..\..\..\Actions\actionmodels.xml .
-
-if $(SolutionName) == Ris goto RisModules
-
-      :: Copy database file
-      copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" .\datastore
-
-      :: Copy Hibernate configuration file
-      copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" .
-
-      :: Copy database rebuild utility
-      copy "..\..\..\..\Utilities\RebuildDatabase\bin\$(ConfigurationName)\ClearCanvas.Utilities.RebuildDatabase.exe" .
-      copy "..\..\..\..\Utilities\RebuildDatabase\app.config" .\ClearCanvas.Utilities.RebuildDatabase.exe.config
-
-      :: Copy Dicom assemblies	
-      copy "..\..\..\..\Dicom\bin\$(ConfigurationName)\ClearCanvas.Dicom.dll" .\Common
-      copy "..\..\..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll" .\Common
-      copy "..\..\..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll" .\Common
-      copy "..\..\..\..\DataStore\bin\$(ConfigurationName)\ClearCanvas.DataStore.dll" .\Common
-
-      :: Copy ImageViewer plugins
-      copy "..\..\..\..\Codecs\bin\$(ConfigurationName)\ClearCanvas.Codecs.dll" .\plugins
-      copy "..\..\..\Explorer\bin\$(ConfigurationName)\ClearCanvas.Desktop.Explorer.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.View.WinForms.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Measurement.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Tools\Standard\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Tools.Standard.dll" .\plugins
-      copy "..\..\..\Edit\bin\$(ConfigurationName)\ClearCanvas.Desktop.Edit.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Explorer\Local\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Explorer\Local\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Explorer\Dicom\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Layout\Basic\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Renderer\GDI\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\Renderer\GDI\BilinearInterpolation\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.Renderer.GDI.BilinearInterpolation.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\StudyFinders\Remote\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" .\plugins
-      copy "..\..\..\..\ImageViewer\TextOverlay\bin\$(ConfigurationName)\ClearCanvas.ImageViewer.TextOverlay.dll" .\plugins
-      copy "..\..\..\..\Dicom\Services\bin\$(ConfigurationName)\ClearCanvas.Dicom.Services.dll" .\plugins
-      copy "..\..\..\..\Dicom\Services\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Dicom.Services.View.WinForms.dll" .\plugins
-
-      :: Important to exit here - do not copy the Ris Modules
-      exit
-
-:RisModules
-
-      :: Copy Enterprise	
-      copy "..\..\..\..\Enterprise\bin\$(ConfigurationName)\ClearCanvas.Enterprise.dll" .\plugins
-      copy "..\..\..\..\Enterprise\refs\Iesi.Collections.dll" .\plugins
-      copy "..\..\..\..\Enterprise\refs\Spring.Core.dll" .\plugins
-      copy "..\..\..\..\Enterprise\refs\Spring.Aop.dll" .\plugins
-
-      copy "..\..\..\..\Enterprise\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Enterprise.Hibernate.dll" .\plugins
-      copy "..\..\..\..\Enterprise\Hibernate\DdlWriter\bin\$(ConfigurationName)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" .\plugins
-      copy "..\..\..\..\Enterprise\Hibernate\refs\Castle.DynamicProxy.dll" .\plugins
-      copy "..\..\..\..\Enterprise\Hibernate\refs\HashCodeProvider.dll" .\plugins
-      copy "..\..\..\..\Enterprise\Hibernate\refs\NHibernate.dll" .\plugins
-      copy "..\..\..\..\Enterprise\Hibernate\hibernate.cfg.xml" .
-
-
-      :: copy Healthcare
-      copy "..\..\..\..\Healthcare\bin\$(ConfigurationName)\ClearCanvas.Healthcare.dll" .\plugins
-      copy "..\..\..\..\Healthcare\Hibernate\bin\$(ConfigurationName)\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
-
-      :: Ris
-      copy "..\..\..\..\Ris\Services\bin\$(ConfigurationName)\ClearCanvas.Ris.Services.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Admin\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Admin\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Adt\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Adt.dll" .\plugins
-      copy "..\..\..\..\Ris\Client\Adt\View\WinForms\bin\$(ConfigurationName)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" .\plugins
-     
-      ::Nop so that VS doesn't complain if the last copy fails
-      echo Done
-
-</PostBuildEvent>
+    <PostBuildEvent>PostBuild.bat "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
