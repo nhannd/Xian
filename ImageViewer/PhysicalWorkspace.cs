@@ -64,6 +64,8 @@ namespace ClearCanvas.ImageViewer
 		private bool _isRectangularImageBoxGrid;
 		private CaptureUIEventHandler _captureUIEventHandler = new CaptureUIEventHandler();
 		private bool _dynamicAction = false;
+		private bool _contextMenuEnabled = true;
+		private Point _lastMousePoint;
 
         internal PhysicalWorkspace(IImageViewer parentViewer)
 		{
@@ -166,6 +168,11 @@ namespace ClearCanvas.ImageViewer
 
 				_selectedImageBox = value;
 			}
+		}
+
+		internal bool ContextMenuEnabled
+		{
+			get { return _contextMenuEnabled; }
 		}
 
 		/// <summary>
@@ -284,6 +291,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
+			// HACK: Assume that the user intends to bring up the context menu
+			// when he clicks the right mouse button.  We'll determine
+			// in OnMouseMove whether this was a correct assumption.
+			_contextMenuEnabled = true;
+			_lastMousePoint = new Point(e.X, e.Y);
+
 			if (!_captureUIEventHandler.OnMouseDown(e))
 			{
 				return _uiEventHandler.OnMouseDown(e);
@@ -302,6 +315,20 @@ namespace ClearCanvas.ImageViewer
 		public bool OnMouseMove(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
+
+			// HACK: If right mouse button is pressed and the mouse is moving,
+			// the assumption we made in OnMouseDown was incorrect;
+			// the user's real intent was to use a MouseTool, not bring
+			// up the context menu.
+			if (e.Button == XMouseButtons.Right)
+			{
+				// Unfortunately, OnMouseMove is called by .NET after
+				// a mouse down even if the mouse hasn't moved, so 
+				// we have to make sure the mouse has in fact moved
+				// before we disable the context menu.
+				if (_lastMousePoint != new Point(e.X, e.Y))
+					_contextMenuEnabled = false;
+			}
 
 			if (!_captureUIEventHandler.OnMouseMove(e))
 			{

@@ -121,6 +121,9 @@ namespace ClearCanvas.ImageViewer
         {
             get
             {
+				if (!this.PhysicalWorkspace.ContextMenuEnabled)
+					return null;
+
 				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 
 				// insert dynamic items into model here

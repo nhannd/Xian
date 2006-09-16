@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
-            :base(XMouseButtons.Middle, true, false)
+            :base(XMouseButtons.Right, true, false)
 		{
 		}
 
