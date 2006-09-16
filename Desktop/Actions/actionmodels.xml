@@ -4,8 +4,8 @@
     <action id="ClearCanvas.Desktop.ExtensionBrowser.ExtensionBrowserTool:show" path="global-menus/MenuFile/MenuExtensionBrowser" />
     <action id="ClearCanvas.Desktop.View.WinForms.StockDesktopTools+CloseWorkspaceTool:closeWorkspace" path="global-menus/MenuFile/MenuFileCloseWorkspace" />
     <action id="ClearCanvas.Desktop.View.WinForms.StockDesktopTools+ExitAppTool:exit" path="global-menus/MenuFile/MenuFileExitApplication" />
-    <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:redo" path="global-menus/MenuEdit/MenuEditRedo" />
     <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:undo" path="global-menus/MenuEdit/MenuEditUndo" />
+    <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:redo" path="global-menus/MenuEdit/MenuEditRedo" />
     <action id="ClearCanvas.ImageViewer.Layout.Basic.LayoutTool:show" path="global-menus/MenuLayout/MenuLayoutLayoutManager" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardStack" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardWindowLevel" />
@@ -18,11 +18,12 @@
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler" />
     <action id="ClearCanvas.Desktop.Help.HelpTool:activate" path="global-menus/MenuHelp/MenuHelpAbout" />
+    <action id="ClearCanvas.Dicom.Services.QueueDisplayLaunchTool:launch" path="global-menus/Services/Queue" />
   </action-model>
   <action-model id="ClearCanvas.Desktop.DesktopWindow:global-toolbars">
     <action id="ClearCanvas.Desktop.Explorer.ExplorerTool:show" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardStudyCentre" />
-    <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:redo" path="global-toolbars/ToolbarStandard/ToolbarStandardRedo" />
     <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:undo" path="global-toolbars/ToolbarStandard/ToolbarStandardUndo" />
+    <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:redo" path="global-toolbars/ToolbarStandard/ToolbarStandardRedo" />
     <action id="ClearCanvas.ImageViewer.Layout.Basic.LayoutTool:show" path="global-toolbars/ToolbarStandard/MenuLayoutLayoutManager" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardStack" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardWindowLevel" />
@@ -40,5 +41,18 @@
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="imageviewer-contextmenu/MenuToolsStandardWindowLevel" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="imageviewer-contextmenu/MenuToolsStandardPan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="imageviewer-contextmenu/MenuToolsStandardZoom" />
+    <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="imageviewer-contextmenu/ToolsMeasurementRuler" />
+  </action-model>
+  <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.StudyBrowserComponent:dicomstudybrowser-toolbar">
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.OpenStudyTool:activate" path="dicomstudybrowser-toolbar/Open" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.RetrieveStudyTool:activate" path="dicomstudybrowser-toolbar/Retrieve" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.SendStudyTool:activate" path="dicomstudybrowser-toolbar/Send" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.DeleteStudyTool:activate" path="dicomstudybrowser-toolbar/Delete" />
+  </action-model>
+  <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.StudyBrowserComponent:dicomstudybrowser-contextmenu">
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.OpenStudyTool:activate" path="dicomstudybrowser-contextmenu/Open" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.RetrieveStudyTool:activate" path="dicomstudybrowser-contextmenu/Retrieve" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.SendStudyTool:activate" path="dicomstudybrowser-contextmenu/Send" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.DeleteStudyTool:activate" path="dicomstudybrowser-contextmenu/Delete" />
   </action-model>
 </action-models>
