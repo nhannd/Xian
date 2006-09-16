@@ -17,8 +17,8 @@
     <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateRightTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardRotateRight" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler" />
-    <action id="ClearCanvas.Desktop.Help.HelpTool:activate" path="global-menus/MenuHelp/MenuHelpAbout" />
     <action id="ClearCanvas.Dicom.Services.QueueDisplayLaunchTool:launch" path="global-menus/Services/Queue" />
+    <action id="ClearCanvas.Desktop.Help.HelpTool:activate" path="global-menus/MenuHelp/MenuHelpAbout" />
   </action-model>
   <action-model id="ClearCanvas.Desktop.DesktopWindow:global-toolbars">
     <action id="ClearCanvas.Desktop.Explorer.ExplorerTool:show" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardStudyCentre" />
