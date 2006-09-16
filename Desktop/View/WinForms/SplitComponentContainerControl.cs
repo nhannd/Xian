@@ -22,17 +22,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			SplitPane pane1 = _component.Pane1;
 			SplitPane pane2 = _component.Pane2;
 
-			Control c = this.Parent;
-
-
 			if (component.SplitOrientation == SplitOrientation.Horizontal)
-			{
 				_splitContainer.Orientation = Orientation.Horizontal;
-			}
 			else
-			{
 				_splitContainer.Orientation = Orientation.Vertical;
-			}
 
 			Control control1 = pane1.ComponentHost.ComponentView.GuiElement as Control;
 			Control control2 = pane2.ComponentHost.ComponentView.GuiElement as Control;
