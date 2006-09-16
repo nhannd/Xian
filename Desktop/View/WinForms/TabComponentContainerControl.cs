@@ -20,6 +20,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 			_component = component;
 
+			_tabControl.ControlLeftOffset = 3;
+			_tabControl.ControlTopOffset = 3;
+			_tabControl.ControlRightOffset = 3;
+			_tabControl.ControlBottomOffset = 3;
+
 			foreach (TabPage page in _component.Pages)
 			{
 				Control control = page.ComponentHost.ComponentView.GuiElement as Control;

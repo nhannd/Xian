@@ -19,16 +19,28 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			SplitPane leftPane = _component.LeftPane;
-			SplitPane rightPane = _component.RightPane;
+			SplitPane pane1 = _component.Pane1;
+			SplitPane pane2 = _component.Pane2;
 
-			Control leftControl = leftPane.ComponentHost.ComponentView.GuiElement as Control;
-			Control rightControl = rightPane.ComponentHost.ComponentView.GuiElement as Control;
+			Control c = this.Parent;
 
-			_splitContainer.Panel1.Controls.Add(leftControl);
-			_splitContainer.Panel2.Controls.Add(rightControl);
-			leftControl.Dock = DockStyle.Fill;
-			rightControl.Dock = DockStyle.Fill;
+
+			if (component.SplitOrientation == SplitOrientation.Horizontal)
+			{
+				_splitContainer.Orientation = Orientation.Horizontal;
+			}
+			else
+			{
+				_splitContainer.Orientation = Orientation.Vertical;
+			}
+
+			Control control1 = pane1.ComponentHost.ComponentView.GuiElement as Control;
+			Control control2 = pane2.ComponentHost.ComponentView.GuiElement as Control;
+
+			_splitContainer.Panel1.Controls.Add(control1);
+			_splitContainer.Panel2.Controls.Add(control2);
+			control1.Dock = DockStyle.Fill;
+			control2.Dock = DockStyle.Fill;
 		}
 	}
 }

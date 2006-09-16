@@ -1,36 +1,36 @@
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
-	partial class StudySearchForm
-	{
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer _components = null;
+    partial class SearchPanelComponentControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (_components != null))
-			{
-				_components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Component Designer generated code
+        #region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
 			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._patientIDLabel = new System.Windows.Forms.Label();
-			this._patientID = new System.Windows.Forms.TextBox();
+			this._clearButton = new System.Windows.Forms.Button();
 			this._accessionNumberLabel = new System.Windows.Forms.Label();
 			this._accessionNumber = new System.Windows.Forms.TextBox();
 			this._lastNameLabel = new System.Windows.Forms.Label();
@@ -40,8 +40,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._studyDescription = new System.Windows.Forms.TextBox();
 			this._studyDateLabel = new System.Windows.Forms.Label();
 			this._dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-			this._searchButton = new System.Windows.Forms.Button();
 			this._firstNameLabel = new System.Windows.Forms.Label();
+			this._searchButton = new System.Windows.Forms.Button();
+			this._patientID = new System.Windows.Forms.TextBox();
+			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -53,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanel.Controls.Add(this._patientIDLabel, 0, 0);
-			this._tableLayoutPanel.Controls.Add(this._patientID, 1, 0);
+			this._tableLayoutPanel.Controls.Add(this._clearButton, 3, 2);
 			this._tableLayoutPanel.Controls.Add(this._accessionNumberLabel, 2, 0);
 			this._tableLayoutPanel.Controls.Add(this._accessionNumber, 3, 0);
 			this._tableLayoutPanel.Controls.Add(this._lastNameLabel, 0, 1);
@@ -63,9 +65,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._tableLayoutPanel.Controls.Add(this._studyDescription, 1, 3);
 			this._tableLayoutPanel.Controls.Add(this._studyDateLabel, 0, 2);
 			this._tableLayoutPanel.Controls.Add(this._dateTimePicker1, 1, 2);
-			this._tableLayoutPanel.Controls.Add(this._searchButton, 3, 3);
 			this._tableLayoutPanel.Controls.Add(this._firstNameLabel, 2, 1);
-			this._tableLayoutPanel.Location = new System.Drawing.Point(12, 18);
+			this._tableLayoutPanel.Controls.Add(this._searchButton, 3, 3);
+			this._tableLayoutPanel.Controls.Add(this._patientID, 1, 0);
+			this._tableLayoutPanel.Location = new System.Drawing.Point(6, 29);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
 			this._tableLayoutPanel.RowCount = 4;
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -73,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.Size = new System.Drawing.Size(469, 106);
-			this._tableLayoutPanel.TabIndex = 1;
+			this._tableLayoutPanel.TabIndex = 2;
 			// 
 			// _patientIDLabel
 			// 
@@ -85,13 +88,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._patientIDLabel.TabIndex = 1;
 			this._patientIDLabel.Text = "Patient ID";
 			// 
-			// _patientID
+			// _clearButton
 			// 
-			this._patientID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._patientID.Location = new System.Drawing.Point(99, 3);
-			this._patientID.Name = "_patientID";
-			this._patientID.Size = new System.Drawing.Size(141, 20);
-			this._patientID.TabIndex = 0;
+			this._clearButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this._clearButton.Location = new System.Drawing.Point(353, 55);
+			this._clearButton.Name = "_clearButton";
+			this._clearButton.Size = new System.Drawing.Size(75, 23);
+			this._clearButton.TabIndex = 7;
+			this._clearButton.Text = "Clear";
+			this._clearButton.UseVisualStyleBackColor = true;
 			// 
 			// _accessionNumberLabel
 			// 
@@ -141,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._studyDescriptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._studyDescriptionLabel.AutoSize = true;
-			this._studyDescriptionLabel.Location = new System.Drawing.Point(3, 85);
+			this._studyDescriptionLabel.Location = new System.Drawing.Point(3, 88);
 			this._studyDescriptionLabel.Name = "_studyDescriptionLabel";
 			this._studyDescriptionLabel.Size = new System.Drawing.Size(90, 13);
 			this._studyDescriptionLabel.TabIndex = 6;
@@ -150,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _studyDescription
 			// 
 			this._studyDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._studyDescription.Location = new System.Drawing.Point(99, 82);
+			this._studyDescription.Location = new System.Drawing.Point(99, 85);
 			this._studyDescription.Name = "_studyDescription";
 			this._studyDescription.Size = new System.Drawing.Size(141, 20);
 			this._studyDescription.TabIndex = 5;
@@ -159,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._studyDateLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._studyDateLabel.AutoSize = true;
-			this._studyDateLabel.Location = new System.Drawing.Point(3, 58);
+			this._studyDateLabel.Location = new System.Drawing.Point(3, 60);
 			this._studyDateLabel.Name = "_studyDateLabel";
 			this._studyDateLabel.Size = new System.Drawing.Size(60, 13);
 			this._studyDateLabel.TabIndex = 3;
@@ -169,20 +174,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._dateTimePicker1.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._dateTimePicker1.Enabled = false;
-			this._dateTimePicker1.Location = new System.Drawing.Point(99, 55);
+			this._dateTimePicker1.Location = new System.Drawing.Point(99, 56);
 			this._dateTimePicker1.Name = "_dateTimePicker1";
 			this._dateTimePicker1.Size = new System.Drawing.Size(141, 20);
 			this._dateTimePicker1.TabIndex = 4;
-			// 
-			// _searchButton
-			// 
-			this._searchButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this._searchButton.Location = new System.Drawing.Point(353, 81);
-			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(75, 22);
-			this._searchButton.TabIndex = 6;
-			this._searchButton.Text = "Search";
-			this._searchButton.UseVisualStyleBackColor = true;
 			// 
 			// _firstNameLabel
 			// 
@@ -194,35 +189,67 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._firstNameLabel.TabIndex = 4;
 			this._firstNameLabel.Text = "First Name";
 			// 
-			// StudySearchForm
+			// _searchButton
+			// 
+			this._searchButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this._searchButton.Location = new System.Drawing.Point(353, 84);
+			this._searchButton.Name = "_searchButton";
+			this._searchButton.Size = new System.Drawing.Size(75, 22);
+			this._searchButton.TabIndex = 6;
+			this._searchButton.Text = "Search";
+			this._searchButton.UseVisualStyleBackColor = true;
+			// 
+			// _patientID
+			// 
+			this._patientID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._patientID.Location = new System.Drawing.Point(99, 3);
+			this._patientID.Name = "_patientID";
+			this._patientID.Size = new System.Drawing.Size(141, 20);
+			this._patientID.TabIndex = 0;
+			// 
+			// _titleBar
+			// 
+			this._titleBar.Dock = System.Windows.Forms.DockStyle.Top;
+			this._titleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._titleBar.Location = new System.Drawing.Point(0, 0);
+			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
+			this._titleBar.Name = "_titleBar";
+			this._titleBar.Size = new System.Drawing.Size(480, 23);
+			this._titleBar.TabIndex = 3;
+			this._titleBar.Text = "Search";
+			// 
+			// SearchPanelComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Controls.Add(this._titleBar);
 			this.Controls.Add(this._tableLayoutPanel);
-			this.MinimumSize = new System.Drawing.Size(494, 159);
-			this.Name = "StudySearchForm";
-			this.Size = new System.Drawing.Size(494, 159);
+			this.Name = "SearchPanelComponentControl";
+			this.Size = new System.Drawing.Size(480, 146);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this._tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 
-		}
+        }
 
-		#endregion
+        #endregion
 
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
-		private System.Windows.Forms.TextBox _patientID;
-		private System.Windows.Forms.TextBox _lastName;
-		private System.Windows.Forms.Label _firstNameLabel;
-		private System.Windows.Forms.TextBox _firstName;
+		private System.Windows.Forms.Label _patientIDLabel;
+		private System.Windows.Forms.Button _clearButton;
+		private System.Windows.Forms.Label _accessionNumberLabel;
+		private System.Windows.Forms.TextBox _accessionNumber;
 		private System.Windows.Forms.Label _lastNameLabel;
+		private System.Windows.Forms.TextBox _lastName;
+		private System.Windows.Forms.TextBox _firstName;
 		private System.Windows.Forms.Label _studyDescriptionLabel;
 		private System.Windows.Forms.TextBox _studyDescription;
-		private System.Windows.Forms.Label _patientIDLabel;
-		private System.Windows.Forms.Label _accessionNumberLabel;
 		private System.Windows.Forms.Label _studyDateLabel;
 		private System.Windows.Forms.DateTimePicker _dateTimePicker1;
-		private System.Windows.Forms.TextBox _accessionNumber;
+		private System.Windows.Forms.Label _firstNameLabel;
 		private System.Windows.Forms.Button _searchButton;
-	}
+		private System.Windows.Forms.TextBox _patientID;
+		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+    }
 }

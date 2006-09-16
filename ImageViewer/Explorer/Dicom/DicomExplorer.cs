@@ -15,6 +15,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private SplitComponentContainer _splitComponentContainer;
 		private AENavigatorComponent _aeNavigator;
 		private StudyBrowserComponent _studyBrowser;
+		private SearchPanelComponent _searchPanel;
 
 		public DicomExplorer()
 		{
@@ -51,11 +52,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (_studyBrowser == null)
 				_studyBrowser = new StudyBrowserComponent();
 
+			if (_searchPanel == null)
+				_searchPanel = new SearchPanelComponent(_studyBrowser);
+
 			_studyBrowser.SelectServer(GetLocalAE());
 
 			SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);
 			SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser);
-			_splitComponentContainer = new SplitComponentContainer(leftPane, rightPane);
+
+			SplitComponentContainer bottomContainer = 
+				new SplitComponentContainer(
+				leftPane,
+				rightPane, 
+				SplitOrientation.Vertical);
+
+			SplitPane topPane = new SplitPane("Search Panel", _searchPanel);
+			SplitPane bottomPane = new SplitPane("Study Navigator", bottomContainer);
+
+			_splitComponentContainer = 
+				new SplitComponentContainer(
+				topPane, 
+				bottomPane, 
+				SplitOrientation.Horizontal);
 		}
 
 		void OnSelectedServerChanged(object sender, EventArgs e)

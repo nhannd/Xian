@@ -13,6 +13,12 @@ namespace ClearCanvas.Desktop
     {
     }
 
+	public enum SplitOrientation
+	{
+		Horizontal = 0,
+		Vertical = 1
+	}
+
     [AssociateView(typeof(SplitComponentContainerViewExtensionPoint))]
     public class SplitComponentContainer : ApplicationComponentContainer
     {
@@ -100,43 +106,54 @@ namespace ClearCanvas.Desktop
         }
 
 
-		private SplitPane _leftPane;
-		private SplitPane _rightPane;
+		private SplitPane _pane1;
+		private SplitPane _pane2;
+		private SplitOrientation _splitOrientation;
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public SplitComponentContainer(SplitPane leftPane, SplitPane rightPane)
+        public SplitComponentContainer(
+			SplitPane pane1, 
+			SplitPane pane2, 
+			SplitOrientation splitOrientation)
         {
-			_leftPane = leftPane;
-			_rightPane = rightPane;
+			_pane1 = pane1;
+			_pane2 = pane2;
 
-			_leftPane.ComponentHost = new SplitPaneHost(this, _leftPane);
-			_rightPane.ComponentHost = new SplitPaneHost(this, _rightPane);
+			_pane1.ComponentHost = new SplitPaneHost(this, _pane1);
+			_pane2.ComponentHost = new SplitPaneHost(this, _pane2);
+
+			_splitOrientation = splitOrientation;
 		}
 
-		public SplitPane LeftPane
+		public SplitPane Pane1
 		{
-			get { return _leftPane; }
+			get { return _pane1; }
 		}
 
-		public SplitPane RightPane
+		public SplitPane Pane2
 		{
-			get { return _rightPane; }
+			get { return _pane2; }
+		}
+
+		public SplitOrientation SplitOrientation
+		{
+			get { return _splitOrientation; }
 		}
 
 		public override void Start()
         {
 			base.Start();
 
-			_leftPane.ComponentHost.Start();
-			_rightPane.ComponentHost.Start();
+			_pane1.ComponentHost.Start();
+			_pane2.ComponentHost.Start();
         }
 
         public override void Stop()
         {
-            _leftPane.Component.Stop();
-			_rightPane.Component.Stop();
+            _pane1.Component.Stop();
+			_pane2.Component.Stop();
 
             base.Stop();
         }

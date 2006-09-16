@@ -31,18 +31,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyTableView.MenuModel = _studyBrowserComponent.ContextMenuModel;
 			_studyTableView.SelectionChanged += new EventHandler(OnStudyTableViewSelectionChanged);
 			_studyTableView.ItemDoubleClicked += new EventHandler(OnStudyTableViewDoubleClick);
-			_studySearchForm.SearchClicked += new EventHandler(OnSearchClicked);
 
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _studyBrowserComponent;
 
-			_studySearchForm.LastName.DataBindings.Add("Text", _bindingSource, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studySearchForm.FirstName.DataBindings.Add("Text", _bindingSource, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studySearchForm.AccessionNumber.DataBindings.Add("Text", _bindingSource, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studySearchForm.PatientId.DataBindings.Add("Text", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studySearchForm.StudyDescription.DataBindings.Add("Text", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_searchTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "SearchTitle", true, DataSourceUpdateMode.OnPropertyChanged);
 			_resultsTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "ResultsTitle", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
@@ -61,21 +53,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_studyBrowserComponent.ItemDoubleClick();
-			}
-		}
-
-		void OnSearchClicked(object sender, EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				try
-				{
-					_studyBrowserComponent.Search();
-				}
-				catch
-				{
-					Platform.ShowMessageBox("Unable to query server");
-				}
 			}
 		}
 	}

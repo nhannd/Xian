@@ -37,6 +37,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabControl.Location = new System.Drawing.Point(3, 3);
 			this._tabControl.Name = "_tabControl";
 			this._tabControl.OfficeDockSides = false;
+			this._tabControl.OfficeExtraTabInset = 3;
+			this._tabControl.OfficeStyle = Crownwood.DotNetMagic.Controls.OfficeStyle.SoftWhite;
 			this._tabControl.PositionTop = true;
 			this._tabControl.ShowDropSelect = false;
 			this._tabControl.Size = new System.Drawing.Size(772, 447);
@@ -47,6 +49,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.SystemColors.Control;
 			this.Controls.Add(this._tabControl);
 			this.Name = "TabComponentContainerControl";
 			this.Padding = new System.Windows.Forms.Padding(3, 3, 0, 3);

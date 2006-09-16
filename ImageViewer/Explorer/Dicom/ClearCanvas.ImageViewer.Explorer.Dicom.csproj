@@ -50,6 +50,7 @@
     <Compile Include="BrowserNode.cs" />
     <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="IBrowserNode.cs" />
+    <Compile Include="SearchPanelComponent.cs" />
     <Compile Include="SendStudyTool.cs" />
     <Compile Include="ServerPath.cs" />
     <Compile Include="ServerViewRootNode.cs" />

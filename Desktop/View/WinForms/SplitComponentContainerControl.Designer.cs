@@ -34,17 +34,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _splitContainer
 			// 
+			this._splitContainer.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this._splitContainer.Location = new System.Drawing.Point(0, 0);
 			this._splitContainer.Name = "_splitContainer";
 			// 
 			// _splitContainer.Panel1
 			// 
-			this._splitContainer.Panel1.Padding = new System.Windows.Forms.Padding(2, 2, 0, 2);
+			this._splitContainer.Panel1.BackColor = System.Drawing.SystemColors.Control;
 			// 
 			// _splitContainer.Panel2
 			// 
-			this._splitContainer.Panel2.Padding = new System.Windows.Forms.Padding(0, 2, 2, 2);
+			this._splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
 			this._splitContainer.Size = new System.Drawing.Size(745, 485);
 			this._splitContainer.SplitterDistance = 248;
 			this._splitContainer.SplitterWidth = 2;
