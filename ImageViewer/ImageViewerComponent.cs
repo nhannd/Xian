@@ -127,7 +127,10 @@ namespace ClearCanvas.ImageViewer
 				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 
 				// insert dynamic items into model here
-				model.InsertActions(GetDisplaySetActions());
+
+				// NY: Disable these for now, since we haven't quite decided yet
+				// how we're going to manage display sets on the context menu.
+				//model.InsertActions(GetDisplaySetActions());
 
 				return model;
             }
