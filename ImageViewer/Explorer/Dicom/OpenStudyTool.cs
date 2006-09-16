@@ -33,39 +33,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OpenStudy()
 		{
-			if (this.Context.SelectedStudy == null)
+			if (this.Context.SelectedStudies == null)
 				return;
 
-			string studyInstanceUid = this.Context.SelectedStudy.StudyInstanceUID;
-			string label = String.Format("{0}, {1} | {2}",
-				this.Context.SelectedStudy.LastName,
-				this.Context.SelectedStudy.FirstName,
-				this.Context.SelectedStudy.PatientId);
+			foreach (StudyItem item in this.Context.SelectedStudies)
+			{
+				string studyInstanceUid = item.StudyInstanceUID;
+				string label = String.Format("{0}, {1} | {2}",
+					item.LastName,
+					item.FirstName,
+					item.PatientId);
 
-			try
-			{
-				IStudyLoader studyLoader = ImageViewerComponent.StudyManager.StudyLoaders["DICOM_LOCAL"];
-				studyLoader.LoadStudy(studyInstanceUid);
-			}
-			catch (OpenStudyException e)
-			{
-				if (e.StudyCouldNotBeLoaded)
+				try
 				{
-					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
+					IStudyLoader studyLoader = ImageViewerComponent.StudyManager.StudyLoaders["DICOM_LOCAL"];
+					studyLoader.LoadStudy(studyInstanceUid);
+				}
+				catch (OpenStudyException e)
+				{
+					if (e.StudyCouldNotBeLoaded)
+					{
+						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
+						return;
+					}
+
+					if (e.AtLeastOneImageFailedToLoad)
+					{
+						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
+						return;
+					}
+
 					return;
 				}
 
-				if (e.AtLeastOneImageFailedToLoad)
-				{
-					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
-					return;
-				}
-
-				return;
+				ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
+				ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);
 			}
-
-			ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
-			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);
 		}
 
 		private void SetDoubleClickHandler()
@@ -86,17 +89,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			// If no study is selected then we don't even care whether
-			// the last searched server has changed.
-			if (this.Context.SelectedStudy == null)
-				return;
-
 			if (this.Context.SelectedServer.Host == "localhost")
-				this.Enabled = true;
-			else
-				this.Enabled = false;
+			{
+				if (this.Context.SelectedStudy != null)
+					this.Enabled = true;
+				else
+					this.Enabled = false;
 
-			SetDoubleClickHandler();
+				SetDoubleClickHandler();
+			}
+			else
+			{
+				this.Enabled = false;
+			}
 		}
 	}
 }

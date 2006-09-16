@@ -12,6 +12,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Services;
 using System.IO;
 using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -48,22 +49,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			using (DicomClient client = new DicomClient(me))
 			{
 				AEServer server = this.Context.SelectedServer;
-				Uid studyUid = new Uid(this.Context.SelectedStudy.StudyInstanceUID);
 
-				// Try to create the storage directory if it doesn't already exist.
-				// Ideally, this code should eventually be removed when the
-				// directory is handled properly by the dicom.services layer.
-				try
+				foreach (StudyItem item in this.Context.SelectedStudies)
 				{
-					CreateStorageDirectory(myAESettings.DicomStoragePath);
-				}
-				catch
-				{
-					Platform.ShowMessageBox("Unable to create storage directory; cannot retrieve study");
-				}
+					Uid studyUid = new Uid(item.StudyInstanceUID);
 
-				client.SopInstanceReceived += new EventHandler<SopInstanceReceivedEventArgs>(OnSopInstanceReceived);
-				client.Retrieve(server, studyUid, myAESettings.DicomStoragePath);
+					// Try to create the storage directory if it doesn't already exist.
+					// Ideally, this code should eventually be removed when the
+					// directory is handled properly by the dicom.services layer.
+					try
+					{
+						CreateStorageDirectory(myAESettings.DicomStoragePath);
+					}
+					catch
+					{
+						Platform.ShowMessageBox("Unable to create storage directory; cannot retrieve study");
+					}
+
+					client.SopInstanceReceived += new EventHandler<SopInstanceReceivedEventArgs>(OnSopInstanceReceived);
+					client.Retrieve(server, studyUid, myAESettings.DicomStoragePath);
+				}
 			}
 		}
 
@@ -140,15 +145,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If no study is selected then we don't even care whether
 			// the last searched server has changed.
-			if (this.Context.SelectedStudy == null)
-				return;
 
 			if (this.Context.SelectedServer.Host == "localhost")
+			{
 				this.Enabled = false;
+				return;
+			}
 			else
-				this.Enabled = true;
+			{
+				if (this.Context.SelectedStudy != null)
+					this.Enabled = true;
+				else
+					this.Enabled = false;
 
-			SetDoubleClickHandler();
+				SetDoubleClickHandler();
+			}
 		}
 	}
 }

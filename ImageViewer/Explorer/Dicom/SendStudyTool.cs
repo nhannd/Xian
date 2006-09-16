@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Services;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -36,7 +37,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         	LocalAESettings myAESettings = new LocalAESettings();
             ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
-            DicomServicesLayer.GetISendService(me).Send(new Uid(this.Context.SelectedStudy.StudyInstanceUID), this.Context.SelectedServer);
+
+			foreach (StudyItem item in this.Context.SelectedStudies)
+			{
+				DicomServicesLayer.GetISendService(me).Send(new Uid(item.StudyInstanceUID), this.Context.SelectedServer);
+			}
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -31,17 +32,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			Uid studyUid = new Uid(this.Context.SelectedStudy.StudyInstanceUID);
-			IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(studyUid);
+			foreach (StudyItem item in this.Context.SelectedStudies)
+			{
+				Uid studyInstanceUid = new Uid(item.StudyInstanceUID);
+				IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(studyInstanceUid);
 
-			try
-			{
-				DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(e, LogLevel.Error);
-				Platform.ShowMessageBox("Unable to delete study");
+				try
+				{
+					DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e, LogLevel.Error);
+					Platform.ShowMessageBox("Unable to delete study");
+				}
 			}
 
 			this.Context.RefreshStudyList();
