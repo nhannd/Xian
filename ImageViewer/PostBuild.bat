@@ -3,7 +3,7 @@
 echo Executing ImageViewer post-build step
 
 :: Copy database file
-::copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" .\datastore
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" .\datastore
 
 :: Copy Hibernate configuration file
 copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" .
