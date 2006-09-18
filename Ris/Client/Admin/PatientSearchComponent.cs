@@ -6,6 +6,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Admin
 {

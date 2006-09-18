@@ -11,6 +11,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Healthcare;
 using System.ComponentModel;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Admin
 {

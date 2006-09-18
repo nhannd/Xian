@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
