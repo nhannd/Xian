@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
