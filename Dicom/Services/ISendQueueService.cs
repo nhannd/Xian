@@ -9,9 +9,9 @@ namespace ClearCanvas.Dicom.Services
     /// Manipulate the queue directly with operations that create, add and remove parcels from
     /// the queue
     /// </summary>
-    public interface ISendQueueService
+    public interface ISendQueue
     {
-        IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE);
+        IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription);
         IEnumerable<IParcel> GetParcels();
         IEnumerable<IParcel> GetSendIncompleteParcels();
         void Add(IParcel aParcel);

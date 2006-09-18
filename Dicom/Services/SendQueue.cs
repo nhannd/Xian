@@ -8,7 +8,7 @@ using NHibernate;
 
 namespace ClearCanvas.Dicom.Services
 {
-    public class SendQueue : ISendQueueService
+    public class SendQueue : ISendQueue
     {
         #region Handcoded Members
         public SendQueue(ISessionFactory sessionFactory)
@@ -74,9 +74,9 @@ namespace ClearCanvas.Dicom.Services
             }
         }
 
-        public IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE)
+        public IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription)
         {
-            return new Parcel(sourceAE, destinationAE);
+            return new Parcel(sourceAE, destinationAE, parcelDescription);
         }
 
         public IEnumerable<IParcel> GetParcels()
@@ -85,14 +85,21 @@ namespace ClearCanvas.Dicom.Services
             List<IParcel> returningParcels = new List<IParcel>();
             ISession session = null;
 
+            ITransaction transaction = null;
+
             try
             {
                 session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
                 listOfParcels = session.Find("from Parcel");
                 if (listOfParcels.Count <= 0)
                     return null;
             }
-            catch { throw; }
+            catch 
+            {
+                transaction.Rollback();
+                throw; 
+            }
             finally { session.Close(); }
 
             foreach (IParcel parcel in listOfParcels)
@@ -108,10 +115,12 @@ namespace ClearCanvas.Dicom.Services
             IList listOfParcels;
             List<IParcel> returningParcels = new List<IParcel>();
             ISession session = null;
+            ITransaction transaction = null;
 
             try
             {
                 session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
                 listOfParcels = session.Find("from Parcel as parcel where parcel.ParcelTransferState != ?",
                     ParcelTransferState.Completed,
                     NHibernateUtil.Int16);
@@ -127,7 +136,11 @@ namespace ClearCanvas.Dicom.Services
                     returningParcels.Add(parcel);
                 }
             }
-            catch { throw; }
+            catch 
+            {
+                transaction.Rollback();
+                throw; 
+            }
             finally { session.Close(); }
 
             return returningParcels;
@@ -148,27 +161,6 @@ namespace ClearCanvas.Dicom.Services
             {
                 transaction.Rollback();
                 throw; 
-            }
-            finally { session.Close(); }
-        }
-
-        public void LoadAllReferences(IParcel aParcel)
-        {
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.Lock(aParcel, LockMode.Read);
-                NHibernateUtil.Initialize(aParcel);
-                aParcel.GetReferencedSopInstanceFileNames();
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
             }
             finally { session.Close(); }
         }

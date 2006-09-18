@@ -43,7 +43,7 @@ namespace ClearCanvas.Dicom.Network
         /// and network connections to the target/remote Application
         /// Entity.
         /// </summary>
-        public ushort ConnectionTimeout
+        public int ConnectionTimeout
         {
             get { return _connectionTimeout; }
             set { _connectionTimeout = value; }
@@ -53,7 +53,7 @@ namespace ClearCanvas.Dicom.Network
         /// Sets the timeout value for completing network operations
         /// such as a single C-STORE command.
         /// </summary>
-        public ushort OperationTimeout
+        public int OperationTimeout
         {
             get { return _operationTimeout; }
             set { _operationTimeout = value; }
@@ -122,7 +122,7 @@ namespace ClearCanvas.Dicom.Network
         private HostName _hostname;
         private AETitle _aeTitle;
         private ListeningPort _listeningPort;
-        private ushort _connectionTimeout = 20;
-        private ushort _operationTimeout = 180;
+        private int _connectionTimeout = 20;
+        private int _operationTimeout = 180;
     }
 }

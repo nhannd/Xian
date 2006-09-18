@@ -48,13 +48,19 @@ namespace ClearCanvas.Dicom.Services
             _parcels.Columns.Add(new TableColumn<Parcel, string>("Destination",
                 delegate(Parcel aParcel) { return aParcel.DestinationAE.AE; }
                 ));
-            
+            _parcels.Columns.Add(new TableColumn<Parcel, int>("Current",
+                delegate(Parcel aParcel) { return aParcel.CurrentProgressStep; }
+                ));
+            _parcels.Columns.Add(new TableColumn<Parcel, int>("Total",
+                delegate(Parcel aParcel) { return aParcel.TotalProgressSteps; }
+                ));
+           
             PopulateListFromDataStore();
         }
 
         private void PopulateListFromDataStore()
         {
-            IEnumerable<IParcel> listOfParcels = DicomServicesLayer.GetISendQueueService().GetParcels();
+            IEnumerable<IParcel> listOfParcels = DicomServicesLayer.GetISendQueue().GetParcels();
             if (null != listOfParcels)
             {
                 foreach (IParcel aParcel in listOfParcels)
@@ -85,8 +91,19 @@ namespace ClearCanvas.Dicom.Services
             remove { _queueStatusChanged -= value; }
         }
 
+        public void SetSelection(ISelection selection)
+        {
+            if (_currentSelection != selection)
+            {
+                _currentSelection = selection;
+            }
+        }
+
         public void RemoveSelectedParcel()
         {
+            IParcel aParcel = _currentSelection.Item as IParcel;
+            DicomServicesLayer.GetISendQueue().Remove(aParcel);
+            Refresh();
         }
 
         public void AbortSendSelectedParcel()
@@ -108,6 +125,12 @@ namespace ClearCanvas.Dicom.Services
             _parcels.Clear();
             PopulateListFromDataStore();
         }
+
+        #region Handcoded Members
+        #region Private Members
+        ISelection _currentSelection;
+        #endregion
+        #endregion
     }
 
     [MenuAction("launch", "global-menus/Services/Queue")]

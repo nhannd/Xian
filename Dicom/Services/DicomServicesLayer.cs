@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using NHibernate;
 using NHibernate.Cfg;
 using ClearCanvas.Dicom.DataStore;
@@ -12,72 +13,120 @@ namespace ClearCanvas.Dicom.Services
     public class DicomServicesLayer 
     {
         #region Handcoded Members
-        private static ISession _currentSession = null;
-        private static readonly ISessionFactory _sessionFactory;
+        #region Private Members
+        private static Dictionary<Thread, ISessionFactory> _sessionFactories;
+        private static Configuration _hibernateConfiguration;
+        private static Dictionary<ISessionFactory, ISendQueue> _sendQueues;
+        private static Dictionary<ISessionFactory, ISender> _senders;
+
+        public static Dictionary<ISessionFactory, ISendQueue> SendQueues
+        {
+            get { return _sendQueues; }
+            set { _sendQueues = value; }
+        }
+	
+        private static Dictionary<ISessionFactory, ISender> Senders
+        {
+            get { return _senders; }
+            set { _senders = value; }
+        }
+	
+        private static Configuration HibernateConfiguration
+        {
+            get { return _hibernateConfiguration; }
+            set { _hibernateConfiguration = value; }
+        }
+
+        private static Dictionary<Thread, ISessionFactory> SessionFactories
+        {
+            get { return _sessionFactories; }
+        }
+
+        private static ISessionFactory CurrentFactory
+        {
+            get
+            {
+                // look for stale sessions and get rid of them
+                List<KeyValuePair<Thread, ISessionFactory>> toRemoveArray = new List<KeyValuePair<Thread, ISessionFactory>>();
+                foreach (KeyValuePair<Thread, ISessionFactory> iterator in DicomServicesLayer.SessionFactories)
+                {
+                    if (!iterator.Key.IsAlive)
+                        toRemoveArray.Add(iterator);
+                }
+                foreach (KeyValuePair<Thread, ISessionFactory> iterator in toRemoveArray)
+                {
+                    // get rid of session-dependent objects that we remember about
+                    DicomServicesLayer.SendQueues.Remove(iterator.Value);
+                    DicomServicesLayer.Senders.Remove(iterator.Value);
+
+                    // close the session and get rid of the session that we remember about
+                    DicomServicesLayer.SessionFactories.Remove(iterator.Key);
+                }
+                toRemoveArray.Clear();
+
+                Thread currentThread = Thread.CurrentThread;
+                if (DicomServicesLayer.SessionFactories.ContainsKey(currentThread))
+                {
+                    return DicomServicesLayer.SessionFactories[currentThread];
+                }
+                else
+                {
+                    ISessionFactory newSessionFactory = DicomServicesLayer.HibernateConfiguration.BuildSessionFactory();
+                    DicomServicesLayer.SessionFactories.Add(currentThread, newSessionFactory);
+                    return newSessionFactory;
+                }
+            }
+        }
+
+        #endregion
+        #endregion
 
         static DicomServicesLayer()
         {
-            Configuration cfg = new Configuration();
+            DicomServicesLayer.HibernateConfiguration = new Configuration();
             string assemblyName = MethodBase.GetCurrentMethod().DeclaringType.Assembly.GetName().Name;
-            cfg.Configure(assemblyName + ".cfg.xml");
-            cfg.AddAssembly(assemblyName);
-            cfg.AddAssembly("ClearCanvas.Dicom.DataStore");
-            _sessionFactory = cfg.BuildSessionFactory();
+            DicomServicesLayer.HibernateConfiguration.Configure(assemblyName + ".cfg.xml");
+            DicomServicesLayer.HibernateConfiguration.AddAssembly(assemblyName);
+            DicomServicesLayer.HibernateConfiguration.AddAssembly("ClearCanvas.Dicom.DataStore");
+
+            _sessionFactories = new Dictionary<Thread, ISessionFactory>();
+            _sendQueues = new Dictionary<ISessionFactory, ISendQueue>();
+            _senders = new Dictionary<ISessionFactory, ISender>();
         }
 
-        private static ISession GetCurrentSession()
+        public static ISendQueue GetISendQueue()
         {
-            if (null == _currentSession)
-                _currentSession = _sessionFactory.OpenSession();
-
-            return _currentSession;
+            ISessionFactory sessionFactory = DicomServicesLayer.CurrentFactory;
+            if (DicomServicesLayer.SendQueues.ContainsKey(sessionFactory))
+            {
+                return DicomServicesLayer.SendQueues[sessionFactory];
+            }
+            else
+            {
+                ISendQueue sendQueue = new SendQueue(sessionFactory);
+                DicomServicesLayer.SendQueues.Add(sessionFactory, sendQueue);
+                return sendQueue;
+            }
         }
 
-        private static void CloseSession()
+        public static ISender GetISender(ApplicationEntity senderAE)
         {
-            if (null == _currentSession)
-                // No current session
-                return;
-
-            _currentSession.Close();
-            _currentSession = null;
-        }
-
-        private static void CloseSessionFactory()
-        {
-            if (_sessionFactory != null)
-                _sessionFactory.Close();
-        }
-
-        private static ISessionFactory GetSessionFactory()
-        {
-            return _sessionFactory;
-        }
-
-        public static ISendQueueService GetISendQueueService()
-        {
-            if (null == _sendQueue)
-                _sendQueue = new SendQueue(GetSessionFactory());
-
-            return _sendQueue;
-        }
-
-        public static ISendService GetISendService(ApplicationEntity senderAE)
-        {
-            if (null == _sendService)
-                _sendService = new Sender(senderAE);
-
-            return _sendService;
+            ISessionFactory sessionFactory = DicomServicesLayer.CurrentFactory;
+            if (DicomServicesLayer.Senders.ContainsKey(sessionFactory))
+            {
+                return DicomServicesLayer.Senders[sessionFactory];
+            }
+            else
+            {
+                ISender sender = new Sender(senderAE);
+                DicomServicesLayer.Senders.Add(sessionFactory, sender);
+                return sender;
+            }
         }
 
         public static IDicomSender GetIDicomSender()
         {
             return new DicomSender();
         }
-        #region Private Members
-        private static ISendQueueService _sendQueue;
-        private static ISendService _sendService;
-        #endregion
-        #endregion
     }
 }

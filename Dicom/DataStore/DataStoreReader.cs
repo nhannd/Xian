@@ -373,6 +373,115 @@ namespace ClearCanvas.Dicom.DataStore
             return new ReadOnlyQueryResultCollection(results); 
         }
 
+        public ISeries GetSeriesAndSopInstances(Uid referenceUid)
+        {
+            if (!SeriesExists(referenceUid))
+                return null;
+
+            ISeries series = null;
+            ISession session = null;
+            ITransaction transaction = null;
+            try
+            {
+                session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
+
+                IList listOfSeries = session.CreateCriteria(typeof(Series))
+                    .Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
+                    .SetFetchMode("SopInstances", FetchMode.Eager)
+                    .List();
+
+                if (null != listOfSeries && listOfSeries.Count > 0)
+                    series = listOfSeries[0] as ISeries;
+            }
+            catch (Exception ex)
+            {
+                if (null != transaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (null != session)
+                    session.Close();
+            }
+
+            return series;
+        }
+
+        public IStudy GetStudyAndSeries(Uid referenceUid)
+        {
+            if (!StudyExists(referenceUid))
+                return null;
+
+            IStudy studyFound = null;
+            ISession session = null;
+            ITransaction transaction = null;
+            try
+            {
+                session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
+
+                IList listOfStudies = session.CreateCriteria(typeof(Study))
+                    .Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
+                    .SetFetchMode("Series", FetchMode.Eager)
+                    .List();
+
+                if (null != listOfStudies && listOfStudies.Count > 0)
+                    studyFound = listOfStudies[0] as IStudy;
+            }
+            catch (Exception ex)
+            {
+                if (null != transaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (null != session)
+                    session.Close();
+            }
+
+            return studyFound;    
+        }
+
+        public IStudy GetStudyAndAllObjects(Uid referenceUid)
+        {
+            if (!StudyExists(referenceUid))
+                return null;
+
+            IStudy studyFound = null;
+            ISession session = null;
+            ITransaction transaction = null;
+            try
+            {
+                session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
+
+                IList listOfStudies = session.CreateCriteria(typeof(Study))
+                    .Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
+                    .SetFetchMode("Series", FetchMode.Eager)
+                    .SetFetchMode("SopInstances", FetchMode.Eager)
+                    .List();
+
+                if (null != listOfStudies && listOfStudies.Count > 0)
+                    studyFound = listOfStudies[0] as IStudy;
+            }
+            catch (Exception ex)
+            {
+                if (null != transaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (null != session)
+                    session.Close();
+            }
+
+            return studyFound;
+        }
+
         #endregion
     }
 }

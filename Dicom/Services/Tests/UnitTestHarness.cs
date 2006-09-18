@@ -18,15 +18,15 @@ namespace ClearCanvas.Dicom.Services.Tests
     {
         public class TestSender : Sender
         {
-            private ISendQueueService _mockSendQueue;
+            private ISendQueue _mockSendQueue;
 
-            public TestSender(ApplicationEntity myAE, ISendQueueService mockSendQueue)
+            public TestSender(ApplicationEntity myAE, ISendQueue mockSendQueue)
                 : base(myAE)
             {
                 _mockSendQueue = mockSendQueue;
             }
 
-            public override ISendQueueService SendQueue
+            public override ISendQueue SendQueue
             {
                 get
                 {
@@ -36,8 +36,8 @@ namespace ClearCanvas.Dicom.Services.Tests
         }
 
         private Mockery _mocks;
-        private ISendService _sender;
-        private ISendQueueService _mockSendQueue;
+        private ISender _sender;
+        private ISendQueue _mockSendQueue;
         private IParcel _mockParcel;
         private ApplicationEntity _testingAE = new ApplicationEntity(new HostName("localhost"),
                                                     new AETitle("TEST_AE"),
@@ -47,7 +47,7 @@ namespace ClearCanvas.Dicom.Services.Tests
         public void Setup()
         {
             _mocks = new Mockery();
-            _mockSendQueue = _mocks.NewMock<ISendQueueService>();
+            _mockSendQueue = _mocks.NewMock<ISendQueue>();
             _mockParcel = _mocks.NewMock<IParcel>();
 
             _sender = new TestSender(_testingAE, _mockSendQueue);
@@ -71,11 +71,11 @@ namespace ClearCanvas.Dicom.Services.Tests
 
             Uid sopInstance = new Uid("9.9.9.9");
 
-            Expect.Once.On(_mockSendQueue).Method("CreateNewParcel").With(new Matcher[] { Is.Same(_testingAE), Is.Same(destinationAE) }).Will(Return.Value(_mockParcel));
+            Expect.Once.On(_mockSendQueue).Method("CreateNewParcel").With(new Matcher[] { Is.Same(_testingAE), Is.Same(destinationAE), Is.StringContaining("Test Send") }).Will(Return.Value(_mockParcel));
             Expect.Once.On(_mockParcel).Method("Include").With(Is.EqualTo(sopInstance)).Will(Return.Value(1));
             Expect.Once.On(_mockSendQueue).Method("Add").With(Is.Same(_mockParcel));
 
-            _sender.Send(sopInstance, destinationAE);
+            _sender.Send(sopInstance, destinationAE, "Test Send");
 
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
@@ -87,6 +87,8 @@ namespace ClearCanvas.Dicom.Services.Tests
         private Mockery _mocks;
         private IStudy _mockStudy;
         private IDataStoreReader _mockDataStore;
+        private IDicomSender _mockDicomSender;
+        private ISendQueue _mockSendQueue;
         private ISeries _mockSeries;
         private ApplicationEntity _testingAE = new ApplicationEntity(new HostName("localhost"),
                                             new AETitle("TEST_AE"),
@@ -94,9 +96,11 @@ namespace ClearCanvas.Dicom.Services.Tests
 
         public class TestParcel : Parcel
         {
-            public TestParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, IDataStoreReader dataStore) : base(sourceAE, destinationAE)
+            public TestParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, IDataStoreReader dataStore, IDicomSender dicomSender, ISendQueue sendQueue) : base(sourceAE, destinationAE, "Test Parcel")
             {
                 _mockDataStoreReader = dataStore;
+                _mockDicomSender = dicomSender;
+                _mockSendQueue = sendQueue;
             }
 
             public override IDataStoreReader DataStoreReader
@@ -104,7 +108,19 @@ namespace ClearCanvas.Dicom.Services.Tests
                 get { return _mockDataStoreReader; }
             }
 
+            public override IDicomSender DicomSender
+            {
+                get { return _mockDicomSender; }
+            }
+
+            public override ISendQueue SendQueue
+            {
+                get { return _mockSendQueue; }
+            }
+
             private IDataStoreReader _mockDataStoreReader;
+            private IDicomSender _mockDicomSender;
+            private ISendQueue _mockSendQueue;
         }
 
         [SetUp]
@@ -113,6 +129,8 @@ namespace ClearCanvas.Dicom.Services.Tests
             _mocks = new Mockery();
             _mockStudy = _mocks.NewMock<IStudy>();
             _mockDataStore = _mocks.NewMock<IDataStoreReader>();
+            _mockDicomSender = _mocks.NewMock<IDicomSender>();
+            _mockSendQueue = _mocks.NewMock<ISendQueue>();
             _mockSeries = _mocks.NewMock<ISeries>();
         }
 
@@ -123,7 +141,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                                                             new AETitle("TEST_SERVER"),
                                                             new ListeningPort(13000));
 
-            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore, _mockDicomSender, _mockSendQueue);
     
             Uid sopInstanceReference = new Uid("1.2.8.999.999.999.999.1111.1111.1111");
             ISopInstance mockSopInstance1 = _mocks.NewMock<ISopInstance>();
@@ -177,7 +195,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                                                             new AETitle("TEST_SERVER"),
                                                             new ListeningPort(13000));
 
-            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore, _mockDicomSender, _mockSendQueue);
 
             // first SOP instance
             Uid sopInstanceReference = new Uid("1.2.8.999.999.999.999.1111.1111.1111");
@@ -243,7 +261,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                                                             new AETitle("TEST_SERVER"),
                                                             new ListeningPort(13000));
 
-            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore, _mockDicomSender, _mockSendQueue);
 
             // first SOP instance
             Uid sopInstanceReference = new Uid("1.2.8.999.999.999.999.1111.1111.1111");
@@ -309,7 +327,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                                                 new AETitle("TEST_SERVER"),
                                                 new ListeningPort(13000));
 
-            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore, _mockDicomSender, _mockSendQueue);
 
             Uid seriesReference = new Uid("1.2.8.999.999.999.999.2222.1111");
             ISopInstance mockSopInstance1 = _mocks.NewMock<ISopInstance>();
@@ -348,7 +366,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                                                 new AETitle("TEST_SERVER"),
                                                 new ListeningPort(13000));
 
-            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore, _mockDicomSender, _mockSendQueue);
 
             Uid studyReference = new Uid("1.2.8.999.999.999.999.3333");
             ISopInstance mockSopInstance1 = _mocks.NewMock<ISopInstance>();
@@ -399,7 +417,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                                     new AETitle("TEST_SERVER"),
                                     new ListeningPort(13000));
 
-            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore);
+            IParcel aParcel = new TestParcel(_testingAE, destinationAE, _mockDataStore, _mockDicomSender, _mockSendQueue);
 
             Uid studyReference = new Uid("1.2.8.999.999.999.999.3333");
             ISopInstance mockSopInstance1 = _mocks.NewMock<ISopInstance>();
@@ -411,14 +429,14 @@ namespace ClearCanvas.Dicom.Services.Tests
                 mockSopInstance4, mockSopInstance5 };
             Uid transferSyntax = new Uid("1.2.840.10008.1.2");
             Uid sopClass = new Uid("1.2.840.10008.5.1.4.1.1.1");
-            IDicomSender dicomSender = _mocks.NewMock<IDicomSender>(); 
 
             Expect.Once.On(_mockDataStore).Method("StudyExists").With(Is.EqualTo(studyReference)).Will(Return.Value(true));
             Expect.Once.On(_mockDataStore).Method("GetStudy").With(Is.EqualTo(studyReference)).Will(Return.Value(_mockStudy));
             Expect.Once.On(_mockStudy).Method("GetSopInstances").WithNoArguments().Will(Return.Value(sopInstances));
-            Expect.Once.On(dicomSender).Method("SetSourceApplicationEntity").With(Is.EqualTo(_testingAE));
-            Expect.Once.On(dicomSender).Method("SetDestinationApplicationEntity").With(Is.EqualTo(destinationAE));
-            Expect.Once.On(dicomSender).Method("Send").WithAnyArguments();
+            Expect.Once.On(_mockDicomSender).Method("SetSourceApplicationEntity").With(Is.EqualTo(_testingAE));
+            Expect.Once.On(_mockDicomSender).Method("SetDestinationApplicationEntity").With(Is.EqualTo(destinationAE));
+            Expect.Once.On(_mockDicomSender).Method("Send").WithAnyArguments();
+            Expect.Exactly(2).On(_mockSendQueue).Method("UpdateParcel").With(Is.EqualTo(aParcel));
             Expect.Once.On(mockSopInstance1).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
             Expect.Once.On(mockSopInstance1).Method("GetSopClassUid").WithNoArguments().Will(Return.Value(sopClass));
             Expect.Once.On(mockSopInstance2).Method("GetTransferSyntaxUid").WithNoArguments().Will(Return.Value(transferSyntax));
@@ -446,7 +464,7 @@ namespace ClearCanvas.Dicom.Services.Tests
             Expect.Once.On(mockSopInstance5).Method("GetLocationUri").WithNoArguments().Will(Return.Value(new DicomUri("file://localhost/C:/temp/file5")));
 
             int includedObjectCount = aParcel.Include(studyReference);
-            aParcel.StartSend(dicomSender);
+            aParcel.StartSend();
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
     }
@@ -482,7 +500,7 @@ namespace ClearCanvas.Dicom.Services.Tests
             Expect.Once.On(_mockSessionFactory).Method("OpenSession").WithNoArguments().Will(Return.Value(_mockSession));
             Expect.Once.On(_mockSession).Method("Find").With(Is.StringContaining("from Parcel")).Will(Return.Value(mockList));
             Expect.Once.On(_mockSession).Method("Close").WithNoArguments();
-            ISendQueueService sendQueue = new SendQueue(_mockSessionFactory);
+            ISendQueue sendQueue = new SendQueue(_mockSessionFactory);
             IEnumerable<IParcel> listOfParcels = sendQueue.GetParcels();
 
             int count = 0;
@@ -502,7 +520,7 @@ namespace ClearCanvas.Dicom.Services.Tests
             Expect.Once.On(_mockSessionFactory).Method("OpenSession").WithNoArguments().Will(Return.Value(_mockSession));
             Expect.Once.On(_mockSession).Method("Find").With(Is.StringContaining("from Parcel as parcel where parcel.ParcelTransferState != ?"), ParcelTransferState.Completed, NHibernateUtil.Int16);//.Will(Return.Value(mockList));
             Expect.Once.On(_mockSession).Method("Close").WithNoArguments();
-            ISendQueueService sendQueue = new SendQueue(_mockSessionFactory);
+            ISendQueue sendQueue = new SendQueue(_mockSessionFactory);
             IEnumerable<IParcel> listOfParcels = sendQueue.GetSendIncompleteParcels();
 
             int count = 0;
@@ -521,7 +539,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                 new AETitle("TEST_SOURCE"),
                 new ListeningPort(14000));
 
-            IParcel aParcel = DicomServicesLayer.GetISendQueueService().CreateNewParcel(source, destination);
+            IParcel aParcel = DicomServicesLayer.GetISendQueue().CreateNewParcel(source, destination, "Test Parcel");
             ITransaction mockTransaction = _mocks.NewMock<ITransaction>();
 
             Expect.Once.On(_mockSessionFactory).Method("OpenSession").WithNoArguments().Will(Return.Value(_mockSession));
@@ -529,14 +547,14 @@ namespace ClearCanvas.Dicom.Services.Tests
             Expect.Once.On(_mockSession).Method("Update").With(Is.EqualTo(aParcel));
             Expect.Once.On(mockTransaction).Method("Commit").WithNoArguments();
             Expect.Once.On(_mockSession).Method("Close").WithNoArguments();
-            ISendQueueService sendQueue = new SendQueue(_mockSessionFactory);
+            ISendQueue sendQueue = new SendQueue(_mockSessionFactory);
             sendQueue.UpdateParcel(aParcel);
 
             _mocks.VerifyAllExpectationsHaveBeenMet();
 
         }
     }
-
+    
     [TestFixture]
     public class ZebraResourceDependentTests
     {
@@ -551,7 +569,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                 new AETitle("TESTER"),
                 new ListeningPort(12000));
 
-            IParcel aParcel = new Parcel(sourceAE, destinationAE);
+            IParcel aParcel = new Parcel(sourceAE, destinationAE, "Test Parcel");
 
             // populate database with test study
             Study study = new Study();
@@ -605,14 +623,14 @@ namespace ClearCanvas.Dicom.Services.Tests
 
             aParcel.Include(new Uid("3.1.4.1.5.9.2"));
 
-            DicomServicesLayer.GetISendQueueService().Add(aParcel);
+            DicomServicesLayer.GetISendQueue().Add(aParcel);
 
             IStudy studyFound = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid("3.1.4.1.5.9.2"));
 
             // we're done, get rid of study
             DataAccessLayer.GetIDataStoreWriter().RemoveStudy(studyFound);
 
-            DicomServicesLayer.GetISendQueueService().Remove(aParcel);
+            DicomServicesLayer.GetISendQueue().Remove(aParcel);
         }
 
         [Test]
@@ -620,7 +638,7 @@ namespace ClearCanvas.Dicom.Services.Tests
         {
             while (true)
             {
-                IEnumerable<IParcel> parcels = DicomServicesLayer.GetISendQueueService().GetSendIncompleteParcels();
+                IEnumerable<IParcel> parcels = DicomServicesLayer.GetISendQueue().GetSendIncompleteParcels();
 
                 if (null != parcels)
                 {
@@ -636,7 +654,7 @@ namespace ClearCanvas.Dicom.Services.Tests
                             case ParcelTransferState.PauseRequested:
                                 break;
                             case ParcelTransferState.Pending:
-                                parcel.StartSend(DicomServicesLayer.GetIDicomSender());
+                                parcel.StartSend();
                                 break;
                             case ParcelTransferState.Unknown:
                                 break;

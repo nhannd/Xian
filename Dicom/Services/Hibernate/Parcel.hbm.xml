@@ -8,6 +8,8 @@
     </id>
 	<property name="ParcelTransferState" column="ParcelTransferState_" type="Int16" />
 	<property name="Description" column="Description_" type="String" />
+	<property name="CurrentProgressStep" column="CurrentStep_" type="Int32" />
+	<property name="TotalProgressSteps" column="TotalProgessSteps_" type="Int32" />
 	<component name="DestinationAE" class="ClearCanvas.Dicom.Network.ApplicationEntity, ClearCanvas.Dicom">
 		<property name="Host" column="DestinationAEHost_" />
 		<property name="AE" column="DestinationAEAE_" />

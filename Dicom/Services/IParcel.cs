@@ -9,7 +9,7 @@ namespace ClearCanvas.Dicom.Services
     {
         int Include(Uid referencedUid);
         ParcelTransferState GetState();
-        void StartSend(IDicomSender dicomSender);
+        void StartSend();
         void StopSend();
         int GetToSendObjectCount();
         int SentObjectCount();

@@ -7,16 +7,16 @@ using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.Dicom.Services
 {
-    public class Sender : ISendService
+    public class Sender : ISender
     {
         public Sender(ApplicationEntity ae)
         {
             _myAEParameters = ae;
         }
 
-        public virtual ISendQueueService SendQueue
+        public virtual ISendQueue SendQueue
         {
-            get { return DicomServicesLayer.GetISendQueueService(); }
+            get { return DicomServicesLayer.GetISendQueue(); }
         }
 
         protected ApplicationEntity MyAE
@@ -26,10 +26,10 @@ namespace ClearCanvas.Dicom.Services
 
         #region ISendService Members
 
-        public void Send(Uid referencedUid, ApplicationEntity destinationAE)
+        public void Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription)
         {
             // create the parcel
-            IParcel aParcel = this.SendQueue.CreateNewParcel(this.MyAE, destinationAE);
+            IParcel aParcel = this.SendQueue.CreateNewParcel(this.MyAE, destinationAE, parcelDescription);
 
             // put the object into the parcel
             if (aParcel.Include(referencedUid) > 0)

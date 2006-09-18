@@ -13,10 +13,11 @@ namespace ClearCanvas.Dicom.Services
     /// </summary>
     public class Parcel : IParcel
     {
-        public Parcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE) : this()
+        public Parcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription) : this()
         {
             _sourceAE = sourceAE;
             _destinationAE = destinationAE;
+            _description = parcelDescription;
         }
 
         protected Parcel()
@@ -29,6 +30,22 @@ namespace ClearCanvas.Dicom.Services
         public virtual IDataStoreReader DataStoreReader
         {
             get { return DataAccessLayer.GetIDataStoreReader(); }
+        }
+
+        public virtual IDicomSender DicomSender
+        {
+            get 
+            {
+                if (null == _dicomSender)
+                    _dicomSender = DicomServicesLayer.GetIDicomSender();
+
+                return _dicomSender; 
+            }
+        }
+
+        public virtual ISendQueue SendQueue
+        {
+            get { return DicomServicesLayer.GetISendQueue(); }
         }
 
         public bool IsSendCompleted
@@ -177,11 +194,26 @@ namespace ClearCanvas.Dicom.Services
         private IList _transferSyntaxes;
         private IList _sopClasses;
         private IList _sopInstances;
-        private long _parcelOid;
         private IDicomSender _dicomSender;
+        private long _parcelOid;
         private ParcelTransferState _parcelTransferState = ParcelTransferState.Pending;
         private string _description;
+        private int _currentProgressStep;
+        private int _totalProgressSteps;
 
+        public virtual int TotalProgressSteps
+        {
+            get { return _totalProgressSteps; }
+            set { _totalProgressSteps = value; }
+        }
+	
+        public virtual int CurrentProgressStep
+        {
+            get { return _currentProgressStep; }
+            set { _currentProgressStep = value; }
+        }
+	
+        
         public virtual string Description
         {
             get { return _description; }
@@ -199,6 +231,9 @@ namespace ClearCanvas.Dicom.Services
         /// <param name="referencedUid">The UID of the entity, whether a Study, Series or Sop Instance.
         /// If the UID refers to a Study or Series, all the associasted Sop Instances of that Study or
         /// Series will be included in the parcel.
+        /// </param>
+        /// <param name="parcelDescription">Client-defined description of the parcel. This may include
+        /// the Patient's Name, Study Description, etc.
         /// </param>
         /// <returns>The number of new Sop Instances that were added.</returns>
         public int Include(Uid referencedUid)
@@ -223,9 +258,6 @@ namespace ClearCanvas.Dicom.Services
                         // get the SopInstance object
                         ISopInstance sop = this.DataStoreReader.GetSopInstance(referencedUid);
                         AddSopInstanceIntoParcel(sop);
-
-                        // set description
-                        this.Description = sop.GetLocationUri().LocalDiskPath;
                     }
                 }
                 else // series was found
@@ -236,14 +268,6 @@ namespace ClearCanvas.Dicom.Services
                     {
                         AddSopInstanceIntoParcel(sop);
                     }
-
-                    // set description
-                    Series concreteSeries = series as Series;
-                    if (null != concreteSeries)
-                    {
-                        this.Description = concreteSeries.SeriesDescription + " [" +
-                            concreteSeries.Modality + "]";
-                    }
                 }
             }
             else // study was found
@@ -253,14 +277,6 @@ namespace ClearCanvas.Dicom.Services
                 foreach (ISopInstance sop in sops)
                 {
                     AddSopInstanceIntoParcel(sop);
-                }
-
-                // set description
-                Study concreteStudy = study as Study;
-                if (null != concreteStudy)
-                {
-                    this.Description = concreteStudy.PatientId + "/" + concreteStudy.PatientsName +
-                        " [" + concreteStudy.StudyDate + "/" + concreteStudy.StudyDescription + "]";
                 }
             }
 
@@ -273,18 +289,28 @@ namespace ClearCanvas.Dicom.Services
             return this.ParcelTransferState;
         }
 
-        public void StartSend(IDicomSender dicomSender)
+        public void StartSend()
         {
-            _dicomSender = dicomSender;
-            _dicomSender.SetSourceApplicationEntity(this.SourceAE);
-            _dicomSender.SetDestinationApplicationEntity(this.DestinationAE);
+            this.DicomSender.SetSourceApplicationEntity(this.SourceAE);
+            this.DicomSender.SetDestinationApplicationEntity(this.DestinationAE);
 
             this.ParcelTransferState = ParcelTransferState.InProgress;
-            DicomServicesLayer.GetISendQueueService().UpdateParcel(this);
+            this.SendQueue.UpdateParcel(this);
 
-            _dicomSender.Send(this.SopInstanceFilenamesList, this.SopClassesList, this.TransferSyntaxesList);
+            this.DicomSender.Send(this.SopInstanceFilenamesList, 
+                this.SopClassesList, 
+                this.TransferSyntaxesList, 
+                delegate(object source, SendProgressUpdatedEventArgs args)
+                {
+                    this.TotalProgressSteps = args.TotalCount;
+                    this.CurrentProgressStep = args.CurrentCount;
+
+                    this.SendQueue.UpdateParcel(this);
+                }
+                );
+
             this.ParcelTransferState = ParcelTransferState.Completed;
-            DicomServicesLayer.GetISendQueueService().UpdateParcel(this);
+            this.SendQueue.UpdateParcel(this);
         }
 
         public void StopSend()

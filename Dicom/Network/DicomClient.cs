@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Dicom;
+using MySR = ClearCanvas.Dicom.SR;
+using System.IO;
+
 namespace ClearCanvas.Dicom.Network
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SqlClient;
-    using System.Runtime.InteropServices;    
-    using System.Text;
-    using ClearCanvas.Common;
-    using ClearCanvas.Dicom.OffisWrapper;
-    using ClearCanvas.Dicom;
-    using MySR = ClearCanvas.Dicom.SR;
-    using System.IO;
-
     /// <summary>
     /// Main entry point for DICOM networking functionality. Allows the client to 
     /// perform C-ECHO, C-FIND and C-MOVE commands. Both C-FIND and C-MOVE 
@@ -73,6 +73,12 @@ namespace ClearCanvas.Dicom.Network
             remove { _queryCompletedEvent -= value; }
         }
 
+        public event EventHandler<SendProgressUpdatedEventArgs> SendProgressUpdated
+        {
+            add { _sendProgressUpdatedEvent += value; }
+            remove { _sendProgressUpdatedEvent -= value; }
+        }
+
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -110,7 +116,7 @@ namespace ClearCanvas.Dicom.Network
         /// library.
         /// </summary>
         /// <param name="timeout">Timeout period in seconds. Default is 120 seconds.</param>
-        protected static void SetGlobalConnectionTimeout(ushort timeout)
+        protected static void SetGlobalConnectionTimeout(int timeout)
         {
             OffisDcm.SetGlobalConnectionTimeout(timeout);
         }
@@ -859,6 +865,11 @@ namespace ClearCanvas.Dicom.Network
             EventsHelper.Fire(_queryCompletedEvent, this, e);
         }
 
+        protected void OnSendProgressUpdatedEvent(SendProgressUpdatedEventArgs e)
+        {
+            EventsHelper.Fire(_sendProgressUpdatedEvent, this, e);
+        }
+
         #endregion
 
         #region Private members
@@ -997,6 +1008,8 @@ namespace ClearCanvas.Dicom.Network
                 InteropStoreScuCallbackInfo callbackInfo = new InteropStoreScuCallbackInfo(interopStoreScuCallbackInfo, false);
                 T_DIMSE_C_StoreRQ request = callbackInfo.Request;
                 T_DIMSE_StoreProgress progress = callbackInfo.Progress;
+
+                _parent.OnSendProgressUpdatedEvent(new SendProgressUpdatedEventArgs(callbackInfo.CurrentCount, callbackInfo.TotalCount));
             }
 
             private StoreScuCallbackHelperDelegate _storeScuCallbackHelperDelegate;

@@ -270,6 +270,21 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
+        public ISeries GetSeriesAndSopInstances(Uid referenceUid)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public IStudy GetStudyAndSeries(Uid referenceUid)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public IStudy GetStudyAndAllObjects(Uid referenceUid)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
         #endregion
     }
 }

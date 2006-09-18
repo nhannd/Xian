@@ -10,8 +10,8 @@ namespace ClearCanvas.Dicom.Services
     /// High-level interface to send an object or set of hiearchical objects 
     /// denoted by referencedUid, to the destination specified by destinationAE
     /// </summary>
-    public interface ISendService
+    public interface ISender
     {
-        void Send(Uid referencedUid, ApplicationEntity destinationAE);
+        void Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription);
     }
 }

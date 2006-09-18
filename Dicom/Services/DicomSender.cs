@@ -28,9 +28,12 @@ namespace ClearCanvas.Dicom.Services
             _destinationAE = ae;
         }
 
-        public void Send(IEnumerable<string> fileNames, IEnumerable<string> sopClasses, IEnumerable<string> transferSyntaxes)
+        public void Send(IEnumerable<string> fileNames, IEnumerable<string> sopClasses, IEnumerable<string> transferSyntaxes, EventHandler<SendProgressUpdatedEventArgs> progressHandler)
         {
             DicomClient client = new DicomClient(_sourceAE);
+            if (null != progressHandler)
+                client.SendProgressUpdated += progressHandler;
+
             client.Store(_destinationAE, fileNames, sopClasses, transferSyntaxes);
         }
 

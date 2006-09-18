@@ -13,6 +13,6 @@ namespace ClearCanvas.Dicom.Services
     {
         void SetSourceApplicationEntity(ApplicationEntity ae);
         void SetDestinationApplicationEntity(ApplicationEntity ae);
-        void Send(IEnumerable<string> fileNames, IEnumerable<string> sopClasses, IEnumerable<string> transferSyntaxes);
+        void Send(IEnumerable<string> fileNames, IEnumerable<string> sopClasses, IEnumerable<string> transferSyntaxes, EventHandler<SendProgressUpdatedEventArgs> progressHandler);
     }
 }

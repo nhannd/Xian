@@ -1902,7 +1902,7 @@ struct T_ASC_Association
 		int totalCount = fileNameList.size();
 		while ((iter != enditer) && (cond == EC_Normal)) // compare with EC_Normal since DUL_PEERREQUESTEDRELEASE is also good()
 		{
-			cond = StoreScu(self, (*iter).c_str(), currentCount, totalCount);
+			cond = StoreScu(self, (*iter).c_str(), currentCount++, totalCount);
 
 			// don't increment the iterator if cond is not EC_Normal so that we can get the file name
 			if (cond == EC_Normal)
