@@ -9,6 +9,7 @@ using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using MySR = ClearCanvas.Dicom.SR;
 using System.IO;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Network
 {
