@@ -11,7 +11,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get;
         }
 
-        string DisplayName
+        string ServerName
+        {
+            get;
+        }
+
+        string ServerPath
         {
             get;
         }

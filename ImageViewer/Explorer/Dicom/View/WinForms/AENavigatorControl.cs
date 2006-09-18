@@ -34,18 +34,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             InitializeComponent();
 
             _aenavigatorComponent = component;
-            AddClicked += new EventHandler(OnAddClicked);
-            DeleteClicked += new EventHandler(OnDeleteClicked);
+            //AddClicked += new EventHandler(OnAddClicked);
+            //DeleteClicked += new EventHandler(OnDeleteClicked);
 
             _bindingSource = new BindingSource();
             _bindingSource.DataSource = _aenavigatorComponent;
 
             _aenavigatorComponent.SelectedServerChanged += new EventHandler(ServerSettingChanged);
             //_aeserverTreeForm1.LostFocus += new EventHandler(_aeserverTreeForm1_LostFocus);
-            _aeserverTreeForm1.ServerName.LostFocus += new EventHandler(ServerName_LostFocus);
-            _aeserverTreeForm1.ServerAE.LostFocus += new EventHandler(ServerAE_LostFocus);
-            _aeserverTreeForm1.ServerHost.LostFocus += new EventHandler(ServerHost_LostFocus);
-            _aeserverTreeForm1.ServerPort.LostFocus += new EventHandler(ServerPort_LostFocus);
+            //_aeserverTreeForm1.ServerName.LostFocus += new EventHandler(ServerName_LostFocus);
+            //_aeserverTreeForm1.ServerAE.LostFocus += new EventHandler(ServerAE_LostFocus);
+            //_aeserverTreeForm1.ServerHost.LostFocus += new EventHandler(ServerHost_LostFocus);
+            //_aeserverTreeForm1.ServerPort.LostFocus += new EventHandler(ServerPort_LostFocus);
 
             _aeserverTreeForm1.ServerName.DataBindings.Add("Text", _bindingSource, "ServerName", true, DataSourceUpdateMode.OnPropertyChanged);
             _aeserverTreeForm1.ServerDesc.DataBindings.Add("Text", _bindingSource, "ServerDesc", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -55,13 +55,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             //_aeserverTreeForm1.AeserverTree.BeforeExpand += new TreeViewCancelEventHandler(TreeView_BeforeExpand);
             _aeserverTreeForm1.AeserverTree.Click += new EventHandler(AeserverTree_Click);
-            _aeserverTreeForm1.AeserverTree.BeforeSelect += new TreeViewCancelEventHandler(AeserverTree_BeforeSelect);
+            //_aeserverTreeForm1.AeserverTree.BeforeSelect += new TreeViewCancelEventHandler(AeserverTree_BeforeSelect);
             BuildServerTreeView(_aeserverTreeForm1.AeserverTree, _aenavigatorComponent.ServerTreeView);
         }
 
         void ServerSettingChanged(object sender, EventArgs e)
         {
-            _bindingSource.ResetBindings(false);
+//            _bindingSource.ResetBindings(false);
         }
 
         void _aeserverTreeForm1_LostFocus(object sender, EventArgs e)
@@ -158,9 +158,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _lastClickedNode = _aeserverTreeForm1.AeserverTree.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
             if (_lastClickedNode == null)
                 return;
-            if (_lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle))
-                _aenavigatorComponent.DataStoreEvent();
-            else
+            //if (_lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle))
+            //    _aenavigatorComponent.DataStoreEvent();
+            //else
                 _aenavigatorComponent.SelectChanged(_lastClickedNode.Text);
         }
 
@@ -230,19 +230,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// <param name="dataRoot"></param>
         private void BuildServerTreeView(TreeView treeView, IBrowserNode dataRoot)
         {
-            if (null == _aeserverTreeForm1.AeserverTree.TopNode)
-            {
-                treeView.Nodes.Add(new TreeNode(AENavigatorComponent.MyDatastoreTitle));
-            }
+            treeView.Nodes.Clear();
+            treeView.ShowNodeToolTips = true;
 
-            //treeView.Nodes[1].Nodes.Clear();
-            if (dataRoot != null)
+            foreach (IBrowserNode dataChild in dataRoot.ChildNodes)
             {
-                TreeNode treeRoot = new TreeNode(dataRoot.DisplayName);
-                treeRoot.Tag = dataRoot;
-                treeView.Nodes.Add(treeRoot);
-
-                BuildNextTreeLevel(treeRoot);
+                TreeNode treeChild = new TreeNode(dataChild.ServerName);
+                treeChild.Tag = dataChild;
+                treeChild.ToolTipText = dataChild.Details;
+                treeView.Nodes.Add(treeChild);
+                BuildNextTreeLevel(treeChild);
             }
         }
 
@@ -255,8 +252,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             IBrowserNode dataNode = (IBrowserNode)treeNode.Tag;
             foreach (IBrowserNode dataChild in dataNode.ChildNodes)
             {
-                TreeNode treeChild = new TreeNode(dataChild.DisplayName);
+                TreeNode treeChild = new TreeNode(dataChild.ServerName);
                 treeChild.Tag = dataChild;
+                treeChild.ToolTipText = dataChild.Details;
                 treeNode.Nodes.Add(treeChild);
             }
         }

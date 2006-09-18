@@ -27,6 +27,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private AEServerPool _serverPool;
         private AEServer _serverSelected;
+        private List<AEServer> _selectedServers;
         private ServerViewRootNode _serverTreeView;
         private event EventHandler _selectedServerChanged;
         private event EventHandler _dataStoreSelected;
@@ -80,6 +81,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get { return _serverPool; }
             set { _serverPool = value; }
+        }
+
+        public List<AEServer> SelectedServers
+        {
+            get { return _selectedServers; }
+            set { _selectedServers = value; }
         }
 
         public ServerViewRootNode ServerTreeView
@@ -161,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void DataStoreEvent()
         {
-            UpdateServerSetting();
+            //UpdateServerSetting();
             _serverPool.Currentserver = null;
             _serverPool.Currentserverid = -1;
             _serverSelected = null;
@@ -185,9 +192,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void SelectChanged(String nodeName)
         {
-            UpdateServerSetting();
+            //UpdateServerSetting();
             _serverPool.SetCurrentServerByName(nodeName);
-            LoadServerSetting();
+            //LoadServerSetting();
             _serverSelected = _serverPool.Currentserver;
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
@@ -224,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 this.ServerName = _serverPool.Currentserver.Servername;
-                this.ServerDesc = _serverPool.Currentserver.Description;
+                this.ServerDesc = _serverPool.Currentserver.Serverlocation;
                 this.ServerAE = _serverPool.Currentserver.AE;
                 this.ServerHost = _serverPool.Currentserver.Host;
                 this.ServerPort = _serverPool.Currentserver.Port.ToString();
@@ -239,7 +246,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                || _serverPool.Currentserverid >= _serverPool.Serverlist.Count)
                 return true;
             if (_serverPool.Currentserver.Servername.Equals(this.ServerName)
-                    && _serverPool.Currentserver.Description.Equals(this.ServerDesc)
+                    && _serverPool.Currentserver.Serverlocation.Equals(this.ServerDesc)
                     && _serverPool.Currentserver.AE.Equals(this.ServerAE)
                     && _serverPool.Currentserver.Host.Equals(this.ServerHost)
                     && _serverPool.Currentserver.Port.ToString().Equals(this.ServerPort))

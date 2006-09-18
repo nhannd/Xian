@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._serverName.Location = new System.Drawing.Point(69, 229);
             this._serverName.Name = "_serverName";
+            this._serverName.ReadOnly = true;
             this._serverName.Size = new System.Drawing.Size(172, 20);
             this._serverName.TabIndex = 1;
             // 
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._serverDesc.Location = new System.Drawing.Point(69, 256);
             this._serverDesc.Name = "_serverDesc";
+            this._serverDesc.ReadOnly = true;
             this._serverDesc.Size = new System.Drawing.Size(172, 20);
             this._serverDesc.TabIndex = 2;
             // 
@@ -74,17 +76,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._serverHost.Location = new System.Drawing.Point(69, 310);
             this._serverHost.Name = "_serverHost";
+            this._serverHost.ReadOnly = true;
             this._serverHost.Size = new System.Drawing.Size(172, 20);
             this._serverHost.TabIndex = 4;
             // 
             // _lblDesc
             // 
             this._lblDesc.AutoSize = true;
-            this._lblDesc.Location = new System.Drawing.Point(3, 259);
+            this._lblDesc.Location = new System.Drawing.Point(15, 259);
             this._lblDesc.Name = "_lblDesc";
-            this._lblDesc.Size = new System.Drawing.Size(60, 13);
+            this._lblDesc.Size = new System.Drawing.Size(48, 13);
             this._lblDesc.TabIndex = 6;
-            this._lblDesc.Text = "Description";
+            this._lblDesc.Text = "Location";
             // 
             // _lblName
             // 
@@ -128,6 +131,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._serverAE.Location = new System.Drawing.Point(69, 282);
             this._serverAE.Name = "_serverAE";
+            this._serverAE.ReadOnly = true;
             this._serverAE.Size = new System.Drawing.Size(172, 20);
             this._serverAE.TabIndex = 3;
             // 
@@ -137,6 +141,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._serverPort.Location = new System.Drawing.Point(70, 337);
             this._serverPort.Name = "_serverPort";
+            this._serverPort.ReadOnly = true;
             this._serverPort.Size = new System.Drawing.Size(171, 20);
             this._serverPort.TabIndex = 5;
             // 

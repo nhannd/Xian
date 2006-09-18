@@ -8,17 +8,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     public class ServerViewServerNode : BrowserNode 
     {
         private AEServer _aeserver;
+        private AEServerPool _serverPool;
 
-        internal ServerViewServerNode(AEServer ae)
+        public AEServerPool ServerPool
         {
-            _aeserver = ae;
+            get { return _serverPool; }
+            set { _serverPool = value; }
         }
 
-        public override string DisplayName
+        internal ServerViewServerNode(AEServer ae, AEServerPool svrPool)
+        {
+            _aeserver = ae;
+            _serverPool = svrPool;
+        }
+
+        public override string ServerName
         {
             get
             {
+                if (_aeserver.Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                    return _aeserver.getServerGroupName();
                 return _aeserver.Servername;
+            }
+        }
+
+        public override string ServerPath
+        {
+            get
+            {
+                return _aeserver.Serverpath;
             }
         }
 
@@ -26,15 +44,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get
             {
-                return _aeserver.Description;
+                if (_aeserver.Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                    return "";
+                return _aeserver.AEDetails;
             }
         }
 
         protected override void CreateChildNodes()
         {
-            //int i = 0;
-            //AddChild(new PluginViewExtensionPointsNode(_plugin));
-            //AddChild(new PluginViewExtensionsNode(_plugin));
+            if (!ServerName.Equals(AENavigatorComponent.MyServersTitle))
+                return;
+            foreach (AEServer ae in _serverPool.Serverlist)
+            {
+                if (ae.Servername.Equals(AENavigatorComponent.EmptyNodeName) || ae.Servername.Equals(AENavigatorComponent.MyDatastoreTitle))
+                    continue;
+                AddChild(new ServerViewServerNode(ae, _serverPool));
+            }
         }
     }
 }
