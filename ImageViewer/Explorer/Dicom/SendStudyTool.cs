@@ -60,7 +60,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
             DicomServicesLayer.GetISender(me).Send(new Uid(this.Context.SelectedStudy.StudyInstanceUID), this.Context.SelectedServer, this.Context.SelectedStudy.StudyDescription);
 		}
-		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
