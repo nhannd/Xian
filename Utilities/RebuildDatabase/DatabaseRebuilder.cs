@@ -108,17 +108,17 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
         protected void OnImageInsertCompletedEvent(ImageInsertCompletedEventArgs args)
         {
-            ClearCanvas.Common.EventsHelper.Fire(ImageInsertCompletedEvent, this, args);
+            ClearCanvas.Common.Utilities.EventsHelper.Fire(ImageInsertCompletedEvent, this, args);
         }
 
         protected void OnImageInsertCompletingEvent(ImageInsertCompletingEventArgs args)
         {
-            ClearCanvas.Common.EventsHelper.Fire(ImageInsertCompletingEvent, this, args);
+            ClearCanvas.Common.Utilities.EventsHelper.Fire(ImageInsertCompletingEvent, this, args);
         }
 
         protected void OnDatabaseRebuildCompletedEvent(DatabaseRebuildCompletedEventArgs args)
         {
-            ClearCanvas.Common.EventsHelper.Fire(DatabaseRebuildCompletedEvent, this, args);
+            ClearCanvas.Common.Utilities.EventsHelper.Fire(DatabaseRebuildCompletedEvent, this, args);
         }
 
         protected void DoRebuild()
