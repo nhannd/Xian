@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// This class serves as a basic container for a collection of unknown extensions.

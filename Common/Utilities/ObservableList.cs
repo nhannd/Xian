@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	public class ObservableList<TItem, TItemEventArgs> 
 		: IObservableList<TItem, TItemEventArgs>

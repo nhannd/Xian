@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	public class CollectionEventArgs<TItem> : EventArgs
 	{

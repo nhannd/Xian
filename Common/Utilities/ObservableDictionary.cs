@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	public class ObservableDictionary<TKey, TItem, TItemEventArgs> : IDictionary<TKey, TItem>
 		where TItem : class

@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// Helps clients raise events safely.

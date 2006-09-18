@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Defines a generic mechanism for binding to an arbitrary observable property of an object.

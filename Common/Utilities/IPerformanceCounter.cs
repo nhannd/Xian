@@ -1,4 +1,4 @@
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	public interface IPerformanceCounter
 	{

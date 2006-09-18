@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Defines an interface that provides resource resolution services.  Resource resolution in this context

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Security.Policy;
 using System.Security;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {

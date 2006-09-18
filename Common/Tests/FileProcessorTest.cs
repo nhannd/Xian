@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using NUnit.Framework;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Tests
 {

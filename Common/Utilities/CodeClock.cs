@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// A simple stopwatch class that can be used to profile code.  To ensure portability, use this

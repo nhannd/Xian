@@ -1,5 +1,6 @@
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Auditing
 {

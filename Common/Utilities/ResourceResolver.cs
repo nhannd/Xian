@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Resources;
 using System.IO;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Default implementation of <see cref="IResourceResolver"/>.  Resolves resources by searching the set of

@@ -7,6 +7,7 @@ using System.Text;
 using NUnit.Framework;
 using NMock2;
 using ClearCanvas.Common.Auditing;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Auditing.Tests
 {

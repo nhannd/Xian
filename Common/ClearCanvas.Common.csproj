@@ -92,28 +92,20 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Auditing\IAuditMessage.cs" />
-    <Compile Include="BasicExtensionPointManager.cs" />
+    <Compile Include="ClassNameExtensionFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ExtensionPoint.cs" />
-    <Compile Include="ExtensionSettings.cs" />
+    <Compile Include="ExtensionSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Auditing\Auditor.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
-    <Compile Include="IObservablePropertyBinding.cs" />
-    <Compile Include="DynamicObservablePropertyBinding.cs" />
-    <Compile Include="ClassNameExtensionFilter.cs" />
-    <Compile Include="IResourceResolver.cs" />
     <Compile Include="ISessionManager.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CollectionEventArgs.cs" />
-    <Compile Include="CodeClock.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DefaultPerformanceCounter.cs" />
-    <Compile Include="EventsHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Exceptions.cs">
@@ -124,24 +116,14 @@
     <Compile Include="ExtensionOfAttribute.cs" />
     <Compile Include="ExtensionPointInfo.cs" />
     <Compile Include="ExtensionPointAttribute.cs" />
-    <Compile Include="FileProcessor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FloatComparer.cs" />
     <Compile Include="GuiToolkitAttribute.cs" />
     <Compile Include="GuiToolkitID.cs" />
     <Compile Include="IApplicationRoot.cs" />
     <Compile Include="IBrowsable.cs" />
-    <Compile Include="IObservableList.cs" />
-    <Compile Include="IPerformanceCounter.cs" />
     <Compile Include="AttributeExtensionFilter.cs" />
     <Compile Include="Auditing\Tests\AuditingTests.cs" />
-    <Compile Include="Tests\FloatComparerTest.cs" />
+    <Compile Include="Tests\FileProcessorTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
-    <Compile Include="Mathematics\RectF.cs" />
-    <Compile Include="Mathematics\Vector.cs" />
-    <Compile Include="ObservableDictionary.cs" />
-    <Compile Include="ObservableList.cs" />
     <Compile Include="Platform.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -158,14 +140,10 @@
     <Compile Include="PluginManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ResourceResolver.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Tests\FileProcessorTest.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\PluginManagerTest.cs">
       <SubType>Code</SubType>
@@ -173,10 +151,23 @@
     <Compile Include="Tests\PluginSetupTeardown.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\BasicExtensionPointManager.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />
+    <Compile Include="Utilities\CodeClock.cs" />
+    <Compile Include="Utilities\CollectionEventArgs.cs" />
+    <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
+    <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />
+    <Compile Include="Utilities\EventsHelper.cs" />
+    <Compile Include="Utilities\FileProcessor.cs" />
     <Compile Include="Utilities\InterthreadMarshaler.cs" />
-    <Compile Include="Utilities\PointUtilities.cs" />
-    <Compile Include="Win32PerformanceCounter.cs" />
+    <Compile Include="Utilities\IObservableList.cs" />
+    <Compile Include="Utilities\IObservablePropertyBinding.cs" />
+    <Compile Include="Utilities\IPerformanceCounter.cs" />
+    <Compile Include="Utilities\IResourceResolver.cs" />
+    <Compile Include="Utilities\ObservableDictionary.cs" />
+    <Compile Include="Utilities\ObservableList.cs" />
+    <Compile Include="Utilities\ResourceResolver.cs" />
+    <Compile Include="Utilities\Win32PerformanceCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

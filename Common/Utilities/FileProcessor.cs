@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// Summary description for FileProcessor.

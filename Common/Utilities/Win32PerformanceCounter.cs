@@ -1,4 +1,4 @@
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// A wrapping of the Win32 high resolution performance counter

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Common.Utilities
 {
     public delegate T PropertyGetDelegate<T>();
     public delegate void PropertySetDelegate<T>(T val);
