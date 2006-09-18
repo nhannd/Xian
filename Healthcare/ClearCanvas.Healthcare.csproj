@@ -42,18 +42,27 @@
     <Compile Include="AddressType.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
+    <Compile Include="CompositeIdentifier.cs" />
+    <Compile Include="Facility.cs" />
+    <Compile Include="Location.cs" />
     <Compile Include="Patient.cs" />
-    <Compile Include="PatientIdentifier.cs" />
+    <Compile Include="PatientClass.cs" />
     <Compile Include="PatientIdentifierType.cs" />
     <Compile Include="PatientProfile.cs" />
     <Compile Include="PatientProfileMatch.cs" />
-    <Compile Include="PatientProfileSearchCriteria.cs" />
     <Compile Include="PersonName.cs" />
+    <Compile Include="Practitioner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sex.cs" />
+    <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />
     <Compile Include="TelephoneNumber.cs" />
     <Compile Include="TelephoneUse.cs" />
+    <Compile Include="Visit.cs" />
+    <Compile Include="VisitLocation.cs" />
+    <Compile Include="VisitLocationRole.cs" />
+    <Compile Include="VisitPractitioner.cs" />
+    <Compile Include="VisitPractitionerRole.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

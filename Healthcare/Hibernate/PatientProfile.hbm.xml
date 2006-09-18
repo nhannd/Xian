@@ -18,11 +18,11 @@
       </composite-element>
     </set>
     -->
-    <component name="MRN" class="PatientIdentifier">
+    <component name="MRN" class="CompositeIdentifier">
       <property name ="Id" column="MrnId_" type="String" length="30" not-null="true"/>
       <property name="AssigningAuthority" column="MrnAssigningAuthority_" type="String" length="100" not-null="true"/>
     </component>
-    <component name="Healthcard" class="PatientIdentifier">
+    <component name="Healthcard" class="CompositeIdentifier">
       <property name ="Id" column="HealthcardId_" type="String" length="30" not-null="true"/>
       <property name="AssigningAuthority" column="HealthcardAssigningAuthority_" type="String" length="100" not-null="true"/>
     </component>

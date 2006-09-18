@@ -78,6 +78,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Patient.hbm.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Facility.hbm.xml" />
+    <EmbeddedResource Include="Location.hbm.xml" />
+    <EmbeddedResource Include="PatientClassEnum.hbm.xml" />
+    <EmbeddedResource Include="Practitioner.hbm.xml" />
+    <EmbeddedResource Include="Staff.hbm.xml" />
+    <EmbeddedResource Include="Visit.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VisitLocationRoleEnum.hbm.xml" />
+    <EmbeddedResource Include="VisitPractitionerRoleEnum.hbm.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

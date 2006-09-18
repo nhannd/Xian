@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Services
             {
                 foreach (PatientProfile profile in patient.Profiles)
                 {
-                    PatientIdentifier mrnToBeReconciled = profile.MRN;
+                    CompositeIdentifier mrnToBeReconciled = profile.MRN;
                     if (mrnToBeReconciled != null &&
                         PatientHasProfileForSite(toBeKept, mrnToBeReconciled.AssigningAuthority) == true)
                     {
@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Services
         {
             foreach (PatientProfile profile in patient.Profiles)
             {
-                PatientIdentifier id = profile.MRN;
+                CompositeIdentifier id = profile.MRN;
                 if (id != null && 
                     id.AssigningAuthority == site)
                 {

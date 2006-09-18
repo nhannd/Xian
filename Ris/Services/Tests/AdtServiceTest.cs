@@ -356,7 +356,7 @@ namespace ClearCanvas.Ris.Services.Tests
         }
     }
 
-    public class TestPatientIdentifier : PatientIdentifier
+    public class TestPatientIdentifier : CompositeIdentifier
     {
         public TestPatientIdentifier(string id, string authority) : base()
         {

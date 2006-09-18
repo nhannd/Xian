@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="Location" proxy="Location" table="Location_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <many-to-one name="Facility" class="Facility" column="FacilityOID_" not-null="true" fetch="join"/>
+    <property name="Building" column="Building_" type="String" length="100" not-null="false"/>
+    <property name="Floor" column="Floor_" type="String" length="100" not-null="false"/>
+    <property name="PointOfCare" column="PointOfCare_" type="String" length="100" not-null="false"/>
+    <property name="Room" column="Room_" type="String" length="100" not-null="false"/>
+    <property name="Bed" column="Bed_" type="String" length="100" not-null="false"/>
+
+    <property name="Active" column="Active_" type="Boolean" not-null="true"/>
+    <property name="InactiveDate" column="InactiveDate_" type="DateTime" not-null="false"/>
+  </class>
+</hibernate-mapping>

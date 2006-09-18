@@ -10,23 +10,23 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// Simplified implementation of HL7 CX (Extended Composite ID) data type
+    /// CompositeIdentifier component
     /// </summary>
-	public partial class PatientIdentifier
+	public partial class CompositeIdentifier
 	{
 		/// <summary>
 		/// Factory method
 		/// </summary>
-		public static PatientIdentifier New()
+		public static CompositeIdentifier New()
 		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-            PatientIdentifier patientIdentifier = new PatientIdentifier();
+            // add any object initialization code here
+            // the signature of the New() method may be freely changed as needed
+            CompositeIdentifier patientIdentifier = new CompositeIdentifier();
             patientIdentifier.AssigningAuthority = "UHN";
             return patientIdentifier;
-		}
+        }
 
-        public void CopyFrom(PatientIdentifier source)
+        public void CopyFrom(CompositeIdentifier source)
         {
             _id = source.Id;
             _assigningAuthority = source.AssigningAuthority;
