@@ -2,8 +2,9 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Mathematics;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {

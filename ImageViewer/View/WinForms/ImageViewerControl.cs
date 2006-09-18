@@ -8,6 +8,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {

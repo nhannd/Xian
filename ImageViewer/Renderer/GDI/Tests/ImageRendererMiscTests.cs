@@ -10,6 +10,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Renderer.GDI;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {

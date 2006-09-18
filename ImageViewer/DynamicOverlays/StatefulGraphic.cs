@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {

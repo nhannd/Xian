@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Mathematics;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.DynamicOverlays;
 using ClearCanvas.Desktop.Tools;

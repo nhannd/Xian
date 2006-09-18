@@ -1,6 +1,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.ImageViewer

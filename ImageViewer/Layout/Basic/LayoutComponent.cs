@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {

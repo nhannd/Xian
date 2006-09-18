@@ -8,6 +8,7 @@ using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {

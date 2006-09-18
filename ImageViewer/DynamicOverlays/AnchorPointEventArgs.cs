@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {

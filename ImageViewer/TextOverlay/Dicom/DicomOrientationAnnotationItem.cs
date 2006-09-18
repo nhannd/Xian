@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
-using ClearCanvas.Common.Mathematics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.TextOverlay.Dicom
 {

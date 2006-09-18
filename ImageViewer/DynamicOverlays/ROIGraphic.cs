@@ -4,9 +4,10 @@ using System.Text;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Mathematics;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {

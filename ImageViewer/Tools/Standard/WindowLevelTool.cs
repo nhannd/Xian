@@ -7,6 +7,7 @@ using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {

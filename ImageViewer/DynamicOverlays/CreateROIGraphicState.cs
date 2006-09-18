@@ -5,6 +5,7 @@ using System.Drawing;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {

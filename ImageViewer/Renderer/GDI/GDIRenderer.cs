@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {

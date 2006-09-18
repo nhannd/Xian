@@ -92,6 +92,11 @@
   <ItemGroup>
     <Compile Include="AnnotationConfiguration.cs" />
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
+    <Compile Include="Mathematics\FloatComparer.cs" />
+    <Compile Include="Mathematics\PointUtilities.cs" />
+    <Compile Include="Mathematics\RectF.cs" />
+    <Compile Include="Mathematics\Tests\FloatComparerTest.cs" />
+    <Compile Include="Mathematics\Vector.cs" />
     <Compile Include="MouseWheelToolMappedEventArgs.cs" />
     <Compile Include="AnnotationConfigurationManager.cs" />
     <Compile Include="AnnotationItemConfigurationOptions.cs" />

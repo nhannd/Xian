@@ -5,6 +5,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {

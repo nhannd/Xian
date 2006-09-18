@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
