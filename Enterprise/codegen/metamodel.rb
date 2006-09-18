@@ -1,5 +1,8 @@
 require 'rexml/document'
 
+# NHibernate elements that result in C# classes
+NHIBERNATE_CLASS_TYPES = ['class', 'joined-subclass']
+
 # NHibernate elements that result in C# fields
 NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','component','map','set','idbag', 'bag', 'list']
 
@@ -59,18 +62,21 @@ class Model < ElementDef
     @namespace = mappings.root.attributes['namespace'] if @namespace == nil
     
     # process each class in the hbm file
-    mappings.root.each_element('class') do |c|
-      className = c.attributes['name']
-      
-      # check if this class name already exists
-      if(!@symbolSpace.include?(className))
-        if(/Enum$/.match(className))
-          processEnum(c)
-        else
-          processEntity(c, "Entity", @entityDefs)
-        end
+    mappings.root.each_element do |c|
+      if(NHIBERNATE_CLASS_TYPES.include?(c.name))
+	      className = c.attributes['name']
+	      
+	      # check if this class name already exists
+	      if(!@symbolSpace.include?(className))
+		if(/Enum$/.match(className))
+		  processEnum(c)
+		else
+		  processEntity(c, c.attributes['extends'] || "Entity", @entityDefs)
+		end
+	      end
       end
     end
+    
   end
   
   # returns the last component of the namespace
@@ -96,7 +102,7 @@ protected
     
     #process subclassses recursively
     classNode.each_element do |subclassNode|
-      processEntity(subclassNode, entityDef.className, entityDefs ) if(['joined-subclass', 'subclass'].include?(subclassNode.name))
+      processEntity(subclassNode, entityDef.className, entityDefs ) if(NHIBERNATE_CLASS_TYPES.include?(subclassNode.name))
     end
   end
   
