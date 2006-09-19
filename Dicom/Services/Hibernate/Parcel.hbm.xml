@@ -24,20 +24,31 @@
 		<property name="ConnectionTimeout" column="SourceAEConnectionTimeout_" />
 		<property name="OperationTimeout" column="SourceAEOperationTimeout_" />
 	</component>
-	<list name="TransferSyntaxes" table="TransferSyntaxes_" lazy="false" access="nosetter.camelcase-underscore">
+	<joined-subclass name="SendParcel" table="SendParcel_" proxy="SendParcel">
 		<key column="ParcelOid_" />
-		<index column="Index_" /> 
-		<element column="TransferSyntax_" type="String" />
-	</list>
-	<list name="SopClasses" table="SopClasses_" lazy="false" access="nosetter.camelcase-underscore">
+		<list name="TransferSyntaxes" table="TransferSyntaxes_" lazy="false" access="nosetter.camelcase-underscore">
+			<key column="ParcelOid_" />
+			<index column="Index_" /> 
+			<element column="TransferSyntax_" type="String" />
+		</list>
+		<list name="SopClasses" table="SopClasses_" lazy="false" access="nosetter.camelcase-underscore">
+			<key column="ParcelOid_" />
+			<index column="Index_" /> 
+			<element column="SopClass_" type="String" />
+		</list>
+		<list name="SopInstances" table="SopInstances_" lazy="false" access="nosetter.camelcase-underscore">
+			<key column="ParcelOid_" />
+			<index column="Index_" /> 
+			<many-to-many class="ClearCanvas.Dicom.DataStore.SopInstance, ClearCanvas.Dicom.DataStore" column="ReferencedSopInstance_" fetch="select" />
+		</list>
+	</joined-subclass>
+	<joined-subclass name="RetrieveParcel" table="RetrieveParcel_" proxy="RetrieveParcel">
 		<key column="ParcelOid_" />
-		<index column="Index_" /> 
-		<element column="SopClass_" type="String" />
-	</list>
-	<list name="SopInstances" table="SopInstances_" lazy="false" access="nosetter.camelcase-underscore">
+		<property name="ObjectUid" column="ObjectUid_" type="String" />
+	</joined-subclass>
+	<joined-subclass name="ReceiveParcel" table="ReceiveParcel_" proxy="ReceiveParcel">
 		<key column="ParcelOid_" />
-		<index column="Index_" /> 
-		<many-to-many class="ClearCanvas.Dicom.DataStore.SopInstance, ClearCanvas.Dicom.DataStore" column="ReferencedSopInstance_" fetch="select" />
-	</list>
+		<property name="ReceivingStudyUid" column="ReceivingStudyUid_" type="String" length="64" />
+	</joined-subclass>
   </class>
 </hibernate-mapping>

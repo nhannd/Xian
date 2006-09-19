@@ -5,7 +5,7 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Services
 {
-    public interface IParcel
+    public interface ISendParcel
     {
         int Include(Uid referencedUid);
         ParcelTransferState GetState();

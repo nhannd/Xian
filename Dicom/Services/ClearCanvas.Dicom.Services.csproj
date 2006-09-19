@@ -62,16 +62,16 @@
     <Compile Include="DicomSender.cs" />
     <Compile Include="DicomServicesLayer.cs" />
     <Compile Include="IDicomSender.cs" />
-    <Compile Include="IParcel.cs" />
-    <Compile Include="ISendQueueService.cs" />
-    <Compile Include="ISendService.cs" />
+    <Compile Include="ISender.cs" />
+    <Compile Include="ISendParcel.cs" />
+    <Compile Include="ISendQueue.cs" />
     <Compile Include="LocalAESettings.cs" />
-    <Compile Include="Parcel.cs" />
     <Compile Include="ParcelTransferState.cs" />
     <Compile Include="QueueDisplayComponent.cs" />
     <Compile Include="QueueStatusChangedEventArgs.cs" />
     <Compile Include="Sender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SendParcel.cs" />
     <Compile Include="SendQueue.cs" />
     <Compile Include="Tests\UnitTestHarness.cs" />
   </ItemGroup>

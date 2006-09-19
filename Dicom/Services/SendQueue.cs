@@ -27,7 +27,7 @@ namespace ClearCanvas.Dicom.Services
         #endregion        
 
         #region ISendQueueService Members
-        public void Add(IParcel aParcel)
+        public void Add(ISendParcel aParcel)
         {
             ISession session = null;
             ITransaction transaction = null;
@@ -51,7 +51,7 @@ namespace ClearCanvas.Dicom.Services
             }
         }
 
-        public void Remove(IParcel aParcel)
+        public void Remove(ISendParcel aParcel)
         {
             ISession session = null;
             ITransaction transaction = null;
@@ -74,15 +74,15 @@ namespace ClearCanvas.Dicom.Services
             }
         }
 
-        public IParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription)
+        public ISendParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription)
         {
-            return new Parcel(sourceAE, destinationAE, parcelDescription);
+            return new SendParcel(sourceAE, destinationAE, parcelDescription);
         }
 
-        public IEnumerable<IParcel> GetParcels()
+        public IEnumerable<ISendParcel> GetParcels()
         {
             IList listOfParcels;
-            List<IParcel> returningParcels = new List<IParcel>();
+            List<ISendParcel> returningParcels = new List<ISendParcel>();
             ISession session = null;
 
             ITransaction transaction = null;
@@ -102,7 +102,7 @@ namespace ClearCanvas.Dicom.Services
             }
             finally { session.Close(); }
 
-            foreach (IParcel parcel in listOfParcels)
+            foreach (ISendParcel parcel in listOfParcels)
             {
                 returningParcels.Add(parcel);
             }
@@ -110,10 +110,10 @@ namespace ClearCanvas.Dicom.Services
             return returningParcels;
         }
 
-        public IEnumerable<IParcel> GetSendIncompleteParcels()
+        public IEnumerable<ISendParcel> GetSendIncompleteParcels()
         {
             IList listOfParcels;
-            List<IParcel> returningParcels = new List<IParcel>();
+            List<ISendParcel> returningParcels = new List<ISendParcel>();
             ISession session = null;
             ITransaction transaction = null;
 
@@ -127,7 +127,7 @@ namespace ClearCanvas.Dicom.Services
                 if (listOfParcels.Count <= 0)
                     return null;
 
-                foreach (IParcel parcel in listOfParcels)
+                foreach (ISendParcel parcel in listOfParcels)
                 {
                     // workaround: fetching isn't being done automatically even though 'lazy' is set to false
                     // so here, we access the list of sop instance filenames as a means of indirectly causing
@@ -146,7 +146,7 @@ namespace ClearCanvas.Dicom.Services
             return returningParcels;
         }
 
-        public void UpdateParcel(IParcel aParcel)
+        public void UpdateParcel(ISendParcel aParcel)
         {
             ISession session = null;
             ITransaction transaction = null;

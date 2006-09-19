@@ -34,25 +34,25 @@ namespace ClearCanvas.Dicom.Services
             // TODO prepare the component for its live phase
             base.Start();
 
-            _parcels = new TableData<Parcel>();
+            _parcels = new TableData<SendParcel>();
  
-            _parcels.Columns.Add(new TableColumn<Parcel, string>("Description",
-                delegate(Parcel aParcel) { return aParcel.Description; }
+            _parcels.Columns.Add(new TableColumn<SendParcel, string>("Description",
+                delegate(SendParcel aParcel) { return aParcel.Description; }
                 ));
-            _parcels.Columns.Add(new TableColumn<Parcel, string>("Status",
-                delegate(Parcel aParcel) { return ParcelTransferStateHelper.GetString(aParcel.ParcelTransferState); }
+            _parcels.Columns.Add(new TableColumn<SendParcel, string>("Status",
+                delegate(SendParcel aParcel) { return ParcelTransferStateHelper.GetString(aParcel.ParcelTransferState); }
                 ));
-            _parcels.Columns.Add(new TableColumn<Parcel, string>("Source",
-                delegate(Parcel aParcel) { return aParcel.SourceAE.AE; }
+            _parcels.Columns.Add(new TableColumn<SendParcel, string>("Source",
+                delegate(SendParcel aParcel) { return aParcel.SourceAE.AE; }
                 ));
-            _parcels.Columns.Add(new TableColumn<Parcel, string>("Destination",
-                delegate(Parcel aParcel) { return aParcel.DestinationAE.AE; }
+            _parcels.Columns.Add(new TableColumn<SendParcel, string>("Destination",
+                delegate(SendParcel aParcel) { return aParcel.DestinationAE.AE; }
                 ));
-            _parcels.Columns.Add(new TableColumn<Parcel, int>("Current",
-                delegate(Parcel aParcel) { return aParcel.CurrentProgressStep; }
+            _parcels.Columns.Add(new TableColumn<SendParcel, int>("Current",
+                delegate(SendParcel aParcel) { return aParcel.CurrentProgressStep; }
                 ));
-            _parcels.Columns.Add(new TableColumn<Parcel, int>("Total",
-                delegate(Parcel aParcel) { return aParcel.TotalProgressSteps; }
+            _parcels.Columns.Add(new TableColumn<SendParcel, int>("Total",
+                delegate(SendParcel aParcel) { return aParcel.TotalProgressSteps; }
                 ));
            
             PopulateListFromDataStore();
@@ -60,12 +60,12 @@ namespace ClearCanvas.Dicom.Services
 
         private void PopulateListFromDataStore()
         {
-            IEnumerable<IParcel> listOfParcels = DicomServicesLayer.GetISendQueue().GetParcels();
+            IEnumerable<ISendParcel> listOfParcels = DicomServicesLayer.GetISendQueue().GetParcels();
             if (null != listOfParcels)
             {
-                foreach (IParcel aParcel in listOfParcels)
+                foreach (ISendParcel aParcel in listOfParcels)
                 {
-                    _parcels.Add(aParcel as Parcel);
+                    _parcels.Add(aParcel as SendParcel);
                 }
             }
         }
@@ -77,10 +77,10 @@ namespace ClearCanvas.Dicom.Services
             base.Stop();
         }
 
-        private TableData<Parcel> _parcels;
+        private TableData<SendParcel> _parcels;
         private event EventHandler<QueueStatusChangedEventArgs> _queueStatusChanged;
 
-        public TableData<Parcel> Parcels
+        public TableData<SendParcel> Parcels
         {
             get { return _parcels; }
         }
@@ -101,7 +101,7 @@ namespace ClearCanvas.Dicom.Services
 
         public void RemoveSelectedParcel()
         {
-            IParcel aParcel = _currentSelection.Item as IParcel;
+            ISendParcel aParcel = _currentSelection.Item as ISendParcel;
             DicomServicesLayer.GetISendQueue().Remove(aParcel);
             Refresh();
         }

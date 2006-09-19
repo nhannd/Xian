@@ -29,7 +29,7 @@ namespace ClearCanvas.Dicom.Services
         public void Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription)
         {
             // create the parcel
-            IParcel aParcel = this.SendQueue.CreateNewParcel(this.MyAE, destinationAE, parcelDescription);
+            ISendParcel aParcel = this.SendQueue.CreateNewParcel(this.MyAE, destinationAE, parcelDescription);
 
             // put the object into the parcel
             if (aParcel.Include(referencedUid) > 0)

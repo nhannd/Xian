@@ -11,16 +11,16 @@ namespace ClearCanvas.Dicom.Services
     /// <summary>
     /// Allows access to the DataStore in a way that's not specific to Study, Series or SopInstance
     /// </summary>
-    public class Parcel : IParcel
+    public class SendParcel : ISendParcel
     {
-        public Parcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription) : this()
+        public SendParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription) : this()
         {
             _sourceAE = sourceAE;
             _destinationAE = destinationAE;
             _description = parcelDescription;
         }
 
-        protected Parcel()
+        protected SendParcel()
         {
             _transferSyntaxes = new List<string>();
             _sopClasses = new List<string>();
@@ -95,7 +95,7 @@ namespace ClearCanvas.Dicom.Services
         #region Internal and Private members
         private void AddTransferSyntax(Uid newTransferSyntax)
         {
-            string foundMatch = Parcel.Find((this.TransferSyntaxes as List<string>), newTransferSyntax);
+            string foundMatch = SendParcel.Find((this.TransferSyntaxes as List<string>), newTransferSyntax);
 
             if (null == foundMatch)
             {
@@ -105,7 +105,7 @@ namespace ClearCanvas.Dicom.Services
 
         private void AddSopClass(Uid newSopClass)
         {
-            string foundMatch = Parcel.Find((this.SopClasses as List<string>), newSopClass);
+            string foundMatch = SendParcel.Find((this.SopClasses as List<string>), newSopClass);
 
             if (null == foundMatch)
             {
