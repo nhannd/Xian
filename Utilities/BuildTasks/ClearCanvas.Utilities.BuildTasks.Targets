@@ -4,5 +4,5 @@
     <ClearCanvasBuildTasksPath Condition="'$(ClearCanvasBuildTasksPath)' == ''">$(MSBuildExtensionsPath)\ClearCanvasBuildTasks</ClearCanvasBuildTasksPath>
     <ClearCanvasTasksDll>$(ClearCanvasBuildTasksPath)\ClearCanvas.Utilities.BuildTasks.dll</ClearCanvasTasksDll>
   </PropertyGroup>
-  <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Build.VersionProjects"/>
+  <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.VersionProjects"/>
 </Project>
