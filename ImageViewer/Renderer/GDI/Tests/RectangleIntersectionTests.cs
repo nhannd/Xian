@@ -45,33 +45,26 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void IntersectOn1Side()
 		{
-			RectangleF rect1 = new RectangleF(0, 0, 10, 10);
-			RectangleF rect2 = new RectangleF(2, -2, 5, 5);
+			RectangleF rect1 = new RectangleF(2, -2, 5, 5); 
+			RectangleF rect2 = new RectangleF(0, 0, 10, 10);
 
 			RectangleF intersectRect = RectangleUtilities.Intersect(rect1, rect2);
 
 			Assert.AreEqual(new RectangleF(2,0,5,3), intersectRect);
 
-			rect1 = new RectangleF(0, 0, -10, 10);
+			rect1 = new RectangleF(0, 0, -10, 10); 
 			rect2 = new RectangleF(-8, -2, 5, 5);
 
 			intersectRect = RectangleUtilities.Intersect(rect1, rect2);
 
-			Assert.AreEqual(new RectangleF(-8, 0, 5, 3), intersectRect);
-
-			rect2 = new RectangleF(0, 0, -10, 10);
-			rect1 = new RectangleF(-8, -2, 5, 5);
-
-			intersectRect = RectangleUtilities.Intersect(rect1, rect2);
-
-			Assert.AreEqual(new RectangleF(-8, 0, 5, 3), intersectRect);
+			Assert.AreEqual(new RectangleF(-3, 0, -5, 3), intersectRect);
 
 			rect1 = new RectangleF(0, 0, -10, 10);
 			rect2 = new RectangleF(-3, -2, -5, 5);
 
 			intersectRect = RectangleUtilities.Intersect(rect1, rect2);
 
-			Assert.AreEqual(new RectangleF(-8, 0, 5, 3), intersectRect);
+			Assert.AreEqual(new RectangleF(-3, 0, -5, 3), intersectRect);
 		}
 
 		[Test]
@@ -164,6 +157,54 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			rect1 = new RectangleF(10, 0, 10, 10);
 
 			Assert.IsFalse(RectangleUtilities.DoesIntersect(rect1, rect2));
+		}
+
+		[Test]
+		public void RoundInflated()
+		{
+			//positive width and height
+			RectangleF testRectangle = new RectangleF(1.5F, 2.5F, 5F, 7F);
+			testRectangle = RectangleUtilities.RoundInflate(testRectangle);
+			Assert.AreEqual(testRectangle.Left, 1);
+			Assert.AreEqual(testRectangle.Top, 2);
+			Assert.AreEqual(testRectangle.Right, 7);
+			Assert.AreEqual(testRectangle.Bottom, 10);
+
+			testRectangle = new RectangleF(-1.5F, -2.5F, 5F, 7F);
+			testRectangle = RectangleUtilities.RoundInflate(testRectangle);
+			Assert.AreEqual(testRectangle.Left, -2);
+			Assert.AreEqual(testRectangle.Top, -3);
+			Assert.AreEqual(testRectangle.Right, 4);
+			Assert.AreEqual(testRectangle.Bottom, 5);
+
+			testRectangle = new RectangleF(-11.5F, -12.5F, 5F, 7F);
+			testRectangle = RectangleUtilities.RoundInflate(testRectangle);
+			Assert.AreEqual(testRectangle.Left, -12);
+			Assert.AreEqual(testRectangle.Top, -13);
+			Assert.AreEqual(testRectangle.Right, -6);
+			Assert.AreEqual(testRectangle.Bottom, -5);
+
+			//negative width and height
+			testRectangle = new RectangleF(10.5F, 11.5F, -5F, -7F);
+			testRectangle = RectangleUtilities.RoundInflate(testRectangle);
+			Assert.AreEqual(testRectangle.Left, 11);
+			Assert.AreEqual(testRectangle.Top, 12);
+			Assert.AreEqual(testRectangle.Right, 5);
+			Assert.AreEqual(testRectangle.Bottom, 4);
+
+			testRectangle = new RectangleF(-10.5F, -11.5F, -5F, -7F);
+			testRectangle = RectangleUtilities.RoundInflate(testRectangle);
+			Assert.AreEqual(testRectangle.Left, -10);
+			Assert.AreEqual(testRectangle.Top, -11);
+			Assert.AreEqual(testRectangle.Right, -16);
+			Assert.AreEqual(testRectangle.Bottom, -19);
+
+			testRectangle = new RectangleF(3.5F, 5.5F, -5F, -7F);
+			testRectangle = RectangleUtilities.RoundInflate(testRectangle);
+			Assert.AreEqual(testRectangle.Left, 4);
+			Assert.AreEqual(testRectangle.Top, 6);
+			Assert.AreEqual(testRectangle.Right, -2);
+			Assert.AreEqual(testRectangle.Bottom, -2);
 		}
 	}
 }

@@ -4,18 +4,38 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Diagnostics;
-
-using NUnit.Framework;
 using ClearCanvas.ImageViewer.Renderer.GDI;
 using ClearCanvas.ImageViewer.Layers;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
-    [TestFixture]
+	public unsafe class PublicMethodRenderer : ImageRenderer
+	{
+		new public static bool IsRotated(ImageLayer imageLayer)
+		{
+			return ImageRenderer.IsRotated(imageLayer);
+		}
+
+		new public static void CalculateVisibleRectangles(
+			ImageLayer imageLayer,
+			RectangleF clientRectangle,
+			out Rectangle dstVisibleRectangle,
+			out Rectangle srcVisibleRectangle)
+		{
+			ImageRenderer.CalculateVisibleRectangles(imageLayer,
+				clientRectangle,
+				out dstVisibleRectangle,
+				out srcVisibleRectangle);
+		}
+	}
+
+	[TestFixture]
     public class ImageRendererBilinearInterpolationTests
     {
         enum ImageTypes { MONO8, MONO16, RGB_PLANAR, RGB_TRIPLET};
-        
+
+		ImageLayer.InterpolationMethods _interpolationMethod; 
         LayerGroup _layerGroup;
         MockImageLayer _layer;
 
@@ -38,17 +58,20 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
         ImageTypes _sourceImageType;
 
+		static readonly float _fixedScale = 128;
+		static readonly int _fixedPrecision = 7;
+
         public ImageRendererBilinearInterpolationTests()
         {
-            _tracePhantom = true;
-            _traceBitmap = true;
-            _trace = true;
         }
 
         [TestFixtureSetUp]
         public void Init()
         {
-        }
+			_tracePhantom = true;
+			_traceBitmap = true;
+			_trace = true;
+		}
 
         [TestFixtureTearDown]
         public void Cleanup()
@@ -56,20 +79,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
         }
 
         [Test]
-        [Ignore("Renderer fails due to memory access violations when images are this small (See Ticket#89).")]
-        public void TestImageOneByOne()
-        {
-            //Test a 1x1 source image.  The results aren't so important here as it is for the Render call to *not* fail.
-            _srcWidth = 1;
-            _srcHeight = 1;
-            _dstWidth = 11;
-            _dstHeight = 17;
-
-            TestVariousPoints();
-        }
-
-        [Test]
-        [Ignore("Renderer fails due to memory access violations when images are this small (See Ticket#89).")]
         public void TestImageTwoByTwo()
         {
             //Test a 2x2 source image.  The results aren't so important here as it is for the Render call to *not* fail.
@@ -78,11 +87,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 11;
             _dstHeight = 17;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
         [Test]
-		[Ignore("Ignore for now - the unit tests will not work until the off-by-1 in the usage of SpatialTransform is corrected (see ticket #93).  Tests also need to be updated to test both 'fast' and regular bilinear interpolation.")]
         public void TestImageArbitrarySizeLargerDestination1()
         {
             _srcWidth = 7;
@@ -90,11 +98,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 23;
             _dstHeight = 31;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
         [Test]
-		[Ignore("Ignore for now - the unit tests will not work until the off-by-1 in the usage of SpatialTransform is corrected (see ticket #93).  Tests also need to be updated to test both 'fast' and regular bilinear interpolation.")]
         public void TestImageArbitrarySizeLargerDestination2()
         {
             _srcWidth = 23;
@@ -102,11 +109,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 41;
             _dstHeight = 53;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
         [Test]
-		[Ignore("Ignore for now - the unit tests will not work until the off-by-1 in the usage of SpatialTransform is corrected (see ticket #93).  Tests also need to be updated to test both 'fast' and regular bilinear interpolation.")]
         public void TestImageArbitrarySizeLargerSource1()
         {
             _srcWidth = 23;
@@ -114,11 +120,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 7;
             _dstHeight = 11;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
         [Test]
-		[Ignore("Ignore for now - the unit tests will not work until the off-by-1 in the usage of SpatialTransform is corrected (see ticket #93).  Tests also need to be updated to test both 'fast' and regular bilinear interpolation.")]
         public void TestImageArbitrarySizeLargerSource2()
         {
             _srcWidth = 41;
@@ -126,11 +131,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 23;
             _dstHeight = 31;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
         [Test]
-		[Ignore("Ignore for now - the unit tests will not work until the off-by-1 in the usage of SpatialTransform is corrected (see ticket #93).  Tests also need to be updated to test both 'fast' and regular bilinear interpolation.")]
         public void TestImageSameSize1()
         {
             _srcWidth = 7;
@@ -138,11 +142,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 7;
             _dstHeight = 11;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
         [Test]
-		[Ignore("Ignore for now - the unit tests will not work until the off-by-1 in the usage of SpatialTransform is corrected (see ticket #93).  Tests also need to be updated to test both 'fast' and regular bilinear interpolation.")]
         public void TestImageSameSize2()
         {
             _srcWidth = 23;
@@ -150,15 +153,23 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _dstWidth = 23;
             _dstHeight = 31;
 
-            TestVariousPoints();
+            TestVariousPointAllMethods();
         }
 
-        private void TestVariousPoints()
+        private void TestVariousPointAllMethods()
         {
+			_interpolationMethod = ImageLayer.InterpolationMethods.BILINEAR;
+
             TestAtCentreOfQuadrants();
             TestAtBoundaries();
             TestNearBoundaries();
-        }
+
+			_interpolationMethod = ImageLayer.InterpolationMethods.BILINEAR_FAST;
+
+			TestAtCentreOfQuadrants();
+			TestAtBoundaries();
+			TestNearBoundaries();
+		}
 
         private void TestAtCentreOfQuadrants()
         {
@@ -211,12 +222,12 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             Point[] arrayOfTestPoints = new Point[4];
             
             //top left
-            arrayOfTestPoints[1].X = 1;
-            arrayOfTestPoints[1].Y = 1;
+            arrayOfTestPoints[0].X = 1;
+            arrayOfTestPoints[0].Y = 1;
 
             //bottom left
-            arrayOfTestPoints[3].X = _dstWidth - 2;
-            arrayOfTestPoints[3].Y = 1;
+            arrayOfTestPoints[1].X = _dstWidth - 2;
+            arrayOfTestPoints[1].Y = 1;
 
             //top right
             arrayOfTestPoints[2].X = 1;
@@ -261,21 +272,21 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
         private void TestImageVariousTranslationsScalesAndOrientations(Point[] arrayOfTestPoints)
         {
-            _translationX = 0;
-            _translationY = 0;
-            TestImageVariousScalesAndOrientations(arrayOfTestPoints);
+			_translationX = 0;
+			_translationY = 0;
+			TestImageVariousScalesAndOrientations(arrayOfTestPoints);
 
-            _translationX = _dstWidth / 4;
-            _translationY = 0;
-            TestImageVariousScalesAndOrientations(arrayOfTestPoints);
+			_translationX = _dstWidth / 4;
+			_translationY = 0;
+			TestImageVariousScalesAndOrientations(arrayOfTestPoints);
 
-            _translationX = 0;
-            _translationY = _dstHeight / 4;
-            TestImageVariousScalesAndOrientations(arrayOfTestPoints);
+			_translationX = 0;
+			_translationY = _dstHeight / 4;
+			TestImageVariousScalesAndOrientations(arrayOfTestPoints);
 
-            _translationX = _dstWidth / 4;
-            _translationY = _dstHeight / 4;
-            TestImageVariousScalesAndOrientations(arrayOfTestPoints);
+			_translationX = _dstWidth / 4;
+			_translationY = _dstHeight / 4;
+			TestImageVariousScalesAndOrientations(arrayOfTestPoints);
         }
 
         private void TestImageVariousScalesAndOrientations(Point[] arrayOfTestPoints)
@@ -335,127 +346,105 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             TestImage(arrayOfTestPoints);
         }
 
-        private void TestImage(Point [] arrayOfTestPoints)
-        {
-            if (_trace)
-            {
-                string imageType = String.Empty;
-                if (_sourceImageType == ImageTypes.MONO16)
-                    imageType = "MONO16";
-                else if (_sourceImageType == ImageTypes.MONO8)
-                    imageType = "MONO8";
-                else if (_sourceImageType == ImageTypes.RGB_PLANAR)
-                    imageType = "RGB_PLANAR";
-                else
-                    imageType = "RGB_TRIPLET";
+		private void TestImage(Point[] arrayOfTestPoints)
+		{
+			if (_trace)
+			{
+				string imageType = String.Empty;
+				if (_sourceImageType == ImageTypes.MONO16)
+					imageType = "MONO16";
+				else if (_sourceImageType == ImageTypes.MONO8)
+					imageType = "MONO8";
+				else if (_sourceImageType == ImageTypes.RGB_PLANAR)
+					imageType = "RGB_PLANAR";
+				else
+					imageType = "RGB_TRIPLET";
 
-                Trace.WriteLine(""); 
-                Trace.WriteLine(imageType);
-                Trace.WriteLine(String.Format("Scale (Fit/Scale): {0}/{1}", _scaleToFit, _scale));
-                Trace.WriteLine(String.Format("Orientation(FH/FV/R): {0}/{1}/{2}", _flipHorizontal, _flipVertical, _rotation));
-                Trace.WriteLine(String.Format("Translation: {0}, {1}", _translationX, _translationY));
-            }
+				Trace.WriteLine("");
+				Trace.WriteLine(imageType);
+				Trace.WriteLine(String.Format("Scale (Fit/Scale): {0}/{1}", _scaleToFit, _scale));
+				Trace.WriteLine(String.Format("Orientation(FH/FV/R): {0}/{1}/{2}", _flipHorizontal, _flipVertical, _rotation));
+				Trace.WriteLine(String.Format("Translation: {0}, {1}", _translationX, _translationY));
+			}
 
-            CreateImageLayer(_sourceImageType);
-            CreatePhantom();
+			CreateImageLayer(_sourceImageType);
+			CreatePhantom();
 
-            //render the image to a bitmap
-            Bitmap dstBitmap = null;
+			//render the image to a bitmap
+			Bitmap dstBitmap = ImageRendererTestUtilities.RenderLayer(_layer, _dstWidth, _dstHeight);
+			if (_traceBitmap)
+			{
+				string strTraceBitmap = "Bitmap:\n";
 
-            try
-            {
-                dstBitmap = ImageRendererTestUtilities.RenderLayer(_layer, _dstWidth, _dstHeight);
-                if (_traceBitmap)
-                {
-                    string strTraceBitmap = "Bitmap:\n";
+				for (int y = 0; y < dstBitmap.Height; y++)
+				{
+					for (int x = 0; x < dstBitmap.Width; x++)
+					{
+						byte pixelValue = dstBitmap.GetPixel(x, y).R;
+						strTraceBitmap += String.Format("{0}  ", (int)pixelValue);
+					}
 
-                    for (int y = 0; y < dstBitmap.Height; y++)
-                    {
-                        for (int x = 0; x < dstBitmap.Width; x++)
-                        {
-                            byte pixelValue = dstBitmap.GetPixel(x, y).R;
-                            strTraceBitmap += String.Format("{0}  ", (int)pixelValue);
-                        }
+					strTraceBitmap += "\n";
+				}
 
-                        strTraceBitmap += "\n";
-                    }
+				Trace.WriteLine(strTraceBitmap);
+			}
 
-                    Trace.WriteLine(strTraceBitmap);
-                }
-            }
-            catch (Exception e)
-            {
-                Assert.Fail(e.Message);
-            }
-            
-            foreach (Point dstPoint in arrayOfTestPoints)
-            {
-                try
-                {
-                    // Because the renderer does not use the spatial transform to obtain the source coordinate when performing
-                    // the interpolation (and the spatial transform results are trusted), we use it here in the unit tests.
-                    // After that, it's just a simple bilinear calculation of a value that is then put through the same LUT
-                    // as the value(s) in the renderer were put through.  The calculation methods are independent of each other
-                    // as they use different code entirely to compute the interpolated value(s).  Hence the reason I
-                    // can get away with performing these unit tests automated and not 'by hand'.
+			foreach (Point dstPoint in arrayOfTestPoints)
+			{
+				// The point of the unit test here is to do the same bilinear calculation as is done in the 
+				// actual interpolation code, but in a more reliable & simpler way (e.g. not using pointer
+				// arithmetic).
+				Rectangle dstViewableRectangle = new Rectangle();
+				Rectangle srcViewableRectangle = new Rectangle();
+				PublicMethodRenderer.CalculateVisibleRectangles(_layer, new Rectangle(0, 0, _dstWidth, _dstHeight), out dstViewableRectangle, out srcViewableRectangle);
 
-                    RectangleF dstViewableRectangle = new RectangleF();
-                    RectangleF srcViewableRectangle = new RectangleF();
-                    CalculateVisibleRectanglesF(_layer, new Rectangle(0, 0, _dstWidth, _dstHeight), out dstViewableRectangle, out srcViewableRectangle);
-                    // because we calculate the 'visible rectangles' in the actual interpolation algorithm
-                    // and they are rounded to integer values before performing the interpolation, we have to
-                    // account for that discrepancy here as well or we'll get the occasional value that doesn't match.
-                    float xCorrection = srcViewableRectangle.Left - (int)srcViewableRectangle.Left;
-                    float yCorrection = srcViewableRectangle.Top - (int)srcViewableRectangle.Top;
+				int dstViewableWidth = dstViewableRectangle.Width;
+				int dstViewableHeight = dstViewableRectangle.Height;
 
-                    byte dstValue = dstBitmap.GetPixel(dstPoint.X, dstPoint.Y).R; //just check the value of R.
-                    
-                    PointF srcPoint00 = _layer.SpatialTransform.ConvertToSource(new PointF((float)dstPoint.X, (float)dstPoint.Y));
-                    srcPoint00.X -= xCorrection; //correct it for the rounding that occurs in CalculateVisibleRectangles.
-                    srcPoint00.Y -= yCorrection; 
-                    byte backCalculateValue = PerformBilinearInterpolationAt(srcPoint00);
+				byte dstValue = dstBitmap.GetPixel(dstPoint.X, dstPoint.Y).R; //just check the value of R.
+				byte backCalculateValue = 0;
 
-                    string strMessage = String.Format("Image({0}, {1}): {2}, BackCalculated({3}, {4}): {5}\n",
-                                            dstPoint.X, dstPoint.Y, dstValue, srcPoint00.X, srcPoint00.Y, backCalculateValue);
-                    Trace.Write(strMessage);
-                    
-                    Assert.AreEqual(dstValue, backCalculateValue, strMessage);
-                }
-                catch (Exception e)
-                {
-                    Assert.Fail(e.Message);
-                }
-            }
-        }
+				if (dstViewableRectangle.Contains(dstPoint))
+				{
+					dstViewableRectangle = RectangleUtilities.MakeRectangleZeroBased(dstViewableRectangle); 
+					Point dstPointTranslated = new Point(dstPoint.X - dstViewableRectangle.Left, dstPoint.Y - dstViewableRectangle.Top);
 
-        // this function is in the test module rather than in the source code
-        // because we're not going to use it for anything other than tests right now.
-        public static void CalculateVisibleRectanglesF(
-            ImageLayer imageLayer,
-            RectangleF clientRectangle,
-            out RectangleF dstVisibleRectangleF,
-            out RectangleF srcVisibleRectangleF)
-        {
-            Rectangle srcRectangle = imageLayer.SpatialTransform.SourceRectangle;
-            dstVisibleRectangleF = imageLayer.SpatialTransform.ConvertToDestination(srcRectangle);
+					PointF srcPoint00 = new PointF();
+					if (_rotation != 0)
+					{
+						int temp = dstViewableHeight;
+						dstViewableHeight = dstViewableWidth;
+						dstViewableWidth = temp;
 
-            // Find the intersection between the drawable client rectangle and
-            // the transformed destination rectangle
-            dstVisibleRectangleF = RectangleUtilities.Intersect(clientRectangle, dstVisibleRectangleF);
-            if (dstVisibleRectangleF.IsEmpty)
-            {
-                dstVisibleRectangleF = Rectangle.Empty;
-                srcVisibleRectangleF = Rectangle.Empty;
-                return;
-            }
+						temp = dstPointTranslated.X;
+						dstPointTranslated.X = dstPointTranslated.Y;
+						dstPointTranslated.Y = temp;
+					}
 
-            // From that intersection, figure out what portion of the image
-            // is Visible in source coordinates
-            srcVisibleRectangleF = imageLayer.SpatialTransform.ConvertToSource(dstVisibleRectangleF);
+					float xRatio = (float)srcViewableRectangle.Width / dstViewableWidth;
+					float yRatio = (float)srcViewableRectangle.Height / dstViewableHeight;
+					float srcOffsetX = xRatio * dstPointTranslated.X;
+					float srcOffsetY = yRatio * dstPointTranslated.Y;
+					srcPoint00.X = srcViewableRectangle.Left + srcOffsetX;
+					srcPoint00.Y = srcViewableRectangle.Top + srcOffsetY;
 
-            //dstVisibleRectangleF = RectangleUtilities.MakeRectangleZeroBased(dstVisibleRectangleF);
-            //srcVisibleRectangleF = RectangleUtilities.MakeRectangleZeroBased(srcVisibleRectangleF);
-        }
+					backCalculateValue = PerformBilinearInterpolationAt(srcPoint00);
+
+					string strMessage = String.Format("Image({0}, {1}): {2}, BackCalculated({3:F8}, {4:F8}): {5}\n",
+											dstPoint.X, dstPoint.Y, dstValue, srcPoint00.X, srcPoint00.Y, backCalculateValue);
+					Trace.Write(strMessage);
+
+					Assert.AreEqual(dstValue, backCalculateValue, strMessage);
+				}
+				else
+				{
+					//The bilinear interpolation algorithm should not calculate any values outside the dstViewableRectangle.
+					string strMessage = String.Format("Point outside rectangle ({0}, {1})", dstPoint.X, dstPoint.Y);
+					Assert.IsTrue(dstValue == 0);
+				}
+			}
+		}
 
         private byte PerformBilinearInterpolationAt(PointF srcPoint00)
         {
@@ -464,10 +453,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             if (srcPoint00.X < 0)
                 srcPoint00.X = 0;
 
-            if (srcPoint00.X >= (_layer.Columns - 1))
-                srcPoint00.X = (_layer.Columns - 1.001F);
-            if (srcPoint00.Y >= (_layer.Rows - 1))
-                srcPoint00.Y = (_layer.Rows - 1.001F);
+			if (srcPoint00.X > (_srcWidth - 1.001F))
+				srcPoint00.X = (_srcWidth - 1.001F);
+			if (srcPoint00.Y > (_srcHeight - 1.001F))
+				srcPoint00.Y = (_srcHeight - 1.001F);
 
             Point srcPointInt00 = new Point((int)srcPoint00.X, (int)srcPoint00.Y);
 
@@ -504,35 +493,39 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
                 }
             }
 
-            try
-            {
-                //this actually performs the bilinear interpolation within the source image using 4 neighbour pixels.
-                float dx = srcPoint00.X - srcPointInt00.X;
-                float dy = srcPoint00.Y - srcPointInt00.Y;
+            //this actually performs the bilinear interpolation within the source image using 4 neighbour pixels.
+            float dx = srcPoint00.X - (float)srcPointInt00.X;
+			float dy = srcPoint00.Y - (float)srcPointInt00.Y;
 
-                float I1y = arrayOfValues[0, 0] + (arrayOfValues[1, 0] - arrayOfValues[0, 0]) * dy;
-                float I2y = arrayOfValues[0, 1] + (arrayOfValues[1, 1] - arrayOfValues[0, 1]) * dy;
-                float Ifinal = I1y + (I2y - I1y) * dx;
+			if (_interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR)
+			{
+				float yInterpolated1 = arrayOfValues[0, 0] + (arrayOfValues[1, 0] - arrayOfValues[0, 0]) * dy;
+				float yInterpolated2 = arrayOfValues[0, 1] + (arrayOfValues[1, 1] - arrayOfValues[0, 1]) * dy;
+				float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dx;
 
-                if (_layer.IsColor)
-                    return (byte)Ifinal;
+				if (_layer.IsColor)
+					return (byte)interpolated;
 
-                try
-                {
-                    return _layer.GrayscaleLUTPipeline.OutputLUT[(int)Ifinal];
-                }
-                catch (Exception e)
-                {
-                    Assert.Fail(e.Message);
-                }
-            
-            }
-            catch (Exception e)
-            {
-                Assert.Fail(e.Message);
-            }
-            return 0;
-        }
+				return _layer.GrayscaleLUTPipeline.OutputLUT[(ushort)interpolated];
+			}
+			else if (_interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR_FAST)
+			{
+				int dyFixed = (int)(dy * _fixedScale);
+				int dxFixed = (int)(dx * _fixedScale);
+				int yInterpolated1 = (((int)(arrayOfValues[0, 0])) << _fixedPrecision) + ((dyFixed * ((int)((arrayOfValues[1, 0] - arrayOfValues[0, 0])) << _fixedPrecision)) >> _fixedPrecision);
+				int yInterpolated2 = (((int)(arrayOfValues[0, 1])) << _fixedPrecision) + ((dyFixed * ((int)((arrayOfValues[1, 1] - arrayOfValues[0, 1])) << _fixedPrecision)) >> _fixedPrecision);
+				int interpolated = (yInterpolated1 + (((dxFixed) * (yInterpolated2 - yInterpolated1)) >> _fixedPrecision)) >> _fixedPrecision;
+
+				if (_layer.IsColor)
+					return (byte)interpolated;
+
+				return _layer.GrayscaleLUTPipeline.OutputLUT[(ushort)interpolated];
+			}
+			else
+			{
+				throw new Exception("No algorithm exists.");
+			}
+		}
 
         private void CreateImageLayer(ImageTypes imageType)
         {
@@ -561,6 +554,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
             _layer.SpatialTransform.TranslationY = _translationY;
 
             _layer.SpatialTransform.Calculate();
+
+			_layer.NormalInterpolationMethod = _interpolationMethod;
         }
 
         private void CreatePhantom()

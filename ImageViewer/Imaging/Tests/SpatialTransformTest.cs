@@ -239,75 +239,63 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void DestinationToSource()
 		{
-            // (SB: 2006-08-10) This test illustrates the current error in the SpatialTransform class.  The rectangles should not 
-            // include the other coordinates (e.g. a 7x11 image should be represented by (0, 0, 6, 10) instead of (0, 0, 7, 11)).
-            // Note that it is not the spatial transform that is wrong, but the current usage of it throughout the code (See Ticket #93).
-            SpatialTransform transform = new SpatialTransform();
-            transform.SourceRectangle = new Rectangle(0, 0, 7, 11);
-            transform.DestinationRectangle = new Rectangle(0, 0, 7, 11);
-            transform.Calculate();
-
-            int srcWidth = transform.SourceRectangle.Width;
-            int srcHeight = transform.SourceRectangle.Height;
-            int dstWidth = transform.DestinationRectangle.Width;
-            int dstHeight = transform.DestinationRectangle.Height;
-            float oneQuarter = 0.25f;
-            float threeQuarters = 0.75f;
-
-            PointF destinationPoint = new PointF((int)(dstWidth * oneQuarter), (int)(dstHeight * oneQuarter));
-            PointF sourcePointExpected = new PointF((int)(srcWidth * oneQuarter), (int)(srcHeight * oneQuarter));
-            PointF SourcePointCalculated = transform.ConvertToSource(destinationPoint);
-            Assert.IsFalse(sourcePointExpected == SourcePointCalculated);
-
-            transform.FlipHorizontal = true;
-
-            sourcePointExpected.X = (int)(srcWidth * threeQuarters);
-            SourcePointCalculated = transform.ConvertToSource(destinationPoint);
-            Assert.IsFalse(sourcePointExpected == SourcePointCalculated);
-
-            transform.FlipHorizontal = false;
-            transform.FlipVertical = true;
-
-            sourcePointExpected.X = (int)(srcWidth * oneQuarter);
-            sourcePointExpected.Y = (int)(srcHeight * threeQuarters);
-            SourcePointCalculated = transform.ConvertToSource(destinationPoint);
-            Assert.IsFalse(sourcePointExpected == SourcePointCalculated);
-
-            transform.SourceRectangle = new Rectangle(0, 0, 6, 10);
-            transform.DestinationRectangle = new Rectangle(0, 0, 6, 10);
-            transform.Calculate();
-
-            srcWidth = transform.SourceRectangle.Width + 1;
-            srcHeight = transform.SourceRectangle.Height + 1;
-            dstWidth = transform.DestinationRectangle.Width + 1;
-            dstHeight = transform.DestinationRectangle.Height + 1;
-            oneQuarter = 0.25f;
-            threeQuarters = 0.75f;
-
-            destinationPoint = new PointF((int)(dstWidth * oneQuarter), (int)(dstHeight * oneQuarter));
-            sourcePointExpected = new PointF((int)(srcWidth * oneQuarter), (int)(srcHeight * oneQuarter));
-            SourcePointCalculated = transform.ConvertToSource(destinationPoint);
-            Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
-
-            transform.FlipHorizontal = true;
-
-            sourcePointExpected.X = (int)(srcWidth * threeQuarters);
-            SourcePointCalculated = transform.ConvertToSource(destinationPoint);
-            Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
-
-            transform.FlipHorizontal = false;
-            transform.FlipVertical = true;
-
-            sourcePointExpected.X = (int)(srcWidth * oneQuarter);
-            sourcePointExpected.Y = (int)(srcHeight * threeQuarters);
-            SourcePointCalculated = transform.ConvertToSource(destinationPoint);
-            Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
-        }
+			Assert.Fail();
+		}
 
 		[Test]
 		public void OneToOne()
 		{
 			Assert.Fail();
+		}
+
+		[Test]
+		public void QuadrantTransformSameImageSize()
+		{
+			SpatialTransform transform = new SpatialTransform();
+			transform.SourceRectangle = new Rectangle(0, 0, 7, 11);
+			transform.DestinationRectangle = new Rectangle(0, 0, 7, 11);
+
+			int srcWidth = transform.SourceRectangle.Width;
+			int srcHeight = transform.SourceRectangle.Height;
+			int dstWidth = transform.DestinationRectangle.Width;
+			int dstHeight = transform.DestinationRectangle.Height;
+			float oneQuarter = 0.25f;
+			float threeQuarters = 0.75f;
+
+			PointF destinationPoint = new PointF((dstWidth * oneQuarter), (dstHeight * oneQuarter));
+			PointF sourcePointExpected = new PointF((srcWidth * oneQuarter), (srcHeight * oneQuarter));
+			PointF SourcePointCalculated = transform.ConvertToSource(destinationPoint);
+			PointF destinationPointBackCalculated = transform.ConvertToDestination(SourcePointCalculated);
+			Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
+			Assert.IsTrue(destinationPointBackCalculated == destinationPoint);
+
+			transform.FlipHorizontal = true;
+
+			sourcePointExpected.X = (srcWidth * threeQuarters);
+			SourcePointCalculated = transform.ConvertToSource(destinationPoint);
+			destinationPointBackCalculated = transform.ConvertToDestination(SourcePointCalculated);
+			Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
+			Assert.IsTrue(destinationPointBackCalculated == destinationPoint);
+
+			transform.FlipHorizontal = false;
+			transform.FlipVertical = true;
+
+			sourcePointExpected.X = (srcWidth * oneQuarter);
+			sourcePointExpected.Y = (srcHeight * threeQuarters);
+			SourcePointCalculated = transform.ConvertToSource(destinationPoint);
+			destinationPointBackCalculated = transform.ConvertToDestination(SourcePointCalculated);
+			Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
+			Assert.IsTrue(destinationPointBackCalculated == destinationPoint);
+
+			transform.FlipHorizontal = true;
+			transform.FlipVertical = true;
+
+			sourcePointExpected.X = (srcWidth * threeQuarters);
+			sourcePointExpected.Y = (srcHeight * threeQuarters);
+			SourcePointCalculated = transform.ConvertToSource(destinationPoint);
+			destinationPointBackCalculated = transform.ConvertToDestination(SourcePointCalculated);
+			Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
+			Assert.IsTrue(destinationPointBackCalculated == destinationPoint);
 		}
 	}
 }

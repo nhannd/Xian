@@ -4,9 +4,9 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
-	class ImageInterpolatorBilinear : ImageInterpolator
+	internal unsafe class ImageInterpolatorBilinear : ImageInterpolator
 	{
-		private static float _floatSlightlyMoreThanOne = 1.001F;
+		private static readonly float _floatSlightlyMoreThanOne = 1.001F;
 		
 		/// <summary>
 		/// Implements the True (floating point) Bilinear Interpolation algorithm.
@@ -41,22 +41,26 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 
 			if (swapXY)
 			{
-				dstRegionHeight = Math.Abs(dstRegionRectangle.Right - dstRegionRectangle.Left) + 1;
-				dstRegionWidth = Math.Abs(dstRegionRectangle.Bottom - dstRegionRectangle.Top) + 1;
+				dstRegionHeight = Math.Abs(dstRegionRectangle.Right - dstRegionRectangle.Left);
+				dstRegionWidth = Math.Abs(dstRegionRectangle.Bottom - dstRegionRectangle.Top);
 				xDstStride = dstWidth * dstBytesPerPixel;
 				yDstStride = dstBytesPerPixel;
 				xDstIncrement = Math.Sign(dstRegionRectangle.Bottom - dstRegionRectangle.Top) * xDstStride;
 				yDstIncrement = Math.Sign(dstRegionRectangle.Right - dstRegionRectangle.Left) * yDstStride;
+
+				dstRegionRectangle = RectangleUtilities.MakeRectangleZeroBased(dstRegionRectangle);
 				pDstPixelData += (dstRegionRectangle.Top * xDstStride) + (dstRegionRectangle.Left * yDstStride);
 			}
 			else
 			{
-				dstRegionHeight = Math.Abs(dstRegionRectangle.Bottom - dstRegionRectangle.Top) + 1;
-				dstRegionWidth = Math.Abs(dstRegionRectangle.Right - dstRegionRectangle.Left) + 1;
+				dstRegionHeight = Math.Abs(dstRegionRectangle.Bottom - dstRegionRectangle.Top);
+				dstRegionWidth = Math.Abs(dstRegionRectangle.Right - dstRegionRectangle.Left);
 				xDstStride = dstBytesPerPixel;
 				yDstStride = dstWidth * dstBytesPerPixel;
 				xDstIncrement = Math.Sign(dstRegionRectangle.Right - dstRegionRectangle.Left) * xDstStride;
 				yDstIncrement = Math.Sign(dstRegionRectangle.Bottom - dstRegionRectangle.Top) * yDstStride;
+
+				dstRegionRectangle = RectangleUtilities.MakeRectangleZeroBased(dstRegionRectangle); 
 				pDstPixelData += (dstRegionRectangle.Top * yDstStride) + (dstRegionRectangle.Left * xDstStride);
 			}
 
@@ -84,16 +88,12 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 
 			int srcRegionWidth = srcRegionRectangle.Right - srcRegionRectangle.Left;
 			int srcRegionHeight = srcRegionRectangle.Bottom - srcRegionRectangle.Top;
-			int xSrcIncrementDirection = Math.Sign(srcRegionWidth); //set the sign/direction
-			int ySrcIncrementDirection = Math.Sign(srcRegionHeight);
-			srcRegionWidth = srcRegionWidth * xSrcIncrementDirection + 1;
-			srcRegionHeight = srcRegionHeight * ySrcIncrementDirection + 1; //remove the sign from w/h and add 1
 
 			float srcSlightlyLessThanWidthMinusOne = (float)srcWidth - _floatSlightlyMoreThanOne;
 			float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - _floatSlightlyMoreThanOne;
 
-			float xRatio = (float)srcRegionWidth / dstRegionWidth * xSrcIncrementDirection;
-			float yRatio = (float)srcRegionHeight / dstRegionHeight * ySrcIncrementDirection;
+			float xRatio = (float)srcRegionWidth / dstRegionWidth;
+			float yRatio = (float)srcRegionHeight / dstRegionHeight;
 
 			int[] xSrcPixelCoordinates = new int[dstRegionWidth];
 			float[] dxValuesAtXSrcPixelCoordinates = new float[dstRegionWidth];
@@ -147,8 +147,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 
 								float yInterpolated1 = (float)(*pSrcPixel00) + (*pSrcPixel10 - *pSrcPixel00) * dy;
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
-
-								byte value = pLutData[(ushort)(yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x])];
+								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
+								byte value = pLutData[(ushort)interpolated];
 
 								pRowDstPixelData[0] = value; //B
 								pRowDstPixelData[1] = value; //G
@@ -165,7 +165,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 								float yInterpolated1 = (float)(*pSrcPixel00) + (*pSrcPixel10 - *pSrcPixel00) * dy;
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 
-								byte value = pLutData[(ushort)(yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x])];
+								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
+								byte value = pLutData[(ushort)interpolated];
 
 								pRowDstPixelData[0] = value; //B
 								pRowDstPixelData[1] = value; //G
@@ -185,7 +186,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 								float yInterpolated1 = (float)(*pSrcPixel00) + (*pSrcPixel10 - *pSrcPixel00) * dy;
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 
-								byte value = pLutData[(byte)(yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x])];
+								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
+								byte value = pLutData[(byte)interpolated];
 
 								pRowDstPixelData[0] = value; //B
 								pRowDstPixelData[1] = value; //G
@@ -202,7 +204,8 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 								float yInterpolated1 = (float)(*pSrcPixel00) + (*pSrcPixel10 - *pSrcPixel00) * dy;
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 
-								byte value = pLutData[(byte)(yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x])];
+								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
+								byte value = pLutData[(byte)interpolated];
 
 								pRowDstPixelData[0] = value; //B
 								pRowDstPixelData[1] = value; //G
@@ -226,9 +229,10 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 
 							float yInterpolated1 = (float)(*pSrcPixel00) + (*pSrcPixel10 - *pSrcPixel00) * dy;
 							float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
+							float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dx;
 
 							//2-i because the destination pixel data goes BGRA and the source goes RGB
-							pRowDstPixelData[2 - i] = (byte)(yInterpolated1 + (yInterpolated2 - yInterpolated1) * dx); //R(i=0), G(1), B(2)
+							pRowDstPixelData[2 - i] = (byte)interpolated;
 
 							pSrcPixel00 += srcNextChannelOffset;
 						}

@@ -101,6 +101,7 @@
     <Compile Include="GDIRenderer.cs" />
     <Compile Include="ImageBuffer.cs" />
     <Compile Include="ImageBufferWin32.cs" />
+    <Compile Include="ImageInterpolator.cs" />
     <Compile Include="ImageInterpolatorBilinear.cs" />
     <Compile Include="ImageInterpolatorBilinearFast.cs" />
     <Compile Include="ImageRenderer.cs" />

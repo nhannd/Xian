@@ -10,73 +10,75 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 		/// <summary>
 		/// Computes the intersection between two rectangles.
 		/// </summary>
-		/// <param name="r1"></param>
-		/// <param name="r2"></param>
+		/// <param name="primaryRectangle"></param>
+		/// <param name="secondaryRectangle"></param>
 		/// <returns></returns>
 		/// <remarks>
 		/// .NET's Rectangle class does not properly compute intersections
 		/// between rectangles when either the height and/or width is negative.
-		/// This 
+		///
+		/// NOTE: the order in which rectangles are passed into this function is IMPORTANT!
+		/// The function maintains the sense/direction (of the width & height) of the first
+		/// rectangle passed in.
 		/// </remarks>
-		public static RectangleF Intersect(RectangleF r1,
-					RectangleF r2)
+		public static RectangleF Intersect(RectangleF primaryRectangle, RectangleF secondaryRectangle)
 		{
-			if (!DoesIntersect(r1, r2))
+			if (!DoesIntersect(primaryRectangle, secondaryRectangle))
 				return Rectangle.Empty;
 
 			float left, top, right, bottom;
 
-			if (r1.Width >= 0)
+			if (primaryRectangle.Width >= 0)
 			{
-				if (r2.Width >= 0)
+				if (secondaryRectangle.Width >= 0)
 				{
-					left = Math.Max(r1.Left, r2.Left);
-					right = Math.Min(r1.Right, r2.Right);
+					left = Math.Max(primaryRectangle.Left, secondaryRectangle.Left);
+					right = Math.Min(primaryRectangle.Right, secondaryRectangle.Right);
 				}
 				else
 				{
-					left = Math.Max(r1.Left, r2.Right);
-					right = Math.Min(r1.Right, r2.Left);
+					left = Math.Max(primaryRectangle.Left, secondaryRectangle.Right);
+					right = Math.Min(primaryRectangle.Right, secondaryRectangle.Left);
 				}
 			}
 			else
 			{
-				if (r2.Width >= 0)
+				if (secondaryRectangle.Width >= 0)
 				{
-					left = Math.Max(r1.Right, r2.Left);
-					right = Math.Min(r1.Left, r2.Right);
+					left = Math.Min(primaryRectangle.Left, secondaryRectangle.Right);
+					right = Math.Max(primaryRectangle.Right, secondaryRectangle.Left);
 				}
 				else
 				{
-					left = Math.Max(r1.Right, r2.Right);
-					right = Math.Min(r1.Left, r2.Left);
+					left = Math.Min(primaryRectangle.Left, secondaryRectangle.Left);
+					right = Math.Max(primaryRectangle.Right, secondaryRectangle.Right);
 				}
 			}
 
-			if (r1.Height >= 0)
+			if (primaryRectangle.Height >= 0)
 			{
-				if (r2.Height >= 0)
+				if (secondaryRectangle.Height >= 0)
 				{
-					top = Math.Max(r1.Top, r2.Top);
-					bottom = Math.Min(r1.Bottom, r2.Bottom);
+					top = Math.Max(primaryRectangle.Top, secondaryRectangle.Top);
+					bottom = Math.Min(primaryRectangle.Bottom, secondaryRectangle.Bottom);
 				}
 				else
 				{
-					top = Math.Max(r1.Top, r2.Bottom);
-					bottom = Math.Min(r1.Bottom, r2.Top);
+					top = Math.Max(primaryRectangle.Top, secondaryRectangle.Bottom);
+					bottom = Math.Min(primaryRectangle.Bottom, secondaryRectangle.Top);
 				}
 			}
 			else
 			{
-				if (r2.Height >= 0)
+				if (secondaryRectangle.Height >= 0)
 				{
-					top = Math.Max(r1.Bottom, r2.Top);
-					bottom = Math.Min(r1.Top, r2.Bottom);
+					top = Math.Min(primaryRectangle.Top, secondaryRectangle.Bottom);
+					bottom = Math.Max(primaryRectangle.Bottom, secondaryRectangle.Top);
 				}
 				else
 				{
-					top = Math.Max(r1.Bottom, r2.Bottom);
-					bottom = Math.Min(r1.Top, r2.Top);
+					top = Math.Min(primaryRectangle.Top, secondaryRectangle.Top);
+					bottom = Math.Max(primaryRectangle.Bottom, secondaryRectangle.Bottom);
 				}
 			}
 
@@ -84,10 +86,93 @@ namespace ClearCanvas.ImageViewer.Renderer.GDI
 		}
 
 		/// <summary>
-		/// 
+		/// Rounds the 4 sides (top, left, right, bottom) to integer values, but
+		/// it does not do typical float-style rounding.  The values are rounded
+		/// away from the center of the rectangle.
 		/// </summary>
-		/// <param name="rect1"></param>
-		/// <param name="rect2"></param>
+		/// <param name="rect"></param>
+		/// <returns>A new rectangle that has been rounded away from the centre
+		/// of the original input rectangle.</returns>
+		public static RectangleF RoundInflate(RectangleF rect)
+		{
+			float left, top, right, bottom;
+
+			if (rect.Width >= 0)
+			{
+				if (rect.Left >= 0)
+				{
+					left = (int)rect.Left;
+					right = (int)(rect.Right + 0.5);
+				}
+				else
+				{
+					left = (int)(rect.Left - 0.5);
+
+					if (rect.Right >= 0)
+						right = (int)(rect.Right + 0.5);
+					else
+						right = (int)rect.Right;
+				}
+			}
+			else
+			{
+				if (rect.Left >= 0)
+				{
+					left = (int)(rect.Left + 0.5);
+					if (rect.Right >= 0)
+						right = (int)rect.Right;
+					else
+						right = (int)(rect.Right - 0.5);
+				}
+				else
+				{
+					left = (int)rect.Left;
+					right = (int)(rect.Right - 0.5);
+				}
+			}
+
+			if (rect.Height >= 0)
+			{
+				if (rect.Top >= 0)
+				{
+					top = (int)rect.Top;
+					bottom = (int)(rect.Bottom + 0.5);
+				}
+				else
+				{
+					top = (int)(rect.Top - 0.5);
+
+					if (rect.Bottom >= 0)
+						bottom = (int)(rect.Bottom + 0.5);
+					else
+						bottom = (int)rect.Bottom;
+				}
+			}
+			else
+			{
+				if (rect.Top >= 0)
+				{
+					top = (int)(rect.Top + 0.5);
+					if (rect.Bottom >= 0)
+						bottom = (int)rect.Bottom;
+					else
+						bottom = (int)(rect.Bottom - 0.5);
+				}
+				else
+				{
+					top = (int)rect.Top;
+					bottom = (int)(rect.Bottom - 0.5);
+				}
+			}
+
+			return RectangleF.FromLTRB(left, top, right, bottom);
+		}
+
+		/// <summary>
+		/// Determines if the two input rectangles intersect at all.
+		/// </summary>
+		/// <param name="r1"></param>
+		/// <param name="r2"></param>
 		/// <returns></returns>
 		public static bool DoesIntersect(RectangleF r1, RectangleF r2)
 		{

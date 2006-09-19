@@ -180,6 +180,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			_layer.SpatialTransform.SourceRectangle = _srcRect;
 			_layer.SpatialTransform.DestinationRectangle = _dstRect;
+
+			_layer.NormalInterpolationMethod = ImageLayer.InterpolationMethods.NEAREST_NEIGHBOURS;
 		}
 
 		private void CreatePhantom()

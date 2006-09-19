@@ -311,36 +311,52 @@ BOOL InterpolateBilinear
 
     if (swapXY)
     {
-        dstRegionHeight = abs(dstRegionRectRight - dstRegionRectLeft) + 1;
-        dstRegionWidth = abs(dstRegionRectBottom - dstRegionRectTop) + 1;
+        dstRegionHeight = abs(dstRegionRectRight - dstRegionRectLeft);
+        dstRegionWidth = abs(dstRegionRectBottom - dstRegionRectTop);
         xDstStride = dstWidth * dstBytesPerPixel;
         yDstStride = dstBytesPerPixel;
 		xDstIncrement = ((dstRegionRectBottom - dstRegionRectTop) < 0 ? -1: 1) * xDstStride;
 		yDstIncrement = ((dstRegionRectRight - dstRegionRectLeft) < 0 ? -1: 1) * yDstStride;
-        pDstPixelData += (dstRegionRectTop * xDstStride) + (dstRegionRectLeft * yDstStride);
+
+		//Offset Top/Left by 1 if the height/width is negative.
+		int zeroBasedTop = dstRegionRectTop;
+		if (xDstIncrement < 0) //use the width because it's actually the height.
+			--zeroBasedTop;
+
+		int zeroBasedLeft = dstRegionRectLeft;
+		if (yDstIncrement < 0) //use the height because it's actually the width.
+			--zeroBasedLeft;
+
+		pDstPixelData += (zeroBasedTop * xDstStride) + (zeroBasedLeft * yDstStride);
     }
     else
     {
-        dstRegionHeight = abs(dstRegionRectBottom - dstRegionRectTop) + 1;
-        dstRegionWidth = abs(dstRegionRectRight - dstRegionRectLeft) + 1;
+        dstRegionHeight = abs(dstRegionRectBottom - dstRegionRectTop);
+        dstRegionWidth = abs(dstRegionRectRight - dstRegionRectLeft);
         xDstStride = dstBytesPerPixel;
         yDstStride = dstWidth * dstBytesPerPixel;
         xDstIncrement = ((dstRegionRectRight - dstRegionRectLeft) < 0 ? -1: 1) * xDstStride;
         yDstIncrement = ((dstRegionRectBottom - dstRegionRectTop) < 0 ? -1: 1) * yDstStride;
-        pDstPixelData += (dstRegionRectTop * yDstStride) + (dstRegionRectLeft * xDstStride);
+
+		//Offset Top/Left by 1 if the height/width is negative.
+		int zeroBasedTop = dstRegionRectTop;
+		if (yDstIncrement < 0)
+			--zeroBasedTop;
+
+		int zeroBasedLeft = dstRegionRectLeft;
+		if (xDstIncrement < 0)
+			--zeroBasedLeft;
+
+		pDstPixelData += (zeroBasedTop * yDstStride) + (zeroBasedLeft * xDstStride);
     }
 
     int srcRegionWidth = srcRegionRectRight - srcRegionRectLeft;
     int srcRegionHeight = srcRegionRectBottom - srcRegionRectTop;
-	int xSrcIncrementDirection = (srcRegionWidth < 0) ? -1 : 1; //set the sign/direction
-	int ySrcIncrementDirection = (srcRegionHeight < 0) ? -1 : 1;
-    srcRegionWidth = srcRegionWidth * xSrcIncrementDirection + 1;
-    srcRegionHeight = srcRegionHeight * ySrcIncrementDirection + 1; //remove the sign from w/h and add 1
 
     float srcSlightlyLessThanWidthMinusOne = (float)srcWidth - SLIGHTLYGREATERTHANONE;
 
-    float xRatio = (float)srcRegionWidth / dstRegionWidth * xSrcIncrementDirection;
-    float yRatio = (float)srcRegionHeight / dstRegionHeight * ySrcIncrementDirection;
+    float xRatio = (float)srcRegionWidth / dstRegionWidth;
+    float yRatio = (float)srcRegionHeight / dstRegionHeight;
 
 	std::auto_ptr<int> spxSrcPixels(new int[dstRegionWidth]);
 	int* pxPixel = spxSrcPixels.get();

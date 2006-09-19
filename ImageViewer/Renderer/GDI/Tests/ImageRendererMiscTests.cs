@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.IsTrue(FloatComparer.AreEqual(dstRectangleF.Right, 200));
 			Assert.IsTrue(FloatComparer.AreEqual(dstRectangleF.Bottom, 25));
 
-			RectangleF dstViewableRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
+			RectangleF dstViewableRectangleF = RectangleUtilities.Intersect(dstRectangleF, clientRectangle);
             RectangleF srcViewableRectangleF = transform.ConvertToSource(dstViewableRectangleF);
 
 			Rectangle dstViewableRectangle = Rectangle.Round(dstViewableRectangleF);
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			RectangleF srcRectangleF = transform.SourceRectangle;
 			RectangleF dstRectangleF = transform.ConvertToDestination(srcRectangleF);
-			RectangleF dstViewableRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
+			RectangleF dstViewableRectangleF = RectangleUtilities.Intersect(dstRectangleF, clientRectangle);
 			RectangleF srcViewableRectangleF = transform.ConvertToSource(dstViewableRectangleF);
 
 			Rectangle dstViewableRectangle = Rectangle.Round(dstViewableRectangleF);
