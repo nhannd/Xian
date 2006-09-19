@@ -14,7 +14,8 @@ namespace ClearCanvas.Utilities.BuildTasks
         public override bool Execute()
         {
             TimeSpan timeSince = DateTime.Now - _incorporationDate;
-            _buildNumber = timeSince.Days.ToString() + DateTime.Now.Hour.ToString();
+            int inHours = (int) timeSince.TotalHours;
+            _buildNumber = inHours < UInt16.MaxValue ? inHours.ToString() : "0";
 
             return true;
         }
