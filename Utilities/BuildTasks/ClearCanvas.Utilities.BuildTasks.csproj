@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RelativeBuildDateTime.cs" />
     <Compile Include="VersionProjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

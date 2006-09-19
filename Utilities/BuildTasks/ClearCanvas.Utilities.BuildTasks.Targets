@@ -5,4 +5,5 @@
     <ClearCanvasTasksDll>$(ClearCanvasBuildTasksPath)\ClearCanvas.Utilities.BuildTasks.dll</ClearCanvasTasksDll>
   </PropertyGroup>
   <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.VersionProjects"/>
+  <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.RelativeBuildDateTime"/>
 </Project>
