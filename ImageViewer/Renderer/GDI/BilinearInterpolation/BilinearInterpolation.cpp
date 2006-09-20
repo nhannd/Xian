@@ -32,9 +32,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 using std::auto_ptr;
 
-#define SLIGHTLYGREATERTHANONE 1.001f
+#define SLIGHTLYGREATERTHANONE 1.001F
 #define FIXEDPRECISION 7
-#define FIXEDSCALE 128.0
+#define FIXEDSCALE 128.0F
 
 ///////////////////////////////////////////////////////////////////////
 ///
@@ -148,7 +148,7 @@ void InterpolateBilinearT(
 
 	for (float y = 0; y < floatDstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
-		float ySrcCoordinate = floatsrcRegionOriginY + y * yRatio;
+		float ySrcCoordinate = floatsrcRegionOriginY + (y + 0.5F) * yRatio;
 
 		//a necessary evil, I'm afraid.
 		if (ySrcCoordinate < 0)
@@ -225,7 +225,7 @@ void InterpolateBilinearRGB(
 
 	for (float y = 0; y < floatDstRegionHeight; ++y)
 	{
-		float ySrcCoordinate = floatsrcRegionOriginY + y * yRatio;
+		float ySrcCoordinate = floatsrcRegionOriginY + (y + 0.5F) * yRatio;
 
 		//a necessary evil, I'm afraid.
 		if (ySrcCoordinate < 0)
@@ -258,7 +258,7 @@ void InterpolateBilinearRGB(
 				int yInterpolated2 = (*pSrcPixel01 << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 				int IFinal = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
 
-                //2-i because the destination pixel data goes BGRA and the source goes RGB
+				//2-i because the destination pixel data goes BGRA and the source goes RGB
                 pRowDstPixelData[2 - i] = (BYTE)(IFinal); //R(i=0), G(1), B(2)
 
                 pSrcPixel00 += srcNextChannelOffset;
@@ -369,7 +369,7 @@ BOOL InterpolateBilinear
 
 	for (float x = 0; x < floatDstRegionWidth; ++x)
 	{
-		float xCoord = floatSrcRegionOriginX + x * xRatio;
+		float xCoord = floatSrcRegionOriginX + (x + 0.5F) * xRatio;
 
 		//a necessary evil, I'm afraid.
 		if (xCoord < 0)

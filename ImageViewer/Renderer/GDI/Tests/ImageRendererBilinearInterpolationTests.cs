@@ -68,9 +68,9 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
         [TestFixtureSetUp]
         public void Init()
         {
-			_tracePhantom = true;
-			_traceBitmap = true;
-			_trace = true;
+			//_tracePhantom = true;
+			//_traceBitmap = true;
+			//_trace = true;
 		}
 
         [TestFixtureTearDown]
@@ -407,8 +407,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 				if (dstViewableRectangle.Contains(dstPoint))
 				{
-					dstViewableRectangle = RectangleUtilities.MakeRectangleZeroBased(dstViewableRectangle); 
-					Point dstPointTranslated = new Point(dstPoint.X - dstViewableRectangle.Left, dstPoint.Y - dstViewableRectangle.Top);
+					dstViewableRectangle = RectangleUtilities.MakeRectangleZeroBased(dstViewableRectangle);
+					float dstTranslatedX = ((float)dstPoint.X + 0.5F) - (float)dstViewableRectangle.Left;
+					float dstTranslatedY = ((float)dstPoint.Y + 0.5F) - (float)dstViewableRectangle.Top;
+					PointF dstPointTranslated = new PointF(dstTranslatedX, dstTranslatedY);
 
 					PointF srcPoint00 = new PointF();
 					if (_rotation != 0)
@@ -417,17 +419,15 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 						dstViewableHeight = dstViewableWidth;
 						dstViewableWidth = temp;
 
-						temp = dstPointTranslated.X;
+						float temp2 = dstPointTranslated.X;
 						dstPointTranslated.X = dstPointTranslated.Y;
-						dstPointTranslated.Y = temp;
+						dstPointTranslated.Y = temp2;
 					}
 
 					float xRatio = (float)srcViewableRectangle.Width / dstViewableWidth;
 					float yRatio = (float)srcViewableRectangle.Height / dstViewableHeight;
-					float srcOffsetX = xRatio * dstPointTranslated.X;
-					float srcOffsetY = yRatio * dstPointTranslated.Y;
-					srcPoint00.X = srcViewableRectangle.Left + srcOffsetX;
-					srcPoint00.Y = srcViewableRectangle.Top + srcOffsetY;
+					srcPoint00.X = srcViewableRectangle.Left + xRatio * dstPointTranslated.X;
+					srcPoint00.Y = srcViewableRectangle.Top + yRatio * dstPointTranslated.Y;
 
 					backCalculateValue = PerformBilinearInterpolationAt(srcPoint00);
 
