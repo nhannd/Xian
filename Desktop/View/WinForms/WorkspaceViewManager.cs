@@ -65,6 +65,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 tabPages.Remove(tabPage);
 
+                // tabPages.Remove does not seem to call Dispose(), so let's do it explicitly
+                if(!tabPage.IsDisposed)
+                    tabPage.Dispose();
+
                 GC.Collect();
 				GC.WaitForPendingFinalizers();
 				//string str = String.Format("Memory: {0}", GC.GetTotalMemory(false));

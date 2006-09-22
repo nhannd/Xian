@@ -118,6 +118,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             Content content = _shelfViewMap[shelf];
             _dockingManager.Contents.Remove(content);
             _shelfViewMap.Remove(shelf);
+
+            // make sure to dispose of the control now (dotnetmagic doesn't do it automatically)
+            if (!content.Control.IsDisposed)
+            {
+                content.Control.Dispose();
+            }
         }
 
     }

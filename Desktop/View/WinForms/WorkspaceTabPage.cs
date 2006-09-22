@@ -12,6 +12,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	class WorkspaceTabPage : Crownwood.DotNetMagic.Controls.TabPage
 	{
         private IWorkspace _workspace;
+        private Control _control;
 
 		public WorkspaceTabPage(IWorkspace workspace)
 		{
@@ -22,20 +23,30 @@ namespace ClearCanvas.Desktop.View.WinForms
             IWorkspaceView view = (IWorkspaceView)ViewFactory.CreateAssociatedView(_workspace.GetType());
             view.SetWorkspace(_workspace);
 
-			this.Control = view.GuiElement as Control;
+			this.Control = _control = view.GuiElement as Control;
             this.Title = _workspace.Title;
 
 			_workspace.TitleChanged += new EventHandler(_workspace_TitleChanged);
 		}
 
-        void _workspace_TitleChanged(object sender, EventArgs e)
+        public IWorkspace Workspace
+        {
+            get { return _workspace; }
+        }
+
+        private void _workspace_TitleChanged(object sender, EventArgs e)
         {
             this.Title = _workspace.Title;
         }
 
-        public IWorkspace Workspace
-		{
-			get { return _workspace; }
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && _control != null)
+            {
+                _control.Dispose();
+                _control = null;
+            }
+            base.Dispose(disposing);
+        }
 	}
 }
