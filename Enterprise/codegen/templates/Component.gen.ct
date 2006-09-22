@@ -42,13 +42,17 @@ namespace <%= @model.namespace %> {
 	  	#region Public Properties
 	  	
 	  	<% @fields.each do |f| %>
+		<% 	if(f.hasGetter || f.hasSetter) %>
 	  	public <%= f.dataType %> <%= f.accessorName %>
 	  	{
+			<% if(f.hasGetter) %>
 			get { return <%= f.fieldName %>; }
-			<% if(!f.readOnly) %>
+			<% end %>
+			<% if(f.hasSetter) %>
 			set { <%= f.fieldName %> = value; }
 			<% end %>
 	  	}
+		<%	end %>
 	  	<% end %>
 	  	
 	  	#endregion

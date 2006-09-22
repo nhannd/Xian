@@ -188,17 +188,25 @@ end
 
 # represents the definition of a field within a ClassDef
 class FieldDef
-  attr_reader :fieldName, :accessorName, :dataType, :readOnly, :isCollection, :isComponent, :initialValue
+  attr_reader :fieldName, :accessorName, :dataType, :hasGetter, :hasSetter, :isCollection, :isComponent, :initialValue
 
   def initialize(fieldNode)
+	# is this field a collection?
+      @isCollection = NHIBERNATE_COLLECTION_TYPES.include?(fieldNode.name)
+
+	# determine the access strategy - if the strategy contains multiple parts separated by . then only take the first part
+	# use "property" as the default strategy, as hibernate does
+	access = (fieldNode.attributes['access'] || "property").split('.')[0];
+	
+	@hasGetter = ['property', 'nosetter'].include?(access)
+	@hasSetter = (access == 'property' && !@isCollection)
+  
       @accessorName = fieldNode.attributes['name']
       @fieldName = "_" + @accessorName[0..0].downcase + @accessorName[1..-1]
       
 	#if 'not-null' attribute is omitted, the default value is false (eg. the column is nullable)
       nullable = (fieldNode.attributes['not-null'] == nil || fieldNode.attributes['not-null'] == 'false')
 
-	# is this field a collection?
-      @isCollection = NHIBERNATE_COLLECTION_TYPES.include?(fieldNode.name)
       
       
 	# get the raw datatype,  from either the node name itself, or the 'class' or 'type' attribute
@@ -212,9 +220,6 @@ class FieldDef
       
       # special handling of DateTime, because we need to support nullable
 	@dataType << "?" if(@dataType == 'DateTime' && nullable)
-      
-      # all collection properties are read-only
-      @readOnly = @isCollection
       
       @isComponent = (fieldNode.name == 'component')
       
