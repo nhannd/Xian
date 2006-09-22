@@ -23,7 +23,7 @@
 	</component>
 	<property name="PatientsSex" column="PatientsSex_" type="string" length="16" />
 	<property name="PatientsBirthDate" column="PatientsBirthDate_" type="string" length="16" />
-    <set name="Series" lazy="false" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <set name="InternalSeries" table="Series_" lazy="false" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="StudyOid_" />
       <one-to-many class="Series" />
     </set>

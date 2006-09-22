@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using NHibernate;
+using NHibernate.Collection;
 using Iesi.Collections;
 
 namespace ClearCanvas.Dicom.DataStore
@@ -10,9 +11,12 @@ namespace ClearCanvas.Dicom.DataStore
     public class Study : IStudy
     {
         #region Handcoded Members
+        public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
+        public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
+
         public Study()
         {
-            _series = new HybridSet();
+            _internalSeries = new HybridSet();
         }
 
         protected virtual long StudyOid
@@ -99,9 +103,20 @@ namespace ClearCanvas.Dicom.DataStore
             set { _patientsBirthDate = value; }
         }
 
+        protected virtual ISet InternalSeries
+        {
+            get { return _internalSeries; }
+        }
+
         public virtual ISet Series
         {
-            get { return _series; }
+            get
+            {
+                if (null != InitializeAssociatedCollection)
+                    InitializeAssociatedCollection(this, _internalSeries as PersistentCollection);
+
+                return _internalSeries;
+            }
         }
 
         public override bool Equals(object obj)
@@ -152,14 +167,13 @@ namespace ClearCanvas.Dicom.DataStore
         PatientsName _patientsName;
         string _patientsSex;
         string _patientsBirthDate;
-        ISet _series;
+        ISet _internalSeries;
         #endregion
         #endregion
         #region IStudy Members
 
         public IEnumerable<ISopInstance> GetSopInstances()
         {
-            DataAccessLayer.GetIDataStoreReader().InitializeAssociatedObject(this, this.Series);
             List<ISopInstance> sopList = new List<ISopInstance>();
             foreach (ISeries series in this.Series)
             {

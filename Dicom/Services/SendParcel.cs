@@ -5,26 +5,28 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.DataStore;
+using NHibernate.Collection;
 
 namespace ClearCanvas.Dicom.Services
 {
     /// <summary>
     /// Allows access to the DataStore in a way that's not specific to Study, Series or SopInstance
     /// </summary>
-    public class SendParcel : ISendParcel
+    public class SendParcel : Parcel, ISendParcel
     {
-        public SendParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription) : this()
-        {
-            _sourceAE = sourceAE;
-            _destinationAE = destinationAE;
-            _description = parcelDescription;
-        }
+        public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
+        public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
 
-        protected SendParcel()
+        public SendParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription)
+            : base(sourceAE, destinationAE, parcelDescription)
         {
             _transferSyntaxes = new List<string>();
             _sopClasses = new List<string>();
-            _sopInstances = new List<ISopInstance>();
+            _internalSopInstances = new List<ISopInstance>();
+        }
+
+        private SendParcel() : base()
+        {
         }
 
         public virtual IDataStoreReader DataStoreReader
@@ -53,43 +55,31 @@ namespace ClearCanvas.Dicom.Services
             get { return this.ParcelTransferState == ParcelTransferState.Completed; }
         }
 
-        public ParcelTransferState ParcelTransferState
-        {
-            get { return _parcelTransferState; }
-            private set { _parcelTransferState = value; }
-        }
-
-        protected virtual long ParcelOid
-        {
-            get { return _parcelOid; }
-            set { _parcelOid = value; }
-        }
-
-        public virtual ApplicationEntity DestinationAE
-        {
-            get { return _destinationAE; }
-            private set { _destinationAE = value; }
-        }
-
-        public  virtual ApplicationEntity SourceAE
-        {
-            get { return _sourceAE; }
-            private set { _sourceAE = value; }
-        }
-
-        internal virtual IList TransferSyntaxes
+        protected internal virtual IList TransferSyntaxes
         {
             get { return _transferSyntaxes; }
         }
 
-        internal virtual IList SopClasses
+        protected internal virtual IList SopClasses
         {
             get { return _sopClasses; }
         }
 
-        internal virtual IList SopInstances
+
+        protected internal virtual IList InternalSopInstances
         {
-            get { return _sopInstances; }
+            get { return _internalSopInstances; }
+        }
+
+        public virtual IList SopInstances
+        {
+            get 
+            {
+                if (null != InitializeAssociatedCollection)
+                    InitializeAssociatedCollection(this, _internalSopInstances as PersistentCollection);
+
+                return _internalSopInstances; 
+            }
         }
 
         #region Internal and Private members
@@ -153,7 +143,7 @@ namespace ClearCanvas.Dicom.Services
             get
             {
                 List<string> sops = new List<string>();
-                foreach (ISopInstance sop in _sopInstances)
+                foreach (ISopInstance sop in _internalSopInstances)
                 {
                     sops.Add(sop.GetLocationUri().LocalDiskPath);
                 }
@@ -189,40 +179,14 @@ namespace ClearCanvas.Dicom.Services
             }
         }
 
-        private ApplicationEntity _destinationAE;
-        private ApplicationEntity _sourceAE;
         private IList _transferSyntaxes;
         private IList _sopClasses;
-        private IList _sopInstances;
+        private IList _internalSopInstances;
         private IDicomSender _dicomSender;
-        private long _parcelOid;
-        private ParcelTransferState _parcelTransferState = ParcelTransferState.Pending;
-        private string _description;
-        private int _currentProgressStep;
-        private int _totalProgressSteps;
-
-        public virtual int TotalProgressSteps
-        {
-            get { return _totalProgressSteps; }
-            set { _totalProgressSteps = value; }
-        }
-	
-        public virtual int CurrentProgressStep
-        {
-            get { return _currentProgressStep; }
-            set { _currentProgressStep = value; }
-        }
-	
-        
-        public virtual string Description
-        {
-            get { return _description; }
-            private set { _description = value; }
-        }
 
         #endregion
 
-        #region IParcel Members
+        #region ISendParcel Members
 
         /// <summary>
         /// Allows client to include a particular DICOM entity, whether a Study, Series or Sop Instance

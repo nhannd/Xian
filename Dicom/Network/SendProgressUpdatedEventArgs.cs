@@ -4,10 +4,6 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     /// <summary>
     /// Argument type that encapsulates data pertinent to a
     /// the progress of sending objects (using C-STORE)

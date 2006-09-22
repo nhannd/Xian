@@ -72,10 +72,12 @@ namespace std
 
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRSP)
 CONTROLACCESSPUBLIC(T_DIMSE_C_FindRQ)
+CONTROLACCESSPUBLIC(T_DIMSE_C_MoveRSP)
 CONTROLACCESSPUBLIC(InteropStoreCallbackInfo)
 CONTROLACCESSPUBLIC(InteropFindScpCallbackInfo)
 CONTROLACCESSPUBLIC(InteropMoveCallbackInfo)
 CONTROLACCESSPUBLIC(InteropStoreScuCallbackInfo)
+CONTROLACCESSPUBLIC(InteropRetrieveCallbackInfo)
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -278,6 +280,11 @@ struct InteropMoveCallbackInfo
 
 };
 
+struct InteropRetrieveCallbackInfo
+{
+	T_DIMSE_C_MoveRSP* CMoveResponse;
+};
+
 %}
 
 /////////////////////////////////////////////////////////////////////////
@@ -344,6 +351,18 @@ SWIGEXPORT void SWIGSTDCALL RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHe
 	CSharpQueryCallbackHelperCallback = callback;
 }
 //-------------------------------------------
+
+//-----------------------------------
+typedef void (SWIGSTDCALL* RetrieveCallbackHelperCallback)(InteropRetrieveCallbackInfo*);
+static RetrieveCallbackHelperCallback CSharpRetrieveCallbackHelperCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterRetrieveCallbackHelper_OffisDcm(RetrieveCallbackHelperCallback callback) {
+	CSharpRetrieveCallbackHelperCallback = callback;
+}
+//-----------------------------------
 
 //-----------------------------------
 typedef void (SWIGSTDCALL* StoreScuCallbackHelperCallback)(InteropStoreScuCallbackInfo*);
@@ -736,10 +755,17 @@ static void MoveProgressCallback(void *callbackData,
     	int responseCount, 
 		T_DIMSE_C_MoveRSP *response)
 {
-    OFCondition cond = EC_Normal;
-    QueryRetrieveCallbackInfo *myCallbackData;
+	// should fire off image received event
+	if (NULL != CSharpRetrieveCallbackHelperCallback)
+	{
+		InteropRetrieveCallbackInfo info;
 
-    myCallbackData = (QueryRetrieveCallbackInfo*)callbackData;
+		// prepare the transmission of data 
+		bzero((char*)&info, sizeof(info));
+		info.CMoveResponse = response;
+
+		CSharpRetrieveCallbackHelperCallback(&info);
+	}
 }
 
 static void StoreScpCallback(
@@ -2212,4 +2238,21 @@ struct T_DIMSE_StoreProgress { /* progress structure for store callback routines
     long callbackCount;	/* callback execution count */
     long progressBytes;	/* sent/received so far */
     long totalBytes;		/* total/estimated total to send/receive */
+} ;
+
+struct T_DIMSE_C_MoveRSP {
+	DIC_US          MessageIDBeingRespondedTo;		/* M */
+	DIC_UI          AffectedSOPClassUID;			/* U(=) */
+	T_DIMSE_DataSetType DataSetType;			/* M */
+	DIC_US          DimseStatus;				/* M */
+	DIC_US          NumberOfRemainingSubOperations;		/* C */
+	DIC_US          NumberOfCompletedSubOperations;		/* C */
+	DIC_US          NumberOfFailedSubOperations;		/* C */
+	DIC_US          NumberOfWarningSubOperations;		/* C */
+	unsigned int	opts; /* which optional items are set */
+#define O_MOVE_AFFECTEDSOPCLASSUID		0x0001
+#define O_MOVE_NUMBEROFREMAININGSUBOPERATIONS	0x0002
+#define O_MOVE_NUMBEROFCOMPLETEDSUBOPERATIONS	0x0004
+#define O_MOVE_NUMBEROFFAILEDSUBOPERATIONS	0x0008
+#define O_MOVE_NUMBEROFWARNINGSUBOPERATIONS	0x0010
 } ;

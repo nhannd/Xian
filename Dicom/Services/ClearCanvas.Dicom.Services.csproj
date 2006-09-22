@@ -66,9 +66,11 @@
     <Compile Include="ISendParcel.cs" />
     <Compile Include="ISendQueue.cs" />
     <Compile Include="LocalAESettings.cs" />
+    <Compile Include="Parcel.cs" />
     <Compile Include="ParcelTransferState.cs" />
     <Compile Include="QueueDisplayComponent.cs" />
     <Compile Include="QueueStatusChangedEventArgs.cs" />
+    <Compile Include="RetrieveParcel.cs" />
     <Compile Include="Sender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendParcel.cs" />

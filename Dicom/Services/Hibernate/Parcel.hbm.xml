@@ -36,7 +36,7 @@
 			<index column="Index_" /> 
 			<element column="SopClass_" type="String" />
 		</list>
-		<list name="SopInstances" table="SopInstances_" lazy="false" access="nosetter.camelcase-underscore">
+		<list name="InternalSopInstances" table="InternalSopInstances_" lazy="false" access="nosetter.camelcase-underscore">
 			<key column="ParcelOid_" />
 			<index column="Index_" /> 
 			<many-to-many class="ClearCanvas.Dicom.DataStore.SopInstance, ClearCanvas.Dicom.DataStore" column="ReferencedSopInstance_" fetch="select" />
@@ -44,11 +44,13 @@
 	</joined-subclass>
 	<joined-subclass name="RetrieveParcel" table="RetrieveParcel_" proxy="RetrieveParcel">
 		<key column="ParcelOid_" />
-		<property name="ObjectUid" column="ObjectUid_" type="String" />
+		<property name="RetrieveObjectUid" column="RetrieveObjectUid_" type="String" />
 	</joined-subclass>
+	<!--
 	<joined-subclass name="ReceiveParcel" table="ReceiveParcel_" proxy="ReceiveParcel">
 		<key column="ParcelOid_" />
 		<property name="ReceivingStudyUid" column="ReceivingStudyUid_" type="String" length="64" />
 	</joined-subclass>
+	-->
   </class>
 </hibernate-mapping>

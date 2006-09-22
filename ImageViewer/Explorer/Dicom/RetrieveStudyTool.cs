@@ -67,6 +67,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					}
 
 					client.SopInstanceReceived += new EventHandler<SopInstanceReceivedEventArgs>(OnSopInstanceReceived);
+                    client.RetrieveProgressUpdated += delegate(object source, RetrieveProgressUpdatedEventArgs args)
+                    {
+                        int dummy = 0;
+                    };
 					client.Retrieve(server, studyUid, myAESettings.DicomStoragePath);
 				}
 			}

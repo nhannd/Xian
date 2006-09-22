@@ -166,7 +166,14 @@ namespace ClearCanvas.Dicom.DataStore
                     .List();
 
                 if (null != listOfStudies && listOfStudies.Count > 0)
+                {
+                    (listOfStudies[0] as Study).InitializeAssociatedCollection += InitializeAssociatedObject;
+                    foreach (Series series in (listOfStudies[0] as Study).Series)
+                    {
+                        series.InitializeAssociatedCollection += InitializeAssociatedObject;
+                    }
                     studyFound = listOfStudies[0] as IStudy;
+                }
             }
             catch (Exception ex)
             {
@@ -268,21 +275,6 @@ namespace ClearCanvas.Dicom.DataStore
             {
                 throw ex;
             }
-        }
-
-        public ISeries GetSeriesAndSopInstances(Uid referenceUid)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public IStudy GetStudyAndSeries(Uid referenceUid)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public IStudy GetStudyAndAllObjects(Uid referenceUid)
-        {
-            throw new Exception("The method or operation is not implemented.");
         }
 
         #endregion

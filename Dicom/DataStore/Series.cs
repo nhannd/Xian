@@ -4,15 +4,19 @@ using System.Collections.Generic;
 using System.Text;
 using Iesi.Collections;
 using NHibernate;
+using NHibernate.Collection;
 
 namespace ClearCanvas.Dicom.DataStore
 {
     public class Series : ISeries
     {
         #region Handcoded Members
+        public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
+        public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
+
         public Series()
         {
-            _sopInstances = new HybridSet();
+            _internalSopInstances = new HybridSet();
         }
 
         protected virtual long SeriesOid
@@ -57,9 +61,20 @@ namespace ClearCanvas.Dicom.DataStore
             set { _parentStudy = value; }
         }
 
-        protected virtual ISet SopInstances
+        protected virtual ISet InternalSopInstances
         {
-            get { return _sopInstances; }
+            get { return _internalSopInstances; }
+        }
+
+        public virtual ISet SopInstances
+        {
+            get
+            {
+                if (null != InitializeAssociatedCollection)
+                    InitializeAssociatedCollection(this, _internalSopInstances as PersistentCollection);
+
+                return _internalSopInstances;
+            }
         }
 
         public override bool Equals(object obj)
@@ -103,7 +118,7 @@ namespace ClearCanvas.Dicom.DataStore
         int _seriesNumber;
         string _laterality;
         string _seriesDescription;
-        ISet _sopInstances;
+        ISet _internalSopInstances;
         Study _parentStudy;
         #endregion
         #endregion
@@ -111,8 +126,6 @@ namespace ClearCanvas.Dicom.DataStore
 
         public IEnumerable<ISopInstance> GetSopInstances()
         {
-            DataAccessLayer.GetIDataStoreReader().InitializeAssociatedObject(this, this.SopInstances);
-
             List<ISopInstance> sops = new List<ISopInstance>();
             foreach (ImageSopInstance sop in this.SopInstances)
             {

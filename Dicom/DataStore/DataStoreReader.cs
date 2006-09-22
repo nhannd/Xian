@@ -196,7 +196,10 @@ namespace ClearCanvas.Dicom.DataStore
                     .List();
 
                 if (null != listOfSeries && listOfSeries.Count > 0)
+                {
+                    (listOfSeries[0] as Series).InitializeAssociatedCollection += InitializeAssociatedObject;
                     series = listOfSeries[0] as ISeries;
+                }
             }
             catch (Exception ex)
             {
@@ -220,11 +223,8 @@ namespace ClearCanvas.Dicom.DataStore
             // we are using v1.2 of NHibernate or later, there should be
             // a WasInitialized property that can be checked
             PersistentCollection associatedCollection = associatedObject as PersistentCollection;
-            if (null != associatedCollection)
-            {
-                if (associatedCollection.WasInitialized)
-                    return;
-            }
+            if (null == associatedCollection || associatedCollection.WasInitialized)
+                return;
 
             ISession session = null;
             ITransaction transaction = null;
@@ -234,7 +234,7 @@ namespace ClearCanvas.Dicom.DataStore
                 transaction = session.BeginTransaction();
 
                 session.Lock(primaryObject, LockMode.Read);
-                NHibernateUtil.Initialize(associatedObject);
+                NHibernateUtil.Initialize(associatedCollection);
             }
             catch (Exception ex)
             {
@@ -268,7 +268,15 @@ namespace ClearCanvas.Dicom.DataStore
                     .List();
 
                 if (null != listOfStudies && listOfStudies.Count > 0)
+                {
+                    (listOfStudies[0] as Study).InitializeAssociatedCollection += InitializeAssociatedObject;
+                    foreach (Series series in (listOfStudies[0] as Study).Series)
+                    {
+                        series.InitializeAssociatedCollection += InitializeAssociatedObject;
+                    }
+
                     studyFound = listOfStudies[0] as IStudy;
+                }
             }
             catch (Exception ex)
             {
@@ -373,114 +381,6 @@ namespace ClearCanvas.Dicom.DataStore
             return new ReadOnlyQueryResultCollection(results); 
         }
 
-        public ISeries GetSeriesAndSopInstances(Uid referenceUid)
-        {
-            if (!SeriesExists(referenceUid))
-                return null;
-
-            ISeries series = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IList listOfSeries = session.CreateCriteria(typeof(Series))
-                    .Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
-                    .SetFetchMode("SopInstances", FetchMode.Eager)
-                    .List();
-
-                if (null != listOfSeries && listOfSeries.Count > 0)
-                    series = listOfSeries[0] as ISeries;
-            }
-            catch (Exception ex)
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-                throw ex;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return series;
-        }
-
-        public IStudy GetStudyAndSeries(Uid referenceUid)
-        {
-            if (!StudyExists(referenceUid))
-                return null;
-
-            IStudy studyFound = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IList listOfStudies = session.CreateCriteria(typeof(Study))
-                    .Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
-                    .SetFetchMode("Series", FetchMode.Eager)
-                    .List();
-
-                if (null != listOfStudies && listOfStudies.Count > 0)
-                    studyFound = listOfStudies[0] as IStudy;
-            }
-            catch (Exception ex)
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-                throw ex;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return studyFound;    
-        }
-
-        public IStudy GetStudyAndAllObjects(Uid referenceUid)
-        {
-            if (!StudyExists(referenceUid))
-                return null;
-
-            IStudy studyFound = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IList listOfStudies = session.CreateCriteria(typeof(Study))
-                    .Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
-                    .SetFetchMode("Series", FetchMode.Eager)
-                    .SetFetchMode("SopInstances", FetchMode.Eager)
-                    .List();
-
-                if (null != listOfStudies && listOfStudies.Count > 0)
-                    studyFound = listOfStudies[0] as IStudy;
-            }
-            catch (Exception ex)
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-                throw ex;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return studyFound;
-        }
 
         #endregion
     }

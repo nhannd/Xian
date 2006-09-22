@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Text;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using MySR = ClearCanvas.Dicom.SR;
@@ -48,6 +48,11 @@ namespace ClearCanvas.Dicom.Network
         private event EventHandler<StudyCompletedEventArgs> _studyCompletedEvent;
 
         /// <summary>
+        /// 
+        /// </summary>
+        private event EventHandler<RetrieveProgressUpdatedEventArgs> _retrieveProgressUpdatedEvent;
+
+        /// <summary>
         /// Event accessor.
         /// </summary>
         public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceived
@@ -80,6 +85,12 @@ namespace ClearCanvas.Dicom.Network
             remove { _sendProgressUpdatedEvent -= value; }
         }
 
+        public event EventHandler<RetrieveProgressUpdatedEventArgs> RetrieveProgressUpdated
+        {
+            add { _retrieveProgressUpdatedEvent += value; }
+            remove { _retrieveProgressUpdatedEvent -= value; }
+        }
+
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
@@ -105,6 +116,9 @@ namespace ClearCanvas.Dicom.Network
 
             // same goes for the store scu callback helper
             _storeScuCallbackHelper = new StoreScuCallbackHelper(this);
+
+            // same goes for the retrieve callback helper
+            _retrieveCallbackHelper = new RetrieveCallbackHelper(this);
 
             _queryResults = new QueryResultList();
 
@@ -871,6 +885,11 @@ namespace ClearCanvas.Dicom.Network
             EventsHelper.Fire(_sendProgressUpdatedEvent, this, e);
         }
 
+        protected void OnRetrieveProgressUpdatedEvent(RetrieveProgressUpdatedEventArgs e)
+        {
+            EventsHelper.Fire(_retrieveProgressUpdatedEvent, this, e);
+        }
+
         #endregion
 
         #region Private members
@@ -943,6 +962,51 @@ namespace ClearCanvas.Dicom.Network
             public void Dispose()
             {
                 RegisterQueryCallbackHelper_OffisDcm(null);
+            }
+
+            #endregion
+        }
+
+        class RetrieveCallbackHelper : IDisposable
+        {
+            public RetrieveCallbackHelper(DicomClient parent)
+            {
+                _parent = parent;
+                _retrieveCallbackHelperDelegate = new RetrieveCallbackHelperDelegate(DefaultCallback);
+                RegisterRetrieveCallbackHelper_OffisDcm(_retrieveCallbackHelperDelegate);
+            }
+
+            public delegate void RetrieveCallbackHelperDelegate(IntPtr callbackInfo);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterRetrieveCallbackHelper_OffisDcm")]
+            public static extern void RegisterRetrieveCallbackHelper_OffisDcm(RetrieveCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr callbackInfoPointer)
+            {
+                InteropRetrieveCallbackInfo callbackInfo = new InteropRetrieveCallbackInfo(callbackInfoPointer, false);
+                T_DIMSE_C_MoveRSP moveResponse = callbackInfo.CMoveResponse;
+                
+                if ((moveResponse.opts & OffisDcm.O_MOVE_NUMBEROFCOMPLETEDSUBOPERATIONS) > 0 &&
+                    (moveResponse.opts & OffisDcm.O_MOVE_NUMBEROFFAILEDSUBOPERATIONS) > 0 &&
+                    (moveResponse.opts & OffisDcm.O_MOVE_NUMBEROFREMAININGSUBOPERATIONS) > 0)
+                {
+                    int completedOperations = moveResponse.NumberOfCompletedSubOperations;
+                    int failedOperations = moveResponse.NumberOfFailedSubOperations;
+                    int remainingOperations = moveResponse.NumberOfRemainingSubOperations;
+
+                    RetrieveProgressUpdatedEventArgs args = new RetrieveProgressUpdatedEventArgs(completedOperations, failedOperations, remainingOperations);
+                    _parent.OnRetrieveProgressUpdatedEvent(args);
+                }
+            }
+
+            private RetrieveCallbackHelperDelegate _retrieveCallbackHelperDelegate;
+            private DicomClient _parent;
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                RegisterRetrieveCallbackHelper_OffisDcm(null);
             }
 
             #endregion
@@ -1029,6 +1093,7 @@ namespace ClearCanvas.Dicom.Network
         private QueryCallbackHelper _queryCallbackHelper;
         private StoreCallbackHelper _storeCallbackHelper;
         private StoreScuCallbackHelper _storeScuCallbackHelper;
+        private RetrieveCallbackHelper _retrieveCallbackHelper;
         private QueryResultList _queryResults;
         private ApplicationEntity _myOwnAE;
         private int _defaultPDUSize = 16384;

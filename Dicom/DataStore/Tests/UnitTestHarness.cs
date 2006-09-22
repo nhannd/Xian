@@ -128,7 +128,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             DataAccessLayer.GetIDataStoreWriter().StoreSeries(series);
 
             
-            ISeries seriesLoaded = DataAccessLayer.GetIDataStoreReader().GetSeriesAndSopInstances(new Uid("1.2.3.4.5.6"));
+            ISeries seriesLoaded = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6"));
 
             ImageSopInstance sop3 = new ImageSopInstance();
             sop3.SopInstanceUid = "9.9.9.3";
@@ -142,7 +142,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             DataAccessLayer.GetIDataStoreWriter().StoreSeries(seriesLoaded);
 
             
-            ISeries seriesCheck = DataAccessLayer.GetIDataStoreReader().GetSeriesAndSopInstances(new Uid("1.2.3.4.5.6"));
+            ISeries seriesCheck = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6"));
 
             int count = 0;
             foreach (ISopInstance sop in seriesCheck.GetSopInstances())
@@ -157,7 +157,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             seriesCheck.RemoveSopInstance(sop4);
             DataAccessLayer.GetIDataStoreWriter().StoreSeries(seriesCheck);
             
-            ISeries seriesRecheck = DataAccessLayer.GetIDataStoreReader().GetSeriesAndSopInstances(new Uid("1.2.3.4.5.6"));
+            ISeries seriesRecheck = DataAccessLayer.GetIDataStoreReader().GetSeries(new Uid("1.2.3.4.5.6"));
 
             count = 0;
             foreach (ISopInstance sop in seriesRecheck.GetSopInstances())

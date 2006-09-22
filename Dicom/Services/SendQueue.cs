@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using NHibernate;
+using NHibernate.Collection;
 
 namespace ClearCanvas.Dicom.Services
 {
@@ -76,7 +77,38 @@ namespace ClearCanvas.Dicom.Services
 
         public ISendParcel CreateNewParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription)
         {
-            return new SendParcel(sourceAE, destinationAE, parcelDescription);
+            SendParcel aNewParcel = new SendParcel(sourceAE, destinationAE, parcelDescription);
+            aNewParcel.InitializeAssociatedCollection += InitializeAssociatedObject;
+
+            return aNewParcel;
+        }
+
+        public void InitializeAssociatedObject(object parcel, PersistentCollection associatedCollection)
+        {
+            if (null == associatedCollection || associatedCollection.WasInitialized)
+                return;
+
+            ISession session = null;
+            ITransaction transaction = null;
+            try
+            {
+                session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
+
+                session.Lock(parcel, LockMode.Read);
+                NHibernateUtil.Initialize(associatedCollection);
+            }
+            catch (Exception ex)
+            {
+                if (null != transaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (null != session)
+                    session.Close();
+            }
         }
 
         public IEnumerable<ISendParcel> GetParcels()
@@ -124,6 +156,7 @@ namespace ClearCanvas.Dicom.Services
                 listOfParcels = session.Find("from Parcel as parcel where parcel.ParcelTransferState != ?",
                     ParcelTransferState.Completed,
                     NHibernateUtil.Int16);
+
                 if (listOfParcels.Count <= 0)
                     return null;
 

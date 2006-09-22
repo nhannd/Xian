@@ -102,6 +102,7 @@
     <Compile Include="Network\ListeningPort.cs" />
     <Compile Include="Network\QueryCompletedEventArgs.cs" />
     <Compile Include="Network\QueryResultReceivedEventArgs.cs" />
+    <Compile Include="Network\RetrieveProgressUpdatedEventArgs.cs" />
     <Compile Include="Network\SendProgressUpdatedEventArgs.cs" />
     <Compile Include="Network\SeriesCompletedEventArgs.cs" />
     <Compile Include="Network\SocketManager.cs" />
