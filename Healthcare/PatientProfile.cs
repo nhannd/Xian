@@ -26,5 +26,11 @@ namespace ClearCanvas.Healthcare {
             patientProfile._sex = Sex.U;   // default to Unknown
             return patientProfile;
 		}
+
+        public virtual DateTime DateOfBirth
+        {
+            get { return _dateOfBirth.Date; }
+            set { _dateOfBirth = value.Date; }
+        }
     }
 }
