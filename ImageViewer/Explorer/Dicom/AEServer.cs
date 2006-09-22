@@ -13,8 +13,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private String _servername;
         private String _serverpath;
         private String _serverlocation;
-        private int _serverid;
-        private int _serverparentid;
+        private String[] _serverPathGroups;
+        private int _serverID;
+        private int _serverParentID;
 
         public String Servername
         {
@@ -34,16 +35,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set { _serverlocation = value; }
         }
 
-        public int Serverid
+        public String[] ServerPathGroups
         {
-            get { return _serverid; }
-            set { _serverid = value; }
+            get {
+                if (_serverPathGroups == null)
+                    BuildServerPathGroup();
+                return _serverPathGroups; 
+            }
+            set { _serverPathGroups = value; }
         }
 
-        public int Serverparentid
+        public int ServerID
         {
-            get { return _serverparentid; }
-            set { _serverparentid = value; }
+            get { return _serverID; }
+            set { _serverID = value; }
+        }
+
+        public int ServerParentID
+        {
+            get { return _serverParentID; }
+            set { _serverParentID = value; }
         }
 
         #endregion
@@ -54,6 +65,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _servername = servername;
             _serverpath = serverpath;
             _serverlocation = serverlocation;
+            _serverPathGroups = null;
+            _serverID = -1;
+            _serverParentID = -1;
         }
 
         public new String Host
@@ -83,23 +97,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get
             {
                 StringBuilder aeDescText = new StringBuilder();
-                aeDescText.AppendFormat("AE Title: {0}\r\nHost: {1}\r\nListening Port: {2}\r\nLocation: {3}", base.AE, base.Host, base.Port, Serverlocation);
+                aeDescText.AppendFormat("Server Name: {0}\r\nAE Title: {1}\r\nHost: {2}\r\nListening Port: {3}\r\nLocation: {4}", Servername, base.AE, base.Host, base.Port, Serverlocation);
                 return aeDescText.ToString();
             }
         }
 
         public String getServerGroupName()
         {
-            if (_serverpath == null || _serverpath.Equals(""))
+            if (ServerPathGroups == null || ServerPathGroups.Length <= 0)
                 return "";
-            string[] gnames = getServerPathGroup();
-            return gnames[gnames.Length-1]; 
+            return ServerPathGroups[ServerPathGroups.Length - 1]; 
         }
 
-        public String[] getServerPathGroup()
+        public String getServerRootName()
+        {
+            if (ServerPathGroups == null || ServerPathGroups.Length <= 0)
+                return "";
+            return ServerPathGroups[0];
+        }
+
+        public int BuildServerPathGroup()
         {
             if (_serverpath == null)
-                return null;
+                return -1;
             _serverpath = _serverpath.Replace("\\", "/").Trim();
             while (_serverpath.IndexOf("//") >= 0)
                 _serverpath = _serverpath.Replace("//", "/");
@@ -107,8 +127,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _serverpath = _serverpath.Substring(1);
             while (_serverpath.EndsWith("/"))
                 _serverpath = _serverpath.Substring(0, _serverpath.Length - 1);
-            return _serverpath.Split('/');
+            _serverPathGroups = _serverpath.Split('/');
+            return _serverPathGroups.Length;
         }
-
     }
 }

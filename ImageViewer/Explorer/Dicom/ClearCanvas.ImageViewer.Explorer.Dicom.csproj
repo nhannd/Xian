@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AENavigatorComponent.cs" />
     <Compile Include="AEServer.cs" />
+    <Compile Include="AEServerEditorComponent.cs" />
     <Compile Include="AEServerPool.cs" />
     <Compile Include="AEServerSettings.cs" />
     <Compile Include="BrowserNode.cs" />

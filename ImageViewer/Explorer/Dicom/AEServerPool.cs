@@ -12,12 +12,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         #region Fields
 
         private AEServer _currentserver;
-        //private AEServer _mydatastore;
         private List<AEServer> _serverlist;
-        private List<AEServer> _currentgroup;
+        private List<AEServer> _childServers;
         private int _currentserverid;
-        private List<int> _parentids;
-        private string _currentgroupname;
 
         public AEServer Currentserver
         {
@@ -29,7 +26,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get
             {
-                LoadServerSettings();
+                if (_serverlist == null)
+                    LoadServerSettings();
                 return _serverlist;
             }
             set { _serverlist = value; }
@@ -46,31 +44,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set { _currentserverid = value; }
         }
 
-        public List<AEServer> Currentgroup
+        public List<AEServer> ChildServers
         {
-            get { return _currentgroup; }
-            set { _currentgroup = value; }
+            get { return _childServers; }
+            set { _childServers = value; }
         }
-
-        public string Currentgroupname
-        {
-            get { return _currentgroupname; }
-            set { _currentgroupname = value; }
-        }
-
-        //public AEServer Mydatastore
-        //{
-        //    get { return _mydatastore; }
-        //    set { _mydatastore = value; }
-        //}
 
         #endregion
+
+        public AEServerPool()
+        {
+            _currentserver = null;
+            _serverlist = null;
+            _childServers = null;
+            _currentserverid = -1;
+        }
 
         public void SaveServerSettings()
         {
             List<AEServerSettings> _settinglist = new List<AEServerSettings>();
             if (_serverlist == null)
                 _serverlist = new List<AEServer>();
+            ComposeServerPath();
             foreach (AEServer aeserver in _serverlist)
             {
                 _settinglist.Add(new AEServerSettings(aeserver.Servername, aeserver.Serverpath, aeserver.Serverlocation, aeserver.Host, aeserver.AE, aeserver.Port));
@@ -87,7 +82,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_serverlist != null)
                 return;
             _serverlist = new List<AEServer>();
-            _parentids = new List<int>();
             List<AEServerSettings> _settinglist = new List<AEServerSettings>();
             if (File.Exists("DICOMServerSettings.xml"))
             {
@@ -100,29 +94,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 }
                 fStream.Close();
                 //check the default server nodes
-                bool ds_exists = false;
-                bool dsroot_exists = false;
-                bool svrroot_exists = false;
-                for (int i = 0; i < _serverlist.Count; i++)
-                {
-                    if (_serverlist[i].Servername.Equals(AENavigatorComponent.EmptyNodeName) && _serverlist[i].Serverpath.Equals("/" + AENavigatorComponent.MyDatastoreTitle))
-                        dsroot_exists = true;
-                    else if (_serverlist[i].Servername.Equals(AENavigatorComponent.EmptyNodeName) && _serverlist[i].Serverpath.Equals("/" + AENavigatorComponent.MyServersTitle))
-                        svrroot_exists = true;
-                    else if (_serverlist[i].Servername.Equals(AENavigatorComponent.MyDatastoreTitle) && _serverlist[i].Serverpath.Equals("/" + AENavigatorComponent.MyDatastoreTitle))
-                        ds_exists = true;
-                }
-                if (!dsroot_exists)
-                    _serverlist.Add(new AEServer(AENavigatorComponent.EmptyNodeName, "/" + AENavigatorComponent.MyDatastoreTitle, "", "Host", "AeTitle", 100));
-                if (!svrroot_exists)
-                    _serverlist.Add(new AEServer(AENavigatorComponent.EmptyNodeName, "/" + AENavigatorComponent.MyServersTitle, "", "Host0", "AeTitle0", 100));
-                if (!ds_exists)
-                {
-                    LocalAESettings myAESettings = new LocalAESettings();
-                    _serverlist.Add(new AEServer(AENavigatorComponent.MyDatastoreTitle, "/" + AENavigatorComponent.MyDatastoreTitle, "", "localhost", myAESettings.AETitle, myAESettings.Port));
-                }
-                if (!dsroot_exists || !svrroot_exists || !ds_exists)
-                    SaveServerSettings();
+                CheckDefaultServerSettings();
             }
             else
             {
@@ -133,81 +105,104 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _serverlist.Add(new AEServer(AENavigatorComponent.NewServerName, "/" + AENavigatorComponent.MyServersTitle, "", "Host", "AeTitle", 100));
                 SaveServerSettings();
             }
-            LoadParentID(-1);
         }
 
-        public void LoadParentID(int serverid)
+        private void CheckDefaultServerSettings()
         {
-            if (_serverlist == null || _parentids == null
-                || serverid < -1 || serverid >= _serverlist.Count)
+            if (_serverlist == null)
                 return;
-
-            string[][] serverPaths = new string[_serverlist.Count][];
+            //check the default server nodes
+            bool ds_exists = false;
+            bool dsroot_exists = false;
+            bool svrroot_exists = false;
+            bool isupdated = false;
             for (int i = 0; i < _serverlist.Count; i++)
             {
-                serverPaths[i] = _serverlist[i].getServerPathGroup();
-            }
-
-            if (serverid >= 0)
-            {
-                return;
-            }
-
-            _parentids.Clear();
-            for (int i = 0; i < _serverlist.Count; i++)
-            {
-                _parentids.Add(FindParentID(i, serverPaths));
-            }
-        }
-
-        public int FindParentID(int serverid, string[][] serverPaths)
-        {
-            int myparent = -1;
-            if (_serverlist == null || _parentids == null || _parentids.Count < _serverlist.Count
-                || serverid < 0 || serverid >= _serverlist.Count)
-                return myparent; 
-
-            if (serverPaths == null || serverPaths.Length < _serverlist.Count)
-            {
-                serverPaths = new string[_serverlist.Count][];
-                for (int i = 0; i < _serverlist.Count; i++)
+                AEServer ae = _serverlist[i];
+                if (ae.Servername.Equals(AENavigatorComponent.EmptyNodeName) && ae.Serverpath.Equals("/" + AENavigatorComponent.MyDatastoreTitle))
+                    dsroot_exists = true;
+                else if (ae.Servername.Equals(AENavigatorComponent.EmptyNodeName) && ae.Serverpath.Equals("/" + AENavigatorComponent.MyServersTitle))
+                    svrroot_exists = true;
+                else if (ae.Servername.Equals(AENavigatorComponent.MyDatastoreTitle) && ae.Serverpath.Equals("/" + AENavigatorComponent.MyDatastoreTitle))
+                    ds_exists = true;
+                if (!ae.getServerRootName().Equals(AENavigatorComponent.MyDatastoreTitle) && !ae.getServerRootName().Equals(AENavigatorComponent.MyServersTitle))
                 {
-                    serverPaths[i] = _serverlist[i].getServerPathGroup();
+                    _serverlist[i].Serverpath = "/" + AENavigatorComponent.MyServersTitle + _serverlist[i].Serverpath;
+                    _serverlist[i].BuildServerPathGroup();
+                    isupdated = true;
                 }
             }
+            if (!dsroot_exists)
+                _serverlist.Add(new AEServer(AENavigatorComponent.EmptyNodeName, "/" + AENavigatorComponent.MyDatastoreTitle, "", "Host", "AeTitle", 100));
+            if (!svrroot_exists)
+                _serverlist.Add(new AEServer(AENavigatorComponent.EmptyNodeName, "/" + AENavigatorComponent.MyServersTitle, "", "Host0", "AeTitle0", 100));
+            if (!ds_exists)
+            {
+                LocalAESettings myAESettings = new LocalAESettings();
+                _serverlist.Add(new AEServer(AENavigatorComponent.MyDatastoreTitle, "/" + AENavigatorComponent.MyDatastoreTitle, "", "localhost", myAESettings.AETitle, myAESettings.Port));
+            }
 
-            if (serverPaths[serverid] == null || serverPaths[serverid].Length <= 0
-                || (_serverlist[serverid].Servername.Equals(AENavigatorComponent.EmptyNodeName) && serverPaths[serverid].Length == 1))
+            for (int i = 0; i < _serverlist.Count; i++)
             {
-                return myparent;
-            }
-            int m = 0;
-            if (_serverlist[serverid].Servername.Equals(AENavigatorComponent.EmptyNodeName))
-            {
-                m = 1;
-            }
-            for (int j = 0; j < _serverlist.Count; j++)
-            {
-                if (serverid == j || serverPaths[j] == null || serverPaths[j].Length <= 0
-                    || serverPaths[serverid].Length != (serverPaths[j].Length + m)
-                    || !_serverlist[j].Servername.Equals(AENavigatorComponent.EmptyNodeName))
-                    continue;
-                bool hasparent = true;
-                for (int k = serverPaths[serverid].Length - 1 - m; k >= 0; k--)
+                AEServer ae = _serverlist[i];
+                ae.ServerID = i;
+                ae.ServerParentID = -1;
+                String[] pgroup = ae.ServerPathGroups;
+                int k = 0;
+                if (ae.Servername.Equals(AENavigatorComponent.EmptyNodeName))
                 {
-                    if (!serverPaths[serverid][k].Equals(serverPaths[j][k]))
+                    k = 1;
+                }
+                for (int j = 0; j < _serverlist.Count; j++)
+                {
+                    if (i == j || !_serverlist[j].Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                        continue;
+
+                    String[] p2group = _serverlist[j].ServerPathGroups;
+                    if (pgroup.Length != (p2group.Length + k))
+                        continue;
+                    bool samepath = true;
+                    for (int m = 0; m < pgroup.Length-k; m++)
                     {
-                        hasparent = false;
-                        break;
+                        if (!pgroup[m].Equals(p2group[m]))
+                        {
+                            samepath = false;
+                            break;
+                        }
                     }
-                }
-                if (hasparent)
-                {
-                    myparent = j;
+                    if (!samepath)
+                        continue;
+                    ae.ServerParentID = j;
                     break;
                 }
             }
-            return myparent; 
+
+            if (!dsroot_exists || !svrroot_exists || !ds_exists || !isupdated)
+            {
+                SaveServerSettings();
+            }
+        }
+
+        private void ComposeServerPath()
+        {
+            if (_serverlist != null)
+                return;
+
+            for (int i = 0; i < _serverlist.Count; i++)
+            {
+                AEServer ae = _serverlist[i];
+                String svrpath = "";
+                String[] pgroup = ae.ServerPathGroups;
+                for (int m = 0; m < pgroup.Length; m++)
+                {
+                    if (!pgroup[m].Equals(""))
+                    {
+                        svrpath += "/" + pgroup[m];
+                    }
+                }
+                ae.Serverpath = svrpath;
+            }
+
         }
 
         public void SetCurrentServerByName(string svrName)
@@ -227,32 +222,67 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-        public void SetNewServer(string svrName, string tstamp)
+        public int AddNewServer(int parentid)
         {
             _currentserver = null;
             _currentserverid = -1;
-            if (svrName == null || svrName.Equals("") || _serverlist == null || tstamp == null)
-                return;
-
-            _currentserver = new AEServer(svrName + tstamp, "/ServerGroup/", "", "1.1.1." + tstamp, "AETitle" + tstamp, 100);
+            _currentserver = new AEServer(AENavigatorComponent.NewServerName, "/" + AENavigatorComponent.MyServersTitle, "", "1", "AETitle", 100);
             _currentserverid = _serverlist.Count;
+            _currentserver.ServerID = _serverlist.Count;
+            _currentserver.ServerParentID = parentid;
             _serverlist.Add(_currentserver);
             SaveServerSettings();
+            return _serverlist.Count - 1;
         }
 
-        public List<AEServer> GetChildServers(int n) 
+        public List<AEServer> GetServerRoots()
         {
-            List<AEServer> childList = new List<AEServer>();
-            if (_serverlist == null || n < 0 || n >= _serverlist.Count)
-                return childList;
-            String serverPath = _serverlist[n].Serverpath;
+            _childServers = new List<AEServer>();
             for (int i = 0; i < _serverlist.Count; i++)
             {
-                if (i == n || !_serverlist[i].Serverpath.StartsWith(serverPath))
-                    continue;
-                childList.Add(_serverlist[i]);
+                if (_serverlist[i].getServerRootName().Equals(AENavigatorComponent.MyDatastoreTitle) && !_serverlist[i].Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                {
+                    _childServers.Add(_serverlist[i]);
+                    break;
+                }
             }
-            return childList;
+            for (int i = 0; i < _serverlist.Count; i++)
+            {
+                if (_serverlist[i].ServerParentID == -1 && _serverlist[i].getServerRootName().Equals(AENavigatorComponent.MyServersTitle))
+                {
+                    _childServers.Add(_serverlist[i]);
+                    break;
+                }
+            }
+            return _childServers;
+        }
+
+        public List<AEServer> GetChildServers(int serverid, bool serveronly, bool recursive) 
+        {
+            _childServers = new List<AEServer>();
+            FindChildServers(serverid, serveronly, recursive);
+            return _childServers;
+        }
+
+        public void FindChildServers(int serverid, bool serveronly, bool recursive)
+        {
+            if (_serverlist == null || serverid < 0 || serverid >= _serverlist.Count
+                || !_serverlist[serverid].Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                return;
+            String gname = _serverlist[serverid].getServerGroupName();
+            String[] pgroup = _serverlist[serverid].ServerPathGroups;
+            for (int i = 0; i < _serverlist.Count; i++)
+            {
+                if (_serverlist[i].ServerParentID != serverid)
+                    continue;
+                if (!_serverlist[i].Servername.Equals(AENavigatorComponent.EmptyNodeName) || !serveronly)
+                    _childServers.Add(_serverlist[i]);
+                if (recursive)
+                {
+                    FindChildServers(i, serveronly, recursive);
+                }
+            }
+            return;
         }
 
     }

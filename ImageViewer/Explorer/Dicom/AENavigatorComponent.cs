@@ -154,16 +154,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #endregion
 
-        public string AddServer()
+        public void AddServer()
         {
-            Random r = new Random();
-            string tstamp = r.Next(10000).ToString();
-            UpdateServerSetting();
-            _serverPool.SetNewServer(NewServerName, tstamp);
-            LoadServerSetting();
-            _serverSelected = _serverPool.Currentserver;
-            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-            return NewServerName+tstamp;
+            //UpdateServerSetting();
+            //_serverPool.SetNewServer(NewServerName, tstamp);
+            //LoadServerSetting();
+            //_serverSelected = _serverPool.Currentserver;
+            //EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+            //return NewServerName+tstamp;
         }
 
         public bool DeleteServer()
@@ -177,6 +175,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             LoadServerSetting();
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
             return true;
+        }
+
+        public void UpdateServer()
+        {
+            AEServerEditorComponent editor = new AEServerEditorComponent();
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update AE Server...");
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                return;
+            }
         }
 
         public void SelectChanged(String nodeName)
@@ -273,6 +281,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             base.Start();
 
             _serverPool = new AEServerPool();
+            _serverPool.LoadServerSettings();
             _serverPool.Currentserver = null;
             _serverPool.Currentserverid = -1;
             ClearServerSetting();

@@ -49,7 +49,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         void OnAddClicked(object sender, EventArgs e)
         {
-            // to do
+            // to do 
+            _aenavigatorComponent.UpdateServer();
         }
 
         void OnDeleteClicked(object sender, EventArgs e)
@@ -103,6 +104,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 treeChild.Tag = dataChild;
                 treeChild.ToolTipText = dataChild.Details;
                 treeNode.Nodes.Add(treeChild);
+                BuildNextTreeLevel(treeChild);
             }
         }
 

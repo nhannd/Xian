@@ -52,12 +52,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void CreateChildNodes()
         {
-            if (!ServerName.Equals(AENavigatorComponent.MyServersTitle))
-                return;
-            foreach (AEServer ae in _serverPool.Serverlist)
+            foreach (AEServer ae in _serverPool.GetChildServers(_aeserver.ServerID, false, false))
             {
-                if (ae.Servername.Equals(AENavigatorComponent.EmptyNodeName) || ae.Servername.Equals(AENavigatorComponent.MyDatastoreTitle))
-                    continue;
                 AddChild(new ServerViewServerNode(ae, _serverPool));
             }
         }

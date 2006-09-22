@@ -29,16 +29,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             if (_serverPool == null)
                 return;
-            foreach (AEServer ae in _serverPool.Serverlist)
+            foreach (AEServer ae in _serverPool.GetServerRoots())
             {
-                if (!ae.Servername.Equals(AENavigatorComponent.MyDatastoreTitle))
-                    continue;
-                AddChild(new ServerViewServerNode(ae, _serverPool));
-            }
-            foreach (AEServer ae in _serverPool.Serverlist)
-            {
-                if (!ae.Servername.Equals(AENavigatorComponent.EmptyNodeName) || !ae.Serverpath.Replace("/", "").Equals(AENavigatorComponent.MyServersTitle))
-                    continue;
                 AddChild(new ServerViewServerNode(ae, _serverPool));
             }
         }
