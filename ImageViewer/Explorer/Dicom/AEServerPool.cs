@@ -93,8 +93,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     _serverlist.Add(new AEServer(svrsettings.Servername, svrsettings.Serverpath, svrsettings.Description, svrsettings.Hostname, svrsettings.AeTitle, svrsettings.ListenPort));
                 }
                 fStream.Close();
-                //check the default server nodes
-                CheckDefaultServerSettings();
             }
             else
             {
@@ -105,6 +103,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _serverlist.Add(new AEServer(AENavigatorComponent.NewServerName, "/" + AENavigatorComponent.MyServersTitle, "", "Host", "AeTitle", 100));
                 SaveServerSettings();
             }
+            //check the default server nodes
+            CheckDefaultServerSettings();
         }
 
         private void CheckDefaultServerSettings()
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void ComposeServerPath()
         {
-            if (_serverlist != null)
+            if (_serverlist == null)
                 return;
 
             for (int i = 0; i < _serverlist.Count; i++)

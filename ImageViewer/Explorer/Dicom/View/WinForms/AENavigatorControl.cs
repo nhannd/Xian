@@ -65,10 +65,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _lastClickedNode = _aeTreeView.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
             if (_lastClickedNode == null)
                 return;
-            //if (_lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle))
-            //    _aenavigatorComponent.DataStoreEvent();
-            //else
-                _aenavigatorComponent.SelectChanged(_lastClickedNode.Text);
+            _aeTreeView.SelectedNode = _lastClickedNode;
+            IBrowserNode dataNode = (IBrowserNode)_lastClickedNode.Tag;
+            _aenavigatorComponent.SelectChanged(dataNode);
         }
 
         /// <summary>

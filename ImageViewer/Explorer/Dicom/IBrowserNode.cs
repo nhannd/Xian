@@ -21,6 +21,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get;
         }
 
+        int ServerID
+        {
+            get;
+        }
+
+        bool IsServerNode
+        {
+            get;
+        }
+
         string Details
         {
             get;

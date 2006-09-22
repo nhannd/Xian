@@ -80,7 +80,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             // _aeTreeView
             // 
-            this._aeTreeView.Dock = System.Windows.Forms.DockStyle.Top;
+            this._aeTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this._aeTreeView.Location = new System.Drawing.Point(0, 48);
             this._aeTreeView.Name = "_aeTreeView";
             this._aeTreeView.Size = new System.Drawing.Size(300, 244);

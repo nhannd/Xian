@@ -40,6 +40,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return AENavigatorComponent.MyServersTitle; }
         }
 
+        public override int ServerID
+        {
+            get { return -1; }
+        }
+
+        public override bool IsServerNode
+        {
+            get { return false; }
+        }
+
         public override string ServerPath
         {
             get { return ""; }

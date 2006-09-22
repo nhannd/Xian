@@ -32,6 +32,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
+        public override int ServerID
+        {
+            get
+            {
+                return _aeserver.ServerID;
+            }
+        }
+
+        public override bool IsServerNode
+        {
+            get {
+                if (_aeserver.Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                    return false;
+                return true;
+            }
+        }
+
         public override string ServerPath
         {
             get

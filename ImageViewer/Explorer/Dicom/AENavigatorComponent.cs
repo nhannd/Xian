@@ -30,7 +30,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private List<AEServer> _selectedServers;
         private ServerViewRootNode _serverTreeView;
         private event EventHandler _selectedServerChanged;
-        private event EventHandler _dataStoreSelected;
 
         private static String _myServersTitle = "My Servers";
         private static String _myDatastoreTitle = "My DataStore";
@@ -63,12 +62,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             add { _selectedServerChanged += value; }
             remove { _selectedServerChanged -= value; }
-        }
-
-        public event EventHandler DataStoreSelected
-        {
-            add { _dataStoreSelected += value; }
-            remove { _dataStoreSelected -= value; }
         }
 
         public AEServer ServerSelected
@@ -187,12 +180,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-        public void SelectChanged(String nodeName)
+        public void SelectChanged(IBrowserNode dataNode)
         {
             //UpdateServerSetting();
-            _serverPool.SetCurrentServerByName(nodeName);
+            if (dataNode.IsServerNode)
+            {
+                _selectedServers = new List<AEServer>();
+                _selectedServers.Add(_serverPool.Serverlist[dataNode.ServerID]);
+            }
+            else
+            {
+                _selectedServers = _serverPool.GetChildServers(dataNode.ServerID, true, true);
+            }
             //LoadServerSetting();
-            _serverSelected = _serverPool.Currentserver;
+            //_serverSelected = _serverPool.Currentserver;
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
 
