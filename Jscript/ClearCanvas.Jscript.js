@@ -21,7 +21,7 @@ package ClearCanvas.Jscript
     public 
     ClearCanvas.Common.ExtensionOf(ScriptEngineExtensionPoint)
     ClearCanvas.Common.Scripting.LanguageSupport("jscript")
-    expando class Engine implements IScriptEngine
+    class Engine implements IScriptEngine
     {
         var Context: Object;
     
