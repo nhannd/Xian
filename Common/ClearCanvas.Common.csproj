@@ -122,6 +122,11 @@
     <Compile Include="IBrowsable.cs" />
     <Compile Include="AttributeExtensionFilter.cs" />
     <Compile Include="Auditing\Tests\AuditingTests.cs" />
+    <Compile Include="Scripting\IScriptEngine.cs" />
+    <Compile Include="Scripting\ScriptHost.cs" />
+    <Compile Include="Scripting\LanguageSupportAttribute.cs" />
+    <Compile Include="Scripting\ActiveTemplate.cs" />
+    <Compile Include="Scripting\ActiveTemplateException.cs" />
     <Compile Include="Tests\FileProcessorTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Platform.cs">
