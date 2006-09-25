@@ -4,6 +4,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -67,6 +68,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				DicomPresentationImage presentationImage = new DicomPresentationImage(image);
 				displaySet.PresentationImages.Add(presentationImage);
 			}
+
+			// This has been added so that the initial presentation of each display set has a reasonable 
+			// sort order.  When proper sorting support is added, the sorters will be extensions.
+			displaySet.PresentationImages.Sort((IComparer<PresentationImage>)new DicomPresentationImageSortByInstanceNumber());
 		}
 
 		private void CreatePhysicalWorkspaceTree(PhysicalWorkspace physicalWorkspace)

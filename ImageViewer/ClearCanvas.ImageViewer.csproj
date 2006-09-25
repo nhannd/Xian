@@ -91,7 +91,10 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="AnnotationConfiguration.cs" />
+    <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
+    <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
+    <Compile Include="Imaging\Tests\DicomPresentationImageSortTests.cs" />
     <Compile Include="Mathematics\FloatComparer.cs" />
     <Compile Include="Mathematics\PointUtilities.cs" />
     <Compile Include="Mathematics\RectF.cs" />
@@ -278,6 +281,7 @@
     <Compile Include="Tests\ImageBoxTest.cs" />
     <Compile Include="Tests\LogicalWorkspaceTest.cs" />
     <Compile Include="Tests\MappableModalToolsIndexTest.cs" />
+    <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\PhysicalWorkspaceTest.cs" />
     <Compile Include="Tests\SourceImageSetTest.cs" />
     <Compile Include="Tests\TileTest.cs" />

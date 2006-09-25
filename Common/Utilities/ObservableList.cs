@@ -13,6 +13,7 @@ namespace ClearCanvas.Common.Utilities
 		where TItemEventArgs : CollectionEventArgs<TItem>, new()
 	{
 		private List<TItem> _list = new List<TItem>();
+		
 		private event EventHandler<TItemEventArgs> _itemAddedEvent;
 		private event EventHandler<TItemEventArgs> _itemRemovedEvent;
 
@@ -25,6 +26,13 @@ namespace ClearCanvas.Common.Utilities
 		{
 			foreach (TItem item in list)
 				this.Add(item);
+		}
+
+		public void Sort(IComparer<TItem> sortComparer)
+		{
+			Platform.CheckForNullReference(sortComparer, "sortComparer");
+
+			_list.Sort(sortComparer);
 		}
 
 		#region IObservableList<TItem, TItemEventArgs> Members
