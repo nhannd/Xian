@@ -34,5 +34,12 @@ namespace ClearCanvas.Healthcare {
             _extension = source.Extension;
         }
 
+        public string Format()
+        {
+            return _extension == null ?
+                string.Format("{0} ({1}) {2}", _countryCode, _areaCode, _number) :
+                string.Format("{0} ({1}) {2} x{3}", _countryCode, _areaCode, _number, _extension);
+        }
+
 	}
 }
