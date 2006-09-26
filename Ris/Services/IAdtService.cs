@@ -16,6 +16,8 @@ namespace ClearCanvas.Ris.Services
 
         void LoadPatientProfiles(Patient patient);
 
+        void LoadPatientProfileDetails(PatientProfile profile);
+
 
         /// <summary>
         /// 

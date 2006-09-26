@@ -38,9 +38,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfirmReconciliationComponent.cs" />
+    <Compile Include="JscriptComponent.cs" />
+    <Compile Include="JscriptTool.cs" />
+    <Compile Include="PatientPreviewComponent.cs" />
     <Compile Include="PatientProfileTableData.cs" />
     <Compile Include="PatientReconciliationComponent.cs" />
     <Compile Include="PatientReconciliationTool.cs" />
+    <Compile Include="PatientRegistrationTool.cs" />
+    <Compile Include="PatientSearchComponent.cs" />
+    <Compile Include="PatientSearchResultComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTableData.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />
@@ -90,6 +96,27 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PatientReconciliationToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientRegistrationToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientRegistrationToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientRegistrationToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PatientPreview.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\JscriptToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\JscriptToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\JscriptToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

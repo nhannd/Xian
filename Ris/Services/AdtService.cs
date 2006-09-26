@@ -80,6 +80,14 @@ namespace ClearCanvas.Ris.Services
             GetPatientBroker().LoadRelated(patient, patient.Profiles);
         }
 
+        [ReadOperation]
+        public void LoadPatientProfileDetails(PatientProfile profile)
+        {
+            IPatientProfileBroker broker = GetPatientProfileBroker();
+            broker.LoadRelated(profile, profile.Addresses);
+            broker.LoadRelated(profile, profile.TelephoneNumbers);
+        }
+
         //[UpdateOperation]
         //public void ReconcilePatients(PatientProfile toBeKept, PatientProfile toBeReconciled)
         //{

@@ -42,6 +42,20 @@
       <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ConfirmReconciliationComponentView.cs" />
+    <Compile Include="JscriptComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JscriptComponentControl.Designer.cs">
+      <DependentUpon>JscriptComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="JscriptComponentView.cs" />
+    <Compile Include="PatientPreviewComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientPreviewComponentControl.Designer.cs">
+      <DependentUpon>PatientPreviewComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientPreviewComponentView.cs" />
     <Compile Include="PatientReconciliationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -49,6 +63,20 @@
       <DependentUpon>PatientReconciliationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientReconciliationComponentView.cs" />
+    <Compile Include="PatientSearchComponentView.cs" />
+    <Compile Include="PatientSearchComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientSearchComponentControl.Designer.cs">
+      <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientSearchResultComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientSearchResultComponentControl.Designer.cs">
+      <DependentUpon>PatientSearchResultComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientSearchResultComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -80,9 +108,25 @@
       <SubType>Designer</SubType>
       <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="JscriptComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>JscriptComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientPreviewComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PatientPreviewComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PatientReconciliationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PatientReconciliationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientSearchComponentControl.resx">
+      <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientSearchResultComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PatientSearchResultComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

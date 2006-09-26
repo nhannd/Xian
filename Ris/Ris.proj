@@ -6,5 +6,6 @@
     <Exec Command="..\Healthcare\codegen-clean.bat" WorkingDirectory="..\Healthcare" ContinueOnError="true" />
     <Exec Command="..\Healthcare\codegen-gen.bat" WorkingDirectory="..\Healthcare" />
     <MSBuild Projects=".\Ris.sln" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
   </Target>
 </Project>
