@@ -58,6 +58,13 @@
     <Compile Include="CustomUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="HtmlComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HtmlComponentControl.Designer.cs">
+      <DependentUpon>HtmlComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HtmlComponentView.cs" />
     <Compile Include="SplitComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -133,6 +140,10 @@
     <EmbeddedResource Include="NavigatorComponentContainerControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>NavigatorComponentContainerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HtmlComponentControl.resx">
+      <DependentUpon>HtmlComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SplitComponentContainerControl.resx">
       <SubType>Designer</SubType>

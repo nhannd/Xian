@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Reflection;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Desktop
 {
@@ -21,7 +23,7 @@ namespace ClearCanvas.Desktop
     /// rather than implement <see cref="IApplicationComponent"/> directly, as it provides a default
     /// implementation suitable for most situations.
     /// </summary>
-    public abstract class ApplicationComponent : IApplicationComponent
+    public abstract class ApplicationComponent : IApplicationComponent, INotifyPropertyChanged, IDataErrorInfo
     {
         /// <summary>
         /// Executes the specified application component in a new workspace.  The exit callback will be invoked
@@ -87,8 +89,15 @@ namespace ClearCanvas.Desktop
 
         private IApplicationComponentHost _host;
         private ApplicationComponentExitCode _exitCode;
+
         private bool _modified;
         private event EventHandler _modifiedChanged;
+
+        private event EventHandler _allPropertiesChanged;
+        private event PropertyChangedEventHandler _propertyChanged;
+
+        private Dictionary<string, Validator> _validators;
+
 
         /// <summary>
         /// Constructor
@@ -96,6 +105,20 @@ namespace ClearCanvas.Desktop
         public ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
+
+            _validators = new Dictionary<string, Validator>();
+
+            foreach (PropertyInfo propInfo in this.GetType().GetProperties())
+            {
+                foreach (ValidateAttribute attr in propInfo.GetCustomAttributes(typeof(ValidateAttribute), false))
+                {
+                    MethodInfo getMethod = propInfo.GetGetMethod();
+
+                    Validator.GetPropertyValueDelegate getter = (Validator.GetPropertyValueDelegate)
+                        Delegate.CreateDelegate(typeof(Validator.GetPropertyValueDelegate), this, getMethod);
+                    _validators[propInfo.Name] = new Validator(attr.DisplayName, getter, attr.Mandatory);
+                }
+            }
         }
 
         /// <summary>
@@ -115,9 +138,23 @@ namespace ClearCanvas.Desktop
         /// This method is provided for situations where the subclass has chosen
         /// to override the <see cref="Modified"/> property.
         /// </summary>
-        protected void FireModifiedChanged()
+        protected void NotifyModifiedChanged()
         {
-            EventsHelper.Fire(_modifiedChanged, this, new EventArgs());
+            EventsHelper.Fire(_modifiedChanged, this, EventArgs.Empty);
+        }
+
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Notifies that all properties may have changed.  A view should respond to this event
+        /// by refreshing itself completely.
+        /// </summary>
+        protected void NotifyAllPropertiesChanged()
+        {
+            EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
         }
 
         #region IApplicationComponent Members
@@ -202,9 +239,15 @@ namespace ClearCanvas.Desktop
                 if (value != _modified)
                 {
                     _modified = value;
-                    FireModifiedChanged();
+                    NotifyModifiedChanged();
                 }
             }
+        }
+
+        public event EventHandler AllPropertiesChanged
+        {
+            add { _allPropertiesChanged += value; }
+            remove { _allPropertiesChanged -= value; }
         }
 
         /// <summary>
@@ -227,5 +270,41 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { _propertyChanged += value; }
+            remove { _propertyChanged -= value; }
+        }
+
+        #endregion
+
+        #region IDataErrorInfo Members
+
+        string IDataErrorInfo.Error
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
+
+        string IDataErrorInfo.this[string propertyName]
+        {
+            get
+            {
+                if (_validators.ContainsKey(propertyName))
+                {
+                    ValidatorResult result = _validators[propertyName].Result;
+                    return result.IsValid ? null : result.Message;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        #endregion
+
     }
 }

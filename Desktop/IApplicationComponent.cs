@@ -73,6 +73,13 @@ namespace ClearCanvas.Desktop
         event EventHandler ModifiedChanged;
 
         /// <summary>
+        /// Notifies that the value of any or all properties may have changed, and the view
+        /// should re-synchronize itself with the component.
+        /// </summary>
+        event EventHandler AllPropertiesChanged;
+
+
+        /// <summary>
         /// Called by the framework to determine if this component in a state
         /// such that it can be stopped.
         /// </summary>

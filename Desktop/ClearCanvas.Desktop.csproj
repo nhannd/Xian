@@ -57,6 +57,7 @@
     <Compile Include="ClosingEventArgs.cs" />
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
+    <Compile Include="Format.cs" />
     <Compile Include="ITableColumn.cs" />
     <Compile Include="SplitComponentContainer.cs">
       <SubType>Code</SubType>
@@ -95,6 +96,8 @@
     <Compile Include="Actions\StateObserverAttribute.cs" />
     <Compile Include="Actions\TooltipAttribute.cs" />
     <Compile Include="Tools\ToolBase.cs" />
+    <Compile Include="Validation\ValidateAttribute.cs" />
+    <Compile Include="Validation\Validator.cs" />
     <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />
