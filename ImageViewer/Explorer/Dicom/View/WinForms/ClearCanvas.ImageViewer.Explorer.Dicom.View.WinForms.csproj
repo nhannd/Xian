@@ -66,6 +66,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RetrieveStudyToolProgressComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RetrieveStudyToolProgressComponentControl.Designer.cs">
+      <DependentUpon>RetrieveStudyToolProgressComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RetrieveStudyToolProgressComponentView.cs" />
     <Compile Include="SearchPanelComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -135,6 +142,10 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RetrieveStudyToolProgressComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RetrieveStudyToolProgressComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchPanelComponentControl.resx">
       <SubType>Designer</SubType>
