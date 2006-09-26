@@ -17,6 +17,7 @@ namespace ClearCanvas.Common.Scripting
     public class ActiveTemplate
     {
         private string _inversion;
+        private ScriptHost _scriptHost;
 
         /// <summary>
         /// Constructs a template from the specified content.
@@ -36,10 +37,13 @@ namespace ClearCanvas.Common.Scripting
         {
             try
             {
-                context["__out"] = output;
+                if (_scriptHost == null)
+                {
+                    _scriptHost = new ScriptHost("jscript");
+                }
 
-                ScriptHost scriptHost = new ScriptHost("jscript");
-                scriptHost.Run(_inversion, context);
+                context["__out__"] = output;
+                _scriptHost.Run(_inversion, context);
             }
             catch (Exception e)
             {
@@ -50,7 +54,7 @@ namespace ClearCanvas.Common.Scripting
         /// <summary>
         /// Evaluates this template in the specified context.  The context parameter allows a set of
         /// named objects to be passed into the scripting environment.  Within the scripting environment
-        /// these objects can be referenced directly as properties of the Context property.  For example,
+        /// these objects can be referenced directly as properties of "this".  For example,
         /// <code>
         ///     Hashtable scriptingContext = new Hashtable();
         ///     scriptingContext["Patient"] = patient;  // add a reference to an existing instance of a patient object
@@ -59,9 +63,7 @@ namespace ClearCanvas.Common.Scripting
         ///     template.Evaluate(scriptingContext);
         /// 
         ///     // now, in the template, the script would access the object as shown
-        ///     &lt;%= this.Context.Patient.Name %&gt;
-        ///     // or equivalently, "this" can be omitted
-        ///     &lt;%= Context.Patient.Name %&gt;
+        ///     &lt;%= this.Patient.Name %&gt;
         ///     
         /// </code>
         /// </summary>
@@ -92,7 +94,8 @@ namespace ClearCanvas.Common.Scripting
                 inCode = ProcessLine(line, inCode, inversion);
                 
                 // preserve the formatting of the original template by writing new lines appropriately
-                inversion.AppendLine("this.Context.__out.WriteLine();");
+                if(!inCode)
+                    inversion.AppendLine("this.__out__.WriteLine();");
             }
 
             return inversion.ToString();
@@ -118,7 +121,7 @@ namespace ClearCanvas.Common.Scripting
                 {
                     if (part.StartsWith("="))
                     {
-                        inversion.AppendLine(string.Format("this.Context.__out.Write({0});", part.Substring(1)));
+                        inversion.AppendLine(string.Format("this.__out__.Write({0});", part.Substring(1)));
                     }
                     else
                     {
@@ -129,7 +132,7 @@ namespace ClearCanvas.Common.Scripting
                 else
                 {
                     string escaped = part.Replace("\"", "\\\"");  // escape any " characters
-                    inversion.AppendLine(string.Format("this.Context.__out.Write(\"{0}\");", escaped));
+                    inversion.AppendLine(string.Format("this.__out__.Write(\"{0}\");", escaped));
                 }
             }
             return inCode;

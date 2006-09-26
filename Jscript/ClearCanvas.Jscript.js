@@ -11,30 +11,31 @@ package ClearCanvas.Jscript
     /// This class provides an implementation of ClearCanvas.Common.Scripting.ScriptEngineExtensionPoint
     /// for JScript
     ///
-    /// The context IDictionary is accessible to the script as "this.Context".  For example, if
+    /// The context IDictionary is accessible to the script as "this".  For example, if
     /// the dictionary contains "Name" => "JoJo", then from the script,
     ///
-    ///     this.Context['Name'] => "JoJo"
+    ///     this['Name'] => "JoJo"
     ///     or
-    ///     this.Context.Name => "JoJo"     (the entries are directly accessible as properties of the Context object)
-    /// 
+    ///     this.Name => "JoJo"     (the entries are directly accessible as properties of this)
+    ///
+    /// The script must use the "return" keyword to return an object to the caller. This is because
+    /// the Run(...) method packages the script into its own function before executing it.
     public 
     ClearCanvas.Common.ExtensionOf(ScriptEngineExtensionPoint)
     ClearCanvas.Common.Scripting.LanguageSupport("jscript")
     class Engine implements IScriptEngine
     {
-        var Context: Object;
-    
 	    function Run(script: String, context: IDictionary)
 	    {
-	        this.Context = new Object();
+	        var ctx = new Object();
 	        
 	        for(var entry in context)
 	        {
-	            this.Context[entry.Key] = entry.Value;
+	            ctx[entry.Key] = entry.Value;
 	        }
 	        
-		    return eval(script);
+	        ctx.__scriptFunction__ = new Function(script);
+	        return ctx.__scriptFunction__();
 	    }
     }
 }
