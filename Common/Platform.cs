@@ -57,6 +57,11 @@ namespace ClearCanvas.Common
     {
     }
 
+    [ExtensionPoint()]
+    public class TimeProviderExtensionPoint : ExtensionPoint<ITimeProvider>
+    {
+    }
+
 	/// <summary>
 	/// A collection of useful utility functions.
 	/// </summary>
@@ -71,6 +76,7 @@ namespace ClearCanvas.Common
         private static IApplicationRoot _applicationRoot;
 		private static IMessageBox _messageBox;
 		private static AuditManager _auditManager;
+        private static ITimeProvider _timeProvider;
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
@@ -176,6 +182,30 @@ namespace ClearCanvas.Common
 				return _auditManager;
 			}
 		}
+
+        public static DateTime Time
+        {
+            get
+            {
+                if (_timeProvider == null)
+                {
+                    try
+                    {
+                        // check for a time provider extension
+                        TimeProviderExtensionPoint xp = new TimeProviderExtensionPoint();
+                        _timeProvider = (ITimeProvider)xp.CreateExtension();
+                    }
+                    catch (NotSupportedException)
+                    {
+                        // can't find time provider, default to local time
+                        Log("Time provider not found - defaulting to local machine time", LogLevel.Warn);
+
+                        _timeProvider = new LocalTimeProvider();
+                    }
+                }
+                return _timeProvider.CurrentTime;
+            }
+        }
 
         /// <summary>
         /// Starts the application.

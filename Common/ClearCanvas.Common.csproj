@@ -104,6 +104,7 @@
     <Compile Include="Auditing\Auditor.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
     <Compile Include="ISessionManager.cs" />
+    <Compile Include="ITimeProvider.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -169,6 +170,7 @@
     <Compile Include="Utilities\IObservablePropertyBinding.cs" />
     <Compile Include="Utilities\IPerformanceCounter.cs" />
     <Compile Include="Utilities\IResourceResolver.cs" />
+    <Compile Include="LocalTimeProvider.cs" />
     <Compile Include="Utilities\ObservableDictionary.cs" />
     <Compile Include="Utilities\ObservableList.cs" />
     <Compile Include="Utilities\ResourceResolver.cs" />
