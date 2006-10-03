@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private string _givenName;
         private Sex? _sex;
         private DateTime? _dateOfBirth;
+        private bool _keepOpen;
 
         private bool _searchEnabled;
         private event EventHandler _searchEnabledChanged;
@@ -157,6 +158,13 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public bool KeepOpen
+        {
+            get { return _keepOpen; }
+            set { _keepOpen = value; }
+        }
+		
+
         public event EventHandler SearchEnabledChanged
         {
             add { _searchEnabledChanged += value; }
@@ -166,6 +174,10 @@ namespace ClearCanvas.Ris.Client.Adt
         public void Search()
         {
             EventsHelper.Fire(_searchRequested, this, new PatientSearchRequestedEventArgs(BuildCriteria()));
+            if (!_keepOpen)
+            {
+                this.Host.Exit();
+            }
         }
 
         #endregion

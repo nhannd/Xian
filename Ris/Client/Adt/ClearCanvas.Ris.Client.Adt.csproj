@@ -38,18 +38,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfirmReconciliationComponent.cs" />
+    <Compile Include="Folder.cs" />
+    <Compile Include="FoldersComponent.cs" />
+    <Compile Include="IFolder.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
+    <Compile Include="PatientAddTool.cs" />
+    <Compile Include="PatientComponent.cs" />
+    <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientPreviewComponent.cs" />
     <Compile Include="PatientProfileTableData.cs" />
     <Compile Include="PatientReconciliationComponent.cs" />
     <Compile Include="PatientReconciliationTool.cs" />
-    <Compile Include="PatientRegistrationTool.cs" />
+    <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
-    <Compile Include="PatientSearchResultComponent.cs" />
+    <Compile Include="WorklistComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTableData.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />
+    <Compile Include="SearchResultsFolder.cs" />
+    <Compile Include="SearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -107,7 +115,7 @@
     <EmbeddedResource Include="Icons\PatientRegistrationToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PatientPreview.htm" />
+    <EmbeddedResource Include="PatientPreview1.htm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\JscriptToolLarge.png" />
@@ -117,6 +125,27 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\JscriptToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SearchToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SearchToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SearchToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientAddToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientAddToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientAddToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PatientPreview.html" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

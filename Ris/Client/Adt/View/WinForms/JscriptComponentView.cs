@@ -9,20 +9,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="PatientSearchResultComponent"/>
+    /// Provides a Windows Forms view onto <see cref="JscriptComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(PatientSearchResultComponentViewExtensionPoint))]
-    public class PatientSearchResultComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(JscriptComponentViewExtensionPoint))]
+    public class JscriptComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientSearchResultComponent _component;
-        private PatientSearchResultComponentControl _control;
+        private JscriptComponent _component;
+        private JscriptComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientSearchResultComponent)component;
+            _component = (JscriptComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PatientSearchResultComponentControl(_component);
+                    _control = new JscriptComponentControl(_component);
                 }
                 return _control;
             }

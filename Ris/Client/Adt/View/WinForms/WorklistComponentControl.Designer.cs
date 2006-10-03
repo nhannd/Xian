@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    partial class PatientSearchResultComponentControl
+    partial class WorklistComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -45,14 +45,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._patientProfileTable.ToolbarModel = null;
             this._patientProfileTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._patientProfileTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._patientProfileTable.ItemDoubleClicked += new System.EventHandler(this._patientProfileTable_ItemDoubleClicked);
             this._patientProfileTable.SelectionChanged += new System.EventHandler(this._patientProfileTable_SelectionChanged);
             // 
-            // PatientSearchResultComponentControl
+            // WorklistComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._patientProfileTable);
-            this.Name = "PatientSearchResultComponentControl";
+            this.Name = "WorklistComponentControl";
             this.Size = new System.Drawing.Size(771, 429);
             this.ResumeLayout(false);
 

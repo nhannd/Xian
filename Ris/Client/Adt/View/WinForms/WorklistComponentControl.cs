@@ -13,14 +13,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="PatientSearchResultComponent"/>
     /// </summary>
-    public partial class PatientSearchResultComponentControl : CustomUserControl
+    public partial class WorklistComponentControl : CustomUserControl
     {
-        private PatientSearchResultComponent _component;
+        private WorklistComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientSearchResultComponentControl(PatientSearchResultComponent component)
+        public WorklistComponentControl(WorklistComponent component)
         {
             InitializeComponent();
 
@@ -32,6 +32,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void _patientProfileTable_SelectionChanged(object sender, EventArgs e)
         {
             _component.SetSelection(_patientProfileTable.CurrentSelection);
+        }
+
+        private void _patientProfileTable_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.DoubleClickItem();
         }
     }
 }

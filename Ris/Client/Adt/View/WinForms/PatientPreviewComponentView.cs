@@ -15,9 +15,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     public class PatientPreviewComponentView : HtmlComponentView
     {
         public PatientPreviewComponentView()
-            :base("PatientPreview.htm")
+            :base("PatientPreview.html")
         {
 
+        }
+
+        protected override ClearCanvas.Desktop.Actions.ActionModelNode GetEmbeddedActionModel()
+        {
+            return ((PatientPreviewComponent)this.Component).MenuModel;
         }
     }
 }

@@ -57,6 +57,17 @@
             </tr>
             <% } %>
         </table>
+        <br />
+        <br />
+        <strong>Actions</strong><br />
+        <table border="1">
+            <tr>
+            <% for(var node in component.MenuModel.ChildNodes) { %>
+            <td><a href="action:<%= node.Action.Path %>"><%= node.Action.Label %></a></td>
+            <% } %>
+            </tr>
+        </table>
+        <img alt="Test" src="http://clearcanvas.ca/images/clearcanvas_logo.png" />
 
     <%} %>    
 	</body>

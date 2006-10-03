@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcard = new ClearCanvas.Controls.WinForms.TextField();
             this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this._keepOpen = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
@@ -59,6 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this._keepOpen, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this._familyName, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this._mrn, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._givenName, 0, 3);
@@ -164,6 +166,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._errorProvider.ContainerControl = this;
             // 
+            // _keepOpen
+            // 
+            this._keepOpen.AutoSize = true;
+            this._keepOpen.Location = new System.Drawing.Point(3, 273);
+            this._keepOpen.Name = "_keepOpen";
+            this._keepOpen.Size = new System.Drawing.Size(102, 21);
+            this._keepOpen.TabIndex = 8;
+            this._keepOpen.Text = "Keep Open";
+            this._keepOpen.UseVisualStyleBackColor = true;
+            // 
             // PatientSearchComponentControl
             // 
             this.AcceptButton = this._searchButton;
@@ -174,6 +186,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Name = "PatientSearchComponentControl";
             this.Size = new System.Drawing.Size(285, 328);
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
             this.ResumeLayout(false);
 
@@ -190,5 +203,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
         private System.Windows.Forms.ErrorProvider _errorProvider;
+        private System.Windows.Forms.CheckBox _keepOpen;
     }
 }

@@ -28,8 +28,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetMagic2005, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\ReferencedAssemblies\DotNetMagic2005.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -42,6 +47,13 @@
       <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ConfirmReconciliationComponentView.cs" />
+    <Compile Include="FoldersComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FoldersComponentControl.Designer.cs">
+      <DependentUpon>FoldersComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FoldersComponentView.cs" />
     <Compile Include="JscriptComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -49,6 +61,20 @@
       <DependentUpon>JscriptComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JscriptComponentView.cs" />
+    <Compile Include="PatientComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientComponentControl.Designer.cs">
+      <DependentUpon>PatientComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientComponentView.cs" />
+    <Compile Include="PatientEditorComponentView.cs" />
+    <Compile Include="PatientEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientEditorControl.Designer.cs">
+      <DependentUpon>PatientEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PatientPreviewComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -70,13 +96,13 @@
     <Compile Include="PatientSearchComponentControl.Designer.cs">
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientSearchResultComponentControl.cs">
+    <Compile Include="WorklistComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientSearchResultComponentControl.Designer.cs">
-      <DependentUpon>PatientSearchResultComponentControl.cs</DependentUpon>
+    <Compile Include="WorklistComponentControl.Designer.cs">
+      <DependentUpon>WorklistComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientSearchResultComponentView.cs" />
+    <Compile Include="WorklistComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -108,9 +134,17 @@
       <SubType>Designer</SubType>
       <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FoldersComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FoldersComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="JscriptComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>JscriptComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientEditorControl.resx">
+      <DependentUpon>PatientEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientPreviewComponentControl.resx">
       <SubType>Designer</SubType>
@@ -124,9 +158,9 @@
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientSearchResultComponentControl.resx">
+    <EmbeddedResource Include="WorklistComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientSearchResultComponentControl.cs</DependentUpon>
+      <DependentUpon>WorklistComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

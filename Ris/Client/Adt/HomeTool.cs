@@ -9,14 +9,14 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/MenuTools/MenuToolsMyTools/PatientRegistrationTool")]
-    [ButtonAction("launch", "global-toolbars/ToolbarMyTools/PatientRegistrationTool")]
-    [Tooltip("launch", "Patient Registration")]
+    [MenuAction("launch", "global-menus/View/Home")]
+    [ButtonAction("launch", "global-toolbars/View/Home")]
+    [Tooltip("launch", "Home")]
     [IconSet("launch", IconScheme.Colour, "Icons.PatientRegistrationToolSmall.png", "Icons.PatientRegistrationToolMedium.png", "Icons.PatientRegistrationToolLarge.png")]
     [ClickHandler("launch", "Launch")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PatientRegistrationTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+    public class HomeTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
     {
 
         private IWorkspace _workspace;
@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PatientRegistrationTool()
+        public HomeTool()
         {
         }
 
@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     BuildComponent(),
-                    "Patient Registration",
+                    "Home",
                     delegate(IApplicationComponent c) { _workspace = null; });
             }
             else
@@ -47,15 +47,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public IApplicationComponent BuildComponent()
         {
-            PatientSearchComponent searchComponent = new PatientSearchComponent();
-            PatientSearchResultComponent resultComponent = new PatientSearchResultComponent();
+            WorklistComponent resultComponent = new WorklistComponent();
+            FoldersComponent foldersComponent = new FoldersComponent(resultComponent);
             PatientPreviewComponent previewComponent = new PatientPreviewComponent();
-
-            searchComponent.SearchRequested +=
-                delegate(object sender, PatientSearchRequestedEventArgs e)
-                {
-                    resultComponent.SearchCriteria = e.SearchCriteria;
-                };
 
             resultComponent.SelectedPatientChanged +=
                 delegate(object sender, EventArgs e)
@@ -69,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 SplitOrientation.Vertical);
 
             return new SplitComponentContainer(
-                new SplitPane("Search", searchComponent),
+                new SplitPane("Search", foldersComponent),
                 new SplitPane("Results", container),
                 SplitOrientation.Vertical);
         }

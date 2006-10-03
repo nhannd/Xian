@@ -107,18 +107,18 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public DateTime? ValidFrom
         {
-            get { return _address.ValidFrom; }
-            set { 
-                _address.ValidFrom = value;
+            get { return _address.ValidRange.From; }
+            set {
+                _address.ValidRange.From = value;
                 this.Modified = true;
             }
         }
 
         public DateTime? ValidUntil
         {
-            get { return _address.ValidUntil; }
-            set { 
-                _address.ValidUntil = value;
+            get { return _address.ValidRange.Until; }
+            set {
+                _address.ValidRange.Until = value;
                 this.Modified = true;
             }
         }

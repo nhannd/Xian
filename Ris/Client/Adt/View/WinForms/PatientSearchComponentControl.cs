@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");
+            _keepOpen.DataBindings.Add("Checked", _component, "KeepOpen", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _searchButton_Click(object sender, EventArgs e)

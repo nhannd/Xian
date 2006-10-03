@@ -9,14 +9,17 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/Patient/Reconcile...")]
+    //[MenuAction("apply", "global-menus/Patient/Reconcile...")]
+    [MenuAction("apply", "patientpreview-menu/Reconcile")]
+    [MenuAction("doSomething", "patientpreview-menu/DoSomething")]
     //[ButtonAction("apply", "global-toolbars/Patient/PatientReconciliationTool")]
     //[Tooltip("apply", "Place tooltip text here")]
-    [IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]
+    //[IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]
     [ClickHandler("apply", "Apply")]
+    [ClickHandler("doSomething", "DoSomething")]
 
-    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PatientReconciliationTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+    [ExtensionOf(typeof(PatientPreviewToolExtensionPoint))]
+    public class PatientReconciliationTool : Tool<IPatientPreviewToolContext>
     {
         private PatientReconciliationComponent _component;
 
@@ -42,6 +45,11 @@ namespace ClearCanvas.Ris.Client.Adt
                     "Patient Reconciliation",
                     delegate(IApplicationComponent c) { _component = null; });
             }
+        }
+
+        public void DoSomething()
+        {
+            Platform.ShowMessageBox("Something!");
         }
     }
 }

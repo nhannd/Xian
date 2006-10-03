@@ -23,10 +23,9 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PatientSearchResultComponent class
     /// </summary>
     [AssociateView(typeof(PatientSearchResultComponentViewExtensionPoint))]
-    public class PatientSearchResultComponent : ApplicationComponent
+    public class WorklistComponent : ApplicationComponent
     {
         private PatientProfileTableData _searchResults;
-        private PatientProfileSearchCriteria _searchCriteria;
 
         private PatientProfile _selectedPatient;
         private event EventHandler _selectedPatientChanged;
@@ -36,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientSearchResultComponent()
+        public WorklistComponent()
         {
         }
 
@@ -51,16 +50,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Stop()
         {
             base.Stop();
-        }
-
-        public PatientProfileSearchCriteria SearchCriteria
-        {
-            get { return _searchCriteria; }
-            set
-            {
-                _searchCriteria = value;
-                DoSearch();
-            }
         }
 
         public PatientProfile SelectedPatient
@@ -87,6 +76,14 @@ namespace ClearCanvas.Ris.Client.Adt
         public ITableData SearchResults
         {
             get { return _searchResults; }
+            set
+            {
+                _searchResults.Clear();
+                if (value != null)
+                {
+                    _searchResults.AddRange(value);
+                }
+            }
         }
 
         public void SetSelection(ISelection selection)
@@ -94,16 +91,20 @@ namespace ClearCanvas.Ris.Client.Adt
             this.SelectedPatient = (PatientProfile)selection.Item;
         }
 
-        #endregion
-
-
-        private void DoSearch()
+        public void DoubleClickItem()
         {
-            _searchResults.Clear();
-            if (_searchCriteria != null)
+            if (_selectedPatient != null)
             {
-                _searchResults.AddRange(_adtService.ListPatientProfiles(_searchCriteria));
+                ApplicationComponent.LaunchAsWorkspace(
+                    this.Host.DesktopWindow,
+                    new PatientComponent(_selectedPatient),
+                    string.Format("{0} - {1}", _selectedPatient.Name.Format(), _selectedPatient.MRN.Id),
+                    null);
             }
         }
+
+
+        #endregion
+
     }
 }

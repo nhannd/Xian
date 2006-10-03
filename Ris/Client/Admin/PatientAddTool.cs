@@ -12,8 +12,8 @@ using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("add", "global-menus/Admin/Patient/New...")]
-    [ButtonAction("add", "global-toolbars/PatientAdminToolbar/AddPatient")]
+    //[MenuAction("add", "global-menus/Admin/Patient/New...")]
+    //[ButtonAction("add", "global-toolbars/PatientAdminToolbar/AddPatient")]
     [Tooltip("add", "Add new Patient")]
     [IconSet("add", IconScheme.Colour, "Icons.AddPatientMedium.png", "Icons.AddPatientMedium.png", "Icons.AddPatientMedium.png")]
     [ClickHandler("add", "AddPatient")]
