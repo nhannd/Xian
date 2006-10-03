@@ -35,9 +35,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				SplashScreen.SplashForm.Owner = this;
 			
 			InitializeComponent();
-			this.Text = String.Format("{0} {1}",
-                Application.ApplicationName,
-                Application.ApplicationVersion);
+            UpdateTitleBar();
  
             // Subscribe to WorkspaceManager events so we know when workspaces are being
             // added, removed and activated
@@ -54,6 +52,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);
 
 			RebuildMenusAndToolbars();
+        }
+
+        private void UpdateTitleBar()
+        {
+            string title = string.Format("{0} {1}", Application.ApplicationName, Application.ApplicationVersion);
+            if (_desktopWindow.WorkspaceManager.ActiveWorkspace != null)
+            {
+                title = string.Format("{0} - {1}", title, _desktopWindow.WorkspaceManager.ActiveWorkspace.Title);
+            }
+            this.Text = title;
         }
 
 		internal IDesktopWindow DesktopWindow
@@ -157,6 +165,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
         {
             _workspaceViewManager.ActivateWorkspace(e.ActivatedWorkspace);
+            UpdateTitleBar();
         }
 
         internal void RebuildMenusAndToolbars()

@@ -39,7 +39,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._webBrowser.Name = "_webBrowser";
             this._webBrowser.Size = new System.Drawing.Size(531, 473);
             this._webBrowser.TabIndex = 0;
-            this._webBrowser.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this._webBrowser_Navigating);
             // 
             // HtmlComponentControl
             // 

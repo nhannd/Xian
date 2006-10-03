@@ -118,24 +118,46 @@ namespace ClearCanvas.Desktop
 			SplitPane pane2, 
 			SplitOrientation splitOrientation)
         {
-			_pane1 = pane1;
-			_pane2 = pane2;
-
-			_pane1.ComponentHost = new SplitPaneHost(this, _pane1);
-			_pane2.ComponentHost = new SplitPaneHost(this, _pane2);
+			this.Pane1 = pane1;
+			this.Pane2 = pane2;
 
 			_splitOrientation = splitOrientation;
 		}
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public SplitComponentContainer(SplitOrientation splitOrientation)
+        {
+            _splitOrientation = splitOrientation;
+        }
+
+
 		public SplitPane Pane1
 		{
 			get { return _pane1; }
+            set
+            {
+                if(_pane1 != null && _pane1.ComponentHost != null && _pane1.ComponentHost.Started)
+                    throw new InvalidOperationException("Cannot set pane after container has been started");
+
+                _pane1 = value;
+                _pane1.ComponentHost = new SplitPaneHost(this, _pane1);
+            }
 		}
 
 		public SplitPane Pane2
 		{
 			get { return _pane2; }
-		}
+            set
+            {
+                if (_pane2 != null && _pane2.ComponentHost != null && _pane2.ComponentHost.Started)
+                    throw new InvalidOperationException("Cannot set pane after container has been started");
+
+                _pane2 = value;
+                _pane2.ComponentHost = new SplitPaneHost(this, _pane2);
+            }
+        }
 
 		public SplitOrientation SplitOrientation
 		{

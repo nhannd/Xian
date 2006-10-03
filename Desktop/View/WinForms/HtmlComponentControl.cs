@@ -18,6 +18,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private IApplicationComponent _component;
         private ActiveTemplate _template;
 
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -39,6 +40,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             ReloadPage();
         }
 
+        public event WebBrowserNavigatingEventHandler Navigating
+        {
+            add { _webBrowser.Navigating += value; }
+            remove { _webBrowser.Navigating -= value; }
+        }
+
         internal void ReloadPage()
         {
             Dictionary<string, object> context = new Dictionary<string, object>();
@@ -55,14 +62,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
         {
             ReloadPage();
-        }
-
-        private void _webBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e)
-        {
-            if (e.Url.OriginalString != "about:blank")
-            {
-                e.Cancel = true;
-            }
         }
     }
 }
