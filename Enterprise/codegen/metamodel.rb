@@ -27,7 +27,8 @@ DATATYPE_INITIALIZERS =
 	'IDictionary' => 'new Hashtable()',
 	'ISet' => 'new HybridSet()',
 	'IList' => 'new ArrayList()',
-	'DateTime' => 'DateTime.Now'
+	'DateTime' => 'DateTime.Now',
+	'DateTimeRange' => 'new DateTimeRange()'
 }
 
 class ElementDef
@@ -68,7 +69,7 @@ class Model < ElementDef
 	      
 	      # check if this class name already exists
 	      if(!@symbolSpace.include?(className))
-		if(/Enum$/.match(className))
+		if(/Enum$/.match(className))	#does the class name end with "Enum"?
 		  processEnum(c)
 		else
 		  processEntity(c, c.attributes['extends'] || "Entity", @entityDefs)
@@ -122,12 +123,12 @@ protected
     # remove the namespace
     name = name.split('.')[-1]
     
-    # remove "EnumHbm" - this is a hack to remove the Hbm from mapped enum classes
-    name = name.sub("EnumHbm", "")
+    # remove "EnumHbm" or "Hbm" - this is a hack to extract the underlying datatype from "mapper" types
+    name = name.sub(/EnumHbm$/, "").sub(/Hbm$/, "")
   end
 end
 
-# represents the definition of a class
+# represents the definition of a class - see subclasses EnumDef, EntityDef, and ComponentDef
 class ClassDef < ElementDef
   attr_reader :className, :model, :fields
   
