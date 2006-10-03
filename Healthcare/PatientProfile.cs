@@ -32,5 +32,35 @@ namespace ClearCanvas.Healthcare {
             get { return _dateOfBirth.Date; }
             set { _dateOfBirth = value.Date; }
         }
+
+        public Address CurrentHomeAddress
+        {
+            get
+            {
+                foreach (Address address in this.Addresses)
+                {
+                    if (address.Type == AddressType.R && address.IsCurrent)
+                    {
+                        return address;
+                    }
+                }
+                return null;
+            }
+        }
+
+        public TelephoneNumber CurrentHomePhone
+        {
+            get
+            {
+                foreach (TelephoneNumber phone in this.TelephoneNumbers)
+                {
+                    if (phone.Use == TelephoneUse.PRN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent)
+                    {
+                        return phone;
+                    }
+                }
+                return null;
+            }
+        }
     }
 }

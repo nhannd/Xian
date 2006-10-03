@@ -4,6 +4,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Healthcare {
@@ -14,6 +15,7 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Address
 	{
+
 		/// <summary>
 		/// Factory method
 		/// </summary>
@@ -32,26 +34,12 @@ namespace ClearCanvas.Healthcare {
             _province = source.Province;
             _country = source.Country;
             _postalCode = source.PostalCode;
-            _validFrom = source.ValidFrom;
-            _validUntil = source.ValidUntil;
+            _validRange = (source._validRange == null) ? null : new DateTimeRange(source._validRange.From, source._validRange.Until);
         }
 
-        /// <summary>
-        /// Valid From
-        /// </summary>
-        public DateTime? ValidFrom
+        public bool IsCurrent
         {
-            get { return _validFrom == null ? _validFrom : _validFrom.Value.Date; }
-            set { _validFrom = (value == null) ? value : value.Value.Date; }
-        }
-
-        /// <summary>
-        /// Valid Until
-        /// </summary>
-        public DateTime? ValidUntil
-        {
-            get { return _validUntil == null ? _validUntil : _validUntil.Value.Date; }
-            set { _validUntil = (value == null) ? value : value.Value.Date; }
+            get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }
         }
 
         public string Format()

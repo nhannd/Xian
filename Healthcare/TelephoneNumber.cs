@@ -34,6 +34,11 @@ namespace ClearCanvas.Healthcare {
             _extension = source.Extension;
         }
 
+        public bool IsCurrent
+        {
+            get { return true; }    // TODO add concept of a valid range to the phone number entity
+        }
+
         public string Format()
         {
             return _extension == null ?

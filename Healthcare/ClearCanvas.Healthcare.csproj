@@ -43,6 +43,7 @@
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
     <Compile Include="CompositeIdentifier.cs" />
+    <Compile Include="DateTimeRange.cs" />
     <Compile Include="Facility.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Patient.cs" />
