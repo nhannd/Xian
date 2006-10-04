@@ -6,9 +6,6 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.Tests
 {
-	/// <summary>
-	/// Summary description for CompositeLUTTest.
-	/// </summary>
 	[TestFixture]
 	public class CompositeLUTTest
 	{

@@ -8,6 +8,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		IEnumerable<StudyItem> SelectedStudies { get; }
 
-		AEServer SelectedServer { get; }
+		AEServerGroup SelectedServerGroup { get; }
 
 		event EventHandler SelectedStudyChanged;
 
@@ -84,9 +85,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				} 
 			}
 
-			public AEServer SelectedServer
+			public AEServerGroup SelectedServerGroup
 			{
-				get { return _component._selectedServer; }
+				get { return _component._selectedServerGroup; }
 			}
 
 			public event EventHandler SelectedStudyChanged
@@ -163,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ClickHandlerDelegate _defaultActionHandler;
 		private ToolSet _toolSet;
 
-		private AEServer _selectedServer;
+		private AEServerGroup _selectedServerGroup;
 		private event EventHandler _selectedServerChangedEvent;
 
 		private ActionModelRoot _toolbarModel;
@@ -246,25 +247,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#endregion
 
-		public void SelectServer(AEServer selectedServer)
+		public void SelectServerGroup(AEServerGroup selectedServerGroup)
 		{
-			if (_selectedServer == selectedServer)
-				return;
+			//if (_selectedServerGroup != null)
+			//{
+			//    if (_selectedServerGroup.GroupID == selectedServerGroup.GroupID)
+			//        return;
+			//}
 
-			_selectedServer = selectedServer;
+			_selectedServerGroup = selectedServerGroup;
 
-			if (selectedServer.Host == "localhost")
+			if (selectedServerGroup.IsLocalDatastore)
 				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_LOCAL"];
 			else
 				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_REMOTE"];
 
-			if (!_searchResults.ContainsKey(_selectedServer.Servername))
+			if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
 			{
 				SearchResult searchResult = new SearchResult();
-				searchResult.ResultsTitle = String.Format("{0}", _selectedServer.Servername);
+				searchResult.ResultsTitle = String.Format("{0}", _selectedServerGroup.Name);
 				AddColumns(searchResult.StudyList);
 
-				_searchResults.Add(_selectedServer.Servername, searchResult);
+				_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
 			}
 
 			UpdateView();
@@ -277,39 +281,65 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
 			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
 
-			string patientsName = _searchPanelComponent.LastName + 
-				GetWildcard() + 
-				"^" +
-				_searchPanelComponent.FirstName + 
-				GetWildcard();
-			//string patientsName = _lastName + GetWildcard();
-			string patientID = _searchPanelComponent.PatientID + GetWildcard();
-			string accessionNumber = _searchPanelComponent.AccessionNumber + GetWildcard();
-			string studyDescription = _searchPanelComponent.StudyDescription + GetWildcard();
+            // create patient's name query key
+            // LastName   FirstName   Result
+            //    X           X        <Blank>
+            //    V           X        LastName*
+            //    V           V        LastName*FirstName*
+            //    X           V        *FirstName*
+            string patientsName = "";
+            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
+                patientsName = _searchPanelComponent.LastName + "*";
+            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
+                patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
+            if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
+                patientsName = "*" + _searchPanelComponent.FirstName + "*";
+
+            string patientId = "";
+            if (_searchPanelComponent.PatientID.Length > 0)
+                patientId = _searchPanelComponent.PatientID + "*";
+
+            string accessionNumber = "";
+            if (_searchPanelComponent.AccessionNumber.Length > 0)
+                accessionNumber = _searchPanelComponent.AccessionNumber + "*";
+
+			string studyDescription = "";
+            if (_searchPanelComponent.StudyDescription.Length > 0)
+                studyDescription = _searchPanelComponent.StudyDescription + "*";
 
 			QueryParameters queryParams = new QueryParameters();
 			queryParams.Add("PatientsName", patientsName);
-			queryParams.Add("PatientId", patientID);
+			queryParams.Add("PatientId", patientId);
 			queryParams.Add("AccessionNumber", accessionNumber);
 			queryParams.Add("StudyDescription", studyDescription);
+            queryParams.Add("ModalitiesInStudy", "");
 
-			StudyItemList studyItemList;
+			StudyItemList aggregateStudyItemList = new StudyItemList();
 
 			try
 			{
-				studyItemList = _studyFinder.Query(_selectedServer, queryParams);
+				foreach (AEServer server in _selectedServerGroup.Servers)
+				{
+					StudyItemList serverStudyItemList = _studyFinder.Query(server, queryParams);
+					aggregateStudyItemList.AddRange(serverStudyItemList);
+			}
 			}
 			catch (Exception e)
 			{
 				Platform.Log(e, LogLevel.Error);
 				throw;
 			}
+			finally
+			{
+				this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
+			
+				UpdateComponent();
 
-			this.ResultsTitle = String.Format("{0} studies found on {1}", studyItemList.Count, _selectedServer.Servername);
-			UpdateComponent();
+				foreach (StudyItem item in aggregateStudyItemList)
+					_searchResults[_selectedServerGroup.GroupID].StudyList.Add(item);
 
-			foreach (StudyItem item in studyItemList)
-				_searchResults[_selectedServer.Servername].StudyList.Add(item);
+				_searchResults[_selectedServerGroup.GroupID].StudyList.ApplySort();
+			}
 		}
 
 		public void ItemDoubleClick()
@@ -331,14 +361,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateComponent()
 		{
-			_searchResults[_selectedServer.Servername].ResultsTitle = this.ResultsTitle;
-			_searchResults[_selectedServer.Servername].StudyList.Clear();
+			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = this.ResultsTitle;
+			_searchResults[_selectedServerGroup.GroupID].StudyList.Clear();
 		}
 
 		private void UpdateView()
 		{
-			this.ResultsTitle = _searchResults[_selectedServer.Servername].ResultsTitle;
-			this.StudyList = _searchResults[_selectedServer.Servername].StudyList;
+			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
+			this.StudyList = _searchResults[_selectedServerGroup.GroupID].StudyList;
 		}
 
 		private void AddColumns(TableData<StudyItem> studyList)
@@ -346,18 +376,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Patient ID",
-					delegate(StudyItem item) { return item.PatientId; }
+					delegate(StudyItem item) { return item.PatientId; },
+                    1.5f
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Last Name",
-					delegate(StudyItem item) { return item.LastName; }
+					delegate(StudyItem item) { return item.LastName; },
+                    1.5f
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"First Name",
 					delegate(StudyItem item) { return item.FirstName; }
 					));
+            studyList.Columns.Add(
+                new TableColumn<StudyItem, string>(
+                    "DOB",
+                    delegate(StudyItem item) { return DicomHelper.ConvertFromDicomDA(item.PatientsBirthDate); },
+                    null,
+                    1.0f,
+                    delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); }
+                    ));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Accession Number",
@@ -366,28 +406,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Study Date",
-					delegate(StudyItem item) { return item.StudyDate; }
-					));
-			studyList.Columns.Add(
-				new TableColumn<StudyItem, string>(
-					"DOB",
-					delegate(StudyItem item) { return item.PatientsBirthDate; }
+					delegate(StudyItem item) { return DicomHelper.ConvertFromDicomDA(item.StudyDate); },
+                    null,
+                    1.0f,
+                    delegate(StudyItem one, StudyItem two) {  return one.StudyDate.CompareTo(two.StudyDate); }
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Description",
-					delegate(StudyItem item) { return item.StudyDescription; }
+					delegate(StudyItem item) { return item.StudyDescription; },
+                    2.5f
 					));
-		}
+            studyList.Columns.Add(
+                new TableColumn<StudyItem, string>(
+                    "Modality",
+                    delegate(StudyItem item) { return item.ModalitiesInStudy; },
+                    0.5f
+                    ));
 
-		private string GetWildcard()
-		{
-			// TODO: get rid of this hack once the dicom datastore layer supports
-			// "*" as the proper wildcard character.
-			if (_selectedServer.Host == "localhost")
-				return "%";
-			else
-				return "*";
 		}
 
 		private void OnPropertyChanged(string propertyName)

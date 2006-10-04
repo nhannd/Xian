@@ -8,9 +8,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for RulerOverlay.
-	/// </summary>
 	public class ControlPoint : Graphic
 	{
 		private int _index;

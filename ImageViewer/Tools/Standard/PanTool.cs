@@ -11,16 +11,13 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardPan")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.PanMedium.png", "Icons.PanLarge.png")]
     
-    /// <summary>
-	/// Summary description for PanTool.
-	/// </summary>
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PanTool : DynamicActionMouseTool
 	{
@@ -28,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public PanTool()
-            :base(XMouseButtons.Left, false, false)
+            :base(XMouseButtons.Left, false)
 		{
 		}
 

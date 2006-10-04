@@ -4,9 +4,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for SpatialTransformMemento.
-	/// </summary>
 	public class SpatialTransformMemento : IMemento
 	{
 		private bool _scaleToFit;

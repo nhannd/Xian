@@ -85,13 +85,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._toolStripContainer.TopToolStripPanel.Controls.Add(this._mainMenu);
 			this._toolStripContainer.TopToolStripPanel.Controls.Add(this._toolbar);
 			// 
-			// _tabbedGroup
+			// _tabbedGroups
 			// 
 			this._tabbedGroups.AllowDrop = true;
 			this._tabbedGroups.AtLeastOneLeaf = true;
 			this._tabbedGroups.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tabbedGroups.Location = new System.Drawing.Point(0, 0);
-			this._tabbedGroups.Name = "_tabbedGroup";
+			this._tabbedGroups.Name = "_tabbedGroups";
 			this._tabbedGroups.ProminentLeaf = null;
 			this._tabbedGroups.ResizeBarColor = System.Drawing.SystemColors.Control;
 			this._tabbedGroups.Size = new System.Drawing.Size(792, 512);

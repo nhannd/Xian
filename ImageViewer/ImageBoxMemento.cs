@@ -4,9 +4,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for ImageBoxMemento.
-	/// </summary>
 	internal class ImageBoxMemento : IMemento
 	{
 		private DisplaySet _displaySet;

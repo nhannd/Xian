@@ -4,9 +4,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for ImageValidator.
-	/// </summary>
 	public class ImageValidator
 	{
 		public static void ValidateImage(ImageSop image)

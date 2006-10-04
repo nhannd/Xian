@@ -6,9 +6,6 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.Tests
 {
-	/// <summary>
-	/// Summary description for VOILUTLinearTest.
-	/// </summary>
 	[TestFixture]
 	public class VOILUTLinearTest
 	{

@@ -1,0 +1,14 @@
+drop table InternalSopInstances_;
+drop table RetrieveParcel_;
+drop table Parcel_;
+drop table DicomDictionaryContainer_;
+drop table SopInstance_;
+drop table TransferSyntaxes_;
+drop table WindowValues_;
+drop table SendParcel_;
+drop table ImageSopInstance_;
+drop table Series_;
+drop table DictionaryEntries_;
+drop table SopClasses_;
+drop table Study_;
+drop table hibernate_unique_key;

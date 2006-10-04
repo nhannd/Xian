@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._fileBrowser.CustomFileContextMenu = this._fileContextMenu;
 			this._fileBrowser.CustomFolderContextMenu = this._folderContextMenu;
 			this._fileBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._fileBrowser.ListViewMode = System.Windows.Forms.View.List;
+			this._fileBrowser.ListViewMode = System.Windows.Forms.View.Details;
 			this._fileBrowser.Location = new System.Drawing.Point(0, 0);
 			this._fileBrowser.Name = "_fileBrowser";
 			treeNode1.Name = "";
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._fileOpenedItem.Name = "_fileOpenedItem";
 			this._fileOpenedItem.Size = new System.Drawing.Size(116, 24);
 			this._fileOpenedItem.Text = "Open";
-			this._fileOpenedItem.Click += new System.EventHandler(this.OnItemOpened);
+			this._fileOpenedItem.Click += new System.EventHandler(this.OnFileViewItemOpened);
 			// 
 			// _folderContextMenu
 			// 
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderOpenedItem.Name = "_folderOpenedItem";
 			this._folderOpenedItem.Size = new System.Drawing.Size(152, 24);
 			this._folderOpenedItem.Text = "Open";
-			this._folderOpenedItem.Click += new System.EventHandler(this.OnItemOpened);
+			this._folderOpenedItem.Click += new System.EventHandler(this.OnFolderViewItemOpened);
 			// 
 			// LocalImageExplorerControl
 			// 

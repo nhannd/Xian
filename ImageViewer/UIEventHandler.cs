@@ -5,9 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for UIEventHandler.
-	/// </summary>
 	internal class UIEventHandler<TItem> : IUIEventHandler
 	{
 		private IEnumerable<TItem> _collection;

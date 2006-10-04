@@ -7,9 +7,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for LUTComposer.
-	/// </summary>
 	public class LUTComposer
 	{
 		private IList<IGrayscaleLUT> _lutCollection = new List<IGrayscaleLUT>();

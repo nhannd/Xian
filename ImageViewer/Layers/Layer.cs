@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		}
 
 		/// <summary>
-		/// Gets this layer's parent <see cref="ImageWorkspace"/>.
+		/// Gets this layer's parent <see cref="IImageViewer"/>.
 		/// </summary>
 		/// <value>Can be <b>null</b> if the layer has not been added
 		/// to the layer tree  (For example, right after construction.)</value>

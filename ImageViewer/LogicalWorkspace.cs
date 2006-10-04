@@ -43,7 +43,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets a collection of linked <see cref="DisplaySets"/>
 		/// </summary>
-		/// <value>A collection of linked <see cref="DisplaySets"/></value>
 		public ReadOnlyCollection<DisplaySet> LinkedDisplaySets
 		{
 			get { return _linkedDisplaySets.AsReadOnly(); }
@@ -51,6 +50,13 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDrawable
 
+		/// <summary>
+		/// Draws all currently visible images in this <see cref="LogicalWorkspace"/>.
+		/// </summary>
+		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
+		/// repainted immediately.  If <b>false</b>, each image rectangle is still
+		/// invalidated but when the actual painting occurs is left to the the .NET 
+		/// framework.</param>
 		public void Draw(bool paintNow)
 		{
 			foreach (DisplaySet displaySet in this.DisplaySets)

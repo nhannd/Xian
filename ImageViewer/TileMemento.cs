@@ -4,9 +4,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for TileMemento.
-	/// </summary>
 	internal class TileMemento : IMemento
 	{
 		private PresentationImage _presentationImage;

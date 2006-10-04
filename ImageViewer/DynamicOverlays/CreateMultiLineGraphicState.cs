@@ -5,9 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for InactiveState.
-	/// </summary>
 	public class CreateMultiLineGraphicState : GraphicState
 	{
 		private int _controlPointIndex;

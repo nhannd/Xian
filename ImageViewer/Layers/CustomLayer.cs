@@ -6,9 +6,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for CustomLayer.
-	/// </summary>
 	public class CustomLayer : Layer
 	{
 		private event EventHandler<DrawCustomLayerEventArgs> _drawCustomLayerEvent;

@@ -7,9 +7,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for GraphicElement.
-	/// </summary>
 	public abstract class InvariantPrimitive : Graphic
 	{
 		private PointF _anchorPoint;

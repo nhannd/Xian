@@ -3,9 +3,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for XKeyEventArgs.
-	/// </summary>
 	public class XKeyEventArgs : EventArgs 
 	{
 		private XKeys _keyData;

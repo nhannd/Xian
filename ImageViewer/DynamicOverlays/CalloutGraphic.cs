@@ -8,9 +8,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for CalloutGraphic.
-	/// </summary>
 	public class CalloutGraphic : StatefulGraphic, IMemorable
 	{
         private InvariantTextPrimitive _textGraphic;

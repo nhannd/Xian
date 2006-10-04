@@ -9,15 +9,12 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardRotateLeft")]
+    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardRotateLeft")]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateLeft")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardRotateLeft")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RotateLeftMedium.png", "Icons.RotateLeftLarge.png")]
     
-    /// <summary>
-	/// Summary description for RotateLeftTool.
-	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RotateLeftTool : Tool<IImageViewerToolContext>
 	{

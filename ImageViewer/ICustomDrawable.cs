@@ -4,7 +4,7 @@ using System.Drawing;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Summary description for IDrawable.
+	/// Do not implement.  Will be removed in 1.0.
 	/// </summary>
 	public interface ICustomDrawable
 	{

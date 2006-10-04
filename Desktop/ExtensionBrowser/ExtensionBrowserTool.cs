@@ -14,9 +14,6 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
     [MenuAction("show", "global-menus/MenuFile/MenuExtensionBrowser", Flags=ClickActionFlags.CheckAction)]
     [ClickHandler("show", "Show")]
 
-    /// <summary>
-    /// Summary description for ExtensionBrowserTool.
-	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExtensionBrowserTool : Tool<IDesktopToolContext>
 	{

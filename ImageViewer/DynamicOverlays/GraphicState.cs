@@ -6,9 +6,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for GraphicState.
-	/// </summary>
 	public abstract class GraphicState : IUIEventHandler
 	{
 		private StatefulGraphic _statefulGraphic;

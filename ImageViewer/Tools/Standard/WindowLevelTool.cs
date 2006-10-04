@@ -12,16 +12,13 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardWindowLevel")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.WindowLevelMedium.png", "Icons.WindowLevelLarge.png")]
     
-    /// <summary>
-	/// Summary description for WindowLevelTool.
-	/// </summary>
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : DynamicActionMouseTool
 	{
@@ -29,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private WindowLevelApplicator _applicator;
 
 		public WindowLevelTool()
-            :base(XMouseButtons.Right, false, true)
+            :base(XMouseButtons.Right, true)
 		{
         }
 

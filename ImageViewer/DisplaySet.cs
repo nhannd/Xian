@@ -9,7 +9,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Describes a display set.
+	/// A domain representation of a display set.
 	/// </summary>
 	public class DisplaySet : IDrawable
 	{
@@ -52,16 +52,16 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets a collection of linked <see cref="PresentationImages"/>
 		/// </summary>
-		/// <value>A collection of linked <see cref="PresentationImages"/></value>
 		public ReadOnlyCollection<PresentationImage> LinkedPresentationImages
 		{
 			get { return _linkedPresentationImages.AsReadOnly(); }
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="ImageWorkspace"/>.
+		/// Gets the parent <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
+		/// <value>The parent <see cref="IImageViewer"/> or be <b>null</b> 
+		/// if the <see cref="DisplaySet"/> has not
 		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
 		public IImageViewer ParentViewer
 		{
@@ -77,7 +77,8 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the parent <see cref="LogicalWorkspace"/>
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
+		/// <value>The parent <see cref="LogicalWorkspace"/> or <b>null</b> 
+		/// if the <see cref="DisplaySet"/> has not
 		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
 		public LogicalWorkspace ParentLogicalWorkspace
 		{
@@ -135,7 +136,6 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets a value indicating whether this <see cref="ImageBox"/> is
 		/// linked.
 		/// </summary>
-		/// <value><b>true</b> if linked; <b>false</b> otherwise.</value>
 		/// <remarks>
 		/// Multiple display sets may be linked, allowing tools that can operate on
 		/// multiple display sets to operate on all linked display sets simultaneously.  
@@ -170,6 +170,13 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDrawable Members
 
+		/// <summary>
+		/// Draws all currently visible presentation images in the display set.
+		/// </summary>
+		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
+		/// repainted immediately.  If <b>false</b>, each image rectangle is still
+		/// invalidated but when the actual painting occurs is left to the the .NET 
+		/// framework.</param>
 		public void Draw(bool paintNow)
 		{
 			foreach (PresentationImage image in this.PresentationImages)

@@ -247,10 +247,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreSeries.SeriesNumber != 0)
-                    return Convert.ToString(this.DataStoreSeries.SeriesNumber);
-                else
-                    return "";
+                return Convert.ToString(this.DataStoreSeries.SeriesNumber);
             }
             set { throw new Exception("This is not yet implemented."); }
 		}
@@ -415,10 +412,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				if (this.DataStoreImageSopInstance.InstanceNumber != 0)
-					return Convert.ToString(this.DataStoreImageSopInstance.InstanceNumber);
-				else
-					return "";
+    			return Convert.ToString(this.DataStoreImageSopInstance.InstanceNumber);
 			}
 			set
 			{
@@ -876,10 +870,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.RescaleIntercept != 0)
-                    return this.DataStoreImageSopInstance.RescaleIntercept;
-                else
-                    return double.NaN;
+                return this.DataStoreImageSopInstance.RescaleIntercept;
             }
             set
 			{

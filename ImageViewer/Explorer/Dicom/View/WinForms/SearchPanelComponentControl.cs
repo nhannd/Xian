@@ -7,13 +7,14 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="SearchPanelComponent"/>
     /// </summary>
-    public partial class SearchPanelComponentControl : UserControl
+    public partial class SearchPanelComponentControl : CustomUserControl
     {
         private SearchPanelComponent _component;
 		private BindingSource _bindingSource;
@@ -25,6 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         {
             InitializeComponent();
 
+			this.AcceptButton = _searchButton;
             _component = component;
 
 			_bindingSource = new BindingSource();

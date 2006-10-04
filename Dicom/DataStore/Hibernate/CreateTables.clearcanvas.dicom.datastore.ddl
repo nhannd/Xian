@@ -1,0 +1,15 @@
+create table InternalSopInstances_ (ParcelOid_ INTEGER not null, ReferencedSopInstance_ INTEGER not null, Index_ INTEGER not null, primary key (ParcelOid_, Index_));
+create table RetrieveParcel_ (ParcelOid_ INTEGER not null, RetrieveObjectUid_ TEXT, primary key (ParcelOid_));
+create table Parcel_ (ParcelOid_ INTEGER not null, ParcelTransferState_ INTEGER, Description_ TEXT, CurrentStep_ INTEGER, TotalProgessSteps_ INTEGER, DestinationAEHost_ TEXT, DestinationAEAE_ TEXT, DestinationAEPort_ INTEGER, DestinationAEConnectionTimeout_ INTEGER, DestinationAEOperationTimeout_ INTEGER, SourceAEHost_ TEXT, SourceAEAE_ TEXT, SourceAEPort_ INTEGER, SourceAEConnectionTimeout_ INTEGER, SourceAEOperationTimeout_ INTEGER, primary key (ParcelOid_));
+create table DicomDictionaryContainer_ (EntryOid_ INTEGER not null, primary key (EntryOid_));
+create table SopInstance_ (Oid_ INTEGER not null, TransferSyntaxUid_ TEXT, InstanceNumber_ INTEGER, SopInstanceUid_ TEXT, SopClassUid_ TEXT, LocationUri_ TEXT, SeriesOid_ INTEGER, primary key (Oid_));
+create table TransferSyntaxes_ (ParcelOid_ INTEGER not null, TransferSyntax_ TEXT, Index_ INTEGER not null, primary key (ParcelOid_, Index_));
+create table WindowValues_ (Oid_ INTEGER not null, Width_ NUMERIC, Center_ NUMERIC, VM_ INTEGER not null, primary key (Oid_, VM_));
+create table SendParcel_ (ParcelOid_ INTEGER not null, primary key (ParcelOid_));
+create table ImageSopInstance_ (Oid_ INTEGER not null, SamplesPerPixel_ INTEGER, BitsStored_ INTEGER, RescaleSlope_ NUMERIC, Rows_ INTEGER, Columns_ INTEGER, PlanarConfiguration_ INTEGER, RescaleIntercept_ NUMERIC, PixelRepresentation_ INTEGER, BitsAllocated_ INTEGER, HighBit_ INTEGER, PhotometricInterpretation_ INTEGER, Row_ NUMERIC, Column_ NUMERIC, primary key (Oid_));
+create table Series_ (SeriesOid_ INTEGER not null, SeriesInstanceUid_ TEXT, Modality_ TEXT, SeriesNumber_ INTEGER, Laterality_ TEXT, SeriesDescription_ TEXT, StudyOid_ INTEGER, primary key (SeriesOid_));
+create table DictionaryEntries_ (EntryOid_ INTEGER not null, TagName_ TEXT, Path_ TEXT, IsComputed_ INTEGER, Index_ INTEGER not null, primary key (EntryOid_, Index_));
+create table SopClasses_ (ParcelOid_ INTEGER not null, SopClass_ TEXT, Index_ INTEGER not null, primary key (ParcelOid_, Index_));
+create table Study_ (StudyOid_ INTEGER not null, ProcedureCodeSequenceCodingSchemeDesignator_ TEXT, StudyId_ TEXT, StudyTime_ TEXT, StudyDate_ TEXT, AccessionNumber_ TEXT, StudyInstanceUid_ TEXT, StudyDescription_ TEXT, ProcedureCodeSequenceCodeValue_ TEXT, AdmittingDiagnosesDescription_ TEXT, PatientsName_ TEXT, PatientId_ TEXT, PatientsSex_ TEXT, PatientsBirthDate_ TEXT, primary key (StudyOid_));
+create table hibernate_unique_key ( next_hi INTEGER );
+insert into hibernate_unique_key values ( 1 );

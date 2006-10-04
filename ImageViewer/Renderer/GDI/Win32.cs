@@ -3,9 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
-	/// <summary>
-	/// Summary description for GDI.
-	/// </summary>
 	public class Win32
 	{
 		/// <summary>

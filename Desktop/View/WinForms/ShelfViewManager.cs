@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Tools;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
+using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -27,10 +28,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             _shelfManager.Shelves.ItemAdded += new EventHandler<ShelfEventArgs>(Shelves_ItemAdded);
             _shelfManager.Shelves.ItemRemoved += new EventHandler<ShelfEventArgs>(Shelves_ItemRemoved);
 
-
 			_dockingManager = dockingManager;
-            _dockingManager.ContentHidden += new DockingManager.ContentHandler(_dockingManager_ContentHidden);
+
+			// NY: We subscribe to ContentHiding instead of ContentHidden because ContentHidden
+			// is fired when the user double clicks the caption bar of a docking window, which
+			// results in a crash. (Ticket #144)
+			_dockingManager.ContentHiding += new DockingManager.ContentHidingHandler(_dockingManager_ContentHiding);
 		}
+
 
         public void HideShelves()
         {
@@ -61,12 +66,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             RemoveShelfView(e.Item);
         }
 
-        private void _dockingManager_ContentHidden(Content c, EventArgs cea)
-        {
-            IShelf shelf = (IShelf)c.Tag;
-            _shelfManager.Shelves.Remove(shelf);
-        }
-
+		void _dockingManager_ContentHiding(Content c, CancelEventArgs cea)
+		{
+			IShelf shelf = (IShelf)c.Tag;
+			_shelfManager.Shelves.Remove(shelf);
+		}
+		
         private void AddShelfView(IShelf shelf)
         {
             IShelfView view = (IShelfView)ViewFactory.CreateAssociatedView(shelf.GetType());
@@ -85,7 +90,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             content.AutoHideSize = content.Control.Size;
             content.FloatingSize = content.Control.Size;
-            content.CloseOnHide = false;
+            //content.CloseOnHide = false;
             content.Tag = shelf;
 
             if ((hint & ShelfDisplayHint.DockAutoHide) != 0)

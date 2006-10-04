@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (_searchPanel == null)
 				_searchPanel = new SearchPanelComponent(_studyBrowser);
 
-			_studyBrowser.SelectServer(GetLocalAE());
+			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
 
 			SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);
 			SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser);
@@ -78,19 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			// TODO: Remove this hack once AENavigator.Selected returns non
-			// null for local machine
-			if (_aeNavigator.ServerSelected == null)
-				_studyBrowser.SelectServer(GetLocalAE());
-			else
-				_studyBrowser.SelectServer(_aeNavigator.ServerSelected);
-		}
-
-		// TODO: Remove this hack once AENavigator.Selected returns non
-		// null for local machine
-		private AEServer GetLocalAE()
-		{
-			return new AEServer("My Datastore", "", "", new HostName("localhost"), new AETitle("CC"), new ListeningPort(4000));
+			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
 		}
 	}
 }

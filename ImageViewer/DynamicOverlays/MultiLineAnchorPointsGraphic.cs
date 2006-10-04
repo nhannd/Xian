@@ -9,9 +9,6 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for AnchorPoints.
-	/// </summary>
 	public class MultiLineAnchorPointsGraphic 
 		: Graphic, IObservableList<PointF, AnchorPointEventArgs>, IMemorable
 	{

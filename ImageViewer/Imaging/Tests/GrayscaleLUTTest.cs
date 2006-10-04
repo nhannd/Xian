@@ -9,9 +9,6 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.Tests
 {
-	/// <summary>
-	/// Summary description for GrayscaleLUTTest.
-	/// </summary>
 	[TestFixture]
 	public class GrayscaleLUTTest
 	{

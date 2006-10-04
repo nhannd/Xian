@@ -2,9 +2,6 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for CalculatedGrayscaleLUT.
-	/// </summary>
 	public abstract class CalculatedGrayscaleLUT : IGrayscaleLUT
 	{
 		protected int _minInputValue;

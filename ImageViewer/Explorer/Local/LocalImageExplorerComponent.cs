@@ -23,17 +23,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 		}
 
-		public void Load(string path)
+		public void Load(IEnumerable<string> paths)
 		{
 			if (_imageLoader == null)
 				_imageLoader = new LocalImageLoader();
 
-			string studyInstanceUID;
+			IEnumerable<string> studyInstanceUIDs = _imageLoader.Load(paths);
 
-			studyInstanceUID = _imageLoader.Load(path);
-
-			ImageViewerComponent viewer = new ImageViewerComponent(studyInstanceUID);
-			ApplicationComponent.LaunchAsWorkspace(this.Host.DesktopWindow, viewer, "Study", null);
+			foreach (string studyInstanceUID in studyInstanceUIDs)
+			{
+				ImageViewerComponent viewer = new ImageViewerComponent(studyInstanceUID);
+				ApplicationComponent.LaunchAsWorkspace(this.Host.DesktopWindow, viewer, "Study", null);
+			}
 		}
 	}
 }

@@ -168,7 +168,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 
 			// Now select the new row
-			_dataGridView.Rows[info.RowIndex].Selected = true;
+			if (info.RowIndex >= 0)
+				_dataGridView.Rows[info.RowIndex].Selected = true;
         }
 
         private void _contextMenu_Opened(object sender, EventArgs e)

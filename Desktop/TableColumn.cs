@@ -193,7 +193,21 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         private int ValueComparsion(TItem x, TItem y)
         {
-            return ((IComparable)GetValue(x)).CompareTo(GetValue(y));
+			object valueX = GetValue(x);
+			object valueY = GetValue(y);
+			if (valueX == null)
+			{
+				if (valueY == null)
+					return 0;
+				else
+					return -1;
+			}
+			else if (valueY == null)
+			{
+				return 1;
+			}
+
+			return ((IComparable)valueX).CompareTo(valueY);
         }
 
         /// <summary>

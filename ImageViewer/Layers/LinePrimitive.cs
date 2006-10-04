@@ -7,9 +7,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for Line.
-	/// </summary>
 	public class LinePrimitive : Graphic
 	{
 		private PointF _srcPt1;

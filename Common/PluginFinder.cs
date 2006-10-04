@@ -6,9 +6,6 @@ using System.IO;
 
 namespace ClearCanvas.Common
 {
-	/// <summary>
-	/// Summary description for PluginFinder.
-	/// </summary>
 	public class PluginFinder : MarshalByRefObject
 	{
 		// Private attributes

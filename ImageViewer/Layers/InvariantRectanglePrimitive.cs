@@ -5,9 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for Rectangle.
-	/// </summary>
 	public class InvariantRectanglePrimitive : InvariantPrimitive
 	{
 		private RectangleF _rectangle = new RectangleF(0,0,0,0);

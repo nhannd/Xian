@@ -147,6 +147,14 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		public void ApplySort()
+		{
+			if (_sortProperty == null)
+				return;
+
+			ApplySortCore(_sortProperty, _sortDirection);
+		}
+
         #region ITypedList Members
 
         public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)

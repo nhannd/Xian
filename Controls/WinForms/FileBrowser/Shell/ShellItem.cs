@@ -836,6 +836,16 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
 
         #region Static Methods
 
+		public static string GetFullPath(ShellItem item)
+		{
+			StringBuilder builder = new StringBuilder(ShellAPI.MAX_PATH + 1);
+			PIDL pidlFull = item.PIDLFull;
+			ShellAPI.SHGetPathFromIDList(pidlFull.Ptr, builder);
+			Marshal.FreeCoTaskMem(pidlFull.Ptr);
+
+			return builder.ToString();
+		}
+
         public static string GetRealPath(ShellItem item)
         {
             if (item.Equals(item.browser.DesktopItem))

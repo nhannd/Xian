@@ -46,6 +46,8 @@
     <Compile Include="AENavigatorComponent.cs" />
     <Compile Include="AEServer.cs" />
     <Compile Include="AEServerEditorComponent.cs" />
+    <Compile Include="AEServerGroup.cs" />
+    <Compile Include="AEServerGroupEditorComponent.cs" />
     <Compile Include="AEServerPool.cs" />
     <Compile Include="AEServerSettings.cs" />
     <Compile Include="BrowserNode.cs" />
@@ -54,7 +56,6 @@
     <Compile Include="RetrieveStudyToolProgressComponent.cs" />
     <Compile Include="SearchPanelComponent.cs" />
     <Compile Include="SendStudyTool.cs" />
-    <Compile Include="ServerPath.cs" />
     <Compile Include="ServerViewRootNode.cs" />
     <Compile Include="ServerViewServerNode.cs" />
     <Compile Include="StudyBrowserTool.cs" />

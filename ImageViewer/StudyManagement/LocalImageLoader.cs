@@ -11,45 +11,45 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class LocalImageLoader
 	{
-		private string _studyInstanceUID;
-		private bool _firstImage;
+		private List<string> _studyInstanceUIDs;
 		private bool _atLeastOneImageFailedToLoad;
-		private bool _oneStudyAlreadyLoaded;
+		private bool _studyCouldNotBeLoaded;
+
 		private Exception _innerException;
 
 		public LocalImageLoader()
 		{
-
+			_studyInstanceUIDs = new List<string>();
 		}
 
-		public string Load(string path)
+		public IEnumerable<string> Load(IEnumerable<string> paths)
 		{
-			_firstImage = true;
 			_atLeastOneImageFailedToLoad = false;
-			_studyInstanceUID = "";
-			_oneStudyAlreadyLoaded = false;
+			_studyCouldNotBeLoaded = false;
 
-			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(AddImage);
-			FileProcessor.Process(path, "*.dcm", process, true);
+			_studyInstanceUIDs.Clear();
 
-			if (_atLeastOneImageFailedToLoad || _studyInstanceUID == "")
+			foreach (string path in paths)
 			{
-				OpenStudyException e = new OpenStudyException("An error occurred while opening the study", _innerException);
+				FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(AddImage);
+				FileProcessor.Process(path, "*.dcm", process, true);
 
-				e.AtLeastOneImageFailedToLoad = _atLeastOneImageFailedToLoad;
-				e.StudyCouldNotBeLoaded = (_studyInstanceUID == "");
+				if (_atLeastOneImageFailedToLoad)
+				{
+					OpenStudyException e = new OpenStudyException("An error occurred while opening the study(s)", _innerException);
 
-				throw e;
+					e.AtLeastOneImageFailedToLoad = _atLeastOneImageFailedToLoad;
+					e.StudyCouldNotBeLoaded = _studyCouldNotBeLoaded;
+
+					throw e;
+				}
 			}
 
-			return _studyInstanceUID;
+			return _studyInstanceUIDs.AsReadOnly();
 		}
 
 		private void AddImage(string file)
 		{
-			if (_oneStudyAlreadyLoaded)
-				return;
-
 			LocalImageSop image = null;
 
 			try
@@ -57,11 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				image = new LocalImageSop(file);
 
 				ImageValidator.ValidateStudyInstanceUID(image.StudyInstanceUID);
-
-				if (image.StudyInstanceUID == _studyInstanceUID || _firstImage)
-					ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
-				else
-					_oneStudyAlreadyLoaded = true;
+				ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
 			}
 			catch (Exception e)
 			{
@@ -73,19 +69,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_innerException = e;
 
 				_atLeastOneImageFailedToLoad = true;
+				_studyCouldNotBeLoaded = (image.StudyInstanceUID == "");
+
 				Platform.Log(e, LogLevel.Error);
 				return;
 			}
 
-			// Make a note of the study UID so we know what study we're trying to load
-			if (_firstImage)
-			{
-				if (image != null)
-				{
-					_studyInstanceUID = image.StudyInstanceUID;
-					_firstImage = false;
-				}
-			}
+			if (!_studyInstanceUIDs.Contains(image.StudyInstanceUID))
+				_studyInstanceUIDs.Add(image.StudyInstanceUID);
 		}
 	}
 }

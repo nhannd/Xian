@@ -6,9 +6,6 @@ using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Desktop.Executable
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
 	class Program
 	{
 		/// <summary>

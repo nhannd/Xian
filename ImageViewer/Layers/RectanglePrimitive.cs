@@ -8,9 +8,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for Rectangle.
-	/// </summary>
 	public class RectanglePrimitive : Graphic
 	{
 		private RectangleF _rectangle = new RectangleF(0,0,0,0);

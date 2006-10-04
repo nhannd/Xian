@@ -10,15 +10,12 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardFlipVertical")]
+    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardFlipVertical")]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipVertical")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardFlipVertical")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipVerticalMedium.png", "Icons.FlipVerticalLarge.png")]
     
-    /// <summary>
-	/// Summary description for FlipVerticalTool.
-	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class FlipVerticalTool : Tool<IImageViewerToolContext>
 	{

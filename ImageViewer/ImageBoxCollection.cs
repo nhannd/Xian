@@ -6,9 +6,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for ImageBoxCollection.
-	/// </summary>
 	public class ImageBoxCollection : ObservableList<ImageBox, ImageBoxEventArgs>
 	{
 		public ImageBoxCollection()

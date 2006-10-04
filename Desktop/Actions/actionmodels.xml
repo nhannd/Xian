@@ -6,17 +6,17 @@
     <action id="ClearCanvas.Desktop.View.WinForms.StockDesktopTools+ExitAppTool:exit" path="global-menus/MenuFile/MenuFileExitApplication" />
     <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:undo" path="global-menus/MenuEdit/MenuEditUndo" />
     <action id="ClearCanvas.Desktop.Edit.EditHistoryTool:redo" path="global-menus/MenuEdit/MenuEditRedo" />
-    <action id="ClearCanvas.ImageViewer.Layout.Basic.LayoutTool:show" path="global-menus/MenuLayout/MenuLayoutLayoutManager" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardStack" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardWindowLevel" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardPan" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardZoom" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipHorizontalTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardFlipHorizontal" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipVerticalTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardFlipVertical" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateLeftTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardRotateLeft" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateRightTool:activate" path="global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardRotateRight" />
-    <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRectangularROI" />
-    <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler" />
+    <action id="ClearCanvas.ImageViewer.Layout.Basic.LayoutTool:show" path="global-menus/Layout/MenuLayoutLayoutManager" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardStack" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardWindowLevel" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardPan" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardZoom" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipHorizontalTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardFlipHorizontal" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipVerticalTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardFlipVertical" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateLeftTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardRotateLeft" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateRightTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardRotateRight" />
+    <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-menus/MenuTools/Measurement/ToolsMeasurementRectangularROI" />
+    <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-menus/MenuTools/Measurement/ToolsMeasurementRuler" />
     <action id="ClearCanvas.Dicom.Services.QueueDisplayLaunchTool:launch" path="global-menus/Services/Queue" />
     <action id="ClearCanvas.Desktop.Help.HelpTool:activate" path="global-menus/MenuHelp/MenuHelpAbout" />
   </action-model>

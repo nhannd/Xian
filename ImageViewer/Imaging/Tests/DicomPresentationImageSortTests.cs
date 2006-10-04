@@ -41,7 +41,20 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			PresentationImageCollection orderedCollection = new PresentationImageCollection();
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
 
+			MockImageSop junkImageSop = new MockImageSop();
+			junkImageSop.InstanceNumber = "";
+			junkImageSop.StudyInstanceUID = "123";
+			junkImageSop.SeriesInstanceUID = "1";
+			orderedCollection.Add(new DicomPresentationImage(junkImageSop));
+
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
+			
+			junkImageSop = new MockImageSop();
+			junkImageSop.InstanceNumber = "a";
+			junkImageSop.StudyInstanceUID = "123";
+			junkImageSop.SeriesInstanceUID = "10";
+			orderedCollection.Add(new DicomPresentationImage(junkImageSop));
+
 			AppendCollection(NewDicomSeries("123", "10", 1, 25), orderedCollection);
 			AppendCollection(NewDicomSeries("123", "111", 1, 25), orderedCollection);
 			AppendCollection(NewDicomSeries("123", "456", 1, 25), orderedCollection);

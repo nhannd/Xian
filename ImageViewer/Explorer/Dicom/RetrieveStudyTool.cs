@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
@@ -11,7 +10,6 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Services;
 using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
-
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -38,8 +36,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void RetrieveStudy()
 		{
+            //
+            // check pre-conditions
+            //
             if (this.Context.SelectedStudy == null)
                 return;
+
+            if (this.IsRetrieveActive)
+            {
+                Platform.ShowMessageBox("Sorry, but you cannot start two different retrieval sessions at the same time", MessageBoxActions.Ok);
+                return;
+            }
 
             LocalAESettings myAESettings = new LocalAESettings();
             ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
@@ -57,22 +64,39 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
             }
 
+            // create an instance of the retrieval component if it doesn't already exist
+            if (null == this.RetrieveProgressComponent)
+                this.RetrieveProgressComponent = new RetrieveStudyToolProgressComponent(me, myAESettings.DicomStoragePath);
 
-            foreach (StudyItem item in this.Context.SelectedStudies)
+            // open the retrieval component shelf if it's currently closed
+            // delegate is used to reset the state of ProgressComponentShelfClosed
+            if (this.ProgressComponentShelfClosed)
             {
-                RetrieveStudyToolProgressComponent progressComponent = new RetrieveStudyToolProgressComponent(me,
-                    this.Context.SelectedServer,
-                    new Uid(item.StudyInstanceUID),
-                    myAESettings.DicomStoragePath);
-
-                ApplicationComponent.LaunchAsWorkspace(
+                #region Launch the retrieval component as a shelf
+                ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
-                    progressComponent,
+                    this.RetrieveProgressComponent,
                     "Retrieve Progress",
+                    ShelfDisplayHint.DockRight,
                     delegate(IApplicationComponent component)
-                    { Console.WriteLine("Done!"); }
+                    {
+                        this.ProgressComponentShelfClosed = true;
+                    }
                     );
+                #endregion
+
+                this.ProgressComponentShelfClosed = false;
             }
+
+            this.IsRetrieveActive = true;
+            this.RetrieveProgressComponent.AllRetrievalTasksCompleted += 
+                delegate(object source, EventArgs args)
+                {
+                    this.IsRetrieveActive = false;
+                };
+
+
+            this.RetrieveProgressComponent.Retrieve(this.Context.SelectedStudies);           
 		}
 
 		private void CreateStorageDirectory(string path)
@@ -83,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (this.Context.SelectedServer.Host != "localhost")
+			if (!this.Context.SelectedServerGroup.IsLocalDatastore)
 				this.Context.DefaultActionHandler = RetrieveStudy;
 		}
 
@@ -91,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from a remote machine, then we don't
 			// even care whether a study has been selected or not
-			if (this.Context.SelectedServer.Host == "localhost")
+			if (this.Context.SelectedServerGroup.IsLocalDatastore)
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
@@ -102,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			// If no study is selected then we don't even care whether
 			// the last searched server has changed.
 
-			if (this.Context.SelectedServer.Host == "localhost")
+			if (this.Context.SelectedServerGroup.IsLocalDatastore)
 			{
 				this.Enabled = false;
 				return;
@@ -116,6 +140,40 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				SetDoubleClickHandler();
 			}
-		}
-	}
+        }
+        #region Properties
+        private RetrieveStudyToolProgressComponent _retrieveProgressComponent;
+        private bool _progressComponentShelfClosed = true;
+        private bool _isRetrieveActive;
+
+        /// <summary>
+        /// Indicates whether or not there is currently an active retrieve operation
+        /// taking place.
+        /// </summary>
+        public bool IsRetrieveActive
+        {
+            get { return _isRetrieveActive; }
+            set { _isRetrieveActive = value; }
+        }
+	
+        /// <summary>
+        /// Used to keep track of whether the shelf component that 
+        /// displays the retrieval progress has been closed. This 
+        /// allows us to reopen the shelf, whenever a new retrieve
+        /// operation is initiated.
+        /// </summary>
+        private bool ProgressComponentShelfClosed
+        {
+            get { return _progressComponentShelfClosed; }
+            set { _progressComponentShelfClosed = value; }
+        }
+	
+        private RetrieveStudyToolProgressComponent RetrieveProgressComponent
+        {
+            get { return _retrieveProgressComponent; }
+            set { _retrieveProgressComponent = value; }
+        }
+	
+        #endregion
+    }
 }

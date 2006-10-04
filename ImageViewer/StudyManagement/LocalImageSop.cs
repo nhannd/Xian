@@ -586,7 +586,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				double pixelSpacingX;
                 _dicomImage.GetTag(Dcm.PixelSpacing, out pixelSpacingX, 0, out tagExists);
-				return pixelSpacingX;
+				if (tagExists)
+					return pixelSpacingX;
+				return -1.0;
 			}
 			set
 			{
@@ -601,7 +603,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				double pixelSpacingY;
                 _dicomImage.GetTag(Dcm.PixelSpacing, out pixelSpacingY, 1, out tagExists);
-				return pixelSpacingY;
+				if (tagExists) 
+					return pixelSpacingY;
+				return -1.0;
 			}
 			set
 			{

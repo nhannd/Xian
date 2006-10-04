@@ -8,9 +8,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for InteractiveGraphic.
-	/// </summary>
 	public abstract class InteractiveGraphic : StatefulGraphic, IMemorable
 	{
 		public static readonly int _hitTestDistance = 10;

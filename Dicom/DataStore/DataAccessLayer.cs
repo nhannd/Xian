@@ -18,6 +18,7 @@ namespace ClearCanvas.Dicom.DataStore
         private static Configuration _hibernateConfiguration;
         private static Dictionary<ISessionFactory, IDataStoreReader> _dataStoreReaders;
         private static Dictionary<ISessionFactory, IDataStoreWriter> _dataStoreWriters;
+        private static DicomDictionary _dicomDictionary;
 
         public static Dictionary<ISessionFactory, IDataStoreWriter> DataStoreWriters
         {
@@ -127,5 +128,14 @@ namespace ClearCanvas.Dicom.DataStore
         {
             return new DicomImageStore();
         }
+
+        public static IDicomDictionary GetIDicomDictionary()
+        {
+            if (null == _dicomDictionary)
+                _dicomDictionary = new DicomDictionary(DataAccessLayer.CurrentFactory.OpenSession());
+
+            return _dicomDictionary;
+        }
+
     }
 }

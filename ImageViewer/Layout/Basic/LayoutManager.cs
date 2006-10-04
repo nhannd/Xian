@@ -8,9 +8,6 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	/// <summary>
-	/// Summary description for LayoutManager.
-	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.LayoutManagerExtensionPoint))]
 	public class LayoutManager : ILayoutManager
 	{

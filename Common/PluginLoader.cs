@@ -7,9 +7,6 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common
 {
-	/// <summary>
-	/// Summary description for PluginLoader.
-	/// </summary>
 	internal class PluginLoader 
 	{
 		// Private attributes

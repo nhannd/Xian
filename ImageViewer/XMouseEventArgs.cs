@@ -3,9 +3,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for XMouseEventArgs.
-	/// </summary>
 	public class XMouseEventArgs : EventArgs, ICloneable
 	{
 		private XMouseButtons _button;

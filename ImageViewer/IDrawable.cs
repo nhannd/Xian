@@ -3,7 +3,7 @@ using System;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// IDrawable interface
+	/// Do not implement.  Will be removed in 1.0.
 	/// </summary>
 	public interface IDrawable
 	{

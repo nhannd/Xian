@@ -17,6 +17,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
        
         public DatabaseRebuilder(String imageStoragePath, Boolean isSearchRecursive)
         {
+            _dicomStore = SingleSessionDataAccessLayer.GetIDicomPersistentStore();
             _state = RebuilderState.Stopped;
             _imageStoragePath = imageStoragePath;
             _isSearchRecursive = isSearchRecursive;
@@ -214,6 +215,6 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         private Object _synchronizationLock = new Object();
         private enum RebuilderState { Stopped, Rebuilding };
         private RebuilderState _state;
-        private IDicomPersistentStore _dicomStore = SingleSessionDataAccessLayer.GetIDicomPersistentStore();
+        private IDicomPersistentStore _dicomStore;
     }
 }

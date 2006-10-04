@@ -28,10 +28,11 @@ namespace ClearCanvas.Controls.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._components = new System.ComponentModel.Container();
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
-			this._timer = new System.Windows.Forms.Timer(this._components);
+			this._timer = new System.Windows.Forms.Timer(this.components);
 			this._statusLabel = new System.Windows.Forms.Label();
+			this._versionLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _timer
@@ -45,10 +46,21 @@ namespace ClearCanvas.Controls.WinForms
 			this._statusLabel.BackColor = System.Drawing.Color.White;
 			this._statusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._statusLabel.Location = new System.Drawing.Point(295, 61);
-			this._statusLabel.Name = "_StatusLabel";
+			this._statusLabel.Name = "_statusLabel";
 			this._statusLabel.Size = new System.Drawing.Size(354, 23);
 			this._statusLabel.TabIndex = 0;
 			this._statusLabel.Text = "Progress text";
+			// 
+			// _versionLabel
+			// 
+			this._versionLabel.AutoSize = true;
+			this._versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
+			this._versionLabel.ForeColor = System.Drawing.Color.White;
+			this._versionLabel.Location = new System.Drawing.Point(449, 302);
+			this._versionLabel.Name = "_versionLabel";
+			this._versionLabel.Size = new System.Drawing.Size(42, 13);
+			this._versionLabel.TabIndex = 1;
+			this._versionLabel.Text = "Version";
 			// 
 			// SplashScreen
 			// 
@@ -57,6 +69,7 @@ namespace ClearCanvas.Controls.WinForms
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
+			this.Controls.Add(this._versionLabel);
 			this.Controls.Add(this._statusLabel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "SplashScreen";
@@ -65,6 +78,7 @@ namespace ClearCanvas.Controls.WinForms
 			this.TopMost = true;
 			this.DoubleClick += new System.EventHandler(this.SplashScreen_DoubleClick);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -72,5 +86,7 @@ namespace ClearCanvas.Controls.WinForms
 
 		private System.Windows.Forms.Timer _timer;
 		private System.Windows.Forms.Label _statusLabel;
+		private System.ComponentModel.IContainer components;
+		private System.Windows.Forms.Label _versionLabel;
 	}
 }

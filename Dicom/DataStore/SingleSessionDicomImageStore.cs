@@ -47,8 +47,7 @@ namespace ClearCanvas.Dicom.DataStore
             // did not exist in the database, on UIDs, would take very very very long.
             // A workaround to this, is to clear the session of domain objects explicitly
             // before closing the session.
-            SingleSessionDataAccessLayer.ClearCurrentSession();
-            SingleSessionDataAccessLayer.CloseCurrentSession();
+            SingleSessionDataAccessLayer.SqliteWorkaround();
         }
 
         public int GetCachedStudiesCount()
@@ -84,6 +83,9 @@ namespace ClearCanvas.Dicom.DataStore
                     {
                         // the study was found in the data store
                         this.StudyCache.Add(studyInstanceUid.ToString(), study);
+
+                        // since Study-Series is not lazy initialized, all the series
+                        // should be loaded. Let's add them to the cache
                         foreach (ISeries series in study.Series)
                         {
                             this.SeriesCache.Add(series.GetSeriesInstanceUid().ToString(), series as Series);
@@ -113,25 +115,17 @@ namespace ClearCanvas.Dicom.DataStore
 
                 if (null == series)
                 {
-                    // we haven't come across this study yet, so let's see if it already exists in the DataStore
-                    series = SingleSessionDataAccessLayer.GetIDataStoreReader().GetSeries(new Uid(seriesInstanceUid.ToString())) as Series;
-                    if (null == series)
-                    {
-                        // the study doesn't exist in the data store either
-                        series = CreateNewSeries(metaInfo, sopInstanceDataset);
-                        this.SeriesCache.Add(seriesInstanceUid.ToString(), series);
-                        return series;
-                    }
-                    else
-                    {
-                        // the study was found in the data store
-                        this.SeriesCache.Add(seriesInstanceUid.ToString(), series);
-                        return series;
-                    }
+                    // if the series was in the datastore, it would also exist
+                    // in the cache at this point, because the study would have
+                    // been loaded, and Series is not lazy-initialized.
+                    // Therefore, this series is not in the datastore either.
+                    series = CreateNewSeries(metaInfo, sopInstanceDataset);
+                    this.SeriesCache.Add(seriesInstanceUid.ToString(), series);
+                    return series;
                 }
                 else
                 {
-                    // the study was found in the cache
+                    // the series was found in the cache
                     return series;
                 }
             }
@@ -360,7 +354,7 @@ namespace ClearCanvas.Dicom.DataStore
                 if (cond.good())
                 {
                     string[] widthComponents = stringValue.ToString().Split('\\');
-                    string[] centerComponents = stringValue.ToString().Split('\\');
+                    string[] centerComponents = stringValue2.ToString().Split('\\');
 
                     for (int i = 0; i < widthComponents.Length; ++i)
                     {
@@ -368,6 +362,9 @@ namespace ClearCanvas.Dicom.DataStore
                     }
                 }
             }
+
+            if (!System.IO.Path.IsPathRooted(fileName))
+                fileName = System.IO.Path.GetFullPath(fileName);
 
             UriBuilder uriBuilder = new UriBuilder();
             uriBuilder.Scheme = "file";

@@ -28,7 +28,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
     <DefineConstants>DEBUG;TRACE;UNIT_TESTS</DefineConstants>
-    <DocumentationFile>ClearCanvas.Workstation.Model.xml</DocumentationFile>
+    <DocumentationFile>ClearCanvas.ImageViewer.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="AnnotationConfiguration.cs" />
+    <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
@@ -101,13 +101,13 @@
     <Compile Include="Mathematics\Tests\FloatComparerTest.cs" />
     <Compile Include="Mathematics\Vector.cs" />
     <Compile Include="MouseWheelToolMappedEventArgs.cs" />
-    <Compile Include="AnnotationConfigurationManager.cs" />
-    <Compile Include="AnnotationItemConfigurationOptions.cs" />
-    <Compile Include="AnnotationItemProviderManager.cs" />
-    <Compile Include="AnnotationLayout.cs" />
-    <Compile Include="AnnotationLayoutManager.cs" />
-    <Compile Include="AnnotationManager.cs" />
-    <Compile Include="DicomAnnotationConfiguration.cs" />
+    <Compile Include="Annotations\AnnotationConfigurationManager.cs" />
+    <Compile Include="Annotations\AnnotationItemConfigurationOptions.cs" />
+    <Compile Include="Annotations\AnnotationItemProviderManager.cs" />
+    <Compile Include="Annotations\AnnotationLayout.cs" />
+    <Compile Include="Annotations\AnnotationLayoutManager.cs" />
+    <Compile Include="Annotations\AnnotationManager.cs" />
+    <Compile Include="Annotations\DicomAnnotationConfiguration.cs" />
     <Compile Include="DynamicActionMouseTool.cs" />
     <Compile Include="CaptureUIEventHandler.cs" />
     <Compile Include="ClientArea.cs" />
@@ -150,8 +150,8 @@
     <Compile Include="Enumerations.cs" />
     <Compile Include="EventBroker.cs" />
     <Compile Include="GraphicHitTestInfo.cs" />
-    <Compile Include="IAnnotationItem.cs" />
-    <Compile Include="IAnnotationItemProvider.cs" />
+    <Compile Include="Annotations\IAnnotationItem.cs" />
+    <Compile Include="Annotations\IAnnotationItemProvider.cs" />
     <Compile Include="IClientArea.cs" />
     <Compile Include="ICustomDrawable.cs" />
     <Compile Include="IDrawable.cs" />
@@ -198,7 +198,7 @@
     <Compile Include="IMouseCapture.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IUIEventHandler.cs" />
-    <Compile Include="AnnotationBox.cs" />
+    <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Layers\BaseLayerCollection.cs" />
     <Compile Include="Layers\GraphicLayer.cs">
       <SubType>Code</SubType>
@@ -310,6 +310,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Layers\Layers.cd" />
+    <None Include="PostBuild.bat" />
     <None Include="Workspaces.cd" />
     <None Include="Model.cd" />
     <None Include="StudyManagement\StudyFindersAndLoaders.cd" />

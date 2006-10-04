@@ -7,9 +7,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for AnchorPoints.
-	/// </summary>
 	public class PointsMemento : IMemento, IEnumerable<PointF>
 	{
 		List<PointF> _anchorPoints = new List<PointF>();

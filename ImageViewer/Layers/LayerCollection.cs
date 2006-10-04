@@ -5,9 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for LayerCollection.
-	/// </summary>
 	public class LayerCollection : BaseLayerCollection
 	{
 		public LayerCollection()

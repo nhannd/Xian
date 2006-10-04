@@ -30,42 +30,35 @@ namespace ClearCanvas.ImageViewer
         /// <summary>
         /// Gets the currently selected <see cref="ImageBox"/>
         /// </summary>
-        /// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
+        /// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if 
+		/// no <see cref="ImageBox"/> is currently selected.</value>
         ImageBox SelectedImageBox { get; }
 
         /// <summary>
         /// Gets the currently selected <see cref="Tile"/>
         /// </summary>
-        /// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
+        /// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if 
+		/// no <see cref="Tile"/> is currently selected.</value>
         Tile SelectedTile { get; }
 
         /// <summary>
         /// Gets the currently selected <see cref="PresentationImage"/>
         /// </summary>
-        /// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
+        /// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if 
+		/// no <see cref="PresentationImage"/> is no currently selected.</value>
         PresentationImage SelectedPresentationImage { get; }
 
         /// <summary>
-        /// Gets the workspace's currently selected mappable modal tools.
+        /// Gets the <see cref="MouseButtonToolMap"/>
         /// </summary>
-        /// <value>The workspace's current selected mappable modal tools.</value>
+		/// <value>The <see cref="MouseButtonToolMap"/></value>
         /// <remarks>
-        /// A <i>Mappable modal tool</i> or <i>MMT</i> is a tool that when selected
-        /// causes a mouse button to be mapped to the tool's function; an MMT that
+        /// A <i>Mouse tool</i> is a tool that when selected
+        /// causes a mouse button to be mapped to the tool's function; a mouse tool that
         /// is already mapped to the same button becomes deselected.  Examples
-        /// of MMTs in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.  This
-        /// property gets an index that stores which mouse buttons are currently
-        /// mapped to which MMT.
+        /// of mouse tools in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.
         /// </remarks>
         MouseButtonToolMap MouseButtonToolMap { get; }
-
-		MouseWheelToolMap MouseWheelToolMap { get; }
 
         /// <summary>
         /// Gets the <see cref="CommandHistory"/>.

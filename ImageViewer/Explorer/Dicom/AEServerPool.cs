@@ -36,11 +36,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public int Currentserverid
         {
             get
-            {
-                if (_currentserver == null)
-                    _currentserverid = -1;
-                return _currentserverid;
-            }
+            { return _currentserverid; }
             set { _currentserverid = value; }
         }
 
@@ -83,6 +79,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
             _serverlist = new List<AEServer>();
             List<AEServerSettings> _settinglist = new List<AEServerSettings>();
+            bool isupdated = false;
             if (File.Exists("DICOMServerSettings.xml"))
             {
                 Stream fStream = File.OpenRead("DICOMServerSettings.xml");
@@ -90,6 +87,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _settinglist = (List<AEServerSettings>)xmlFormat.Deserialize(fStream);
                 foreach (AEServerSettings svrsettings in _settinglist)
                 {
+                    if (svrsettings.Servername.Equals(AENavigatorComponent.NodeDeleted))
+                    {
+                        isupdated = true;
+                        continue;
+                    }
                     _serverlist.Add(new AEServer(svrsettings.Servername, svrsettings.Serverpath, svrsettings.Description, svrsettings.Hostname, svrsettings.AeTitle, svrsettings.ListenPort));
                 }
                 fStream.Close();
@@ -101,13 +103,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _serverlist.Add(new AEServer(AENavigatorComponent.MyDatastoreTitle, "/" + AENavigatorComponent.MyDatastoreTitle, "", "localhost", myAESettings.AETitle, myAESettings.Port));
                 _serverlist.Add(new AEServer(AENavigatorComponent.EmptyNodeName, "/" + AENavigatorComponent.MyServersTitle, "", "Host0", "AeTitle0", 100));
                 _serverlist.Add(new AEServer(AENavigatorComponent.NewServerName, "/" + AENavigatorComponent.MyServersTitle, "", "Host", "AeTitle", 100));
-                SaveServerSettings();
+                isupdated = true;
             }
             //check the default server nodes
-            CheckDefaultServerSettings();
+            CheckDefaultServerSettings(isupdated);
         }
 
-        private void CheckDefaultServerSettings()
+        private void CheckDefaultServerSettings(bool isupdated)
         {
             if (_serverlist == null)
                 return;
@@ -115,7 +117,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             bool ds_exists = false;
             bool dsroot_exists = false;
             bool svrroot_exists = false;
-            bool isupdated = false;
             for (int i = 0; i < _serverlist.Count; i++)
             {
                 AEServer ae = _serverlist[i];
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 if (!ae.getServerRootName().Equals(AENavigatorComponent.MyDatastoreTitle) && !ae.getServerRootName().Equals(AENavigatorComponent.MyServersTitle))
                 {
                     _serverlist[i].Serverpath = "/" + AENavigatorComponent.MyServersTitle + _serverlist[i].Serverpath;
-                    _serverlist[i].BuildServerPathGroup();
+                    _serverlist[i].ServerPathGroups = null;
                     isupdated = true;
                 }
             }
@@ -177,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 }
             }
 
-            if (!dsroot_exists || !svrroot_exists || !ds_exists || !isupdated)
+            if (!dsroot_exists || !svrroot_exists || !ds_exists || isupdated)
             {
                 SaveServerSettings();
             }
@@ -205,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
-        public void SetCurrentServerByName(string svrName)
+        /*public void SetCurrentServerByName(string svrName)
         {
             _currentserver = null;
             _currentserverid = -1;
@@ -221,7 +222,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 break;
             }
         }
-
         public int AddNewServer(int parentid)
         {
             _currentserver = null;
@@ -233,6 +233,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _serverlist.Add(_currentserver);
             SaveServerSettings();
             return _serverlist.Count - 1;
+        }
+
+         * */
+
+        public void SetCurrentServerByID(int svrID)
+        {
+            if (svrID < 0 || svrID >= _serverlist.Count)
+            {
+                _currentserver = null;
+                _currentserverid = -1;
+                return;
+            }
+            _currentserver = _serverlist[svrID];
+            _currentserverid = svrID;
+            return;
+        }
+
+        public AEServer GetMyDatastoreServer()
+        {
+            for (int i = 0; i < _serverlist.Count; i++)
+            {
+                if (_serverlist[i].getServerRootName().Equals(AENavigatorComponent.MyDatastoreTitle) && !_serverlist[i].Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                {
+                    return _serverlist[i];
+                }
+            }
+            return null;
         }
 
         public List<AEServer> GetServerRoots()
@@ -261,13 +288,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             _childServers = new List<AEServer>();
             FindChildServers(serverid, serveronly, recursive);
+            _childServers.Sort(delegate(AEServer s1, AEServer s2) { return s1.Servername.CompareTo(s2.Servername); });
             return _childServers;
         }
 
         public void FindChildServers(int serverid, bool serveronly, bool recursive)
         {
             if (_serverlist == null || serverid < 0 || serverid >= _serverlist.Count
-                || !_serverlist[serverid].Servername.Equals(AENavigatorComponent.EmptyNodeName))
+                || !_serverlist[serverid].Servername.Equals(AENavigatorComponent.EmptyNodeName)
+                || _serverlist[serverid].Servername.Equals(AENavigatorComponent.NodeDeleted))
                 return;
             String gname = _serverlist[serverid].getServerGroupName();
             String[] pgroup = _serverlist[serverid].ServerPathGroups;

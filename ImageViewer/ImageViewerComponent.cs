@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -26,6 +27,9 @@ namespace ClearCanvas.ImageViewer
     {
     }
 
+	/// <summary>
+	/// An application component capable of displaying images.
+	/// </summary>
     [AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
     public class ImageViewerComponent : ApplicationComponent, IImageViewer
     {
@@ -69,7 +73,10 @@ namespace ClearCanvas.ImageViewer
         private string _studyInstanceUID;
         private ToolSet _toolSet;
 
-        public ImageViewerComponent(string studyInstanceUID)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ImageViewerComponent"/> class.
+		/// </summary>
+		public ImageViewerComponent(string studyInstanceUID)
         {
             Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
 
@@ -79,6 +86,9 @@ namespace ClearCanvas.ImageViewer
             _eventBroker = new EventBroker();
         }
         
+		/// <summary>
+		/// Starts this image viewer.
+		/// </summary>
         public override void Start()
         {
             base.Start();
@@ -98,6 +108,9 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
+		/// <summary>
+		/// Stops this image viewer
+		/// </summary>
         public override void Stop()
         {
             // TODO: What would be better is if the study tree listened for workspaces
@@ -107,6 +120,9 @@ namespace ClearCanvas.ImageViewer
             base.Stop();
         }
 
+		/// <summary>
+		/// Gets this image viewer's action set
+		/// </summary>
         public override IActionSet ExportedActions
         {
             get
@@ -117,6 +133,9 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
+		/// <summary>
+		/// Gets this image viewer's context menu action model.
+		/// </summary>
         public ActionModelNode ContextMenuModel
         {
             get
@@ -137,7 +156,7 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the <see cref="StudyManager"/>
+        /// Gets this image viewer's <see cref="StudyManager"/>
         /// </summary>
         public static StudyManager StudyManager
         {
@@ -151,7 +170,7 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the command history for this image viewer.
+        /// Gets this image viewer's command history
         /// </summary>
         public CommandHistory CommandHistory
         {
@@ -159,7 +178,7 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the <see cref="PhysicalWorkspace"/>.
+        /// Gets this image viewer's <see cref="PhysicalWorkspace"/>.
         /// </summary>
         /// <value>The <see cref="PhysicalWorkspace"/>.</value>
         public PhysicalWorkspace PhysicalWorkspace
@@ -168,7 +187,7 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the <see cref="LogicalWorkspace"/>.
+		/// Gets this image viewer's <see cref="LogicalWorkspace"/>.
         /// </summary>
         /// <value>The <see cref="LogicalWorkspace"/>.</value>
         public LogicalWorkspace LogicalWorkspace
@@ -176,18 +195,20 @@ namespace ClearCanvas.ImageViewer
             get { return _logicalWorkspace; }
         }
 
+		/// <summary>
+		/// Gets this image viewer's <see cref="EventBroker"/>
+		/// </summary>
         public EventBroker EventBroker
         {
             get { return _eventBroker; }
         }
 
-        /// <summary>
-        /// Gets the currently selected <see cref="ImageBox"/>
-        /// </summary>
-        /// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
-        public ImageBox SelectedImageBox
+		/// <summary>
+		/// Gets this image viewer's currently selected <see cref="ImageBox"/>
+		/// </summary>
+		/// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if 
+		/// no <see cref="ImageBox"/> is currently selected.</value>
+		public ImageBox SelectedImageBox
         {
             get
             {
@@ -198,13 +219,12 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-        /// <summary>
-        /// Gets the currently selected <see cref="Tile"/>
-        /// </summary>
-        /// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
-        public Tile SelectedTile
+		/// <summary>
+		/// Gets this image viewer's currently selected <see cref="Tile"/>
+		/// </summary>
+		/// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if 
+		/// no <see cref="Tile"/> is currently selected.</value>
+		public Tile SelectedTile
         {
             get
             {
@@ -215,13 +235,12 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-        /// <summary>
-        /// Gets the currently selected <see cref="PresentationImage"/>
-        /// </summary>
-        /// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
-        public PresentationImage SelectedPresentationImage
+		/// <summary>
+		/// Gets this image viewer's currently selected <see cref="PresentationImage"/>
+		/// </summary>
+		/// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if 
+		/// no <see cref="PresentationImage"/> is no currently selected.</value>
+		public PresentationImage SelectedPresentationImage
         {
             get
             {
@@ -232,19 +251,17 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-        /// <summary>
-        /// Gets the workspace's currently selected mappable modal tools.
-        /// </summary>
-        /// <value>The workspace's current selected mappable modal tools.</value>
-        /// <remarks>
-        /// A <i>Mappable modal tool</i> or <i>MMT</i> is a tool that when selected
-        /// causes a mouse button to be mapped to the tool's function; an MMT that
-        /// is already mapped to the same button becomes deselected.  Examples
-        /// of MMTs in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.  This
-        /// property gets an index that stores which mouse buttons are currently
-        /// mapped to which MMT.
-        /// </remarks>
-        public MouseButtonToolMap MouseButtonToolMap
+		/// <summary>
+		/// Gets this image viewer's <see cref="MouseButtonToolMap"/>
+		/// </summary>
+		/// <value>The <see cref="MouseButtonToolMap"/></value>
+		/// <remarks>
+		/// A <i>Mouse tool</i> is a tool that when selected
+		/// causes a mouse button to be mapped to the tool's function; a mouse tool that
+		/// is already mapped to the same button becomes deselected.  Examples
+		/// of mouse tools in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.
+		/// </remarks>
+		public MouseButtonToolMap MouseButtonToolMap
         {
             get 
 			{
@@ -255,17 +272,20 @@ namespace ClearCanvas.ImageViewer
 			}
         }
 
-		public MouseWheelToolMap MouseWheelToolMap
-		{
-			get 
-			{
-				if (_mouseWheelToolMap == null)
-					_mouseWheelToolMap = new MouseWheelToolMap();
+		//public MouseWheelToolMap MouseWheelToolMap
+		//{
+		//    get 
+		//    {
+		//        if (_mouseWheelToolMap == null)
+		//            _mouseWheelToolMap = new MouseWheelToolMap();
 
-				return _mouseWheelToolMap; 
-			}
-		}
+		//        return _mouseWheelToolMap; 
+		//    }
+		//}
 
+		/// <summary>
+		/// Gets this image viewer's <see cref="AnnotationManager"/>
+		/// </summary>
 		public static AnnotationManager AnnotationManager
 		{
 			get

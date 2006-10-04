@@ -3,17 +3,16 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using System.Collections.Generic;
+
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
-using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Renderer.GDI
 {
-	/// <summary>
-	/// Summary description for GDIRenderer.
-	/// </summary>
 	[ExtensionOf(typeof(ClearCanvas.ImageViewer.RendererExtensionPoint))]
     public class GDIRenderer : IRenderer
 	{

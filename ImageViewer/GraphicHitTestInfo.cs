@@ -10,9 +10,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		None = 2
 	}
 
-	/// <summary>
-	/// Summary description for HitTestInfo.
-	/// </summary>
 	public class InteractiveHitTestInfo
 	{
 		private ActiveZones _activeZone;

@@ -18,7 +18,6 @@ namespace ClearCanvas.ImageViewer
 	{
 		// Protected attributes
         private XMouseButtons _mouseButton;
-		private bool _useMouseWheel;
 
 		private int _lastX;
 		private int _lastY;
@@ -40,11 +39,9 @@ namespace ClearCanvas.ImageViewer
         /// <param name="initiallyActive">A preference for being the initially active tool.</param>
         public MouseTool(
 			XMouseButtons mouseButton, 
-			bool useMouseWheel,
 			bool initiallyActive)
         {
             _mouseButton = mouseButton;
-			_useMouseWheel = useMouseWheel;
             _initiallyActive = initiallyActive;
         }
 
@@ -54,7 +51,7 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
         /// <param name="mouseButton">The button to which this tool is assigned.</param>
         public MouseTool(XMouseButtons mouseButton)
-            : this(mouseButton, false, false)
+            : this(mouseButton, false)
         {
         }
 
@@ -68,19 +65,12 @@ namespace ClearCanvas.ImageViewer
             base.Initialize();
 
             this.Context.Viewer.MouseButtonToolMap.MouseToolMapped += OnMouseButtonToolMapped;
-			this.Context.Viewer.MouseWheelToolMap.MouseToolMapped += OnMouseWheelToolMapped;
 
-
-            // attempt to honour the initiallyActive request
+			// attempt to honour the initiallyActive request
             // there is no guarantee the request won't be superceded
             // by a request from another tool
             if (_initiallyActive)
-            {
                 this.Context.Viewer.MouseButtonToolMap[_mouseButton] = this;
-
-				if (_useMouseWheel)
-					this.Context.Viewer.MouseWheelToolMap.MouseTool = this;
-            }
         }
 
         /// <summary>
@@ -110,14 +100,6 @@ namespace ClearCanvas.ImageViewer
             get { return _mouseButton; }
         }
 
-		/// <summary>
-		/// Indicates whether tool should be mapped to mouse wheel also.
-		/// </summary>
-		public bool UseMouseWheel
-		{
-			get { return _useMouseWheel; }
-		}
-		
 		/// <summary>
         /// The previous x coordinate of the mouse pointer.
         /// </summary>
@@ -157,9 +139,6 @@ namespace ClearCanvas.ImageViewer
 		public void Select()
 		{
             this.Context.Viewer.MouseButtonToolMap[_mouseButton] = this;
-
-			if (_useMouseWheel)
-				this.Context.Viewer.MouseWheelToolMap.MouseTool = this;
         }
 
         private void OnMouseButtonToolMapped(object sender, MouseButtonToolMappedEventArgs e)
@@ -170,12 +149,6 @@ namespace ClearCanvas.ImageViewer
                 EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
             }
         }
-
-		private void OnMouseWheelToolMapped(object sender, MouseWheelToolMappedEventArgs e)
-		{
-			_active = (e.NewTool == this);
-			EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
-		}
 
 		#region IUIEventHandler Members
 

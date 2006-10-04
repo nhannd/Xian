@@ -11,16 +11,13 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardZoom")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.ZoomMedium.png", "Icons.ZoomLarge.png")]
     
-    /// <summary>
-	/// Summary description for ZoomTool.
-	/// </summary>
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : DynamicActionMouseTool
 	{
@@ -28,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
-            :base(XMouseButtons.Right, true, false)
+            :base(XMouseButtons.Right, false)
 		{
 		}
 

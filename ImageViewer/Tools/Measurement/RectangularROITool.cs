@@ -5,6 +5,7 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.DynamicOverlays;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -15,14 +16,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [Tooltip("activate", "ToolsMeasurementRectangularROI")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RectangularROIMedium.png", "Icons.RectangularROILarge.png")]
     
-    /// <summary>
-	/// Summary description for RulerTool.
-	/// </summary>
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RectangularROITool : MouseTool
 	{
+		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
+
 		public RectangularROITool()
-            :base(XMouseButtons.Left, false, false)
+            :base(XMouseButtons.Left, false)
 		{
 		}
 
@@ -77,6 +77,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		#endregion
 
+		private bool PixelSpacingNotAllowed(ImageSop imageSop)
+		{
+			foreach (string modality in _disallowedModalities)
+			{
+				if (String.Compare(modality, imageSop.Modality, true) == 0)
+					return true;
+			}
+
+			return false;
+		}
+		
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
 			ROIGraphic roiGraphic = sender as ROIGraphic;
@@ -92,7 +103,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			string text;
 
-			if (image.ImageSop.PixelSpacingX == 0 || image.ImageSop.PixelSpacingY == 0)
+			bool pixelSpacingInvalid = image.ImageSop.PixelSpacingX <= float.Epsilon ||
+										image.ImageSop.PixelSpacingY <= float.Epsilon ||
+										double.IsNaN(image.ImageSop.PixelSpacingX) ||
+										double.IsNaN(image.ImageSop.PixelSpacingY);
+
+			//!! This has been put in as a temporary measure to stop certain modality 
+			//!! images (DX, CR, MG) from reporting the incorrect measurements in cm.
+			//!! These modalities should actually use Imager Pixel Spacing for the calculation.
+
+			if (this.PixelSpacingNotAllowed(image.ImageSop))
+				pixelSpacingInvalid = true;
+
+			if (pixelSpacingInvalid)
 			{
 				double area = Math.Abs(widthInPixels * heightInPixels);
 				text = String.Format("Area: {0:F2} pixels", area);

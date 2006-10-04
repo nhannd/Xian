@@ -41,12 +41,18 @@ namespace ClearCanvas.ImageViewer
 			_tiles.ItemRemoved += new EventHandler<TileEventArgs>(OnTileRemoved);
 		}
 
+		/// <summary>
+		/// Gets a <see cref="TileCollection"/>
+		/// </summary>
 		public TileCollection Tiles
 		{
 			get { return _tiles; }
 		}
 
 
+		/// <summary>
+		/// Gets the parent <see cref="IImageViewer"/>
+		/// </summary>
 		public IImageViewer ParentViewer
 		{
 			get 
@@ -61,7 +67,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets this image box's parent <see cref="PhysicalWorkspace"/>.
 		/// </summary>
-		/// <value>this image box's parent <see cref="PhysicalWorkspace"/>.</value>
 		public PhysicalWorkspace ParentPhysicalWorkspace
 		{
 			get
@@ -78,7 +83,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets this image box's client rectangle.
 		/// </summary>
-		/// <value>The image box's client rectangle.</value>
 		/// <remarks>
 		/// The client rectangle is completely determined by the 
 		/// <see cref="PhysicalWorkspace.ClientRectangle"/> of the 
@@ -522,13 +526,6 @@ namespace ClearCanvas.ImageViewer
 		/// repainted immediately.  If <b>false</b>, each image rectangle is still
 		/// invalidated but when the actual painting occurs is left to the the .NET 
 		/// framework.</param>
-		/// <remarks>
-		/// The semantics of <paramref name="paintNow"/> described above are only
-		/// guaranteed in the standard implementation of ClearCanvas for presentation images
-		/// that do not implement the <see cref="ICustomDrawable"/> interface.  How
-		/// a custom drawable image decides to interpret <paramref name="paintNow"/>
-		/// is entirely up to the implementor.
-		/// </remarks>
 		public void Draw(bool paintNow)
 		{
 			foreach (Tile tile in this.Tiles)

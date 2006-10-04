@@ -8,9 +8,6 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	/// <summary>
-	/// Summary description for ZoomTool.
-	/// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class Zoom2XTool : ZoomFixedTool
 	{

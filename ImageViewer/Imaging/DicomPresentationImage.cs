@@ -7,9 +7,6 @@ using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for PresentationImage.
-	/// </summary>
 	public class DicomPresentationImage : PresentationImage
 	{
 		private ImageSop _imageSop;

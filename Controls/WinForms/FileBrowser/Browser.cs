@@ -131,7 +131,8 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 		private ContextMenuStrip _customFolderContextMenu;
 		private ContextMenuStrip _customFileContextMenu;
 
-		private event EventHandler _itemOpenedEvent;
+		private event EventHandler _folderOpenedEvent;
+		private event EventHandler _filesOpenedEvent;
 
         private delegate void UpdateInvoker(object sender, ShellItemUpdateEventArgs e);
 
@@ -491,9 +492,9 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 
         private void viewSplitContainer_Resize(object sender, EventArgs e)
         {
-            int distance = Math.Max(viewSplitContainer.Height - 108, 0);
-            viewSplitContainer.SplitterDistance = distance;
-        }
+			//int distance = Math.Max(viewSplitContainer.Height - 108, 0);
+			//viewSplitContainer.SplitterDistance = distance;
+		}
 
         #endregion
 
@@ -501,10 +502,22 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 
         #region Generated Events
 
-		public event EventHandler ItemOpened
+		public event EventHandler FolderOpened
 		{
-			add { _itemOpenedEvent += value; }
-			remove { _itemOpenedEvent -= value; }
+			add { _folderOpenedEvent += value; }
+			remove { _folderOpenedEvent -= value; }
+		}
+
+		public event EventHandler FilesOpened
+		{
+			add { _filesOpenedEvent += value; }
+			remove { _filesOpenedEvent -= value; }
+		}
+
+		public void OpenSelectedFiles()
+		{
+			if (_filesOpenedEvent != null)
+				_filesOpenedEvent(this, new EventArgs());
 		}
 
 		/// <summary>
@@ -1330,7 +1343,42 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 
         #region Public
 
-        [Browsable(false)]
+		/// <summary>
+		///!! This has been added as a temporary measure so we can get at the selected
+		///!! items, be it the selected folder in the folderView or the selected files
+		///!! in the fileView.
+		///
+		/// </summary>
+		public IEnumerable<string> PathsToSelectedItems
+		{
+			get
+			{
+				List<string> paths = new List<string>();
+
+				if (fileView.SelectedOrder.Count == 0)
+				{
+					if (SelectedItem == null)
+						return null;
+
+					//no individual files have been selected, so return the
+					// currently selected folder from the folder view.
+					string path = ShellItem.GetFullPath(SelectedItem);
+					paths.Add(path);
+				}
+				else
+				{
+					//return the paths to all the selected files in the file view.
+					for (int i = 0; i < fileView.SelectedOrder.Count; ++i)
+					{
+						paths.Add(ShellItem.GetFullPath((ShellItem)((ListViewItem)fileView.SelectedOrder[i]).Tag));
+					}
+				}
+
+				return paths.AsReadOnly();
+			}
+		}
+
+			[Browsable(false)]
         public ShellItem SelectedItem
         {
             get { return selectedItem; }
@@ -1734,94 +1782,95 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
         /// </summary>
         private void ChangeNavBarItem(SelectedFolderChangedEventArgs e)
         {
-            if (!navAddressBox.CurrentItem.ShellItem.Equals(e.Item))
+			if (navAddressBox.CurrentItem.ShellItem.Equals(e.Item))
+				return;
+
+            int currentIndex = navAddressBox.Items.IndexOf(navAddressBox.CurrentItem);
+            BrowserComboItem currentItem = navAddressBox.CurrentItem;
+            int maxIndent = folderView.IsParentNode(myCompNode, selectedNode) ? 3 : 2;
+            TreeNode[] path;
+
+            bool isMyCompChild = folderView.IsParentNode(myCompNode, e.Node);
+            if (selectedNode.Nodes.Contains(e.Node) &&
+                ((isMyCompChild && e.Node.Level >= 3) || (!isMyCompChild && e.Node.Level >= 2)))
             {
-                int currentIndex = navAddressBox.Items.IndexOf(navAddressBox.CurrentItem);
-                BrowserComboItem currentItem = navAddressBox.CurrentItem;
-                int maxIndent = folderView.IsParentNode(myCompNode, selectedNode) ? 3 : 2;
-                TreeNode[] path;
-
-                bool isMyCompChild = folderView.IsParentNode(myCompNode, e.Node);
-                if (selectedNode.Nodes.Contains(e.Node) &&
-                    ((isMyCompChild && e.Node.Level >= 3) || (!isMyCompChild && e.Node.Level >= 2)))
-                {
-                    navAddressBox.Items.Insert(currentIndex + 1, new BrowserComboItem(e.Item, e.Node.Level));
-                    navAddressBox.SelectedIndex = currentIndex + 1;
-                }
-                else if (folderView.IsParentNode(e.Node, selectedNode, out path))
-                {
-                    if (e.Node.Equals(desktopNode))
-                        navAddressBox.SelectedIndex = 0;
-                    else if (e.Node.Equals(myCompNode))
-                        navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(myCompNode) + 1;
-                    else
-                        navAddressBox.SelectedIndex = currentIndex - path.Length + 1;
-
-                    while (currentItem.Text != e.Node.Text && currentItem.Indent >= maxIndent)
-                    {
-                        navAddressBox.Items.Remove(currentItem);
-                        currentIndex--;
-                        currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
-                    }
-                }
+                navAddressBox.Items.Insert(currentIndex + 1, new BrowserComboItem(e.Item, e.Node.Level));
+                navAddressBox.SelectedIndex = currentIndex + 1;
+            }
+            else if (folderView.IsParentNode(e.Node, selectedNode, out path))
+            {
+                if (e.Node.Equals(desktopNode))
+                    navAddressBox.SelectedIndex = 0;
+                else if (e.Node.Equals(myCompNode))
+                    navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(myCompNode) + 1;
                 else
+                    navAddressBox.SelectedIndex = currentIndex - path.Length + 1;
+
+                while (currentItem.Indent >= maxIndent && !currentItem.ShellItem.Equals(e.Item))
                 {
-                    while (currentItem.Indent >= maxIndent && !e.Node.Equals(myCompNode))
-                    {
-                        navAddressBox.Items.Remove(currentItem);
-                        currentIndex--;
-                        currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
-                    }
-
-                    if (folderView.IsParentNode(myCompNode, e.Node, out path))
-                    {
-                        if (path.Length > 2)
-                        {
-                            int startIndex =
-                                desktopNode.Nodes.IndexOf(myCompNode) +
-                                myCompNode.Nodes.IndexOf(path[1]) + 1;
-
-                            for (int i = 2; i < path.Length; i++)
-                            {
-                                navAddressBox.Items.Insert(startIndex + i,
-                                    new BrowserComboItem((ShellItem)path[i].Tag, i + 1));
-                            }
-
-                            navAddressBox.SelectedIndex = startIndex + path.Length - 1;
-                        }
-                        else
-                        {
-                            navAddressBox.SelectedIndex =
-                                desktopNode.Nodes.IndexOf(myCompNode) +
-                                myCompNode.Nodes.IndexOf(e.Node) + 2;
-                        }
-                    }
-                    else if (folderView.IsParentNode(desktopNode, e.Node, out path))
-                    {
-                        if (path.Length > 2)
-                        {
-                            int startIndex = desktopNode.Nodes.IndexOf(path[1]);
-
-                            for (int i = 2; i < path.Length; i++)
-                            {
-                                navAddressBox.Items.Insert(startIndex + i,
-                                    new BrowserComboItem((ShellItem)path[i].Tag, i));
-                            }
-
-                            navAddressBox.SelectedIndex = startIndex + path.Length - 1;
-                        }
-                        else
-                        {
-                            if (desktopNode.Nodes.IndexOf(e.Node) <= desktopNode.Nodes.IndexOf(myCompNode))
-                                navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(e.Node) + 1;
-                            else
-                                navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(e.Node) + myCompNode.Nodes.Count + 1;
-                        }
-                    }
-                    else
-                        navAddressBox.SelectedIndex = 0;
+					navAddressBox.Items.Remove(currentItem);
+                    currentIndex--;
+                    currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
                 }
             }
+            else
+            {
+				while (currentItem.Indent >= maxIndent && !e.Node.Equals(myCompNode))
+				{
+					navAddressBox.Items.Remove(currentItem);
+					currentIndex--;
+					currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
+				}
+
+				if (folderView.IsParentNode(myCompNode, e.Node, out path))
+				{
+					if (path.Length > 2)
+					{
+						int startIndex = 1 + (desktopNode.Nodes.IndexOf(myCompNode) + 1) +
+										  (myCompNode.Nodes.IndexOf(path[1]) + 1);
+
+						for (int i = 2; i < path.Length; i++)
+						{
+							navAddressBox.Items.Insert(startIndex++,
+								new BrowserComboItem((ShellItem)path[i].Tag, i + 1));
+						}
+
+						navAddressBox.SelectedIndex = startIndex - 1;
+					}
+					else
+					{
+						navAddressBox.SelectedIndex =
+							desktopNode.Nodes.IndexOf(myCompNode) +
+							myCompNode.Nodes.IndexOf(e.Node) + 2;
+					}
+				}
+				else if (folderView.IsParentNode(desktopNode, e.Node, out path))
+				{
+					if (path.Length > 2)
+					{
+						int startIndex = 1 + (desktopNode.Nodes.IndexOf(path[1]) + 1);
+						if (desktopNode.Nodes.IndexOf(path[1]) > desktopNode.Nodes.IndexOf(myCompNode))
+							startIndex += myCompNode.Nodes.Count;
+
+						for (int i = 2; i < path.Length; i++)
+						{
+							navAddressBox.Items.Insert(startIndex++,
+								new BrowserComboItem((ShellItem)path[i].Tag, i));
+						}
+
+						navAddressBox.SelectedIndex = startIndex - 1;
+					}
+					else
+					{
+						if (desktopNode.Nodes.IndexOf(e.Node) <= desktopNode.Nodes.IndexOf(myCompNode))
+							navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(e.Node) + 1;
+						else
+							navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(e.Node) + myCompNode.Nodes.Count + 1;
+					}
+				}
+				else
+					navAddressBox.SelectedIndex = 0;
+			}
         }
 
         /// <summary>
@@ -1859,7 +1908,7 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 
                     if (folderView.IsParentNode(newNode, oldNode))
                     {
-                        while (currentItem.Text != newNode.Text && currentItem.Indent >= maxIndent)
+                        while (!currentItem.ShellItem.Equals(item) && currentItem.Indent >= maxIndent)
                         {
                             navAddressBox.Items.Remove(currentItem);
                             currentIndex--;

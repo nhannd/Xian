@@ -15,6 +15,7 @@ using ClearCanvas.Controls.WinForms;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
+using System.Reflection;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -35,7 +36,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 				SplashScreen.SplashForm.Owner = this;
 			
 			InitializeComponent();
-            UpdateTitleBar();
+			this.Text = String.Format("{0} {1}",
+                Application.ApplicationName,
+                GetVersion());
  
             // Subscribe to WorkspaceManager events so we know when workspaces are being
             // added, removed and activated
@@ -191,5 +194,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._toolbar.ResumeLayout();
 			this._mainMenu.ResumeLayout();
 		}
+
+		private string GetVersion()
+		{
+			int major = Assembly.GetExecutingAssembly().GetName().Version.Major;
+			int minor = Assembly.GetExecutingAssembly().GetName().Version.Minor;
+
+			return String.Format("{0}.{1}", major, minor);
 	}
+}
 }

@@ -6,8 +6,8 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [MenuAction("show", "global-menus/MenuLayout/MenuLayoutLayoutManager")]
-    [ButtonAction("show", "global-toolbars/ToolbarStandard/MenuLayoutLayoutManager")]
+    [MenuAction("show", "global-menus/Layout/LayoutManager")]
+    [ButtonAction("show", "global-toolbars/ToolbarStandard/LayoutManager")]
     [ClickHandler("show", "Show")]
     [IconSet("show", IconScheme.Colour, "", "Icons.LayoutMedium.png", "Icons.LayoutLarge.png")]
     [Tooltip("show", "MenuLayoutLayoutManager")]

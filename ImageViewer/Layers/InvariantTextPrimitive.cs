@@ -5,9 +5,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for Text.
-	/// </summary>
 	public class InvariantTextPrimitive : InvariantPrimitive
 	{
 		private string _text;

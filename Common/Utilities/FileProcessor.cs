@@ -3,9 +3,6 @@ using System.IO;
 
 namespace ClearCanvas.Common.Utilities
 {
-	/// <summary>
-	/// Summary description for FileProcessor.
-	/// </summary>
 	public class FileProcessor
 	{
 		// Public methods

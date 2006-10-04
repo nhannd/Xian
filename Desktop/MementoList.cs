@@ -5,9 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-	/// <summary>
-	/// Summary description for MementoList.
-	/// </summary>
 	public class MementoList : IEnumerable<IMemento> 
 	{
 		private List<IMemento> _mementos = new List<IMemento>();

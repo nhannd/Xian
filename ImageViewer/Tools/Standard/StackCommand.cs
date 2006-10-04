@@ -6,9 +6,6 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	/// <summary>
-	/// Summary description for StackCommand.
-	/// </summary>
 	public class StackCommand : UndoableCommand
 	{
 		public StackCommand(ImageBox imageBox)

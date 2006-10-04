@@ -12,9 +12,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
-	/// <summary>
-	/// Summary description for WorkspaceForm.
-	/// </summary>
 	public class ImageViewerControl : UserControl
     {
         private IContainer components;

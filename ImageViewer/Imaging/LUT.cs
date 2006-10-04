@@ -3,9 +3,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for LUT.
-	/// </summary>
 	public class LUT : ILUT
 	{
 		// Protected attributes

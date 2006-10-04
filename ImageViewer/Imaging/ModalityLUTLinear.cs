@@ -3,9 +3,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for ModalityLUTLinear.
-	/// </summary>
 	public class ModalityLUTLinear : CalculatedGrayscaleLUT
 	{
 		private double _rescaleSlope;

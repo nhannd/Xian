@@ -7,9 +7,8 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Summary description for IRenderer.
+	/// Do not implement.  Will be removed in 1.0.
 	/// </summary>
-    
 	public interface IRenderer : IDisposable
 	{
 		void Draw(Graphics graphics, ImageDrawingEventArgs e);

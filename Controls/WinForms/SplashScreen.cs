@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -30,11 +31,18 @@ namespace ClearCanvas.Controls.WinForms
 		public SplashScreen()
 		{
 			InitializeComponent();
+			SetVersion();
 			this._statusLabel.ForeColor = Color.FromArgb(60, 150, 208);
 			this.Opacity = .00;
 			_timer.Start();
 			this.ClientSize = this.BackgroundImage.Size;
 			Control.CheckForIllegalCrossThreadCalls = false;
+		}
+
+		private void SetVersion()
+		{
+			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			this._versionLabel.Text = String.Format("Version {0}", version);
 		}
 
 		// ************* Static Methods *************** //

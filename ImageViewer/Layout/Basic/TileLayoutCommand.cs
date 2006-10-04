@@ -4,9 +4,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	/// <summary>
-	/// Summary description for LayoutCommand.
-	/// </summary>
 	public class TileLayoutCommand : UndoableCommand
 	{
 		public TileLayoutCommand(ImageBox imageBox)

@@ -6,9 +6,17 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A context in which a <see cref="PresentationImage"/> is displayed
+	/// </summary>
+	/// <remarks>
+	/// See <see cref="PhysicalWorkspace"/> for an explanation of how tiles
+	/// help describe the layout of images in a workspace.
+	/// </remarks>
 	public class Tile : IDrawable, IClientArea, IUIEventHandler, IMemorable
 	{
 		private PresentationImageCollection _presentationImages = new PresentationImageCollection();
@@ -19,7 +27,9 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
 		private int _drawableInsetSize = 4;
 
-		// Constructor
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Tile"/> class.
+		/// </summary>
 		public Tile()
 		{
 			// Add a single null reference; this will be the reference to an PresentationImage
@@ -27,7 +37,10 @@ namespace ClearCanvas.ImageViewer
 			_uiEventHandler = new UIEventHandler<PresentationImage>(this._presentationImages);
 		}
 
-        public IImageViewer ParentViewer
+		/// <summary>
+		/// Gets the parent <see cref="IImageViewer"/>
+		/// </summary>
+		public IImageViewer ParentViewer
 		{
 			get 
 			{
@@ -38,6 +51,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets this tile's parent <see cref="ImageBox"/>
+		/// </summary>
 		public ImageBox ParentImageBox
 		{
 			get
@@ -52,6 +68,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets this tile's client rectangle.
+		/// </summary>
 		public Rectangle ClientRectangle
 		{
 			get
@@ -60,6 +79,16 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the drawable inset size in pixels.
+		/// </summary>
+		/// <value>The drawable inset size in pixels.</value>
+		/// <remarks>
+		/// Adjacent <see cref="Tile"/> client rectangles have no gap between them.
+		/// For aesthetic reasons, a small gap is usually preferred; the actual 
+		/// <see cref="Tile.DrawableClientRectangle"/> should be slightly inset.  
+		/// This property determines the size of the inset in pixels.
+		/// </remarks>
 		public int DrawableInsetSize
 		{
 			get { return _drawableInsetSize; }
@@ -70,6 +99,16 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the drawable client rectangle.
+		/// </summary>
+		/// <value>The drawable client rectangle.</value>
+		/// <remarks>
+		/// Adjacent <see cref="Tile"/> client rectangles have no gap between them.
+		/// For aesthetic reasons, a small gap is usually preferred; the actual 
+		/// <b>DrawableClientRectangle</b> should be slightly inset.  The size of the
+		/// inset is determined by <see cref="DrawableInsetSize"/>.
+		/// </remarks>
 		public Rectangle DrawableClientRectangle
 		{
 			get
@@ -81,6 +120,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets this tile's <see cref="Presentationimage"/>.
+		/// </summary>
 		public PresentationImage PresentationImage
 		{
 			get
@@ -123,6 +165,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets this tile's <see cref="PresentationImage"/> based on the
+		/// index in the associated <see cref="DisplaySet"/>
+		/// </summary>
 		public int PresentationImageIndex
 		{
 			get
@@ -154,6 +200,15 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Tile"/> is
+		/// selected.
+		/// </summary>
+		/// <value><b>true</b> if selected; <b>false</b> otherwise.</value>
+		/// <remarks>
+		/// <see cref="Tile"/> selection is mutually exclusive, i.e., only one
+		/// <see cref="Tile"/> is ever selected at a given time.  
+		/// </remarks>
 		public bool Selected
 		{
 			get { return _selected; }
@@ -195,7 +250,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public event EventHandler<ImageDrawingEventArgs> ImageDrawing
+		internal event EventHandler<ImageDrawingEventArgs> ImageDrawing
 		{
 			add { _imageDrawingEvent += value; }
 			remove { _imageDrawingEvent -= value; }
@@ -238,6 +293,14 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDrawable
 
+		/// <summary>
+		/// Draws the <see cref="PresentationImage"/> currently associated
+		/// with this <see cref="ImageBox"/>.
+		/// </summary>
+		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
+		/// repainted immediately.  If <b>false</b>, each image rectangle is still
+		/// invalidated but when the actual painting occurs is left to the the .NET 
+		/// framework.</param>
 		public void Draw(bool paintNow)
 		{
 			if (this.PresentationImage != null)

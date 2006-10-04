@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (this.Context.SelectedServer.Host == "localhost")
+			if (this.Context.SelectedServerGroup.IsLocalDatastore)
 				this.Context.DefaultActionHandler = OpenStudy;
 		}
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from the local machine, then we don't
 			// even care whether a study has been selected or not
-			if (this.Context.SelectedServer.Host != "localhost")
+			if (!this.Context.SelectedServerGroup.IsLocalDatastore)
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			if (this.Context.SelectedServer.Host == "localhost")
+			if (this.Context.SelectedServerGroup.IsLocalDatastore)
 			{
 				if (this.Context.SelectedStudy != null)
 					this.Enabled = true;

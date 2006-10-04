@@ -2,9 +2,6 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	/// <summary>
-	/// Summary description for MeasurementParams.
-	/// </summary>
 	public class SpatialMeasurementParams
 	{
 		double _pixelSpacingX;

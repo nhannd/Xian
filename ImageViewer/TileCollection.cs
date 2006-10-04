@@ -6,9 +6,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for TileCollection.
-	/// </summary>
 	public class TileCollection : ObservableList<Tile, TileEventArgs>
 	{
 		public TileCollection()

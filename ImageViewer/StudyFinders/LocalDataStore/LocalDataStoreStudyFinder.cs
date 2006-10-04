@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             queryKey.Add(DicomTag.StudyDate, "");
             queryKey.Add(DicomTag.StudyDescription, queryParams["StudyDescription"]);
             queryKey.Add(DicomTag.PatientsBirthDate, "");
-            //queryKey.Add(DicomTag.ModalitiesInStudy, "");
+            queryKey.Add(DicomTag.ModalitiesInStudy, "");
 
             ReadOnlyQueryResultCollection results = Query(queryKey);
             if (null == results)
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
                 item.PatientsBirthDate = result[DicomTag.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
                 item.StudyDescription = result.StudyDescription;
-                //item.ModalitiesInStudy = result.ModalitiesInStudy;
+                item.ModalitiesInStudy = result.ModalitiesInStudy;
                 item.AccessionNumber = result.AccessionNumber;
                 item.StudyInstanceUID = result.StudyInstanceUid.ToString();
                 item.StudyLoaderName = this.Name;

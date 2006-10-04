@@ -133,9 +133,9 @@ namespace ClearCanvas.Dicom.Services
         #endregion
     }
 
-    [MenuAction("launch", "global-menus/Services/Queue")]
-    [ClickHandler("launch", "Launch")]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	//[MenuAction("launch", "global-menus/Services/Queue")]
+	//[ClickHandler("launch", "Launch")]
+	//[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class QueueDisplayLaunchTool : Tool<IDesktopToolContext>
     {
         public QueueDisplayLaunchTool()

@@ -6,9 +6,6 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tests
 {
-	/// <summary>
-	/// Summary description for ModalityLUTLinearTest.
-	/// </summary>
 	[TestFixture]
 	public class ModalityLUTLinearTest
 	{

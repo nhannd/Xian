@@ -5,9 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for InactiveState.
-	/// </summary>
 	public class SelectedInteractiveGraphicState : SelectedGraphicState
 	{
 		public SelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)

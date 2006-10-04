@@ -8,7 +8,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private int _initialPresentationImageIndex;
 
 		public StackTool()
-            :base(XMouseButtons.Left, true, true)
+            :base(XMouseButtons.Left, true)
 		{
 		}
 

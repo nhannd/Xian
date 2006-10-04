@@ -2,9 +2,6 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for Exceptions.
-	/// </summary>
 	public class ImageValidationException : ApplicationException
 	{
 		public ImageValidationException() {}

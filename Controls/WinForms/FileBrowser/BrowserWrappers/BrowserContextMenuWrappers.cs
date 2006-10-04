@@ -185,7 +185,46 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.BrowserWrappers
         /// </summary>
         void FolderView_MouseUp(object sender, MouseEventArgs e)
         {
-            if (suspendContextMenu || contextMenuVisible)
+			//SB (2006-09-26)
+			//This is necessary because of the strange default behaviour of TreeView.
+			//On right click, the node you right-click on doesn't get selected, which
+			//is confusing to the user.  However, I think the reason for it is that
+			//if you DO select the node on right button up (in code), then if you go and
+			//click the same (selected) node with the left button, it doesn't expand.
+			//The code below for the left button fixes that issue.
+			//
+			//SOOOO, I've put this code in as a temporary measure, so that the behaviour
+			//is more Windows Explorer-like.
+
+			if (e.Button == MouseButtons.Right)
+			{
+				//on right mouse button, select the node.
+				TreeNode selectedNode = br.FolderView.GetNodeAt(e.Location);
+				if (selectedNode != null)
+					br.FolderView.SelectedNode = selectedNode;
+			}
+			else if (e.Button == MouseButtons.Left)
+			{
+				// Setting the selected node on right button affects the expansion
+				// of the same node when leaving the context menu and left-clicking
+				// on the same (already selected) node.
+				TreeNode selectedNode = br.FolderView.GetNodeAt(e.Location);
+				if (br.FolderView.SelectedNode == selectedNode)
+				{
+					TreeViewHitTestInfo hitTest = br.FolderView.HitTest(e.Location);
+					//you have to check the hit test location, otherwise if you go
+					//and click on the + sign, it will collapse and then expand again.
+					if (hitTest.Location == TreeViewHitTestLocations.Image ||
+						hitTest.Location == TreeViewHitTestLocations.Label ||
+						hitTest.Location == TreeViewHitTestLocations.StateImage)
+					{
+						if (!br.FolderView.SelectedNode.IsExpanded)
+							br.FolderView.SelectedNode.Expand();
+					}
+				}
+			}
+
+			if (suspendContextMenu || contextMenuVisible)
             {
                 suspendContextMenu = false;
                 return;
@@ -633,88 +672,99 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.BrowserWrappers
                 ShellItem shellItem = (ShellItem)listViewItem.Tag;
                 int startIndex = 0;
 
-                if ((Control.ModifierKeys & Keys.Alt) == 0)
-                {
-                    if (shellItem.IsFolder)
-                    {
-                        if (!parent.IsExpanded)
-                            parent.Expand();
+			    if ((Control.ModifierKeys & Keys.Alt) == 0)
+			    {
+			        if (shellItem.IsFolder)
+			        {
+			            if (!parent.IsExpanded)
+			                parent.Expand();
 
-                        br.FolderView.SelectedNode = parent.Nodes[listViewItem.Text];
-                        startIndex = 1;
-                    }
+			            br.FolderView.SelectedNode = parent.Nodes[listViewItem.Text];
+			            startIndex = 1;
+			        }
 
-                    if (br.FileView.SelectedOrder.Count - startIndex > 0)
-                    {
-                        #region Fields
+					if (br.FileView.SelectedOrder.Count - startIndex > 0)
+					{
+						if (br.CustomFileContextMenu != null)
+						{
+							//!! temporary workaround to make double-click (or enter) on
+							//!! one or more files open the files rather than the parent folder.
+							br.OpenSelectedFiles();
+							return;
+						}
 
-                        IntPtr[] pidls = new IntPtr[br.FileView.SelectedOrder.Count - startIndex];
-                        for (int i = startIndex; i < pidls.Length; i++)
-                        {
-                            pidls[i - startIndex] = ((ShellItem)((ListViewItem)br.FileView.SelectedOrder[i]).Tag).PIDLRel.Ptr;
-                        }
+						#region Fields
 
-                        IntPtr icontextMenuPtr = IntPtr.Zero, context2Ptr = IntPtr.Zero, context3Ptr = IntPtr.Zero;
-                        ContextMenu contextMenu = new ContextMenu();
-                        ShellItem parentShellItem = (ShellItem)parent.Tag;
-                        IShellFolder parentShellFolder = parentShellItem.ShellFolder;
+						IntPtr[] pidls = new IntPtr[br.FileView.SelectedOrder.Count - startIndex];
+						for (int i = startIndex; i < pidls.Length; i++)
+						{
+							pidls[i - startIndex] = ((ShellItem)((ListViewItem)br.FileView.SelectedOrder[i]).Tag).PIDLRel.Ptr;
+						}
 
-                        #endregion
+						IntPtr icontextMenuPtr = IntPtr.Zero, context2Ptr = IntPtr.Zero, context3Ptr = IntPtr.Zero;
+						ContextMenu contextMenu = new ContextMenu();
+						ShellItem parentShellItem = (ShellItem)parent.Tag;
+						IShellFolder parentShellFolder = parentShellItem.ShellFolder;
 
-                        #region Show / Invoke
+						#endregion
 
-                        try
-                        {
-                            if (ContextMenuHelper.GetIContextMenu(parentShellFolder, pidls, out icontextMenuPtr, out iContextMenu))
-                            {
-                                iContextMenu.QueryContextMenu(
-                                    contextMenu.Handle,
-                                    0,
-                                    ShellAPI.CMD_FIRST,
-                                    ShellAPI.CMD_LAST,
-                                    ShellAPI.CMF.DEFAULTONLY);
+						#region Show / Invoke
 
-                                int defaultCommand = ShellAPI.GetMenuDefaultItem(contextMenu.Handle, false, 0);
-                                if (defaultCommand >= ShellAPI.CMD_FIRST)
-                                {
-                                    ContextMenuHelper.InvokeCommand(
-                                        iContextMenu,
-                                        (uint)defaultCommand - ShellAPI.CMD_FIRST,
-                                        ShellItem.GetRealPath(parentShellItem),
-                                        Control.MousePosition);
-                                }
-                            }
-                        }
-                        #endregion
-                        catch (Exception) { }
-                        #region Finally
-                        finally
-                        {
-                            if (iContextMenu != null)
-                            {
-                                Marshal.ReleaseComObject(iContextMenu);
-                                iContextMenu = null;
-                            }
+						try
+						{
+							if (ContextMenuHelper.GetIContextMenu(parentShellFolder, pidls, out icontextMenuPtr, out iContextMenu))
+							{
+								iContextMenu.QueryContextMenu(
+									contextMenu.Handle,
+									0,
+									ShellAPI.CMD_FIRST,
+									ShellAPI.CMD_LAST,
+									ShellAPI.CMF.DEFAULTONLY);
 
-                            if (contextMenu.Handle != null)
-                                Marshal.FreeCoTaskMem(contextMenu.Handle);
+								int defaultCommand = ShellAPI.GetMenuDefaultItem(contextMenu.Handle, false, 0);
+								if (defaultCommand >= ShellAPI.CMD_FIRST)
+								{
+									ContextMenuHelper.InvokeCommand(
+										iContextMenu,
+										(uint)defaultCommand - ShellAPI.CMD_FIRST,
+										ShellItem.GetRealPath(parentShellItem),
+										Control.MousePosition);
+								}
+							}
+						}
+						#endregion
+						catch (Exception) { }
+						#region Finally
+						finally
+						{
+							if (iContextMenu != null)
+							{
+								Marshal.ReleaseComObject(iContextMenu);
+								iContextMenu = null;
+							}
 
-                            Marshal.Release(icontextMenuPtr);
-                        }
-                        #endregion
-                    }
-                }
-                else
-                {
-                    IntPtr[] pidls = new IntPtr[br.FileView.SelectedOrder.Count - startIndex];
-                    for (int i = startIndex; i < pidls.Length; i++)
-                    {
-                        pidls[i - startIndex] = ((ShellItem)((ListViewItem)br.FileView.SelectedOrder[i]).Tag).PIDLRel.Ptr;
-                    }
+							if (contextMenu.Handle != null)
+								Marshal.FreeCoTaskMem(contextMenu.Handle);
 
-                    ContextMenuHelper.InvokeCommand(shellItem.ParentItem, pidls, "properties", Control.MousePosition);
-                }
-            }
+							Marshal.Release(icontextMenuPtr);
+						}
+						#endregion
+					}
+				}
+				else
+				{
+					if (br.CustomFileContextMenu != null)
+						return;
+
+					IntPtr[] pidls = new IntPtr[br.FileView.SelectedOrder.Count - startIndex];
+					for (int i = startIndex; i < pidls.Length; i++)
+					{
+						pidls[i - startIndex] = ((ShellItem)((ListViewItem)br.FileView.SelectedOrder[i]).Tag).PIDLRel.Ptr;
+					}
+
+					ContextMenuHelper.InvokeCommand(shellItem.ParentItem, pidls, "properties", Control.MousePosition);
+				}
+			}
         }
 
         /// <summary>
@@ -730,10 +780,10 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.BrowserWrappers
             }
 
 			// NY: Added support for custom context menus
-			if (br.CustomFolderContextMenu != null)
+			if (br.CustomFileContextMenu != null)
 			{
 				if (e.Button == MouseButtons.Right)
-					br.CustomFolderContextMenu.Show(Control.MousePosition);
+					br.CustomFileContextMenu.Show(Control.MousePosition);
 			}
 			else
 			{

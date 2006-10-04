@@ -85,13 +85,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return base.Port; }
         }
 
-        public override string ToString()
+/*        public override string ToString()
         {
             StringBuilder me = new StringBuilder();
             me.AppendFormat("{0} <{1}> ({2}) - {3}", Servername, Serverpath, Serverlocation, base.ToString());
             return me.ToString();
         }
-
+*/
         public string AEDetails
         {
             get
@@ -102,11 +102,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
+        public ApplicationEntity getApplicationEntity()
+        {
+            return(new ApplicationEntity(new HostName(base.Host), new AETitle(base.AE), new ListeningPort(base.Port)));
+        }
+
         public String getServerGroupName()
         {
             if (ServerPathGroups == null || ServerPathGroups.Length <= 0)
                 return "";
-            return ServerPathGroups[ServerPathGroups.Length - 1]; 
+            return ServerPathGroups[ServerPathGroups.Length - 1];
+        }
+
+        public String getServerGroupID()
+        {
+            if (Servername == null || ServerPathGroups == null || ServerPathGroups.Length <= 0)
+                return "";
+            if (Servername.Equals(AENavigatorComponent.EmptyNodeName))
+            {
+                if (ServerPathGroups.Length == 1)
+                    return Serverpath;
+
+                string spath = "";
+                for (int m = 0; m < ServerPathGroups.Length-1; m++)
+                {
+                    spath += "/" + ServerPathGroups[m];
+                }
+                return spath;
+            }
+            else
+            {
+                return Serverpath;
+            }
         }
 
         public String getServerRootName()
@@ -116,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return ServerPathGroups[0];
         }
 
-        public int BuildServerPathGroup()
+        private int BuildServerPathGroup()
         {
             if (_serverpath == null)
                 return -1;

@@ -4,9 +4,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
-	/// <summary>
-	/// Summary description for EventArgs.
-	/// </summary>
     public class WorkspaceEventArgs : CollectionEventArgs<IWorkspace>
 	{
 		public WorkspaceEventArgs()

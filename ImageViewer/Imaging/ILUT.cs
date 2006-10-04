@@ -2,9 +2,6 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// Summary description for ILUT.
-	/// </summary>
 	public interface ILUT
 	{
 		int NumEntries

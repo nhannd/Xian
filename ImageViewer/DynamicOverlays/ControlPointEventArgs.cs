@@ -5,9 +5,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for ControlPointEventArgs.
-	/// </summary>
 	public class ControlPointEventArgs : CollectionEventArgs<PointF>
 	{
 		private int _controlPointIndex;

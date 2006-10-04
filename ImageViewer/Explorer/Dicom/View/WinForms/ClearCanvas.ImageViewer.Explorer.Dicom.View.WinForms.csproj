@@ -54,12 +54,13 @@
       <DependentUpon>AEServerEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AEServerEditorComponentView.cs" />
-    <Compile Include="AEServerTreeForm.cs">
+    <Compile Include="AEServerGroupEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AEServerTreeForm.designer.cs">
-      <DependentUpon>AEServerTreeForm.cs</DependentUpon>
+    <Compile Include="AEServerGroupEditorComponentControl.Designer.cs">
+      <DependentUpon>AEServerGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="AEServerGroupEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -119,10 +120,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>AENavigatorControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AEServerTreeForm.resx">
-      <DependentUpon>AEServerTreeForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="StudyBrowserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>
@@ -135,6 +132,10 @@
     <EmbeddedResource Include="AEServerEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AEServerEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AEServerGroupEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AEServerGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\Add.png" />
     <EmbeddedResource Include="Icons\Delete.png" />
@@ -151,6 +152,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>SearchPanelComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icons\Edit.png" />
+    <Content Include="Icons\Verify.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

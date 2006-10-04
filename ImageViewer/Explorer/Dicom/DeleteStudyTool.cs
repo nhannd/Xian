@@ -32,6 +32,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
+			DialogBoxAction action = Platform.ShowMessageBox("Are you sure?", MessageBoxActions.YesNo);
+
+			if (action == DialogBoxAction.No)
+				return;
+
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
 				Uid studyInstanceUid = new Uid(item.StudyInstanceUID);
@@ -55,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from the local machine, then we don't
 			// even care whether a study has been selected or not
-			if (this.Context.SelectedServer.Host != "localhost")
+			if (!this.Context.SelectedServerGroup.IsLocalDatastore)
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
@@ -68,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			if (this.Context.SelectedServer.Host == "localhost")
+			if (this.Context.SelectedServerGroup.IsLocalDatastore)
 				this.Enabled = true;
 			else
 				this.Enabled = false;

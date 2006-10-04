@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="9.75" />
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.StudyTree" Collapsed="true">
-    <Position X="6.25" Y="0.5" Width="1.5" />
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.StudyTree" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\StudyTree.cs</FileName>
       <HashCode>gAAAAAAAAAAAAEggAAQAABAEAAEAAAAABAIAAACDACA=</HashCode>
@@ -10,16 +10,16 @@
     <ShowAsCollectionAssociation>
       <Property Name="Patients" />
     </ShowAsCollectionAssociation>
-    <AssociationLine Name="Patients" Type="ClearCanvas.Workstation.Model.StudyManagement.Patient" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Patients" Type="ClearCanvas.ImageViewer.StudyManagement.Patient" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="7" Y="1.056" />
-        <Point X="7" Y="1.431" />
-        <Point X="1.188" Y="1.431" />
+        <Point X="7.5" Y="1.056" />
+        <Point X="7.5" Y="1.625" />
+        <Point X="1.188" Y="1.625" />
         <Point X="1.188" Y="2" />
       </Path>
     </AssociationLine>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.Patient" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.Patient" Collapsed="true">
     <Position X="0.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\Patient.cs</FileName>
@@ -29,7 +29,7 @@
       <Property Name="Studies" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.Study" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.Study" Collapsed="true">
     <Position X="3" Y="2" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\Study.cs</FileName>
@@ -39,36 +39,25 @@
       <Property Name="Series" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.Series" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.Series" Collapsed="true">
     <Position X="5.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\Series.cs</FileName>
-      <HashCode>AgAACAAAAAAAEAAkAACAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AoAACAAAAAAAEAAkAACAAAAAAAAAAEAAAAAAAAAAIAA=</HashCode>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Sops" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.Sop" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.Sop" Collapsed="true">
     <Position X="7.75" Y="2" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\Sop.cs</FileName>
       <HashCode>AAAAAAAAAAAACAIEAAAAAAAAAAAAAACAAAAAEAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.WorkstationModel" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.75" />
-    <TypeIdentifier>
-      <FileName>WorkstationModel.cs</FileName>
-      <HashCode>AAAEgQAABABAAAAIAAIABAQEBAAJABAAACAIIAAAIAQ=</HashCode>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="StudyManager" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.StudyManager" Collapsed="true">
-    <Position X="3.5" Y="0.5" Width="1.5" />
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.StudyManager" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\StudyManager.cs</FileName>
       <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAAAAAQAMA=</HashCode>
@@ -77,18 +66,37 @@
       <Property Name="StudyTree" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.ImageSop" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.ImageSop" Collapsed="true">
     <Position X="7.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\ImageSop.cs</FileName>
-      <HashCode>dglAgAMUIROghEAVQ4CFZGnEARxCABABMABwaAlAAEA=</HashCode>
+      <HashCode>dolAgAMUIROghEAVQ4CFZGnEARxCABABMABwaAlAAEA=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="ClearCanvas.Workstation.Model.StudyManagement.LocalImageSop" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.StudyManagement.LocalImageSop" Collapsed="true">
     <Position X="7.75" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\LocalImageSop.cs</FileName>
-      <HashCode>dglAgAMUIROgjEARQ4CFZGnEARxCABCBMABwaAlIAEA=</HashCode>
+      <HashCode>dolAgAMUIROgjEARQ4CFZGnEARxCABCBMABwaAlIAEA=</HashCode>
     </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.ImageViewerComponent" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>ImageViewerComponent.cs</FileName>
+      <HashCode>AQAAICAAUCBwIAAAABBAAAAEAAAoABBAIoAiAEQAIAQ=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="StudyManager" />
+    </ShowAsAssociation>
+    <NestedTypes>
+      <Class Name="ClearCanvas.ImageViewer.ImageViewerComponent.ImageViewerToolContext" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ImageViewerComponent.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <Lollipop Position="0.2" />
   </Class>
 </ClassDiagram>

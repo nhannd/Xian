@@ -1,12 +1,13 @@
+using System;
+using System.Text;
+using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Dicom;
+using MySR = ClearCanvas.Dicom.SR;
+
 namespace ClearCanvas.Dicom
 {
-    using System;
-    using ClearCanvas.Common;
-    using ClearCanvas.Dicom.OffisWrapper;
-    using ClearCanvas.Dicom;
-    using MySR = ClearCanvas.Dicom.SR;
-    using System.Text;
-
 	/// <summary>
 	/// Encapsulates a set of static functions that helps with work on various aspects to
     /// do with the OFFIS DICOM Toolkit.
@@ -30,10 +31,19 @@ namespace ClearCanvas.Dicom
 
 			if (status.bad())
 			{
+				// Status code 1 - invalid tag
+				// Usually happens when a tag is queried that exists, but has an empty value.
+				// This is not a particularly exceptional situation, since we mostly only
+				// care whether or not the tag has a value.  If the tag is 'invalid', regardless
+				// of the reason, set tagExists to false and return.
+				
 				// Status code 2 = Tag not found
 				// This is not an exceptional situation (and in fact can occur often), 
 				// so don't throw an exception, but set tagExists to false.
-				if (status.code() == 2)
+
+				//NOTE: The rest of the return codes *ARE* exceptional situations.
+
+				if (status.code() == 1 || status.code() == 2)
 					tagExists = false;
 				else
 					throw new GeneralDicomException(String.Format(SR.ExceptionDICOMTag, tag.toString(), status.text()));
@@ -113,6 +123,27 @@ namespace ClearCanvas.Dicom
             return normalizedDirectory.ToString();
         }
 
+        /// <summary>
+        /// Takes in a string that contains a DICOM DT value
+        /// and returns it in the format of the current user-configured
+        /// culture. This function assumes that the DT value is formatted
+        /// correctly, i.e. in the ANSI format of YYYYMMDD
+        /// </summary>
+        public static string ConvertFromDicomDA(string dicomDAValue)
+        {
+            if (dicomDAValue.Length < 8)
+                return dicomDAValue;
+
+            DateTime newDate = new DateTime(
+                Convert.ToInt32(dicomDAValue.Substring(0, 4)),
+                Convert.ToInt32(dicomDAValue.Substring(4, 2)),
+                Convert.ToInt32(dicomDAValue.Substring(6, 2))
+                );
+
+            string[] formats = newDate.GetDateTimeFormats(Thread.CurrentThread.CurrentCulture);
+            return formats[0];
+        }
+
         private DicomHelper() { }
-	}
+    }
 }

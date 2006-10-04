@@ -7,9 +7,6 @@ using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for RulerOverlay.
-	/// </summary>
 	public class InteractiveMultiLineGraphic : InteractiveGraphic
 	{
 		private MultiLineAnchorPointsGraphic _anchorPointsGraphic = new MultiLineAnchorPointsGraphic();

@@ -5,9 +5,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Summary description for PhysicalWorkspaceMemento.
-	/// </summary>
 	internal class PhysicalWorkspaceMemento : IMemento
 	{
 		private LogicalWorkspace _logicalWorkspace;

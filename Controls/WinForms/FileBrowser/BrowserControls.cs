@@ -657,7 +657,10 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
                         DrawImage();
                         break;
                     case (int)ShellAPI.WM.CHAR:
-                        base.WndProc(ref m);
+                        //!!Typing UNC paths in the address bar can cause a crash.
+						//!!The code around the folder selection from a path is a bit
+						//!!flaky right now, so we'll just not let the user type at all.
+						//base.WndProc(ref m);
                         DrawImage();
                         break;
                     case (int)ShellAPI.WM.GETTEXTLENGTH:

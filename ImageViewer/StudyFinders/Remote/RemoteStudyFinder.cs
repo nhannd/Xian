@@ -39,6 +39,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
             queryKey.Add(DicomTag.PatientsName, queryParams["PatientsName"]);
             queryKey.Add(DicomTag.StudyDate, "");
             queryKey.Add(DicomTag.StudyDescription, queryParams["StudyDescription"]);
+            queryKey.Add(DicomTag.PatientsBirthDate, "");
+            queryKey.Add(DicomTag.ModalitiesInStudy, "");
 
             ReadOnlyQueryResultCollection results = Query(_selectedServer, queryKey);
             if (null == results)
@@ -54,7 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
                 item.PatientsBirthDate = result[DicomTag.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
                 item.StudyDescription = result.StudyDescription;
-                //item.ModalitiesInStudy = result.ModalitiesInStudy;
+                item.ModalitiesInStudy = result.ModalitiesInStudy;
                 item.AccessionNumber = result.AccessionNumber;
                 item.StudyLoaderName = this.Name;
                 item.Server = _selectedServer;

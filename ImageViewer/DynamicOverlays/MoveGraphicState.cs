@@ -8,9 +8,6 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for InactiveState.
-	/// </summary>
 	public class MoveGraphicState : GraphicState
 	{
 		private PointF _currentPoint = new Point(0,0);

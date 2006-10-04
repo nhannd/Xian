@@ -74,7 +74,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 				//string str = String.Format("Memory: {0}", GC.GetTotalMemory(false));
 				//Platform.Log(str);
 
-				if (tabPages.Count == 0)
+				// When there are no tabs left, turn off the tab control strip.
+				// Done purely for aesthetic reasons.
+				if (_tabbedGroups.ActiveLeaf.TabPages.Count == 0)
 					_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
             }
             catch (Exception ex)

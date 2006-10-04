@@ -7,9 +7,6 @@ using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for RulerOverlay.
-	/// </summary>
 	public class InteractiveRectangleGraphic : InteractiveGraphic
 	{
 		private const int _topLeft = 0;

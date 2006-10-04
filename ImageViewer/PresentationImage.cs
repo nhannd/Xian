@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="ImageWorkspace"/>.
+		/// Gets the parent <see cref="IImageViewer"/>.
 		/// </summary>
 		/// <value>Can be <b>null</b> if <see cref="PresentationImage"/> has not been
 		/// added to a <see cref="DisplaySet"/>.</value>
@@ -152,6 +152,13 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDrawable Members
 
+		/// <summary>
+		/// Draws the image.
+		/// </summary>
+		/// <param name="paintNow">If <b>true</b>, the image rectangle is invalidated and
+		/// repainted immediately.  If <b>false</b>, the image rectangle is still
+		/// invalidated but when the actual painting occurs is left to the the .NET 
+		/// framework.</param>
 		public virtual void Draw(bool paintNow)
 		{
 			if (!this.Visible)
@@ -242,19 +249,19 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			e.SelectedPresentationImage = this;
-			e.SelectedDisplaySet = this.ParentDisplaySet;
+			//e.SelectedPresentationImage = this;
+			//e.SelectedDisplaySet = this.ParentDisplaySet;
 
-			bool handled = this.LayerManager.RootLayerGroup.OnMouseWheel(e);
+			//bool handled = this.LayerManager.RootLayerGroup.OnMouseWheel(e);
 
-			if (!handled)
-			{
-				MouseTool tool = this.ParentViewer.MouseWheelToolMap.MouseTool;
-				if (tool != null)
-				{
-					tool.OnMouseWheel(e);
-				}
-			}
+			//if (!handled)
+			//{
+			//    MouseTool tool = this.ParentViewer.MouseWheelToolMap.MouseTool;
+			//    if (tool != null)
+			//    {
+			//        tool.OnMouseWheel(e);
+			//    }
+			//}
 
 			return true;
 		}

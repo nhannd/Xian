@@ -6,9 +6,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	/// <summary>
-	/// Summary description for BaseLayerCollection.
-	/// </summary>
 	public class BaseLayerCollection : ObservableList<Layer, LayerEventArgs>
 	{
 		public BaseLayerCollection()

@@ -62,7 +62,12 @@ namespace ClearCanvas.Desktop.Explorer
 					this.Context.DesktopWindow, 
 					_tabComponentContainer, 
 					"Explorer", 
-					delegate { _tabComponentContainer = null; });
+					delegate 
+					{ 
+						_tabComponentContainer = null;
+						_healthcareArtifactExplorers.Clear();
+						_healthcareArtifactExplorers = null;
+					});
 
 			}
 		}

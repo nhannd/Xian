@@ -7,9 +7,6 @@ using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	/// <summary>
-	/// Summary description for CreateRulerCommand.
-	/// </summary>
 	public class PositionGraphicCommand : UndoableCommand
 	{
 		private bool _create;

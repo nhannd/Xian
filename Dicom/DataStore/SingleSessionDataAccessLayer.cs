@@ -9,75 +9,97 @@ using NHibernate.Mapping.Attributes;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public partial class SingleSessionDataAccessLayer : IDisposable
+    public class SingleSessionDataAccessLayer
     {
         #region Handcoded Members
         #region Private Members
 
-        private static readonly ISessionFactory _sessionFactory;
-        private static Dictionary<Thread, ISession> _sessions;
+        private static Dictionary<Thread, ISessionFactory> _sessionFactories;
+        private static Dictionary<ISessionFactory, ISession> _sessions;
         private static Dictionary<ISession, IDataStoreReader> _dataStores;
         private static Dictionary<ISession, IDataStoreWriter> _dataStoreWriteAccessors;
         private static IDicomDictionary _dicomDictionary;
+        private static Configuration _hibernateConfiguration;
 
-        private static void CloseSessionFactory()
-        {          
-            if (_sessionFactory != null)
-                _sessionFactory.Close();
-        }
-
-        private static ISessionFactory SessionFactory
+        private static Dictionary<Thread, ISessionFactory> SessionFactories
         {
-            get { return _sessionFactory; }
+            get { return _sessionFactories; }
         }
 
-        private static Dictionary<ISession, IDataStoreReader> DataStores
+        private static Dictionary<ISession, IDataStoreReader> DataStoreReaders
         {
             get { return _dataStores; }
         }
 
-        private static Dictionary<Thread, ISession> Sessions
+        private static Dictionary<ISessionFactory, ISession> Sessions
         {
             get { return _sessions; }
         }
 
-        private static Dictionary<ISession, IDataStoreWriter> DataStoreWriteAccessors
+        private static Dictionary<ISession, IDataStoreWriter> DataStoreWriters
         {
             get { return _dataStoreWriteAccessors; }
+        }
+
+        private static Configuration HibernateConfiguration
+        {
+            get { return _hibernateConfiguration; }
+        }
+
+        private static ISessionFactory CurrentFactory
+        {
+            get
+            {
+                // look for stale sessions and get rid of them
+                List<KeyValuePair<Thread, ISessionFactory>> toRemoveArray = new List<KeyValuePair<Thread, ISessionFactory>>();
+                foreach (KeyValuePair<Thread, ISessionFactory> iterator in SingleSessionDataAccessLayer.SessionFactories)
+                {
+                    if (!iterator.Key.IsAlive)
+                        toRemoveArray.Add(iterator);
+                }
+                foreach (KeyValuePair<Thread, ISessionFactory> iterator in toRemoveArray)
+                {
+                    // get rid of session-dependent objects that we remember about, if the session
+                    // hasn't already been removed due to the Sqlite workaround.
+                    if (SingleSessionDataAccessLayer.Sessions.ContainsKey(iterator.Value))
+                    {
+                        ISession sessionToRemove = SingleSessionDataAccessLayer.Sessions[iterator.Value];
+                        SingleSessionDataAccessLayer.DataStoreReaders.Remove(sessionToRemove);
+                        SingleSessionDataAccessLayer.DataStoreWriters.Remove(sessionToRemove);
+                        SingleSessionDataAccessLayer.Sessions.Remove(iterator.Value);
+                    }
+
+                    // close the session and get rid of the session that we remember about
+                    SingleSessionDataAccessLayer.SessionFactories.Remove(iterator.Key);
+                }
+                toRemoveArray.Clear();
+
+                Thread currentThread = Thread.CurrentThread;
+                if (SingleSessionDataAccessLayer.SessionFactories.ContainsKey(currentThread))
+                {
+                    return SingleSessionDataAccessLayer.SessionFactories[currentThread];
+                }
+                else
+                {
+                    ISessionFactory newSessionFactory = SingleSessionDataAccessLayer.HibernateConfiguration.BuildSessionFactory();
+                    SingleSessionDataAccessLayer.SessionFactories.Add(currentThread, newSessionFactory);
+                    return newSessionFactory;
+                }
+            }
         }
 
         private static ISession CurrentSession
         {
             get 
             {
-                // look for stale sessions and get rid of them
-                List<KeyValuePair<Thread,ISession>> toRemoveArray = new List<KeyValuePair<Thread,ISession>>();
-                foreach (KeyValuePair<Thread, ISession> iterator in SingleSessionDataAccessLayer.Sessions)
+                if (SingleSessionDataAccessLayer.Sessions.ContainsKey(SingleSessionDataAccessLayer.CurrentFactory))
                 {
-                    if (!iterator.Key.IsAlive || !iterator.Value.IsOpen)
-                        toRemoveArray.Add(iterator);
-                }
-                foreach (KeyValuePair<Thread, ISession> iterator in toRemoveArray)
-                {
-                    // get rid of session-dependent objects that we remember about
-                    SingleSessionDataAccessLayer.DataStores.Remove(iterator.Value);
-                    SingleSessionDataAccessLayer.DataStoreWriteAccessors.Remove(iterator.Value);
-
-                    // close the session and get rid of the session that we remember about
-                    iterator.Value.Close();
-                    SingleSessionDataAccessLayer.Sessions.Remove(iterator.Key);
-                }
-                toRemoveArray.Clear();
-
-                Thread currentThread = Thread.CurrentThread;
-                if (SingleSessionDataAccessLayer.Sessions.ContainsKey(currentThread))
-                {
-                    return SingleSessionDataAccessLayer.Sessions[currentThread];
+                    return SingleSessionDataAccessLayer.Sessions[SingleSessionDataAccessLayer.CurrentFactory];
                 }
                 else
                 {
-                    ISession newSession = SingleSessionDataAccessLayer.SessionFactory.OpenSession();
-                    SingleSessionDataAccessLayer.Sessions.Add(currentThread, newSession);
+                    ISession newSession = SingleSessionDataAccessLayer.CurrentFactory.OpenSession();
+                    SingleSessionDataAccessLayer.Sessions.Add(SingleSessionDataAccessLayer.CurrentFactory, newSession);
                     return newSession;
                 }
             }
@@ -87,49 +109,64 @@ namespace ClearCanvas.Dicom.DataStore
 
         static SingleSessionDataAccessLayer()
         {
-            Configuration cfg = new Configuration();
+            _hibernateConfiguration = new Configuration();
             string assemblyName = MethodBase.GetCurrentMethod().DeclaringType.Assembly.GetName().Name;
-            cfg.Configure(assemblyName + ".cfg.xml");
-            cfg.AddAssembly(assemblyName);
-            _sessionFactory = cfg.BuildSessionFactory();
-
-            _sessions = new Dictionary<Thread, ISession>();
+            _hibernateConfiguration.Configure(assemblyName + ".cfg.xml");
+            _hibernateConfiguration.AddAssembly(assemblyName);
+            _sessionFactories = new Dictionary<Thread, ISessionFactory>();
+            _sessionFactories.Add(Thread.CurrentThread, _hibernateConfiguration.BuildSessionFactory());
+            _sessions = new Dictionary<ISessionFactory, ISession>();
             _dataStores = new Dictionary<ISession, IDataStoreReader>();
             _dataStoreWriteAccessors = new Dictionary<ISession, IDataStoreWriter>();
         }
 
-        public static void CloseCurrentSession()
-        {
-            SingleSessionDataAccessLayer.CurrentSession.Close();
-        }
-
-        public static void ClearCurrentSession()
-        {
-            SingleSessionDataAccessLayer.CurrentSession.Clear();
-        }
-
-        public static void ReconnectCurrentSession()
-        {
-            if (!SingleSessionDataAccessLayer.CurrentSession.IsConnected)
-                SingleSessionDataAccessLayer.CurrentSession.Reconnect();
-        }
-
-        public static void DisconnectCurrentSession()
+        public static void SqliteWorkaround()
         {
             SingleSessionDataAccessLayer.CurrentSession.Disconnect();
+            SingleSessionDataAccessLayer.CurrentSession.Clear();
+            SingleSessionDataAccessLayer.CurrentSession.Close();
+            SingleSessionDataAccessLayer.RemoveCurrentSession();
         }
+
+        private static void RemoveCurrentSession()
+        {
+            SingleSessionDataAccessLayer.DataStoreReaders.Remove(SingleSessionDataAccessLayer.CurrentSession);
+            SingleSessionDataAccessLayer.DataStoreWriters.Remove(SingleSessionDataAccessLayer.CurrentSession);
+            SingleSessionDataAccessLayer.Sessions.Remove(SingleSessionDataAccessLayer.CurrentFactory);
+        }
+
+        //public static void CloseCurrentSession()
+        //{
+        //    SingleSessionDataAccessLayer.CurrentSession.Close();
+        //}
+
+        //public static void ClearCurrentSession()
+        //{
+        //    SingleSessionDataAccessLayer.CurrentSession.Clear();
+        //}
+
+        //public static void ReconnectCurrentSession()
+        //{
+        //    if (!SingleSessionDataAccessLayer.CurrentSession.IsConnected)
+        //        SingleSessionDataAccessLayer.CurrentSession.Reconnect();
+        //}
+
+        //public static void DisconnectCurrentSession()
+        //{
+        //    SingleSessionDataAccessLayer.CurrentSession.Disconnect();
+        //}
 
         public static IDataStoreReader GetIDataStoreReader()
         {
             ISession session = SingleSessionDataAccessLayer.CurrentSession;
-            if (SingleSessionDataAccessLayer.DataStores.ContainsKey(session))
+            if (SingleSessionDataAccessLayer.DataStoreReaders.ContainsKey(session))
             {
-                return SingleSessionDataAccessLayer.DataStores[session];
+                return SingleSessionDataAccessLayer.DataStoreReaders[session];
             }
             else
             {
                 IDataStoreReader dataStore = new SingleSessionDataStoreReader(session);
-                SingleSessionDataAccessLayer.DataStores.Add(session, dataStore);
+                SingleSessionDataAccessLayer.DataStoreReaders.Add(session, dataStore);
                 return dataStore;
             }
         }
@@ -137,14 +174,14 @@ namespace ClearCanvas.Dicom.DataStore
         public static IDataStoreWriter GetIDataStoreWriter()
         {
             ISession session = SingleSessionDataAccessLayer.CurrentSession;
-            if (SingleSessionDataAccessLayer.DataStoreWriteAccessors.ContainsKey(session))
+            if (SingleSessionDataAccessLayer.DataStoreWriters.ContainsKey(session))
             {
-                return SingleSessionDataAccessLayer.DataStoreWriteAccessors[session];
+                return SingleSessionDataAccessLayer.DataStoreWriters[session];
             }
             else
             {
                 IDataStoreWriter dataStoreWriteAccessor = new SingleSessionDataStoreWriter(session);
-                SingleSessionDataAccessLayer.DataStoreWriteAccessors.Add(session, dataStoreWriteAccessor);
+                SingleSessionDataAccessLayer.DataStoreWriters.Add(session, dataStoreWriteAccessor);
                 return dataStoreWriteAccessor;
             }
         }
@@ -152,7 +189,7 @@ namespace ClearCanvas.Dicom.DataStore
         public static IDicomDictionary GetIDicomDictionary()
         {
             if (null == _dicomDictionary)
-                _dicomDictionary = new DicomDictionary(SingleSessionDataAccessLayer.SessionFactory.OpenSession());
+                _dicomDictionary = new DicomDictionary(SingleSessionDataAccessLayer.CurrentFactory.OpenSession());
 
             return _dicomDictionary;
         }
@@ -160,17 +197,6 @@ namespace ClearCanvas.Dicom.DataStore
         public static IDicomPersistentStore GetIDicomPersistentStore()
         {
             return new SingleSessionDicomImageStore();
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            SingleSessionDataAccessLayer.ClearCurrentSession();
-            SingleSessionDataAccessLayer.CloseCurrentSession();
-            SingleSessionDataAccessLayer.CloseSessionFactory();
         }
 
         #endregion

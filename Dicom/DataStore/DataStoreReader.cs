@@ -308,18 +308,20 @@ namespace ClearCanvas.Dicom.DataStore
             int index = 1;
             foreach (DicomTag tag in queryKey.DicomTags)
             {
-                Path path = new Path(tag.ToString());
-                DictionaryEntry column = SingleSessionDataAccessLayer.GetIDicomDictionary().GetColumn(path);
-
                 if (queryKey[tag].Length > 0)
                 {
+                    Path path = new Path(tag.ToString());
+                    DictionaryEntry column = DataAccessLayer.GetIDicomDictionary().GetColumn(path);
+
+                    string queryKeyString = StandardizeQueryKey(queryKey[tag]);
+
                     if (index > 1)
                         selectCommandString.AppendFormat(" AND ");
                     else
                         selectCommandString.AppendFormat("WHERE ");
 
                     // don't forget to append the trailing underscore for column names
-                    selectCommandString.AppendFormat("{0} LIKE '{1}'", column.TagName.ToString() + "_", queryKey[tag]);
+                    selectCommandString.AppendFormat("{0} LIKE '{1}'", column.TagName.ToString() + "_", queryKeyString);
                     ++index;
                 }
             }
@@ -363,17 +365,38 @@ namespace ClearCanvas.Dicom.DataStore
                 foreach (PropertyInfo pi in study.GetType().GetProperties())
                 {
                     string fieldName = pi.Name;
-                    if (SingleSessionDataAccessLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
+                    if (DataAccessLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
                     {
                         // ensure that property actually has a value
                         object fieldValue = pi.GetValue(study, null);
                         if (null == fieldValue)
                             continue;
 
-                        DictionaryEntry col = SingleSessionDataAccessLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
+                        DictionaryEntry col = DataAccessLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
                         DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
                         result.Add(tag, fieldValue.ToString());
                     }
+                }
+
+                // special tags
+                if (queryKey.ContainsTag(DicomTag.ModalitiesInStudy))
+                {
+                    Dictionary<string, string> set = new Dictionary<string, string>();
+                    foreach (Series series in study.Series)
+                    {
+                        if (!set.ContainsKey(series.Modality))
+                            set.Add(series.Modality, series.Modality);
+                    }
+
+                    string modalities = "";
+                    foreach (KeyValuePair<string,string> pair in set)
+                    {
+                        modalities += pair.Key + @"\";
+                    }
+
+                    // get rid of trailing slash
+                    modalities = modalities.Remove(modalities.Length - 1);
+                    result.Add(DicomTag.ModalitiesInStudy, modalities);
                 }
 
                 results.Add(result);
@@ -381,6 +404,12 @@ namespace ClearCanvas.Dicom.DataStore
             return new ReadOnlyQueryResultCollection(results); 
         }
 
+        private string StandardizeQueryKey(string inputQueryKeyString)
+        {
+            string output = inputQueryKeyString.Replace('*', '%');
+            output = output.Replace("'", "''");
+            return output;
+        }
 
         #endregion
     }
