@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Configuration.Application;
 
 namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {

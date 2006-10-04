@@ -5,7 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Desktop.Configuration
+namespace ClearCanvas.Desktop.Configuration.Application
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="DicomConfigurationApplicationComponent"/>
