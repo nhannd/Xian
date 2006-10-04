@@ -123,9 +123,6 @@
   <data name="MenuOptions" xml:space="preserve">
     <value>Options</value>
   </data>
-  <data name="MenuTools" xml:space="preserve">
-    <value>Tools</value>
-  </data>
   <data name="NoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
   </data>

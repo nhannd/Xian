@@ -79,15 +79,6 @@ namespace ClearCanvas.Desktop.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tools.
-        /// </summary>
-        internal static string MenuTools {
-            get {
-                return ResourceManager.GetString("MenuTools", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No configuration pages exist..
         /// </summary>
         internal static string NoConfigurationPagesExist {
