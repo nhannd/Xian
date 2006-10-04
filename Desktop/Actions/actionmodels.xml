@@ -18,6 +18,7 @@
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-menus/MenuTools/Measurement/ToolsMeasurementRectangularROI" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-menus/MenuTools/Measurement/ToolsMeasurementRuler" />
     <action id="ClearCanvas.Dicom.Services.QueueDisplayLaunchTool:launch" path="global-menus/Services/Queue" />
+    <action id="ClearCanvas.Desktop.Configuration.MenuOptions:show" path="global-menus/MenuTools/MenuOptions" />
     <action id="ClearCanvas.Desktop.Help.HelpTool:activate" path="global-menus/MenuHelp/MenuHelpAbout" />
   </action-model>
   <action-model id="ClearCanvas.Desktop.DesktopWindow:global-toolbars">

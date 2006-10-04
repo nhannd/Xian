@@ -116,6 +116,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Services.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.AnnotationProviders", "AnnotationProviders\ClearCanvas.ImageViewer.AnnotationProviders.csproj", "{A7C78084-947E-4955-9473-9F186B760AEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configuration", "..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj", "{F7244490-8FC8-4296-A97F-024070A4816A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configuration.View.WinForms", "..\Desktop\Configuration\View\WinForms\ClearCanvas.Desktop.Configuration.View.WinForms.csproj", "{88DD01B0-9550-4E82-8F4F-73726F88BD64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -246,6 +250,14 @@ Global
 		{A7C78084-947E-4955-9473-9F186B760AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7C78084-947E-4955-9473-9F186B760AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7C78084-947E-4955-9473-9F186B760AEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7244490-8FC8-4296-A97F-024070A4816A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7244490-8FC8-4296-A97F-024070A4816A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7244490-8FC8-4296-A97F-024070A4816A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7244490-8FC8-4296-A97F-024070A4816A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88DD01B0-9550-4E82-8F4F-73726F88BD64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88DD01B0-9550-4E82-8F4F-73726F88BD64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88DD01B0-9550-4E82-8F4F-73726F88BD64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88DD01B0-9550-4E82-8F4F-73726F88BD64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

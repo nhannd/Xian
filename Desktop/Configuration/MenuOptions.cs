@@ -1,0 +1,108 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+
+namespace ClearCanvas.Desktop.Configuration
+{
+	[MenuAction("show", "global-menus/MenuTools/MenuOptions")]
+	//[ButtonAction("show", "global-toolbars/ToolbarMyTools/MenuOptions")]
+	[Tooltip("show", "TooltipMenuOptions")]
+	[IconSet("show", IconScheme.Colour, "Icons.MenuOptionsSmall.png", "Icons.MenuOptionsMedium.png", "Icons.MenuOptionsLarge.png")]
+	[ClickHandler("show", "Show")]
+	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+
+	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
+	public class MenuOptions : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+	{
+		private bool _enabled;
+		private event EventHandler _enabledChanged;
+		ConfigurationPageManager _configurationPageManager;
+
+		/// <summary>
+		/// Default constructor.  A no-args constructor is required by the
+		/// framework.  Do not remove.
+		/// </summary>
+		public MenuOptions()
+		{
+			_enabled = true;
+		}
+
+		/// <summary>
+		/// Called by the framework to initialize this tool.
+		/// </summary>
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			// TODO: add any significant initialization code here rather than in the constructor
+		}
+
+		/// <summary>
+		/// Called to determine whether this tool is enabled/disabled in the UI.
+		/// </summary>
+		public bool Enabled
+		{
+			get { return _enabled; }
+			protected set
+			{
+				if (_enabled != value)
+				{
+					_enabled = value;
+					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Notifies that the Enabled state of this tool has changed.
+		/// </summary>
+		public event EventHandler EnabledChanged
+		{
+			add { _enabledChanged += value; }
+			remove { _enabledChanged -= value; }
+		}
+
+		/// <summary>
+		/// Called by the framework when the user clicks the "apply" menu item or toolbar button.
+		/// </summary>
+		public void Show()
+		{
+			if (_configurationPageManager == null)
+			{
+				_configurationPageManager = new ConfigurationPageManager();
+			}
+
+			try
+			{
+				IEnumerable<IConfigurationPage> pages = _configurationPageManager.Pages;
+
+				NavigatorComponentContainer container = new NavigatorComponentContainer();
+
+				foreach (IConfigurationPage configurationPage in pages)
+				{
+					NavigatorPage page = new NavigatorPage(configurationPage.GetPath(), configurationPage.GetComponent());
+					container.Pages.Add(page);
+				}
+
+				if (container.Pages.Count > 0)
+				{
+					container.CurrentPage = container.Pages[0];
+					ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, container, "Options");
+				}
+				else
+					Platform.ShowMessageBox(SR.NoConfigurationPagesExist);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+				Platform.ShowMessageBox(e.Message);
+			}
+		}
+	}
+}
