@@ -27,8 +27,8 @@ namespace ClearCanvas.Desktop.Actions
         /// Constructor
         /// </summary>
         /// <param name="actionID">The logical action ID</param>
-        /// <param name="pathHint">The action path</param>
-        /// <param name="target"></param>
+        /// <param name="path">The action path</param>
+        /// <param name="resourceResolver">A resource resolver that will be used to resolve icons associated with this action</param>
         public Action(string actionID, ActionPath path, IResourceResolver resourceResolver)
         {
             _actionID = actionID;

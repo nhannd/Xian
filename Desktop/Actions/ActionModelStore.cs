@@ -19,7 +19,6 @@ namespace ClearCanvas.Desktop.Actions
         /// Constructs an object on the specified filename.
         /// </summary>
         /// <param name="filename">The file that acts a store</param>
-        /// <param name="throwIfNotExist">Specify true to throw an exception if the file does not exist</param>
         internal ActionModelStore(string filename)
         {
             _filename = filename;
@@ -69,6 +68,7 @@ namespace ClearCanvas.Desktop.Actions
         /// The actions will be ordered according to the XML model.  Any actions that are not a part of the
         /// XML model will be appended to memory model and appended to the XML model.
         /// </summary>
+        /// <param name="site">the action model site</param>
         /// <param name="xmlActionModel">an XML "action-model" node</param>
         /// <param name="actions">the set of that the model should contain</param>
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>

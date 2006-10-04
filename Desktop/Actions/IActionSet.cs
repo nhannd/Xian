@@ -16,7 +16,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Returns a subset of this set containing only the elements for which the predicate is true.
         /// </summary>
-        /// <param name="selector"></param>
+        /// <param name="predicate">The predicate to test</param>
         /// <returns></returns>
         IActionSet Select(Predicate<IAction> predicate);
 

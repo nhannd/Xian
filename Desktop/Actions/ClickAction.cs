@@ -33,7 +33,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Sets the observable property that this action monitors for its checked state
         /// </summary>
-        /// <param name="enabledPropertyBinding">The property to monitor</param>
+        /// <param name="checkedPropertyBinding">The property to monitor</param>
         public void SetCheckedObservable(IObservablePropertyBinding<bool> checkedPropertyBinding)
         {
             _checkedPropertyBinding = checkedPropertyBinding;

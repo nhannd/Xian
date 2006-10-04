@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop
         /// will be attempted on each path segment by treating the segment as a resource key,
         /// and path segments that fail as resource keys will be treated as literals.
         /// </remarks>
-        /// <param name="path">The path string to parse</param>
+        /// <param name="pathString">The path string to parse</param>
         /// <param name="resolver">The <see cref="ResourceResolver"/> to use for localization</param>
         public Path(string pathString, IResourceResolver resolver)
         {
