@@ -19,11 +19,13 @@ namespace ClearCanvas.Desktop
     {
         internal class PropertyDescriptorEx : PropertyDescriptor
         {
+            private TableData<TItem> _table;
             private ITableColumn<TItem> _column;
 
-            internal PropertyDescriptorEx(ITableColumn<TItem> column)
+            internal PropertyDescriptorEx(TableData<TItem> table, ITableColumn<TItem> column)
                 : base(column.Name, new Attribute[] { })
             {
+                _table = table;
                 _column = column;
             }
 
@@ -66,6 +68,11 @@ namespace ClearCanvas.Desktop
             {
                 return false;
             }
+
+            public int WidthPercent
+            {
+                get { return _table.GetColumnWidthPercent(_column); }
+            }
         }
 
         class ColumnList : ObservableList<ITableColumn<TItem>, CollectionEventArgs<ITableColumn<TItem>>>
@@ -90,7 +97,7 @@ namespace ClearCanvas.Desktop
             _columns = new ColumnList();
             _columns.ItemAdded += delegate(object sender, CollectionEventArgs<ITableColumn<TItem>> args)
                 {
-                    _propertyDescriptors.Add(args.Item, new PropertyDescriptorEx(args.Item));
+                    _propertyDescriptors.Add(args.Item, new PropertyDescriptorEx(this, args.Item));
                 };
             _columns.ItemRemoved += delegate(object sender, CollectionEventArgs<ITableColumn<TItem>> args)
                 {
@@ -231,6 +238,16 @@ namespace ClearCanvas.Desktop
                     return kvp.Key;
             }
             return null;
+        }
+
+        private int GetColumnWidthPercent(ITableColumn<TItem> column)
+        {
+            float sum = 0;
+            foreach (ITableColumn<TItem> c in _columns)
+            {
+                sum += c.WidthFactor;
+            }
+            return (int)(100*column.WidthFactor / sum);
         }
      }
 #endif

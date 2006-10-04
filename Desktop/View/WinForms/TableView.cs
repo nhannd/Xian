@@ -107,7 +107,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _bindingSource.DataSource = value;
                 _dataGridView.DataSource = _bindingSource;
+
+                if (value is ITableData)
+                {
+                    InitColumnWidths(value as ITableData);
+                }
             }
+        }
+
+        private void InitColumnWidths(ITableData table)
+        {
         }
 
         public RightToLeft ToolStripRightToLeft

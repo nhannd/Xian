@@ -96,7 +96,9 @@ namespace ClearCanvas.Desktop
         private event EventHandler _allPropertiesChanged;
         private event PropertyChangedEventHandler _propertyChanged;
 
-        private Dictionary<string, Validator> _validators;
+        private IDictionary<string, ValidatorGroup> _validators;
+        private bool _showValidationErrors;
+        private event EventHandler _showValidationErrorsChanged;
 
 
         /// <summary>
@@ -106,19 +108,7 @@ namespace ClearCanvas.Desktop
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
 
-            _validators = new Dictionary<string, Validator>();
-
-            foreach (PropertyInfo propInfo in this.GetType().GetProperties())
-            {
-                foreach (ValidateAttribute attr in propInfo.GetCustomAttributes(typeof(ValidateAttribute), false))
-                {
-                    MethodInfo getMethod = propInfo.GetGetMethod();
-
-                    Validator.GetPropertyValueDelegate getter = (Validator.GetPropertyValueDelegate)
-                        Delegate.CreateDelegate(typeof(Validator.GetPropertyValueDelegate), this, getMethod);
-                    _validators[propInfo.Name] = new Validator(attr.DisplayName, getter, attr.Mandatory);
-                }
-            }
+            _validators = ValidationAttributeProcessor.Process(this);
         }
 
         /// <summary>
@@ -143,6 +133,10 @@ namespace ClearCanvas.Desktop
             EventsHelper.Fire(_modifiedChanged, this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Notifies that the specified property has changed
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void NotifyPropertyChanged(string propertyName)
         {
             EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
@@ -155,6 +149,52 @@ namespace ClearCanvas.Desktop
         protected void NotifyAllPropertiesChanged()
         {
             EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Gets the collection of <see cref="ValidatorGroup"/> objects
+        /// </summary>
+        protected IDictionary<string, ValidatorGroup> ValidatorGroups
+        {
+            get { return _validators; }
+        }
+
+        /// <summary>
+        /// True if any validator test fails according given the current state of this component
+        /// </summary>
+        protected bool HasValidationErrors
+        {
+            get
+            {
+                foreach (IValidator validator in _validators.Values)
+                {
+                    if (!validator.Result.IsValid)
+                        return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the view should display validation errors to the user
+        /// </summary>
+        protected bool ShowValidationErrors
+        {
+            get { return _showValidationErrors; }
+            set
+            {
+                if (value != _showValidationErrors)
+                {
+                    _showValidationErrors = value;
+                    EventsHelper.Fire(_showValidationErrorsChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler ShowValidationErrorsChanged
+        {
+            add { _showValidationErrorsChanged += value; }
+            remove { _showValidationErrorsChanged -= value; }
         }
 
         #region IApplicationComponent Members
@@ -292,10 +332,10 @@ namespace ClearCanvas.Desktop
         {
             get
             {
-                if (_validators.ContainsKey(propertyName))
+                if (_showValidationErrors && _validators.ContainsKey(propertyName))
                 {
-                    ValidatorResult result = _validators[propertyName].Result;
-                    return result.IsValid ? null : result.Message;
+                    ValidationResult result = _validators[propertyName].Result;
+                    return result.IsValid ? null : result.GetMessageString("\n");
                 }
                 else
                 {

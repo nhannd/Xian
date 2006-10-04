@@ -6,15 +6,20 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    public class ValidatorResult
+    public class ValidationResult
     {
         private bool _isValid;
-        private string _message;
+        private string[] _messages;
 
-        public ValidatorResult(bool isValid, string message)
+        public ValidationResult(bool isValid, string message)
+            : this(isValid, new string[] { message })
+        {
+        }
+
+        public ValidationResult(bool isValid, string[] messages)
         {
             _isValid = isValid;
-            _message = message;
+            _messages = messages;
         }
 
         public bool IsValid
@@ -22,44 +27,43 @@ namespace ClearCanvas.Desktop.Validation
             get { return _isValid; }
         }
 
-        public string Message
+        public string[] Messages
         {
-            get { return _message; }
+            get { return _messages; }
+        }
+
+        public string GetMessageString(string separator)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (string msg in _messages)
+            {
+                if (sb.Length > 0)
+                    sb.Append(separator);
+                sb.Append(msg);
+            }
+            return sb.ToString();
         }
     }
 
-    public abstract class ValidatorBase
+    public delegate object TestValueCallbackDelegate();
+
+    public abstract class Validator : IValidator
     {
-    }
+        private TestValueCallbackDelegate _testValueCallback;
 
-    public class Validator : ValidatorBase
-    {
-        public delegate object GetPropertyValueDelegate();
-
-        private bool _mandatory;
-        private string _displayName;
-        private GetPropertyValueDelegate _propertyGetter;
-
-        public Validator(string displayName, GetPropertyValueDelegate getter, bool mandatory)
+        public Validator(TestValueCallbackDelegate testValueCallback)
         {
-            _displayName = displayName;
-            _mandatory = mandatory;
-            _propertyGetter = getter;
+            _testValueCallback = testValueCallback;
         }
 
-        public ValidatorResult Result
+        public ValidationResult Result
         {
             get
             {
-                if (_propertyGetter() == null)
-                {
-                    return new ValidatorResult(false, string.Format("{0} is required", _displayName));
-                }
-                else
-                {
-                    return new ValidatorResult(true, null);
-                }
+                return Validate(_testValueCallback());
             }
         }
+
+        protected abstract ValidationResult Validate(object testValue);
     }
 }

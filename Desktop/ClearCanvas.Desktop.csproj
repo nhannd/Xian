@@ -98,8 +98,15 @@
     <Compile Include="Actions\StateObserverAttribute.cs" />
     <Compile Include="Actions\TooltipAttribute.cs" />
     <Compile Include="Tools\ToolBase.cs" />
-    <Compile Include="Validation\ValidateAttribute.cs" />
+    <Compile Include="Validation\IValidator.cs" />
+    <Compile Include="Validation\ValidateMatchRegexAttribute.cs" />
+    <Compile Include="Validation\RegexValidator.cs" />
+    <Compile Include="Validation\ValidateRequiredFieldAttribute.cs" />
+    <Compile Include="Validation\RequiredFieldValidator.cs" />
+    <Compile Include="Validation\ValidationAttribute.cs" />
+    <Compile Include="Validation\ValidationAttributeProcessor.cs" />
     <Compile Include="Validation\Validator.cs" />
+    <Compile Include="Validation\ValidatorGroup.cs" />
     <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />
