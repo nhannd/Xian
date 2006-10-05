@@ -12,6 +12,7 @@ using ClearCanvas.Healthcare;
 using System.ComponentModel;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -71,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Admin
         }
         
         private event EventHandler _workingSetChanged;
-        private TableData<PatientProfile> _workingSet;
+        private Table<PatientProfile> _workingSet;
         private PatientProfile _selectedPatient;
         private event EventHandler _selectedPatientChanged;
         private ClickHandlerDelegate _defaultActionHandler;
@@ -88,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _patientAdminService.PatientProfileChanged += _patientAdminService_PatientChanged;
 
-            _workingSet = new TableData<PatientProfile>();
+            _workingSet = new Table<PatientProfile>();
             _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("MRN", delegate(PatientProfile p) { return p.MRN != null ? p.MRN.Id : ""; }));
             _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Name", delegate(PatientProfile p) { return p.Name.Format(); }));
             _workingSet.Columns.Add(new TableColumn<PatientProfile, string>("Sex", delegate(PatientProfile p) { return _patientAdminService.SexEnumTable[p.Sex].Value; }));
@@ -109,12 +110,12 @@ namespace ClearCanvas.Ris.Client.Admin
             long oid = e.Change.EntityOID;
 
             // check if the patient with this oid is in the list
-            int index = _workingSet.FindIndex(delegate(PatientProfile p) { return p.OID == oid; });
+            int index = _workingSet.Items.FindIndex(delegate(PatientProfile p) { return p.OID == oid; });
             if (index > -1)
             {
                 PatientProfile p = _patientAdminService.LoadPatient(oid);
                 // update the patient in the list
-                _workingSet[index] = p;
+                _workingSet.Items[index] = p;
             }
         }
 
@@ -141,9 +142,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
             // obtain a list of patients matching the specified criteria
             IList<PatientProfile> patients = _patientAdminService.ListPatients(criteria);
-            _workingSet.Clear();
-            foreach (PatientProfile patient in patients)
-                _workingSet.Add(patient);
+            _workingSet.Items.Clear();
+            _workingSet.Items.AddRange(patients);
 
             EventsHelper.Fire(_workingSetChanged, this, new EventArgs());
         }
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Admin
             remove { _workingSetChanged -= value; }
         }
 
-        public ITableData WorkingSet
+        public ITable WorkingSet
         {
             get { return _workingSet; }
         }

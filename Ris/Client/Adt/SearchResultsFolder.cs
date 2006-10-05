@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -32,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public override ClearCanvas.Desktop.ITableData Items
+        public override ITable Items
         {
             get
             {
@@ -42,10 +43,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void DoSearch()
         {
-            _searchResults.Clear();
+            _searchResults.Items.Clear();
             if (_searchCriteria != null)
             {
-                _searchResults.AddRange(_adtService.ListPatientProfiles(_searchCriteria));
+                _searchResults.Items.AddRange(_adtService.ListPatientProfiles(_searchCriteria));
             }
         }
 

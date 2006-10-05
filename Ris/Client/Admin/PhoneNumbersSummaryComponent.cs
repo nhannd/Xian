@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -45,14 +46,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private PatientProfile _patient;
         private IPatientAdminService _patientAdminService;
-        private TableData<TelephoneNumber> _phoneNumbers;
+        private Table<TelephoneNumber> _phoneNumbers;
         private TelephoneNumber _currentPhoneNumberSelection;
 
         PhoneNumberActionHandler _phoneNumberActionHandler;
 
         public PhoneNumbersSummaryComponent()
         {
-            _phoneNumbers = new TableData<TelephoneNumber>();
+            _phoneNumbers = new Table<TelephoneNumber>();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
 
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Use", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneUseEnumTable[pn.Use].Value; }));
@@ -72,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Admin
             set { _patient = value; }
         }
 
-        public ITableData PhoneNumbers
+        public ITable PhoneNumbers
         {
             get { return _phoneNumbers; }
         }
@@ -130,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Admin
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                _phoneNumbers.Add(phoneNumber);
+                _phoneNumbers.Items.Add(phoneNumber);
                 _patient.TelephoneNumbers.Add(phoneNumber);
                 this.Modified = true;
             }
@@ -150,10 +151,10 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 // delete and re-insert to ensure that TableView updates correctly
                 TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
-                _phoneNumbers.Remove(toBeRemoved);
+                _phoneNumbers.Items.Remove(toBeRemoved);
                 _patient.TelephoneNumbers.Remove(toBeRemoved);
 
-                _phoneNumbers.Add(phoneNumber);
+                _phoneNumbers.Items.Add(phoneNumber);
                 _patient.TelephoneNumbers.Add(phoneNumber);
 
                 this.Modified = true;
@@ -167,7 +168,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 //  Must use temporary TelephoneNumber otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong TelephoneNumber being removed from the PatientProfile
                 TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
-                _phoneNumbers.Remove(toBeRemoved);
+                _phoneNumbers.Items.Remove(toBeRemoved);
                 _patient.TelephoneNumbers.Remove(toBeRemoved);
                 this.Modified = true;
             }
@@ -179,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 foreach (TelephoneNumber phoneNumber in _patient.TelephoneNumbers)
                 {
-                    _phoneNumbers.Add(phoneNumber);
+                    _phoneNumbers.Items.Add(phoneNumber);
                 }
             }
         }

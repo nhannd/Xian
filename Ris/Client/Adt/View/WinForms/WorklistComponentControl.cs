@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            _patientProfileTable.DataSource = _component.SearchResults;
+            _patientProfileTable.Table = _component.SearchResults;
         }
 
         private void _patientProfileTable_SelectionChanged(object sender, EventArgs e)

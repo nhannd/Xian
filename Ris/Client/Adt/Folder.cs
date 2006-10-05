@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -28,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _name; }
         }
 
-        public virtual ITableData Items
+        public virtual ITable Items
         {
             get { return null; }
         }

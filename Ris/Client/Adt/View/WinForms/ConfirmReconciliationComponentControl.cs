@@ -26,8 +26,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component = component;
 
             // TODO add .NET databindings to _component
-            _sourceTable.DataSource = _component.SourcePatientData;
-            _targetTable.DataSource = _component.TargetPatientData;
+            _sourceTable.Table = _component.SourcePatientData;
+            _targetTable.Table = _component.TargetPatientData;
         }
 
         private void _continueButton_Click(object sender, EventArgs e)

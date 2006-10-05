@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        [Validate("MRN", true)]
+        [ValidateMatchRegex(@"\d\d\d\d\d\d\d+", "MRN must be 7 or more digits")]
         public string Mrn
         {
             get { return _mrn; }
@@ -91,7 +91,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [Validate("Healthcard", true)]
         public string Healthcard
         {
             get { return _healthcard; }
@@ -103,6 +102,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        [ValidateMatchRegex(@"\w\w+", "Must provide at least 2 letters of family name")]
         public string FamilyName
         {
             get { return _familyName; }
@@ -173,10 +173,20 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Search()
         {
-            EventsHelper.Fire(_searchRequested, this, new PatientSearchRequestedEventArgs(BuildCriteria()));
-            if (!_keepOpen)
+            if (!this.HasValidationErrors)
             {
-                this.Host.Exit();
+                EventsHelper.Fire(_searchRequested, this, new PatientSearchRequestedEventArgs(BuildCriteria()));
+                if (!_keepOpen)
+                {
+                    this.Host.Exit();
+                }
+
+                // always turn the validation errors off after a successful search
+                this.ShowValidationErrors = false;
+            }
+            else
+            {
+                this.ShowValidationErrors = true;
             }
         }
 

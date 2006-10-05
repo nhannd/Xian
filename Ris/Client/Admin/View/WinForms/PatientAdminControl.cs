@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _component = component;
 
-            _patientTableView.DataSource = _component.WorkingSet;
+            _patientTableView.Table = _component.WorkingSet;
             _component.WorkingSetChanged += new EventHandler(_component_WorkingSetChanged);
         }
 

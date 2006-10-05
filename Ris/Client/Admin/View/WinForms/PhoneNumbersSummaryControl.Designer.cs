@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             // _phoneNumbers
             // 
-            this._phoneNumbers.DataSource = null;
+            this._phoneNumbers.Table = null;
             this._phoneNumbers.Dock = System.Windows.Forms.DockStyle.Fill;
             this._phoneNumbers.Location = new System.Drawing.Point(3, 3);
             this._phoneNumbers.Name = "_phoneNumbers";

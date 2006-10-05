@@ -13,6 +13,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Scripting;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -55,8 +56,8 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         private PatientProfile _subject;
-        private TableData<Address> _addresses;
-        private TableData<TelephoneNumber> _phoneNumbers;
+        private Table<Address> _addresses;
+        private Table<TelephoneNumber> _phoneNumbers;
 
         private IAdtService _adtService;
 
@@ -69,14 +70,14 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
 
-            _addresses = new TableData<Address>();
+            _addresses = new Table<Address>();
             _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _adtService.AddressTypeEnumTable[a.Type].Value; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Address", delegate(Address a) { return a.Format(); }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }));
 
 
-            _phoneNumbers = new TableData<TelephoneNumber>();
+            _phoneNumbers = new Table<TelephoneNumber>();
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Type",
                 delegate(TelephoneNumber t)
                 {
@@ -96,16 +97,16 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (_subject != value)
                 {
-                    _addresses.Clear();
-                    _phoneNumbers.Clear();
+                    _addresses.Items.Clear();
+                    _phoneNumbers.Items.Clear();
 
                     _subject = value;
                     if (_subject != null)
                     {
                         _adtService.LoadPatientProfileDetails(_subject);
 
-                        _addresses.AddRange(_subject.Addresses);
-                        _phoneNumbers.AddRange(_subject.TelephoneNumbers);
+                        _addresses.Items.AddRange(_subject.Addresses);
+                        _phoneNumbers.Items.AddRange(_subject.TelephoneNumbers);
                     }
 
                     NotifyAllPropertiesChanged();
@@ -177,12 +178,12 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public ITableData Addresses
+        public ITable Addresses
         {
             get { return _addresses; }
         }
 
-        public ITableData PhoneNumbers
+        public ITable PhoneNumbers
         {
             get { return _phoneNumbers; }
         }

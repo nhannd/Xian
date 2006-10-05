@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _searchResultsTable
             // 
-            this._searchResultsTable.DataSource = null;
+            this._searchResultsTable.Table = null;
             this._searchResultsTable.Location = new System.Drawing.Point(19, 197);
             this._searchResultsTable.Margin = new System.Windows.Forms.Padding(5);
             this._searchResultsTable.MenuModel = null;
@@ -112,7 +112,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _alternateProfilesTable
             // 
-            this._alternateProfilesTable.DataSource = null;
+            this._alternateProfilesTable.Table = null;
             this._alternateProfilesTable.Location = new System.Drawing.Point(544, 197);
             this._alternateProfilesTable.Margin = new System.Windows.Forms.Padding(5);
             this._alternateProfilesTable.MenuModel = null;
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _reconciliationCandidateTable
             // 
-            this._reconciliationCandidateTable.DataSource = null;
+            this._reconciliationCandidateTable.Table = null;
             this._reconciliationCandidateTable.Location = new System.Drawing.Point(544, 398);
             this._reconciliationCandidateTable.Margin = new System.Windows.Forms.Padding(5);
             this._reconciliationCandidateTable.MenuModel = null;

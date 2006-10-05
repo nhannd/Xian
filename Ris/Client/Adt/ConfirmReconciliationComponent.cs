@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -39,11 +40,11 @@ namespace ClearCanvas.Ris.Client.Adt
             foreach (Patient patient in sources)
             {
                 service.LoadPatientProfiles(patient);
-                _sourceProfiles.AddRange(patient.Profiles);
+                _sourceProfiles.Items.AddRange(patient.Profiles);
             }
 
             _targetProfiles = new PatientProfileTableData(service);
-            _targetProfiles.AddRange(target.Profiles);
+            _targetProfiles.Items.AddRange(target.Profiles);
         }
 
         public override void Start()
@@ -56,12 +57,12 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        public ITableData SourcePatientData
+        public ITable SourcePatientData
         {
             get { return _sourceProfiles; }
         }
 
-        public ITableData TargetPatientData
+        public ITable TargetPatientData
         {
             get { return _targetProfiles; }
         }

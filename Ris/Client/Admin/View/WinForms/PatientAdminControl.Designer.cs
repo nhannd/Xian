@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             // _patientTableView
             // 
-            this._patientTableView.DataSource = null;
+            this._patientTableView.Table = null;
             this._patientTableView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._patientTableView.Location = new System.Drawing.Point(0, 0);
             this._patientTableView.Margin = new System.Windows.Forms.Padding(4);

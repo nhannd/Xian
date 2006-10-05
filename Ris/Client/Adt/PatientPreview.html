@@ -52,12 +52,12 @@ if(component.Subject != null)
     <td colspan="4">Additional Phone Numbers</td>
   </tr>
   <tr class="tableheading">
-    <% for(var column in component.PhoneNumbers.GetItemProperties(null)) { %>
+    <% for(var column in component.PhoneNumbers.Columns) { %>
     <td><%= column.Name %></td>
     <% } %>
   </tr>
-    <% for(var phone in component.PhoneNumbers) {%>
-    <tr><% for(var column in component.PhoneNumbers.GetItemProperties(null)) {%>
+    <% for(var phone in component.PhoneNumbers.Items) {%>
+    <tr><% for(var column in component.PhoneNumbers.Columns) {%>
         <td><%= column.GetValue(phone) %></td>
         <% } %>
     </tr>
@@ -69,12 +69,12 @@ if(component.Subject != null)
     <td colspan="4">Additional Addresses</td>
   </tr>
   <tr class="tableheading">
-  <% for(var column in component.Addresses.GetItemProperties(null)) { %>
+  <% for(var column in component.Addresses.Columns) { %>
   <td><%= column.Name %></td>
   <% } %>
   </tr>
-  <% for(var address in component.Addresses) {%>
-  <tr><% for(var column in component.Addresses.GetItemProperties(null)) {%>
+  <% for(var address in component.Addresses.Items) {%>
+  <tr><% for(var column in component.Addresses.Columns) {%>
     <td><%= column.GetValue(address) %></td>
       <% } %>
   </tr>

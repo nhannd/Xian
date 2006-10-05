@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -101,17 +102,17 @@ namespace ClearCanvas.Ris.Client.Adt
             private set { _error = value; }
         }
 
-        public ITableData SearchResults
+        public ITable SearchResults
         {
             get { return _searchResults; }
         }
 
-        public ITableData AlternateProfiles
+        public ITable AlternateProfiles
         {
             get { return _alternateProfiles; }
         }
 
-        public ITableData ReconciliationCandidateProfiles
+        public ITable ReconciliationCandidateProfiles
         {
             get { return _reconciliationCandidateProfiles; }
         }
@@ -130,8 +131,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             IList<PatientProfile> profiles = _adtService.ListPatientProfiles(criteria);
 
-            _searchResults.Clear();
-            _searchResults.AddRange(profiles);
+            _searchResults.Items.Clear();
+            _searchResults.Items.AddRange(profiles);
         }
 
         public void SetSelectedSearchResults(ISelection selection)
@@ -146,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _error = "";
             IList<Patient> checkedPatients = new List<Patient>();
-            foreach (ReconciliationCandidateTableEntry entry in _reconciliationCandidateProfiles)
+            foreach (ReconciliationCandidateTableEntry entry in _reconciliationCandidateProfiles.Items)
             {
                 if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.Patient))
                 {
@@ -184,25 +185,25 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void RefreshAlternateProfiles()
         {
-            _alternateProfiles.Clear();
+            _alternateProfiles.Items.Clear();
 
             if (_selectedSearchResult != null)
             {
                 IList<PatientProfile> alternates = _adtService.ListReconciledPatientProfiles(_selectedSearchResult);
-                _alternateProfiles.AddRange(alternates);
+                _alternateProfiles.Items.AddRange(alternates);
             }
         }
 
         private void RefreshReconciliationCandidates()
         {
-            _reconciliationCandidateProfiles.Clear();
+            _reconciliationCandidateProfiles.Items.Clear();
 
             if (_selectedSearchResult != null)
             {
                 IList<PatientProfileMatch> matches = _adtService.FindPatientReconciliationMatches(_selectedSearchResult);
                 foreach (PatientProfileMatch match in matches)
                 {
-                    _reconciliationCandidateProfiles.Add(new ReconciliationCandidateTableEntry(match));
+                    _reconciliationCandidateProfiles.Items.Add(new ReconciliationCandidateTableEntry(match));
                 }
             }
         }

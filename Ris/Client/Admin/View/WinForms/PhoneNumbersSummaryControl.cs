@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _phoneNumbers.DataSource = _component.PhoneNumbers;
+            _phoneNumbers.Table = _component.PhoneNumbers;
             _phoneNumbers.ToolbarModel = _component.PhoneNumberListToolbarActions;
             _phoneNumbers.MenuModel = _component.PhoneNumberListMenuActions;
 

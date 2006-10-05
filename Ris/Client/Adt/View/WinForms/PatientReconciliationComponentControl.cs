@@ -27,9 +27,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component = component;
 
             // TODO add .NET databindings to _component
-            _searchResultsTable.DataSource = _component.SearchResults;
-            _alternateProfilesTable.DataSource = _component.AlternateProfiles;
-            _reconciliationCandidateTable.DataSource = _component.ReconciliationCandidateProfiles;
+            _searchResultsTable.Table = _component.SearchResults;
+            _alternateProfilesTable.Table = _component.AlternateProfiles;
+            _reconciliationCandidateTable.Table = _component.ReconciliationCandidateProfiles;
 
             _mrnField.DataBindings.Add("Value", _component, "Mrn", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardField.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);

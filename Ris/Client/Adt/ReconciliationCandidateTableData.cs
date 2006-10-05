@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    class ReconciliationCandidateTableData : TableData<ReconciliationCandidateTableEntry>
+    class ReconciliationCandidateTableData : Table<ReconciliationCandidateTableEntry>
     {
         public ReconciliationCandidateTableData(IHealthcareServiceLayer service)
         {

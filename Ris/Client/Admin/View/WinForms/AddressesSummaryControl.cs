@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _addressList.DataSource = _component.Addresses;
+            _addressList.Table = _component.Addresses;
             _addressList.ToolbarModel = _component.AddressListToolbarActions;
             _addressList.MenuModel = _component.AddressListMenuActions;
 

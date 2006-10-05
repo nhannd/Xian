@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _sourceTable
             // 
-            this._sourceTable.DataSource = null;
+            this._sourceTable.Table = null;
             this._sourceTable.Location = new System.Drawing.Point(17, 44);
             this._sourceTable.Margin = new System.Windows.Forms.Padding(4);
             this._sourceTable.MenuModel = null;
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _targetTable
             // 
-            this._targetTable.DataSource = null;
+            this._targetTable.Table = null;
             this._targetTable.Location = new System.Drawing.Point(17, 299);
             this._targetTable.Margin = new System.Windows.Forms.Padding(4);
             this._targetTable.MenuModel = null;

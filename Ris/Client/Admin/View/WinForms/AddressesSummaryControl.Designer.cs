@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // _addressList
             // 
             this._addressList.AutoSize = true;
-            this._addressList.DataSource = null;
+            this._addressList.Table = null;
             this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
             this._addressList.Location = new System.Drawing.Point(3, 3);
             this._addressList.Name = "_addressList";

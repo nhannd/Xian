@@ -8,6 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -73,15 +74,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        public ITableData SearchResults
+        public ITable SearchResults
         {
             get { return _searchResults; }
             set
             {
-                _searchResults.Clear();
+                _searchResults.Items.Clear();
                 if (value != null)
                 {
-                    _searchResults.AddRange(value);
+                    _searchResults.Items.AddRange(value.Items);
                 }
             }
         }
