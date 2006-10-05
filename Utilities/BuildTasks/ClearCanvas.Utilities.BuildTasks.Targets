@@ -6,4 +6,5 @@
   </PropertyGroup>
   <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.VersionProjects"/>
   <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.RelativeBuildDateTime"/>
+  <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.NUnitLogParser"/>
 </Project>
