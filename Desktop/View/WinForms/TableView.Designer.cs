@@ -52,6 +52,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.HotTrack;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             this._dataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this._dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this._dataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this._dataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this._dataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;

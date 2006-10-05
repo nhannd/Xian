@@ -11,6 +11,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -123,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public class SearchResult
 		{
-			private TableData<StudyItem> _studyList;
+			private Table<StudyItem> _studyList;
 			private string _resultsTitle = "";
 
 			public SearchResult()
@@ -131,12 +132,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			}
 
-			public TableData<StudyItem> StudyList
+			public Table<StudyItem> StudyList
 			{
 				get 
 				{
 					if (_studyList == null)
-						_studyList = new TableData<StudyItem>();
+						_studyList = new Table<StudyItem>();
 
 					return _studyList; 
 				}
@@ -155,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private IStudyFinder _studyFinder;
 		private Dictionary<string, SearchResult> _searchResults;
-		private TableData<StudyItem> _currentStudyList;
+		private Table<StudyItem> _currentStudyList;
 
 		private string _resultsTitle;
 
@@ -191,7 +192,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set { _searchPanelComponent = value; }
 		}
 
-		public TableData<StudyItem> StudyList
+		public Table<StudyItem> StudyList
 		{
 			get { return _currentStudyList; }
 			set { _currentStudyList = value; }
@@ -336,9 +337,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				UpdateComponent();
 
 				foreach (StudyItem item in aggregateStudyItemList)
-					_searchResults[_selectedServerGroup.GroupID].StudyList.Add(item);
+					_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
 
-				_searchResults[_selectedServerGroup.GroupID].StudyList.ApplySort();
+				_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
 			}
 		}
 
@@ -362,7 +363,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void UpdateComponent()
 		{
 			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = this.ResultsTitle;
-			_searchResults[_selectedServerGroup.GroupID].StudyList.Clear();
+			_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Clear();
 		}
 
 		private void UpdateView()
@@ -371,7 +372,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.StudyList = _searchResults[_selectedServerGroup.GroupID].StudyList;
 		}
 
-		private void AddColumns(TableData<StudyItem> studyList)
+		private void AddColumns(Table<StudyItem> studyList)
 		{
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(

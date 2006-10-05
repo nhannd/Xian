@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _studyTableView
 			// 
-			this._studyTableView.DataSource = null;
+            this._studyTableView.Table = null;
 			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._studyTableView.Location = new System.Drawing.Point(0, 23);
 			this._studyTableView.MenuModel = null;

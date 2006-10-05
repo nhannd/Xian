@@ -1,37 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
-namespace ClearCanvas.Desktop
+namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
     /// Use this class to describe a column in conjunction with the <see cref="TableData"/> class.
     /// </summary>
     /// <typeparam name="TItem">The type of item on which the table is based</typeparam>
     /// <typeparam name="TColumn">The type of value that this column holds</typeparam>
-    public class TableColumn<TItem, TColumn> : ITableColumn<TItem>
+    public class TableColumn<TItem, TColumn> : TableColumnBase<TItem>
     {
-        /// <summary>
-        /// Comparer for sorting operations
-        /// </summary>
-        class SortComparer : Comparer<TItem>
-        {
-            private int _direction;
-            private Comparison<TItem> _comp;
-
-            public SortComparer(TableColumn<TItem, TColumn> column, bool ascending)
-            {
-                _comp = column.Comparison;
-                _direction = ascending ? 1 : -1;
-            }
-
-            public override int Compare(TItem x, TItem y)
-            {
-                return _comp(x, y) * _direction;
-            }
-        }
-
-
         /// <summary>
         /// Delegate that is used to pull the value of a column from an object.
         /// </summary>
@@ -51,12 +31,8 @@ namespace ClearCanvas.Desktop
         public delegate void SetColumnValueDelegate<TObject, TValue>(TObject obj, TValue val);
 
 
-        private string _name;
-        private float _widthFactor;
         private GetColumnValueDelegate<TItem, TColumn> _valueGetter;
         private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
-
-        private Comparison<TItem> _comparison;
 
 
         /// <summary>
@@ -73,22 +49,10 @@ namespace ClearCanvas.Desktop
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
             float widthFactor,
             Comparison<TItem> comparison)
+            :base(columnName, typeof(TColumn), widthFactor, comparison)
         {
-            _name = columnName;
-            _widthFactor = widthFactor;
             _valueGetter = valueGetter;
             _valueSetter = valueSetter;
-            _comparison = comparison;
-
-            // if no comparison operator was specified, assign a default comparison
-            if (_comparison == null)
-            {
-                // if TColumn implements IComparable, can compare by column value
-                if (typeof(IComparable).IsAssignableFrom(typeof(TColumn)))
-                    _comparison = ValueComparsion;
-                else
-                    _comparison = NopComparison;    // no comparison is possible
-            }
         }
 
         /// <summary>
@@ -140,85 +104,19 @@ namespace ClearCanvas.Desktop
         {
         }
 
-        public Comparison<TItem> Comparison
+        public override bool ReadOnly
         {
-            get { return _comparison; }
-            set { _comparison = value; }
+            get { return _valueSetter != null; }
         }
 
-        #region ITableColumn members
-
-        public string Name
+        public override object GetValue(object item)
         {
-            get { return _name; }
+            return _valueGetter((TItem)item);
         }
 
-        public Type ColumnType
+        public override void SetValue(object item, object value)
         {
-            get { return typeof(TColumn); }
-        }
-
-        public float WidthFactor
-        {
-            get { return _widthFactor; }
-        }
-
-        public bool ReadOnly
-        {
-            get { return _valueSetter == null; }
-        }
-
-        public object GetValue(TItem item)
-        {
-            return _valueGetter(item);
-        }
-
-        public void SetValue(TItem item, object value)
-        {
-            _valueSetter(item, (TColumn)value);
-        }
-
-        public IComparer<TItem> GetComparer(bool ascending)
-        {
-            return new SortComparer(this, ascending);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Default comparison used when TColumn is IComparable
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        private int ValueComparsion(TItem x, TItem y)
-        {
-			object valueX = GetValue(x);
-			object valueY = GetValue(y);
-			if (valueX == null)
-			{
-				if (valueY == null)
-					return 0;
-				else
-					return -1;
-			}
-			else if (valueY == null)
-			{
-				return 1;
-			}
-
-			return ((IComparable)valueX).CompareTo(valueY);
-        }
-
-        /// <summary>
-        /// Default comparison used when TColumn is not IComparable (in which case, sorting is not possible)
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        private int NopComparison(TItem x, TItem y)
-        {
-            return 0;
+            _valueSetter((TItem)item, (TColumn)value);
         }
     }
 }

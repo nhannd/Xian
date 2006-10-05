@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 
@@ -45,10 +46,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
 		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+        private ITable _table;
 
 		public TableView()
 		{
 			InitializeComponent();
+
+            // if we allow the framework to generate columns, there seems to be a bug with 
+            // setting the minimum column width > 100 pixels
+            // therefore, turn off the auto-generate and create the columns ourselves
+            _dataGridView.AutoGenerateColumns = false;
 		}
 
         public bool ReadOnly
@@ -100,23 +107,21 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public object DataSource
+        public ITable Table
         {
-            get { return _bindingSource.DataSource; }
+            get { return _table; }
             set
             {
-                _bindingSource.DataSource = value;
-                _dataGridView.DataSource = _bindingSource;
+                _table = value;
 
-                if (value is ITableData)
+                InitColumns();
+
+                if (_table != null)
                 {
-                    InitColumnWidths(value as ITableData);
+                    _bindingSource.DataSource = new TableAdapter(_table);
+                    _dataGridView.DataSource = _bindingSource;
                 }
             }
-        }
-
-        private void InitColumnWidths(ITableData table)
-        {
         }
 
         public RightToLeft ToolStripRightToLeft
@@ -149,6 +154,38 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             add { _itemDoubleClicked += value; }
             remove { _itemDoubleClicked -= value; }
+        }
+
+        private void InitColumns()
+        {
+            // clear the old columns
+            _dataGridView.Columns.Clear();
+
+            if (_table != null)
+            {
+                foreach (ITableColumn col in _table.Columns)
+                {
+                    // this is ugly but somebody's gotta do it
+                    DataGridViewColumn dgcol;
+                    if (col.ColumnType == typeof(bool))
+                        dgcol = new DataGridViewCheckBoxColumn();
+                    else if (col.ColumnType == typeof(Image))
+                        dgcol = new DataGridViewImageColumn();
+                    else
+                    {
+                        // assume any other type of column will be displayed as text
+                        dgcol = new DataGridViewTextBoxColumn();
+                    }
+
+                    // initialize the necessary properties
+                    dgcol.Name = col.Name;
+                    dgcol.HeaderText = col.Name;
+                    dgcol.DataPropertyName = col.Name;
+                    dgcol.MinimumWidth = (int)(col.WidthFactor * _table.BaseColumnWidth);
+                    dgcol.FillWeight = col.WidthFactor;
+                    _dataGridView.Columns.Add(dgcol);
+                }
+            }
         }
 
         private void _dataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

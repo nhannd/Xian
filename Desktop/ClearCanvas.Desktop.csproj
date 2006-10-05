@@ -60,13 +60,25 @@
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
     <Compile Include="Format.cs" />
-    <Compile Include="ITableColumn.cs" />
+    <Compile Include="Tables\ITable.cs" />
+    <Compile Include="Tables\ITableColumn.cs" />
+    <Compile Include="Tables\ITableColumnCollection.cs" />
     <Compile Include="SplitComponentContainer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SplitPane.cs" />
     <Compile Include="TabComponentContainer.cs" />
-    <Compile Include="TableColumn.cs" />
+    <Compile Include="Tables\ITableItemCollection.cs" />
+    <Compile Include="Tables\Table.cs" />
+    <Compile Include="Tables\TableColumn.cs" />
+    <Compile Include="Tables\TableColumnBase.cs" />
+    <Compile Include="Tables\TableColumnCollection.cs" />
+    <Compile Include="Tables\TableItemCollection.cs" />
+    <Compile Include="Tables\TableItemChangeType.cs" />
+    <Compile Include="Tables\TableItemEventArgs.cs" />
+    <Compile Include="Tables\TableSortParams.cs" />
+    <Compile Include="Tables\TableColumnChangeType.cs" />
+    <Compile Include="Tables\TableColumnEventArgs.cs" />
     <Compile Include="TabPage.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="IDesktopWindow.cs" />
@@ -123,14 +135,12 @@
     <Compile Include="IWorkspace.cs" />
     <Compile Include="IWorkspaceView.cs" />
     <Compile Include="ISelection.cs" />
-    <Compile Include="ITableData.cs" />
     <Compile Include="NavigatorComponentContainer.cs" />
     <Compile Include="Shelf.cs" />
     <Compile Include="ShelfCollection.cs" />
     <Compile Include="ShelfDisplayHint.cs" />
     <Compile Include="ShelfEventArgs.cs" />
     <Compile Include="ShelfManager.cs" />
-    <Compile Include="TableData.cs" />
     <Compile Include="MementoList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
