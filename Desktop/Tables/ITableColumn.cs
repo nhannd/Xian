@@ -27,6 +27,11 @@ namespace ClearCanvas.Desktop.Tables
         float WidthFactor { get; }
 
         /// <summary>
+        /// Gets the width of this column as a percentage of the overall table width.
+        /// </summary>
+        int WidthPercent { get; }
+
+        /// <summary>
         /// Indicates whether this column is read-only
         /// </summary>
         bool ReadOnly { get; }

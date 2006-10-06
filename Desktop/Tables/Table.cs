@@ -30,11 +30,13 @@ namespace ClearCanvas.Desktop.Tables
             _columns = new TableColumnCollection<TItem>();
             _columns.ItemAdded += delegate(object sender, CollectionEventArgs<TableColumnBase<TItem>> args)
                 {
-                    NotifyStructureChanged(TableColumnChangeType.ColumnAdded, args.Item);
+                    args.Item.Table = this;
+                    NotifyColumnChanged(TableColumnChangeType.ColumnAdded, args.Item);
                 };
             _columns.ItemRemoved += delegate(object sender, CollectionEventArgs<TableColumnBase<TItem>> args)
                 {
-                    NotifyStructureChanged(TableColumnChangeType.ColumnRemoved, args.Item);
+                    args.Item.Table = null;
+                    NotifyColumnChanged(TableColumnChangeType.ColumnRemoved, args.Item);
                 };
 
             _data = new TableItemCollection<TItem>(this);
@@ -115,12 +117,12 @@ namespace ClearCanvas.Desktop.Tables
 
         #endregion
 
-        #region Private methods
+        #region Internal methods
 
-        private int GetColumnWidthPercent(ITableColumn column)
+        internal int GetColumnWidthPercent(TableColumnBase<TItem> column)
         {
             float sum = 0;
-            foreach (ITableColumn c in _columns)
+            foreach (TableColumnBase<TItem> c in _columns)
             {
                 sum += c.WidthFactor;
             }
@@ -132,7 +134,7 @@ namespace ClearCanvas.Desktop.Tables
             EventsHelper.Fire(_dataChanged, this, new TableItemEventArgs(changeType, index));
         }
 
-        internal void NotifyStructureChanged(TableColumnChangeType changeType, ITableColumn column)
+        internal void NotifyColumnChanged(TableColumnChangeType changeType, TableColumnBase<TItem> column)
         {
             EventsHelper.Fire(_structureChanged, this, new TableColumnEventArgs(changeType, column));
         }

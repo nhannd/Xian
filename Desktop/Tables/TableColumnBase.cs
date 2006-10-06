@@ -32,6 +32,7 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
+        private Table<TItem> _table;
         private string _name;
         private Type _columnType;
         private float _widthFactor;
@@ -72,6 +73,15 @@ namespace ClearCanvas.Desktop.Tables
             set { _comparison = value; }
         }
 
+        /// <summary>
+        /// Used by the framework to associate this column with a parent <see cref="Table"/>
+        /// </summary>
+        internal Table<TItem> Table
+        {
+            get { return _table; }
+            set { _table = value; }
+        }
+
         #region ITableColumn members
 
         public string Name
@@ -84,9 +94,32 @@ namespace ClearCanvas.Desktop.Tables
             get { return _columnType; }
         }
 
+        /// <summary>
+        /// Gets or sets a factor that determines the width of this column relative to other columns in the table.
+        /// The default value is 1.0.  
+        /// </summary>
         public float WidthFactor
         {
             get { return _widthFactor; }
+            set
+            {
+                _widthFactor = value;
+                if (_table != null)
+                {
+                    _table.NotifyColumnChanged(TableColumnChangeType.ColumnChanged, this);
+                }
+            }
+        }
+
+        public int WidthPercent
+        {
+            get
+            {
+                if (_table == null)
+                    throw new InvalidOperationException("This column must be added to a table to determine its percentage width");
+                
+                return _table.GetColumnWidthPercent(this);
+            }
         }
 
         public abstract bool ReadOnly { get; }
