@@ -71,10 +71,14 @@ namespace ClearCanvas.Ris.Client.Adt
             _adtService = ApplicationContext.GetService<IAdtService>();
 
             _addresses = new Table<Address>();
-            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _adtService.AddressTypeEnumTable[a.Type].Value; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Address", delegate(Address a) { return a.Format(); }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Type",
+                delegate(Address a) { return _adtService.AddressTypeEnumTable[a.Type].Value; }, 1.0f));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Address",
+                delegate(Address a) { return a.Format(); }, 3.0f));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From",
+                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }, 1.0f));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until",
+                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 1.0f));
 
 
             _phoneNumbers = new Table<TelephoneNumber>();
@@ -84,10 +88,13 @@ namespace ClearCanvas.Ris.Client.Adt
                     return string.Format("{0} {1}",
                         _adtService.TelephoneUseEnumTable[t.Use].Value,
                         t.Equipment == TelephoneEquipment.CP ? _adtService.TelephoneEquipmentEnumTable[t.Equipment].Value : "");
-                }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", delegate(TelephoneNumber t) { return t.Format(); }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", delegate(TelephoneNumber t) { return ""; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", delegate(TelephoneNumber t) { return ""; }));
+                }, 1.0f));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number",
+                delegate(TelephoneNumber t) { return t.Format(); }, 3.0f));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From",
+                delegate(TelephoneNumber t) { return ""; }, 1.0f));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until",
+                delegate(TelephoneNumber t) { return ""; }, 1.0f));
         }
 
         public PatientProfile Subject

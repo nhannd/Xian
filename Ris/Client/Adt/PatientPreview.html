@@ -53,7 +53,7 @@ if(component.Subject != null)
   </tr>
   <tr class="tableheading">
     <% for(var column in component.PhoneNumbers.Columns) { %>
-    <td><%= column.Name %></td>
+    <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
     <% } %>
   </tr>
     <% for(var phone in component.PhoneNumbers.Items) {%>
@@ -70,7 +70,7 @@ if(component.Subject != null)
   </tr>
   <tr class="tableheading">
   <% for(var column in component.Addresses.Columns) { %>
-  <td><%= column.Name %></td>
+  <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
   <% } %>
   </tr>
   <% for(var address in component.Addresses.Items) {%>

@@ -15,12 +15,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// </summary>
     public partial class PatientComponentControl : CustomUserControl
     {
-        private PatientComponent _component;
+        private PatientOverviewComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientComponentControl(PatientComponent component)
+        public PatientComponentControl(PatientOverviewComponent component)
         {
             InitializeComponent();
 

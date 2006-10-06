@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Host.DesktopWindow,
-                    new PatientComponent(_selectedPatient),
+                    new PatientOverviewComponent(_selectedPatient),
                     string.Format("{0} - {1}", _selectedPatient.Name.Format(), _selectedPatient.MRN.Id),
                     null);
             }

@@ -40,6 +40,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressEditorComponentView.cs" />
+    <Compile Include="AddressEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddressEditorControl.Designer.cs">
+      <DependentUpon>AddressEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddressesSummaryComponentView.cs" />
+    <Compile Include="AddressesSummaryControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddressesSummaryControl.Designer.cs">
+      <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConfirmReconciliationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -96,6 +110,20 @@
     <Compile Include="PatientSearchComponentControl.Designer.cs">
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="PhoneNumberEditorComponentView.cs" />
+    <Compile Include="PhoneNumberEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PhoneNumberEditorControl.Designer.cs">
+      <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PhoneNumbersSummaryComponentView.cs" />
+    <Compile Include="PhoneNumbersSummaryControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PhoneNumbersSummaryControl.Designer.cs">
+      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorklistComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -130,6 +158,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddressEditorControl.resx">
+      <DependentUpon>AddressEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddressesSummaryControl.resx">
+      <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConfirmReconciliationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
@@ -156,6 +192,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PatientSearchComponentControl.resx">
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PhoneNumberEditorControl.resx">
+      <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PhoneNumbersSummaryControl.resx">
+      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WorklistComponentControl.resx">

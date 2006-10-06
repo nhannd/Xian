@@ -6,12 +6,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/MenuTools/MenuToolsMyTools/PatientAddTool")]
-    //[ButtonAction("apply", "global-toolbars/ToolbarMyTools/PatientAddTool")]
-    [Tooltip("apply", "Add Patient")]
+    [MenuAction("apply", "global-menus/Adt/New Patient...")]
+    [ButtonAction("apply", "global-toolbars/Adt/PatientAddTool")]
+    [Tooltip("apply", "New Patient")]
     [IconSet("apply", IconScheme.Colour, "Icons.PatientAddToolSmall.png", "Icons.PatientAddToolMedium.png", "Icons.PatientAddToolLarge.png")]
     [ClickHandler("apply", "Apply")]
 
@@ -41,7 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public void Apply()
         {
-            ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, new PatientEditorComponent(), "New Patient", null);
+            PatientEditorShellComponent editor = new PatientEditorShellComponent(PatientProfile.New());
+            ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, editor, "New Patient", null);
         }
     }
 }

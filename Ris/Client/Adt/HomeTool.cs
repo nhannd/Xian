@@ -9,8 +9,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/View/Home")]
-    [ButtonAction("launch", "global-toolbars/View/Home")]
+    [MenuAction("launch", "global-menus/Adt/Home")]
+    [ButtonAction("launch", "global-toolbars/Adt/Home")]
     [Tooltip("launch", "Home")]
     [IconSet("launch", IconScheme.Colour, "Icons.PatientRegistrationToolSmall.png", "Icons.PatientRegistrationToolMedium.png", "Icons.PatientRegistrationToolLarge.png")]
     [ClickHandler("launch", "Launch")]

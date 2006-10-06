@@ -37,14 +37,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressEditorComponent.cs" />
+    <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="ConfirmReconciliationComponent.cs" />
+    <Compile Include="CrudActionModel.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FoldersComponent.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
     <Compile Include="PatientAddTool.cs" />
-    <Compile Include="PatientComponent.cs" />
+    <Compile Include="PatientEditorShellComponent.cs" />
+    <Compile Include="PatientOverviewComponent.cs" />
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientPreviewComponent.cs" />
     <Compile Include="PatientProfileTableData.cs" />
@@ -52,6 +56,8 @@
     <Compile Include="PatientReconciliationTool.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
+    <Compile Include="PhoneNumberEditorComponent.cs" />
+    <Compile Include="PhoneNumbersSummaryComponent.cs" />
     <Compile Include="WorklistComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTableData.cs" />
@@ -139,13 +145,22 @@
     <EmbeddedResource Include="Icons\PatientAddToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientAddToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\PatientAddToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PatientPreview.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientAddToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

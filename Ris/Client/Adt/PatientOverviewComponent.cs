@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PatientComponent class
     /// </summary>
 //    [AssociateView(typeof(PatientComponentViewExtensionPoint))]
-    public class PatientComponent : SplitComponentContainer
+    public class PatientOverviewComponent : SplitComponentContainer
     {
         private PatientPreviewComponent _preview;
         private PatientPreviewComponent _detail;
@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientComponent(PatientProfile subject)
+        public PatientOverviewComponent(PatientProfile subject)
             :base(SplitOrientation.Vertical)
         {
             _subject = subject;

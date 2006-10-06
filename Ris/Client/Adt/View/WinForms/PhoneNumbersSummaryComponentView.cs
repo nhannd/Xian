@@ -8,21 +8,17 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="PatientComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(PatientComponentViewExtensionPoint))]
-    public class PatientComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
+    public class PhoneNumbersSummaryComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientOverviewComponent _component;
-        private PatientComponentControl _control;
-
+        private PhoneNumbersSummaryComponent _component;
+        private PhoneNumbersSummaryControl _control;
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientOverviewComponent)component;
+            _component = (PhoneNumbersSummaryComponent)component;
         }
 
         #endregion
@@ -33,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PatientComponentControl(_component);
+                    _control = new PhoneNumbersSummaryControl(_component);
                 }
                 return _control;
             }
