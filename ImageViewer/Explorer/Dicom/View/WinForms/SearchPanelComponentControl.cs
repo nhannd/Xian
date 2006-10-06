@@ -65,5 +65,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 				}
 			}
 		}
+
+        private void OnSearchTodayButtonClicked(object sender, EventArgs e)
+        {
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                try
+                {
+                    _component.SearchToday();
+                }
+                catch
+                {
+                    Platform.ShowMessageBox("Unable to query server");
+                }
+            }
+        }
     }
 }

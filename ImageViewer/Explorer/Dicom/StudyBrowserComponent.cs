@@ -7,11 +7,11 @@ using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -279,68 +279,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
-			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
-			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
-
-            // create patient's name query key
-            // LastName   FirstName   Result
-            //    X           X        <Blank>
-            //    V           X        LastName*
-            //    V           V        LastName*FirstName*
-            //    X           V        *FirstName*
-            string patientsName = "";
-            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
-                patientsName = _searchPanelComponent.LastName + "*";
-            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
-                patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
-            if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
-                patientsName = "*" + _searchPanelComponent.FirstName + "*";
-
-            string patientId = "";
-            if (_searchPanelComponent.PatientID.Length > 0)
-                patientId = _searchPanelComponent.PatientID + "*";
-
-            string accessionNumber = "";
-            if (_searchPanelComponent.AccessionNumber.Length > 0)
-                accessionNumber = _searchPanelComponent.AccessionNumber + "*";
-
-			string studyDescription = "";
-            if (_searchPanelComponent.StudyDescription.Length > 0)
-                studyDescription = _searchPanelComponent.StudyDescription + "*";
-
-			QueryParameters queryParams = new QueryParameters();
-			queryParams.Add("PatientsName", patientsName);
-			queryParams.Add("PatientId", patientId);
-			queryParams.Add("AccessionNumber", accessionNumber);
-			queryParams.Add("StudyDescription", studyDescription);
-            queryParams.Add("ModalitiesInStudy", "");
-
-			StudyItemList aggregateStudyItemList = new StudyItemList();
-
-			try
-			{
-				foreach (AEServer server in _selectedServerGroup.Servers)
-				{
-					StudyItemList serverStudyItemList = _studyFinder.Query(server, queryParams);
-					aggregateStudyItemList.AddRange(serverStudyItemList);
-			}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(e, LogLevel.Error);
-				throw;
-			}
-			finally
-			{
-				this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
-			
-				UpdateComponent();
-
-				foreach (StudyItem item in aggregateStudyItemList)
-					_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
-
-				_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
-			}
+            InternalSearch(DateTime.MinValue, DateTime.MinValue);
 		}
 
 		public void ItemDoubleClick()
@@ -436,5 +375,117 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				  new PropertyChangedEventArgs(propertyName));
 			}
 		}
-	}
+
+        internal void SearchToday()
+        {
+            InternalSearch(DateTime.Today, DateTime.Today);
+        }
+
+        /// <summary>
+        /// The semantics of the fromDate and toDate, is:
+        /// <table>
+        /// <tr><td>fromDate</td><td>toDate</td><td>Query</td></tr>
+        /// <tr><td>null</td><td>null</td><td>Empty</td></tr>
+        /// <tr><td>20060608</td><td>null</td><td>Since: "20060608-"</td></tr>
+        /// <tr><td>20060608</td><td>20060610</td><td>Between: "20060608-20060610"</td></tr>
+        /// <tr><td>null</td><td>20060610</td><td>Prior to: "-20060610"</td></tr>
+        /// </table>
+        /// Treat "null" above as DateTime.MinValue
+        /// </summary>
+        /// <param name="fromDate"></param>
+        /// <param name="toDate"></param>
+        private void InternalSearch(DateTime fromDate, DateTime toDate)
+        {
+            Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
+            Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
+
+            // create patient's name query key
+            // LastName   FirstName   Result
+            //    X           X        <Blank>
+            //    V           X        LastName*
+            //    V           V        LastName*FirstName*
+            //    X           V        *FirstName*
+            string patientsName = "";
+            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
+                patientsName = _searchPanelComponent.LastName + "*";
+            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
+                patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
+            if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
+                patientsName = "*" + _searchPanelComponent.FirstName + "*";
+
+            string patientId = "";
+            if (_searchPanelComponent.PatientID.Length > 0)
+                patientId = _searchPanelComponent.PatientID + "*";
+
+            string accessionNumber = "";
+            if (_searchPanelComponent.AccessionNumber.Length > 0)
+                accessionNumber = _searchPanelComponent.AccessionNumber + "*";
+
+            string studyDescription = "";
+            if (_searchPanelComponent.StudyDescription.Length > 0)
+                studyDescription = _searchPanelComponent.StudyDescription + "*";
+
+            QueryParameters queryParams = new QueryParameters();
+            queryParams.Add("PatientsName", patientsName);
+            queryParams.Add("PatientId", patientId);
+            queryParams.Add("AccessionNumber", accessionNumber);
+            queryParams.Add("StudyDescription", studyDescription);
+            queryParams.Add("ModalitiesInStudy", "");
+            queryParams.Add("StudyDate", GetDicomDateRangeMatchString(fromDate, toDate));
+
+            StudyItemList aggregateStudyItemList = new StudyItemList();
+
+            try
+            {
+                foreach (AEServer server in _selectedServerGroup.Servers)
+                {
+                    StudyItemList serverStudyItemList = _studyFinder.Query(server, queryParams);
+                    aggregateStudyItemList.AddRange(serverStudyItemList);
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log(e, LogLevel.Error);
+                throw;
+            }
+            finally
+            {
+                this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
+
+                UpdateComponent();
+
+                foreach (StudyItem item in aggregateStudyItemList)
+                    _searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
+
+                _searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
+            }
+        }
+
+        private string GetDicomDateRangeMatchString(DateTime fromDate, DateTime toDate)
+        {
+            if (DateTime.MinValue == fromDate && DateTime.MinValue == toDate)
+            {
+                return "";
+            }
+            else if (fromDate == toDate)
+            {
+                return fromDate.ToString("yyyyMMdd");
+            }
+            else if (DateTime.MinValue != fromDate && DateTime.MinValue == toDate)
+            {
+                return fromDate.ToString("yyyyMMdd-");
+            }
+            else if (DateTime.MinValue != fromDate && DateTime.MinValue != toDate)
+            {
+                return fromDate.ToString("yyyyMMdd-") + toDate.ToString("yyyyMMdd");
+            }
+            else if (DateTime.MinValue == fromDate && DateTime.MinValue != toDate)
+            {
+                return toDate.ToString("-yyyyMMdd");
+            }
+
+            return "";
+        }
+
+    }
 }

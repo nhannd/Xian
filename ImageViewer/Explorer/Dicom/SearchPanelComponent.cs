@@ -145,5 +145,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				  new PropertyChangedEventArgs(propertyName));
 			}
 		}
-	}
+
+        public void SearchToday()
+        {
+            _studyBrowserComponent.SearchToday();
+        }
+    }
 }
