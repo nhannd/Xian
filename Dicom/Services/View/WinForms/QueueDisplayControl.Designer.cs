@@ -64,7 +64,7 @@ namespace ClearCanvas.Dicom.Services.View.WinForms
             // 
             // _parcelTableView
             // 
-            this._parcelTableView.DataSource = null;
+            this._parcelTableView.Table = null;
             this._parcelTableView.Location = new System.Drawing.Point(16, 14);
             this._parcelTableView.Margin = new System.Windows.Forms.Padding(4);
             this._parcelTableView.MenuModel = null;

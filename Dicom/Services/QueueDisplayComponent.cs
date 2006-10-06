@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Dicom.Services
 {
@@ -34,7 +35,7 @@ namespace ClearCanvas.Dicom.Services
             // TODO prepare the component for its live phase
             base.Start();
 
-            _parcels = new TableData<SendParcel>();
+            _parcels = new Table<SendParcel>();
  
             _parcels.Columns.Add(new TableColumn<SendParcel, string>("Description",
                 delegate(SendParcel aParcel) { return aParcel.Description; }
@@ -65,7 +66,7 @@ namespace ClearCanvas.Dicom.Services
             {
                 foreach (ISendParcel aParcel in listOfParcels)
                 {
-                    _parcels.Add(aParcel as SendParcel);
+                    _parcels.Items.Add(aParcel as SendParcel);
                 }
             }
         }
@@ -77,10 +78,10 @@ namespace ClearCanvas.Dicom.Services
             base.Stop();
         }
 
-        private TableData<SendParcel> _parcels;
+        private Table<SendParcel> _parcels;
         private event EventHandler<QueueStatusChangedEventArgs> _queueStatusChanged;
 
-        public TableData<SendParcel> Parcels
+        public Table<SendParcel> Parcels
         {
             get { return _parcels; }
         }
@@ -122,7 +123,7 @@ namespace ClearCanvas.Dicom.Services
 
         public void Refresh()
         {
-            _parcels.Clear();
+            _parcels.Items.Clear();
             PopulateListFromDataStore();
         }
 

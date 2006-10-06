@@ -24,7 +24,7 @@ namespace ClearCanvas.Dicom.Services.View.WinForms
         {
             _queueDisplay = component;
 
-            _parcelTableView.DataSource = _queueDisplay.Parcels;
+            _parcelTableView.Table = _queueDisplay.Parcels;
             _parcelTableView.SelectionChanged += new EventHandler(OnParcelTableViewSelectionChanged);
             // event handlers
             _abortButton.Click += delegate(object sender, EventArgs args)
