@@ -47,12 +47,10 @@
     <Compile Include="CustomSqlDialect.cs" />
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />
-    <Compile Include="EnumeratorWrapper.cs" />
     <Compile Include="DefaultInterceptor.cs" />
     <Compile Include="Hql\HqlCondition.cs" />
     <Compile Include="Hql\HqlQuery.cs" />
     <Compile Include="Hql\HqlSort.cs" />
-    <Compile Include="ListWrapper.cs" />
     <Compile Include="PersistenceContext.cs" />
     <Compile Include="PersistentStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

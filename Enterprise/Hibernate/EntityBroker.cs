@@ -6,6 +6,7 @@ using System.Text;
 using NHibernate;
 using NHibernate.Expression;
 using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
