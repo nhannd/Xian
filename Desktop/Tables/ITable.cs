@@ -50,6 +50,10 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         TableSortParams SortParams { get; }
 
-        float BaseColumnWidth { get; }
+        /// <summary>
+        /// Gets the base column width for this table, in units that correspond roughly to the
+        /// width of one character.
+        /// </summary>
+        float BaseColumnWidthChars { get; }
     }
 }

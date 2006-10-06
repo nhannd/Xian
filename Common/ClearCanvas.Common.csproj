@@ -161,6 +161,7 @@
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />
+    <Compile Include="Utilities\ComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
     <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />
     <Compile Include="Utilities\EnumerableWrapper.cs" />

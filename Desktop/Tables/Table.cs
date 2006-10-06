@@ -6,25 +6,12 @@ using System.Collections;
 
 namespace ClearCanvas.Desktop.Tables
 {
+    /// <summary>
+    /// A useful generic implementation of <see cref="ITable"/>
+    /// </summary>
+    /// <typeparam name="TItem">The type of item that this table holds</typeparam>
     public class Table<TItem> : ITable
     {
-        /// <summary>
-        /// Provides a typed wrapper around an untyped <see cref="IComparer"/>
-        /// </summary>
-        class ComparerWrapper : Comparer<TItem>
-        {
-            private IComparer _inner;
-            public ComparerWrapper(IComparer inner)
-            {
-                _inner = inner;
-            }
-            public override int Compare(TItem x, TItem y)
-            {
-                return _inner.Compare(x, y);
-            }
-        }
-
-
         private TableColumnCollection<TItem> _columns;
         private TableItemCollection<TItem> _data;
         private float _baseColumnWidth;
@@ -34,9 +21,12 @@ namespace ClearCanvas.Desktop.Tables
         private event EventHandler<TableItemEventArgs> _dataChanged;
         private event EventHandler<TableColumnEventArgs> _structureChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Table()
         {
-            _baseColumnWidth = 100;
+            _baseColumnWidth = 10;
             _columns = new TableColumnCollection<TItem>();
             _columns.ItemAdded += delegate(object sender, CollectionEventArgs<TableColumnBase<TItem>> args)
                 {
@@ -49,6 +39,24 @@ namespace ClearCanvas.Desktop.Tables
 
             _data = new TableItemCollection<TItem>(this);
         }
+
+        /// <summary>
+        /// Gets the collection of columns for the table.  Use this property to add <see cref="TableColumn"/> objects.
+        /// </summary>
+        public TableColumnCollection<TItem> Columns
+        {
+            get { return _columns; }
+        }
+
+        /// <summary>
+        /// Gets the collection of items in the table.
+        /// </summary>
+        public TableItemCollection<TItem> Items
+        {
+            get { return _data; }
+        }
+
+        #region ITable members
 
         public event EventHandler<TableItemEventArgs> ItemsChanged
         {
@@ -72,15 +80,6 @@ namespace ClearCanvas.Desktop.Tables
             get { return _sortParams; }
         }
 
-        /// <summary>
-        /// Accesses the list of columns that describe this table data.  Use this property to add
-        /// <see cref="TableColumn"/> objects.
-        /// </summary>
-        public TableColumnCollection<TItem> Columns
-        {
-            get { return _columns; }
-        }
-
         ITableColumnCollection ITable.Columns
         {
             get { return _columns; }
@@ -90,7 +89,7 @@ namespace ClearCanvas.Desktop.Tables
         {
             if (_sortParams != null)
             {
-                _data.Sort(new ComparerWrapper(_sortParams.Column.GetComparer(_sortParams.Ascending)));
+                _data.Sort(new ComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
 
                 // notify that the list has been sorted
                 NotifyDataChanged(TableItemChangeType.Reset, -1);
@@ -103,21 +102,18 @@ namespace ClearCanvas.Desktop.Tables
             Sort();
         }
 
-        public float BaseColumnWidth
+        public float BaseColumnWidthChars
         {
             get { return _baseColumnWidth; }
             set { _baseColumnWidth = value; }
-        }
-
-        public TableItemCollection<TItem> Items
-        {
-            get { return _data; }
         }
 
         ITableItemCollection ITable.Items
         {
             get { return _data; }
         }
+
+        #endregion
 
         #region Private methods
 

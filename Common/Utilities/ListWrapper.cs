@@ -7,9 +7,8 @@ namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Utility class used to wrap an untyped <see cref="IList"/> as a type-safe one.
-    /// This is an interim measure because NHibernate does not yet support generics.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the items in the list</typeparam>
     public class ListWrapper<T> : IList<T>
     {
         private IList _inner;

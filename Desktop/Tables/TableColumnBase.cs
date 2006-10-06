@@ -5,6 +5,11 @@ using System.Collections;
 
 namespace ClearCanvas.Desktop.Tables
 {
+    /// <summary>
+    /// Abstract base implementation of <see cref="ITableColumn"/> for use with the <see cref="Table"/> class.
+    /// Application code should use the concrete <see cref="TableColumn"/> class.
+    /// </summary>
+    /// <typeparam name="TItem">The type of item on which the table is based</typeparam>
     public abstract class TableColumnBase<TItem> : ITableColumn
     {
         /// <summary>
@@ -33,6 +38,13 @@ namespace ClearCanvas.Desktop.Tables
 
         private Comparison<TItem> _comparison;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="columnName">The name of the column</param>
+        /// <param name="columnType">The type of value that the column holds</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
         public TableColumnBase(string columnName, Type columnType, float widthFactor, Comparison<TItem> comparison)
         {
             _name = columnName;
@@ -51,6 +63,9 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
+        /// <summary>
+        /// Gets or sets the comparison delegate that will be used to sort the table according to this column.
+        /// </summary>
         public Comparison<TItem> Comparison
         {
             get { return _comparison; }

@@ -9,6 +9,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
 {
+    /// <summary>
+    /// Implementation of <see cref="ITableItemCollection"/> for use with the <see cref="Table"/> class.
+    /// </summary>
+    /// <typeparam name="TItem">The type of item that the table holds</typeparam>
     public class TableItemCollection<TItem> : IList<TItem>, ITableItemCollection
     {
 
@@ -25,10 +29,9 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Searches the rows for an item that meets the criteria of the specified delegate and returns
+        /// Searches the collection for an item that satisfies the specified predicate and returns
         /// the index of the first such item.
         /// </summary>
-        /// <param name="findDelegate">A delegate that accepts an item and returns a boolean to indicate if the item is the item sought</param>
         /// <returns>The index of the first matching item, or -1 if no matching items are found</returns>
         public int FindIndex(Predicate<TItem> findDelegate)
         {
@@ -61,6 +64,11 @@ namespace ClearCanvas.Desktop.Tables
             _owner.NotifyDataChanged(TableItemChangeType.Reset, -1);
         }
 
+        /// <summary>
+        /// Notifies the table that the item at the specified index has changed in some way.  Use this method
+        /// to cause the view to update itself to reflect the changed item.
+        /// </summary>
+        /// <param name="index"></param>
         public void NotifyItemUpdated(int index)
         {
             _owner.NotifyDataChanged(TableItemChangeType.ItemChanged, index);

@@ -163,6 +163,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (_table != null)
             {
+                float fontSize = this.Font.SizeInPoints;
                 foreach (ITableColumn col in _table.Columns)
                 {
                     // this is ugly but somebody's gotta do it
@@ -181,7 +182,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     dgcol.Name = col.Name;
                     dgcol.HeaderText = col.Name;
                     dgcol.DataPropertyName = col.Name;
-                    dgcol.MinimumWidth = (int)(col.WidthFactor * _table.BaseColumnWidth);
+
+                    dgcol.MinimumWidth = (int)(col.WidthFactor * _table.BaseColumnWidthChars * fontSize);
                     dgcol.FillWeight = col.WidthFactor;
                     _dataGridView.Columns.Add(dgcol);
                 }

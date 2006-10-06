@@ -7,9 +7,8 @@ namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Utility class used to wrap an untyped <see cref="IEnumerator"/> as a type-safe one.
-    /// This is an interim measure because NHibernate does not yet support generics.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the items to be enumerated</typeparam>
     public class EnumeratorWrapper<T> : IEnumerator<T>
     {
         private IEnumerator _inner;

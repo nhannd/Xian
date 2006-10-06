@@ -6,7 +6,7 @@ using System.Collections;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// Use this class to describe a column in conjunction with the <see cref="TableData"/> class.
+    /// Implementation of <see cref="ITableColumn"/> for use with the <see cref="Table"/> class.
     /// </summary>
     /// <typeparam name="TItem">The type of item on which the table is based</typeparam>
     /// <typeparam name="TColumn">The type of value that this column holds</typeparam>

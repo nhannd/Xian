@@ -5,6 +5,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
 {
+    /// <summary>
+    /// Implementation of <see cref="ITableColumnCollection"/> for use with the <see cref="Table"/> class.
+    /// </summary>
+    /// <typeparam name="TItem">The type of item that the table holds</typeparam>
     public class TableColumnCollection<TItem> : 
         ObservableList<TableColumnBase<TItem>, CollectionEventArgs<TableColumnBase<TItem>>>,
         ITableColumnCollection
