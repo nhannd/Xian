@@ -243,6 +243,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Stop()
 		{
+			_toolSet.Dispose();
+			_toolSet = null;
+
 			base.Stop();
 		}
 

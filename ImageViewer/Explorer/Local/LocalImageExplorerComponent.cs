@@ -109,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 		public override void Stop()
 		{
 			base.Stop();
+			_toolSet.Dispose();
 			_toolSet = null;
 		}
 	}
