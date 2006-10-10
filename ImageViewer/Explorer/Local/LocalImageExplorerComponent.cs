@@ -16,101 +16,44 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 	{
 	}
 
-	[ExtensionPoint()]
 	public class LocalImageExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	public interface ILocalImageViewerToolContext : IToolContext
-	{
-		IEnumerable<string> SelectedPaths { get; }
-		IDesktopWindow DesktopWindow { get; }
-		ClickHandlerDelegate DefaultActionHandler { get; set; }
-	}
-
 	[AssociateView(typeof(LocalImageExplorerComponentViewExtensionPoint))]
-	public class LocalImageExplorerComponent : ApplicationComponent
+	public class LocalImageExplorerComponent : LocalImageExplorerComponentBase
 	{
-		internal class LocalImageExplorerToolContext : ToolContext, ILocalImageViewerToolContext
-		{
-			private LocalImageExplorerComponent _component;
-
-			public LocalImageExplorerToolContext(LocalImageExplorerComponent component)
-			{
-				_component = component;
-			}
-
-			#region ILocalImageViewerToolContext Members
-
-			public IEnumerable<string> SelectedPaths
-			{
-				get
-				{
-					if (_component._getSelectedPathsDelegate == null)
-						return new List<string>(); //an empty list
-
-					return _component._getSelectedPathsDelegate();
-				}
-			}
-
-			public IDesktopWindow DesktopWindow
-			{
-				get
-				{
-					return _component.Host.DesktopWindow;
-				}
-			}
-
-			public ClickHandlerDelegate DefaultActionHandler
-			{
-				get { return _component._defaultActionHandler; }
-				set { _component._defaultActionHandler = value; }
-			}
-
-			#endregion
-		}
-
-		/// LocalImageExplorerComponent members
-
-		private ToolSet _toolSet;		
-		private ClickHandlerDelegate _defaultActionHandler;
-		private PropertyGetDelegate<IEnumerable<string>> _getSelectedPathsDelegate;
-		
 		public LocalImageExplorerComponent()
 		{
-			
 		}
 
-		public ActionModelNode ContextMenuModel
+		public override ActionModelNode ContextMenuModel
 		{
 			get
 			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "explorerlocal-contextmenu", _toolSet.Actions);
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "explorerlocal-contextmenu", ToolSet.Actions);
 			}
 		}
 
-		public PropertyGetDelegate<IEnumerable<string>> GetSelectedPathsDelegate
+		public override ActionModelNode ToolbarModel
 		{
-			get { return _getSelectedPathsDelegate; }
-			set { _getSelectedPathsDelegate = value; }
-		}
-
-		public ClickHandlerDelegate DefaultActionHandler
-		{
-			get { return _defaultActionHandler; }
+			get
+			{
+				throw new NotSupportedException();
+			}
 		}
 
 		public override void Start()
 		{
 			base.Start();
-			_toolSet = new ToolSet(new LocalImageExplorerToolExtensionPoint(), new LocalImageExplorerToolContext(this));
+			ToolSet = new ToolSet(new LocalImageExplorerToolExtensionPoint(), new LocalImageExplorerToolContext(this));
 		}
 
 		public override void Stop()
 		{
 			base.Stop();
-			_toolSet.Dispose();
-			_toolSet = null;
+			ToolSet.Dispose();
+			ToolSet = null;
 		}
 	}
 }
