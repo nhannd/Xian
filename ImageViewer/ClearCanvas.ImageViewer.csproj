@@ -96,6 +96,14 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
+    <Compile Include="Rendering\ImageInterpolator.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererMiscTests.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererMono16OrientationTests.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererRGBPlanarOrientationTests.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
+    <Compile Include="Rendering\Tests\RectangleIntersectionTests.cs" />
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
     <Compile Include="ClientArea.cs" />
     <Compile Include="IDisplaySet.cs" />

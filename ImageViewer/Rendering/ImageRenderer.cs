@@ -86,73 +86,79 @@ namespace ClearCanvas.ImageViewer.Rendering
             }
         }
 
-        private static bool IsRotated(ImageLayer imageLayer)
+        protected static bool IsRotated(ImageLayer imageLayer)
         {
             float m12 = imageLayer.SpatialTransform.Transform.Elements[2];
             return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
         }
 
-        private static void CalculateVisibleRectangles(
+        protected static void CalculateVisibleRectangles(
             ImageLayer imageLayer,
             RectangleF clientRectangle,
             out Rectangle dstVisibleRectangle,
             out Rectangle srcVisibleRectangle)
         {
-            Rectangle srcRectangle = imageLayer.SpatialTransform.SourceRectangle;
-            RectangleF dstRectangleF = imageLayer.SpatialTransform.ConvertToDestination(srcRectangle);
+			Rectangle srcRectangle = imageLayer.SpatialTransform.SourceRectangle;
+			RectangleF dstRectangleF = imageLayer.SpatialTransform.ConvertToDestination(srcRectangle);
 
-            // Find the intersection between the drawable client rectangle and
-            // the transformed destination rectangle
-            RectangleF dstVisibleRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
-            if (dstVisibleRectangleF.IsEmpty)
-            {
-                dstVisibleRectangle = Rectangle.Empty;
-                srcVisibleRectangle = Rectangle.Empty;
-                return;
-            }
+			// Find the intersection between the drawable client rectangle and
+			// the transformed destination rectangle
+			RectangleF dstVisibleRectangleF = RectangleUtilities.Intersect(clientRectangle, dstRectangleF);
 
-            // From that intersection, figure out what portion of the image
-            // is Visible in source coordinates
-            RectangleF srcVisibleRectangleF = imageLayer.SpatialTransform.ConvertToSource(dstVisibleRectangleF);
+			if (dstVisibleRectangleF.IsEmpty)
+			{
+				dstVisibleRectangle = Rectangle.Empty;
+				srcVisibleRectangle = Rectangle.Empty;
+				return;
+			}
 
-            dstVisibleRectangle = Rectangle.Round(dstVisibleRectangleF);
-            srcVisibleRectangle = Rectangle.Round(srcVisibleRectangleF);
+			// From that intersection, figure out what portion of the image
+			// is Visible in source coordinates
+			RectangleF srcVisibleRectangleF = imageLayer.SpatialTransform.ConvertToSource(dstVisibleRectangleF);
 
-            dstVisibleRectangle = RectangleUtilities.MakeRectangleZeroBased(dstVisibleRectangle);
-            srcVisibleRectangle = RectangleUtilities.MakeRectangleZeroBased(srcVisibleRectangle);
-        }
-    }
+			// Round the rectangles, but round away from the centre of the rectangle,
+			// rather than simply truncating the LTRB values.
+			srcVisibleRectangleF = RectangleUtilities.RoundInflate(srcVisibleRectangleF);
+			dstVisibleRectangleF = RectangleUtilities.RoundInflate(dstVisibleRectangleF);
 
-    /// <summary>
-    /// A common (abstract) class for creating different interpolators.  Later, we can use an ExtensionPoint.
-    /// </summary>
-    public abstract class ImageInterpolator
-    {
-		public static ImageInterpolator AllocateInterpolator(ImageLayer.InterpolationMethods interpolationMethod)
-        {
-			if (interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR)
-                return new ImageInterpolatorBilinear();
+			// Redo the intersection(s) after rounding, otherwise if you render to a bitmap
+			// that is exactly the same size as the clientRectangle, the dstVisibleRectangle
+			// will occasionally be outside the clientRectangle and cause a crash.
+			dstVisibleRectangleF = RectangleUtilities.Intersect(dstVisibleRectangleF, clientRectangle);
+			srcVisibleRectangleF = RectangleUtilities.Intersect(srcVisibleRectangleF, srcRectangle);
 
-			if (interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR_FAST)
-				return new ImageInterpolatorBilinearFast();
-
-            return new ImageInterpolatorNearestNeighbour();
-        }
-
-        public abstract unsafe void Interpolate(
-            Rectangle srcRegionRect,
-            byte* pSrcPixelData,
-            int srcWidth,
-            int srcHeight,
-            int srcBytesPerPixel,
-            Rectangle dstRegionRect,
-            byte* pDstPixelData,
-            int dstWidth,
-            int dstBytesPerPixel,
-            bool swapXY,
-            byte* pLutData,
-            bool isRGB,
-            bool isPlanar,
-            bool IsSigned);
+			// Just a formality now, these are already rounded.
+			srcVisibleRectangle = Rectangle.Round(srcVisibleRectangleF);
+			dstVisibleRectangle = Rectangle.Round(dstVisibleRectangleF);
+		}
     }
 }
+
+//string str = String.Format("dstRectangle: {0}", dstRectangleF);
+//Platform.Log(str);
+//str = String.Format("dstViewableRectangle: {0}", dstViewableRectangle);
+//Platform.Log(str);
+//str = String.Format("srcViewableRectangle: {0}", srcViewableRectangle);
+//Platform.Log(str);
+
+//Matrix matrix = imageLayer.SpatialTransform.Transform;
+//str = String.Format("matrix: {0},{1},{2},{3}", matrix.Elements[0], matrix.Elements[1], matrix.Elements[2], matrix.Elements[3]);
+//Platform.Log(str);
+
+			//    srcBytesPerPixel = imageLayer.BitsAllocated / 8;
+			//}
+			//else
+			//{
+			//    if (imageLayer.IsPlanar)
+			//    {
+			//        srcBytesPerPixel = imageLayer.BitsAllocated;
+			//    }
+			//    else
+			//    {
+			//        int samplesPerPixel = 3;
+			//        srcStride = imageLayer.Columns * imageLayer.BitsAllocated / 8 * samplesPerPixel;
+			//        srcBytesPerPixel = imageLayer.BitsAllocated * samplesPerPixel;
+			//    }
+			//}
+
+			//int planeSize = srcStride * imageLayer.Rows;

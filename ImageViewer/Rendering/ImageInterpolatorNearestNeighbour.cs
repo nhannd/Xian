@@ -22,9 +22,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 			bool isPlanar,
             bool isSigned)
 		{
-
-            int srcRegionHeight = Math.Abs(srcRegionRect.Bottom - srcRegionRect.Top) + 1;
-			int srcRegionWidth = Math.Abs(srcRegionRect.Right - srcRegionRect.Left) + 1;
+			
+			int srcRegionHeight = Math.Abs(srcRegionRect.Bottom - srcRegionRect.Top);
+			int srcRegionWidth = Math.Abs(srcRegionRect.Right - srcRegionRect.Left);
 			int xSrcStride, ySrcStride;
 
 			// If the image is RGB triplet, then the x-stride is 3 bytes
@@ -42,6 +42,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			int xSrcIncrement = Math.Sign(srcRegionRect.Right - srcRegionRect.Left) * xSrcStride;
 			int ySrcIncrement = Math.Sign(srcRegionRect.Bottom - srcRegionRect.Top) * ySrcStride;
+
+			srcRegionRect = RectangleUtilities.MakeRectangleZeroBased(srcRegionRect);
 			pSrcPixelData += (srcRegionRect.Top * ySrcStride) + (srcRegionRect.Left * xSrcStride);
 
 			int dstRegionHeight, dstRegionWidth,
@@ -50,22 +52,26 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			if (swapXY)
 			{
-				dstRegionHeight = Math.Abs(dstRegionRect.Right - dstRegionRect.Left) + 1;
-				dstRegionWidth = Math.Abs(dstRegionRect.Bottom - dstRegionRect.Top) + 1;
+				dstRegionHeight = Math.Abs(dstRegionRect.Right - dstRegionRect.Left);
+				dstRegionWidth = Math.Abs(dstRegionRect.Bottom - dstRegionRect.Top);
 				xDstStride = dstWidth * dstBytesPerPixel;
 				yDstStride = dstBytesPerPixel;
 				xDstIncrement = Math.Sign(dstRegionRect.Bottom - dstRegionRect.Top) * xDstStride;
 				yDstIncrement = Math.Sign(dstRegionRect.Right - dstRegionRect.Left) * yDstStride;
+				
+				dstRegionRect = RectangleUtilities.MakeRectangleZeroBased(dstRegionRect);
 				pDstPixelData += (dstRegionRect.Top * xDstStride) + (dstRegionRect.Left * yDstStride);
 			}
 			else
 			{
-				dstRegionHeight = Math.Abs(dstRegionRect.Bottom - dstRegionRect.Top) + 1;
-				dstRegionWidth = Math.Abs(dstRegionRect.Right - dstRegionRect.Left) + 1;
+				dstRegionHeight = Math.Abs(dstRegionRect.Bottom - dstRegionRect.Top);
+				dstRegionWidth = Math.Abs(dstRegionRect.Right - dstRegionRect.Left);
 				xDstStride = dstBytesPerPixel;
 				yDstStride = dstWidth * dstBytesPerPixel;
 				xDstIncrement = Math.Sign(dstRegionRect.Right - dstRegionRect.Left) * xDstStride;
 				yDstIncrement = Math.Sign(dstRegionRect.Bottom - dstRegionRect.Top) * yDstStride;
+				
+				dstRegionRect = RectangleUtilities.MakeRectangleZeroBased(dstRegionRect);
 				pDstPixelData += (dstRegionRect.Top * yDstStride) + (dstRegionRect.Left * xDstStride);
 			}
 
