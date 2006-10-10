@@ -56,4 +56,7 @@
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.SendStudyTool:activate" path="dicomstudybrowser-contextmenu/Send" />
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.DeleteStudyTool:activate" path="dicomstudybrowser-contextmenu/Delete" />
   </action-model>
+  <action-model id="ClearCanvas.ImageViewer.Explorer.Local.LocalImageExplorerComponent:explorerlocal-contextmenu">
+    <action id="ClearCanvas.ImageViewer.Explorer.Local.Tools.DicomImageLoaderTool:Open" path="explorerlocal-contextmenu/OpenFiles" />
+  </action-model>
 </action-models>

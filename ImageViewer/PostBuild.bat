@@ -28,6 +28,7 @@ copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\%1\ClearCanvas.ImageViewer.T
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\ClearCanvas.ImageViewer.Tools.Standard.dll" ".\plugins"
 copy "..\..\..\Edit\bin\%1\ClearCanvas.Desktop.Edit.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Explorer\Local\bin\%1\ClearCanvas.ImageViewer.Explorer.Local.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Explorer\Local\Tools\bin\%1\ClearCanvas.ImageViewer.Explorer.Local.Tools.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Explorer\Local\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Explorer\Dicom\bin\%1\ClearCanvas.ImageViewer.Explorer.Dicom.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Explorer\Dicom\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" ".\plugins"

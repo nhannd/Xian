@@ -9,76 +9,54 @@ using ClearCanvas.ImageViewer;
 using ClearCanvas.Controls.WinForms.FileBrowser.ShellDll;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Controls.WinForms.FileBrowser;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 {
 	public partial class LocalImageExplorerControl : UserControl
 	{
-
 		private LocalImageExplorerComponent _component;
 
 		public LocalImageExplorerControl(LocalImageExplorerComponent component)
 		{
 			_component = component;
+
 			InitializeComponent();
 
-			_fileBrowser.FolderOpened += new EventHandler(OnFolderViewItemOpened);
-			_fileBrowser.FilesOpened += new EventHandler(OnFileViewItemOpened);
+			_fileBrowser.FolderOpened += new EventHandler(OnItemOpened);
+			_fileBrowser.FilesOpened += new EventHandler(OnItemOpened);
 
-			_fileOpenedItem.Text = "Open";
-			_folderOpenedItem.Text = "Open";
+			//we can use the same context menu for both here.
+			_fileBrowser.CustomFileContextMenuDelegate = GetContextMenu;
+			_fileBrowser.CustomFolderContextMenuDelegate = GetContextMenu;
+
+			//Tell the component how to get the paths to use.
+			component.GetSelectedPathsDelegate = GetSelectedPaths;
 		}
 
-		private void OnFolderViewItemOpened(object sender, EventArgs e)
+		private ContextMenuStrip GetContextMenu()
 		{
-			ShellItem item = _fileBrowser.SelectedItem;
-			if (item == null)
-				return;
+			if (_contextMenu != null)
+				return _contextMenu;
 
-			string path = ShellItem.GetFullPath(item);
+			_contextMenu = new ContextMenuStrip();
+			ToolStripBuilder.Clear(_contextMenu.Items);
+			ToolStripBuilder.BuildMenu(_contextMenu.Items, _component.ContextMenuModel.ChildNodes);
 
-			OpenItems(new string[] { path });
+			return _contextMenu;
 		}
 
-		private void OnFileViewItemOpened(object sender, EventArgs e)
+		private IEnumerable<string> GetSelectedPaths()
 		{
-			IEnumerable<string> paths = _fileBrowser.PathsToSelectedItems;
-			if (paths == null)
-				return;
-
-			OpenItems(paths);
+			return _fileBrowser.PathsToSelectedItems;
 		}
 
-		private void OpenItems(IEnumerable<string> paths)
+		private void OnItemOpened(object sender, EventArgs e)
 		{
-			try
+			if (_component.DefaultActionHandler != null)
 			{
-				using (new CursorManager(this, Cursors.WaitCursor))
-				{
-					_component.Load(paths);
-				}
-			}
-			catch (OpenStudyException ex)
-			{
-				if (ex.StudyCouldNotBeLoaded)
-				{
-					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
-					return;
-				}
-
-				if (ex.AtLeastOneImageFailedToLoad)
-				{
-					Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
-					return;
-				}
-			}
-			catch (Exception ex)
-			{
-				// Just in case.  It's unlikely, but we could also catch:
-				//    - DirectoryNotFoundException
-				//    - ArgumentNullException
-				//    - ArgumentException
-				Platform.ShowMessageBox(ex.Message);
+				_component.DefaultActionHandler();
 			}
 		}
 	}

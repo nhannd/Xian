@@ -51,6 +51,7 @@
     <Compile Include="DateTimeField.Designer.cs">
       <DependentUpon>DateTimeField.cs</DependentUpon>
     </Compile>
+    <Compile Include="Delegates.cs" />
     <Compile Include="FileBrowser\Browser.cs">
       <SubType>UserControl</SubType>
     </Compile>

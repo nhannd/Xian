@@ -128,8 +128,8 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
         private int maxBackForward = 10;
         private bool suspendNavBackAdd, handleCreated;
 
-		private ContextMenuStrip _customFolderContextMenu;
-		private ContextMenuStrip _customFileContextMenu;
+		private GetContextMenuStripDelegate _customFolderContextMenuDelegate;
+		private GetContextMenuStripDelegate _customFileContextMenuDelegate;
 
 		private event EventHandler _folderOpenedEvent;
 		private event EventHandler _filesOpenedEvent;
@@ -1355,23 +1355,23 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 			{
 				List<string> paths = new List<string>();
 
-				if (fileView.SelectedOrder.Count == 0)
-				{
-					if (SelectedItem == null)
-						return null;
-
-					//no individual files have been selected, so return the
-					// currently selected folder from the folder view.
-					string path = ShellItem.GetFullPath(SelectedItem);
-					paths.Add(path);
-				}
-				else
+				if (fileView.Focused && fileView.SelectedOrder.Count > 0)
 				{
 					//return the paths to all the selected files in the file view.
 					for (int i = 0; i < fileView.SelectedOrder.Count; ++i)
 					{
 						paths.Add(ShellItem.GetFullPath((ShellItem)((ListViewItem)fileView.SelectedOrder[i]).Tag));
 					}
+				}
+				else
+				{
+					if (SelectedItem == null)
+						return new List<string>();
+
+					//no individual files have been selected, so return the
+					// currently selected folder from the folder view.
+					string path = ShellItem.GetFullPath(SelectedItem);
+					paths.Add(path);
 				}
 
 				return paths.AsReadOnly();
@@ -1578,28 +1578,41 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
             }
         }
 
-        [Category("Options"),
-         Description("Sets a custom folder context menu.  Setting this overrides the default context menu."),
-         DefaultValue(""),
-         Browsable(true)]
-		public ContextMenuStrip CustomFolderContextMenu
+		public GetContextMenuStripDelegate CustomFolderContextMenuDelegate
 		{
-			get { return _customFolderContextMenu; }
-			set { _customFolderContextMenu = value; }
+			get { return _customFolderContextMenuDelegate; }
+			set { _customFolderContextMenuDelegate = value; }
 		}
 
-        [Category("Options"),
-		 Description("Sets a custom file context menu.  Setting this overrides the default context menu."),
-		 DefaultValue(""),
-         Browsable(true)]
+		public GetContextMenuStripDelegate CustomFileContextMenuDelegate
+		{
+			get { return _customFileContextMenuDelegate; }
+			set { _customFileContextMenuDelegate = value; }
+		}
+
 		public ContextMenuStrip CustomFileContextMenu
 		{
-			get { return _customFileContextMenu; }
-			set { _customFileContextMenu = value; }
+			get
+			{
+				if (_customFileContextMenuDelegate == null)
+					return null;
+
+				return _customFileContextMenuDelegate();
+			}
 		}
 
+		public ContextMenuStrip CustomFolderContextMenu
+		{
+			get
+			{
+				if (_customFolderContextMenuDelegate == null)
+					return null;
 
-        #endregion
+				return _customFolderContextMenuDelegate();
+			}
+		}
+		
+#endregion
 
         #endregion
 
