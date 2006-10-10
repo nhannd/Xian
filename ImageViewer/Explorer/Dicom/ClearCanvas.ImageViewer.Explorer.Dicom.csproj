@@ -51,6 +51,12 @@
     <Compile Include="AEServerPool.cs" />
     <Compile Include="AEServerSettings.cs" />
     <Compile Include="BrowserNode.cs" />
+    <Compile Include="DicomServer.cs" />
+    <Compile Include="DicomServerBase.cs" />
+    <Compile Include="DicomServerGroup.cs" />
+    <Compile Include="DicomServerService.cs" />
+    <Compile Include="DicomServerSettings.cs" />
+    <Compile Include="IDicomServer.cs" />
     <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="IBrowserNode.cs" />
     <Compile Include="RetrieveStudyToolProgressComponent.cs" />

@@ -26,16 +26,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
         #region Fields
 
-        private AEServerPool _serverPool;
-        private AEServerGroup _selectedServers;
-        private ServerViewRootNode _serverTreeView;
+        private DicomServerGroup _dicomServerGroup;
         private event EventHandler _selectedServerChanged;
 
         private static String _myServersTitle = "My Servers";
         private static String _myDatastoreTitle = "My Studies";
+        private static String _myServersRoot = "MyServersRoot";
+
+        private AEServerPool _serverPool;
+        private AEServerGroup _selectedServers;
+        private ServerViewRootNode _serverTreeView;
+
+        // to delete
         private static String _newServerName = "NewServer";
         private static String _emptyNodeName = "emptynode";
         private static String _nodeDeleted = "nodeDeleted";
+
+        public DicomServerGroup DicomServerGroup
+        {
+            get { return _dicomServerGroup; }
+            set { _dicomServerGroup = value; }
+        }
 
         public AEServerPool ServerPool
         {
@@ -63,6 +74,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public static String MyDatastoreTitle
         {
             get { return AENavigatorComponent._myDatastoreTitle; }
+        }
+
+        public static String MyServersRoot
+        {
+            get { return AENavigatorComponent._myServersRoot; }
         }
 
         public static String NewServerName
@@ -97,6 +113,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverPool.Currentserverid = _serverPool.Currentserver.ServerID;
 			}
 			_serverTreeView = new ServerViewRootNode(_serverPool);
+
+            _dicomServerGroup = DicomServerService.LoadDicomServers();
 
 		}
 
