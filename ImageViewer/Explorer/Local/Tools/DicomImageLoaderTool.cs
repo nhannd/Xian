@@ -87,7 +87,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 				foreach (string studyInstanceUID in studyInstanceUIDs)
 				{
 					ImageViewerComponent viewer = new ImageViewerComponent(studyInstanceUID);
-					ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, viewer, "Study", null);
+					ApplicationComponent.LaunchAsWorkspace(
+						this.Context.DesktopWindow, 
+						viewer, 
+						"Study", 
+						delegate
+						{
+							viewer.Dispose();
+						});
 				}
 			}
 			catch (OpenStudyException ex)

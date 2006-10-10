@@ -67,7 +67,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 
 				ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
-				ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, imageViewer, label, null);
+				ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow,
+					imageViewer,
+					label,
+					delegate
+					{
+						imageViewer.Dispose();
+					});
 			}
 		}
 

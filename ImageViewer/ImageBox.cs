@@ -420,7 +420,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void DisposeTiles()
 		{
-			if (this.Tiles != null)
+			if (this.Tiles == null)
 				return;
 
 			foreach (Tile tile in this.Tiles)

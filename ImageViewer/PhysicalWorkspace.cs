@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void DisposeImageBoxes()
 		{
-			if (this.ImageBoxes != null)
+			if (this.ImageBoxes == null)
 				return;
 
 			foreach (ImageBox imageBox in this.ImageBoxes)
