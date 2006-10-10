@@ -19,9 +19,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// 
 	/// </summary>
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class StackTool : DynamicActionMouseTool
+	public class StackTool : MouseTool
 	{
-		private StackCommand _command;
+		//private StackCommand _command;
 		private int _initialPresentationImageIndex;
 
 		public StackTool()
@@ -38,13 +38,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (e.SelectedTile == null)
 				return true;
 
-			_command = new StackCommand(e.SelectedImageBox);
-			_command.Name = SR.CommandStack;
+			//_command = new StackCommand(e.SelectedImageBox);
+			//_command.Name = SR.CommandStack;
 
-			// Capture state before stack
-			_command.BeginState = e.SelectedImageBox.CreateMemento();
+			//// Capture state before stack
+			//_command.BeginState = e.SelectedImageBox.CreateMemento();
 
-			_initialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
+			//_initialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
 
 			return true;
 		}
@@ -60,10 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			else
 				increment = -1;
 
-			Tile selectedTile = e.SelectedTile;
-			ImageBox selectedImageBox = e.SelectedImageBox;
-
-			AdvanceImage(increment, selectedTile, selectedImageBox);
+			AdvanceImage(increment, e.SelectedTile, e.SelectedImageBox);
 
 			return true;
 		}
@@ -72,26 +69,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.OnMouseUp(e); 
 			
-			if (_command == null)
-				return true;
+			//if (_command == null)
+			//    return true;
 
 			// If nothing's changed then just return
-			if (_initialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
-			{
-				_command = null;
-				return true;
-			}
-
-			//int tileIndex = e.SelectedImageBox.Tiles.IndexOf(e.SelectedTile);
-			//int topLeftPresentationIndex = e.SelectedTile.PresentationImageIndex - tileIndex;
-
-			//e.SelectedImageBox.TopLeftPresentationImageIndex = topLeftPresentationIndex;
-			//e.SelectedImageBox.Draw(false);
+			//if (_initialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
+			//{
+			//    //_command = null;
+			//    return true;
+			//}
 
 			// Capture state after stack
-			_command.EndState = e.SelectedImageBox.CreateMemento();
+			//_command.EndState = e.SelectedImageBox.CreateMemento();
 
-            this.Context.Viewer.CommandHistory.AddCommand(_command);
+			//this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			return true;
 		}
@@ -128,22 +119,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#endregion
 
-		private void AdvanceImage(int increment, Tile selectedTile, ImageBox selectedImageBox)
+		private void AdvanceImage(int increment, ITile selectedTile, IImageBox selectedImageBox)
 		{
-			selectedTile.PresentationImageIndex += increment;
-			//selectedTile.PresentationImage.Draw(true);
-
-			int tileIndex = selectedImageBox.Tiles.IndexOf(selectedTile);
-			int topLeftPresentationIndex = selectedTile.PresentationImageIndex - tileIndex;
-
-			selectedImageBox.TopLeftPresentationImageIndex = topLeftPresentationIndex;
-			selectedImageBox.Draw(true);
+			selectedImageBox.TopLeftPresentationImageIndex += increment;
+			selectedImageBox.Draw();
 		}
 	
-		protected override void OnDynamicActionStopped(XMouseEventArgs e)
-		{
-			//stack tool changes the state of all tiles in the imagebox, so redraw the image box.
-			e.SelectedImageBox.Draw(true);
-		}
+		//protected override void OnDynamicActionStopped(XMouseEventArgs e)
+		//{
+		//    //stack tool changes the state of all tiles in the imagebox, so redraw the image box.
+		//    e.SelectedImageBox.Draw(true);
+		//}
 	}
 }

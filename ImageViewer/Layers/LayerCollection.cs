@@ -30,10 +30,5 @@ namespace ClearCanvas.ImageViewer.Layers
 			base.Add(graphicLayer);
 		}
 
-		public void Add(CustomLayer customLayer)
-		{
-			Platform.CheckForNullReference(customLayer, "customLayer");
-			base.Add(customLayer);
-		}
 	}
 }

@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			Platform.CheckMemberIsSet(this.ParentPresentationImage, "PresentationImage");
 			this.RedrawRequired = true;
-			this.ParentPresentationImage.DrawLayers(true);
+			this.ParentPresentationImage.Draw();
 		}
 
 		/// <summary>

@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class PresentationImageCollection : ObservableList<PresentationImage, PresentationImageEventArgs>
+	public class PresentationImageCollection : ObservableList<IPresentationImage, PresentationImageEventArgs>
 	{
 		public PresentationImageCollection()
 		{

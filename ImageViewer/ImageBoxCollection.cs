@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class ImageBoxCollection : ObservableList<ImageBox, ImageBoxEventArgs>
+	public class ImageBoxCollection : ObservableList<IImageBox, ImageBoxEventArgs>
 	{
 		public ImageBoxCollection()
 		{
@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer
 		/// Creates a <i>shallow</i> copy.  That is, only references to objects
 		/// in the collection are copied.
 		/// </remarks>
-		public ImageBoxCollection(ObservableList<ImageBox, ImageBoxEventArgs> collection) 
+		public ImageBoxCollection(ObservableList<IImageBox, ImageBoxEventArgs> collection) 
 			: base(collection)
 		{
 		}

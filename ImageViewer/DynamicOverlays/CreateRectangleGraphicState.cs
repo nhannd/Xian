@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				{
 					base.Command = new PositionGraphicCommand(this.InteractiveGraphic, true);
 					base.Command.Name = SR.CommandCreateRectangleGraphic;
-					this.InteractiveGraphic.ParentViewer.CommandHistory.AddCommand(base.Command);
+					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 				}
 
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();

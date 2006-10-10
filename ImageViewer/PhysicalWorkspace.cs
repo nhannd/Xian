@@ -51,37 +51,44 @@ namespace ClearCanvas.ImageViewer
 	/// By default, when constructed, <b>PhysicalWorkspace</b> contains zero image boxes.
 	/// </para>
 	/// </remarks>
-	public class PhysicalWorkspace : IDrawable, IUIEventHandler, IMemorable
+	public class PhysicalWorkspace : IPhysicalWorkspace
 	{
-		private ImageBoxCollection _imageBoxes = new ImageBoxCollection();
-		private IImageViewer _parentViewer;
-		private ClientArea _clientArea = new ClientArea();
-		private UIEventHandler<ImageBox> _uiEventHandler;
-		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
-		private bool _imageBoxLayoutChanged;
+		#region Private Fields
+
+		private ImageBoxCollection _imageBoxes;
+		private IImageViewer _imageViewer;
 		private ImageBox _selectedImageBox;
 		private int _rows;
 		private int _columns;
 		private bool _isRectangularImageBoxGrid;
-		private CaptureUIEventHandler _captureUIEventHandler = new CaptureUIEventHandler();
-		private bool _dynamicAction = false;
-		private bool _contextMenuEnabled = true;
-		private Point _lastMousePoint;
+		private bool _layoutRefreshRequired;
 
-        internal PhysicalWorkspace(IImageViewer parentViewer)
+		private event EventHandler _drawingEvent;
+		private event EventHandler<ImageBoxEventArgs> _imageBoxAddedEvent;
+		private event EventHandler<ImageBoxEventArgs> _imageBoxRemovedEvent;
+
+		#endregion
+
+		internal PhysicalWorkspace(IImageViewer imageViewer)
 		{
-            Platform.CheckForNullReference(parentViewer, "parentWorkspace");
+            Platform.CheckForNullReference(imageViewer, "parentWorkspace");
 
-            _parentViewer = parentViewer;
-			_clientArea.NormalizedRectangle = new RectangleF(0.0f, 0.0f, 1.0f, 1.0f);
-			_uiEventHandler = new UIEventHandler<ImageBox>(this.ImageBoxes);
-			_imageBoxes.ItemAdded += new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
-			_imageBoxes.ItemRemoved += new EventHandler<ImageBoxEventArgs>(OnImageBoxRemoved);
+            _imageViewer = imageViewer;
+			this.ImageBoxes.ItemAdded += new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
+			this.ImageBoxes.ItemRemoved += new EventHandler<ImageBoxEventArgs>(OnImageBoxRemoved);
 		}
+
+		#region Public properties
 
 		public ImageBoxCollection ImageBoxes
 		{
-			get { return _imageBoxes; }
+			get 
+			{
+				if (_imageBoxes == null)
+					_imageBoxes = new ImageBoxCollection();
+
+				return _imageBoxes; 
+			}
 		}
 
 		public int Rows
@@ -94,64 +101,39 @@ namespace ClearCanvas.ImageViewer
 			get { return _columns; }
 		}
 
-		public bool IsRectangularImageBoxGrid
-		{
-			get { return _isRectangularImageBoxGrid; }
+		//public bool IsRectangularImageBoxGrid
+		//{
+		//    get { return _isRectangularImageBoxGrid; }
 
-			// This is temporary.  Ideally, given a number of rectangles,
-			// this class should be able to determine whether rectangles
-			// form a rectangular grid.  Until we implement that, we'll have
-			// to rely on the client of this class to set this property to 
-			// false if it's not a rectangular gride of image boxes.
-			set { _isRectangularImageBoxGrid = value; }
+		//    // This is temporary.  Ideally, given a number of rectangles,
+		//    // this class should be able to determine whether rectangles
+		//    // form a rectangular grid.  Until we implement that, we'll have
+		//    // to rely on the client of this class to set this property to 
+		//    // false if it's not a rectangular gride of image boxes.
+		//    set { _isRectangularImageBoxGrid = value; }
+		//}
+
+		public bool LayoutRefreshRequired
+		{
+			get { return _layoutRefreshRequired; }
 		}
-
-        public IImageViewer ParentViewer
+		
+		public IImageViewer ImageViewer
 		{
-			get { return _parentViewer; }
+			get { return _imageViewer; }
 		}
 
 		/// <summary>
 		/// Gets the associated <see cref="LogicalWorkspace"/>.
 		/// </summary>
 		/// <value>The associated <see cref="LogicalWorkspace"/></value>
-		public LogicalWorkspace LogicalWorkspace
+		public ILogicalWorkspace LogicalWorkspace
 		{
 			get 
 			{
-				if (this.ParentViewer == null)
-					return null;
+				Platform.CheckMemberIsSet(this.ImageViewer, "PhysicalWorkspace.ImageViewer");
 
-                return this.ParentViewer.LogicalWorkspace; 
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets this physical workspace's client rectangle.
-		/// </summary>
-		/// <value>The physical workspace's client rectangle.</value>
-		/// <remarks>
-		/// When the <see cref="System.Windows.Forms.Control"/> object associated with
-		/// the <see cref="PhysicalWorkspace"/> is resized, this property should be
-		/// set to the control's new size so that the client rectangles of associated
-		/// image boxes and tiles are also resized accordingly.  Note that setting
-		/// this property does <i>not</i> result in the physical control being resized.
-		/// </remarks>
-		public Rectangle ClientRectangle
-		{
-			get
-			{
-				return _clientArea.ClientRectangle;
-			}
-			set
-			{
-				// Since the normalized rectangle is (0,0,1,1), the client and
-				// parent rectangles will be the same. We set the *parent* rectangle
-				// in _ClientArea so that the ClientRectangle will be computed automatically
-				_clientArea.ParentRectangle = value;
-
-				foreach (ImageBox imageBox in this.ImageBoxes)
-					imageBox.ParentRectangle = _clientArea.ClientRectangle;
+                return this.ImageViewer.LogicalWorkspace; 
 			}
 		}
 
@@ -159,45 +141,88 @@ namespace ClearCanvas.ImageViewer
 		/// Gets the currently selected <see cref="ImageBox"/>
 		/// </summary>
 		/// <value>The currently selected <see cref="ImageBox"/></value>
-		public ImageBox SelectedImageBox
+		public IImageBox SelectedImageBox
 		{
-			get { return _selectedImageBox; }
+			get { return _selectedImageBox as IImageBox; }
 			internal set
 			{
 				if (_selectedImageBox != null)
-					_selectedImageBox.Selected = false;
+					_selectedImageBox.Deselect();
 
-				_selectedImageBox = value;
+				_selectedImageBox = value as ImageBox;
 			}
 		}
 
-		internal bool ContextMenuEnabled
+		#endregion
+
+		#region Public events
+
+		public event EventHandler Drawing
 		{
-			get { return _contextMenuEnabled; }
+			add { _drawingEvent += value; }
+			remove { _drawingEvent -= value; }
 		}
+
+		public event EventHandler<ImageBoxEventArgs> ImageBoxAdded
+		{
+			add { _imageBoxAddedEvent += value; }
+			remove { _imageBoxAddedEvent -= value; }
+		}
+
+		public event EventHandler<ImageBoxEventArgs> ImageBoxRemoved
+		{
+			add { _imageBoxRemovedEvent += value; }
+			remove { _imageBoxRemovedEvent -= value; }
+		}
+
+		#endregion
+
+		#region Disposal
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
 
 		/// <summary>
-		/// Occurs when any <see cref="PresentationImage"/> in the workspace
-		/// is asked to be drawn.
+		/// Implementation of the <see cref="IDisposable"/> pattern
 		/// </summary>
-		/// <remarks>
-		/// The event handler receives an argument of type <see cref="ImageDrawingEventArgs"/>.
-		/// The <see cref="System.Windows.Forms.Control"/> object associated with the
-		/// <b>PhysicalWorkspace</b> must subscribe to this event so that knows
-		/// when a draw request has been made.  <see cref="ImageDrawingEventArgs"/> contains
-		/// all the information necessary for the View plugin to render the image.
-		/// </remarks>
-		public event EventHandler<ImageDrawingEventArgs> ImageDrawing
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
 		{
-			add
+			if (disposing)
 			{
-				_imageDrawingEvent += value;
-			}
-			remove
-			{
-				_imageDrawingEvent -= value;
+				DisposeImageBoxes();
 			}
 		}
+
+		private void DisposeImageBoxes()
+		{
+			if (this.ImageBoxes != null)
+				return;
+
+			foreach (ImageBox imageBox in this.ImageBoxes)
+				imageBox.Dispose();
+
+			_imageBoxes = null;
+		}
+
+		#endregion
+
+		#region Public methods
 
 		/// <summary>
 		/// Creates a rectangular grid of image boxes.
@@ -224,8 +249,6 @@ namespace ClearCanvas.ImageViewer
 			if (_rows == rows && _columns == columns)
 				return;
 
-			ReleaseMouseCapture();
-
 			_rows = rows;
 			_columns = columns;
 			_isRectangularImageBoxGrid = true;
@@ -250,279 +273,98 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		//public override void Cleanup()
-		//{
-		//    RemoveAllImageBoxes();
-		//}
-
-		#region IDrawable
-
-		/// <summary>
-		/// Draws all currently visible images in this <see cref="PhysicalWorkspace"/>.
-		/// </summary>
-		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
-		/// repainted immediately.  If <b>false</b>, each image rectangle is still
-		/// invalidated but when the actual painting occurs is left to the the .NET 
-		/// framework.</param>
-		/// <remarks>
-		/// The semantics of <paramref name="paintNow"/> described above are only
-		/// guaranteed in the standard implementation of ClearCanvas for presentation images
-		/// that do not implement the <see cref="ICustomDrawable"/> interface.  How
-		/// a custom drawable image decides to interpret <paramref name="paintNow"/>
-		/// is entirely up to the implementor.
-		/// </remarks>
-		public void Draw(bool paintNow)
+		public void Draw()
 		{
-			foreach (ImageBox imageBox in this.ImageBoxes)
-				imageBox.Draw(paintNow);
+			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
+			_layoutRefreshRequired = false;
 		}
-
-		#endregion
-
-		#region IUIEventHandler Members
-
-		/// <summary>
-		/// Handles mouse down event.
-		/// </summary>
-		/// <param name="e">Mouse event data.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"><paramref name="sender"/> or
-		/// <paramref name="e"/> is <b>null</b></exception>
-		public bool OnMouseDown(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			// HACK: Assume that the user intends to bring up the context menu
-			// when he clicks the right mouse button.  We'll determine
-			// in OnMouseMove whether this was a correct assumption.
-			_contextMenuEnabled = true;
-			_lastMousePoint = new Point(e.X, e.Y);
-
-			if (!_captureUIEventHandler.OnMouseDown(e))
-			{
-				return _uiEventHandler.OnMouseDown(e);
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Handles mouse move event.
-		/// </summary>
-		/// <param name="e">Mouse event data.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"><paramref name="sender"/> or
-		/// <paramref name="e"/> is <b>null</b></exception>
-		public bool OnMouseMove(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			// HACK: If right mouse button is pressed and the mouse is moving,
-			// the assumption we made in OnMouseDown was incorrect;
-			// the user's real intent was to use a MouseTool, not bring
-			// up the context menu.
-			if (e.Button == XMouseButtons.Right)
-			{
-				// Unfortunately, OnMouseMove is called by .NET after
-				// a mouse down even if the mouse hasn't moved, so 
-				// we have to make sure the mouse has in fact moved
-				// before we disable the context menu.
-				if (_lastMousePoint != new Point(e.X, e.Y))
-					_contextMenuEnabled = false;
-			}
-
-			if (!_captureUIEventHandler.OnMouseMove(e))
-			{
-				return _uiEventHandler.OnMouseMove(e);
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Handles mouse up event.
-		/// </summary>
-		/// <param name="e">Mouse event data.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"><paramref name="sender"/> or
-		/// <paramref name="e"/> is <b>null</b></exception>
-		public bool OnMouseUp(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (!_captureUIEventHandler.OnMouseUp(e))
-			{
-				return _uiEventHandler.OnMouseUp(e);
-			}
-
-			return false;
-		}
-
-		public bool OnMouseWheel(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (!_captureUIEventHandler.OnMouseWheel(e))
-			{
-				return _uiEventHandler.OnMouseWheel(e);
-			}
-			
-			return false;
-		}
-
-		/// <summary>
-		/// Handles key down event.
-		/// </summary>
-		/// <param name="e">Key event data.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"><paramref name="sender"/> or
-		/// <paramref name="e"/> is <b>null</b></exception>
-		public bool OnKeyDown(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (!_captureUIEventHandler.OnKeyDown(e))
-			{
-				return _uiEventHandler.OnKeyDown(e);
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Handles key up event.
-		/// </summary>
-		/// <param name="e">Key event data.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"><paramref name="sender"/> or
-		/// <paramref name="e"/> is <b>null</b></exception>
-		public bool OnKeyUp(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (!_captureUIEventHandler.OnKeyUp(e))
-			{
-				return _uiEventHandler.OnKeyUp(e);
-			}
-
-			return false;
-		}
-
-		#endregion
 
 		#region IMemorable Members
 
-		/// <summary>
-		/// Creates a memento for this <see cref="PhysicalWorkspace"/>.
-		/// </summary>
-		/// <returns>A memento for this <see cref="PhysicalWorkspace"/>.</returns>
-		/// <remarks>
-		/// This method is used to remember the current state of a
-		/// <see cref="PhysicalWorkspace"/>.  The memento remembers the actual <see cref="ImageBox"/>
-		/// <i>instances</i> contained in the <see cref="PhysicalWorkspace"/>.  Calling
-		/// <see cref="PhysicalWorkspace.SetMemento"/> at a later time restores 
-		/// those instances.
-		/// </remarks>
-		public IMemento CreateMemento()
-		{
-			MementoList imageBoxMementos = new MementoList();
+		///// <summary>
+		///// Creates a memento for this <see cref="PhysicalWorkspace"/>.
+		///// </summary>
+		///// <returns>A memento for this <see cref="PhysicalWorkspace"/>.</returns>
+		///// <remarks>
+		///// This method is used to remember the current state of a
+		///// <see cref="PhysicalWorkspace"/>.  The memento remembers the actual <see cref="ImageBox"/>
+		///// <i>instances</i> contained in the <see cref="PhysicalWorkspace"/>.  Calling
+		///// <see cref="PhysicalWorkspace.SetMemento"/> at a later time restores 
+		///// those instances.
+		///// </remarks>
+		//public IMemento CreateMemento()
+		//{
+		//    MementoList imageBoxMementos = new MementoList();
 
-			foreach (ImageBox imageBox in this.ImageBoxes)
-				imageBoxMementos.AddMemento(imageBox.CreateMemento());
+		//    foreach (ImageBox imageBox in this.ImageBoxes)
+		//        imageBoxMementos.AddMemento(imageBox.CreateMemento());
 
-			PhysicalWorkspaceMemento workspaceMemento = 
-				new PhysicalWorkspaceMemento(this.LogicalWorkspace, 
-											 _clientArea, 
-											 new ImageBoxCollection(this.ImageBoxes),
-											 imageBoxMementos);
+		//    PhysicalWorkspaceMemento workspaceMemento = 
+		//        new PhysicalWorkspaceMemento(this.LogicalWorkspace, 
+		//                                     _clientArea, 
+		//                                     new ImageBoxCollection(this.ImageBoxes),
+		//                                     imageBoxMementos);
 
-			return workspaceMemento;
-		}
+		//    return workspaceMemento;
+		//}
 
-		/// <summary>
-		/// Sets this <see cref="PhysicalWorkspace"/> with a previously created memento.
-		/// </summary>
-		/// <param name="memento">Memento to set.</param>
-		/// <remarks>
-		/// This method restores the state of a <see cref="PhysicalWorkspace"/> with
-		/// a memento previously created by <see cref="PhysicalWorkspace.CreateMemento"/>.
-		/// </remarks>
-		public void SetMemento(IMemento memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
+		///// <summary>
+		///// Sets this <see cref="PhysicalWorkspace"/> with a previously created memento.
+		///// </summary>
+		///// <param name="memento">Memento to set.</param>
+		///// <remarks>
+		///// This method restores the state of a <see cref="PhysicalWorkspace"/> with
+		///// a memento previously created by <see cref="PhysicalWorkspace.CreateMemento"/>.
+		///// </remarks>
+		//public void SetMemento(IMemento memento)
+		//{
+		//    Platform.CheckForNullReference(memento, "memento");
 
-			PhysicalWorkspaceMemento workspaceMemento = memento as PhysicalWorkspaceMemento;
-			Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
+		//    PhysicalWorkspaceMemento workspaceMemento = memento as PhysicalWorkspaceMemento;
+		//    Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
 
-			this.ImageBoxes.Clear();
+		//    this.ImageBoxes.Clear();
 
-			// TODO:  check if we actually need this
-			//_logicalWorkspace = workspaceMemento.LogicalWorkspace;
-			_clientArea = workspaceMemento.ClientArea;
+		//    // TODO:  check if we actually need this
+		//    //_logicalWorkspace = workspaceMemento.LogicalWorkspace;
+		//    _clientArea = workspaceMemento.ClientArea;
 
-			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
-			{
-				IMemento imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
-				ImageBox imageBox = workspaceMemento.ImageBoxes[i];
-				imageBox.SetMemento(imageBoxMemento);
+		//    for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
+		//    {
+		//        IMemento imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
+		//        ImageBox imageBox = workspaceMemento.ImageBoxes[i];
+		//        imageBox.SetMemento(imageBoxMemento);
 			
-				this.ImageBoxes.Add(imageBox);
-			}
-		}
+		//        this.ImageBoxes.Add(imageBox);
+		//    }
+		//}
 
 		#endregion
 
+		#endregion
+
+		#region Private methods
+
 		private void OnImageBoxAdded(object sender, ImageBoxEventArgs e)
 		{
-			e.ImageBox.ParentPhysicalWorkspace = this;
-			e.ImageBox.ParentRectangle = _clientArea.ClientRectangle;
-			e.ImageBox.ImageDrawing += new EventHandler<ImageDrawingEventArgs>(OnImageDrawing);
-			_imageBoxLayoutChanged = true;
+			_layoutRefreshRequired = true;
+
+			ImageBox imageBox = e.ImageBox as ImageBox;
+			imageBox.ImageViewer = this.ImageViewer;
+			imageBox.ParentPhysicalWorkspace = this;
+			EventsHelper.Fire(_imageBoxAddedEvent, this, e);
 		}
 
 		private void OnImageBoxRemoved(object sender, ImageBoxEventArgs e)
 		{
-			e.ImageBox.ImageDrawing -= new EventHandler<ImageDrawingEventArgs>(OnImageDrawing);
-			_imageBoxLayoutChanged = true;
+			_layoutRefreshRequired = true;
 
 			if (e.ImageBox.Selected)
 				this.SelectedImageBox = null;
+
+			EventsHelper.Fire(_imageBoxRemovedEvent, this, e);
 		}
 
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
-			Platform.CheckForNullReference(sender, "sender");
-			Platform.CheckForNullReference(e, "e");
-
-			e.PhysicalWorkspace = this;
-			e.FastDraw = this.DynamicAction; //tell the renderer to draw fast, whatever that may mean.
-
-			if (_imageBoxLayoutChanged)
-			{
-				e.ImageBoxLayoutChanged = _imageBoxLayoutChanged;
-				_imageBoxLayoutChanged = false;
-			}
-
-			EventsHelper.Fire(_imageDrawingEvent, this, e);
-		}
-
-		public void ReleaseMouseCapture()
-		{
-			_captureUIEventHandler.ReleaseCapture();
-		}
-
-		/// <summary>
-		/// The reason we set the 'dynamic action' at the physical workspace level is because of tools like the stack tool.
-		/// Take for example, a case where you were stacking in a 2x2 tiled image box.  You would want any draw operations
-		/// in any of those tiles to use a faster interpolation method (because when you stack, all 4 tiles update).
-		/// Also, you could want to synchronize display sets in other image boxes based on patient position.  This scheme
-		/// still works for the other dynamic tools (zoom, pan) because they only redraw the individual tile that is
-		/// being manipulated.
-		/// </summary>
-		public bool DynamicAction
-		{
-			get { return _dynamicAction; }
-			set { _dynamicAction = value; }
-		}
+		#endregion
 	}
 }

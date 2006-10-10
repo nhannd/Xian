@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Activate()
 		{
-            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
+			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			if (selectedImage == null)
 				return;

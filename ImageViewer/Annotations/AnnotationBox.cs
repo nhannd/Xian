@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			_normalizedRectangle = normalizedRectangle;
 		}
 
-		public string GetAnnotationText(PresentationImage presentationImage)
+		public string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (_annotationItem == null)
 				return string.Empty;

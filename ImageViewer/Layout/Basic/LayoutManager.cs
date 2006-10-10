@@ -21,41 +21,72 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		#region ILayoutManager methods
 
 		public void ApplyLayout(
-			LogicalWorkspace logicalWorkspace, 
-			PhysicalWorkspace physicalWorkspace,
+			ILogicalWorkspace logicalWorkspace, 
+			IPhysicalWorkspace physicalWorkspace,
 			string studyInstanceUID)
 		{
 			CreateLogicalWorkspaceTree(logicalWorkspace, studyInstanceUID);
 			CreatePhysicalWorkspaceTree(physicalWorkspace);
 			FillPhysicalWorkspace(physicalWorkspace, logicalWorkspace);
-			physicalWorkspace.Draw(false);
+			physicalWorkspace.Draw();
 		}
 
 		#endregion
 
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+			}
+		}
+
+
 		// Private methods
 		private void CreateLogicalWorkspaceTree(
-			LogicalWorkspace logicalWorkspace,
+			ILogicalWorkspace logicalWorkspace,
 			string studyInstanceUID)
 		{
             Study study = ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID);
 			AddDisplaySets(logicalWorkspace, study);
 		}
 
-		private void AddDisplaySets(LogicalWorkspace logicalWorkspace, Study study)
+		private void AddDisplaySets(ILogicalWorkspace logicalWorkspace, Study study)
 		{
 			if (study == null)
 				return;
 
 			foreach (Series series in study.Series.Values)
 			{
-				DisplaySet displaySet = new DisplaySet(series.SeriesDescription);
+				//DisplaySet displaySet = new DisplaySet(series.SeriesDescription);
+				DisplaySet displaySet = new DisplaySet();
 				AddImages(displaySet, series);
 				logicalWorkspace.DisplaySets.Add(displaySet);
 			}
 		}
 
-		private void AddImages(DisplaySet displaySet, Series series)
+		private void AddImages(IDisplaySet displaySet, Series series)
 		{
 			if (series == null)
 				return;
@@ -68,10 +99,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
-			displaySet.PresentationImages.Sort((IComparer<PresentationImage>)new DicomPresentationImageSortByInstanceNumber());
+			displaySet.PresentationImages.Sort((IComparer<IPresentationImage>)new DicomPresentationImageSortByInstanceNumber());
 		}
 
-		private void CreatePhysicalWorkspaceTree(PhysicalWorkspace physicalWorkspace)
+		private void CreatePhysicalWorkspaceTree(IPhysicalWorkspace physicalWorkspace)
 		{
 			//physicalWorkspace.SetImageBoxGrid(1, 1);
 			physicalWorkspace.SetImageBoxGrid(1, 2);
@@ -88,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 
 
-		static public void FillPhysicalWorkspace(PhysicalWorkspace physicalWorkspace, LogicalWorkspace logicalWorkspace)
+		static public void FillPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace, ILogicalWorkspace logicalWorkspace)
 		{
 			int displaySetIndex = 0;
 

@@ -11,10 +11,10 @@ namespace ClearCanvas.ImageViewer
 		private int _y;
 		private int _delta;
 		private XKeys _modifierKeys;
-		private ImageBox _selectedImageBox;
-		private Tile _selectedTile;
-		private PresentationImage _selectedPresentationImage;
-		private DisplaySet _selectedDisplaySet;
+		private IImageBox _selectedImageBox;
+		private ITile _selectedTile;
+		private IPresentationImage _selectedPresentationImage;
+		private IDisplaySet _selectedDisplaySet;
 		private IMouseCapture _mouseCapture;
 
 		public XMouseEventArgs(XMouseButtons button, int clicks, int x, int y, int delta, XKeys modifierKeys)
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _modifierKeys; }
 		}
 
-		public ImageBox SelectedImageBox
+		public IImageBox SelectedImageBox
 		{
 			get { return _selectedImageBox; }
 			set 
@@ -69,8 +69,8 @@ namespace ClearCanvas.ImageViewer
 				_selectedImageBox = value; 
 			}
 		}
-		
-		public Tile SelectedTile
+
+		public ITile SelectedTile
 		{
 			get { return _selectedTile; }
 			set 
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public PresentationImage SelectedPresentationImage
+		public IPresentationImage SelectedPresentationImage
 		{
 			get { return _selectedPresentationImage; }
 			set 
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public DisplaySet SelectedDisplaySet
+		public IDisplaySet SelectedDisplaySet
 		{
 			get { return _selectedDisplaySet; }
 			set 

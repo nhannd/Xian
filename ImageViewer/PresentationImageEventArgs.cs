@@ -6,20 +6,20 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class PresentationImageEventArgs : CollectionEventArgs<PresentationImage>
+	public class PresentationImageEventArgs : CollectionEventArgs<IPresentationImage>
 	{
 		public PresentationImageEventArgs()
 		{
 
 		}
 
-		public PresentationImageEventArgs(PresentationImage presentationImage)
+		public PresentationImageEventArgs(IPresentationImage presentationImage)
 		{
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
 
 			base.Item = presentationImage;
 		}
 
-		public PresentationImage PresentationImage { get { return base.Item; } }
+		public IPresentationImage PresentationImage { get { return base.Item; } }
 	}
 }

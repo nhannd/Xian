@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "", "Icons.WindowLevelMedium.png", "Icons.WindowLevelLarge.png")]
     
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class WindowLevelTool : DynamicActionMouseTool
+	public class WindowLevelTool : MouseTool
 	{
 		private UndoableCommand _command;
 		private WindowLevelApplicator _applicator;
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			voiLUT.WindowWidth += (double)base.DeltaX * 10;
 			voiLUT.WindowCenter += (double)base.DeltaY * 10;
 
-			e.SelectedPresentationImage.Draw(true);
+			e.SelectedPresentationImage.Draw();
 
 			counter.Stop();
 

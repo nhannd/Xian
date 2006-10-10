@@ -6,19 +6,19 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class DisplaySetEventArgs : CollectionEventArgs<DisplaySet>
+	public class DisplaySetEventArgs : CollectionEventArgs<IDisplaySet>
 	{
 		public DisplaySetEventArgs()
 		{
 		}
 
-		public DisplaySetEventArgs(DisplaySet displaySet)
+		public DisplaySetEventArgs(IDisplaySet displaySet)
 		{
 			//Platform.CheckForNullReference(displaySet, "displaySet");
 
 			base.Item  = displaySet;
 		}
 
-		public DisplaySet DisplaySet { get { return base.Item; } }
+		public IDisplaySet DisplaySet { get { return base.Item; } }
 	}
 }

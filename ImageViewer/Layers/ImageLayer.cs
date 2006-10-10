@@ -17,7 +17,8 @@ namespace ClearCanvas.ImageViewer.Layers
 		
 		//default is Nearest Neighbours.
 		private InterpolationMethods _normalInterpolationMethod = InterpolationMethods.BILINEAR;
-		private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.NEAREST_NEIGHBOURS;
+		//private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.NEAREST_NEIGHBOURS;
+		private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.BILINEAR_FAST;
 		private bool _fastRender = false;
 		
 		private int _sizeInBytes = -1;

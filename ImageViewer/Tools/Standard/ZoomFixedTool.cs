@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
         protected void ApplyZoom(float scale)
         {
-            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
+			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
             if (selectedImage == null)
                 return;

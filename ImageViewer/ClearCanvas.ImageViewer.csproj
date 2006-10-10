@@ -68,6 +68,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="NMock2, Version=1.0.2313.18049, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\NMock2.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Common\refs\nunit.framework.dll</HintPath>
@@ -93,6 +97,24 @@
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
+    <Compile Include="ClientArea.cs" />
+    <Compile Include="IDisplaySet.cs" />
+    <Compile Include="IImageBox.cs" />
+    <Compile Include="ILogicalWorkspace.cs" />
+    <Compile Include="ImageBox.cs" />
+    <Compile Include="IPhysicalWorkspace.cs" />
+    <Compile Include="IPresentationImage.cs" />
+    <Compile Include="ITile.cs" />
+    <Compile Include="Rendering\DrawArgs.cs" />
+    <Compile Include="Rendering\GdiRenderingSurface.cs" />
+    <Compile Include="Rendering\IRenderer.cs" />
+    <Compile Include="Rendering\IRenderingSurface.cs" />
+    <Compile Include="Tests\BuildTreeTest.cs" />
+    <Compile Include="Tests\MockPresentationImage.cs" />
+    <Compile Include="Tests\SelectionTest.cs" />
+    <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
+    <Compile Include="Tests\TestTree.cs" />
+    <Compile Include="Rendering\DicomPresentationImageRenderer.cs" />
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
     <Compile Include="Imaging\Tests\DicomPresentationImageSortTests.cs" />
     <Compile Include="Mathematics\FloatComparer.cs" />
@@ -100,7 +122,6 @@
     <Compile Include="Mathematics\RectF.cs" />
     <Compile Include="Mathematics\Tests\FloatComparerTest.cs" />
     <Compile Include="Mathematics\Vector.cs" />
-    <Compile Include="MouseWheelToolMappedEventArgs.cs" />
     <Compile Include="Annotations\AnnotationConfigurationManager.cs" />
     <Compile Include="Annotations\AnnotationItemConfigurationOptions.cs" />
     <Compile Include="Annotations\AnnotationItemProviderManager.cs" />
@@ -108,14 +129,10 @@
     <Compile Include="Annotations\AnnotationLayoutManager.cs" />
     <Compile Include="Annotations\AnnotationManager.cs" />
     <Compile Include="Annotations\DicomAnnotationConfiguration.cs" />
-    <Compile Include="DynamicActionMouseTool.cs" />
-    <Compile Include="CaptureUIEventHandler.cs" />
-    <Compile Include="ClientArea.cs" />
     <Compile Include="DisplaySet.cs" />
     <Compile Include="DisplaySetCollection.cs" />
     <Compile Include="DisplaySetEventArgs.cs" />
     <Compile Include="DisplaySetSelectedEventArgs.cs" />
-    <Compile Include="DrawCustomLayerEventArgs.cs" />
     <Compile Include="DynamicOverlays\AnchorPointEventArgs.cs" />
     <Compile Include="DynamicOverlays\CalloutGraphic.cs" />
     <Compile Include="DynamicOverlays\ControlPoint.cs" />
@@ -152,13 +169,9 @@
     <Compile Include="GraphicHitTestInfo.cs" />
     <Compile Include="Annotations\IAnnotationItem.cs" />
     <Compile Include="Annotations\IAnnotationItemProvider.cs" />
-    <Compile Include="IClientArea.cs" />
-    <Compile Include="ICustomDrawable.cs" />
-    <Compile Include="IDrawable.cs" />
     <Compile Include="IImageViewer.cs" />
     <Compile Include="IImageViewerToolContext.cs" />
     <Compile Include="ILayoutManager.cs" />
-    <Compile Include="ImageBox.cs" />
     <Compile Include="ImageBoxCollection.cs" />
     <Compile Include="ImageBoxEventArgs.cs" />
     <Compile Include="ImageBoxMemento.cs" />
@@ -196,7 +209,6 @@
     <Compile Include="Imaging\WindowLevelMemento.cs" />
     <Compile Include="Imaging\WindowLevelOperator.cs" />
     <Compile Include="IMouseCapture.cs" />
-    <Compile Include="IRenderer.cs" />
     <Compile Include="IUIEventHandler.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Layers\BaseLayerCollection.cs" />
@@ -208,7 +220,6 @@
     </Compile>
     <Compile Include="Layers\GraphicSelectedEventArgs.cs" />
     <Compile Include="Layers\ImageLayerSelectedEventArgs.cs" />
-    <Compile Include="Layers\CustomLayer.cs" />
     <Compile Include="Layers\Graphic.cs" />
     <Compile Include="Layers\GraphicCollection.cs" />
     <Compile Include="Layers\ImageLayer.cs" />
@@ -235,7 +246,6 @@
     <Compile Include="MouseButtonToolMappedEventArgs.cs" />
     <Compile Include="MouseCaptureChangingEventArgs.cs" />
     <Compile Include="MouseTool.cs" />
-    <Compile Include="MouseWheelToolMap.cs" />
     <Compile Include="OpenStudyException.cs" />
     <Compile Include="PhysicalWorkspace.cs" />
     <Compile Include="PhysicalWorkspaceMemento.cs" />
@@ -245,6 +255,14 @@
     <Compile Include="PresentationImageSelectedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectangleChangedEventArgs.cs" />
+    <Compile Include="Rendering\ImageBuffer.cs" />
+    <Compile Include="Rendering\ImageBufferWin32.cs" />
+    <Compile Include="Rendering\ImageInterpolatorBilinear.cs" />
+    <Compile Include="Rendering\ImageInterpolatorBilinearFast.cs" />
+    <Compile Include="Rendering\ImageInterpolatorNearestNeighbour.cs" />
+    <Compile Include="Rendering\ImageRenderer.cs" />
+    <Compile Include="Rendering\RectangleUtilities.cs" />
+    <Compile Include="Rendering\Win32.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -275,22 +293,11 @@
     <Compile Include="StudyManagement\StudyLoader.cs" />
     <Compile Include="StudyManagement\Tests\StudyTreeTest.cs" />
     <Compile Include="StudyManagement\Tests\StudyLoaderTest.cs" />
-    <Compile Include="Tests\ClientAreaTest.cs" />
-    <Compile Include="Tests\CorePluginTest.cs" />
-    <Compile Include="Tests\DisplaySetTest.cs" />
-    <Compile Include="Tests\ImageBoxTest.cs" />
-    <Compile Include="Tests\LogicalWorkspaceTest.cs" />
-    <Compile Include="Tests\MappableModalToolsIndexTest.cs" />
-    <Compile Include="Tests\MockPresentationImage.cs" />
-    <Compile Include="Tests\PhysicalWorkspaceTest.cs" />
-    <Compile Include="Tests\SourceImageSetTest.cs" />
-    <Compile Include="Tests\TileTest.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileCollection.cs" />
     <Compile Include="TileEventArgs.cs" />
     <Compile Include="TileMemento.cs" />
     <Compile Include="TileSelectedEventArgs.cs" />
-    <Compile Include="UIEventHandler.cs" />
     <Compile Include="XKeyEventArgs.cs" />
     <Compile Include="XMouseEventArgs.cs" />
   </ItemGroup>

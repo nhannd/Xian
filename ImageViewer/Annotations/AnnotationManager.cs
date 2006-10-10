@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			_annotationConfigurationManager = new AnnotationConfigurationManager(listAllAnnotationItems);
 		}
 
-		public IEnumerable<AnnotationBox> GetAnnotationBoxes(PresentationImage presentationImage)
+		public IEnumerable<AnnotationBox> GetAnnotationBoxes(IPresentationImage presentationImage)
 		{
 			foreach(AnnotationConfiguration annotationConfiguration in _annotationConfigurationManager.AnnotationConfigurations)
 			{

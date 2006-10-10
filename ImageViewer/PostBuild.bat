@@ -3,7 +3,7 @@
 echo Executing ImageViewer post-build step
 
 :: Copy database file
-copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" ".\datastore"
+::copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" ".\datastore"
 
 :: Copy Hibernate configuration file
 copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" "."
@@ -34,8 +34,7 @@ copy "..\..\..\..\ImageViewer\Explorer\Dicom\bin\%1\ClearCanvas.ImageViewer.Expl
 copy "..\..\..\..\ImageViewer\Explorer\Dicom\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Layout\Basic\bin\%1\ClearCanvas.ImageViewer.Layout.Basic.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" ".\plugins"
-copy "..\..\..\..\ImageViewer\Renderer\GDI\bin\%1\ClearCanvas.ImageViewer.Renderer.GDI.dll" ".\plugins"
-copy "..\..\..\..\ImageViewer\Renderer\GDI\BilinearInterpolation\bin\%1\ClearCanvas.ImageViewer.Renderer.GDI.BilinearInterpolation.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Rendering\BilinearInterpolation\bin\%1\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\StudyFinders\Remote\bin\%1\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\%1\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\%1\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" ".\plugins"
@@ -43,3 +42,5 @@ copy "..\..\..\..\ImageViewer\AnnotationProviders\bin\%1\ClearCanvas.ImageViewer
 copy "..\..\..\..\Dicom\Services\bin\%1\ClearCanvas.Dicom.Services.dll" ".\plugins"
 copy "..\..\..\..\Dicom\Services\View\WinForms\bin\%1\ClearCanvas.Dicom.Services.View.WinForms.dll" ".\plugins"
 
+copy "..\..\..\..\ImageViewer\Tools\Volume\bin\%1\ClearCanvas.ImageViewer.Tools.Volume.dll" ".\plugins"
+copy "..\..\..\..\ReferencedAssemblies\vtk\*.*" .\plugins

@@ -8,9 +8,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class WindowLevelOperator : IMemorable
 	{
-		private PresentationImage _presentationImage;
+		private IPresentationImage _presentationImage;
 
-		public WindowLevelOperator(PresentationImage presentationImage)
+		public WindowLevelOperator(IPresentationImage presentationImage)
 		{
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
 			_presentationImage = presentationImage;
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		public static void InstallVOILUTLinear(
-			PresentationImage image, 
+			IPresentationImage image, 
 			double windowWidth,
 			double windowCenter)
 		{

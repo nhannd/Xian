@@ -268,14 +268,14 @@ namespace ClearCanvas.ImageViewer.Layers
 		/// </summary>
 		/// <value>Can be <b>null</b> if the layer has not been added
 		/// to the layer tree  (For example, right after construction.)</value>
-		public IImageViewer ParentViewer
+		public IImageViewer ImageViewer
 		{
 			get 
 			{
 				if (this.ParentPresentationImage == null)
 					return null;
 
-				return this.ParentPresentationImage.ParentViewer; 
+				return this.ParentPresentationImage.ImageViewer; 
 			}
 		}
 
@@ -409,7 +409,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			Platform.CheckMemberIsSet(this.ParentPresentationImage, "PresentationImage");
 			this.RedrawRequired = true;
-			this.ParentPresentationImage.Draw(true);
+			this.ParentPresentationImage.Draw();
 		}
 
 		protected abstract BaseLayerCollection CreateChildLayers();

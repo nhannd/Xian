@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			while (tempCollection.Count > 0)
 			{
 				int index = random.Next(tempCollection.Count);
-				PresentationImage randomImage = tempCollection[index];
+				IPresentationImage randomImage = tempCollection[index];
 				nonOrderedCollection.Add(randomImage);
 				tempCollection.Remove(randomImage);
 			}
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			int index = 0;
 			foreach (PresentationImage orderedImage in orderedCollection)
 			{
-				PresentationImage nonOrderedImage = nonOrderedCollection[index];
+				IPresentationImage nonOrderedImage = nonOrderedCollection[index];
 
 				if (!(orderedImage is DicomPresentationImage) && !(nonOrderedImage is DicomPresentationImage))
 				{

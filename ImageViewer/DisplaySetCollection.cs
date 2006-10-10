@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class DisplaySetCollection : ObservableList<DisplaySet, DisplaySetEventArgs>
+	public class DisplaySetCollection : ObservableList<IDisplaySet, DisplaySetEventArgs>
 	{
 		public DisplaySetCollection()
 		{

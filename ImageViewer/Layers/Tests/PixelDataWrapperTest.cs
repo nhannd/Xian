@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
 
-namespace ClearCanvas.ImageViewer.Tests
+namespace ClearCanvas.ImageViewer.Layers.Tests
 {
 	[TestFixture]
 	unsafe public class PixelDataWrapperTest

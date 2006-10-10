@@ -1,182 +1,133 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text;
 using System.Drawing;
+
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A context in which a <see cref="PresentationImage"/> is displayed
+	/// Extension point for views onto <see cref="TileComponent"/>
 	/// </summary>
-	/// <remarks>
-	/// See <see cref="PhysicalWorkspace"/> for an explanation of how tiles
-	/// help describe the layout of images in a workspace.
-	/// </remarks>
-	public class Tile : IDrawable, IClientArea, IUIEventHandler, IMemorable
+	[ExtensionPoint]
+	public class TileViewExtensionPoint : ExtensionPoint<IView>
 	{
-		private PresentationImageCollection _presentationImages = new PresentationImageCollection();
+	}
+
+	/// <summary>
+	/// TileComponent class
+	/// </summary>
+	[AssociateView(typeof(TileViewExtensionPoint))]
+	public class Tile : ITile, IUIEventHandler
+	{
+		#region Private Fields
+
+		private IImageViewer _imageViewer;
 		private ImageBox _parentImageBox;
-		private ClientArea _clientArea = new ClientArea();
-		private UIEventHandler<PresentationImage> _uiEventHandler;
+		private PresentationImage _presentationImage;
+		private Rectangle _clientRectangle;
+		private RectangleF _normalizedRectangle;
 		private bool _selected = false;
-		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
-		private int _drawableInsetSize = 4;
+
+		private event EventHandler _rendererChangedEvent;
+		private event EventHandler _drawingEvent;
+		private event EventHandler<TileEventArgs> _selectionChangedEvent;
+
+		#endregion
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Tile"/> class.
+		/// Constructor
 		/// </summary>
 		public Tile()
 		{
-			// Add a single null reference; this will be the reference to an PresentationImage
-			_presentationImages.Add(null);
-			_uiEventHandler = new UIEventHandler<PresentationImage>(this._presentationImages);
 		}
 
-		/// <summary>
-		/// Gets the parent <see cref="IImageViewer"/>
-		/// </summary>
-		public IImageViewer ParentViewer
-		{
-			get 
-			{
-				if (this.ParentImageBox == null)
-					return null;
+		#region Public properties
 
-				return this.ParentImageBox.ParentViewer; 
+		public IImageViewer ImageViewer
+		{
+			get { return _imageViewer; }
+			internal set 
+			{
+				_imageViewer = value;
+
+				if (_presentationImage != null && _imageViewer != null)
+					_presentationImage.ImageViewer = _imageViewer;
 			}
 		}
 
-		/// <summary>
-		/// Gets this tile's parent <see cref="ImageBox"/>
-		/// </summary>
-		public ImageBox ParentImageBox
+		public IImageBox ParentImageBox
 		{
-			get
+			get { return _parentImageBox as IImageBox; }
+			internal set 
 			{
-				Platform.CheckMemberIsSet(_parentImageBox, "ParentImageBox");
-				return _parentImageBox;
-			}
-			internal set
-			{
-				Platform.CheckForNullReference(value, "ParentImageBox");
-				_parentImageBox = value;
+				Platform.CheckForNullReference(value, "Tile.ParentImageBox");
+				_parentImageBox = value as ImageBox; 
 			}
 		}
 
 		/// <summary>
-		/// Gets this tile's client rectangle.
+		/// Gets the <see cref="PresentationImage"/> associated with this
+		/// <see cref="Tile"/>.
 		/// </summary>
-		public Rectangle ClientRectangle
+		public IPresentationImage PresentationImage
 		{
-			get
+			get { return _presentationImage as IPresentationImage; }
+			internal set 
 			{
-				return _clientArea.ClientRectangle;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the drawable inset size in pixels.
-		/// </summary>
-		/// <value>The drawable inset size in pixels.</value>
-		/// <remarks>
-		/// Adjacent <see cref="Tile"/> client rectangles have no gap between them.
-		/// For aesthetic reasons, a small gap is usually preferred; the actual 
-		/// <see cref="Tile.DrawableClientRectangle"/> should be slightly inset.  
-		/// This property determines the size of the inset in pixels.
-		/// </remarks>
-		public int DrawableInsetSize
-		{
-			get { return _drawableInsetSize; }
-			set
-			{
-				Platform.CheckNonNegative(value, "DrawableInsetSize");
-				_drawableInsetSize = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets the drawable client rectangle.
-		/// </summary>
-		/// <value>The drawable client rectangle.</value>
-		/// <remarks>
-		/// Adjacent <see cref="Tile"/> client rectangles have no gap between them.
-		/// For aesthetic reasons, a small gap is usually preferred; the actual 
-		/// <b>DrawableClientRectangle</b> should be slightly inset.  The size of the
-		/// inset is determined by <see cref="DrawableInsetSize"/>.
-		/// </remarks>
-		public Rectangle DrawableClientRectangle
-		{
-			get
-			{
-				// The actual drawable area in the tile is slightly
-				// smaller than the tile area.  This is to allow the
-				// drawing of a border around the tile.
-				return Rectangle.Inflate(this.ClientRectangle, -_drawableInsetSize, -_drawableInsetSize);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets this tile's <see cref="Presentationimage"/>.
-		/// </summary>
-		public PresentationImage PresentationImage
-		{
-			get
-			{
-				PresentationImage presentationImage = _presentationImages[0];
-				return presentationImage;
-			}
-			set
-			{
-				// We don't check for null, since image can be null
-
-				// Don't bother if the existing value is the same as the new value
-				if (this.PresentationImage == value)
-					return;
-
-				if (this.PresentationImage != null)
+				if (_presentationImage != value)
 				{
-					// Unsubscribe from the old PresentationImage's ImageDrawing event
-					// before we assign a new PresentationImage
-					this.PresentationImage.ImageDrawing -= new EventHandler<ImageDrawingEventArgs>(OnImageDrawing);
-					// Unselect the old PresentationImage if this Tile is selected
-					if (this.Selected)
-						this.PresentationImage.Selected = false;
-				}
+					IRenderer oldRenderer = null;
+					
+					if (_presentationImage != null)
+						oldRenderer = _presentationImage.ImageRenderer;
 
-				// Assign the new PresentationImage.  Value can be null.
-				_presentationImages[0] = value;
+					// Disassociate the old presentation image with this tile
+					if (_presentationImage != null)
+						_presentationImage.Tile = null;
 
-				// Verify that there's a PresentationImage associated with this Tile
-				// (there doesn't have to be)
-				if (this.PresentationImage != null)
-				{
-					// Subscribe to its ImageDrawing event
-					this.PresentationImage.ImageDrawing += new EventHandler<ImageDrawingEventArgs>(OnImageDrawing);
+					// Assign the new presentation image.  Can be null.
+					_presentationImage = value as PresentationImage;
 
-					// Select the new PresentationImage if this Tile is selected
-					if (this.Selected)
-						this.PresentationImage.Selected = true;
+					// Assuming the new value is not null, associate
+					// this Tile with the new image
+					if (_presentationImage != null)
+					{
+						_presentationImage.Tile = this;
+						_presentationImage.Selected = this.Selected;
+
+						if (_presentationImage.ImageViewer == null)
+							_presentationImage.ImageViewer = this.ImageViewer;
+
+						IRenderer newRenderer = _presentationImage.ImageRenderer;
+
+						if (oldRenderer != null)
+						{
+							if (newRenderer.GetType() != oldRenderer.GetType())
+								EventsHelper.Fire(_rendererChangedEvent, this, EventArgs.Empty);
+						}
+						else
+						{
+							EventsHelper.Fire(_rendererChangedEvent, this, EventArgs.Empty);
+						}
+					}
 				}
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets this tile's <see cref="PresentationImage"/> based on the
-		/// index in the associated <see cref="DisplaySet"/>
-		/// </summary>
 		public int PresentationImageIndex
 		{
 			get
 			{
-				Platform.CheckMemberIsSet(this.PresentationImage, "PresentationImage", SR.ExceptionNoPresentationImageAssociatedWithTile);
+				Platform.CheckMemberIsSet(_presentationImage, "PresentationImage", SR.ExceptionNoPresentationImageAssociatedWithTile);
 				Platform.CheckMemberIsSet(this.ParentImageBox.DisplaySet, "ParentImageBox.DisplaySet", SR.ExceptionNoDisplaySetAssociatedWithImageBoxTile);
 
-				DisplaySet displaySet = this.ParentImageBox.DisplaySet;
+				IDisplaySet displaySet = this.ParentImageBox.DisplaySet;
 
 				return displaySet.PresentationImages.IndexOf(this.PresentationImage);
 			}
@@ -184,7 +135,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				Platform.CheckMemberIsSet(this.ParentImageBox.DisplaySet, "Tile.ParentImageBox.DisplaySet", SR.ExceptionNoDisplaySetAssociatedWithImageBoxTile);
 
-				DisplaySet displaySet = this.ParentImageBox.DisplaySet;
+				IDisplaySet displaySet = this.ParentImageBox.DisplaySet;
 
 				int index;
 
@@ -199,230 +150,52 @@ namespace ClearCanvas.ImageViewer
 				this.PresentationImage = displaySet.PresentationImages[index];
 			}
 		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Tile"/> is
-		/// selected.
-		/// </summary>
-		/// <value><b>true</b> if selected; <b>false</b> otherwise.</value>
-		/// <remarks>
-		/// <see cref="Tile"/> selection is mutually exclusive, i.e., only one
-		/// <see cref="Tile"/> is ever selected at a given time.  
-		/// </remarks>
+		
 		public bool Selected
 		{
 			get { return _selected; }
-			set
+			private set 
 			{
-				Platform.CheckMemberIsSet(this.ParentImageBox, "Tile.ParentImageBox");
-
 				if (_selected != value)
 				{
-					//string str = String.Format("Tile.SetSelected({0})\n", selected.ToString());
-					//Trace.Write(str);
-
-					// If there's no PresentationImage associated with this Tile,
-					// then there's nothing to select/deselect, so don't change anything
-					if (this.PresentationImage != null)
-					{
-						_selected = value;
-
-						// If the tile is being selected...
-						if (_selected)
-						{
-							this.ParentImageBox.SelectedTile = this;
-							// Tell whoever wants to know that this Tile has been selected
-							this.ParentViewer.EventBroker.OnTileSelected(
-								new TileSelectedEventArgs(this));
-							// Select the PresentationImage in this Tile
-							this.PresentationImage.Selected = true;
-						}
-						// If the tile is being deselected
-						else
-						{
-							// Deselect the PresentationImage in this Tile
-							this.PresentationImage.Selected = false;
-						}
-
-						this.PresentationImage.DrawLayers(true);
-					}
+					_selected = value;
+					EventsHelper.Fire(_selectionChangedEvent, this, new TileEventArgs(this));
 				}
 			}
 		}
 
-		internal event EventHandler<ImageDrawingEventArgs> ImageDrawing
+		public Color BorderColor
 		{
-			add { _imageDrawingEvent += value; }
-			remove { _imageDrawingEvent -= value; }
-		}
-
-		internal Rectangle ParentRectangle
-		{
-			get
+			get 
 			{
-				return _clientArea.ParentRectangle;
-			}
-			set
-			{
-				_clientArea.ParentRectangle = value;
-
-				// Tell the presentation image when the tile size changes
-				if (this.PresentationImage != null)
-					this.PresentationImage.LayerManager.RootLayerGroup.SpatialTransform.DestinationRectangle = this.DrawableClientRectangle;
-
-				//this.PresentationImage.LayerManager.RootLayerGroup.DestinationRectangle = this.DrawableClientRectangle;
+				// TODO: remove these hard codes and make this configurable
+				if (this.Selected)
+					return Color.Yellow;
+				else
+					return Color.Gray;
 			}
 		}
 
-		internal RectangleF NormalizedRectangle
+		public int BorderWidth
 		{
-			get
-			{
-				return _clientArea.NormalizedRectangle;
-			}
-			set
-			{
-				_clientArea.NormalizedRectangle = value;
-
-				// Tell the presentation image when the tile size changes
-				if (this.PresentationImage != null)
-					this.PresentationImage.LayerManager.RootLayerGroup.SpatialTransform.DestinationRectangle = this.DrawableClientRectangle;
-				//	this.PresentationImage.LayerManager.RootLayerGroup.DestinationRectangle = this.DrawableClientRectangle;
-			}
+			get { return 1; }
 		}
 
-		#region IDrawable
-
-		/// <summary>
-		/// Draws the <see cref="PresentationImage"/> currently associated
-		/// with this <see cref="ImageBox"/>.
-		/// </summary>
-		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
-		/// repainted immediately.  If <b>false</b>, each image rectangle is still
-		/// invalidated but when the actual painting occurs is left to the the .NET 
-		/// framework.</param>
-		public void Draw(bool paintNow)
+		public int InsetWidth
 		{
-			if (this.PresentationImage != null)
-				this.PresentationImage.Draw(paintNow);
-			else
-				OnImageDrawing(this, new ImageDrawingEventArgs(null, paintNow));
+			get { return 5; }
 		}
 
-		#endregion
-
-		#region IUIEventHandler Members
-
-		public bool OnMouseDown(XMouseEventArgs e)
+		public Rectangle ClientRectangle
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.PresentationImage == null)
-				return true;
-
-			this.Selected = true;
-
-			e.SelectedTile = this;
-
-			return _uiEventHandler.OnMouseDown(e);
+			get { return _clientRectangle; }
+			private set { _clientRectangle = value; }
 		}
 
-		public bool OnMouseMove(XMouseEventArgs e)
+		public RectangleF NormalizedRectangle
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.PresentationImage == null)
-				return true;
-
-			e.SelectedTile = this;
-
-			return _uiEventHandler.OnMouseMove(e);
-		}
-
-		public bool OnMouseUp(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.PresentationImage == null)
-				return true;
-
-			e.SelectedTile = this;
-
-			return _uiEventHandler.OnMouseUp(e);
-		}
-
-		public bool OnMouseWheel(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.PresentationImage == null)
-				return true;
-
-			e.SelectedTile = this;
-
-			return _uiEventHandler.OnMouseWheel(e);
-		}
-
-		public bool OnKeyDown(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return _uiEventHandler.OnKeyDown(e);
-		}
-
-		public bool OnKeyUp(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return _uiEventHandler.OnKeyUp(e);
-		}
-
-		#endregion
-
-		#region IMemorable Members
-
-		public IMemento CreateMemento()
-		{
-			// For the memento, we'll remember what PresentationImage was in this tile
-			// and the location and dimensions of the tile itself
-			TileMemento tileMemento = new TileMemento(this.PresentationImage, _clientArea);
-
-			IMemento memento = tileMemento as IMemento;
-			Platform.CheckForInvalidCast(memento, "tileMemento", "IMemento");
-
-			return memento;
-		}
-
-		public void SetMemento(IMemento memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
-			TileMemento tileMemento = memento as TileMemento;
-			Platform.CheckForInvalidCast(tileMemento, "memento", "TileMemento");
-
-			this.PresentationImage = tileMemento.PresentationImage;
-			_clientArea = tileMemento.ClientArea;
-		}
-
-		#endregion
-
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
-			Platform.CheckForNullReference(sender, "sender");
-			Platform.CheckForNullReference(e, "e");
-
-			e.Tile = this;
-
-			// Set the destination rectangle in the layers and calculate the transform
-			// It's unfortunate that we need to do this here, as this really should
-			// be set in this.PresentationImage.  The problem arises when the same
-			// presentation image is hosted by more than one tile.  The destination
-			// rectangles of the tiles will obviously differ but the single
-			// presentation image can only store one rectangle and that 
-			// leads to strange results when the tiles are drawn.
-			if (e.PresentationImage != null)
-			    e.PresentationImage.LayerManager.RootLayerGroup.DestinationRectangle = this.DrawableClientRectangle;
-
-			EventsHelper.Fire(_imageDrawingEvent, this, e);
+			get { return _normalizedRectangle; }
+			set { _normalizedRectangle = value; }
 		}
 
 		public IEnumerable<AnnotationBox> AnnotationBoxes
@@ -430,10 +203,200 @@ namespace ClearCanvas.ImageViewer
 			get
 			{
 				if (ImageViewerComponent.AnnotationManager != null)
-					return ImageViewerComponent.AnnotationManager.GetAnnotationBoxes(PresentationImage);
+					return ImageViewerComponent.AnnotationManager.GetAnnotationBoxes(this.PresentationImage);
 
 				return null;
 			}
 		}
+
+		#endregion
+
+		#region Public events
+
+		public event EventHandler RendererChanged
+		{
+			add { _rendererChangedEvent += value; }
+			remove { _rendererChangedEvent -= value; }
+		}
+
+		public event EventHandler Drawing
+		{
+			add { _drawingEvent += value; }
+			remove { _drawingEvent -= value; }
+		}
+
+		public event EventHandler<TileEventArgs> SelectionChanged
+		{
+			add { _selectionChangedEvent += value; }
+			remove { _selectionChangedEvent -= value; }
+		}
+
+		#endregion
+
+		#region Disposal
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+			}
+		}
+
+		#endregion
+
+		#region Public methods
+
+		public void Select()
+		{
+			if (!this.Selected)
+			{
+				Platform.CheckMemberIsSet(this.ParentImageBox, "Tile.ParentImageBox");
+				Platform.CheckMemberIsSet(this.ImageViewer, "Tile.ImageViewer");
+
+				if (_presentationImage != null)
+				{
+					this.Selected = true;
+					_presentationImage.Selected = true;
+					_parentImageBox.SelectedTile = this;
+					this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this as ITile));
+				}
+			}
+		}
+
+		/// <summary>
+		/// Draws the <see cref="PresentationImage"/> in this <see cref="TileComponent"/>.
+		/// </summary>
+		/// <remarks>Use this method to redraw the <see cref="PresentationImage"/> in this 
+		/// <see cref="TileComponent"/>.</remarks>
+		public void Draw()
+		{
+			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Draws the <see cref="PresentationImage"/> in this <see cref="TileComponent"/>.
+		/// </summary>
+		/// <param name="drawArgs"></param>
+		/// <remarks>This is called by the GUI control associated with this
+		/// component.  Never call this method directly.  Instead, use
+		/// <see cref="Draw()"/>.</remarks>
+		public void OnDraw(DrawArgs drawArgs)
+		{
+			// No PresentationImage associated with this Tile, so nothing to draw
+			if (_presentationImage == null)
+				return;
+
+			this.ClientRectangle = drawArgs.ClientRectangle;
+
+			drawArgs.Tile = this;
+			drawArgs.ImageBox = this.ParentImageBox;
+
+			_presentationImage.OnDraw(drawArgs);
+		}
+
+		#region IUIEventHandler Members
+
+		public bool OnMouseDown(XMouseEventArgs e)
+		{
+			if (_presentationImage == null)
+				return true;
+
+			// Select this tile if user has clicked on it
+			Select();
+
+			SetSelectedObjects(e);
+			return _presentationImage.OnMouseDown(e);
+		}
+
+		public bool OnMouseMove(XMouseEventArgs e)
+		{
+			if (_presentationImage == null)
+				return true;
+
+			SetSelectedObjects(e);
+			return _presentationImage.OnMouseMove(e);
+		}
+
+		public bool OnMouseUp(XMouseEventArgs e)
+		{
+			if (_presentationImage == null)
+				return true;
+
+			SetSelectedObjects(e);
+			return _presentationImage.OnMouseUp(e);
+		}
+
+		public bool OnMouseWheel(XMouseEventArgs e)
+		{
+			if (_presentationImage == null)
+				return true;
+
+			SetSelectedObjects(e);
+			return _presentationImage.OnMouseWheel(e);
+		}
+
+		public bool OnKeyDown(XKeyEventArgs e)
+		{
+			if (_presentationImage == null)
+				return true;
+
+			return _presentationImage.OnKeyDown(e);
+		}
+
+		public bool OnKeyUp(XKeyEventArgs e)
+		{
+			if (_presentationImage == null)
+				return true;
+
+			return _presentationImage.OnKeyUp(e);
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Internal/private methods
+
+		internal void Deselect()
+		{
+			if (this.Selected)
+			{
+				if (_presentationImage != null)
+				{
+					this.Selected = false;
+					_presentationImage.Selected = false;
+				}
+			}
+		}
+
+		private void SetSelectedObjects(XMouseEventArgs e)
+		{
+			e.SelectedImageBox = this.ParentImageBox;
+			e.SelectedTile = this;
+		}
+
+		#endregion
 	}
 }

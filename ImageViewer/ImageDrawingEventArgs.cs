@@ -6,10 +6,10 @@ namespace ClearCanvas.ImageViewer
 	public class ImageDrawingEventArgs : EventArgs
 	{
 		// Private attributes
-		private PresentationImage _presentationImage;
-		private PhysicalWorkspace _physicalWorkspace;
-		private ImageBox _imageBox;
-		private Tile _tile;
+		private IPresentationImage _presentationImage;
+		private IPhysicalWorkspace _physicalWorkspace;
+		private IImageBox _imageBox;
+		private ITile _tile;
 		private bool _imageBoxLayoutChanged = false;
 		private bool _tileLayoutChanged = false;
 		private bool _paintNow = false;
@@ -26,12 +26,12 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		// Properties
-		public PresentationImage PresentationImage 
+		public IPresentationImage PresentationImage 
 		{ 
 			get { return _presentationImage; } 
 		}
 
-		public PhysicalWorkspace PhysicalWorkspace
+		public IPhysicalWorkspace PhysicalWorkspace
 		{ 
 			get { return _physicalWorkspace; } 
 			set 
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public ImageBox ImageBox
+		public IImageBox ImageBox
 		{ 
 			get { return _imageBox; } 
 			set 
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public Tile Tile
+		public ITile Tile
 		{ 
 			get { return _tile; } 
 			set 

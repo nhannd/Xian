@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	//!! If it becomes necessary later, we can introduce composite collections.
 	//!! Also, when we add support for general image sorting, these will become extensions.
 
-	public class DicomPresentationImageSortByInstanceNumber : IComparer<PresentationImage>
+	public class DicomPresentationImageSortByInstanceNumber : IComparer<IPresentationImage>
 	{
 		private int _returnValue;
 
@@ -41,9 +41,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		#region IComparer<PresentationImage> Members
+		#region IComparer<IPresentationImage> Members
 
-		public int Compare(PresentationImage x, PresentationImage y)
+		public int Compare(IPresentationImage x, IPresentationImage y)
 		{
 			DicomPresentationImage dicomX = null;
 			DicomPresentationImage dicomY = null;

@@ -33,14 +33,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 			get { return _displayName; }
 		}
 
-		protected abstract bool MeetsCriteria(PresentationImage presentationImage);
+		protected abstract bool MeetsCriteria(IPresentationImage presentationImage);
 
 		public IEnumerable<AnnotationBox> AnnotationBoxes
 		{
 			get { return _annotationLayout.AnnotationBoxes; }
 		}
 
-		public IEnumerable<AnnotationBox> GetAnnotationBoxes(PresentationImage presentationImage)
+		public IEnumerable<AnnotationBox> GetAnnotationBoxes(IPresentationImage presentationImage)
 		{
 			if (!MeetsCriteria(presentationImage))
 				return null;

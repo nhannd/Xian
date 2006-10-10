@@ -6,20 +6,20 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class TileEventArgs : CollectionEventArgs<Tile>
+	public class TileEventArgs : CollectionEventArgs<ITile>
 	{
 		public TileEventArgs()
 		{
 
 		}
 
-		public TileEventArgs(Tile Tile)
+		public TileEventArgs(ITile tile)
 		{
-			Platform.CheckForNullReference(Tile, "Tile");
+			Platform.CheckForNullReference(tile, "Tile");
 
-			base.Item = Tile;
+			base.Item = tile;
 		}
 
-		public Tile Tile { get { return base.Item; } }
+		public ITile Tile { get { return base.Item; } }
 	}
 }

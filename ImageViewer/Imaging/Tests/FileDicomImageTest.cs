@@ -7,7 +7,7 @@ using System.Collections;
 using NUnit.Framework;
 
 
-namespace ClearCanvas.ImageViewer.Tests
+namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
 	[TestFixture]
 	public class FileDicomImageTest

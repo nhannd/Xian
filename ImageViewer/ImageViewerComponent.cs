@@ -27,9 +27,6 @@ namespace ClearCanvas.ImageViewer
     {
     }
 
-	/// <summary>
-	/// An application component capable of displaying images.
-	/// </summary>
     [AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
     public class ImageViewerComponent : ApplicationComponent, IImageViewer
     {
@@ -60,23 +57,23 @@ namespace ClearCanvas.ImageViewer
                 get { return _component; }
             }
 
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+
             #endregion
         }
 
-        
-        private LogicalWorkspace _logicalWorkspace;
-        private PhysicalWorkspace _physicalWorkspace;
+        private ILogicalWorkspace _logicalWorkspace;
+        private IPhysicalWorkspace _physicalWorkspace;
         private ILayoutManager _layoutManager;
         private EventBroker _eventBroker;
         private MouseButtonToolMap _mouseButtonToolMap;
-		private MouseWheelToolMap _mouseWheelToolMap;
         private string _studyInstanceUID;
         private ToolSet _toolSet;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImageViewerComponent"/> class.
-		/// </summary>
-		public ImageViewerComponent(string studyInstanceUID)
+        public ImageViewerComponent(string studyInstanceUID)
         {
             Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
 
@@ -86,9 +83,6 @@ namespace ClearCanvas.ImageViewer
             _eventBroker = new EventBroker();
         }
         
-		/// <summary>
-		/// Starts this image viewer.
-		/// </summary>
         public override void Start()
         {
             base.Start();
@@ -101,16 +95,13 @@ namespace ClearCanvas.ImageViewer
             // Select top left tile by default
             if (this.PhysicalWorkspace.SelectedImageBox == null)
             {
-                Tile topLeftTile = this.PhysicalWorkspace.ImageBoxes[0].Tiles[0];
+                ITile topLeftTile = this.PhysicalWorkspace.ImageBoxes[0].Tiles[0];
 
-                if (topLeftTile != null)
-                    topLeftTile.Selected = true;
+				if (topLeftTile != null)
+					topLeftTile.Select();
             }
         }
 
-		/// <summary>
-		/// Stops this image viewer
-		/// </summary>
         public override void Stop()
         {
             // TODO: What would be better is if the study tree listened for workspaces
@@ -120,9 +111,6 @@ namespace ClearCanvas.ImageViewer
             base.Stop();
         }
 
-		/// <summary>
-		/// Gets this image viewer's action set
-		/// </summary>
         public override IActionSet ExportedActions
         {
             get
@@ -133,16 +121,10 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-		/// <summary>
-		/// Gets this image viewer's context menu action model.
-		/// </summary>
         public ActionModelNode ContextMenuModel
         {
             get
             {
-				if (!this.PhysicalWorkspace.ContextMenuEnabled)
-					return null;
-
 				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 
 				// insert dynamic items into model here
@@ -156,7 +138,7 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets this image viewer's <see cref="StudyManager"/>
+        /// Gets the <see cref="StudyManager"/>
         /// </summary>
         public static StudyManager StudyManager
         {
@@ -170,7 +152,7 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets this image viewer's command history
+        /// Gets the command history for this image viewer.
         /// </summary>
         public CommandHistory CommandHistory
         {
@@ -178,37 +160,35 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets this image viewer's <see cref="PhysicalWorkspace"/>.
+        /// Gets the <see cref="PhysicalWorkspace"/>.
         /// </summary>
         /// <value>The <see cref="PhysicalWorkspace"/>.</value>
-        public PhysicalWorkspace PhysicalWorkspace
+        public IPhysicalWorkspace PhysicalWorkspace
         {
             get { return _physicalWorkspace; }
         }
 
         /// <summary>
-		/// Gets this image viewer's <see cref="LogicalWorkspace"/>.
+        /// Gets the <see cref="LogicalWorkspace"/>.
         /// </summary>
         /// <value>The <see cref="LogicalWorkspace"/>.</value>
-        public LogicalWorkspace LogicalWorkspace
+        public ILogicalWorkspace LogicalWorkspace
         {
             get { return _logicalWorkspace; }
         }
 
-		/// <summary>
-		/// Gets this image viewer's <see cref="EventBroker"/>
-		/// </summary>
         public EventBroker EventBroker
         {
             get { return _eventBroker; }
         }
 
-		/// <summary>
-		/// Gets this image viewer's currently selected <see cref="ImageBox"/>
-		/// </summary>
-		/// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if 
-		/// no <see cref="ImageBox"/> is currently selected.</value>
-		public ImageBox SelectedImageBox
+        /// <summary>
+        /// Gets the currently selected <see cref="ImageBox"/>
+        /// </summary>
+        /// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if there are
+        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
+        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
+        public IImageBox SelectedImageBox
         {
             get
             {
@@ -219,12 +199,13 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-		/// <summary>
-		/// Gets this image viewer's currently selected <see cref="Tile"/>
-		/// </summary>
-		/// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if 
-		/// no <see cref="Tile"/> is currently selected.</value>
-		public Tile SelectedTile
+        /// <summary>
+        /// Gets the currently selected <see cref="Tile"/>
+        /// </summary>
+        /// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if there are
+        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
+        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
+        public ITile SelectedTile
         {
             get
             {
@@ -235,12 +216,13 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-		/// <summary>
-		/// Gets this image viewer's currently selected <see cref="PresentationImage"/>
-		/// </summary>
-		/// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if 
-		/// no <see cref="PresentationImage"/> is no currently selected.</value>
-		public PresentationImage SelectedPresentationImage
+        /// <summary>
+        /// Gets the currently selected <see cref="PresentationImage"/>
+        /// </summary>
+        /// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if there are
+        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
+        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
+        public IPresentationImage SelectedPresentationImage
         {
             get
             {
@@ -251,17 +233,19 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-		/// <summary>
-		/// Gets this image viewer's <see cref="MouseButtonToolMap"/>
-		/// </summary>
-		/// <value>The <see cref="MouseButtonToolMap"/></value>
-		/// <remarks>
-		/// A <i>Mouse tool</i> is a tool that when selected
-		/// causes a mouse button to be mapped to the tool's function; a mouse tool that
-		/// is already mapped to the same button becomes deselected.  Examples
-		/// of mouse tools in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.
-		/// </remarks>
-		public MouseButtonToolMap MouseButtonToolMap
+        /// <summary>
+        /// Gets the workspace's currently selected mappable modal tools.
+        /// </summary>
+        /// <value>The workspace's current selected mappable modal tools.</value>
+        /// <remarks>
+        /// A <i>Mappable modal tool</i> or <i>MMT</i> is a tool that when selected
+        /// causes a mouse button to be mapped to the tool's function; an MMT that
+        /// is already mapped to the same button becomes deselected.  Examples
+        /// of MMTs in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.  This
+        /// property gets an index that stores which mouse buttons are currently
+        /// mapped to which MMT.
+        /// </remarks>
+        internal MouseButtonToolMap MouseButtonToolMap
         {
             get 
 			{
@@ -272,20 +256,6 @@ namespace ClearCanvas.ImageViewer
 			}
         }
 
-		//public MouseWheelToolMap MouseWheelToolMap
-		//{
-		//    get 
-		//    {
-		//        if (_mouseWheelToolMap == null)
-		//            _mouseWheelToolMap = new MouseWheelToolMap();
-
-		//        return _mouseWheelToolMap; 
-		//    }
-		//}
-
-		/// <summary>
-		/// Gets this image viewer's <see cref="AnnotationManager"/>
-		/// </summary>
 		public static AnnotationManager AnnotationManager
 		{
 			get
@@ -294,6 +264,46 @@ namespace ClearCanvas.ImageViewer
 					_annotationManager = new AnnotationManager();
 
 				return _annotationManager;
+			}
+		}
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_physicalWorkspace != null)
+					_physicalWorkspace.Dispose();
+
+				if (_logicalWorkspace != null)
+					_logicalWorkspace.Dispose();
+
+				if (_layoutManager != null)
+					_layoutManager.Dispose();
+
+				if (_toolSet != null)
+					_toolSet.Dispose();
 			}
 		}
 
@@ -357,7 +367,7 @@ namespace ClearCanvas.ImageViewer
                 delegate()
                 {
                     this.SelectedImageBox.DisplaySet = displaySet;
-                    this.SelectedImageBox.Draw(true);
+                    //this.SelectedImageBox.Draw();
                 }
             );
             return action;

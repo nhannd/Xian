@@ -1,58 +1,54 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
+using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// A domain representation of a display set.
-	/// </summary>
-	public class DisplaySet : IDrawable
+	public class DisplaySet : IDisplaySet
 	{
-		private PresentationImageCollection _presentationImages = new PresentationImageCollection();
+		#region Private Fields
+
+		private PresentationImageCollection _presentationImages;
+		private IImageViewer _imageViewer;
 		private LogicalWorkspace _parentLogicalWorkspace;
-		private bool _visible = false;
+		private ImageBox _imageBox;
+		private List<IPresentationImage> _linkedPresentationImages = new List<IPresentationImage>();
+
 		private bool _selected = false;
 		private bool _linked = false;
-		private List<PresentationImage> _linkedPresentationImages = new List<PresentationImage>();
-		private event EventHandler<LinkageChangedEventArgs> _linkageChangedEvent;
 		private string _name;
 
-	
+		#endregion
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DisplaySet"/> class.
-		/// </summary>
-		public DisplaySet() : this("")
+		public DisplaySet()
 		{
+			this.PresentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
+			this.PresentationImages.ItemRemoved += new EventHandler<PresentationImageEventArgs>(OnPresentationImageRemoved);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DisplaySet"/> class.
-		/// </summary>
-		public DisplaySet(string name)
-		{
-			_name = name;
-			_presentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
-			_presentationImages.ItemRemoved += new EventHandler<PresentationImageEventArgs>(OnPresentationImageRemoved);
-		}
-
+		#region Properties
+		
 		/// <summary>
 		/// Gets a collection of presentation images.
 		/// </summary>
 		public PresentationImageCollection PresentationImages
 		{
-			get { return _presentationImages; }
+			get 
+			{
+				if (_presentationImages == null)
+					_presentationImages = new PresentationImageCollection();
+
+				return _presentationImages; 
+			}
 		}
 
 		/// <summary>
 		/// Gets a collection of linked <see cref="PresentationImages"/>
 		/// </summary>
-		public ReadOnlyCollection<PresentationImage> LinkedPresentationImages
+		/// <value>A collection of linked <see cref="PresentationImages"/></value>
+		public ReadOnlyCollection<IPresentationImage> LinkedPresentationImages
 		{
 			get { return _linkedPresentationImages.AsReadOnly(); }
 		}
@@ -60,37 +56,38 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the parent <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>The parent <see cref="IImageViewer"/> or be <b>null</b> 
-		/// if the <see cref="DisplaySet"/> has not
+		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
 		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
-		public IImageViewer ParentViewer
+		public IImageViewer ImageViewer
 		{
-			get 
+			get { return _imageViewer; }
+			internal set 
 			{
-				if (this.ParentLogicalWorkspace == null)
-					return null;
+				_imageViewer = value;
 
-                return this.ParentLogicalWorkspace.ParentViewer; 
+				if (_imageViewer != null)
+				{
+					foreach (PresentationImage image in this.PresentationImages)
+						image.ImageViewer = value;
+				}
 			}
 		}
 
 		/// <summary>
 		/// Gets the parent <see cref="LogicalWorkspace"/>
 		/// </summary>
-		/// <value>The parent <see cref="LogicalWorkspace"/> or <b>null</b> 
-		/// if the <see cref="DisplaySet"/> has not
+		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
 		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
-		public LogicalWorkspace ParentLogicalWorkspace
+		public ILogicalWorkspace ParentLogicalWorkspace
 		{
-			get
-			{
-				return _parentLogicalWorkspace;
-			}
-			set
-			{
-				Platform.CheckForNullReference(value, "ParentLogicalWorkspace");
-				_parentLogicalWorkspace = value;
-			}
+			get { return _parentLogicalWorkspace as ILogicalWorkspace; }
+			internal set { _parentLogicalWorkspace = value as LogicalWorkspace; }
+		}
+
+		public IImageBox ImageBox
+		{
+			get { return _imageBox as IImageBox; }
+			internal set { _imageBox = value as ImageBox; }
 		}
 
 		/// <summary>
@@ -107,8 +104,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public bool Visible
 		{
-			get { return _visible;	}
-			set	{ _visible = value; }
+			get { return this.ImageBox != null; }
 		}
 
 		/// <summary>
@@ -117,7 +113,7 @@ namespace ClearCanvas.ImageViewer
 		public bool Selected
 		{
 			get { return _selected; }
-			set
+			internal set
 			{
 				if (_selected != value)
 				{
@@ -125,7 +121,10 @@ namespace ClearCanvas.ImageViewer
 
 					if (_selected)
 					{
-						this.ParentViewer.EventBroker.OnDisplaySetSelected(
+						if (this.ImageViewer == null)
+							return;
+
+						this.ImageViewer.EventBroker.OnDisplaySetSelected(
 							new DisplaySetSelectedEventArgs(this));
 					}
 				}
@@ -136,6 +135,7 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets a value indicating whether this <see cref="ImageBox"/> is
 		/// linked.
 		/// </summary>
+		/// <value><b>true</b> if linked; <b>false</b> otherwise.</value>
 		/// <remarks>
 		/// Multiple display sets may be linked, allowing tools that can operate on
 		/// multiple display sets to operate on all linked display sets simultaneously.  
@@ -152,43 +152,83 @@ namespace ClearCanvas.ImageViewer
 				{
 					_linked = value;
 
-					EventsHelper.Fire(_linkageChangedEvent, this, new LinkageChangedEventArgs(value));
+					if (_linked)
+						_parentLogicalWorkspace.LinkDisplaySet(this);
+					else
+						_parentLogicalWorkspace.UnlinkDisplaySet(this);
 				}
 			}
 		}
 
-		/// <summary>
-		/// Occurs when the <see cref="Linked"/> property in this <see cref="DisplaySet"/>
-		/// has changed.
-		/// </summary>
-		/// <remarks>The event handler receives an argument of type <see cref="LinkageChangedEventArgs"/>.</remarks>
-		public event EventHandler<LinkageChangedEventArgs> LinkageChanged
-		{
-			add { _linkageChangedEvent += value; }
-			remove { _linkageChangedEvent -= value; }
-		}
+		#endregion
 
-		#region IDrawable Members
+		#region IDisposable Members
 
-		/// <summary>
-		/// Draws all currently visible presentation images in the display set.
-		/// </summary>
-		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
-		/// repainted immediately.  If <b>false</b>, each image rectangle is still
-		/// invalidated but when the actual painting occurs is left to the the .NET 
-		/// framework.</param>
-		public void Draw(bool paintNow)
+		public void Dispose()
 		{
-			foreach (PresentationImage image in this.PresentationImages)
-				image.Draw(paintNow);
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				DisposePresentationImages();
+			}
+		}
+
+		private void DisposePresentationImages()
+		{
+			if (this.PresentationImages == null)
+				return;
+
+			foreach (PresentationImage image in this.PresentationImages)
+				image.Dispose();
+
+			_presentationImages.ItemAdded -= new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
+			_presentationImages.ItemRemoved -= new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
+			_presentationImages = null;
+		}
+
+		public void Draw()
+		{
+			if (this.Visible)
+			{
+				foreach (PresentationImage image in this.PresentationImages)
+					image.Draw();
+			}
+		}
+
+		internal void LinkPresentationImage(PresentationImage image)
+		{
+			_linkedPresentationImages.Add(image);
+		}
+
+		internal void UnlinkPresentation(PresentationImage image)
+		{
+			_linkedPresentationImages.Remove(image);
+		}
+
 		private void OnPresentationImageAdded(object sender, PresentationImageEventArgs e)
 		{
-			e.PresentationImage.ParentDisplaySet = this;
-			e.PresentationImage.LinkageChanged += new EventHandler<LinkageChangedEventArgs>(OnPresentationImageLinkageChanged);
+			PresentationImage image = e.PresentationImage as PresentationImage;
+			image.ParentDisplaySet = this;
+			image.ImageViewer = this.ImageViewer;
 
 			if (e.PresentationImage.Linked)
 				_linkedPresentationImages.Add(e.PresentationImage);
@@ -196,21 +236,8 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnPresentationImageRemoved(object sender, PresentationImageEventArgs e)
 		{
-			e.PresentationImage.LinkageChanged -= new EventHandler<LinkageChangedEventArgs>(OnPresentationImageLinkageChanged);
-
 			if (e.PresentationImage.Linked)
 				_linkedPresentationImages.Remove(e.PresentationImage);
-		}
-
-		private void OnPresentationImageLinkageChanged(object sender, LinkageChangedEventArgs e)
-		{
-			PresentationImage presentationImage = sender as PresentationImage;
-			Platform.CheckForInvalidCast(presentationImage, "sender", "PresentationImage");
-
-			if (e.IsLinked)
-				_linkedPresentationImages.Add(presentationImage);
-			else
-				_linkedPresentationImages.Remove(presentationImage);
 		}
 	}
 }

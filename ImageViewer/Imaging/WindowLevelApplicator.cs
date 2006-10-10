@@ -7,13 +7,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class WindowLevelApplicator : ImageOperationApplicator
 	{
-		public WindowLevelApplicator(PresentationImage selectedPresentationImage)
+		public WindowLevelApplicator(IPresentationImage selectedPresentationImage)
 			: base(selectedPresentationImage)
 		{
 
 		}
 
-		protected override IMemorable GetOriginator(PresentationImage image)
+		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
 			return new WindowLevelOperator(image);
 		}

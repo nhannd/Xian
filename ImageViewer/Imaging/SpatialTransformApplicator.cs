@@ -7,13 +7,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class SpatialTransformApplicator : ImageOperationApplicator
 	{
-		public SpatialTransformApplicator(PresentationImage selectedPresentationImage)
+		public SpatialTransformApplicator(IPresentationImage selectedPresentationImage)
 			: base(selectedPresentationImage)
 		{
 
 		}
 
-		protected override IMemorable GetOriginator(PresentationImage image)
+		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
 			return image.LayerManager.SelectedLayerGroup.SpatialTransform;
 		}

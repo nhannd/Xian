@@ -7,16 +7,16 @@ namespace ClearCanvas.ImageViewer
 {
 	public class TileSelectedEventArgs : EventArgs
 	{
-		private Tile _selectedTile;
+		private ITile _selectedTile;
 
 		public TileSelectedEventArgs(
-			Tile selectedTile)
+			ITile selectedTile)
 		{
 			Platform.CheckForNullReference(selectedTile, "selectedTile");
 			_selectedTile = selectedTile;
 		}
 
-		public Tile SelectedTile
+		public ITile SelectedTile
 		{
 			get { return _selectedTile; }
 		}

@@ -64,13 +64,14 @@ namespace ClearCanvas.ImageViewer
         {
             base.Initialize();
 
-            this.Context.Viewer.MouseButtonToolMap.MouseToolMapped += OnMouseButtonToolMapped;
+			ImageViewerComponent viewer = this.Context.Viewer as ImageViewerComponent;
+            viewer.MouseButtonToolMap.MouseToolMapped += OnMouseButtonToolMapped;
 
-			// attempt to honour the initiallyActive request
+            // attempt to honour the initiallyActive request
             // there is no guarantee the request won't be superceded
             // by a request from another tool
             if (_initiallyActive)
-                this.Context.Viewer.MouseButtonToolMap[_mouseButton] = this;
+                viewer.MouseButtonToolMap[_mouseButton] = this;
         }
 
         /// <summary>
@@ -138,7 +139,8 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
 		public void Select()
 		{
-            this.Context.Viewer.MouseButtonToolMap[_mouseButton] = this;
+			ImageViewerComponent viewer = this.Context.Viewer as ImageViewerComponent;
+			viewer.MouseButtonToolMap[_mouseButton] = this;
         }
 
         private void OnMouseButtonToolMapped(object sender, MouseButtonToolMappedEventArgs e)

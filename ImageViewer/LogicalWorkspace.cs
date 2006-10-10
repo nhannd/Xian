@@ -11,15 +11,15 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// Describes a logical workspace.
 	/// </summary>
-	public class LogicalWorkspace : IDrawable
+	public class LogicalWorkspace : ILogicalWorkspace
 	{
 		private DisplaySetCollection _displaySets = new DisplaySetCollection();
-		private List<DisplaySet> _linkedDisplaySets = new List<DisplaySet>();
-        private IImageViewer _parentViewer;
+		private List<IDisplaySet> _linkedDisplaySets = new List<IDisplaySet>();
+        private IImageViewer _imageViewer;
 
-        internal LogicalWorkspace(IImageViewer parentViewer)
+        internal LogicalWorkspace(IImageViewer imageViewer)
 		{
-            _parentViewer = parentViewer;
+            _imageViewer = imageViewer;
 			_displaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
 			_displaySets.ItemRemoved += new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
 		}
@@ -27,9 +27,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
         /// Gets the parent <see cref="ImageViewerComponent"/>
 		/// </summary>
-        public IImageViewer ParentViewer
+        public IImageViewer ImageViewer
 		{
-			get { return _parentViewer; }
+			get { return _imageViewer; }
 		}
 
 		/// <summary>
@@ -43,32 +43,77 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets a collection of linked <see cref="DisplaySets"/>
 		/// </summary>
-		public ReadOnlyCollection<DisplaySet> LinkedDisplaySets
+		/// <value>A collection of linked <see cref="DisplaySets"/></value>
+		public ReadOnlyCollection<IDisplaySet> LinkedDisplaySets
 		{
 			get { return _linkedDisplaySets.AsReadOnly(); }
 		}
 
-		#region IDrawable
+		#region IDisposable Members
 
-		/// <summary>
-		/// Draws all currently visible images in this <see cref="LogicalWorkspace"/>.
-		/// </summary>
-		/// <param name="paintNow">If <b>true</b>, each image rectangle is invalidated and
-		/// repainted immediately.  If <b>false</b>, each image rectangle is still
-		/// invalidated but when the actual painting occurs is left to the the .NET 
-		/// framework.</param>
-		public void Draw(bool paintNow)
+		public void Dispose()
 		{
-			foreach (DisplaySet displaySet in this.DisplaySets)
-				displaySet.Draw(paintNow);
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				DisposeDisplaySets();
+			}
+		}
+
+		private void DisposeDisplaySets()
+		{
+			if (this.DisplaySets == null)
+				return;
+
+			foreach (DisplaySet displaySet in this.DisplaySets)
+				displaySet.Dispose();
+
+			_displaySets.ItemAdded -= new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
+			_displaySets.ItemRemoved -= new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
+			_displaySets = null;
+		}
+
+		public void Draw()
+		{
+			foreach (DisplaySet displaySet in this.DisplaySets)
+				displaySet.Draw();
+		}
+
+		internal void LinkDisplaySet(DisplaySet displaySet)
+		{
+			_linkedDisplaySets.Add(displaySet);
+		}
+
+		internal void UnlinkDisplaySet(DisplaySet displaySet)
+		{
+			_linkedDisplaySets.Remove(displaySet);
+		}
+
 		private void OnDisplaySetAdded(object sender, DisplaySetEventArgs e)
 		{
-			e.DisplaySet.ParentLogicalWorkspace = this;
-			e.DisplaySet.LinkageChanged += new EventHandler<LinkageChangedEventArgs>(OnDisplaySetLinkageChanged);
+			DisplaySet displaySet = e.DisplaySet as DisplaySet;
+
+			displaySet.ParentLogicalWorkspace = this;
+			displaySet.ImageViewer = this.ImageViewer;
 
 			if (e.DisplaySet.Linked)
 				_linkedDisplaySets.Add(e.DisplaySet);
@@ -76,21 +121,8 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnDisplaySetRemoved(object sender, DisplaySetEventArgs e)
 		{
-			e.DisplaySet.LinkageChanged -= new EventHandler<LinkageChangedEventArgs>(OnDisplaySetLinkageChanged);
-
 			if (e.DisplaySet.Linked)
 				_linkedDisplaySets.Remove(e.DisplaySet);
-		}
-
-		private void OnDisplaySetLinkageChanged(object sender, LinkageChangedEventArgs e)
-		{
-			DisplaySet displaySet = sender as DisplaySet;
-			Platform.CheckForInvalidCast(displaySet, "sender", "DisplaySet");
-
-			if (e.IsLinked)
-				_linkedDisplaySets.Add(displaySet);
-			else
-				_linkedDisplaySets.Remove(displaySet);
 		}
 	}
 }

@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 			return this.Label;
 		}
 
-		public abstract string GetAnnotationText(PresentationImage presentationImage);
+		public abstract string GetAnnotationText(IPresentationImage presentationImage);
 
 		#endregion
 	}

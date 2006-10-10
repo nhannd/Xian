@@ -17,14 +17,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Execute();
 			ImageBox imageBox = base.Originator as ImageBox;
-			imageBox.Draw(false);
+			imageBox.Draw();
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
 			ImageBox imageBox = base.Originator as ImageBox;
-			imageBox.Draw(false);
+			imageBox.Draw();
 		}
 	}
 }

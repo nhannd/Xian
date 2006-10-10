@@ -1,32 +1,68 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Describes a presentation image
-	/// </summary>
-	public abstract class PresentationImage : IDrawable, IUIEventHandler
+	public abstract class PresentationImage : IPresentationImage, IUIEventHandler
 	{
-		private DisplaySet _parentDisplaySet;
+		#region Private Fields
+
 		private LayerManager _layerManager;
+		private ImageViewerComponent _imageViewer;
+		private DisplaySet _parentDisplaySet;
+		private Tile _tile;
+
 		private bool _selected = false;
 		private bool _linked = true;
 
-		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
-		private event EventHandler<LinkageChangedEventArgs> _linkageChangedEvent;
+		protected IRenderer _imageRenderer;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PresentationImage"/> class.
-		/// </summary>
+		// TODO: Perhaps each layer should have its own ILayerRenderer?  
+		// The idea is to delegate the actual rendering to the layers themselves, since
+		// they know best how to render themselves.  If the Layer.Renderer is null, then
+		// the basic image renderer will render it in the default way.  Otherwise, it will
+		// use the renderer associated with the layer. 
+		// Fine grained objects like primitives might use the flyweight pattern to 
+		// prevent too many renderers.
+		
+		// TODO: To make the renderer smarter, at the beginning of the draw method,
+		// analyze the RedrawRequired proper of the layers in the PresentationImage.
+		// e.g., in the case where every layer needs to be redrawn, draw the image
+		// first, followed by the graphics.  This would be done all to one buffer.
+		// In the case where a graphic is simply being moved over an image that is
+		// not changing, the image layer's redraw flag would be false, but the
+		// graphic layer's flag would be true.  In that situation, make a copy
+		// of the rendered image buffer, then just blt it as the graphic is moved.
+		// (Maybe we need to incorporate some notion of state into the renderer?)
+
+
+		#endregion
+
 		protected PresentationImage()
 		{
+
+		}
+
+		#region Public Properties
+
+		/// <summary>
+		/// Gets the parent <see cref="IImageViewer"/>.
+		/// </summary>
+		/// <value><b>null</b> if <see cref="PresentationImage"/> has not been
+		/// added to a <see cref="DisplaySet"/>.</value>
+		public IImageViewer ImageViewer
+		{
+			get { return _imageViewer as IImageViewer; }
+			internal set 
+			{ 
+				_imageViewer = value as ImageViewerComponent;
+				//this.LayerManager.ImageViewer = _imageViewer;
+			}
 		}
 
 		/// <summary>
@@ -34,29 +70,38 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <value>Can be <b>null</b> if <see cref="PresentationImage"/> has not been
 		/// added to a <see cref="DisplaySet"/>.</value>
-		public DisplaySet ParentDisplaySet
+		public IDisplaySet ParentDisplaySet
 		{
-			get { return _parentDisplaySet; }
-			set
-			{
-				Platform.CheckForNullReference(value, "ParentDisplaySet");
-				_parentDisplaySet = value;
-			}
+			get { return _parentDisplaySet as IDisplaySet; }
+			internal set { _parentDisplaySet = value as DisplaySet; }
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="IImageViewer"/>.
+		/// Gets the associated <see cref="TileComponent"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if <see cref="PresentationImage"/> has not been
-		/// added to a <see cref="DisplaySet"/>.</value>
-		public IImageViewer ParentViewer
+		/// <value><b>null</b> if <see cref="PresentationImage"/>
+		/// is not currently visible.</value>
+		public ITile Tile
 		{
-			get 
+			get { return _tile as ITile; }
+			internal set 
 			{
-				if (this.ParentDisplaySet == null)
-					return null;
+				if (_tile != value)
+				{
+					_tile = value as Tile;
 
-				return this.ParentDisplaySet.ParentViewer; 
+					if (_tile != null)
+						_tile.PresentationImage = this;
+					else
+					{
+						// If the image is no longer associated with a Tile,
+						// i.e., it's no longer visible, then dispose of the
+						// renderer and set the renderer to null so we don't
+						// hog memory.  (It may be better to keep the renderer
+						// around for performance reasons, but we'll see.)
+						DisposeRenderer();
+					}
+				}
 			}
 		}
 
@@ -65,12 +110,12 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public LayerManager LayerManager
 		{
-			get 
+			get
 			{
 				if (_layerManager == null)
-					_layerManager = new LayerManager(this);
-				
-				return _layerManager; 
+				    _layerManager = new LayerManager(this);
+
+				return _layerManager;
 			}
 		}
 
@@ -79,17 +124,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public bool Visible
 		{
-			get
-			{
-				// The image is visible as long as one or more clients subscribe
-				// to the ImageDrawing event.  When no one is subscribing, that means
-				// the image is not visible
-
-				if (_imageDrawingEvent == null)
-					return false;
-
-				return _imageDrawingEvent.GetInvocationList().Length > 0;
-			}
+			get { return this.Tile != null; }
 		}
 
 		/// <summary>
@@ -98,18 +133,21 @@ namespace ClearCanvas.ImageViewer
 		public bool Selected
 		{
 			get { return _selected; }
-			set 
+			internal set
 			{
-				if (_selected != value)
-				{
-					_selected = value;
+				if (_selected == value)
+					return;
 
-					if (_selected)
-					{
-						this.ParentViewer.EventBroker.OnPresentationImageSelected(
-							new PresentationImageSelectedEventArgs(this));
-					}
-				}
+				_selected = value;
+
+				if (!_selected)
+					return;
+
+				if (this.ImageViewer == null)
+					return;
+
+				this.ImageViewer.EventBroker.OnPresentationImageSelected(
+				    new PresentationImageSelectedEventArgs(this));
 			}
 		}
 
@@ -124,175 +162,166 @@ namespace ClearCanvas.ImageViewer
 				if (_linked != value)
 				{
 					_linked = value;
-					EventsHelper.Fire(_linkageChangedEvent, this, new LinkageChangedEventArgs(value));
+
+					if (_linked)
+						_parentDisplaySet.LinkPresentationImage(this);
+					else
+						_parentDisplaySet.UnlinkPresentation(this);
 				}
 			}
 		}
 
-		/// <summary>
-		/// Occurs when the <see cref="PresentationImage"/> is about to be drawn.
-		/// </summary>
-		/// <remarks>The event handler receives an argument of type <see cref="ImageDrawingEventArgs"/>.</remarks>
-		public event EventHandler<ImageDrawingEventArgs> ImageDrawing
+		public abstract IRenderer ImageRenderer { get; }
+
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
 		{
-			add { _imageDrawingEvent += value; }
-			remove { _imageDrawingEvent -= value; }
-		}
-
-		/// <summary>
-		/// Occurs when the <see cref="IsLinked"/> property in this <see cref="PresentationImage"/>
-		/// has changed.
-		/// </summary>
-		/// <remarks>The event handler receives an argument of type <see cref="LinkageChangedEventArgs"/>.</remarks>
-		public event EventHandler<LinkageChangedEventArgs> LinkageChanged
-		{
-			add { _linkageChangedEvent += value; }
-			remove { _linkageChangedEvent -= value; }
-		}
-
-		#region IDrawable Members
-
-		/// <summary>
-		/// Draws the image.
-		/// </summary>
-		/// <param name="paintNow">If <b>true</b>, the image rectangle is invalidated and
-		/// repainted immediately.  If <b>false</b>, the image rectangle is still
-		/// invalidated but when the actual painting occurs is left to the the .NET 
-		/// framework.</param>
-		public virtual void Draw(bool paintNow)
-		{
-			if (!this.Visible)
-				return;
-
-			this.LayerManager.RootLayerGroup.RedrawRequired = true;
-			DrawLayers(paintNow);
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
 		}
 
 		#endregion
 
-		internal void DrawLayers(bool paintNow)
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
 		{
-			if (!this.Visible)
+			if (disposing)
+			{
+				DisposeRenderer();
+				DisposeLayerManager();
+			}
+		}
+
+		private void DisposeRenderer()
+		{
+			if (this.ImageRenderer == null)
 				return;
 
-			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this, paintNow);
-			this.ParentViewer.EventBroker.OnImageDrawing(args);
-			OnImageDrawing(this, args);
+			this.ImageRenderer.Dispose();
+			_imageRenderer = null;
+		}
+
+		private void DisposeLayerManager()
+		{
+			if (this.LayerManager == null)
+				return;
+
+			// TODO: Add disposal to LayerManager
+			//this.LayerManager.Dispose();
+		}
+
+		public void Draw()
+		{
+			if (this.Visible)
+				this.Tile.Draw();
+		}
+
+		public virtual void OnDraw(DrawArgs drawArgs)
+		{
+			drawArgs.PresentationImage = this;
+			drawArgs.DisplaySet = this.ParentDisplaySet;
+
+			// TODO:  In the event broker's ImageDrawingEvent, the eventargs
+			// should only expose some of DrawArgs properties; it does not
+			// need to expose things like the clip rectangle or surface.
+
+			//ImageDrawingEventArgs args = new ImageDrawingEventArgs(this, true);
+			//this.ImageViewer.EventBroker.OnImageDrawing(args);
+			this.LayerManager.RootLayerGroup.RedrawRequired = true;
+			this.LayerManager.RootLayerGroup.DestinationRectangle = drawArgs.ClientRectangle;
+
+			this.ImageRenderer.Draw(drawArgs);
 		}
 
 		#region IUIEventHandler Members
 
 		public bool OnMouseDown(XMouseEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			e.SelectedPresentationImage = this;
-			e.SelectedDisplaySet = this.ParentDisplaySet;
+			SetSelectedObjects(e);
 
 			bool handled = this.LayerManager.RootLayerGroup.OnMouseDown(e);
 
-            if (!handled)
-            {
-				MouseTool tool = this.ParentViewer.MouseButtonToolMap[e.Button];
-                if (tool != null)
-                {
-                    tool.OnMouseDown(e);
-                }
-            }
+			if (!handled)
+			{
+				MouseTool tool = _imageViewer.MouseButtonToolMap[e.Button];
+
+				if (tool != null)
+					tool.OnMouseDown(e);
+			}
 
 			return true;
 		}
 
 		public bool OnMouseMove(XMouseEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			e.SelectedPresentationImage = this;
-			e.SelectedDisplaySet = this.ParentDisplaySet;
+			SetSelectedObjects(e);
 
 			bool handled = this.LayerManager.RootLayerGroup.OnMouseMove(e);
 
-            if (!handled)
-            {
-				MouseTool tool = this.ParentViewer.MouseButtonToolMap[e.Button];
-                if (tool != null)
-                {
-                    tool.OnMouseMove(e);
-                }
-            }
+			if (!handled)
+			{
+				MouseTool tool = _imageViewer.MouseButtonToolMap[e.Button];
+
+				if (tool != null)
+					tool.OnMouseMove(e);
+			}
 
 			return true;
 		}
 
 		public bool OnMouseUp(XMouseEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
+			SetSelectedObjects(e);
 
-			e.SelectedPresentationImage = this;
-			e.SelectedDisplaySet = this.ParentDisplaySet;
-			
 			bool handled = this.LayerManager.RootLayerGroup.OnMouseUp(e);
 
-            if (!handled)
-            {
-				MouseTool tool = this.ParentViewer.MouseButtonToolMap[e.Button];
-                if (tool != null)
-                {
-                    tool.OnMouseUp(e);
-                }
-            }
+			if (!handled)
+			{
+				MouseTool tool = _imageViewer.MouseButtonToolMap[e.Button];
+
+				if (tool != null)
+					tool.OnMouseUp(e);
+			}
 
 			return true;
 		}
 
 		public bool OnMouseWheel(XMouseEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			//e.SelectedPresentationImage = this;
-			//e.SelectedDisplaySet = this.ParentDisplaySet;
-
-			//bool handled = this.LayerManager.RootLayerGroup.OnMouseWheel(e);
-
-			//if (!handled)
-			//{
-			//    MouseTool tool = this.ParentViewer.MouseWheelToolMap.MouseTool;
-			//    if (tool != null)
-			//    {
-			//        tool.OnMouseWheel(e);
-			//    }
-			//}
 
 			return true;
 		}
 
 		public bool OnKeyDown(XKeyEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			return true;
 		}
 
 		public bool OnKeyUp(XKeyEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			return true;
 		}
 
 		#endregion
 
-		protected virtual void OnImageDrawing(object sender, ImageDrawingEventArgs e)
+		private void SetSelectedObjects(XMouseEventArgs e)
 		{
-			ImageLayer selectedImageLayer = this.LayerManager.SelectedImageLayer;
-
-			if (selectedImageLayer != null)
-			{
-				if (selectedImageLayer.IsGrayscale && selectedImageLayer.RedrawRequired)
-					this.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.Execute();
-			}
-
-			EventsHelper.Fire(_imageDrawingEvent, this, e);
+			e.SelectedPresentationImage = this;
+			e.SelectedDisplaySet = this.ParentDisplaySet;
 		}
 	}
 }

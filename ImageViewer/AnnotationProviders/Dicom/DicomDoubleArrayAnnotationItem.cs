@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			return dicomString;
 		}
 
-		public override string GetAnnotationText(PresentationImage presentationImage)
+		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (presentationImage == null)
 				return string.Empty;

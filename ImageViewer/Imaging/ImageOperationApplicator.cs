@@ -8,16 +8,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class ImageAndOriginator
 	{
-		private PresentationImage _presentationImage;
+		private IPresentationImage _presentationImage;
 		private IMemorable _originator;
 
-		public ImageAndOriginator(PresentationImage presentationImage, IMemorable originator)
+		public ImageAndOriginator(IPresentationImage presentationImage, IMemorable originator)
 		{
 			_presentationImage = presentationImage;
 			_originator = originator;
 		}
 
-		public PresentationImage PresentationImage
+		public IPresentationImage PresentationImage
 		{
 			get { return _presentationImage; }
 		}
@@ -30,9 +30,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 	public abstract class ImageOperationApplicator : IMemorable
 	{
-		private PresentationImage _presentationImage;
+		private IPresentationImage _presentationImage;
 
-		public ImageOperationApplicator(PresentationImage selectedPresentationImage)
+		public ImageOperationApplicator(IPresentationImage selectedPresentationImage)
 		{
 			Platform.CheckForNullReference(selectedPresentationImage, "selectedPresentationImage");
 
@@ -59,18 +59,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			foreach (ImageAndOriginator imageAndOriginator in applicatorMemento.LinkedImagesAndOriginators)
 			{
 				imageAndOriginator.Originator.SetMemento(applicatorMemento.Memento);
-				imageAndOriginator.PresentationImage.Draw(false);
+
+				if (imageAndOriginator.PresentationImage.Visible)
+					imageAndOriginator.PresentationImage.Draw();
 			}
 		}
 
 		#endregion
 
-		protected abstract IMemorable GetOriginator(PresentationImage image);
+		protected abstract IMemorable GetOriginator(IPresentationImage image);
 
 		private IList<ImageAndOriginator> GetImagesAndOriginatorsFromLinkedImages()
 		{
-			DisplaySet displaySet = _presentationImage.ParentDisplaySet;
-			LogicalWorkspace logicalWorkspace = displaySet.ParentLogicalWorkspace;
+			IDisplaySet displaySet = _presentationImage.ParentDisplaySet;
+			ILogicalWorkspace logicalWorkspace = displaySet.ParentLogicalWorkspace;
 
 			List<ImageAndOriginator> imagesAndOrginators = new List<ImageAndOriginator>();
 
@@ -78,9 +80,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// from the other linked display sets
 			if (displaySet.Linked)
 			{
-				foreach (DisplaySet currentDisplaySet in logicalWorkspace.LinkedDisplaySets)
+				foreach (IDisplaySet currentDisplaySet in logicalWorkspace.LinkedDisplaySets)
 				{
-					foreach (PresentationImage image in currentDisplaySet.LinkedPresentationImages)
+					foreach (IPresentationImage image in currentDisplaySet.LinkedPresentationImages)
 					{
 						IMemorable originator = GetOriginator(image);
 						ImageAndOriginator imageAndOriginator = new ImageAndOriginator(image, originator); 
@@ -92,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// in that display set
 			else
 			{
-				foreach (PresentationImage image in displaySet.LinkedPresentationImages)
+				foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
 				{
 					IMemorable originator = GetOriginator(image);
 					ImageAndOriginator imageAndOriginator = new ImageAndOriginator(image, originator); 

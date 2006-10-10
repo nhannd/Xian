@@ -9,6 +9,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 		string GetIdentifier();
 		string GetDisplayName();
 		string GetLabel();
-		string GetAnnotationText(PresentationImage presentationImage);
+		string GetAnnotationText(IPresentationImage presentationImage);
 	}
 }

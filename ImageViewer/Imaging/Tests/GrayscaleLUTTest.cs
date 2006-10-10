@@ -7,7 +7,7 @@ using System.Collections;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.Tests
+namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
 	[TestFixture]
 	public class GrayscaleLUTTest

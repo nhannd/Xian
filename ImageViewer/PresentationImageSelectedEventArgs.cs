@@ -7,16 +7,16 @@ namespace ClearCanvas.ImageViewer
 {
 	public class PresentationImageSelectedEventArgs : EventArgs
 	{
-		private PresentationImage _selectedPresentationImage;
+		private IPresentationImage _selectedPresentationImage;
 
 		public PresentationImageSelectedEventArgs(
-			PresentationImage selectedPresentationImage)
+			IPresentationImage selectedPresentationImage)
 		{
 			Platform.CheckForNullReference(selectedPresentationImage, "selectedPresentationImage");
 			_selectedPresentationImage = selectedPresentationImage;
 		}
 
-		public PresentationImage SelectedPresentationImage
+		public IPresentationImage SelectedPresentationImage
 		{
 			get { return _selectedPresentationImage; }
 		}

@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "", "Icons.ZoomMedium.png", "Icons.ZoomLarge.png")]
     
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ZoomTool : DynamicActionMouseTool
+	public class ZoomTool : MouseTool
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			spatialTransform.ScaleToFit = false;
 			spatialTransform.Scale += (float)base.DeltaY * 0.025f;
 			spatialTransform.Calculate();
-			e.SelectedPresentationImage.Draw(true);
+			e.SelectedPresentationImage.Draw();
 
 			return true;
 		}

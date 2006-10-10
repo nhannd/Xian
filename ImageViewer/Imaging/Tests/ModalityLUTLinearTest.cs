@@ -4,7 +4,7 @@ using System;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Tests
+namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
 	[TestFixture]
 	public class ModalityLUTLinearTest

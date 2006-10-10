@@ -7,16 +7,16 @@ namespace ClearCanvas.ImageViewer
 {
 	public class DisplaySetSelectedEventArgs : EventArgs
 	{
-		private DisplaySet _selectedDisplaySet;
+		private IDisplaySet _selectedDisplaySet;
 
 		public DisplaySetSelectedEventArgs(
-			DisplaySet selectedDisplaySet)
+			IDisplaySet selectedDisplaySet)
 		{
 			Platform.CheckForNullReference(selectedDisplaySet, "selectedDisplaySet");
 			_selectedDisplaySet = selectedDisplaySet;
 		}
 
-		public DisplaySet SelectedDisplaySet
+		public IDisplaySet SelectedDisplaySet
 		{
 			get { return _selectedDisplaySet; }
 		}

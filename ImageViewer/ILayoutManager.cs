@@ -3,11 +3,11 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer 
 {
-	public interface ILayoutManager
+	public interface ILayoutManager : IDisposable
 	{
 		void ApplyLayout(
-			LogicalWorkspace logicalWorkspace, 
-			PhysicalWorkspace physicalWorkspace, 
+			ILogicalWorkspace logicalWorkspace, 
+			IPhysicalWorkspace physicalWorkspace, 
 			string studyInstanceUID);
 	}
 }

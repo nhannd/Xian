@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				// We're done creating, so create a command
 				this.Command = new PositionGraphicCommand(this.ROIGraphic, true);
 				this.Command.Name = SR.CommandCreateROIGraphic;
-				this.ROIGraphic.ParentViewer.CommandHistory.AddCommand(base.Command);
+				this.ROIGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 			}
 		}
 

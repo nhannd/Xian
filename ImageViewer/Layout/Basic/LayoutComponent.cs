@@ -162,10 +162,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             if (_imageViewer == null)
                 return;
 
-            PhysicalWorkspace physicalWorkspace = _imageViewer.PhysicalWorkspace;
-            ImageBoxLayoutCommand command = new ImageBoxLayoutCommand(physicalWorkspace);
-            command.Name = SR.CommandLayoutImageBoxes;
-            command.BeginState = physicalWorkspace.CreateMemento();
+			IPhysicalWorkspace physicalWorkspace = _imageViewer.PhysicalWorkspace;
+			//ImageBoxLayoutCommand command = new ImageBoxLayoutCommand(physicalWorkspace);
+			//command.Name = SR.CommandLayoutImageBoxes;
+			//command.BeginState = physicalWorkspace.CreateMemento();
 
             physicalWorkspace.SetImageBoxGrid(_imageBoxRows, _imageBoxColumns);
 
@@ -173,11 +173,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 imageBox.SetTileGrid(_tileRows, _tileColumns);
 
             LayoutManager.FillPhysicalWorkspace(physicalWorkspace, physicalWorkspace.LogicalWorkspace);
-            physicalWorkspace.Draw(false);
+            physicalWorkspace.Draw();
 
-            command.EndState = physicalWorkspace.CreateMemento();
+			//command.EndState = physicalWorkspace.CreateMemento();
 
-            _imageViewer.CommandHistory.AddCommand(command);
+			//_imageViewer.CommandHistory.AddCommand(command);
 
             // need to update the controls since no tile will be selected now
             UpdateFromImageViewer();
@@ -191,20 +191,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             if (_imageViewer == null)
                 return;
 
-            ImageBox imageBox = _imageViewer.PhysicalWorkspace.SelectedImageBox;
-            TileLayoutCommand command = new TileLayoutCommand(imageBox);
-            command.Name = SR.CommandLayoutTiles;
-            command.BeginState = imageBox.CreateMemento();
+			IImageBox imageBox = _imageViewer.PhysicalWorkspace.SelectedImageBox;
+			//TileLayoutCommand command = new TileLayoutCommand(imageBox);
+			//command.Name = SR.CommandLayoutTiles;
+			//command.BeginState = imageBox.CreateMemento();
 
             int index = imageBox.TopLeftPresentationImageIndex;
 
             imageBox.SetTileGrid(_tileRows, _tileColumns);
             imageBox.TopLeftPresentationImageIndex = index;
-            imageBox.Draw(false);
+            imageBox.Draw();
 
-            command.EndState = imageBox.CreateMemento();
+			//command.EndState = imageBox.CreateMemento();
 
-            _imageViewer.CommandHistory.AddCommand(command);
+			//_imageViewer.CommandHistory.AddCommand(command);
 
             // need to update the controls since no tile will be selected now
             UpdateFromImageViewer();

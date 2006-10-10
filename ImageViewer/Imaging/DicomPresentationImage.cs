@@ -1,19 +1,27 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Drawing;
-using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	// Maybe call this PresetationImage2D instead?
 	public class DicomPresentationImage : PresentationImage
 	{
+		#region Private fields
+
 		private ImageSop _imageSop;
 		private LayerGroup _imageLayerGroup;
 		private ImageLayer _imageLayer;
 		private GraphicLayer _graphicLayer;
-		
+
+		#endregion
+
+
 		public DicomPresentationImage(ImageSop imageSop)
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
@@ -43,6 +51,39 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
+		}
+
+		public override IRenderer ImageRenderer
+		{
+			get
+			{
+				if (_imageRenderer == null)
+					_imageRenderer = new DicomPresentationImageRenderer();
+
+				return _imageRenderer;
+			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+			}
+
+			base.Dispose(disposing);
+		}
+
+		public override void OnDraw(DrawArgs drawArgs)
+		{
+			ImageLayer selectedImageLayer = this.LayerManager.SelectedImageLayer;
+
+			if (selectedImageLayer != null)
+			{
+				if (selectedImageLayer.IsGrayscale && selectedImageLayer.RedrawRequired)
+					this.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.Execute();
+			}
+
+			base.OnDraw(drawArgs);
 		}
 
 		private void InstallDefaultLUTs()

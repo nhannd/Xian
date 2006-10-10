@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		
 		}
 
-		public override string GetAnnotationText(PresentationImage presentationImage)
+		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (presentationImage == null)
 				return string.Empty;

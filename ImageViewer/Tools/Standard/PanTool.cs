@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "", "Icons.PanMedium.png", "Icons.PanLarge.png")]
     
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class PanTool : DynamicActionMouseTool
+	public class PanTool : MouseTool
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			spatialTransform.TranslationX += (float)base.DeltaX / scale;
 			spatialTransform.TranslationY += (float)base.DeltaY / scale;
 			spatialTransform.Calculate();
-			e.SelectedPresentationImage.Draw(true);
+			e.SelectedPresentationImage.Draw();
 
 			return true;
 		}

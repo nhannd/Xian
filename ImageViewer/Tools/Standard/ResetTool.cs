@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Activate()
 		{
-            PresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
+            IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			SpatialTransformApplicator applicator = new SpatialTransformApplicator(selectedImage);
 			UndoableCommand command = new UndoableCommand(applicator);

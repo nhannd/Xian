@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class TileCollection : ObservableList<Tile, TileEventArgs>
+	public class TileCollection : ObservableList<ITile, TileEventArgs>
 	{
 		public TileCollection()
 		{
@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer
 		/// Creates a <i>shallow</i> copy.  That is, only references to objects
 		/// in the collection are copied.
 		/// </remarks>
-		public TileCollection(ObservableList<Tile, TileEventArgs> collection) 
+		public TileCollection(ObservableList<ITile, TileEventArgs> collection) 
 			: base(collection)
 		{
 		}

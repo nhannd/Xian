@@ -23,14 +23,14 @@ namespace ClearCanvas.ImageViewer.Layers
 			_rootLayerGroup.ParentLayerManager = this;
 		}
 
-		public IImageViewer ParentViewer
+		public IImageViewer ImageViewer
 		{
 			get 
 			{
 				if (this.ParentPresentationImage == null)
 					return null;
 
-				return this.ParentPresentationImage.ParentViewer; 
+				return this.ParentPresentationImage.ImageViewer; 
 			}
 		}
 
@@ -59,8 +59,8 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				_selectedLayerGroup = value;
 
-				if (this.ParentViewer != null)
-					this.ParentViewer.EventBroker.OnLayerGroupSelected(
+				if (this.ImageViewer != null)
+					this.ImageViewer.EventBroker.OnLayerGroupSelected(
 						new LayerGroupSelectedEventArgs(_selectedLayerGroup));
 			}
 		}
@@ -80,8 +80,8 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				_selectedImageLayer = value;
 
-				if (this.ParentViewer != null)
-					this.ParentViewer.EventBroker.OnImageLayerSelected(
+				if (this.ImageViewer != null)
+					this.ImageViewer.EventBroker.OnImageLayerSelected(
 						new ImageLayerSelectedEventArgs(_selectedImageLayer));
 			}
 		}
@@ -101,8 +101,8 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				_selectedGraphicLayer = value;
 
-				if (this.ParentViewer != null)
-					this.ParentViewer.EventBroker.OnGraphicLayerSelected(
+				if (this.ImageViewer != null)
+					this.ImageViewer.EventBroker.OnGraphicLayerSelected(
 						new GraphicLayerSelectedEventArgs(_selectedGraphicLayer));
 			}
 		}
@@ -123,9 +123,9 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				_selectedGraphic = value;
 
-				if (this.ParentViewer != null)
+				if (this.ImageViewer != null)
 					if (_selectedGraphic != null)
-						this.ParentViewer.EventBroker.OnGraphicSelected(
+						this.ImageViewer.EventBroker.OnGraphicSelected(
 							new GraphicSelectedEventArgs(_selectedGraphic));
 			}
 		}

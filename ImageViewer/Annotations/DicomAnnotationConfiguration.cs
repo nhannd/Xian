@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			_modality = modality;
 		}
 
-		protected override bool MeetsCriteria(PresentationImage presentationImage)
+		protected override bool MeetsCriteria(IPresentationImage presentationImage)
 		{
 			DicomPresentationImage dicomImage = (DicomPresentationImage)presentationImage;
 			if (dicomImage == null)
