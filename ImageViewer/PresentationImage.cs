@@ -235,12 +235,9 @@ namespace ClearCanvas.ImageViewer
 			drawArgs.PresentationImage = this;
 			drawArgs.DisplaySet = this.ParentDisplaySet;
 
-			// TODO:  In the event broker's ImageDrawingEvent, the eventargs
-			// should only expose some of DrawArgs properties; it does not
-			// need to expose things like the clip rectangle or surface.
+			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this);
+			this.ImageViewer.EventBroker.OnImageDrawing(args);
 
-			//ImageDrawingEventArgs args = new ImageDrawingEventArgs(this, true);
-			//this.ImageViewer.EventBroker.OnImageDrawing(args);
 			this.LayerManager.RootLayerGroup.RedrawRequired = true;
 			this.LayerManager.RootLayerGroup.DestinationRectangle = drawArgs.ClientRectangle;
 
