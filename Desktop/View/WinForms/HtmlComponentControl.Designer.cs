@@ -28,7 +28,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._webBrowser = new System.Windows.Forms.WebBrowser();
+            this._initialRefreshTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // _webBrowser
@@ -40,6 +42,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._webBrowser.Size = new System.Drawing.Size(531, 473);
             this._webBrowser.TabIndex = 0;
             // 
+            // _initialRefreshTimer
+            // 
+            this._initialRefreshTimer.Tick += new System.EventHandler(this._initialRefreshTimer_Tick);
+            // 
             // HtmlComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -47,6 +53,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Controls.Add(this._webBrowser);
             this.Name = "HtmlComponentControl";
             this.Size = new System.Drawing.Size(531, 473);
+            this.VisibleChanged += new System.EventHandler(this.HtmlComponentControl_VisibleChanged);
+            this.Load += new System.EventHandler(this.HtmlComponentControl_Load);
             this.ResumeLayout(false);
 
         }
@@ -54,5 +62,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         #endregion
 
         private System.Windows.Forms.WebBrowser _webBrowser;
+        private System.Windows.Forms.Timer _initialRefreshTimer;
     }
 }
