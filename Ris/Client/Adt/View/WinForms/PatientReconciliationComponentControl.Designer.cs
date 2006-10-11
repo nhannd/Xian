@@ -28,148 +28,54 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._mrnField = new ClearCanvas.Controls.WinForms.TextField();
-            this._healthcardField = new ClearCanvas.Controls.WinForms.TextField();
-            this._familyNameField = new ClearCanvas.Controls.WinForms.TextField();
-            this._givenNameField = new ClearCanvas.Controls.WinForms.TextField();
-            this._searchButton = new System.Windows.Forms.Button();
-            this._searchResultsTable = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._alternateProfilesTable = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._reconciliationCandidateTable = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._reconciliationTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this._reconcileButton = new System.Windows.Forms.Button();
-            this._error = new ClearCanvas.Controls.WinForms.TextField();
+            this._cancelButton = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._rightPreviewPanel = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this._targetTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this._leftPreviewPanel = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // _mrnField
+            // _reconciliationTableView
             // 
-            this._mrnField.LabelText = "MRN";
-            this._mrnField.Location = new System.Drawing.Point(19, 15);
-            this._mrnField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._mrnField.Name = "_mrnField";
-            this._mrnField.Size = new System.Drawing.Size(200, 50);
-            this._mrnField.TabIndex = 0;
-            this._mrnField.Value = null;
-            // 
-            // _healthcardField
-            // 
-            this._healthcardField.LabelText = "Healthcard";
-            this._healthcardField.Location = new System.Drawing.Point(296, 15);
-            this._healthcardField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._healthcardField.Name = "_healthcardField";
-            this._healthcardField.Size = new System.Drawing.Size(200, 50);
-            this._healthcardField.TabIndex = 1;
-            this._healthcardField.Value = null;
-            // 
-            // _familyNameField
-            // 
-            this._familyNameField.LabelText = "Family Name";
-            this._familyNameField.Location = new System.Drawing.Point(19, 94);
-            this._familyNameField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._familyNameField.Name = "_familyNameField";
-            this._familyNameField.Size = new System.Drawing.Size(200, 50);
-            this._familyNameField.TabIndex = 2;
-            this._familyNameField.Value = null;
-            // 
-            // _givenNameField
-            // 
-            this._givenNameField.LabelText = "Given Name";
-            this._givenNameField.Location = new System.Drawing.Point(296, 94);
-            this._givenNameField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._givenNameField.Name = "_givenNameField";
-            this._givenNameField.Size = new System.Drawing.Size(200, 50);
-            this._givenNameField.TabIndex = 3;
-            this._givenNameField.Value = null;
-            // 
-            // _searchButton
-            // 
-            this._searchButton.Location = new System.Drawing.Point(557, 42);
-            this._searchButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._searchButton.Name = "_searchButton";
-            this._searchButton.Size = new System.Drawing.Size(75, 23);
-            this._searchButton.TabIndex = 4;
-            this._searchButton.Text = "Search";
-            this._searchButton.UseVisualStyleBackColor = true;
-            this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
-            // 
-            // _searchResultsTable
-            // 
-            this._searchResultsTable.Table = null;
-            this._searchResultsTable.Location = new System.Drawing.Point(19, 197);
-            this._searchResultsTable.Margin = new System.Windows.Forms.Padding(5);
-            this._searchResultsTable.MenuModel = null;
-            this._searchResultsTable.Name = "_searchResultsTable";
-            this._searchResultsTable.ReadOnly = false;
-            this._searchResultsTable.Size = new System.Drawing.Size(477, 370);
-            this._searchResultsTable.TabIndex = 5;
-            this._searchResultsTable.TabStop = false;
-            this._searchResultsTable.ToolbarModel = null;
-            this._searchResultsTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._searchResultsTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._searchResultsTable.SelectionChanged += new System.EventHandler(this._searchResultsTable_SelectionChanged);
-            // 
-            // _alternateProfilesTable
-            // 
-            this._alternateProfilesTable.Table = null;
-            this._alternateProfilesTable.Location = new System.Drawing.Point(544, 197);
-            this._alternateProfilesTable.Margin = new System.Windows.Forms.Padding(5);
-            this._alternateProfilesTable.MenuModel = null;
-            this._alternateProfilesTable.Name = "_alternateProfilesTable";
-            this._alternateProfilesTable.ReadOnly = false;
-            this._alternateProfilesTable.Size = new System.Drawing.Size(477, 169);
-            this._alternateProfilesTable.TabIndex = 6;
-            this._alternateProfilesTable.TabStop = false;
-            this._alternateProfilesTable.ToolbarModel = null;
-            this._alternateProfilesTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._alternateProfilesTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // _reconciliationCandidateTable
-            // 
-            this._reconciliationCandidateTable.Table = null;
-            this._reconciliationCandidateTable.Location = new System.Drawing.Point(544, 398);
-            this._reconciliationCandidateTable.Margin = new System.Windows.Forms.Padding(5);
-            this._reconciliationCandidateTable.MenuModel = null;
-            this._reconciliationCandidateTable.Name = "_reconciliationCandidateTable";
-            this._reconciliationCandidateTable.ReadOnly = false;
-            this._reconciliationCandidateTable.Size = new System.Drawing.Size(477, 169);
-            this._reconciliationCandidateTable.TabIndex = 7;
-            this._reconciliationCandidateTable.TabStop = false;
-            this._reconciliationCandidateTable.ToolbarModel = null;
-            this._reconciliationCandidateTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._reconciliationCandidateTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._reconciliationTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._reconciliationTableView.Location = new System.Drawing.Point(5, 22);
+            this._reconciliationTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._reconciliationTableView.MenuModel = null;
+            this._reconciliationTableView.Name = "_reconciliationTableView";
+            this._reconciliationTableView.ReadOnly = false;
+            this._reconciliationTableView.ShowToolbar = false;
+            this._reconciliationTableView.Size = new System.Drawing.Size(594, 178);
+            this._reconciliationTableView.TabIndex = 7;
+            this._reconciliationTableView.Table = null;
+            this._reconciliationTableView.TabStop = false;
+            this._reconciliationTableView.ToolbarModel = null;
+            this._reconciliationTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._reconciliationTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._reconciliationTableView.SelectionChanged += new System.EventHandler(this._reconciliationTableView_SelectionChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(541, 377);
+            this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(171, 17);
             this.label1.TabIndex = 8;
             this.label1.Text = "Reconciliation Candidates";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(541, 176);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(116, 17);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "Alternate Profiles";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 176);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(104, 17);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Search Results";
-            // 
             // _reconcileButton
             // 
-            this._reconcileButton.Location = new System.Drawing.Point(908, 574);
+            this._reconcileButton.Location = new System.Drawing.Point(407, 2);
             this._reconcileButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._reconcileButton.Name = "_reconcileButton";
             this._reconcileButton.Size = new System.Drawing.Size(113, 23);
@@ -178,57 +84,152 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reconcileButton.UseVisualStyleBackColor = true;
             this._reconcileButton.Click += new System.EventHandler(this._reconcileButton_Click);
             // 
-            // _error
+            // _cancelButton
             // 
-            this._error.Enabled = false;
-            this._error.LabelText = "Errors";
-            this._error.Location = new System.Drawing.Point(20, 610);
-            this._error.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._error.Name = "_error";
-            this._error.Size = new System.Drawing.Size(1001, 50);
-            this._error.TabIndex = 12;
-            this._error.Value = null;
+            this._cancelButton.Location = new System.Drawing.Point(526, 3);
+            this._cancelButton.Name = "_cancelButton";
+            this._cancelButton.Size = new System.Drawing.Size(75, 23);
+            this._cancelButton.TabIndex = 13;
+            this._cancelButton.Text = "Cancel";
+            this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this._rightPreviewPanel, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this._leftPreviewPanel, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 2);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1220, 749);
+            this.tableLayoutPanel1.TabIndex = 14;
+            // 
+            // _rightPreviewPanel
+            // 
+            this._rightPreviewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._rightPreviewPanel.Location = new System.Drawing.Point(613, 214);
+            this._rightPreviewPanel.Name = "_rightPreviewPanel";
+            this._rightPreviewPanel.Size = new System.Drawing.Size(604, 487);
+            this._rightPreviewPanel.TabIndex = 18;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this._targetTableView, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label2, 0, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(604, 205);
+            this.tableLayoutPanel2.TabIndex = 15;
+            // 
+            // _targetTableView
+            // 
+            this._targetTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._targetTableView.Location = new System.Drawing.Point(5, 22);
+            this._targetTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._targetTableView.MenuModel = null;
+            this._targetTableView.Name = "_targetTableView";
+            this._targetTableView.ReadOnly = false;
+            this._targetTableView.ShowToolbar = false;
+            this._targetTableView.Size = new System.Drawing.Size(594, 178);
+            this._targetTableView.TabIndex = 8;
+            this._targetTableView.Table = null;
+            this._targetTableView.TabStop = false;
+            this._targetTableView.ToolbarModel = null;
+            this._targetTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._targetTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._targetTableView.SelectionChanged += new System.EventHandler(this._targetTableView_SelectionChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(52, 17);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Patient";
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 1;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this._reconciliationTableView, 0, 1);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(613, 3);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(604, 205);
+            this.tableLayoutPanel3.TabIndex = 16;
+            // 
+            // _leftPreviewPanel
+            // 
+            this._leftPreviewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._leftPreviewPanel.Location = new System.Drawing.Point(3, 214);
+            this._leftPreviewPanel.Name = "_leftPreviewPanel";
+            this._leftPreviewPanel.Size = new System.Drawing.Size(604, 487);
+            this._leftPreviewPanel.TabIndex = 17;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.Controls.Add(this._cancelButton);
+            this.flowLayoutPanel1.Controls.Add(this._reconcileButton);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(613, 707);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(604, 38);
+            this.flowLayoutPanel1.TabIndex = 19;
             // 
             // PatientReconciliationComponentControl
             // 
-            this.AcceptButton = this._searchButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._error);
-            this.Controls.Add(this._reconcileButton);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this._reconciliationCandidateTable);
-            this.Controls.Add(this._alternateProfilesTable);
-            this.Controls.Add(this._searchResultsTable);
-            this.Controls.Add(this._searchButton);
-            this.Controls.Add(this._givenNameField);
-            this.Controls.Add(this._familyNameField);
-            this.Controls.Add(this._healthcardField);
-            this.Controls.Add(this._mrnField);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "PatientReconciliationComponentControl";
-            this.Size = new System.Drawing.Size(1164, 673);
+            this.Size = new System.Drawing.Size(1220, 749);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _mrnField;
-        private ClearCanvas.Controls.WinForms.TextField _healthcardField;
-        private ClearCanvas.Controls.WinForms.TextField _familyNameField;
-        private ClearCanvas.Controls.WinForms.TextField _givenNameField;
-        private System.Windows.Forms.Button _searchButton;
-        private ClearCanvas.Desktop.View.WinForms.TableView _searchResultsTable;
-        private ClearCanvas.Desktop.View.WinForms.TableView _alternateProfilesTable;
-        private ClearCanvas.Desktop.View.WinForms.TableView _reconciliationCandidateTable;
+        private ClearCanvas.Desktop.View.WinForms.TableView _reconciliationTableView;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button _reconcileButton;
-        private ClearCanvas.Controls.WinForms.TextField _error;
+        private System.Windows.Forms.Button _cancelButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Panel _rightPreviewPanel;
+        private System.Windows.Forms.Panel _leftPreviewPanel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private ClearCanvas.Desktop.View.WinForms.TableView _targetTableView;
     }
 }

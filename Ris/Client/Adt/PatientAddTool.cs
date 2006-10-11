@@ -7,6 +7,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -17,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("apply", "Apply")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PatientAddTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+    public class PatientAddTool : PatientAddEditToolBase
     {
         /// <summary>
         /// Default constructor.  A no-args constructor is required by the
@@ -42,8 +44,21 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public void Apply()
         {
-            PatientEditorShellComponent editor = new PatientEditorShellComponent(PatientProfile.New());
-            ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, editor, "New Patient", null);
+            OpenPatient("New Patient", PatientProfile.New());
+        }
+
+        protected override IDesktopWindow DesktopWindow
+        {
+            get { return ((IDesktopToolContext)this.ContextBase).DesktopWindow; }
+        }
+
+        protected override void EditorClosed(PatientProfile patientProfile, ApplicationComponentExitCode exitCode)
+        {
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                IAdtService service = ApplicationContext.GetService<IAdtService>();
+                service.CreatePatient(patientProfile.Patient);
+            }
         }
     }
 }

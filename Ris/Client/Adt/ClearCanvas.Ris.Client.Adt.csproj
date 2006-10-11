@@ -46,12 +46,13 @@
     <Compile Include="IFolder.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
+    <Compile Include="PatientAddEditToolBase.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientEditorShellComponent.cs" />
     <Compile Include="PatientOverviewComponent.cs" />
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientPreviewComponent.cs" />
-    <Compile Include="PatientProfileTableData.cs" />
+    <Compile Include="PatientProfileTable.cs" />
     <Compile Include="PatientReconciliationComponent.cs" />
     <Compile Include="PatientReconciliationTool.cs" />
     <Compile Include="HomeTool.cs" />
@@ -60,7 +61,7 @@
     <Compile Include="PhoneNumbersSummaryComponent.cs" />
     <Compile Include="WorklistComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReconciliationCandidateTableData.cs" />
+    <Compile Include="ReconciliationCandidateTable.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />

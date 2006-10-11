@@ -10,19 +10,15 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Ris.Client.Adt
 {
     //[MenuAction("apply", "global-menus/Patient/Reconcile...")]
-    [MenuAction("apply", "patientpreview-menu/Reconcile")]
-    [MenuAction("doSomething", "patientpreview-menu/DoSomething")]
+    [MenuAction("apply", "worklist-contextmenu/Reconcile")]
     //[ButtonAction("apply", "global-toolbars/Patient/PatientReconciliationTool")]
     //[Tooltip("apply", "Place tooltip text here")]
     //[IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]
     [ClickHandler("apply", "Apply")]
-    [ClickHandler("doSomething", "DoSomething")]
 
-    [ExtensionOf(typeof(PatientPreviewToolExtensionPoint))]
-    public class PatientReconciliationTool : Tool<IPatientPreviewToolContext>
+    [ExtensionOf(typeof(WorklistToolExtensionPoint))]
+    public class PatientReconciliationTool : Tool<IWorklistToolContext>
     {
-        private PatientReconciliationComponent _component;
-
         /// <summary>
         /// Default constructor.  A no-args constructor is required by the
         /// framework.  Do not remove.
@@ -36,20 +32,11 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public void Apply()
         {
-            if (_component == null)
-            {
-                _component = new PatientReconciliationComponent();
-                ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    _component,
-                    "Patient Reconciliation",
-                    delegate(IApplicationComponent c) { _component = null; });
-            }
-        }
-
-        public void DoSomething()
-        {
-            Platform.ShowMessageBox("Something!");
+            PatientReconciliationComponent component = new PatientReconciliationComponent(this.Context.SelectedPatientProfile);
+            ApplicationComponent.LaunchAsDialog(
+                this.Context.DesktopWindow,
+                component,
+                "Patient Reconciliation");
         }
     }
 }

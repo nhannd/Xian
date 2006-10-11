@@ -25,8 +25,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(ConfirmReconciliationComponentViewExtensionPoint))]
     public class ConfirmReconciliationComponent : ApplicationComponent
     {
-        private PatientProfileTableData _sourceProfiles;
-        private PatientProfileTableData _targetProfiles;
+        private PatientProfileTable _sourceProfiles;
+        private PatientProfileTable _targetProfiles;
 
 
         /// <summary>
@@ -36,14 +36,14 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             IAdtService service = ApplicationContext.GetService<IAdtService>();
 
-            _sourceProfiles = new PatientProfileTableData(service);
+            _sourceProfiles = new PatientProfileTable();
             foreach (Patient patient in sources)
             {
                 service.LoadPatientProfiles(patient);
                 _sourceProfiles.Items.AddRange(patient.Profiles);
             }
 
-            _targetProfiles = new PatientProfileTableData(service);
+            _targetProfiles = new PatientProfileTable();
             _targetProfiles.Items.AddRange(target.Profiles);
         }
 

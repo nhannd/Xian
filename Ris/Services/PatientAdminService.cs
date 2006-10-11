@@ -23,14 +23,15 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<PatientProfile> ListPatients(PatientProfileSearchCriteria criteria)
         {
-            return this.GetPatientProfileBroker().Find(criteria);
+            IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            return profileBroker.Find(criteria);
         }
 
         [ReadOperation]
         public PatientProfile LoadPatient(long oid)
         {
-            IPatientProfileBroker broker = this.GetPatientProfileBroker();
-            PatientProfile patient = broker.Find(oid);
+            IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile patient = profileBroker.Find(oid);
 
             return patient;
         }
@@ -38,7 +39,7 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public PatientProfile LoadPatientDetails(long oid)
         {
-            IPatientProfileBroker broker = this.GetPatientProfileBroker();
+            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile patient = broker.Find(oid);
 
             // load all relevant collections
@@ -51,15 +52,15 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void AddNewPatient(PatientProfile patient)
         {
-            this.GetPatientBroker().Store(patient.Patient);
-            this.GetPatientProfileBroker().Store(patient);
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            broker.Store(patient.Patient);
         }
 
         [UpdateOperation]
         public void UpdatePatient(PatientProfile patient)
         {
-            this.GetPatientBroker().Store(patient.Patient);
-            this.GetPatientProfileBroker().Store(patient);
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            broker.Store(patient.Patient);
         }
 
         #endregion

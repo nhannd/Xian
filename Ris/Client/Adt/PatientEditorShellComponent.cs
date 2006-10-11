@@ -23,6 +23,11 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
         }
 
+        public PatientProfile Subject
+        {
+            get { return _subject; }
+        }
+
         public override void Start()
         {
             _patientEditor.Subject = _subject;

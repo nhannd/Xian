@@ -47,6 +47,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private DateTime? _dateOfBirth;
         private bool _keepOpen;
 
+        private SexEnumTable _sexChoices;
+
         private bool _searchEnabled;
         private event EventHandler _searchEnabledChanged;
 
@@ -59,6 +61,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Start();
 
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+            _sexChoices = _patientAdminService.GetSexEnumTable();
         }
 
         public override void Stop()
@@ -125,15 +128,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Sex
         {
-            get { return _sex == null ? "(Any)" : _patientAdminService.SexEnumTable[(Sex)_sex].Value; }
-            set { _sex = value == "(Any)" ? null : (Sex?)_patientAdminService.SexEnumTable[value].Code; }
+            get { return _sex == null ? "(Any)" : _sexChoices[(Sex)_sex].Value; }
+            set { _sex = value == "(Any)" ? null : (Sex?)_sexChoices[value].Code; }
         }
 
         public string[] SexChoices
         {
             get
             {
-                List<string> values = new List<string>(_patientAdminService.SexEnumTable.Values);
+                List<string> values = new List<string>(_sexChoices.Values);
                 values.Add("(Any)");
                 return values.ToArray();
             }

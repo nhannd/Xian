@@ -24,6 +24,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private PatientProfile _patient;
         private IPatientAdminService _patientAdminService;
+        private SexEnumTable _sexChoices;
 
         private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
         private string[] _dummySiteChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
@@ -47,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+            _sexChoices = _patientAdminService.GetSexEnumTable();
         }
 
         public string FamilyName
@@ -78,16 +80,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Sex
         {
-            get { return _patientAdminService.SexEnumTable[_patient.Sex].Value; }
-            set { 
-                _patient.Sex = _patientAdminService.SexEnumTable[value].Code;
+            get { return _sexChoices[_patient.Sex].Value; }
+            set {
+                _patient.Sex = _sexChoices[value].Code;
                 this.Modified = true;
             }
         }
 
         public string[] SexChoices
         {
-            get { return _patientAdminService.SexEnumTable.Values; }
+            get { return _sexChoices.Values; }
         }
 
         public DateTime DateOfBirth

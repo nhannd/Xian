@@ -11,8 +11,8 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("show", "global-menus/Admin/Patient/Find...")]
-    [ButtonAction("show", "global-toolbars/PatientAdminToolbar/Find")]
+    //[MenuAction("show", "global-menus/Admin/Patient/Find...")]
+    //[ButtonAction("show", "global-toolbars/PatientAdminToolbar/Find")]
     [Tooltip("show", "Find Patient")]
     [IconSet("show", IconScheme.Colour, "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png")]
     [ClickHandler("show", "Show")]

@@ -24,6 +24,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private string[] _dummyCountryChoices = new string[] { "Canada" };
         private IPatientAdminService _patientAdminService;
 
+        private AddressTypeEnumTable _addressTypes;
+
         public AddressEditorComponent(Address address)
         {
             _address = address;
@@ -43,6 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+            _addressTypes = _patientAdminService.GetAddressTypeEnumTable();
         }
 
         public string Street
@@ -125,17 +128,17 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Type
         {
-            get { return _patientAdminService.AddressTypeEnumTable[_address.Type].Value; }
+            get { return _addressTypes[_address.Type].Value; }
             set
             {
-                _address.Type = _patientAdminService.AddressTypeEnumTable[value].Code;
+                _address.Type = _addressTypes[value].Code;
                 this.Modified = true;
             }
         }
 
         public string[] TypeChoices
         {
-            get { return _patientAdminService.AddressTypeEnumTable.Values; }
+            get { return _addressTypes.Values; }
         }
 
         public void Accept()

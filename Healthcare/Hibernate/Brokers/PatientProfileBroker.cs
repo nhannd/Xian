@@ -25,7 +25,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 new SearchCriteria[] { criteria },
                 page);
 
-            return MakeTypeSafe(ExecuteHql(query));
+            return MakeTypeSafe<PatientProfile>(ExecuteHql(query));
         }
     }
 }

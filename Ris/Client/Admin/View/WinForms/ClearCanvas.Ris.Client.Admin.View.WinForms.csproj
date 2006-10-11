@@ -103,10 +103,6 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.Ris.Client.Admin.csproj">
-      <Project>{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}</Project>
-      <Name>ClearCanvas.Ris.Client.Admin</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

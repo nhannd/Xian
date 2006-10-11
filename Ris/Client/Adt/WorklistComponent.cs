@@ -9,9 +9,23 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
+    [ExtensionPoint]
+    public class WorklistToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public interface IWorklistToolContext : IToolContext
+    {
+        IDesktopWindow DesktopWindow { get; }
+        PatientProfile SelectedPatientProfile { get; }
+    }
+
+
     /// <summary>
     /// Extension point for views onto <see cref="PatientSearchResultComponent"/>
     /// </summary>
@@ -26,12 +40,38 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PatientSearchResultComponentViewExtensionPoint))]
     public class WorklistComponent : ApplicationComponent
     {
-        private PatientProfileTableData _searchResults;
+        class WorklistToolContext : ToolContext, IWorklistToolContext
+        {
+            private WorklistComponent _component;
+
+            public WorklistToolContext(WorklistComponent component)
+            {
+                _component = component;
+            }
+
+            #region IWorklistToolContext Members
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _component.Host.DesktopWindow; }
+            }
+
+            public PatientProfile SelectedPatientProfile
+            {
+                get { return _component._selectedPatient; }
+            }
+
+            #endregion
+        }
+
+
+        private PatientProfileTable _searchResults;
 
         private PatientProfile _selectedPatient;
         private event EventHandler _selectedPatientChanged;
 
         private IAdtService _adtService;
+        private ToolSet _toolSet; 
 
         /// <summary>
         /// Constructor
@@ -42,14 +82,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            base.Start();
-
             _adtService = ApplicationContext.GetService<IAdtService>();
-            _searchResults = new PatientProfileTableData(_adtService);
+            _searchResults = new PatientProfileTable();
+
+            _toolSet = new ToolSet(new WorklistToolExtensionPoint(), new WorklistToolContext(this));
+
+            base.Start();
         }
 
         public override void Stop()
         {
+            _toolSet.Dispose();
+
             base.Stop();
         }
 
@@ -101,6 +145,14 @@ namespace ClearCanvas.Ris.Client.Adt
                     new PatientOverviewComponent(_selectedPatient),
                     string.Format("{0} - {1}", _selectedPatient.Name.Format(), _selectedPatient.MRN.Id),
                     null);
+            }
+        }
+
+        public ActionModelNode MenuModel
+        {
+            get
+            {
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "worklist-contextmenu", _toolSet.Actions);
             }
         }
 

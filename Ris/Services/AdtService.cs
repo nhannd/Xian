@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria)
         {
-            return GetPatientProfileBroker().Find(criteria);
+            return this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
         }
 
         [ReadOperation]
@@ -42,15 +42,17 @@ namespace ClearCanvas.Ris.Services
         {
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)_strategyExtensionPoint.CreateExtension();
 
+            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+
             // Reload the PatientProfile so that the following call to load related works
             // If the PatientProfile is not reloaded within this context, nHibernate will attempt to create a second PatientProfile with the
             // same OID, which results in an exception being thrown.
-            patientProfile = GetPatientProfileBroker().Find(patientProfile.OID);
+            patientProfile = broker.Find(patientProfile.OID);
 
             Patient patient = patientProfile.Patient;
-            GetPatientBroker().LoadRelated(patient, patient.Profiles);
+            this.CurrentContext.GetBroker<IPatientBroker>().LoadRelated(patient, patient.Profiles);
 
-            return strategy.FindReconciliationMatches(patientProfile, GetPatientProfileBroker());
+            return strategy.FindReconciliationMatches(patientProfile, broker);
         }
 
         [ReadOperation]
@@ -59,7 +61,8 @@ namespace ClearCanvas.Ris.Services
             Patient patient = patientProfile.Patient;
 
             // ensure that the profiles collection is loaded
-            GetPatientBroker().LoadRelated(patient, patient.Profiles);
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            broker.LoadRelated(patient, patient.Profiles);
 
             // exclude the reference profile from the list of returned profiles
             IList<PatientProfile> reconciledProfiles = new List<PatientProfile>();
@@ -77,13 +80,14 @@ namespace ClearCanvas.Ris.Services
         public void LoadPatientProfiles(Patient patient)
         {
             // ensure that the profiles collection is loaded
-            GetPatientBroker().LoadRelated(patient, patient.Profiles);
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            broker.LoadRelated(patient, patient.Profiles);
         }
 
         [ReadOperation]
         public void LoadPatientProfileDetails(PatientProfile profile)
         {
-            IPatientProfileBroker broker = GetPatientProfileBroker();
+            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             broker.LoadRelated(profile, profile.Addresses);
             broker.LoadRelated(profile, profile.TelephoneNumbers);
         }
@@ -124,6 +128,13 @@ namespace ClearCanvas.Ris.Services
             DoReconciliation(toBeKept, toBeReconciled);
         }
 
+        [UpdateOperation]
+        public void CreatePatient(Patient patient)
+        {
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            broker.Store(patient);
+        }
+
         #endregion
 
         //private void DoReconciliation(Patient patient, IList<PatientProfile> toBeReconciled)
@@ -158,8 +169,9 @@ namespace ClearCanvas.Ris.Services
                     toBeKept.AddProfile(profile);                    
                 }
             }
-            
-            GetPatientBroker().Store(toBeKept);
+
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            broker.Store(toBeKept);
         }
 
         private static bool PatientIdentifierConflictsFound(Patient toBeKept, IList<Patient> toBeReconciled)

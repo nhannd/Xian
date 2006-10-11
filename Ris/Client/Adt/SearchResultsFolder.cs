@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class SearchResultsFolder : Folder
     {
-        private PatientProfileTableData _searchResults;
+        private PatientProfileTable _searchResults;
         private PatientProfileSearchCriteria _searchCriteria;
         private IAdtService _adtService;
 
@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt
             :base("Search Results")
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
-            _searchResults = new PatientProfileTableData(_adtService);
+            _searchResults = new PatientProfileTable();
         }
 
         public PatientProfileSearchCriteria SearchCriteria
@@ -46,7 +46,16 @@ namespace ClearCanvas.Ris.Client.Adt
             _searchResults.Items.Clear();
             if (_searchCriteria != null)
             {
-                _searchResults.Items.AddRange(_adtService.ListPatientProfiles(_searchCriteria));
+                try
+                {
+                    _searchResults.Items.AddRange(_adtService.ListPatientProfiles(_searchCriteria));
+                }
+                catch (Exception e)
+                {
+                    //TODO we need a more formalized means of handling query service layer exceptions
+                    Platform.Log(e);
+                    Platform.ShowMessageBox("An error occured while trying to execute the query");
+                }
             }
         }
 

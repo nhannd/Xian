@@ -27,14 +27,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private CrudActionModel _addressActionHandler;
 
+        private AddressTypeEnumTable _addressTypes;
+
         public AddressesSummaryComponent()
         {
             _addresses = new Table<Address>();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+            _addressTypes = _patientAdminService.GetAddressTypeEnumTable();
 
 
-            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _patientAdminService.AddressTypeEnumTable[a.Type].Value; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _patientAdminService.AddressTypeEnumTable[a.Type].Value; }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _addressTypes[a.Type].Value; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Street", delegate(Address a) { return a.Street; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("City", delegate(Address a) { return a.City; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Province", delegate(Address a) { return a.Province; }));

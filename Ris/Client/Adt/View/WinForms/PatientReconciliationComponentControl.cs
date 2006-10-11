@@ -26,32 +26,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
-            _searchResultsTable.Table = _component.SearchResults;
-            _alternateProfilesTable.Table = _component.AlternateProfiles;
-            _reconciliationCandidateTable.Table = _component.ReconciliationCandidateProfiles;
+            _targetTableView.Table = _component.TargetProfiles;
+            _reconciliationTableView.Table = _component.ReconciliationProfiles;
 
-            _mrnField.DataBindings.Add("Value", _component, "Mrn", true, DataSourceUpdateMode.OnPropertyChanged);
-            _healthcardField.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);
-            _familyNameField.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _givenNameField.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _error.DataBindings.Add("Value", _component, "Error", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
+            Control targetPreview = (Control)_component.TargetPreviewComponentView.GuiElement;
+            targetPreview.Dock = DockStyle.Fill;
+            _leftPreviewPanel.Controls.Add(targetPreview);
 
-        private void _searchButton_Click(object sender, EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Search();
-            }
-        }
-
-        private void _searchResultsTable_SelectionChanged(object sender, EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.SetSelectedSearchResults(_searchResultsTable.CurrentSelection);
-            }
+            Control recPreview = (Control)_component.ReconciliationPreviewComponentView.GuiElement;
+            recPreview.Dock = DockStyle.Fill;
+            _rightPreviewPanel.Controls.Add(recPreview);
         }
 
         private void _reconcileButton_Click(object sender, EventArgs e)
@@ -61,5 +45,28 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                 _component.Reconcile();
             }
         }
+
+        private void _cancelButton_Click(object sender, EventArgs e)
+        {
+            _component.Cancel();
+        }
+
+
+        private void _reconciliationTableView_SelectionChanged(object sender, EventArgs e)
+        {
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.SetSelectedReconciliationProfile(_reconciliationTableView.CurrentSelection);
+            }
+        }
+
+        private void _targetTableView_SelectionChanged(object sender, EventArgs e)
+        {
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.SetSelectedTargetProfile(_targetTableView.CurrentSelection);
+            }
+        }
+
     }
 }

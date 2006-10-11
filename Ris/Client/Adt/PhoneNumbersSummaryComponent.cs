@@ -26,13 +26,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private CrudActionModel _phoneNumberActionHandler;
 
+        private TelephoneEquipmentEnumTable _phoneEquipments;
+        private TelephoneUseEnumTable _phoneUses;
+
         public PhoneNumbersSummaryComponent()
         {
             _phoneNumbers = new Table<TelephoneNumber>();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+            _phoneEquipments = _patientAdminService.GetTelephoneEquipmentEnumTable();
+            _phoneUses = _patientAdminService.GetTelephoneUseEnumTable();
 
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Use", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneUseEnumTable[pn.Use].Value; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Equipment", delegate(TelephoneNumber pn) { return _patientAdminService.TelephoneEquipmentEnumTable[pn.Equipment].Value; }));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Use", delegate(TelephoneNumber pn) { return _phoneUses[pn.Use].Value; }));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Equipment", delegate(TelephoneNumber pn) { return _phoneEquipments[pn.Equipment].Value; }));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Country Code", delegate(TelephoneNumber pn) { return pn.CountryCode; }));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Area Code", delegate(TelephoneNumber pn) { return pn.AreaCode; }));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", delegate(TelephoneNumber pn) { return pn.Number; }));

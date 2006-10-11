@@ -17,8 +17,10 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
     public class PhoneNumberEditorComponent : ApplicationComponent
     {
-        TelephoneNumber _phoneNumber;
+        private TelephoneNumber _phoneNumber;
         private IPatientAdminService _patientAdminService;
+        private TelephoneEquipmentEnumTable _phoneEquipments;
+        private TelephoneUseEnumTable _phoneUses;
 
         public PhoneNumberEditorComponent(TelephoneNumber phoneNumber)
         {
@@ -29,6 +31,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
+            _phoneEquipments = _patientAdminService.GetTelephoneEquipmentEnumTable();
+            _phoneUses = _patientAdminService.GetTelephoneUseEnumTable();
         }
 
         /// <summary>
@@ -83,32 +87,32 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Use
         {
-            get { return _patientAdminService.TelephoneUseEnumTable[_phoneNumber.Use].Value; }
+            get { return _phoneUses[_phoneNumber.Use].Value; }
             set
             {
-                _phoneNumber.Use = _patientAdminService.TelephoneUseEnumTable[value].Code;
+                _phoneNumber.Use = _phoneUses[value].Code;
                 this.Modified = true;
             }
         }
 
         public string[] UseChoices
         {
-            get { return _patientAdminService.TelephoneUseEnumTable.Values; }
+            get { return _phoneUses.Values; }
         }
 
         public string Equipment
         {
-            get { return _patientAdminService.TelephoneEquipmentEnumTable[_phoneNumber.Equipment].Value; }
+            get { return _phoneEquipments[_phoneNumber.Equipment].Value; }
             set
             {
-                _phoneNumber.Equipment = _patientAdminService.TelephoneEquipmentEnumTable[value].Code;
+                _phoneNumber.Equipment = _phoneEquipments[value].Code;
                 this.Modified = true;
             }
         }
 
         public string[] EquipmentChoices
         {
-            get { return _patientAdminService.TelephoneEquipmentEnumTable.Values; }
+            get { return _phoneEquipments.Values; }
         }
 
         public void Accept()

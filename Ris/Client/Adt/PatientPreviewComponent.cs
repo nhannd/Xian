@@ -58,8 +58,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfile _subject;
         private Table<Address> _addresses;
         private Table<TelephoneNumber> _phoneNumbers;
+        private bool _showHeader;
 
         private IAdtService _adtService;
+        private AddressTypeEnumTable _addressTypes;
+        private TelephoneEquipmentEnumTable _phoneEquipments;
+        private TelephoneUseEnumTable _phoneUses;
+        private SexEnumTable _sexChoices;
 
         private ToolSet _toolSet;
 
@@ -67,12 +72,29 @@ namespace ClearCanvas.Ris.Client.Adt
         /// Constructor
         /// </summary>
         public PatientPreviewComponent()
+            :this(true)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PatientPreviewComponent(bool showHeader)
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
+            _addressTypes = _adtService.GetAddressTypeEnumTable();
+            _phoneEquipments = _adtService.GetTelephoneEquipmentEnumTable();
+            _phoneUses = _adtService.GetTelephoneUseEnumTable();
+            _sexChoices = _adtService.GetSexEnumTable();
+
+            _showHeader = showHeader;
+
+            string displayValue = EnumUtil.GetDisplayValue(TelephoneEquipment.CP);
+            TelephoneEquipment e = (TelephoneEquipment)EnumUtil.GetCode(typeof(TelephoneEquipment), displayValue);
 
             _addresses = new Table<Address>();
             _addresses.Columns.Add(new TableColumn<Address, string>("Type",
-                delegate(Address a) { return _adtService.AddressTypeEnumTable[a.Type].Value; }, 1.0f));
+                delegate(Address a) { return _addressTypes[a.Type].Value; }, 1.0f));
             _addresses.Columns.Add(new TableColumn<Address, string>("Address",
                 delegate(Address a) { return a.Format(); }, 3.0f));
             _addresses.Columns.Add(new TableColumn<Address, string>("Valid From",
@@ -86,8 +108,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(TelephoneNumber t)
                 {
                     return string.Format("{0} {1}",
-                        _adtService.TelephoneUseEnumTable[t.Use].Value,
-                        t.Equipment == TelephoneEquipment.CP ? _adtService.TelephoneEquipmentEnumTable[t.Equipment].Value : "");
+                        _phoneUses[t.Use].Value,
+                        t.Equipment == TelephoneEquipment.CP ? _phoneEquipments[t.Equipment].Value : "");
                 }, 1.0f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number",
                 delegate(TelephoneNumber t) { return t.Format(); }, 3.0f));
@@ -137,6 +159,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
+        public bool ShowHeader
+        {
+            get { return _showHeader; }
+            set { _showHeader = value; }
+        }
+
         public string Name
         {
             get { return _subject.Name.Format(); }
@@ -164,7 +192,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Sex
         {
-            get { return _adtService.SexEnumTable[_subject.Sex].Value; }
+            get { return _sexChoices[_subject.Sex].Value; }
         }
 
         public string CurrentHomeAddress
@@ -172,7 +200,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get
             {
                 Address address = _subject.CurrentHomeAddress;
-                return (address == null) ? null : address.Format();
+                return (address == null) ? "Unknown" : address.Format();
             }
         }
 
@@ -181,7 +209,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get
             {
                 TelephoneNumber phone = _subject.CurrentHomePhone;
-                return (phone == null) ? null : phone.Format();
+                return (phone == null) ? "Unknown" : phone.Format();
             }
         }
 

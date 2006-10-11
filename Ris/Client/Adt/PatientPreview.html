@@ -11,6 +11,7 @@
 var component = this.Component;
 if(component.Subject != null)
 {%>
+<% if(component.ShowHeader) { %>
 <table width="640" border="0">
   <tr>
     <td width="422" class="pageheading"><%= component.Name %></td>
@@ -21,12 +22,19 @@ if(component.Subject != null)
   </tr>
 </table>
 <p>&nbsp;</p>
+<% } // end-if(component.ShowHeader) %>
 <table width="640" border="0">
   <tr class="sectionheading">
     <td colspan="4">Basic Information </td>
   </tr>
   <tr>
-    <td width="120" class="propertyname">Date of Birth </td>
+    <td width="120" class="propertyname">Name</td>
+    <td width="200"><%= component.Name %></td>
+    <td width="63" class="propertyname">MRN</td>
+    <td width="229"><%= component.MrnAuthority %> <%= component.MrnId %></td>
+  </tr>
+  <tr>
+    <td width="120" class="propertyname">Date of Birth</td>
     <td width="200"><%= component.DateOfBirth %></td>
     <td width="63" class="propertyname">Sex</td>
     <td width="229"><%= component.Sex %></td>
@@ -80,6 +88,6 @@ if(component.Subject != null)
   </tr>
   <% } %>
 </table>
-<%} // end-if "component != null"%>    
+<%} // end-if(component != null)%>    
 </body>
 </html>
