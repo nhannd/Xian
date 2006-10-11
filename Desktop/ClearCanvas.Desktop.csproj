@@ -54,6 +54,7 @@
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />
+    <Compile Include="ApplicationComponentHost.cs" />
     <Compile Include="ApplicationComponentHostDialog.cs" />
     <Compile Include="ApplicationComponentHostShelf.cs" />
     <Compile Include="ClosingEventArgs.cs" />
