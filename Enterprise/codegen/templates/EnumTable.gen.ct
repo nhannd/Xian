@@ -5,7 +5,7 @@ using System.Text;
 using ClearCanvas.Enterprise;
 
 
-namespace ClearCanvas.Healthcare {
+namespace <%= @model.namespace %> {
 
     /// <summary>
     /// <%= @className %> wrapper for <see cref="<%= enumName %>"/>
