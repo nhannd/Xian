@@ -89,9 +89,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _showHeader = showHeader;
 
-            string displayValue = EnumUtil.GetDisplayValue(TelephoneEquipment.CP);
-            TelephoneEquipment e = (TelephoneEquipment)EnumUtil.GetCode(typeof(TelephoneEquipment), displayValue);
-
             _addresses = new Table<Address>();
             _addresses.Columns.Add(new TableColumn<Address, string>("Type",
                 delegate(Address a) { return _addressTypes[a.Type].Value; }, 1.0f));
