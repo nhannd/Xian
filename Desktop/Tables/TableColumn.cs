@@ -106,7 +106,7 @@ namespace ClearCanvas.Desktop.Tables
 
         public override bool ReadOnly
         {
-            get { return _valueSetter != null; }
+            get { return _valueSetter == null; }
         }
 
         public override object GetValue(object item)

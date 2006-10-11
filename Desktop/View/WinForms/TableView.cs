@@ -43,6 +43,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         private event EventHandler _itemDoubleClicked;
+        private event EventHandler _selectionChanged;
+
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
 		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -58,6 +60,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _dataGridView.AutoGenerateColumns = false;
 		}
 
+        [DefaultValue(true)]
         public bool ReadOnly
         {
             get { return _dataGridView.ReadOnly; }
@@ -114,13 +117,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _table = value;
 
-                InitColumns();
-
                 if (_table != null)
                 {
                     _bindingSource.DataSource = new TableAdapter(_table);
                     _dataGridView.DataSource = _bindingSource;
                 }
+
+                InitColumns();
             }
         }
 
@@ -136,6 +139,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _toolStripItemDisplayStyle = value; }
 		}
 
+        [DefaultValue(true)]
+        public bool ShowToolbar
+        {
+            get { return _toolStrip.Visible; }
+            set { _toolStrip.Visible = value; }
+        }
+
         /// <summary>
         /// Returns the current selection
         /// </summary>
@@ -146,8 +156,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public event EventHandler SelectionChanged
         {
-            add { _dataGridView.SelectionChanged += value; }
-            remove { _dataGridView.SelectionChanged -= value; }
+            add { _selectionChanged += value; }
+            remove { _selectionChanged -= value; }
         }
 
         public event EventHandler ItemDoubleClicked
@@ -182,6 +192,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     dgcol.Name = col.Name;
                     dgcol.HeaderText = col.Name;
                     dgcol.DataPropertyName = col.Name;
+                    dgcol.ReadOnly = col.ReadOnly;
 
                     dgcol.MinimumWidth = (int)(col.WidthFactor * _table.BaseColumnWidthChars * fontSize);
                     dgcol.FillWeight = col.WidthFactor;
@@ -204,20 +215,29 @@ namespace ClearCanvas.Desktop.View.WinForms
 			Point pt = _dataGridView.PointToClient(DataGridView.MousePosition);
 			DataGridView.HitTestInfo info = _dataGridView.HitTest(pt.X, pt.Y);
 
-			// If only one row is selected, assume that the user's intent
-			// is not to multiselect, so deselect the selected row.  If multiple
-			// rows are selected we don't want to deselect anything, since the
-			// user's intent is to perform a context menu operation on all
-			// selected rows.
-			if (_dataGridView.SelectedRows.Count == 1)
-			{
-				foreach (DataGridViewRow row in _dataGridView.SelectedRows)
-					row.Selected = false;
-			}
+            
+            if (_dataGridView.SelectedRows.Count == 0)
+            {
+                // select the new row
+                if (info.RowIndex >= 0)
+                    _dataGridView.Rows[info.RowIndex].Selected = true;
+            }
+            else if (_dataGridView.SelectedRows.Count == 1 && _dataGridView.SelectedRows[0].Index != info.RowIndex)
+            {
+                // deselect the selected row
+                _dataGridView.SelectedRows[0].Selected = false;
 
-			// Now select the new row
-			if (info.RowIndex >= 0)
-				_dataGridView.Rows[info.RowIndex].Selected = true;
+                // Now select the new row
+                if (info.RowIndex >= 0)
+                    _dataGridView.Rows[info.RowIndex].Selected = true;
+            }
+            else
+            {
+                // If multiple
+                // rows are selected we don't want to deselect anything, since the
+                // user's intent is to perform a context menu operation on all
+                // selected rows.
+            }
         }
 
         private void _contextMenu_Opened(object sender, EventArgs e)
@@ -233,6 +253,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
         {
 
+        }
+
+        private void _dataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
 	}
 }

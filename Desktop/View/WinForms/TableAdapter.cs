@@ -89,7 +89,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         bool IBindingList.AllowEdit
         {
-            get { return false; }
+            get { return true; }
         }
 
         bool IBindingList.AllowNew
