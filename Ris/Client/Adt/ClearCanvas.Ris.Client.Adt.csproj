@@ -43,6 +43,9 @@
     <Compile Include="CrudActionModel.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FoldersComponent.cs" />
+    <Compile Include="HL7QueueItemTableData.cs" />
+    <Compile Include="HL7QueuePreviewComponent.cs" />
+    <Compile Include="HL7QueuePreviewTool.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
@@ -97,6 +100,10 @@
     <ProjectReference Include="..\..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\HL7\ClearCanvas.HL7.csproj">
+      <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
+      <Name>ClearCanvas.HL7</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\ClearCanvas.Ris.Services.csproj">
       <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>

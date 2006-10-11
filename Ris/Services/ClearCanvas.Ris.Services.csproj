@@ -47,7 +47,9 @@
   <ItemGroup>
     <Compile Include="AdtService.cs" />
     <Compile Include="DefaultPatientReconciliationStrategy.cs" />
+    <Compile Include="HL7QueueService.cs" />
     <Compile Include="IAdtService.cs" />
+    <Compile Include="IHL7QueueService.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="IPatientReconciliationStrategy.cs" />
     <Compile Include="PatientAdminService.cs" />
@@ -71,6 +73,10 @@
     <ProjectReference Include="..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\HL7\ClearCanvas.HL7.csproj">
+      <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
+      <Name>ClearCanvas.HL7</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

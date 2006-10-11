@@ -49,10 +49,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Samples.XmppCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Samples.XmppClient.View.WinForms", "..\Samples\XmppClient\View\WinForms\ClearCanvas.Samples.XmppClient.View.WinForms.csproj", "{A23A6B58-0325-4A24-B499-5A3CC100041E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7", "..\HL7\ClearCanvas.HL7.csproj", "{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hibernate", "..\HL7\Hibernate\ClearCanvas.HL7.Hibernate.csproj", "{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}"
+EndProject
 Global
-	GlobalSection(TextTemplating) = postSolution
-		TextTemplating = 1
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -126,8 +127,19 @@ Global
 		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TextTemplating) = postSolution
+		TextTemplating = 1
 	EndGlobalSection
 EndGlobal
