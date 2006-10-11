@@ -68,7 +68,7 @@ namespace ClearCanvas.Enterprise
                 return (IUpdateContext)CurrentContext;
             }
         }
-
+/*
         /// <summary>
         /// Obtains the domain enumeration table for the specified C# enum type.
         /// </summary>
@@ -89,5 +89,6 @@ namespace ClearCanvas.Enterprise
             }
             return (EnumTable<e, E>)_mapEnumTables[typeof(e)];
         }
+ */
     }
 }

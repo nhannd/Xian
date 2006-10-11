@@ -23,6 +23,7 @@ class CodeGen
   @@enumTemplates = [
     Template.new("enum.ct", "<%=@enumName%>.cs", false),
     Template.new("EnumValue.gen.ct", "<%=@className%>.gen.cs", true),
+    Template.new("EnumTable.gen.ct", "<%=@className%>Table.gen.cs", true),
     Template.new("IEnumBroker.gen.ct", "Brokers/I<%=@className%>Broker.gen.cs", true),
     Template.new("EnumBroker.gen.ct", "Hibernate/Brokers/<%=@className%>Broker.gen.cs", true),
     Template.new("EnumHbm.gen.ct", "Hibernate/<%=@className%>Hbm.gen.cs", true)

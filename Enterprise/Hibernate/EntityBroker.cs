@@ -30,7 +30,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             string baseHql = string.Format("from {0} x", typeof(TEntity).Name);
             HqlQuery query = HqlQuery.FromSearchCriteria(baseHql, "x", criteria, page);
 
-            return MakeTypeSafe(ExecuteHql(query));
+            return MakeTypeSafe<TEntity>(ExecuteHql(query));
         }
 
         public virtual TEntity Find(long oid)
@@ -85,11 +85,5 @@ namespace ClearCanvas.Enterprise.Hibernate
                 NHibernateUtil.Initialize(property);
             }
         }
-
-        protected IList<TEntity> MakeTypeSafe(IList list)
-        {
-            return new ListWrapper<TEntity>(list);
-        }
-
     }
 }

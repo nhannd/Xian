@@ -13,7 +13,7 @@ namespace <%= @model.namespace %>.Hibernate.Brokers
     /// </summary>
 
     [ClearCanvas.Common.ExtensionOf(typeof(BrokerExtensionPoint))]
-	public partial class <%= @className %>Broker : EnumBroker<<%= @enumName %>, <%= @className %>>, I<%= @className %>Broker
+	public partial class <%= @className %>Broker : EnumBroker<<%= @className %>>, I<%= @className %>Broker
 	{
 	}
 }

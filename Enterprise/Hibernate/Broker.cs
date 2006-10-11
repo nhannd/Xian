@@ -4,6 +4,8 @@ using System.Text;
 
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using NHibernate;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -37,6 +39,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             IQuery hibQuery = query.BuildHibernateQueryObject(_ctx);
             return hibQuery.List();
+        }
+
+        protected IList<T> MakeTypeSafe<T>(IList list)
+        {
+            return new ListWrapper<T>(list);
         }
     }
 }

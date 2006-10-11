@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 namespace ClearCanvas.Enterprise
 {
@@ -18,18 +19,42 @@ namespace ClearCanvas.Enterprise
     /// <typeparam name="TEnum">The C# enum that this table corresponds to</typeparam>
     public class EnumTable<e, E>
         where e : struct
-        where E : EnumValue<e>
+        where E : EnumValue<e>, new()
     {
         private IDictionary<e, E> _values;
         private string[] _displayValues;
 
-        /// <summary>
-        /// Not used by client code.
-        /// </summary>
-        /// <param name="values"></param>
-        public EnumTable(IDictionary<e, E> values)
+
+        private static IList<E> GetValuesFromAttributes()
         {
-            _values = values;
+            List<E> values = new List<E>();
+            foreach (FieldInfo fi in typeof(e).GetFields())
+            {
+                // try to get an attribute
+                object[] attrs = fi.GetCustomAttributes(typeof(EnumValueAttribute), false);
+                if (attrs.Length > 0)
+                {
+                    E value = new E();
+                    value.Code = (e)fi.GetValue(null);
+                    value.Value = ((EnumValueAttribute)attrs[0]).Value;
+                    values.Add(value);
+                }
+            }
+            return values;
+        }
+
+        public EnumTable()
+            : this(GetValuesFromAttributes())
+        {
+        }
+
+        public EnumTable(IList<E> values)
+        {
+            _values = new Dictionary<e, E>();
+            foreach (E val in values)
+            {
+                _values.Add(val.Code, val);
+            }
         }
 
         /// <summary>

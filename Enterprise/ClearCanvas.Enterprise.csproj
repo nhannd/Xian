@@ -49,6 +49,7 @@
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
+    <Compile Include="EnumUtil.cs" />
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="IServiceManager.cs" />
     <Compile Include="ISession.cs" />

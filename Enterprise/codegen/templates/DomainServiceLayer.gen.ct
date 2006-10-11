@@ -35,23 +35,14 @@ namespace <%= @namespace %> {
 		/// <summary>
 		/// Returns the <see cref="<%= e.enumName %>"/> enum table
 		/// </summary>
-		public EnumTable<<%= e.enumName %>, <%= e.className %>> <%= e.className %>Table
-		{
-			get { return GetEnumTable<<%= e.enumName %>, <%= e.className %>, I<%= e.className %>Broker>(); }
-		}
-	  	<% end %>
-	  	
-	  	
-		<% @entityDefs.each do |e| %>
-		/// <summary>
-		/// Returns a <see cref="<%= e.className %>"/> broker for the current context
-		/// </summary>
-		/// <returns>An instance of <see cref="I<%= e.className %>Broker"/></returns>
-	  	protected I<%= e.className %>Broker Get<%= e.className %>Broker()
+        [ReadOperation]
+        public <%= e.className %>Table Get<%= e.className %>Table()
         {
-            return this.CurrentContext.GetBroker<I<%= e.className %>Broker>();
+            return new <%= e.className %>Table( /*this.CurrentContext.GetBroker<I<%= e.className %>Broker>().Load()*/ );
         }
 	  	<% end %>
+	  	
+	  	
 	  	
 	}
 }

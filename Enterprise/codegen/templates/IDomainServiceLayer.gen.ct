@@ -29,7 +29,7 @@ namespace <%= @namespace %> {
 		/// <summary>
 		/// Returns the <see cref="<%= e.enumName %>"/> enum table
 		/// </summary>
-		EnumTable<<%= e.enumName %>, <%= e.className %>> <%= e.className %>Table { get; }
+	        <%= e.className %>Table Get<%= e.className %>Table();
 	  	<% end %>
   	
 	}
