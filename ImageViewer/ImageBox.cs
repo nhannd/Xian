@@ -284,9 +284,9 @@ namespace ClearCanvas.ImageViewer
 
 				// If specified presentationImage cannot be found in DisplaySet, an
 				// exception will be thrown in DisplaySet.IndexOfPresentationImage
-				int index = _displaySet.PresentationImages.IndexOf(value);
+				int imageIndex = _displaySet.PresentationImages.IndexOf(value);
 
-				FlowImages(index);
+				FlowImages(imageIndex);
 			}
 		}
 
@@ -323,16 +323,16 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckMemberIsSet(this.DisplaySet, "DisplaySet");
 				Platform.CheckPositive(this.DisplaySet.PresentationImages.Count, "ImageBox.DisplaySet.PresentationImages.Count");
 
-				int index;
+				int imageIndex;
 
 				if (value < 0)
-					index = 0;
+					imageIndex = 0;
 				else if (value > this.DisplaySet.PresentationImages.Count - 1)
-					index = this.DisplaySet.PresentationImages.Count - 1;
+					imageIndex = this.DisplaySet.PresentationImages.Count - 1;
 				else
-					index = value;
+					imageIndex = value;
 
-				FlowImages(index);
+				FlowImages(imageIndex);
 			}
 		}
 
@@ -521,44 +521,75 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private void FlowImages(int startIndex)
+		private void FlowImages(int imageIndex)
 		{
-			Platform.CheckArgumentRange(startIndex, 0, this.DisplaySet.PresentationImages.Count, "startIndex");
+			Platform.CheckArgumentRange(imageIndex, 0, this.DisplaySet.PresentationImages.Count, "startIndex");
 
-			int index;
-			int maxStartIndex = _displaySet.PresentationImages.Count - this.Tiles.Count;
+			int startImageIndex;
+			int maxStartImageIndex = _displaySet.PresentationImages.Count - this.Tiles.Count;
 
 			// Case when there are as many or more images than tiles
-			if (maxStartIndex >= 0)
+			if (maxStartImageIndex >= 0)
 			{
-				if (startIndex > maxStartIndex)
-					index = maxStartIndex;
+				if (imageIndex > maxStartImageIndex)
+					startImageIndex = maxStartImageIndex;
 				else
-					index = startIndex;
+					startImageIndex = imageIndex;
 			}
 			// Case when there are fewer images than tiles
 			else
 			{
-				index = 0;
+				startImageIndex = 0;
 			}
 
-			// Null all the tiles of their presentation images so that when we reflow
-			// the images, we don't have the problem of 
-			foreach (Tile tile in this.Tiles)
-				tile.PresentationImage = null;
-
-			foreach (Tile tile in this.Tiles)
+			// If the starting index is less than the top-left index, or if there's no
+			// image in the top left tile yet, then we iterate through the tiles in ascending order.
+			// Otherwise, we iterate through in descending order.
+			// The reason is this:  Consider the example when we have 4 images in 4 tiles, where
+			// the number corresponds to the image, and the position in the list corresponds to the
+			// tile in which the images resides.  If we want to reflow the images so that the first image is 3,
+			// this is what the list would look like after each iteration:
+			//
+			// 2,3,4,5
+			// 3,3,4,5
+			// 3,4,4,5
+			// 3,4,5,5
+			// 3,4,5,6
+			//
+			// The problem here is that at the end of any given iteration, the same image can be
+			// in two tiles simultaneously.  This causes a number synchronization problems.  What we want
+			// is for there to ever only be one instance of an image in the current tiles.
+			// The way to do this is to iterate through the list backwards like this:
+			//
+			// 2,3,4,5
+			// 2,3,4,6
+			// 2,3,5,6
+			// 2,4,5,6
+			// 3,4,5,6
+			if (startImageIndex <= this.TopLeftPresentationImageIndex ||
+				this.TopLeftPresentationImageIndex == -1)
 			{
-				// If there's an image, put it in a tile
-				if (index < _displaySet.PresentationImages.Count)
-					tile.PresentationImage = this.DisplaySet.PresentationImages[index];
-				// If there are no images left (the case when there are fewer images than tiles)
-				// then just set the tile to blank
-				else
-					tile.PresentationImage = null;
-
-				index++;
+				for (int tileIndex = 0; tileIndex < this.Tiles.Count; tileIndex++)
+					SetImage(startImageIndex, tileIndex);
 			}
+			else
+			{
+				for (int tileIndex = this.Tiles.Count - 1; tileIndex >= 0; tileIndex--)
+					SetImage(startImageIndex, tileIndex);
+			}
+		}
+
+		private void SetImage(int startImageIndex, int tileIndex)
+		{
+			Tile tile = this.Tiles[tileIndex] as Tile;
+
+			// If there's an image, put it in a tile
+			if (startImageIndex + tileIndex < _displaySet.PresentationImages.Count)
+				tile.PresentationImage = this.DisplaySet.PresentationImages[startImageIndex + tileIndex];
+			// If there are no images left (the case when there are fewer images than tiles)
+			// then just set the tile to blank
+			else
+				tile.PresentationImage = null;
 		}
 
 		private void OnTileAdded(object sender, TileEventArgs e)
