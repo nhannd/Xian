@@ -1,3 +1,5 @@
+using System;
+
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	partial class ImageViewerControl
@@ -16,6 +18,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (disposing && (components != null))
 			{
 				components.Dispose();
+
+				if (_physicalWorkspace != null)
+				{
+					_physicalWorkspace.Drawing -= new EventHandler(OnPhysicalWorkspaceDrawing);
+					_physicalWorkspace.ImageBoxAdded -= new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
+					_physicalWorkspace.ImageBoxRemoved -= new EventHandler<ImageBoxEventArgs>(OnImageBoxRemoved);
+				}
 			}
 			base.Dispose(disposing);
 		}

@@ -163,9 +163,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 return;
 
 			IPhysicalWorkspace physicalWorkspace = _imageViewer.PhysicalWorkspace;
-			//ImageBoxLayoutCommand command = new ImageBoxLayoutCommand(physicalWorkspace);
-			//command.Name = SR.CommandLayoutImageBoxes;
-			//command.BeginState = physicalWorkspace.CreateMemento();
+			ImageBoxLayoutCommand command = new ImageBoxLayoutCommand(physicalWorkspace);
+			command.Name = SR.CommandLayoutImageBoxes;
+			command.BeginState = physicalWorkspace.CreateMemento();
 
             physicalWorkspace.SetImageBoxGrid(_imageBoxRows, _imageBoxColumns);
 
@@ -175,9 +175,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             LayoutManager.FillPhysicalWorkspace(physicalWorkspace, physicalWorkspace.LogicalWorkspace);
             physicalWorkspace.Draw();
 
-			//command.EndState = physicalWorkspace.CreateMemento();
+			command.EndState = physicalWorkspace.CreateMemento();
 
-			//_imageViewer.CommandHistory.AddCommand(command);
+			_imageViewer.CommandHistory.AddCommand(command);
 
             // need to update the controls since no tile will be selected now
             UpdateFromImageViewer();
@@ -192,9 +192,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 return;
 
 			IImageBox imageBox = _imageViewer.PhysicalWorkspace.SelectedImageBox;
-			//TileLayoutCommand command = new TileLayoutCommand(imageBox);
-			//command.Name = SR.CommandLayoutTiles;
-			//command.BeginState = imageBox.CreateMemento();
+			TileLayoutCommand command = new TileLayoutCommand(imageBox);
+			command.Name = SR.CommandLayoutTiles;
+			command.BeginState = imageBox.CreateMemento();
 
             int index = imageBox.TopLeftPresentationImageIndex;
 
@@ -202,9 +202,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             imageBox.TopLeftPresentationImageIndex = index;
             imageBox.Draw();
 
-			//command.EndState = imageBox.CreateMemento();
+			command.EndState = imageBox.CreateMemento();
 
-			//_imageViewer.CommandHistory.AddCommand(command);
+			_imageViewer.CommandHistory.AddCommand(command);
 
             // need to update the controls since no tile will be selected now
             UpdateFromImageViewer();

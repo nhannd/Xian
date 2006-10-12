@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	public class ImageBoxLayoutCommand : UndoableCommand
 	{
-		public ImageBoxLayoutCommand(PhysicalWorkspace physicalWorkspace)
+		public ImageBoxLayoutCommand(IPhysicalWorkspace physicalWorkspace)
 			: base(physicalWorkspace)
 		{
 		}
@@ -14,15 +14,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public override void Execute()
 		{
 			base.Execute();
-			PhysicalWorkspace physicalWorkspace = base.Originator as PhysicalWorkspace;
-			physicalWorkspace.Draw(false);
+			IPhysicalWorkspace physicalWorkspace = base.Originator as IPhysicalWorkspace;
+			physicalWorkspace.Draw();
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			PhysicalWorkspace physicalWorkspace = base.Originator as PhysicalWorkspace;
-			physicalWorkspace.Draw(false);
+			IPhysicalWorkspace physicalWorkspace = base.Originator as IPhysicalWorkspace;
+			physicalWorkspace.Draw();
 		}
 	}
 }

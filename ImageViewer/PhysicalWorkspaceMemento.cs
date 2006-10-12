@@ -7,12 +7,12 @@ namespace ClearCanvas.ImageViewer
 {
 	internal class PhysicalWorkspaceMemento : IMemento
 	{
-		private LogicalWorkspace _logicalWorkspace;
+		private ILogicalWorkspace _logicalWorkspace;
 		private ImageBoxCollection _imageBoxes;
 		private MementoList _imageBoxMementos;
 
 		public PhysicalWorkspaceMemento(
-			LogicalWorkspace logicalWorkspace,
+			ILogicalWorkspace logicalWorkspace,
 			ImageBoxCollection imageBoxes,
 			MementoList imageBoxMementos)
 		{
@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer
 			_imageBoxMementos = imageBoxMementos;
 		}
 
-		public LogicalWorkspace LogicalWorkspace
+		public ILogicalWorkspace LogicalWorkspace
 		{
 			get { return _logicalWorkspace; }
 		}

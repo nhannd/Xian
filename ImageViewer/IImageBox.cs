@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	public interface IImageBox : IDisposable
+	public interface IImageBox : IMemorable, IDisposable
 	{
 		IImageViewer ImageViewer { get; }
 		IPhysicalWorkspace ParentPhysicalWorkspace { get; }

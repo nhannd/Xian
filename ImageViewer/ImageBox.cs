@@ -500,6 +500,79 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		#region IMemorable Members
+
+		/// <summary>
+		/// Creates a memento for this <see cref="ImageBox"/>.
+		/// </summary>
+		/// <returns>A memento for this <see cref="ImageBox"/>.</returns>
+		/// <remarks>
+		/// This method is used to remember the current state of a
+		/// <see cref="ImageBox"/>.  The memento remembers the actual <see cref="Tile"/>
+		/// <i>instances</i> contained in the <see cref="ImageBox"/>.  Calling
+		/// <see cref="ImageBox.SetMemento"/> at a later time restores those instances.
+		/// </remarks>
+		public IMemento CreateMemento()
+		{
+			// When creating the memento, we have to remember the
+			// display set, client area, rows, columns, tiles mementos AND
+			// the tiles themselves.  We have to remember the actual
+			// instances of the tiles, since command objects
+			// have references to them.  If during image box reconstitution
+			// we simply created new tiles and restored their state with
+			// tile mementos, those command objects, when undone/redone,
+			// would be operating on objects that are simply floating around
+			// on the heap and not part of the logical workspace tree, and thus
+			// would not work.  A similar argument exists for
+			// PhysicalWorkspace.CreateMemento.
+			MementoList tileMementos = new MementoList();
+
+			foreach (ITile tile in this.Tiles)
+				tileMementos.AddMemento(tile.CreateMemento());
+
+			ImageBoxMemento imageBoxMemento =
+					new ImageBoxMemento(this.DisplaySet,
+										_rows,
+										_columns,
+										new TileCollection(this.Tiles),
+										tileMementos);
+
+			return imageBoxMemento;
+		}
+
+		/// <summary>
+		/// Sets this <see cref="ImageBox"/> with a previously created memento.
+		/// </summary>
+		/// <param name="memento">Memento to set.</param>
+		/// <remarks>
+		/// This method restores the state of a <see cref="ImageBox"/> with
+		/// a memento previously created by <see cref="ImageBox.CreateMemento"/>.
+		/// </remarks>
+		public void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+
+			ImageBoxMemento imageBoxMemento = memento as ImageBoxMemento;
+
+			Platform.CheckForInvalidCast(imageBoxMemento, "memento", "ImageBoxMemento");
+
+			this.Tiles.Clear();
+
+			for (int i = 0; i < imageBoxMemento.Tiles.Count; i++)
+			{
+				IMemento tileMemento = imageBoxMemento.TileMementos[i];
+				ITile tile = imageBoxMemento.Tiles[i];
+				tile.SetMemento(tileMemento);
+				this.Tiles.Add(tile);
+			}
+
+			this.DisplaySet = imageBoxMemento.DisplaySet;
+			_rows = imageBoxMemento.Rows;
+			_columns = imageBoxMemento.Columns;
+		}
+
+		#endregion
+
 		#endregion
 
 		#region Internal/private methods

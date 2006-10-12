@@ -6,16 +6,16 @@ namespace ClearCanvas.ImageViewer
 {
 	internal class TileMemento : IMemento
 	{
-		private PresentationImage _presentationImage;
+		private IPresentationImage _presentationImage;
 
-		public TileMemento(PresentationImage image)
+		public TileMemento(IPresentationImage image)
 		{
 			// image can be null if the Tile is empty, so we don't check for null
 
 			_presentationImage = image;
 		}
 
-		public PresentationImage PresentationImage
+		public IPresentationImage PresentationImage
 		{
 			get { return _presentationImage; }
 		}

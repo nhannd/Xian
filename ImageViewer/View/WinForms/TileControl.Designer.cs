@@ -1,3 +1,5 @@
+using System;
+
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
     partial class TileControl
@@ -16,6 +18,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             if (disposing && (components != null))
             {
                 components.Dispose();
+
+				if (_tile != null)
+				{
+					_tile.Drawing -= new EventHandler(OnDrawing);
+					_tile.RendererChanged -= new EventHandler(OnRendererChanged);
+				}
             }
             base.Dispose(disposing);
         }

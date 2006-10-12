@@ -1,3 +1,5 @@
+using System;
+
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
     partial class ImageBoxControl
@@ -16,6 +18,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             if (disposing && (components != null))
             {
                 components.Dispose();
+
+				if (_imageBox != null)
+				{
+					_imageBox.Drawing -= new EventHandler(OnDrawing);
+					_imageBox.SelectionChanged -= new EventHandler<ImageBoxEventArgs>(OnImageBoxSelectionChanged);
+					_imageBox.TileAdded -= new EventHandler<TileEventArgs>(OnTileAdded);
+					_imageBox.TileRemoved -= new EventHandler<TileEventArgs>(OnTileRemoved);
+				}
             }
             base.Dispose(disposing);
         }

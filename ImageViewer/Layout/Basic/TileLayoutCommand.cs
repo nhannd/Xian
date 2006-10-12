@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	public class TileLayoutCommand : UndoableCommand
 	{
-		public TileLayoutCommand(ImageBox imageBox)
+		public TileLayoutCommand(IImageBox imageBox)
 			: base(imageBox)
 		{
 		}
@@ -14,15 +14,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public override void Execute()
 		{
 			base.Execute();
-			ImageBox imageBox = base.Originator as ImageBox;
-			imageBox.Draw(false);
+			IImageBox imageBox = base.Originator as IImageBox;
+			imageBox.Draw();
 		}
 
 		public override void Unexecute()
 		{
 			base.Unexecute();
-			ImageBox imageBox = base.Originator as ImageBox;
-			imageBox.Draw(false);
+			IImageBox imageBox = base.Originator as IImageBox;
+			imageBox.Draw();
 		}
 	}
 }

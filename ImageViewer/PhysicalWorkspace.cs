@@ -281,63 +281,58 @@ namespace ClearCanvas.ImageViewer
 
 		#region IMemorable Members
 
-		///// <summary>
-		///// Creates a memento for this <see cref="PhysicalWorkspace"/>.
-		///// </summary>
-		///// <returns>A memento for this <see cref="PhysicalWorkspace"/>.</returns>
-		///// <remarks>
-		///// This method is used to remember the current state of a
-		///// <see cref="PhysicalWorkspace"/>.  The memento remembers the actual <see cref="ImageBox"/>
-		///// <i>instances</i> contained in the <see cref="PhysicalWorkspace"/>.  Calling
-		///// <see cref="PhysicalWorkspace.SetMemento"/> at a later time restores 
-		///// those instances.
-		///// </remarks>
-		//public IMemento CreateMemento()
-		//{
-		//    MementoList imageBoxMementos = new MementoList();
+		/// <summary>
+		/// Creates a memento for this <see cref="PhysicalWorkspace"/>.
+		/// </summary>
+		/// <returns>A memento for this <see cref="PhysicalWorkspace"/>.</returns>
+		/// <remarks>
+		/// This method is used to remember the current state of a
+		/// <see cref="PhysicalWorkspace"/>.  The memento remembers the actual <see cref="ImageBox"/>
+		/// <i>instances</i> contained in the <see cref="PhysicalWorkspace"/>.  Calling
+		/// <see cref="PhysicalWorkspace.SetMemento"/> at a later time restores 
+		/// those instances.
+		/// </remarks>
+		public IMemento CreateMemento()
+		{
+			MementoList imageBoxMementos = new MementoList();
 
-		//    foreach (ImageBox imageBox in this.ImageBoxes)
-		//        imageBoxMementos.AddMemento(imageBox.CreateMemento());
+			foreach (ImageBox imageBox in this.ImageBoxes)
+				imageBoxMementos.AddMemento(imageBox.CreateMemento());
 
-		//    PhysicalWorkspaceMemento workspaceMemento = 
-		//        new PhysicalWorkspaceMemento(this.LogicalWorkspace, 
-		//                                     _clientArea, 
-		//                                     new ImageBoxCollection(this.ImageBoxes),
-		//                                     imageBoxMementos);
+			PhysicalWorkspaceMemento workspaceMemento =
+				new PhysicalWorkspaceMemento(this.LogicalWorkspace,
+											 new ImageBoxCollection(this.ImageBoxes),
+											 imageBoxMementos);
 
-		//    return workspaceMemento;
-		//}
+			return workspaceMemento;
+		}
 
-		///// <summary>
-		///// Sets this <see cref="PhysicalWorkspace"/> with a previously created memento.
-		///// </summary>
-		///// <param name="memento">Memento to set.</param>
-		///// <remarks>
-		///// This method restores the state of a <see cref="PhysicalWorkspace"/> with
-		///// a memento previously created by <see cref="PhysicalWorkspace.CreateMemento"/>.
-		///// </remarks>
-		//public void SetMemento(IMemento memento)
-		//{
-		//    Platform.CheckForNullReference(memento, "memento");
+		/// <summary>
+		/// Sets this <see cref="PhysicalWorkspace"/> with a previously created memento.
+		/// </summary>
+		/// <param name="memento">Memento to set.</param>
+		/// <remarks>
+		/// This method restores the state of a <see cref="PhysicalWorkspace"/> with
+		/// a memento previously created by <see cref="PhysicalWorkspace.CreateMemento"/>.
+		/// </remarks>
+		public void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
 
-		//    PhysicalWorkspaceMemento workspaceMemento = memento as PhysicalWorkspaceMemento;
-		//    Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
+			PhysicalWorkspaceMemento workspaceMemento = memento as PhysicalWorkspaceMemento;
+			Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
 
-		//    this.ImageBoxes.Clear();
+			this.ImageBoxes.Clear();
 
-		//    // TODO:  check if we actually need this
-		//    //_logicalWorkspace = workspaceMemento.LogicalWorkspace;
-		//    _clientArea = workspaceMemento.ClientArea;
+			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
+			{
+				IMemento imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
+				IImageBox imageBox = workspaceMemento.ImageBoxes[i];
+				imageBox.SetMemento(imageBoxMemento);
 
-		//    for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
-		//    {
-		//        IMemento imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
-		//        ImageBox imageBox = workspaceMemento.ImageBoxes[i];
-		//        imageBox.SetMemento(imageBoxMemento);
-			
-		//        this.ImageBoxes.Add(imageBox);
-		//    }
-		//}
+				this.ImageBoxes.Add(imageBox);
+			}
+		}
 
 		#endregion
 

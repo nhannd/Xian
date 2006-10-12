@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using ClearCanvas.Desktop;
+
 namespace ClearCanvas.ImageViewer
 {
-	public interface ITile : IDisposable
+	public interface ITile : IMemorable, IDisposable
 	{
 		IImageViewer ImageViewer { get; }
 		IImageBox ParentImageBox { get; }

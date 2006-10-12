@@ -6,14 +6,14 @@ namespace ClearCanvas.ImageViewer
 {
 	internal class ImageBoxMemento : IMemento
 	{
-		private DisplaySet _displaySet;
+		private IDisplaySet _displaySet;
 		private int _rows;
 		private int _columns;
 		private TileCollection _tiles;
 		private MementoList _tileMementos;
 
 		public ImageBoxMemento(
-			DisplaySet displaySet, 
+			IDisplaySet displaySet, 
 			int rows,
 			int columns,
 			TileCollection tiles,
@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer
 			_tileMementos = tileMementos;
 		}
 
-		public DisplaySet DisplaySet
+		public IDisplaySet DisplaySet
 		{
 			get { return _displaySet; }
 		}
