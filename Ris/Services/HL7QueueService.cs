@@ -34,28 +34,46 @@ namespace ClearCanvas.Ris.Services
 
             return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, page);
         }
+
+        [ReadOperation]
+        public IList<HL7QueueItem> GetAllItems()
+        {
+            HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
+            return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria);
+        }
      
+        [UpdateOperation]
         public void UpdateItemStatus(ClearCanvas.HL7.HL7QueueItem item, ClearCanvas.HL7.HL7MessageStatusCode status)
         {
             UpdateItemStatusHelper(item, status, null);
         }
 
+        [UpdateOperation]
         public void UpdateItemStatus(ClearCanvas.HL7.HL7QueueItem item, ClearCanvas.HL7.HL7MessageStatusCode status, string statusDescription)
         {
             UpdateItemStatusHelper(item, status, statusDescription);
         }
 
-        [UpdateOperation]
+        //[UpdateOperation]
         private void UpdateItemStatusHelper(ClearCanvas.HL7.HL7QueueItem item, ClearCanvas.HL7.HL7MessageStatusCode status, string statusDescription)
         {
-            item.Status.Code = status;
+            if (item == null) return;
 
-            if (statusDescription != null)
+            HL7QueueItem reloaded = this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(item.OID);
+
+            if (reloaded != null)
             {
-                item.Status.Description = statusDescription;
-            }
+                reloaded.Status.Code = status;
 
-            this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(item);
+                if (statusDescription != null)
+                {
+                    reloaded.Status.Description = statusDescription;
+                }
+
+                reloaded.Status.UpdateDateTime = Platform.Time;
+
+                this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(reloaded);
+            }
         }
 
         [UpdateOperation]

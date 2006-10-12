@@ -25,6 +25,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(HL7QueuePreviewComponentViewExtensionPoint))]
     public class HL7QueuePreviewComponent : ApplicationComponent
     {
+        HL7QueueItem _selectedItem;
+
         private HL7QueueItemTableData _queue;
         private IHL7QueueService _hl7QueueService;
 
@@ -41,15 +43,27 @@ namespace ClearCanvas.Ris.Client.Adt
         public HL7QueueItemTableData Queue
         {
             get { return _queue; }
-            set { _queue = value; }
+            //set { _queue = value; }
         }
 
         public void RefreshItems()
         {
-            IList<HL7QueueItem> items = _hl7QueueService.GetNextInboundItemBatch();
+            IList<HL7QueueItem> items = _hl7QueueService.GetAllItems();
 
             _queue.Items.Clear();
             _queue.Items.AddRange(items);
+        }
+
+        public void ProcessSelection()
+        {
+            _hl7QueueService.UpdateItemStatus(_selectedItem, HL7MessageStatusCode.C);
+
+            RefreshItems();
+        }
+
+        public void SetSelectedItem(ISelection selection)
+        {
+            _selectedItem = selection.Item as HL7QueueItem;
         }
     }
 }

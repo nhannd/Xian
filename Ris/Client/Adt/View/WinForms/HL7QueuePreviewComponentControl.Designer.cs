@@ -29,10 +29,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._queue = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._refresh = new System.Windows.Forms.Button();
             this._process = new System.Windows.Forms.Button();
+            this._queue = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -54,22 +54,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(432, 386);
             this.tableLayoutPanel1.TabIndex = 1;
-            // 
-            // _queue
-            // 
-            this._queue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._queue.Location = new System.Drawing.Point(3, 3);
-            this._queue.MenuModel = null;
-            this._queue.Name = "_queue";
-            this._queue.ReadOnly = false;
-            this._queue.Size = new System.Drawing.Size(426, 342);
-            this._queue.TabIndex = 0;
-            this._queue.Table = null;
-            this._queue.ToolbarModel = null;
-            this._queue.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._queue.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // flowLayoutPanel1
             // 
@@ -102,6 +86,24 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._process.TabIndex = 1;
             this._process.Text = "Process";
             this._process.UseVisualStyleBackColor = true;
+            this._process.Click += new System.EventHandler(this._process_Click);
+            // 
+            // _queue
+            // 
+            this._queue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._queue.Location = new System.Drawing.Point(3, 3);
+            this._queue.MenuModel = null;
+            this._queue.Name = "_queue";
+            this._queue.ReadOnly = false;
+            this._queue.Size = new System.Drawing.Size(426, 342);
+            this._queue.TabIndex = 0;
+            this._queue.Table = null;
+            this._queue.ToolbarModel = null;
+            this._queue.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._queue.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._queue.SelectionChanged += new System.EventHandler(this._queue_SelectionChanged);
             // 
             // HL7QueuePreviewComponentControl
             // 

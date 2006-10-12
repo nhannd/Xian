@@ -25,5 +25,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             _component.RefreshItems();
         }
+
+        private void _queue_SelectionChanged(object sender, EventArgs e)
+        {
+            _component.SetSelectedItem(_queue.CurrentSelection);
+        }
+
+        private void _process_Click(object sender, EventArgs e)
+        {
+            _component.ProcessSelection();
+        }
     }
 }

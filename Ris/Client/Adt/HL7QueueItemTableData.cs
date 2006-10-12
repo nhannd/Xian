@@ -12,8 +12,27 @@ namespace ClearCanvas.Ris.Client.Adt
         public HL7QueueItemTableData(IHL7ServiceLayer service)
         {
             this.Columns.Add(
+                new TableColumn<HL7QueueItem, string>("Direction",
+                    delegate(HL7QueueItem item) { return service.GetHL7MessageDirectionEnumTable()[item.Direction].Value; }, 0.5f));
+            this.Columns.Add(
+                new TableColumn<HL7QueueItem, string>("Peer",
+                    delegate(HL7QueueItem item) { return service.GetHL7MessagePeerEnumTable()[item.Message.Peer].Value; }, 0.5f));
+            this.Columns.Add(
                 new TableColumn<HL7QueueItem, string>("Type",
                     delegate(HL7QueueItem item) { return item.Message.MessageType; }, 0.5f));
+            this.Columns.Add(
+                new TableColumn<HL7QueueItem, string>("Status",
+                    delegate(HL7QueueItem item) { return service.GetHL7MessageStatusCodeEnumTable()[item.Status.Code].Value; }, 0.5f));
+            this.Columns.Add(
+                new TableColumn<HL7QueueItem, string>("Status Description",
+                    delegate(HL7QueueItem item) { return item.Status.Description; }, 0.5f));
+            this.Columns.Add(
+                new TableColumn<HL7QueueItem, DateTime>("Created On",
+                    delegate(HL7QueueItem item) { return item.Status.CreationDateTime; }, 0.5f));
+            this.Columns.Add(
+                new TableColumn<HL7QueueItem, DateTime?>("Updated On",
+                    delegate(HL7QueueItem item) { return item.Status.UpdateDateTime; }, 0.5f));
+
 
         }
     }

@@ -9,6 +9,7 @@ namespace ClearCanvas.Ris.Services
     public interface IHL7QueueService : IHL7ServiceLayer
     {
         IList<HL7QueueItem> GetNextInboundItemBatch();
+        IList<HL7QueueItem> GetAllItems();
         void UpdateItemStatus(HL7QueueItem item, HL7MessageStatusCode status);
         void UpdateItemStatus(HL7QueueItem item, HL7MessageStatusCode status, string statusDescription);
         void EnqueueItem(HL7QueueItem item);
