@@ -27,15 +27,34 @@ package ClearCanvas.Jscript
     {
 	    function Run(script: String, context: IDictionary)
 	    {
-	        var ctx = new Object();
-	        
-	        for(var entry in context)
-	        {
-	            ctx[entry.Key] = entry.Value;
-	        }
-	        
-	        ctx.__scriptFunction__ = new Function(script);
-	        return ctx.__scriptFunction__();
+	        return CreateScript(script).Run(context);
 	    }
+	    
+        function CreateScript(script: String) : IExecutableScript
+        {
+ 	        var ctx = new Object();
+	        ctx.__scriptFunction__ = new Function(script);
+	        return new ExecutableScript(ctx);
+        }
+    }
+    
+    internal class ExecutableScript implements IExecutableScript
+    {
+        private var _ctx;
+        
+        // constructor 
+        function ExecutableScript(ctx)
+        {
+            _ctx = ctx;
+        }
+        
+        function Run(context: IDictionary)
+        {
+ 	        for(var entry in context)
+	        {
+	            _ctx[entry.Key] = entry.Value;
+	        }
+	        return _ctx.__scriptFunction__();
+        }
     }
 }

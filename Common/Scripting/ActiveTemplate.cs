@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Scripting
 {
@@ -17,7 +18,7 @@ namespace ClearCanvas.Common.Scripting
     public class ActiveTemplate
     {
         private string _inversion;
-        private ScriptHost _scriptHost;
+        private IExecutableScript _script;
 
         /// <summary>
         /// Constructs a template from the specified content.
@@ -37,13 +38,14 @@ namespace ClearCanvas.Common.Scripting
         {
             try
             {
-                if (_scriptHost == null)
+                if (_script == null)
                 {
-                    _scriptHost = new ScriptHost("jscript");
+                    _script = ScriptEngineFactory.CreateEngine("jscript").CreateScript(_inversion);
                 }
 
                 context["__out__"] = output;
-                _scriptHost.Run(_inversion, context);
+                _script.Run(context);
+
             }
             catch (Exception e)
             {

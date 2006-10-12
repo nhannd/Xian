@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private string _script;
         private string _result;
 
-        private ScriptHost _scriptHost;
+        private IScriptEngine _scriptEngine;
 
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _scriptHost = new ScriptHost("jscript");
+            _scriptEngine = ScriptEngineFactory.CreateEngine("jscript");
 
             base.Start();
         }
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
             
             try
             {
-                object result = _scriptHost.Run(_script, context);
+                object result = _scriptEngine.Run(_script, context);
                 this.Result = result == null ? null : result.ToString();
             }
             catch (Exception e)
