@@ -61,6 +61,20 @@
       <DependentUpon>AEServerGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AEServerGroupEditorComponentView.cs" />
+    <Compile Include="DicomServerEditComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerEditComponentControl.designer.cs">
+      <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerEditComponentView.cs" />
+    <Compile Include="DicomServerGroupEditComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerGroupEditComponentControl.designer.cs">
+      <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -136,6 +150,14 @@
     <EmbeddedResource Include="AEServerGroupEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AEServerGroupEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomServerEditComponentControl.resx">
+      <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomServerGroupEditComponentControl.resx">
+      <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\Add.png" />
     <EmbeddedResource Include="Icons\Delete.png" />

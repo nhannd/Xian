@@ -440,9 +440,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             try
             {
-                foreach (AEServer server in _selectedServerGroup.Servers)
+                foreach (DicomServer server in _selectedServerGroup.Servers)
                 {
-                    StudyItemList serverStudyItemList = _studyFinder.Query(server, queryParams);
+                    StudyItemList serverStudyItemList = _studyFinder.Query(server.DicomAE, queryParams);
                     aggregateStudyItemList.AddRange(serverStudyItemList);
                 }
             }

@@ -26,44 +26,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
         #region Fields
 
-        private DicomServerGroup _dicomServerGroup;
+        private DicomServerTree _dicomServerTree;
         private event EventHandler _selectedServerChanged;
+        private AEServerGroup _selectedServers;
 
         private static String _myServersTitle = "My Servers";
         private static String _myDatastoreTitle = "My Studies";
         private static String _myServersRoot = "MyServersRoot";
+        private static String _myServersXmlFile = "DicomAEServers.xml";
 
-        private AEServerPool _serverPool;
-        private AEServerGroup _selectedServers;
-        private ServerViewRootNode _serverTreeView;
-
-        // to delete
-        private static String _newServerName = "NewServer";
-        private static String _emptyNodeName = "emptynode";
-        private static String _nodeDeleted = "nodeDeleted";
-
-        public DicomServerGroup DicomServerGroup
+        public DicomServerTree DicomServerTree
         {
-            get { return _dicomServerGroup; }
-            set { _dicomServerGroup = value; }
-        }
-
-        public AEServerPool ServerPool
-        {
-            get { return _serverPool; }
-            set { _serverPool = value; }
+            get { return _dicomServerTree; }
+            set { _dicomServerTree = value; }
         }
 
         public AEServerGroup SelectedServers
         {
             get { return _selectedServers; }
             set { _selectedServers = value; }
-        }
-
-        public ServerViewRootNode ServerTreeView
-        {
-            get { return _serverTreeView; }
-            set { _serverTreeView = value; }
         }
 
         public static String MyServersTitle
@@ -79,6 +60,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public static String MyServersRoot
         {
             get { return AENavigatorComponent._myServersRoot; }
+        }
+
+        public static String MyServersXmlFile
+        {
+            get { return AENavigatorComponent._myServersXmlFile; }
+        }
+
+        // to delete
+        private AEServerPool _serverPool;
+        private ServerViewRootNode _serverTreeView;
+
+        private static String _newServerName = "NewServer";
+        private static String _emptyNodeName = "emptynode";
+        private static String _nodeDeleted = "nodeDeleted";
+
+        public AEServerPool ServerPool
+        {
+            get { return _serverPool; }
+            set { _serverPool = value; }
+        }
+
+        public ServerViewRootNode ServerTreeView
+        {
+            get { return _serverTreeView; }
+            set { _serverTreeView = value; }
         }
 
         public static String NewServerName
@@ -98,129 +104,51 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #endregion
 
-		public AENavigatorComponent()
-		{
-			_selectedServers = new AEServerGroup();
-			_serverPool = new AEServerPool();
-			_serverPool.LoadServerSettings();
-			_serverPool.Currentserverid = -1;
-			_serverPool.Currentserver = _serverPool.GetMyDatastoreServer();
-			if (_serverPool.Currentserver != null)
-			{
-				_selectedServers.Servers.Add(_serverPool.Currentserver);
-				_selectedServers.GroupID = _serverPool.Currentserver.getServerGroupID();
-				_selectedServers.Name = _serverPool.Currentserver.Servername;
-				_serverPool.Currentserverid = _serverPool.Currentserver.ServerID;
-			}
-			_serverTreeView = new ServerViewRootNode(_serverPool);
-
-            _dicomServerGroup = DicomServerService.LoadDicomServers();
-
-		}
-
-        public ServerViewServerNode AddServer(IBrowserNode dataNode)
+        public AENavigatorComponent()
         {
-            if (dataNode.IsServerNode || dataNode.ServerID < 0 || dataNode.ServerID >= _serverPool.Serverlist.Count)
+            _selectedServers = new AEServerGroup();
+            _dicomServerTree = new DicomServerTree();
+            if (_dicomServerTree.CurrentServer != null && _dicomServerTree.CurrentServer.IsServer)
+            {
+                _selectedServers.Servers.Add((DicomServer)_dicomServerTree.CurrentServer);
+                _selectedServers.GroupID = _dicomServerTree.CurrentServer.GroupID;
+                _selectedServers.Name = _dicomServerTree.CurrentServer.ServerName;
+            }
+
+        }
+
+        public IDicomServer AddEditServer(IDicomServer dataNode)
+        {
+            if (dataNode == null)
                 return null;
-            _serverPool.Currentserver = null;
-            _serverPool.Currentserverid = dataNode.ServerID;
-            AEServerEditorComponent editor = new AEServerEditorComponent(_serverPool);
+            _dicomServerTree.CurrentServer = dataNode;
+            DicomServerEditComponent editor = new DicomServerEditComponent(_dicomServerTree);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add New Server");
 
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                _serverPool.SaveServerSettings();
-				AEServer server = _serverPool.Serverlist[_serverPool.Currentserverid];
-				SetSelectedServer(server);
-                return (new ServerViewServerNode(_serverPool.Currentserver, _serverPool));
+                SetSelectedServer((DicomServer)_dicomServerTree.CurrentServer);
+                return _dicomServerTree.CurrentServer;
             }
             return null;
         }
 
-        public ServerViewServerNode AddServerGroup(IBrowserNode dataNode)
+        public IDicomServer AddEditServerGroup(IDicomServer dataNode, bool newGroup)
         {
-            if (dataNode.IsServerNode || dataNode.ServerID < 0 || dataNode.ServerID >= _serverPool.Serverlist.Count)
+            if (dataNode.IsServer)
                 return null;
-            _serverPool.Currentserver = null;
-            _serverPool.Currentserverid = dataNode.ServerID;
-            AEServerGroupEditorComponent editor = new AEServerGroupEditorComponent(_serverPool);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add New Server Group");
+            _dicomServerTree.CurrentServer = (DicomServerGroup)dataNode;
+            _dicomServerTree.IsMarked = newGroup;
+            string title = _dicomServerTree.IsMarked ? "Add New Server Group" : "Edit Server Group";
+            DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, title);
 
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                _serverPool.SaveServerSettings();
-                ServerViewServerNode newDataNode = new ServerViewServerNode(_serverPool.Currentserver, _serverPool);
-                SelectChanged(newDataNode);
-                return newDataNode;
+                SelectChanged(_dicomServerTree.CurrentServer);
+                return _dicomServerTree.CurrentServer;
             }
             return null;
-        }
-
-        public ServerViewServerNode EditServer(IBrowserNode dataNode)
-        {
-            if (dataNode.ServerID < 0 || dataNode.ServerID >= _serverPool.Serverlist.Count)
-                return null;
-            if (dataNode.IsServerNode)
-            {
-                _serverPool.SetCurrentServerByID(dataNode.ServerID);
-                AEServerEditorComponent editor = new AEServerEditorComponent(_serverPool);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Edit Server");
-                if (exitCode == ApplicationComponentExitCode.Normal)
-                {
-                    _serverPool.SaveServerSettings();
-
-				    AEServer server = _serverPool.Serverlist[_serverPool.Currentserverid];
-				    SetSelectedServer(server);
-    				
-				    return (new ServerViewServerNode(_serverPool.Currentserver, _serverPool));
-                }
-            }
-            else
-            {
-                _serverPool.SetCurrentServerByID(dataNode.ServerID);
-                AEServerGroupEditorComponent editor = new AEServerGroupEditorComponent(_serverPool);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Edit Server Group");
-                if (exitCode == ApplicationComponentExitCode.Normal)
-                {
-                    _serverPool.SaveServerSettings();
-
-                    ServerViewServerNode newDataNode = new ServerViewServerNode(_serverPool.Currentserver, _serverPool);
-                    SelectChanged(newDataNode);
-                    return newDataNode;
-                }
-            }
-            return null;
-        }
-
-        public bool DeleteServer(IBrowserNode dataNode)
-        {
-            if (!ServerDeleteConfirm(dataNode))
-                return false;
-
-            _serverPool.Currentserverid = _serverPool.Serverlist[dataNode.ServerID].ServerParentID;
-            _serverPool.Currentserver = null;
-            if (dataNode.IsServerNode)
-            {
-                _serverPool.Serverlist[dataNode.ServerID].Servername = NodeDeleted;
-            }
-            else
-            {
-                _selectedServers.Servers = _serverPool.GetChildServers(dataNode.ServerID, false, true);
-                foreach (AEServer ae in _selectedServers.Servers)
-                {
-                    _serverPool.Serverlist[ae.ServerID].Servername = NodeDeleted;
-                    _serverPool.Serverlist[ae.ServerID].ServerParentID = -1;
-                }
-                _serverPool.Serverlist[dataNode.ServerID].Servername = NodeDeleted;
-                _serverPool.Serverlist[dataNode.ServerID].ServerParentID = -1;
-            }
-            _selectedServers.Servers = _serverPool.GetChildServers(_serverPool.Currentserverid, true, true);
-            _selectedServers.GroupID = _serverPool.Serverlist[_serverPool.Currentserverid].getServerGroupID();
-            _selectedServers.Name = _serverPool.Serverlist[_serverPool.Currentserverid].getServerGroupName();
-            _serverPool.Currentserverid = -1;
-            _serverPool.SaveServerSettings();
-            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-            return true;
         }
 
         public void CEchoServer()
@@ -236,14 +164,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             msgText.AppendFormat("C-ECHO Verification:\r\n\r\n");
             using (DicomClient client = new DicomClient(myAE))
             {
-                _selectedServers.Servers.Sort(delegate(AEServer s1, AEServer s2) { return s1.Serverpath.CompareTo(s2.Serverpath); });
-                foreach (AEServer ae in _selectedServers.Servers)
+                foreach (DicomServer ae in _selectedServers.Servers)
                 {
-                    ApplicationEntity me = ae.getApplicationEntity();
-                    if (client.Verify(me))
-                        msgText.AppendFormat("    {0}: successful    \r\n", ae.Serverpath + "/" + ae.Servername);
+                    if (client.Verify(ae.DicomAE))
+                        msgText.AppendFormat("    {0}: successful    \r\n", ae.GroupID);
                     else
-                        msgText.AppendFormat("    {0}: fail    \r\n", ae.Serverpath + "/" + ae.Servername);
+                        msgText.AppendFormat("    {0}: fail    \r\n", ae.GroupID);
                 }
             }
             msgText.AppendFormat("\r\n");
@@ -251,44 +177,60 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return;
         }
 
-        public void SelectChanged(IBrowserNode dataNode)
+        public bool DeleteServer(IDicomServer dataNode)
         {
-            AEServer server = _serverPool.Serverlist[dataNode.ServerID];
-			
-			if (dataNode.IsServerNode)
-            {
-				SetSelectedServer(server);
-			}
-            else
-            {
-				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers = _serverPool.GetChildServers(dataNode.ServerID, true, true);
-				_selectedServers.GroupID = server.getServerGroupID() + "/" + server.getServerGroupName();
-                _selectedServers.Name = server.getServerGroupName();
-				EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-			}
+            if (!ServerDeleteConfirm(dataNode))
+                return false;
 
+            _dicomServerTree.CurrentServer = _dicomServerTree.RemoveDicomServer(dataNode);
+            if (_dicomServerTree.CurrentServer == null)
+                return false;
+            _selectedServers.Servers = _dicomServerTree.FindChildServers(_dicomServerTree.CurrentServer, true);
+            _selectedServers.GroupID = _dicomServerTree.CurrentServer.GroupID;
+            _selectedServers.Name = _dicomServerTree.CurrentServer.ServerName;
+            _dicomServerTree.SaveDicomServers();
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+            return true;
         }
 
-        private void SetSelectedServer(AEServer server)
+        private void SetSelectedServer(DicomServer server)
         {
             _selectedServers = new AEServerGroup();
             _selectedServers.Servers.Add(server);
-            _selectedServers.GroupID = server.getServerGroupID() + "/" + server.Servername;
-            _selectedServers.Name = server.Servername;
+            _selectedServers.GroupID = server.GroupID;
+            _selectedServers.Name = server.ServerName;
+            _dicomServerTree.CurrentServer = server;
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
 
-        private bool ServerDeleteConfirm(IBrowserNode dataNode)
+        private bool ServerDeleteConfirm(IDicomServer dataNode)
         {
             string msg = "";
-            if (dataNode.IsServerNode)
+            if (dataNode.IsServer)
                 msg = "Are you sure you want to delete this server?";
             else
                 msg = "Are you sure you want to delete this server group?";
             if (this.Host.ShowMessageBox(msg, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                 return true;
             return false;
+        }
+
+        public void SelectChanged(IDicomServer dataNode)
+        {
+            if (dataNode.IsServer)
+            {
+                SetSelectedServer((DicomServer)dataNode);
+            }
+            else
+            {
+                _selectedServers = new AEServerGroup();
+                _selectedServers.Servers = _dicomServerTree.FindChildServers((DicomServerGroup)dataNode, true);
+                _selectedServers.GroupID = dataNode.GroupID;
+                _selectedServers.Name = dataNode.ServerName;
+                _dicomServerTree.CurrentServer = dataNode;
+                EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+            }
+
         }
 
         public event EventHandler SelectedServerChanged

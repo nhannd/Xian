@@ -6,28 +6,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	public class AEServerGroup
 	{
-		private List<AEServer> _servers;
-		private string _name;
+        private List<DicomServer> _servers;
+        private string _name;
 		private string _groupID;
 
 		public AEServerGroup()
 		{
+        }
 
-		}
+        public List<DicomServer> Servers
+        {
+            get {
+                if (_servers == null)
+                    _servers = new List<DicomServer>();
+                return _servers; 
+            }
+            set { _servers = value; }
+        }
 
-		public List<AEServer> Servers
-		{
-			get 
-			{
-				if (_servers == null)
-					_servers = new List<AEServer>();
-
-				return _servers; 
-			}
-			set { _servers = value; }
-		}
-
-		public string Name
+        public string Name
 		{
 			get { return _name; }
 			set { _name = value; }
@@ -43,14 +40,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_servers.Count != 1)
+                if (_servers.Count != 1)
 					return false;
 
-				if (_servers[0].Host == "localhost")
+                if (_servers[0].DicomAE.Host == "localhost")
 					return true;
 				else
 					return false;
 			}
 		}
-	}
+        
+    }
 }

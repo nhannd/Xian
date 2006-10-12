@@ -6,119 +6,68 @@ using System.Text;
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     [Serializable]
-    public class DicomServerSettings
+    public class DicomAEServer
     {
-        public DicomServerSettings()
+        public DicomAEServer()
         {
         }
 
-        public DicomServerSettings(String serverName, String serverPath, String serverLocation, String hostName, String aeTitle, int listenPort)
+        public DicomAEServer(String serverName, String serverPath, String serverLocation, String hostName, String aeTitle, int listenPort)
         {
-            _serverName = serverName;
-            _serverPath = serverPath;
-            _serverLocation = serverLocation;
-            _hostName = hostName;
-            _aeTitle = aeTitle;
-            _listenPort = listenPort;
+            Name = serverName;
+            Path = serverPath;
+            Location = serverLocation;
+            Host = hostName;
+            AETitle = aeTitle;
+            Port = listenPort;
         }
 
-        public String ServerName
-        {
-            get { return _serverName; }
-        }
-
-        public String ServerLocation
-        {
-            get { return _serverLocation; }
-        }
-
-        public String HostName
-        {
-            get { return _hostName; }
-        }
-
-        public int ListenPort
-        {
-            get { return _listenPort; }
-        }
-
-        public String AeTitle
-        {
-            get { return _aeTitle; }
-        }
-
-
-        public String ServerPath
-        {
-            get { return _serverPath; }
-        }
-
-        public String _serverName;
-        public String _serverLocation;
-        public String _serverPath;
-        public String _hostName;
-        public String _aeTitle;
-        public int _listenPort;
+        public String Name;
+        public String Location;
+        public String Path;
+        public String Host;
+        public String AETitle;
+        public int Port;
 
     }
 
     [Serializable]
-    public class DicomServerGroupSettings
+    public class DicomAEGroup
     {
-        public DicomServerGroupSettings()
+        public DicomAEGroup()
         {
         }
 
-        public DicomServerGroupSettings(String serverGroupName, String serverGroupPath)
+        public DicomAEGroup(String serverGroupName, String serverGroupPath)
         {
-            _serverGroupName = serverGroupName;
-            _serverGroupPath = serverGroupPath;
-            _childServerGroups = new List<DicomServerGroupSettings>();
-            _childServers = new List<DicomServerSettings>();
+            Name = serverGroupName;
+            Path = serverGroupPath;
+            ChildGroups = new List<DicomAEGroup>();
+            ChildServers = new List<DicomAEServer>();
         }
 
-        public DicomServerGroupSettings(String serverGroupName, String serverGroupPath, List<DicomServerGroupSettings> childServerGroups, List<DicomServerSettings> childServers)
+        public DicomAEGroup(String serverGroupName, String serverGroupPath, List<DicomAEGroup> childServerGroups, List<DicomAEServer> childServers)
         {
-            _serverGroupName = serverGroupName;
-            _serverGroupPath = serverGroupPath;
-            _childServerGroups = new List<DicomServerGroupSettings>();
-            _childServers = new List<DicomServerSettings>();
+            Name = serverGroupName;
+            Path = serverGroupPath;
+            ChildGroups = new List<DicomAEGroup>();
+            ChildServers = new List<DicomAEServer>();
             if (childServerGroups != null && childServerGroups.Count > 0)
             {
-                foreach(DicomServerGroupSettings dsgs in childServerGroups)
-                    _childServerGroups.Add(new DicomServerGroupSettings(dsgs.ServerGroupName, dsgs.ServerGroupPath, dsgs._childServerGroups, dsgs._childServers));
+                foreach(DicomAEGroup dsgs in childServerGroups)
+                    ChildGroups.Add(new DicomAEGroup(dsgs.Name, dsgs.Path, dsgs.ChildGroups, dsgs.ChildServers));
             }
             if (childServers != null && childServers.Count > 0)
             {
-                foreach (DicomServerSettings dss in childServers)
-                    _childServers.Add(new DicomServerSettings(dss.ServerName, dss.ServerPath, dss.ServerLocation, dss.HostName, dss.AeTitle, dss.ListenPort));
+                foreach (DicomAEServer dss in childServers)
+                    ChildServers.Add(new DicomAEServer(dss.Name, dss.Path, dss.Location, dss.Host, dss.AETitle, dss.Port));
             }
         }
 
-        public String ServerGroupName
-        {
-            get { return _serverGroupName; }
-        }
-
-        public String ServerGroupPath
-        {
-            get { return _serverGroupPath; }
-        }
-
-/*        protected List<DicomServerGroupSettings> ChildServerGroups 
-        {
-            get { return _childServerGroups; }
-        }
-
-        protected List<DicomServerSettings> ChildServers
-        {
-            get { return _childServers; }
-        }
-*/
-        public String _serverGroupName;
-        public String _serverGroupPath;
-        public List<DicomServerGroupSettings> _childServerGroups;
-        public List<DicomServerSettings> _childServers;
+        public String Name;
+        public String Path;
+        public List<DicomAEGroup> ChildGroups;
+        public List<DicomAEServer> ChildServers;
 
     }
 }

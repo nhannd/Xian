@@ -19,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         string ServerPath
         {
             get;
+            set;
         }
 
         bool IsServer
@@ -27,6 +28,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         }
 
         string ServerDetails
+        {
+            get;
+        }
+
+        string GroupID
         {
             get;
         }
