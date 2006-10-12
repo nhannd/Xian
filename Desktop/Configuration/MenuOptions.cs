@@ -22,7 +22,6 @@ namespace ClearCanvas.Desktop.Configuration
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
-		ConfigurationPageManager _configurationPageManager;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -69,34 +68,48 @@ namespace ClearCanvas.Desktop.Configuration
 		}
 
 		/// <summary>
-		/// Called by the framework when the user clicks the "apply" menu item or toolbar button.
+		/// Called by the framework when the user clicks the "Options" menu item or toolbar button.
 		/// </summary>
 		public void Show()
 		{
-			if (_configurationPageManager == null)
-			{
-				_configurationPageManager = new ConfigurationPageManager();
-			}
-
 			try
 			{
-				IEnumerable<IConfigurationPage> pages = _configurationPageManager.Pages;
+				ConfigurationPageManager configurationPageManager = new ConfigurationPageManager();
+
+				IEnumerable<IConfigurationPage> pages = configurationPageManager.Pages;
 
 				NavigatorComponentContainer container = new NavigatorComponentContainer();
 
 				foreach (IConfigurationPage configurationPage in pages)
-				{
-					NavigatorPage page = new NavigatorPage(configurationPage.GetPath(), configurationPage.GetComponent());
-					container.Pages.Add(page);
-				}
+					container.Pages.Add(new NavigatorPage(configurationPage.GetPath(), configurationPage.GetComponent()));
 
 				if (container.Pages.Count > 0)
 				{
-					container.CurrentPage = container.Pages[0];
-					ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, container, "Options");
+					try
+					{
+						container.CurrentPage = container.Pages[0];
+						if (ApplicationComponentExitCode.Normal == ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, container, SR.MenuOptions))
+						{
+							foreach (IConfigurationPage configurationPage in pages)
+							{
+								if (configurationPage.GetComponent().Modified)
+									configurationPage.SaveConfiguration();
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
+					finally
+					{
+						container.Stop();
+					}
 				}
 				else
+				{
 					Platform.ShowMessageBox(SR.NoConfigurationPagesExist);
+				}
 			}
 			catch (Exception e)
 			{

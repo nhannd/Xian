@@ -5,6 +5,7 @@ using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using System.Globalization;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.Desktop.Configuration.User;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
@@ -24,7 +25,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (!DateParser.Parse(dicomString, out date))
 				return dicomString;
 
-			return date.ToShortDateString();
+			return date.ToString(DateFormatSettings.DateFormat);
 		}
 	}
 }

@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Desktop.Configuration.Application
+namespace ClearCanvas.Desktop.Configuration.User
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class ApplicationConfigurationPageProvider : IConfigurationPageProvider
+	public class UserConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members
 
 		public IConfigurationPage[] GetPages()
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
-			listPages.Add(new DateFormatApplicationConfigurationPage("DateFormat"));
+
+			listPages.Add(new DateFormatConfigurationPage("DateFormat"));
+		
 			return listPages.ToArray();
 		}
 

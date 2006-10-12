@@ -8,5 +8,6 @@ namespace ClearCanvas.Desktop.Configuration
 	{
 		string GetPath();
 		IApplicationComponent GetComponent();
+		void SaveConfiguration();
 	}
 }

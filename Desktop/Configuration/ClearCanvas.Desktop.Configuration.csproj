@@ -34,10 +34,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\ApplicationConfigurationPageProvider.cs" />
-    <Compile Include="Application\DateFormatApplicationConfigurationPage.cs" />
+    <Compile Include="DateFormatConfiguration.cs" />
+    <Compile Include="User\DateFormatSettings.cs" />
+    <Compile Include="User\UserConfigurationPageProvider.cs" />
+    <Compile Include="User\DateFormatConfigurationPage.cs" />
     <Compile Include="ConfigurationPageManager.cs" />
-    <Compile Include="Application\DateFormatApplicationComponent.cs" />
+    <Compile Include="DateFormatApplicationComponent.cs" />
     <Compile Include="IConfigurationPage.cs" />
     <Compile Include="IConfigurationPageProvider.cs" />
     <Compile Include="MenuOptions.cs" />
