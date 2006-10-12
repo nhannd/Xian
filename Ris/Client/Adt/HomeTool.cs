@@ -58,13 +58,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 };
 
             SplitComponentContainer container = new SplitComponentContainer(
-                new SplitPane("Results", resultComponent),
-                new SplitPane("Preview", previewComponent),
+                new SplitPane("Results", resultComponent, 0.45f),
+                new SplitPane("Preview", previewComponent, 0.55f),
                 SplitOrientation.Vertical);
 
             return new SplitComponentContainer(
-                new SplitPane("Search", foldersComponent),
-                new SplitPane("Results", container),
+                new SplitPane("Search", foldersComponent, 0.15f),
+                new SplitPane("Results", container, 0.85f),
                 SplitOrientation.Vertical);
         }
     }

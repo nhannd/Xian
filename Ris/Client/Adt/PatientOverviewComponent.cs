@@ -39,8 +39,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            this.Pane1 = new SplitPane("Preview", _preview = new PatientPreviewComponent());
-            this.Pane2 = new SplitPane("Detail", _detail = new PatientPreviewComponent());
+            this.Pane1 = new SplitPane("Preview", _preview = new PatientPreviewComponent(), 1);
+            this.Pane2 = new SplitPane("Detail", _detail = new PatientPreviewComponent(), 1);
 
             _preview.Subject = _subject;
 

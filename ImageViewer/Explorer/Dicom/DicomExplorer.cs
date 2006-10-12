@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
 
-			SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator);
-			SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser);
+			SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator, 0.25f);
+			SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser, 0.75f);
 
 			SplitComponentContainer bottomContainer = 
 				new SplitComponentContainer(
@@ -66,8 +66,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				rightPane, 
 				SplitOrientation.Vertical);
 
-			SplitPane topPane = new SplitPane("Search Panel", _searchPanel);
-			SplitPane bottomPane = new SplitPane("Study Navigator", bottomContainer);
+			SplitPane topPane = new SplitPane("Search Panel", _searchPanel, 0.25f);
+			SplitPane bottomPane = new SplitPane("Study Navigator", bottomContainer, 0.75f);
 
 			_splitComponentContainer = 
 				new SplitComponentContainer(
