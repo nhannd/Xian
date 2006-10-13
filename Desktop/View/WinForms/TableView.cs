@@ -259,5 +259,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
+
+        /// <summary>
+        /// Handling this event is necessary to ensure that changes to checkbox cells are propagated
+        /// immediately to the underlying <see cref="ITable"/>.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _dataGridView_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            // if the state of a checkbox cell has changed, commit the edit immediately
+            if (_dataGridView.CurrentCell is DataGridViewCheckBoxCell)
+            {
+                _dataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
 	}
 }

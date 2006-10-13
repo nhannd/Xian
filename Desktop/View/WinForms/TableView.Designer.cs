@@ -76,6 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._dataGridView.Size = new System.Drawing.Size(720, 256);
             this._dataGridView.TabIndex = 0;
             this._dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellDoubleClick);
+            this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
             this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);
             // 
             // _contextMenu
