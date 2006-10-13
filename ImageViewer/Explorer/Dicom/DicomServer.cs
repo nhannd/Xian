@@ -8,20 +8,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     public class DicomServer : DicomServerBase
     {
-        public DicomServer(String servername, String serverpath, String serverlocation, String hostname, String aeTitle, int listenPort)
+        public DicomServer(String serverName, String serverPath, String serverLocation, String hostName, String aeTitle, int listenPort)
         {
-            DicomAE = new ApplicationEntity(new HostName(hostname), new AETitle(aeTitle), new ListeningPort(listenPort));
-            base.ServerName = servername;
-            base.ServerPath = serverpath;
-            ServerLocation = serverlocation;
+            DicomAE = new ApplicationEntity(new HostName(hostName), new AETitle(aeTitle), new ListeningPort(listenPort));
+            base.ServerName = serverName;
+            base.ServerPath = serverPath;
+            ServerLocation = serverLocation;
         }
 
         public override bool IsServer
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public override string ServerDetails

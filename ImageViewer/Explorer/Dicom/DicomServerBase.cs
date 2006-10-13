@@ -6,16 +6,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     public abstract class DicomServerBase : IDicomServer
     {
-        private List<IDicomServer> _childServers;
-        private string _serverName;
-        private string _serverPath;
-
         public void AddChild(IDicomServer child)
         {
             ChildServers.Add(child);
         }
 
         #region DicomServerBase Members
+
+        private List<IDicomServer> _childServers;
+        private string _serverName;
+        private string _serverPath;
 
         public List<IDicomServer> ChildServers
         {

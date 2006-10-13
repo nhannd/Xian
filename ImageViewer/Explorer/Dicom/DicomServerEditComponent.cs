@@ -27,8 +27,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public DicomServerEditComponent(DicomServerTree dicomServerTree)
         {
             _dicomServerTree = dicomServerTree;
-            if (_dicomServerTree.CurrentServer == null)
-                return;
             if (_dicomServerTree.CurrentServer.IsServer)
             {
                 _serverName = _dicomServerTree.CurrentServer.ServerName;
@@ -51,12 +49,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
-            if (_dicomServerTree.CurrentServer == null)
-            {
-                this.ExitCode = ApplicationComponentExitCode.Cancelled;
-                Host.Exit();
-                return;
-            }
             DicomServer ds = new DicomServer(_serverName, _serverPath, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
             // edit current server
             if (_dicomServerTree.CurrentServer.IsServer)

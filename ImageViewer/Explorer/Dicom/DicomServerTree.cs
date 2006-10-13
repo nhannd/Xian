@@ -14,23 +14,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             LoadDicomServers();
         }
 
-        public bool AddDicomServer(DicomServer newDS)
-        {
-            if (newDS == null || !newDS.IsServer)
-                return false;
-            string[] svrPaths = newDS.ServerPath.Split('/');
-            if (svrPaths == null || svrPaths.Length <= 0)
-                return false;
-            DicomServer ds = (DicomServer)FindDicomServer(_myServerGroup, newDS.ServerName, svrPaths, 1);
-            if (ds != null && ds.IsServer)
-                return true;
-            DicomServerGroup dsg = AddDicomServerGroup(_myServerGroup, svrPaths, 1);
-            if (dsg == null)
-                return false;
-            dsg.AddChild(newDS);
-            return true;
-        }
-
         public bool DicomServerNameExists(IDicomServer ids, string serverName, string serverPath, bool exclusive, bool recursive)
         {
             if (ids == null || ids.IsServer || serverName == null || serverPath == null)
@@ -57,30 +40,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     return true;
             }
             return false;
-        }
-
-        public DicomServerGroup AddDicomServerGroup(IDicomServer idsp, string[] svrPaths, int depth)
-        {
-            if (idsp == null || idsp.IsServer || svrPaths == null || depth <= 0 || svrPaths.Length <= depth)
-                return null;
-            DicomServerGroup dsg = (DicomServerGroup)idsp;
-            DicomServerGroup newdsg = null;
-            foreach (IDicomServer ids in dsg.ChildServers)
-            {
-                if (!ids.IsServer && ids.ServerName.Equals(svrPaths[depth]))
-                {
-                    newdsg = (DicomServerGroup)ids;
-                    break;
-                }
-            }
-            if (newdsg == null)
-            {
-                newdsg = new DicomServerGroup(svrPaths[depth], dsg.ServerPath);
-                dsg.ChildServers.Add(newdsg);
-            }
-            if (svrPaths.Length == (depth + 1))
-                return newdsg;
-            return AddDicomServerGroup(newdsg, svrPaths, depth + 1);
         }
 
         public List<DicomServer> FindChildServers(IDicomServer idsp, bool recursive)
@@ -132,18 +91,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             if (oldDS == null || newDS == null)
                 return null;
-            if (oldDS.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle))
-            {
-                for (int i = 0; i < _myServerGroup.ChildServers.Count; i++)
-                {
-                    if (_myServerGroup.ChildServers[i].ServerName.Equals(AENavigatorComponent.MyDatastoreTitle))
-                    {
-                        _myServerGroup.ChildServers.RemoveAt(i);
-                        _myServerGroup.ChildServers.Add(newDS);
-                        return newDS;
-                    }
-                }
-            }
             DicomServer ds = (DicomServer)FindDicomServer(_myServerGroup, oldDS.ServerName, oldDS.ServerPath.Split('/'), 1);
             DicomServerGroup dsg = RemoveDicomServer(ds);
             if (dsg == null)
@@ -188,22 +135,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     isupdated = true;
                 }
             }
-            if(!CheckServerGroupValid(_myServerGroup, true, true))
-                isupdated = true;
 
             if (isupdated)
                 SaveDicomServers();
             _currentServer = FindDicomServer(_myServerGroup, AENavigatorComponent.MyDatastoreTitle, svrPaths, 1);
             return;
-        }
-
-        private bool CheckServerGroupValid(DicomServerGroup dsg, bool toDelete, bool recursive)
-        {
-            if (dsg == null)
-                return false;
-            bool isvalid = true;
-            // to do 
-            return isvalid;
         }
 
         private DicomAEGroup ConvertDicomServers(DicomServerGroup dsg)
@@ -283,6 +219,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             if (ids == null)
                 return null;
+            if (ids.ServerPath.Equals("."))
+            {
+                return _myServerGroup;
+            }
             string svrName = ids.ServerPath.Substring(ids.ServerPath.LastIndexOf('/') + 1);
             string[] svrPaths = ids.ServerPath.Substring(0, ids.ServerPath.LastIndexOf('/')).Split('/');
             IDicomServer dsg = FindDicomServer(_myServerGroup, svrName, svrPaths, 1);

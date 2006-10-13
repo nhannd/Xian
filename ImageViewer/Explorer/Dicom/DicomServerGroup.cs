@@ -36,18 +36,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public override bool IsServer
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public override string ServerDetails
         {
-            get
-            {
-                return base.GroupID;
-            }
+            get { return base.GroupID; }
         }
 
     }

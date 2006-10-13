@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public DicomServerGroupEditComponent(DicomServerTree dicomServerTree)
         {
             _dicomServerTree = dicomServerTree;
-            if (!_dicomServerTree.IsMarked && _dicomServerTree.CurrentServer != null)
+            if (!_dicomServerTree.IsMarked)
             {
                 _serverGroupName = _dicomServerTree.CurrentServer.ServerName;
             }
@@ -40,11 +40,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
-            if (_dicomServerTree.CurrentServer == null || _dicomServerTree.CurrentServer.IsServer)
-            {
-                this.ExitCode = ApplicationComponentExitCode.Cancelled;
-                Host.Exit();
-            }
             // edit current server group
             if (!_dicomServerTree.IsMarked)
             {

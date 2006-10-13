@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public IDicomServer AddEditServerGroup(IDicomServer dataNode, bool newGroup)
         {
-            if (dataNode.IsServer)
+            if (dataNode == null || dataNode.IsServer)
                 return null;
             _dicomServerTree.CurrentServer = (DicomServerGroup)dataNode;
             _dicomServerTree.IsMarked = newGroup;
