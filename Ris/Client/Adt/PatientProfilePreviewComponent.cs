@@ -39,12 +39,12 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PatientPreviewComponent class
     /// </summary>
     [AssociateView(typeof(PatientPreviewComponentViewExtensionPoint))]
-    public class PatientPreviewComponent : ApplicationComponent
+    public class PatientProfilePreviewComponent : ApplicationComponent
     {
         class PatientPreviewToolContext : ToolContext, IPatientPreviewToolContext
         {
-            private PatientPreviewComponent _component;
-            public PatientPreviewToolContext(PatientPreviewComponent component)
+            private PatientProfilePreviewComponent _component;
+            public PatientPreviewToolContext(PatientProfilePreviewComponent component)
             {
                 _component = component;
             }
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientPreviewComponent()
+        public PatientProfilePreviewComponent()
             :this(true)
         {
         }
@@ -79,15 +79,35 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientPreviewComponent(bool showHeader)
+        public PatientProfilePreviewComponent(bool showHeader)
+        {
+            _showHeader = showHeader;
+        }
+
+        public PatientProfile Subject
+        {
+            get { return _subject; }
+            set
+            {
+                if (_subject != value)
+                {
+                    _subject = value;
+                    if (this.IsStarted)
+                    {
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public override void Start()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
+
             _addressTypes = _adtService.GetAddressTypeEnumTable();
             _phoneEquipments = _adtService.GetTelephoneEquipmentEnumTable();
             _phoneUses = _adtService.GetTelephoneUseEnumTable();
             _sexChoices = _adtService.GetSexEnumTable();
-
-            _showHeader = showHeader;
 
             _addresses = new Table<Address>();
             _addresses.Columns.Add(new TableColumn<Address, string>("Type",
@@ -114,35 +134,10 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(TelephoneNumber t) { return ""; }, 1.0f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until",
                 delegate(TelephoneNumber t) { return ""; }, 1.0f));
-        }
 
-        public PatientProfile Subject
-        {
-            get { return _subject; }
-            set
-            {
-                if (_subject != value)
-                {
-                    _addresses.Items.Clear();
-                    _phoneNumbers.Items.Clear();
-
-                    _subject = value;
-                    if (_subject != null)
-                    {
-                        _adtService.LoadPatientProfileDetails(_subject);
-
-                        _addresses.Items.AddRange(_subject.Addresses);
-                        _phoneNumbers.Items.AddRange(_subject.TelephoneNumbers);
-                    }
-
-                    NotifyAllPropertiesChanged();
-                }
-            }
-        }
-
-        public override void Start()
-        {
             _toolSet = new ToolSet(new PatientPreviewToolExtensionPoint(), new PatientPreviewToolContext(this));
+
+            UpdateDisplay();
             
             base.Start();
         }
@@ -152,6 +147,22 @@ namespace ClearCanvas.Ris.Client.Adt
             _toolSet.Dispose();
 
             base.Stop();
+        }
+
+        private void UpdateDisplay()
+        {
+            _addresses.Items.Clear();
+            _phoneNumbers.Items.Clear();
+
+            if (_subject != null)
+            {
+                _adtService.LoadPatientProfileDetails(_subject);
+
+                _addresses.Items.AddRange(_subject.Addresses);
+                _phoneNumbers.Items.AddRange(_subject.TelephoneNumbers);
+            }
+
+            NotifyAllPropertiesChanged();
         }
 
         #region Presentation Model

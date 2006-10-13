@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(ReconciliationCandidateTableEntry item, bool value) { item.Checked = value; }, 0.5f));
             this.Columns.Add(
                 new TableColumn<ReconciliationCandidateTableEntry, string>("Score",
-                    delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.Score.ToString(); }, 0.5f));
+                    delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.Score.ToString(); }, 1.0f));
             this.Columns.Add(
                 new TableColumn<ReconciliationCandidateTableEntry, string>("Site",
                     delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.PatientProfile.MRN.AssigningAuthority; }, 0.5f));

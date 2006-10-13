@@ -38,28 +38,32 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _sourceTable
             // 
-            this._sourceTable.Table = null;
             this._sourceTable.Location = new System.Drawing.Point(17, 44);
             this._sourceTable.Margin = new System.Windows.Forms.Padding(4);
             this._sourceTable.MenuModel = null;
+            this._sourceTable.MultiSelect = false;
             this._sourceTable.Name = "_sourceTable";
-            this._sourceTable.ReadOnly = true;
+            this._sourceTable.ReadOnly = false;
+            this._sourceTable.ShowToolbar = false;
             this._sourceTable.Size = new System.Drawing.Size(720, 209);
             this._sourceTable.TabIndex = 0;
+            this._sourceTable.Table = null;
             this._sourceTable.ToolbarModel = null;
             this._sourceTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._sourceTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _targetTable
             // 
-            this._targetTable.Table = null;
             this._targetTable.Location = new System.Drawing.Point(17, 299);
             this._targetTable.Margin = new System.Windows.Forms.Padding(4);
             this._targetTable.MenuModel = null;
+            this._targetTable.MultiSelect = false;
             this._targetTable.Name = "_targetTable";
-            this._targetTable.ReadOnly = true;
+            this._targetTable.ReadOnly = false;
+            this._targetTable.ShowToolbar = false;
             this._targetTable.Size = new System.Drawing.Size(720, 214);
             this._targetTable.TabIndex = 1;
+            this._targetTable.Table = null;
             this._targetTable.ToolbarModel = null;
             this._targetTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._targetTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;

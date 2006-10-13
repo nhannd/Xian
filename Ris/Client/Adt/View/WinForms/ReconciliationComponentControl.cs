@@ -13,21 +13,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="PatientReconciliationComponent"/>
     /// </summary>
-    public partial class PatientReconciliationComponentControl : CustomUserControl
+    public partial class ReconciliationComponentControl : CustomUserControl
     {
-        private PatientReconciliationComponent _component;
+        private ReconciliationComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientReconciliationComponentControl(PatientReconciliationComponent component)
+        public ReconciliationComponentControl(ReconciliationComponent component)
         {
             InitializeComponent();
 
             _component = component;
 
-            _targetTableView.Table = _component.TargetProfiles;
-            _reconciliationTableView.Table = _component.ReconciliationProfiles;
+            _targetTableView.Table = _component.TargetProfileTable;
+            _reconciliationTableView.Table = _component.ReconciliationProfileTable;
 
             Control targetPreview = (Control)_component.TargetPreviewComponentView.GuiElement;
             targetPreview.Dock = DockStyle.Fill;
@@ -36,6 +36,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             Control recPreview = (Control)_component.ReconciliationPreviewComponentView.GuiElement;
             recPreview.Dock = DockStyle.Fill;
             _rightPreviewPanel.Controls.Add(recPreview);
+
+            _reconcileButton.DataBindings.Add("Enabled", _component, "ReconcileEnabled");
         }
 
         private void _reconcileButton_Click(object sender, EventArgs e)

@@ -13,14 +13,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="PatientPreviewComponent"/>
     /// </summary>
-    public partial class PatientPreviewComponentControl : CustomUserControl
+    public partial class PatientProfilePreviewComponentControl : CustomUserControl
     {
-        private PatientPreviewComponent _component;
+        private PatientProfilePreviewComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientPreviewComponentControl(PatientPreviewComponent component)
+        public PatientProfilePreviewComponentControl(PatientProfilePreviewComponent component)
         {
             InitializeComponent();
 

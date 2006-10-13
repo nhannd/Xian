@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -9,6 +10,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private PatientProfileMatch _profileMatch;
         private bool _checked;
+        private event EventHandler _checkedChanged;
 
         public ReconciliationCandidateTableEntry(PatientProfileMatch match)
         {
@@ -24,7 +26,20 @@ namespace ClearCanvas.Ris.Client.Adt
         public bool Checked
         {
             get { return _checked; }
-            set { _checked = value; }
+            set
+            {
+                if (_checked != value)
+                {
+                    _checked = value;
+                    EventsHelper.Fire(_checkedChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler CheckedChanged
+        {
+            add { _checkedChanged += value; }
+            remove { _checkedChanged -= value; }
         }
     }
 }

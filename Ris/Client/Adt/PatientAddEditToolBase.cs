@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         protected IWorkspace OpenPatient(string title, PatientProfile patient)
         {
-            PatientEditorShellComponent editor = new PatientEditorShellComponent(patient);
+            PatientEditorShellComponent editor = new PatientEditorShellComponent(patient, true);
             return ApplicationComponent.LaunchAsWorkspace(
                 this.DesktopWindow, editor, title, PatientEditorExited);
         }

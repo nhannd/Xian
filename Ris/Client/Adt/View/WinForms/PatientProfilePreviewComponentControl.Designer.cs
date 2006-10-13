@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    partial class PatientPreviewComponentControl
+    partial class PatientProfilePreviewComponentControl
     {
         /// <summary> 
         /// Required designer variable.

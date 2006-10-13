@@ -12,9 +12,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// Provides a Windows Forms view onto <see cref="PatientPreviewComponent"/>
     /// </summary>
     [ExtensionOf(typeof(PatientPreviewComponentViewExtensionPoint))]
-    public class PatientPreviewComponentView : HtmlComponentView
+    public class PatientProfilePreviewComponentView : HtmlComponentView
     {
-        public PatientPreviewComponentView()
+        public PatientProfilePreviewComponentView()
             :base("PatientPreview.html")
         {
 
@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         protected override ClearCanvas.Desktop.Actions.ActionModelNode GetEmbeddedActionModel()
         {
-            return ((PatientPreviewComponent)this.Component).MenuModel;
+            return ((PatientProfilePreviewComponent)this.Component).MenuModel;
         }
     }
 }

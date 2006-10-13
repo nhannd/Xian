@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             WorklistComponent resultComponent = new WorklistComponent();
             FoldersComponent foldersComponent = new FoldersComponent(resultComponent);
-            PatientPreviewComponent previewComponent = new PatientPreviewComponent();
+            PatientProfilePreviewComponent previewComponent = new PatientProfilePreviewComponent();
 
             resultComponent.SelectedPatientChanged +=
                 delegate(object sender, EventArgs e)

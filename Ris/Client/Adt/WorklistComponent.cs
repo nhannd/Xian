@@ -22,7 +22,10 @@ namespace ClearCanvas.Ris.Client.Adt
     public interface IWorklistToolContext : IToolContext
     {
         IDesktopWindow DesktopWindow { get; }
+        ClickHandlerDelegate DefaultAction { get; set; }
+
         PatientProfile SelectedPatientProfile { get; }
+        event EventHandler SelectedPatientProfileChanged;
     }
 
 
@@ -56,10 +59,23 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _component.Host.DesktopWindow; }
             }
 
+            public ClickHandlerDelegate DefaultAction
+            {
+                get { return _component._defaultAction; }
+                set { _component._defaultAction = value; }
+            }
+
             public PatientProfile SelectedPatientProfile
             {
                 get { return _component._selectedPatient; }
             }
+
+            public event EventHandler SelectedPatientProfileChanged
+            {
+                add { _component.SelectedPatientChanged += value; }
+                remove { _component.SelectedPatientChanged += value; }
+            }
+
 
             #endregion
         }
@@ -71,7 +87,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _selectedPatientChanged;
 
         private IAdtService _adtService;
-        private ToolSet _toolSet; 
+        private ToolSet _toolSet;
+        private ClickHandlerDelegate _defaultAction;
 
         /// <summary>
         /// Constructor
@@ -83,6 +100,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
+            _adtService.PatientProfileChanged += PatientProfileChangedEventHandler;
             _searchResults = new PatientProfileTable();
 
             _toolSet = new ToolSet(new WorklistToolExtensionPoint(), new WorklistToolContext(this));
@@ -93,6 +111,9 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Stop()
         {
             _toolSet.Dispose();
+
+            // important to unsubscribe from service
+            _adtService.PatientProfileChanged -= PatientProfileChangedEventHandler;
 
             base.Stop();
         }
@@ -138,13 +159,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void DoubleClickItem()
         {
-            if (_selectedPatient != null)
+            if (_selectedPatient != null && _defaultAction != null)
             {
-                ApplicationComponent.LaunchAsWorkspace(
-                    this.Host.DesktopWindow,
-                    new PatientOverviewComponent(_selectedPatient),
-                    string.Format("{0} - {1}", _selectedPatient.Name.Format(), _selectedPatient.MRN.Id),
-                    null);
+                _defaultAction();
             }
         }
 
@@ -159,5 +176,36 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
+        private void PatientProfileChangedEventHandler(object sender, EntityChangeEventArgs e)
+        {
+            long oid = e.Change.EntityOID;
+
+            // check if the patient with this oid is in the list
+            int index = _searchResults.Items.FindIndex(delegate(PatientProfile p) { return p.OID == oid; });
+            if (index > -1)
+            {
+                if (e.Change.ChangeType == EntityChangeType.Update)
+                {
+                    // the profile was updated, so we need to update the list to reflect any changes
+
+                    // first need to check whether this item has the current selection
+                    bool wasSelected = (_selectedPatient == _searchResults.Items[index]);
+
+                    // update the profile in the list
+                    PatientProfile p = _adtService.LoadPatientProfile(oid, false);
+                    _searchResults.Items[index] = p;
+
+                    // reset the selected patient
+                    if (wasSelected)
+                    {
+                        this.SelectedPatient = p;
+                    }
+                }
+                else if (e.Change.ChangeType == EntityChangeType.Delete)
+                {
+                    _searchResults.Items.RemoveAt(index);
+                }
+            }
+        }
     }
 }

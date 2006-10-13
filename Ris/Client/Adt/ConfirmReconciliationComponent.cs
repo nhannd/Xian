@@ -44,6 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _targetProfiles = new PatientProfileTable();
+            service.LoadPatientProfiles(target);
             _targetProfiles.Items.AddRange(target.Profiles);
         }
 

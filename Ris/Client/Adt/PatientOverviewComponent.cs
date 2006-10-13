@@ -22,8 +22,8 @@ namespace ClearCanvas.Ris.Client.Adt
 //    [AssociateView(typeof(PatientComponentViewExtensionPoint))]
     public class PatientOverviewComponent : SplitComponentContainer
     {
-        private PatientPreviewComponent _preview;
-        private PatientPreviewComponent _detail;
+        private PatientProfilePreviewComponent _preview;
+        private PatientProfilePreviewComponent _detail;
  
         private PatientProfile _subject;
 
@@ -37,10 +37,15 @@ namespace ClearCanvas.Ris.Client.Adt
             _subject = subject;
         }
 
+        public PatientProfile Subject
+        {
+            get { return _subject; }
+        }
+
         public override void Start()
         {
-            this.Pane1 = new SplitPane("Preview", _preview = new PatientPreviewComponent(), 1);
-            this.Pane2 = new SplitPane("Detail", _detail = new PatientPreviewComponent(), 1);
+            this.Pane1 = new SplitPane("Preview", _preview = new PatientProfilePreviewComponent(), 1);
+            this.Pane2 = new SplitPane("Detail", _detail = new PatientProfilePreviewComponent(), 1);
 
             _preview.Subject = _subject;
 

@@ -23,35 +23,57 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PatientReconciliationComponent class
     /// </summary>
     [AssociateView(typeof(PatientReconciliationComponentViewExtensionPoint))]
-    public class PatientReconciliationComponent : ApplicationComponent
+    public class ReconciliationComponent : ApplicationComponent
     {
-        private PatientPreviewComponent _targetPreviewComponent;
+        class PreviewHost : ApplicationComponentHost
+        {
+            private ReconciliationComponent _owner;
+
+            public PreviewHost(ReconciliationComponent owner, PatientProfilePreviewComponent preview)
+                :base(preview)
+	        {
+                _owner = owner;
+	        }
+
+            public override IDesktopWindow DesktopWindow
+            {
+                get { return _owner.Host.DesktopWindow; }
+            }
+        }
+
+        private PatientProfilePreviewComponent _targetPreviewComponent;
         private ApplicationComponentHost _targetPreviewHost;
 
-        private PatientPreviewComponent _reconciliationPreviewComponent;
+        private PatientProfilePreviewComponent _reconciliationPreviewComponent;
         private ApplicationComponentHost _reconciliationPreviewHost;
 
         private PatientProfile _selectedTargetProfile;
         private PatientProfile _selectedReconciliationProfile;
 
-        private PatientProfileTable _targetProfiles;
-        private ReconciliationCandidateTable _reconciliationProfiles;
+        private PatientProfileTable _targetProfileTable;
+        private ReconciliationCandidateTable _reconciliationProfileTable;
+
+        private IList<PatientProfileMatch> _matches;
 
         private IAdtService _adtService;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientReconciliationComponent(PatientProfile targetProfile)
+        public ReconciliationComponent(PatientProfile targetProfile, IList<PatientProfileMatch> matches)
         {
             _selectedTargetProfile = targetProfile;
+            _matches = matches;
         }
 
         public override void Start()
         {
             // create the preview components
-            _targetPreviewHost = new ApplicationComponentHost(_targetPreviewComponent = new PatientPreviewComponent(false), this.Host.DesktopWindow);
-            _reconciliationPreviewHost = new ApplicationComponentHost(_reconciliationPreviewComponent = new PatientPreviewComponent(false), this.Host.DesktopWindow);
+            _targetPreviewHost = new PreviewHost(this, _targetPreviewComponent = new PatientProfilePreviewComponent(false));
+            _targetPreviewHost.StartComponent();
+
+            _reconciliationPreviewHost = new PreviewHost(this, _reconciliationPreviewComponent = new PatientProfilePreviewComponent(false));
+            _reconciliationPreviewHost.StartComponent();
 
             // get the ADT service
             _adtService = ApplicationContext.GetService<IAdtService>();
@@ -60,22 +82,22 @@ namespace ClearCanvas.Ris.Client.Adt
             _adtService.LoadPatientProfiles(_selectedTargetProfile.Patient);
 
             // add all target profiles - ensure the initially selected one is at the top of the list
-            _targetProfiles = new PatientProfileTable();
-            _targetProfiles.Items.Add(_selectedTargetProfile);
+            _targetProfileTable = new PatientProfileTable();
+            _targetProfileTable.Items.Add(_selectedTargetProfile);
             foreach (PatientProfile alternateProfile in _selectedTargetProfile.Patient.Profiles)
             {
                 if (!alternateProfile.MRN.Equals(_selectedTargetProfile.MRN))
                 {
-                    _targetProfiles.Items.Add(alternateProfile);
+                    _targetProfileTable.Items.Add(alternateProfile);
                 }
             }
 
-            IList<PatientProfileMatch> matches = _adtService.FindPatientReconciliationMatches(_selectedTargetProfile);
-            _reconciliationProfiles = new ReconciliationCandidateTable();
-
-            foreach (PatientProfileMatch match in matches)
+            _reconciliationProfileTable = new ReconciliationCandidateTable();
+            foreach (PatientProfileMatch match in _matches)
             {
-                _reconciliationProfiles.Items.Add(new ReconciliationCandidateTableEntry(match));
+                ReconciliationCandidateTableEntry entry = new ReconciliationCandidateTableEntry(match);
+                entry.CheckedChanged += new EventHandler(CandidateCheckedChangedEventHandler);
+                _reconciliationProfileTable.Items.Add(entry);
             }
 
             base.Start();
@@ -83,6 +105,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Stop()
         {
+            _targetPreviewHost.StopComponent();
+            _reconciliationPreviewHost.StopComponent();
             base.Stop();
         }
 
@@ -98,14 +122,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        public ITable TargetProfiles
+        public ITable TargetProfileTable
         {
-            get { return _targetProfiles; }
+            get { return _targetProfileTable; }
         }
 
-        public ITable ReconciliationProfiles
+        public ITable ReconciliationProfileTable
         {
-            get { return _reconciliationProfiles; }
+            get { return _reconciliationProfileTable; }
         }
 
         public void SetSelectedTargetProfile(ISelection selection)
@@ -129,10 +153,15 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public bool ReconcileEnabled
+        {
+            get { return AnyCandidatesChecked(); }
+        }
+
         public void Reconcile()
         {
             IList<Patient> checkedPatients = new List<Patient>();
-            foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfiles.Items)
+            foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
                 if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.Patient))
                 {
@@ -147,10 +176,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-
                 try
                 {
-                    _adtService.ReconcilePatient(_selectedTargetProfile.Patient, checkedPatients);
+                    _adtService.ReconcilePatients(_selectedTargetProfile.Patient, checkedPatients);
                 }
                 catch (PatientReconciliationException e)
                 {
@@ -170,7 +198,33 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Host.Exit();
         }
 
-
         #endregion
+
+        private void CandidateCheckedChangedEventHandler(object sender, EventArgs e)
+        {
+            ReconciliationCandidateTableEntry changedEntry = (ReconciliationCandidateTableEntry)sender;
+
+            foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
+            {
+                if (entry != changedEntry && entry.ProfileMatch.PatientProfile.Patient.Equals(changedEntry.ProfileMatch.PatientProfile.Patient))
+                {
+                    entry.Checked = changedEntry.Checked;
+                    _reconciliationProfileTable.Items.NotifyItemUpdated(entry);
+                }
+            }
+
+            NotifyPropertyChanged("ReconcileEnabled");
+        }
+
+        private bool AnyCandidatesChecked()
+        {
+            foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
+            {
+                if (entry.Checked)
+                    return true;
+            }
+            return false;
+        }
+
     }
 }

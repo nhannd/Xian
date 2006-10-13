@@ -40,35 +40,41 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._phoneNumbers, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(149, 114);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(199, 140);
             this.tableLayoutPanel1.TabIndex = 6;
             // 
             // _phoneNumbers
             // 
-            this._phoneNumbers.Table = null;
             this._phoneNumbers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._phoneNumbers.Location = new System.Drawing.Point(3, 3);
+            this._phoneNumbers.Location = new System.Drawing.Point(5, 5);
+            this._phoneNumbers.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this._phoneNumbers.MenuModel = null;
+            this._phoneNumbers.MultiSelect = false;
             this._phoneNumbers.Name = "_phoneNumbers";
-            this._phoneNumbers.Size = new System.Drawing.Size(143, 108);
+            this._phoneNumbers.ReadOnly = false;
+            this._phoneNumbers.Size = new System.Drawing.Size(189, 130);
             this._phoneNumbers.TabIndex = 1;
+            this._phoneNumbers.Table = null;
             this._phoneNumbers.ToolbarModel = null;
+            this._phoneNumbers.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._phoneNumbers.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._phoneNumbers.ItemDoubleClicked += new System.EventHandler(this._phoneNumbers_ItemDoubleClicked);
             this._phoneNumbers.SelectionChanged += new System.EventHandler(this._phoneNumbers_SelectionChanged);
             // 
             // PhoneNumbersSummaryControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "PhoneNumbersSummaryControl";
-            this.Size = new System.Drawing.Size(149, 114);
+            this.Size = new System.Drawing.Size(199, 140);
             this.Load += new System.EventHandler(this.PhoneNumbersSummaryControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);

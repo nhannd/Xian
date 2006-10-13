@@ -12,17 +12,17 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// Provides a Windows Forms view onto <see cref="PatientReconciliationComponent"/>
     /// </summary>
     [ExtensionOf(typeof(PatientReconciliationComponentViewExtensionPoint))]
-    public class PatientReconciliationComponentView : WinFormsView, IApplicationComponentView
+    public class ReconciliationComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientReconciliationComponent _component;
-        private PatientReconciliationComponentControl _control;
+        private ReconciliationComponent _component;
+        private ReconciliationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientReconciliationComponent)component;
+            _component = (ReconciliationComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PatientReconciliationComponentControl(_component);
+                    _control = new ReconciliationComponentControl(_component);
                 }
                 return _control;
             }

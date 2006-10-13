@@ -96,20 +96,20 @@
     <Compile Include="PatientEditorControl.Designer.cs">
       <DependentUpon>PatientEditorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientPreviewComponentControl.cs">
+    <Compile Include="PatientProfilePreviewComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientPreviewComponentControl.Designer.cs">
-      <DependentUpon>PatientPreviewComponentControl.cs</DependentUpon>
+    <Compile Include="PatientProfilePreviewComponentControl.Designer.cs">
+      <DependentUpon>PatientProfilePreviewComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientPreviewComponentView.cs" />
-    <Compile Include="PatientReconciliationComponentControl.cs">
+    <Compile Include="PatientProfilePreviewComponentView.cs" />
+    <Compile Include="ReconciliationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientReconciliationComponentControl.Designer.cs">
-      <DependentUpon>PatientReconciliationComponentControl.cs</DependentUpon>
+    <Compile Include="ReconciliationComponentControl.Designer.cs">
+      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientReconciliationComponentView.cs" />
+    <Compile Include="ReconciliationComponentView.cs" />
     <Compile Include="PatientSearchComponentView.cs" />
     <Compile Include="PatientSearchComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -193,13 +193,13 @@
       <DependentUpon>PatientEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientPreviewComponentControl.resx">
+    <EmbeddedResource Include="PatientProfilePreviewComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientPreviewComponentControl.cs</DependentUpon>
+      <DependentUpon>PatientProfilePreviewComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientReconciliationComponentControl.resx">
+    <EmbeddedResource Include="ReconciliationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientReconciliationComponentControl.cs</DependentUpon>
+      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientSearchComponentControl.resx">
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>

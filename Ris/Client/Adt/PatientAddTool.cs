@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("apply", "Apply")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PatientAddTool : PatientAddEditToolBase
+    public class PatientAddTool : Tool<IDesktopToolContext>
     {
         /// <summary>
         /// Default constructor.  A no-args constructor is required by the
@@ -30,35 +30,24 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         /// <summary>
-        /// Called by the framework to initialize this tool.
-        /// </summary>
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            // TODO: add any significant initialization code here rather than in the constructor
-        }
-
-        /// <summary>
         /// Called by the framework when the user clicks the "apply" menu item or toolbar button.
         /// </summary>
         public void Apply()
         {
-            OpenPatient("New Patient", PatientProfile.New());
+            PatientEditorShellComponent editor = new PatientEditorShellComponent(PatientProfile.New(), true);
+            ApplicationComponent.LaunchAsWorkspace(
+                this.Context.DesktopWindow, editor, "New Patient", PatientEditorExited);
         }
 
-        protected override IDesktopWindow DesktopWindow
+        private void PatientEditorExited(IApplicationComponent component)
         {
-            get { return ((IDesktopToolContext)this.ContextBase).DesktopWindow; }
-        }
-
-        protected override void EditorClosed(PatientProfile patientProfile, ApplicationComponentExitCode exitCode)
-        {
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            PatientEditorShellComponent editor = (PatientEditorShellComponent)component;
+            if (editor.ExitCode == ApplicationComponentExitCode.Normal)
             {
                 IAdtService service = ApplicationContext.GetService<IAdtService>();
-                service.CreatePatient(patientProfile.Patient);
+                service.CreatePatientForProfile(editor.Subject);
             }
         }
+
     }
 }

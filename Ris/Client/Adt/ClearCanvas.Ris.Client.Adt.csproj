@@ -52,12 +52,14 @@
     <Compile Include="PatientAddEditToolBase.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientEditorShellComponent.cs" />
+    <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientOverviewComponent.cs" />
     <Compile Include="PatientEditorComponent.cs" />
-    <Compile Include="PatientPreviewComponent.cs" />
+    <Compile Include="PatientOverviewTool.cs" />
+    <Compile Include="PatientProfilePreviewComponent.cs" />
     <Compile Include="PatientProfileTable.cs" />
-    <Compile Include="PatientReconciliationComponent.cs" />
-    <Compile Include="PatientReconciliationTool.cs" />
+    <Compile Include="ReconciliationComponent.cs" />
+    <Compile Include="ReconciliationTool.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
