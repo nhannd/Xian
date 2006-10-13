@@ -19,11 +19,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component = component;
 
             _queue.Table = _component.Queue;
-        }
 
-        private void _refresh_Click(object sender, EventArgs e)
-        {
-            _component.RefreshItems();
+            _message.DataBindings.Add("Text", _component, "Message", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _queue_SelectionChanged(object sender, EventArgs e)
@@ -34,6 +31,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void _process_Click(object sender, EventArgs e)
         {
             _component.ProcessSelection();
+        }
+
+        private void _showAll_Click(object sender, EventArgs e)
+        {
+            _component.ShowAllItems();
+        }
+
+        private void _showPending_Click(object sender, EventArgs e)
+        {
+            _component.ShowNextPendingBatchItems();
+        }
+
+        private void _resync_Click(object sender, EventArgs e)
+        {
+            _component.SyncQueues();
         }
     }
 }

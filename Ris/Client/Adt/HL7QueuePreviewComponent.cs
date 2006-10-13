@@ -13,6 +13,7 @@ using ClearCanvas.HL7;
 
 using Iesi.Collections;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -25,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(HL7QueuePreviewComponentViewExtensionPoint))]
     public class HL7QueuePreviewComponent : ApplicationComponent
     {
-        HL7QueueItem _selectedItem;
+        private HL7QueueItem _selectedItem;
 
         private HL7QueueItemTableData _queue;
         private IHL7QueueService _hl7QueueService;
@@ -37,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _hl7QueueService = ApplicationContext.GetService<IHL7QueueService>();
             _queue = new HL7QueueItemTableData(_hl7QueueService);
 
-            RefreshItems();
+            ShowAllItems();
         }
 
         public HL7QueueItemTableData Queue
@@ -46,24 +47,43 @@ namespace ClearCanvas.Ris.Client.Adt
             //set { _queue = value; }
         }
 
-        public void RefreshItems()
+        public string Message
         {
-            IList<HL7QueueItem> items = _hl7QueueService.GetAllItems();
+            get { return _selectedItem.Message.Text; }
+        }
+
+        public void ShowAllItems()
+        {
+            IList<HL7QueueItem> items = _hl7QueueService.GetAllHL7QueueItems();
 
             _queue.Items.Clear();
             _queue.Items.AddRange(items);
         }
 
+        public void ShowNextPendingBatchItems()
+        {
+            IList<HL7QueueItem> items = _hl7QueueService.GetNextInboundHL7QueueItemBatch();
+
+            _queue.Items.Clear();
+            _queue.Items.AddRange(items);
+        }
+
+        public void SyncQueues()
+        {
+            _hl7QueueService.SyncExternalQueue();
+        }
+
         public void ProcessSelection()
         {
-            _hl7QueueService.UpdateItemStatus(_selectedItem, HL7MessageStatusCode.C);
+            _hl7QueueService.ProcessHL7QueueItem(_selectedItem);
 
-            RefreshItems();
+            ShowAllItems();
         }
 
         public void SetSelectedItem(ISelection selection)
         {
             _selectedItem = selection.Item as HL7QueueItem;
+            NotifyPropertyChanged("Message");
         }
     }
 }

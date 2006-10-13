@@ -65,7 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <summary>
         /// Provides access the NHibernate Session object.
         /// </summary>
-        internal NHibernate.ISession Session
+        public NHibernate.ISession Session
         {
             get { return _session; }
         }
