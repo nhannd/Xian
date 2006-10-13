@@ -62,6 +62,12 @@ namespace ClearCanvas.Desktop
         void Stop();
 
         /// <summary>
+        /// Returns true if the component is live.  A component is considered "live" after the Start()
+        /// method has been called, and before the Stop() method is called.
+        /// </summary>
+        bool IsStarted { get; }
+
+        /// <summary>
         /// Allows the host to determine whether this component holds modified
         /// data that may need to be saved.
         /// </summary>

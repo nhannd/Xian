@@ -67,6 +67,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _dataGridView.ReadOnly = value; }
         }
 
+        public bool MultiSelect
+        {
+            get { return _dataGridView.MultiSelect; }
+            set { _dataGridView.MultiSelect = value; }
+        }
+
         public ActionModelNode ToolbarModel
         {
             get { return _toolbarModel;  }

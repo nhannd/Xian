@@ -90,6 +90,7 @@ namespace ClearCanvas.Desktop
         private IApplicationComponentHost _host;
         private ApplicationComponentExitCode _exitCode;
 
+        private bool _started;
         private bool _modified;
         private event EventHandler _modifiedChanged;
 
@@ -223,17 +224,26 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.Start"/>
+        /// Default implementation of <see cref="IApplicationComponent.Start"/>. Overrides should
+        /// be sure to call the base implementation.
         /// </summary>
         public virtual void Start()
         {
+            _started = true;
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.Stop"/>
+        /// Default implementation of <see cref="IApplicationComponent.Stop"/>.  Overrides should
+        /// be sure to call the base implementation.
         /// </summary>
         public virtual void Stop()
         {
+            _started = false;
+        }
+
+        public bool IsStarted
+        {
+            get { return _started; }
         }
 
         /// <summary>

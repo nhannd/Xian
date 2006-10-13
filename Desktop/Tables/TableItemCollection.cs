@@ -74,6 +74,24 @@ namespace ClearCanvas.Desktop.Tables
             _owner.NotifyDataChanged(TableItemChangeType.ItemChanged, index);
         }
 
+        /// <summary>
+        /// Notifies the table that the specified item has changed in some way.  Use this method
+        /// to cause the view to update itself to reflect the changed item.
+        /// </summary>
+        /// <param name="item"></param>
+        public void NotifyItemUpdated(TItem item)
+        {
+            int index = this.IndexOf(item);
+            if (index > -1)
+            {
+                NotifyItemUpdated(index);
+            }
+            else
+            {
+                throw new ArgumentException("Item not found in collection");
+            }
+        }
+
         #region ITableData members
 
 

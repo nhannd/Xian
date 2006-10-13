@@ -61,6 +61,7 @@
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
     <Compile Include="Format.cs" />
+    <Compile Include="StackComponentContainer.cs" />
     <Compile Include="Tables\ITable.cs" />
     <Compile Include="Tables\ITableColumn.cs" />
     <Compile Include="Tables\ITableColumnCollection.cs" />

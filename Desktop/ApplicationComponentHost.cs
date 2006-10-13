@@ -5,17 +5,25 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-    public class ApplicationComponentHost : IApplicationComponentHost
+    public abstract class ApplicationComponentHost : IApplicationComponentHost
     {
         private IApplicationComponent _component;
         private IApplicationComponentView _componentView;
-        private IDesktopWindow _window;
 
-        public ApplicationComponentHost(IApplicationComponent component, IDesktopWindow window)
+        public ApplicationComponentHost(IApplicationComponent component)
         {
-            _window = window;
             _component = component;
             _component.SetHost(this);
+        }
+
+        public virtual void StartComponent()
+        {
+            _component.Start();
+        }
+
+        public virtual void StopComponent()
+        {
+            _component.Stop();
         }
 
         public IApplicationComponent Component
@@ -40,25 +48,37 @@ namespace ClearCanvas.Desktop
 
         #region IApplicationComponentHost Members
 
+        /// <summary>
+        /// Not supported.  Override this method to add support.
+        /// </summary>
         public virtual void Exit()
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Not supported. Override this method to add support.
+        /// </summary>
         public virtual CommandHistory CommandHistory
         {
             get { throw new NotSupportedException(); }
         }
 
+        /// <summary>
+        /// Shows a message box in the associated desktop window
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="buttons"></param>
+        /// <returns></returns>
         public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             return Platform.ShowMessageBox(message, buttons);
         }
 
-        public virtual IDesktopWindow DesktopWindow
-        {
-            get { return _window; }
-        }
+        /// <summary>
+        /// Returns the associated desktop window
+        /// </summary>
+        public abstract IDesktopWindow DesktopWindow { get; }
 
         #endregion
     }
