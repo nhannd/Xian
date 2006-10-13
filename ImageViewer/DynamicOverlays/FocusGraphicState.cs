@@ -35,10 +35,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (!base.StatefulGraphic.HitTest(e))
 			{
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
-				return true;
+				return false;
 			}
 
-			return false;
+			return true;
 		}
 
 		public override void OnEnterState(XMouseEventArgs e)

@@ -9,8 +9,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class MouseCaptureChangingEventArgs : EventArgs
 	{
-		IUIEventHandler _eventHandlerLosingCapture;
-		IUIEventHandler _eventHandlerGainingCapture;
+		private IUIEventHandler _eventHandlerLosingCapture;
+		private IUIEventHandler _eventHandlerGainingCapture;
 		private XMouseEventArgs _losingMouseEventArgs;
 		private XMouseEventArgs _gainingMouseEventArgs;
 

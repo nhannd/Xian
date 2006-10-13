@@ -38,6 +38,8 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _drawingEvent;
 		private event EventHandler<TileEventArgs> _selectionChangedEvent;
 
+		private event EventHandler<MouseCaptureChangingEventArgs> _notifyCaptureChanging;
+
 		#endregion
 
 		/// <summary>
@@ -83,9 +85,12 @@ namespace ClearCanvas.ImageViewer
 				if (_presentationImage != value)
 				{
 					IRenderer oldRenderer = null;
-					
+
 					if (_presentationImage != null)
+					{
 						oldRenderer = _presentationImage.ImageRenderer;
+						_presentationImage.NotifyCaptureChanging -= new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
+					}
 
 					// Disassociate the old presentation image with this tile
 					if (_presentationImage != null)
@@ -98,6 +103,7 @@ namespace ClearCanvas.ImageViewer
 					// this Tile with the new image
 					if (_presentationImage != null)
 					{
+						_presentationImage.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
 						_presentationImage.Tile = this;
 						_presentationImage.Selected = this.Selected;
 
@@ -229,6 +235,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _selectionChangedEvent += value; }
 			remove { _selectionChangedEvent -= value; }
+		}
+
+		public event EventHandler<MouseCaptureChangingEventArgs> NotifyCaptureChanging
+		{
+			add { _notifyCaptureChanging += value; }
+			remove { _notifyCaptureChanging -= value; }
 		}
 
 		#endregion
@@ -419,6 +431,11 @@ namespace ClearCanvas.ImageViewer
 		{
 			e.SelectedImageBox = this.ParentImageBox;
 			e.SelectedTile = this;
+		}
+
+		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
+		{
+			EventsHelper.Fire(_notifyCaptureChanging, new object[] { sender, e });
 		}
 
 		#endregion

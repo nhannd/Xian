@@ -95,6 +95,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
+    <Compile Include="CaptureUIEventHandler.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
     <Compile Include="Rendering\ImageInterpolator.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />

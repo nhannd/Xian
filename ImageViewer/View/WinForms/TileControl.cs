@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private Tile _tile;
 		private IRenderingSurface _surface;
+		private bool _maintainCapture;
 
 		#endregion
 
@@ -31,6 +32,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
             InitializeComponent();
 
+			_maintainCapture = false;
+
             _tile = tile;
 
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
@@ -38,6 +41,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
+			_tile.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
         }
 
 		public Tile Tile
@@ -179,10 +183,29 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			base.OnMouseWheel(e);
 		}
 
+		protected override void OnMouseCaptureChanged(EventArgs e)
+		{
+			base.OnMouseCaptureChanged(e);
+
+			//This feels bad to me, but it's the only way to accomplish
+			//keeping the capture when the mouse has come up.  .NET automatically handles
+			//capture for you by turning it on on mouse down and off on mouse up, but
+			//it does not allow you to keep capture when the mouse is not down.  Even
+			// if you take out the calls to the base class OnMouseX handlers, it still
+			// turns Capture back off although it has been turned on explicitly.
+			if (this._maintainCapture)
+				this.Capture = true;
+		}
+
 		private XMouseEventArgs ConvertToXMouseEventArgs(MouseEventArgs e)
 		{
 			XMouseEventArgs args = new XMouseEventArgs((XMouseButtons)e.Button, e.Clicks, e.X, e.Y, e.Delta, (XKeys)Control.ModifierKeys);
 			return args;
+		}
+
+		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
+		{
+			_maintainCapture = (e.UIEventHandlerGainingCapture != null);
 		}
     }
 }
