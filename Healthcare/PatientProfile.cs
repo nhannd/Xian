@@ -22,7 +22,6 @@ namespace ClearCanvas.Healthcare {
 			// add any object initialization code here
 			// the signature of the New() method may be freely changed as needed
 			PatientProfile patientProfile = new PatientProfile();
-            Patient.New().AddProfile(patientProfile);
             patientProfile._sex = Sex.U;   // default to Unknown
             return patientProfile;
 		}

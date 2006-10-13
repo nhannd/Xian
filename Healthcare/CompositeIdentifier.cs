@@ -31,5 +31,10 @@ namespace ClearCanvas.Healthcare {
             _id = source.Id;
             _assigningAuthority = source.AssigningAuthority;
         }
+
+        public string Format()
+        {
+            return string.Format("{0} {1}", _assigningAuthority, _id);
+        }
 	}
 }
