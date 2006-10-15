@@ -113,8 +113,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		/// </summary>
 		public void Apply()
 		{
-			VolumePresentationImage image = new VolumePresentationImage();
-			DisplaySet displaySet = new DisplaySet();
+			IDisplaySet selectedDisplaySet = this.ImageViewer.SelectedImageBox.DisplaySet;
+			VolumePresentationImage image = new VolumePresentationImage(selectedDisplaySet);
+			IDisplaySet displaySet = new DisplaySet();
 			displaySet.PresentationImages.Add(image);
 			this.ImageViewer.LogicalWorkspace.DisplaySets.Add(displaySet);
 			IImageBox imageBox = this.ImageViewer.SelectedImageBox;

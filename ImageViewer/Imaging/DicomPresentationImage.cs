@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private ImageSop _imageSop;
 		private LayerGroup _imageLayerGroup;
-		private ImageLayer _imageLayer;
+		private DicomImageLayer _imageLayer;
 		private GraphicLayer _graphicLayer;
 
 		#endregion
@@ -51,6 +51,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
+		}
+
+		public DicomImageLayer ImageLayer
+		{
+			get { return _imageLayer; }
 		}
 
 		public override IRenderer ImageRenderer
