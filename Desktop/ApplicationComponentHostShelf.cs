@@ -21,46 +21,35 @@ namespace ClearCanvas.Desktop
     public class ApplicationComponentHostShelf : Shelf
     {
         // implements the host interface, which is exposed to the hosted application component
-        class Host : IApplicationComponentHost
+        class Host : ApplicationComponentHost
         {
             private ApplicationComponentHostShelf _shelf;
 
-            internal Host(ApplicationComponentHostShelf shelf)
+            internal Host(ApplicationComponentHostShelf shelf, IApplicationComponent component, ApplicationComponentExitDelegate exitCallback)
+                :base(component, exitCallback)
             {
 				Platform.CheckForNullReference(shelf, "shelf");
                 _shelf = shelf;
             }
 
-            public void Exit()
+            public override void Exit()
             {
                 // close the shelf
                 _shelf.DesktopWindow.ShelfManager.Shelves.Remove(_shelf);
             }
 
-            public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
-            {
-                return Platform.ShowMessageBox(message, buttons);
-            }
-
-            public CommandHistory CommandHistory
-            {
-                get
-                {
-                    // this could possibly be implemented in future, if the need arises
-                    // however, it is not clear which command history would actually be used,
-                    // since there is no global command history
-                    throw new NotSupportedException();
-                }
-            }
-
-            public IDesktopWindow DesktopWindow
+            public override IDesktopWindow DesktopWindow
             {
                 get { return _shelf.DesktopWindow; }
             }
+
+            public override void SetTitle(string title)
+            {
+                _shelf.Title = title;
+            }
         }
 
-        private IApplicationComponent _component;
-        private ApplicationComponentExitDelegate _exitCallback;
+        private Host _host;
 
 
         internal ApplicationComponentHostShelf(string title, IApplicationComponent component, ShelfDisplayHint hint,
@@ -68,10 +57,7 @@ namespace ClearCanvas.Desktop
             :base(title, hint)
         {
 			Platform.CheckForNullReference(component, "component");
-            _component = component;
-            _exitCallback = exitCallback;
-
-            _component.SetHost(new Host(this));
+            _host = new Host(this, component, exitCallback);
         }
 
         /// <summary>
@@ -79,7 +65,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public IApplicationComponent Component
         {
-            get { return _component; }
+            get { return _host.Component; }
         }
 
         #region IShelf Members
@@ -88,21 +74,15 @@ namespace ClearCanvas.Desktop
         {
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             base.Initialize(desktopWindow);
-            _component.Start();
+            _host.StartComponent();
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _component != null)
+            if (disposing && _host != null)
             {
-                _component.Stop();
-
-                if (_exitCallback != null)
-                {
-                    _exitCallback(_component);
-                }
-
-                _component = null;
+                _host.StopComponent();
+                _host = null;
             }
         }
 

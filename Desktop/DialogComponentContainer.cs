@@ -16,23 +16,21 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(DialogComponentContainerViewExtensionPoint))]
     public class DialogComponentContainer : ApplicationComponentContainer
     {
-        public class DialogContentHost : IApplicationComponentHost
+        public class DialogContentHost : ApplicationComponentHost
         {
             private DialogComponentContainer _owner;
 			private DialogContent _content;
-            private IApplicationComponentView _view;
-            private bool _started;
 
 			internal DialogContentHost(
 				DialogComponentContainer owner,
 				DialogContent content)
+                :base(content.Component)
             {
 				Platform.CheckForNullReference(owner, "owner");
 				Platform.CheckForNullReference(content, "content");
 
                 _owner = owner;
 				_content = content;
-                _started = false;
             }
 
             public DialogComponentContainer Owner
@@ -40,58 +38,14 @@ namespace ClearCanvas.Desktop
                 get { return _owner; }
             }
 
-            public bool Started
-            {
-                get { return _started; }
-            }
+            #region ApplicationComponentHost overrides
 
-            public void Start()
-            {
-                if (!_started)
-                {
-                    _content.Component.SetHost(this);
-                    _content.Component.Start();
-					_started = true;
-                }
-            }
-
-            public void Stop()
-            {
-                if (_started)
-                    _content.Component.Stop();
-            }
-
-            public IApplicationComponentView ComponentView
-            {
-                get
-                {
-                    if (_view == null)
-                    {
-                        _view = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_content.Component.GetType());
-                        _view.SetComponent(_content.Component);
-                    }
-                    return _view;
-                }
-            }
-
-            #region IApplicationComponentHost Members
-
-            public void Exit()
-            {
-                throw new NotSupportedException();
-            }
-
-            public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
-            {
-                return Platform.ShowMessageBox(message, buttons);
-            }
-
-            public CommandHistory CommandHistory
+            public override CommandHistory CommandHistory
             {
                 get { return _owner.Host.CommandHistory; }
             }
 
-            public IDesktopWindow DesktopWindow
+            public override IDesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }
@@ -101,6 +55,7 @@ namespace ClearCanvas.Desktop
 
 
 		private DialogContent _content;
+        private DialogContentHost _contentHost;
 
         /// <summary>
         /// Default constructor
@@ -109,7 +64,7 @@ namespace ClearCanvas.Desktop
 			DialogContent content)
 		{
 			_content = content;
-			_content.ComponentHost = new DialogContentHost(this, _content);
+            _contentHost = new DialogContentHost(this, _content);
 		}
 
 		public DialogContent Content
@@ -117,16 +72,21 @@ namespace ClearCanvas.Desktop
 			get { return _content; }
 		}
 
+        public DialogContentHost ContentHost
+        {
+            get { return _contentHost; }
+        }
+
 		public override void Start()
         {
 			base.Start();
 
-			_content.ComponentHost.Start();
+			_contentHost.StartComponent();
         }
 
         public override void Stop()
         {
-            _content.Component.Stop();
+            _contentHost.StopComponent();
 
             base.Stop();
         }
@@ -134,13 +94,13 @@ namespace ClearCanvas.Desktop
 		public void OK()
 		{
 			this.ExitCode = ApplicationComponentExitCode.Normal;
-			Host.Exit();
+			this.Host.Exit();
 		}
 
 		public void Cancel()
 		{
 			this.ExitCode = ApplicationComponentExitCode.Cancelled;
-			Host.Exit();
+            this.Host.Exit();
 		}
     }
 }

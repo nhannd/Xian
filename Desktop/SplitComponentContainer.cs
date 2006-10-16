@@ -22,23 +22,21 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(SplitComponentContainerViewExtensionPoint))]
     public class SplitComponentContainer : ApplicationComponentContainer
     {
-        public class SplitPaneHost : IApplicationComponentHost
+        public class SplitPaneHost : ApplicationComponentHost
         {
             private SplitComponentContainer _owner;
 			private SplitPane _pane;
-            private IApplicationComponentView _view;
-            private bool _started;
 
             internal SplitPaneHost(
 				SplitComponentContainer owner,
 				SplitPane pane)
+                :base(pane.Component)
             {
 				Platform.CheckForNullReference(owner, "owner");
 				Platform.CheckForNullReference(pane, "pane");
 
                 _owner = owner;
 				_pane = pane;
-                _started = false;
             }
 
             public SplitComponentContainer Owner
@@ -46,58 +44,9 @@ namespace ClearCanvas.Desktop
                 get { return _owner; }
             }
 
-            public bool Started
-            {
-                get { return _started; }
-            }
+            #region ApplicationComponentHost overrides
 
-            public void Start()
-            {
-                if (!_started)
-                {
-                    _pane.Component.SetHost(this);
-                    _pane.Component.Start();
-					_started = true;
-                }
-            }
-
-            public void Stop()
-            {
-                if (_started)
-                    _pane.Component.Stop();
-            }
-
-            public IApplicationComponentView ComponentView
-            {
-                get
-                {
-                    if (_view == null)
-                    {
-                        _view = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_pane.Component.GetType());
-                        _view.SetComponent(_pane.Component);
-                    }
-                    return _view;
-                }
-            }
-
-            #region IApplicationComponentHost Members
-
-            public void Exit()
-            {
-                throw new NotSupportedException();
-            }
-
-            public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
-            {
-                return Platform.ShowMessageBox(message, buttons);
-            }
-
-            public CommandHistory CommandHistory
-            {
-                get { return _owner.Host.CommandHistory; }
-            }
-
-            public IDesktopWindow DesktopWindow
+            public override IDesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }
@@ -138,7 +87,7 @@ namespace ClearCanvas.Desktop
 			get { return _pane1; }
             set
             {
-                if(_pane1 != null && _pane1.ComponentHost != null && _pane1.ComponentHost.Started)
+                if(_pane1 != null && _pane1.ComponentHost != null && _pane1.ComponentHost.IsStarted)
                     throw new InvalidOperationException("Cannot set pane after container has been started");
 
                 _pane1 = value;
@@ -151,7 +100,7 @@ namespace ClearCanvas.Desktop
 			get { return _pane2; }
             set
             {
-                if (_pane2 != null && _pane2.ComponentHost != null && _pane2.ComponentHost.Started)
+                if (_pane2 != null && _pane2.ComponentHost != null && _pane2.ComponentHost.IsStarted)
                     throw new InvalidOperationException("Cannot set pane after container has been started");
 
                 _pane2 = value;
@@ -168,14 +117,14 @@ namespace ClearCanvas.Desktop
         {
 			base.Start();
 
-			_pane1.ComponentHost.Start();
-			_pane2.ComponentHost.Start();
+			_pane1.ComponentHost.StartComponent();
+            _pane2.ComponentHost.StartComponent();
         }
 
         public override void Stop()
         {
-            _pane1.Component.Stop();
-			_pane2.Component.Stop();
+            _pane1.ComponentHost.StopComponent();
+            _pane2.ComponentHost.StopComponent();
 
             base.Stop();
         }

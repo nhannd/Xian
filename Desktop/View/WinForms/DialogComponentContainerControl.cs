@@ -19,7 +19,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 
 			DialogContent content = _component.Content;
-			Control contentControl = content.ComponentHost.ComponentView.GuiElement as Control;
+			Control contentControl = _component.ContentHost.ComponentView.GuiElement as Control;
 
 			_contentPanel.Controls.Add(contentControl);
 			contentControl.Dock = DockStyle.Fill;

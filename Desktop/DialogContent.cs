@@ -9,7 +9,6 @@ namespace ClearCanvas.Desktop
 	public class DialogContent
 	{
         private IApplicationComponent _component;
-        private DialogComponentContainer.DialogContentHost _host;
 
         /// <summary>
         /// Default constructor.
@@ -25,15 +24,6 @@ namespace ClearCanvas.Desktop
         public IApplicationComponent Component
         {
             get { return _component; }
-        }
-
-        /// <summary>
-        /// Gets the component host for this page.  For internal use only.
-        /// </summary>
-        public DialogComponentContainer.DialogContentHost ComponentHost
-        {
-            get { return _host; }
-            set { _host = value; }
         }
 	}
 }

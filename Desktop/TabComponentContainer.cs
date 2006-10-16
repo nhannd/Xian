@@ -26,18 +26,16 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Defines an application component host for one page.
         /// </summary>
-        public class PageHost : IApplicationComponentHost
+        public class PageHost : ApplicationComponentHost
         {
             private TabComponentContainer _owner;
             private TabPage _page;
-            private IApplicationComponentView _view;
-            private bool _started;
 
             internal PageHost(TabComponentContainer owner, TabPage page)
+                :base(page.Component)
             {
                 _owner = owner;
                 _page = page;
-                _started = false;
             }
 
             public TabComponentContainer Owner
@@ -50,58 +48,9 @@ namespace ClearCanvas.Desktop
                 get { return _page; }
             }
 
-            public bool Started
-            {
-                get { return _started; }
-            }
+            #region ApplicationComponentHost overrides
 
-            public void Start()
-            {
-                if (!_started)
-                {
-                    _page.Component.SetHost(this);
-                    _page.Component.Start();
-					_started = true;
-                }
-            }
-
-            public void Stop()
-            {
-                if (_started)
-                    _page.Component.Stop();
-            }
-
-            public IApplicationComponentView ComponentView
-            {
-                get
-                {
-                    if (_view == null)
-                    {
-                        _view = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_page.Component.GetType());
-                        _view.SetComponent(_page.Component);
-                    }
-                    return _view;
-                }
-            }
-
-            #region IApplicationComponentHost Members
-
-            public void Exit()
-            {
-                throw new NotSupportedException();
-            }
-
-            public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
-            {
-                return Platform.ShowMessageBox(message, buttons);
-            }
-
-            public CommandHistory CommandHistory
-            {
-                get { return _owner.Host.CommandHistory; }
-            }
-
-            public IDesktopWindow DesktopWindow
+            public override IDesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }
@@ -197,9 +146,9 @@ namespace ClearCanvas.Desktop
             {
                 _current = index;
                 TabPage page = _pages[_current];
-                if (!page.ComponentHost.Started)
+                if (!page.ComponentHost.IsStarted)
                 {
-                    page.ComponentHost.Start();
+                    page.ComponentHost.StartComponent();
                 }
 
                 EventsHelper.Fire(_currentPageChanged, this, new EventArgs());
@@ -213,9 +162,9 @@ namespace ClearCanvas.Desktop
         {
             foreach (TabPage page in _pages)
             {
-                if (page.ComponentHost.Started)
+                if (page.ComponentHost.IsStarted)
                 {
-                    page.ComponentHost.Stop();
+                    page.ComponentHost.StopComponent();
                 }
             }
         }

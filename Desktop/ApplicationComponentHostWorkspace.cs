@@ -23,17 +23,18 @@ namespace ClearCanvas.Desktop
     public class ApplicationComponentHostWorkspace : Workspace
     {
         // implements the host interface, which is exposed to the hosted application component
-        class Host : IApplicationComponentHost
+        class Host : ApplicationComponentHost
         {
             private ApplicationComponentHostWorkspace _workspace;
 
-            internal Host(ApplicationComponentHostWorkspace workspace)
+            internal Host(ApplicationComponentHostWorkspace workspace, IApplicationComponent component, ApplicationComponentExitDelegate exitCallback)
+                :base(component, exitCallback)
             {
 				Platform.CheckForNullReference(workspace, "workspace");
                 _workspace = workspace;
             }
 
-            public void Exit()
+            public override void Exit()
             {
                 _workspace._exitRequestedByComponent = true;
 
@@ -41,24 +42,23 @@ namespace ClearCanvas.Desktop
                 _workspace.DesktopWindow.WorkspaceManager.Workspaces.Remove(_workspace);
             }
 
-            public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
-            {
-                return Platform.ShowMessageBox(message, buttons);
-            }
-
-            public CommandHistory CommandHistory
+            public override CommandHistory CommandHistory
             {
                 get { return _workspace.CommandHistory; }
             }
 
-            public IDesktopWindow DesktopWindow
+            public override IDesktopWindow DesktopWindow
             {
                 get { return _workspace.DesktopWindow; }
             }
+
+            public override void SetTitle(string title)
+            {
+                _workspace.Title = title;
+            }
         }
 
-        private IApplicationComponent _component;
-        private ApplicationComponentExitDelegate _exitCallback;
+        private Host _host;
         private bool _exitRequestedByComponent;
 
 
@@ -69,10 +69,8 @@ namespace ClearCanvas.Desktop
             :base(title)
         {
 			Platform.CheckForNullReference(component, "component");
-            _component = component;
-            _exitCallback = exitCallback;
 
-            _component.SetHost(new Host(this));
+            _host = new Host(this, component, exitCallback);
         }
 
         /// <summary>
@@ -80,7 +78,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public IApplicationComponent Component
         {
-            get { return _component; }
+            get { return _host.Component; }
         }
 
         #region IWorkspace Members
@@ -90,32 +88,27 @@ namespace ClearCanvas.Desktop
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
 			
 			base.Initialize(desktopWindow);
-            _component.Start();
+
+            _host.StartComponent();
         }
 
         public override bool CanClose()
         {
-            return _exitRequestedByComponent || _component.CanExit();
+            return _exitRequestedByComponent || _host.Component.CanExit();
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _component != null)
+            if (disposing && _host != null)
             {
-                _component.Stop();
-
-                if (_exitCallback != null)
-                {
-                    _exitCallback(_component);
-                }
-
-                _component = null;
+                _host.StopComponent();
+                _host = null;
             }
         }
 
         public override IActionSet Actions
         {
-            get { return _component.ExportedActions; }
+            get { return _host.Component.ExportedActions; }
         }
 
         #endregion

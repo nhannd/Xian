@@ -14,7 +14,8 @@ namespace ClearCanvas.Desktop
     {
         /// <summary>
         /// Instructs the host to terminate, if for instance, the user has pressed an OK or Cancel button.
-        /// The host will subsequently call <see cref="IApplicationComponent.Stop"/>
+        /// The host will subsequently call <see cref="IApplicationComponent.Stop"/>.  Not all hosts
+        /// support this method.
         /// </summary>
         void Exit();
 
@@ -28,7 +29,15 @@ namespace ClearCanvas.Desktop
         DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
 
         /// <summary>
-        /// Provides component with access to the relevant <see cref="CommandHistory"/>.
+        /// Asks the host to set the title bar text for this component.  Not all hosts support this
+        /// method.
+        /// </summary>
+        /// <param name="title"></param>
+        void SetTitle(string title);
+
+        /// <summary>
+        /// Provides component with access to the relevant <see cref="CommandHistory"/>.  Not all hosts
+        /// support this property.
         /// </summary>
         CommandHistory CommandHistory { get; }
 

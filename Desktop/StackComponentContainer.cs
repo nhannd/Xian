@@ -27,8 +27,8 @@ namespace ClearCanvas.Desktop
             private StackComponentContainer _container;
             private bool _exitRequestedByComponent;
 
-            public ComponentHost(StackComponentContainer container, IApplicationComponent component)
-                :base(component)
+            public ComponentHost(StackComponentContainer container, IApplicationComponent component, ApplicationComponentExitDelegate exitCallback)
+                :base(component, exitCallback)
 	        {
                 _container = container;
 	        }
@@ -66,7 +66,12 @@ namespace ClearCanvas.Desktop
 
         public void Push(IApplicationComponent component)
         {
-            ComponentHost host = new ComponentHost(this, component);
+            Push(component, null);
+        }
+
+        public void Push(IApplicationComponent component, ApplicationComponentExitDelegate exitCallback)
+        {
+            ComponentHost host = new ComponentHost(this, component, exitCallback);
             _hostStack.Push(host);
 
             if (this.IsStarted)
@@ -110,6 +115,11 @@ namespace ClearCanvas.Desktop
             {
                 return _hostStack.Pop().Component;
             }
+        }
+
+        public IApplicationComponent Peek()
+        {
+            return this.Topmost.Component;
         }
 
         public override void Start()

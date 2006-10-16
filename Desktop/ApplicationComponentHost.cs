@@ -9,21 +9,44 @@ namespace ClearCanvas.Desktop
     {
         private IApplicationComponent _component;
         private IApplicationComponentView _componentView;
+        private ApplicationComponentExitDelegate _exitCallback;
 
-        public ApplicationComponentHost(IApplicationComponent component)
+        public ApplicationComponentHost(IApplicationComponent component, ApplicationComponentExitDelegate exitCallback)
         {
             _component = component;
+            _exitCallback = exitCallback;
             _component.SetHost(this);
         }
 
+        public ApplicationComponentHost(IApplicationComponent component)
+            :this(component, null)
+        {
+        }
+
+
         public virtual void StartComponent()
         {
+            if (_component.IsStarted)
+                throw new InvalidOperationException("Component has already been started");
+
             _component.Start();
         }
 
         public virtual void StopComponent()
         {
+            if (!_component.IsStarted)
+                throw new InvalidOperationException("Component was never started, or has already been stopped");
+
             _component.Stop();
+            if (_exitCallback != null)
+            {
+                _exitCallback(_component);
+            }
+        }
+
+        public bool IsStarted
+        {
+            get { return _component.IsStarted; }
         }
 
         public IApplicationComponent Component
@@ -73,6 +96,14 @@ namespace ClearCanvas.Desktop
         public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             return Platform.ShowMessageBox(message, buttons);
+        }
+
+        /// <summary>
+        /// Not supported. Override this method to add support.
+        /// </summary>
+        public virtual void SetTitle(string title)
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>

@@ -12,43 +12,29 @@ namespace ClearCanvas.Desktop
     public class ApplicationComponentHostDialog
     {
         // implements the host interface, which is exposed to the hosted application component
-        class Host : IApplicationComponentHost
+        class Host : ApplicationComponentHost
         {
             private ApplicationComponentHostDialog _owner;
 
-            internal Host(ApplicationComponentHostDialog owner)
+            internal Host(ApplicationComponentHostDialog owner, IApplicationComponent component)
+                :base(component)
             {
 				Platform.CheckForNullReference(owner, "owner");
                 _owner = owner;
             }
 
-            public void Exit()
+            public override void Exit()
             {
                 _owner._exitRequestedByComponent = true;
                 DialogBoxAction action = _owner._component.ExitCode == ApplicationComponentExitCode.Cancelled ? DialogBoxAction.Cancel : DialogBoxAction.Ok;
                 _owner._dialogBox.EndModal(action);
             }
 
-            public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
-            {
-                return Platform.ShowMessageBox(message, buttons);
-            }
-
-            public IDesktopWindow DesktopWindow
+            public override IDesktopWindow DesktopWindow
             {
                 get { return _owner._desktopWindow; }
             }
 
-            public CommandHistory CommandHistory
-            {
-                get
-                {
-                    // for now this is not supported
-                    // if there is a need to support this in future, then this could be implemented
-                    // perhaps to somehow access the command history of the active workspace?
-                    throw new NotSupportedException();
-                }
-            }
         }
 
         private IApplicationComponent _component;
@@ -70,17 +56,12 @@ namespace ClearCanvas.Desktop
             _desktopWindow = desktopWindow;
 
             // start the component
-            _component.SetHost(new Host(this));
-            _component.Start();
-
-            // create the component's view
-            IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_component.GetType());
-
-            componentView.SetComponent(_component);
+            Host host = new Host(this, _component);
+            host.StartComponent();
 
             // create the dialog
             _dialogBox = Application.CreateDialogBox();
-            _dialogBox.Initialize(_title, componentView);
+            _dialogBox.Initialize(_title, host.ComponentView);
             _dialogBox.DialogClosing += new EventHandler<ClosingEventArgs>(_dialogBox_DialogClosing);
         
             // run the dialog as modal
