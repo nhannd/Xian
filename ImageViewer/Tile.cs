@@ -435,7 +435,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
 		{
-			EventsHelper.Fire(_notifyCaptureChanging, new object[] { sender, e });
+			EventsHelper.Fire(_notifyCaptureChanging, sender, e);
 		}
 
 		#endregion

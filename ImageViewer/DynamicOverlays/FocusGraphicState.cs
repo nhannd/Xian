@@ -31,10 +31,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			// If mouse is not over the object, transition back to inactive state
 			if (!base.StatefulGraphic.HitTest(e))
 			{
-				base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
+				//Transition back to selected when focus is lost.
+				if (base.StatefulGraphic.Selected)
+					base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
+				else
+					base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
+
 				return false;
 			}
 

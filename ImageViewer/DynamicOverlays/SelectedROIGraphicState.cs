@@ -45,6 +45,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public override bool OnMouseMove(XMouseEventArgs e)
 		{
+			// In order to indicate which tool will be acted upon,
+			// the selected graphic must also be able to be focused.
+			if (base.StatefulGraphic.HitTest(e))
+			{
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusState();
+				return true;
+			}
+
 			if (_currentChildGraphic != null)
 				return _currentChildGraphic.OnMouseMove(e);
 

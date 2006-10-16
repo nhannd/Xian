@@ -75,6 +75,34 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 		}
 
+		public override bool Focused
+		{
+			get
+			{
+				return base.Focused;
+			}
+			set
+			{
+				if (base.Focused != value)
+				{
+					base.Focused = value;
+
+					if (value)
+					{
+						this.State = CreateFocusState();
+					}
+					else
+					{
+						//transition back to selected if the graphic is selected.
+						if (this.Selected)
+							this.State = CreateSelectedState();
+						else
+							this.State = CreateInactiveState();
+					}
+				}
+			}
+		}
+
 		public event EventHandler<GraphicStateChangedEventArgs> StateChanged
 		{
 			add { _stateChangedEvent += value; }

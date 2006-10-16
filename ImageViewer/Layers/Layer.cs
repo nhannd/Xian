@@ -19,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		private bool _redrawRequired = true;
 		private bool _autoHandleMouse = true;
 		private bool _selected = false;
+		private bool _focused = false;
 		private bool _isLeaf = false;
 		private SpatialTransform _spatialTransform;
 		private Layer _parentLayer;
@@ -159,6 +160,15 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			get { return _selected; }
 			set { _selected = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the layer is focused.
+		/// </summary>
+		public virtual bool Focused
+		{
+			get { return _focused; }
+			set { _focused = value; }
 		}
 
 		/// <summary>

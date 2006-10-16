@@ -73,6 +73,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (this.ParentLayerManager.SelectedGraphic == this)
 				this.ParentLayerManager.SelectedGraphic = null;
 
+			if (this.ParentLayerManager.FocusGraphic == this)
+				this.ParentLayerManager.FocusGraphic = null;
+
 			this.Roi.ControlPoints.Visible = false;
 			this.Color = Color.Yellow;
 			Draw();
@@ -81,6 +84,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public override void OnEnterFocusState(XMouseEventArgs e)
 		{
+			this.Focused = true;
+
 			if (this.Roi.HitTest(e))
 				this.Roi.ControlPoints.Visible = true;
 			else

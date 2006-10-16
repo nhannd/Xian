@@ -60,6 +60,26 @@ namespace ClearCanvas.ImageViewer.Layers
 			}
 		}
 
+		public virtual bool Focused
+		{
+			get { return base.Focused; }	// this is required for compilation on MONO
+			set
+			{
+				Platform.CheckMemberIsSet(base.ParentLayerManager, "Layer.ParentLayerManager");
+
+				if (base.Focused != value)
+				{
+					base.Focused = value;
+
+					if (base.Focused)
+					{
+						if (base.ParentLayerManager != null)
+							base.ParentLayerManager.FocusGraphic = this;
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the colour of the <see cref="Graphic"/>.
 		/// </summary>

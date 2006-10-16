@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		private ImageLayer _selectedImageLayer;
 		private GraphicLayer _selectedGraphicLayer;
 		private Graphic _selectedGraphic;
+		private Graphic _focusGraphic;
 
 		private CaptureUIEventHandler _mouseCapture;
 
@@ -131,6 +132,26 @@ namespace ClearCanvas.ImageViewer.Layers
 					if (_selectedGraphic != null)
 						this.ImageViewer.EventBroker.OnGraphicSelected(
 							new GraphicSelectedEventArgs(_selectedGraphic));
+			}
+		}
+
+		public Graphic FocusGraphic
+		{
+			get { return _focusGraphic; }
+			internal set
+			{
+				if (_focusGraphic == value)
+					return;
+
+				if (_focusGraphic != null)
+					_focusGraphic.Focused = false;
+
+				_focusGraphic = value;
+
+				if (this.ImageViewer != null)
+					if (_focusGraphic != null)
+						this.ImageViewer.EventBroker.OnGraphicFocused(
+							new GraphicFocusedEventArgs(_focusGraphic));
 			}
 		}
 

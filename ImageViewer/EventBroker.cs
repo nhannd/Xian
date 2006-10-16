@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<ImageLayerSelectedEventArgs> _imageLayerSelectedEvent;
 		private event EventHandler<GraphicLayerSelectedEventArgs> _graphicLayerSelectedEvent;
 		private event EventHandler<GraphicSelectedEventArgs> _graphicSelectedEvent;
+		private event EventHandler<GraphicFocusedEventArgs> _graphicFocusedEvent;
 
 		public EventBroker()
 		{
@@ -125,5 +126,15 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_graphicSelectedEvent, this, args);
 		}
 
+		public event EventHandler<GraphicFocusedEventArgs> GraphicFocused
+		{
+			add { _graphicFocusedEvent += value; }
+			remove { _graphicFocusedEvent -= value; }
+		}
+
+		internal void OnGraphicFocused(GraphicFocusedEventArgs graphicFocusedEventArgs)
+		{
+			EventsHelper.Fire(_graphicFocusedEvent, this, graphicFocusedEventArgs);
+		}
 	}
 }
