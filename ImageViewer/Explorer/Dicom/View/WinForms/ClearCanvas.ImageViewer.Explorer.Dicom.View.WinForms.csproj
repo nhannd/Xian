@@ -47,20 +47,6 @@
     <Compile Include="AENavigatorControl.Designer.cs">
       <DependentUpon>AENavigatorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="AEServerEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AEServerEditorComponentControl.Designer.cs">
-      <DependentUpon>AEServerEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AEServerEditorComponentView.cs" />
-    <Compile Include="AEServerGroupEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AEServerGroupEditorComponentControl.Designer.cs">
-      <DependentUpon>AEServerGroupEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AEServerGroupEditorComponentView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -143,14 +129,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AEServerEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AEServerEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AEServerGroupEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AEServerGroupEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DicomServerEditComponentControl.resx">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>

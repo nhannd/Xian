@@ -67,41 +67,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return AENavigatorComponent._myServersXmlFile; }
         }
 
-        // to delete
-        private AEServerPool _serverPool;
-        private ServerViewRootNode _serverTreeView;
-
-        private static String _newServerName = "NewServer";
-        private static String _emptyNodeName = "emptynode";
-        private static String _nodeDeleted = "nodeDeleted";
-
-        public AEServerPool ServerPool
-        {
-            get { return _serverPool; }
-            set { _serverPool = value; }
-        }
-
-        public ServerViewRootNode ServerTreeView
-        {
-            get { return _serverTreeView; }
-            set { _serverTreeView = value; }
-        }
-
-        public static String NewServerName
-        {
-            get { return AENavigatorComponent._newServerName; }
-        }
-
-        public static String EmptyNodeName
-        {
-            get { return AENavigatorComponent._emptyNodeName; }
-        }
-
-        public static String NodeDeleted
-        {
-            get { return AENavigatorComponent._nodeDeleted; }
-        }
-
         #endregion
 
         public AENavigatorComponent()
