@@ -122,6 +122,7 @@ namespace ClearCanvas.Ris.Services.Tests
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 
+        /** This test may not be applicable anymore, since IAdtService.ListReconciledPatientProfiles was removed
         [Test]
         public void CanListExistingReconciledPatients()
         {
@@ -155,6 +156,7 @@ namespace ClearCanvas.Ris.Services.Tests
 
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
+        */
 
         [Test]
         public void CanListReconciliationMatchesFromPatient()

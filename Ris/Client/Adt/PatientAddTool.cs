@@ -36,9 +36,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             PatientEditorShellComponent editor = new PatientEditorShellComponent(PatientProfile.New(), true);
             ApplicationComponent.LaunchAsWorkspace(
-                this.Context.DesktopWindow, editor, "New Patient", PatientEditorExited);
+                this.Context.DesktopWindow, editor, "New Patient", null);
         }
-
+/*
         private void PatientEditorExited(IApplicationComponent component)
         {
             PatientEditorShellComponent editor = (PatientEditorShellComponent)component;
@@ -48,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 service.CreatePatientForProfile(editor.Subject);
             }
         }
+ */
 
     }
 }

@@ -42,8 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _addresses.Columns.Add(new TableColumn<Address, string>("Province", delegate(Address a) { return a.Province; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("PostalCode", delegate(Address a) { return a.PostalCode; }));
             _addresses.Columns.Add(new TableColumn<Address, string>("Country", delegate(Address a) { return a.Country; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", delegate(Address a) { return Format.Date(a.ValidRange.From); }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return Format.Date(a.ValidRange.Until); }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }));
 
             _addressActionHandler = new CrudActionModel();
             _addressActionHandler.Add.Handler = AddAddress;

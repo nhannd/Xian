@@ -49,10 +49,8 @@
     <Compile Include="IFolder.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
-    <Compile Include="PatientAddEditToolBase.cs" />
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientEditorShellComponent.cs" />
-    <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientOverviewComponent.cs" />
     <Compile Include="PatientEditorComponent.cs" />
     <Compile Include="PatientOverviewTool.cs" />

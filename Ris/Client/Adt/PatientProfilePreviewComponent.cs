@@ -183,14 +183,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _subject.DateOfBirth.ToShortDateString(); }
         }
 
-        public string MrnId
+        public string Mrn
         {
-            get { return _subject.MRN.Id; }
-        }
-
-        public string MrnAuthority
-        {
-            get { return _subject.MRN.AssigningAuthority; }
+            get { return _subject.MRN.Format(); }
         }
 
         public string Healthcard

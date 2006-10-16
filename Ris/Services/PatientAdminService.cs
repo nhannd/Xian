@@ -43,8 +43,8 @@ namespace ClearCanvas.Ris.Services
             PatientProfile patient = broker.Find(oid);
 
             // load all relevant collections
-            broker.LoadRelated(patient, patient.Addresses);
-            broker.LoadRelated(patient, patient.TelephoneNumbers);
+            broker.LoadAddresses(patient);
+            broker.LoadTelephoneNumbers(patient);
 
             return patient;
         }

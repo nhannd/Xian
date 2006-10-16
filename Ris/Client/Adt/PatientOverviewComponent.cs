@@ -40,6 +40,14 @@ namespace ClearCanvas.Ris.Client.Adt
         public PatientProfile Subject
         {
             get { return _subject; }
+            set
+            {
+                _subject = value;
+                if (this.IsStarted)
+                {
+                    _preview.Subject = _subject;
+                }
+            }
         }
 
         public override void Start()

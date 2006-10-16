@@ -60,10 +60,10 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             PatientProfile profile = this.Context.SelectedPatientProfile;
 
-            // check for an already open editor
+            // check for an already patient workspace
             if (_openPatients.ContainsKey(profile.OID))
             {
-                // activate existing editor
+                // activate patient workspace
                 _openPatients[profile.OID].Activate();
             }
             else
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                    this.Context.DesktopWindow,
                    new PatientEditorShellComponent(profile, edit),
-                   string.Format("{0} - {1}", profile.Name.Format(), profile.MRN.Id),
+                   string.Format(SR.PatientComponentTitle, profile.Name.Format(), profile.MRN.Format()),
                    PatientWorkspaceClosed);
                 _openPatients[profile.OID] = workspace;
             }
