@@ -74,10 +74,10 @@ namespace ClearCanvas.Enterprise.Hibernate
              this.Context.Session.Delete(entity);
         }
 
-        public virtual void LoadRelated(TEntity entity, object property)
+        protected void LoadRelated(TEntity entity, object property)
         {
-            // if the entity is not part of the current session, re-attach
-            this.Context.Reattach(entity);
+            // if the entity is not part of the current session, re-attach (don't ignore the version)
+            this.Context.Reattach(entity, false);
 
             // if the property is not initialized, initialized it
             if (!NHibernateUtil.IsInitialized(property))

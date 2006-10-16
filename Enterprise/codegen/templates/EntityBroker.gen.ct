@@ -15,5 +15,16 @@ namespace <%= @model.namespace %>.Hibernate.Brokers
     [ClearCanvas.Common.ExtensionOf(typeof(BrokerExtensionPoint))]
 	public partial class <%= @className %>Broker : EntityBroker<<%= @className %>, <%= @className %>SearchCriteria>, I<%= @className %>Broker
 	{
+	  	#region Methods for initializing lazy properties
+	  	
+	  	<% @fields.each do |f| if((f.isCollection && f.isLazy) || f.isEntityRef) %>
+	  	public void Load<%= f.accessorName %>(<%= @className %> entity)		
+		{
+			LoadRelated(entity, entity.<%= f.accessorName %>);
+		}
+		<% end	end %>
+	  	
+	  	#endregion
+
 	}
 }

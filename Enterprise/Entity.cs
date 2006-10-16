@@ -30,5 +30,13 @@ namespace ClearCanvas.Enterprise
             get { return _version; }
             set { _version = value; }
         }
+
+        /// <summary>
+        /// Returns true if this entity has never been persisted
+        /// </summary>
+        public bool IsNew
+        {
+            get { return this.OID == 0; }
+        }
     }
 }

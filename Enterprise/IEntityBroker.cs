@@ -50,13 +50,6 @@ namespace ClearCanvas.Enterprise
         long Count(TSearchCriteria criteria);
 
         /// <summary>
-        /// Forces loading of a lazy property of the specified entity.
-        /// </summary>
-        /// <param name="entity">The entity on which to act</param>
-        /// <param name="property">The lazy property of the entity to load</param>
-        void LoadRelated(TEntity entity, object property);
-
-        /// <summary>
         /// Stores the given entity instance in the persistent store.  If the specified entity is transient,
         /// it will be made persistent (added to the persistent store).  If the specified entity is already persistent,
         /// the persistent store will be updated.

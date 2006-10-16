@@ -189,11 +189,14 @@ end
 
 # represents the definition of a field within a ClassDef
 class FieldDef
-  attr_reader :fieldName, :accessorName, :dataType, :hasGetter, :hasSetter, :isCollection, :isComponent, :initialValue
+  attr_reader :fieldName, :accessorName, :dataType, :hasGetter, :hasSetter, :isCollection, :isComponent, :initialValue, :isLazy, :isEntityRef
 
   def initialize(fieldNode)
-	# is this field a collection?
+	# establish some basic things about the field
       @isCollection = NHIBERNATE_COLLECTION_TYPES.include?(fieldNode.name)
+      @isLazy = (fieldNode.attributes['lazy'] == 'true')
+      @isEntityRef = (fieldNode.name == 'many-to-one')
+      @isComponent = (fieldNode.name == 'component')
 
 	# determine the access strategy - if the strategy contains multiple parts separated by . then only take the first part
 	# use "property" as the default strategy, as hibernate does
@@ -222,8 +225,7 @@ class FieldDef
       # special handling of DateTime, because we need to support nullable
 	@dataType << "?" if(@dataType == 'DateTime' && nullable)
       
-      @isComponent = (fieldNode.name == 'component')
-      
+       
       # determine the C# initializer for the field
       @initialValue = DATATYPE_INITIALIZERS[@dataType] || ("#{@dataType}.New()" if @isComponent)
   end

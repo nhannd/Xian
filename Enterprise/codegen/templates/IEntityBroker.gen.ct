@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 using ClearCanvas.Enterprise;
@@ -12,6 +12,19 @@ namespace <%= @model.namespace %>.Brokers {
     /// </summary>
 	public partial interface I<%= @className %>Broker : IEntityBroker<<%= @className %>, <%= @className %>SearchCriteria>
 	{
+	  	#region Methods for initializing lazy properties
+	  	
+	  	<% @fields.each do |f| if((f.isCollection && f.isLazy) || f.isEntityRef) %>
+	  	/// <summary>
+	  	/// Ensures that the <see cref="<%= @className %>.<%= f.accessorName %>"/> property is loaded for the specified
+        /// <see cref="<%= @className %>"/>.  This method has no effect if the property is already loaded.
+	  	/// </summary>
+	  	/// <param name="entity">The entity whose lazy property should be loaded</param>
+	  	void Load<%= f.accessorName %>(<%= @className %> entity);
+		<% end	end %>
+	  	
+	  	#endregion
+
 	}
 
 }
