@@ -93,7 +93,8 @@ namespace ClearCanvas.Healthcare.Hibernate
             DateTime? from = (DateTime?)NHibernateUtil.DateTime.NullSafeGet(dr, names[0], session, owner);
             DateTime? until = (DateTime?)NHibernateUtil.DateTime.NullSafeGet(dr, names[1], session, owner);
 
-            return (from == null && until == null) ? null : new DateTimeRange(from, until);
+            //return (from == null && until == null) ? null : new DateTimeRange(from, until);
+            return new DateTimeRange(from, until);
         }
 
         public void NullSafeSet(System.Data.IDbCommand cmd, object value, int index, NHibernate.Engine.ISessionImplementor session)

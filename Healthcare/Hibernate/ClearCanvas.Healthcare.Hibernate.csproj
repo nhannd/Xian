@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Enterprise\refs\Iesi.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Enterprise\Hibernate\refs\NHibernate.dll</HintPath>
