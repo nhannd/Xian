@@ -89,15 +89,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                         {
                             childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
                         }
-                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy);
+                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy, _toolStripItemDisplayStyle);
                     }
                     else
                     {
-                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
+                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
                     }
-
-					foreach (ToolStripItem item in _toolStrip.Items)
-						item.DisplayStyle = _toolStripItemDisplayStyle;
                 }
             }
         }

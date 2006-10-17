@@ -18,6 +18,9 @@ namespace ClearCanvas.Desktop
 
     /// <summary>
     /// StackComponentContainer class
+    /// ******************************************************************
+    /// NB. This class is severely broken!!! Do not use this container
+    /// *******************************************************************
     /// </summary>
     [AssociateView(typeof(StackComponentContainerViewExtensionPoint))]
     public class StackComponentContainer : ApplicationComponentContainer
@@ -96,13 +99,18 @@ namespace ClearCanvas.Desktop
                     _hostStack.Pop();
                     top.StopComponent();
 
-                    // the next component may not have been started, in which case we need to start it now
-                    ComponentHost next = _hostStack.Peek();
-                    if (!next.Component.IsStarted)
-                        next.StartComponent();
+                    // the last Pop may have caused this entire component to be stopped, so we need to check again
+                    // that we are still "started", and only in this case do we start the next component down
+                    if (this.IsStarted)
+                    {
+                        // the next component may not have been started, in which case we need to start it now
+                        ComponentHost next = _hostStack.Peek();
+                        if (!next.Component.IsStarted)
+                            next.StartComponent();
 
-                    // notify view
-                    EventsHelper.Fire(_topmostChanged, this, EventArgs.Empty);
+                        // notify view
+                        EventsHelper.Fire(_topmostChanged, this, EventArgs.Empty);
+                    }
 
                     return top.Component;
                 }
@@ -122,6 +130,8 @@ namespace ClearCanvas.Desktop
             return this.Topmost.Component;
         }
 
+        #region ApplicationComponent overrides
+
         public override void Start()
         {
             // start the topmost component on the stack
@@ -140,6 +150,24 @@ namespace ClearCanvas.Desktop
 
             base.Stop();
         }
+
+        public override bool Modified
+        {
+            get
+            {
+                foreach (ComponentHost host in _hostStack)
+                {
+                    if (host.Component.Modified)
+                        return true;
+                }
+                return false;
+            }
+            protected set
+            {
+            }
+        }
+
+        #endregion
 
         #region Presentation Model
 

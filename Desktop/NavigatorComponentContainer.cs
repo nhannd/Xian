@@ -115,6 +115,9 @@ namespace ClearCanvas.Desktop
             this.AcceptEnabled = this.Modified = AnyPageModified();
         }
 
+
+        #region Presentation Model
+
         /// <summary>
         /// Gets or sets the current page.
         /// </summary>
@@ -217,9 +220,10 @@ namespace ClearCanvas.Desktop
         }
         
         /// <summary>
-        /// Causes the component to exit, accepting any changes made by the user.
+        /// Causes the component to exit, accepting any changes made by the user. Override this method
+        /// if desired.
         /// </summary>
-        public void Accept()
+        public virtual void Accept()
         {
             this.ExitCode = ApplicationComponentExitCode.Normal;
             this.Host.Exit();
@@ -251,13 +255,17 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Cancels the component to exit, discarding any changes made by the user.
+        /// Causes the component to exit, discarding any changes made by the user.  Override this method
+        /// if desired.
         /// </summary>
-        public void Cancel()
+        public virtual void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
             this.Host.Exit();
         }
+
+        #endregion
+
 
         /// <summary>
         /// Moves to the page at the specified index

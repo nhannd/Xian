@@ -188,7 +188,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (_desktopWindow.ToolbarModel != null)
             {
-                ToolStripBuilder.BuildToolbar(this._toolbar.Items, _desktopWindow.ToolbarModel.ChildNodes);
+                ToolStripBuilder.BuildToolbar(this._toolbar.Items, _desktopWindow.ToolbarModel.ChildNodes, ToolStripItemDisplayStyle.Image);
             }
 
 			this._toolbar.ResumeLayout();
@@ -201,6 +201,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			int minor = Assembly.GetExecutingAssembly().GetName().Version.Minor;
 
 			return String.Format("{0}.{1}", major, minor);
-	}
-}
+	    }
+    }
 }

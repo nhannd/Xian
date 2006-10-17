@@ -9,7 +9,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public static class ToolStripBuilder
     {
-        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
+        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle displayStyle)
         {
             foreach (ActionModelNode node in nodes)
             {
@@ -19,12 +19,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                     ToolStripButton button = new ActiveToolbarButton((IClickAction)node.Action);
                     button.Tag = node;
 					// By default, only display the image on the button
-					button.DisplayStyle = ToolStripItemDisplayStyle.Image;
+                    button.DisplayStyle = displayStyle;
                     parentItemCollection.Add(button);
                 }
                 else
                 {
-                    BuildToolbar(parentItemCollection, node.ChildNodes);
+                    BuildToolbar(parentItemCollection, node.ChildNodes, displayStyle);
                 }
             }
         }

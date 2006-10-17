@@ -25,6 +25,13 @@ namespace ClearCanvas.Desktop
         /// this typically means that the user cancelled the changes.
         /// </summary>
         Cancelled,
+
+        /// <summary>
+        /// The component encountered an error.  If the component allows editing
+        /// and is responsible for committing its own changes, this code typically
+        /// indicates that the changes did not commit.
+        /// </summary>
+        Error,
     }
 
     /// <summary>

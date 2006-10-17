@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -127,6 +128,15 @@ namespace ClearCanvas.Desktop
             _pane2.ComponentHost.StopComponent();
 
             base.Stop();
+        }
+
+        public override IActionSet ExportedActions
+        {
+            get
+            {
+                // export the actions from both subcomponents
+                return _pane1.Component.ExportedActions.Union(_pane2.Component.ExportedActions);
+            }
         }
     }
 }
