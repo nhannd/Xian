@@ -73,7 +73,7 @@ namespace ClearCanvas.Healthcare {
         public DateTime? Until
         {
             get { return _until; }
-            set { _from = value; }
+            set { _until = value; }
         }
 
         /// <summary>
