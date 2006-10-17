@@ -60,9 +60,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new FocusGraphicState(this);
 		}
 
-		public override GraphicState CreateSelectedState()
+		public override GraphicState CreateFocusSelectedState()
 		{
-			return new SelectedROIGraphicState(this);
+			return new FocusSelectedROIGraphicState(this);
 		}
 
 		public override void OnEnterInactiveState(XMouseEventArgs e)
@@ -96,9 +96,23 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Trace.Write("OnEnterFocusState\n");
 		}
 
-		public override void OnEnterSelectedState(XMouseEventArgs e)
+		public override void OnEnterFocusSelectedState(XMouseEventArgs e)
 		{
 			this.Selected = true;
+			this.Focused = true;
+
+			this.Roi.ControlPoints.Visible = true;
+			this.Color = Color.Red;
+			Draw();
+
+			Trace.Write("OnEnterSelectedState\n");
+		}
+
+		public override void OnEnterSelectedState(XMouseEventArgs e)
+		{
+			if (this.ParentLayerManager.FocusGraphic == this)
+				this.ParentLayerManager.FocusGraphic = null;
+
 			this.Roi.ControlPoints.Visible = true;
 			this.Color = Color.Red;
 			Draw();

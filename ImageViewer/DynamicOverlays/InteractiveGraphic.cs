@@ -37,9 +37,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		#endregion
 
-		public override GraphicState CreateSelectedState()
+		public override GraphicState CreateFocusSelectedState()
 		{
-			return new SelectedInteractiveGraphicState(this);
+			return new FocusSelectedInteractiveGraphicState(this);
 		}
 
 		public override void OnEnterInactiveState(XMouseEventArgs e)
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			//base.OnEnterFocusState(e);
 		}
 
-		public override void OnEnterSelectedState(XMouseEventArgs e)
+		public override void OnEnterFocusSelectedState(XMouseEventArgs e)
 		{
 			//this.ControlPoints.Visible = true;
 			//base.OnEnterSelectedState(e);

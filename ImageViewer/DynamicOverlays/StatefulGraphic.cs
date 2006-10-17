@@ -67,10 +67,20 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				{
 					base.Selected = value;
 
-					if (value == true)
-						this.State = CreateSelectedState();
+					if (this.Focused)
+					{
+						if (value)
+							this.State = CreateFocusSelectedState();
+						else
+							this.State = CreateFocusState();
+					}
 					else
-						this.State = CreateInactiveState();
+					{
+						if (value)
+							this.State = CreateSelectedState();
+						else
+							this.State = CreateInactiveState();
+					}
 				}
 			}
 		}
@@ -89,11 +99,13 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 					if (value)
 					{
-						this.State = CreateFocusState();
+						if (this.Selected)
+							this.State = CreateFocusSelectedState();
+						else
+							this.State = CreateFocusState();
 					}
 					else
 					{
-						//transition back to selected if the graphic is selected.
 						if (this.Selected)
 							this.State = CreateSelectedState();
 						else
@@ -124,9 +136,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new FocusGraphicState(this);
 		}
 
+		public virtual GraphicState CreateFocusSelectedState()
+		{
+			return new FocusSelectedGraphicState(this);
+		}
+		
 		public virtual GraphicState CreateSelectedState()
 		{
-			return new SelectedGraphicState(this);
+			return new SelectedGraphicState(this);	
 		}
 
 		public virtual void OnEnterInactiveState(XMouseEventArgs e)
@@ -141,10 +158,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			//Draw();
 		}
 
-		public virtual void OnEnterSelectedState(XMouseEventArgs e)
+		public virtual void OnEnterFocusSelectedState(XMouseEventArgs e)
 		{
 			//this.Color = Color.Red;
 			//Draw();
+		}
+
+		public virtual void OnEnterSelectedState(XMouseEventArgs e)
+		{ 
 		}
 
 		public virtual void OnExitInactiveState(XMouseEventArgs e)
@@ -157,6 +178,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public virtual void OnExitSelectedState(XMouseEventArgs e)
 		{
+		}
+
+		public virtual void OnExitFocusSelectedState(XMouseEventArgs e)
+		{ 
 		}
 
 		#region IUIEventHandler Members

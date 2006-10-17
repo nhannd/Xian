@@ -5,9 +5,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class SelectedInteractiveGraphicState : SelectedGraphicState
+	public class FocusSelectedInteractiveGraphicState : FocusSelectedGraphicState
 	{
-		public SelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)
+		public FocusSelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)
 			: base(interactiveGraphic)
 		{
 		}
@@ -33,16 +33,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public override bool OnMouseUp(XMouseEventArgs e)
 		{
-			// Must return true.  If we just go with the base class
-			// implementation which returns false, PresentationImage.OnMouseUp
-			// will think we haven't handled this and then route the MouseUp message
-			// to some other mouse tool, which we don't want.
-			return true;
+			return base.OnMouseUp(e);
 		}
 
 		public override string ToString()
 		{
-			return "SelectedInteractiveGraphicState\n";
+			return "FocusSelectedInteractiveGraphicState\n";
 		}
 	}
 }

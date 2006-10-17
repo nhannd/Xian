@@ -104,9 +104,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			// When the child ROI graphic transitions to the selected state,
 			// cause "this" to transition to selected state too.
-			if (e.NewState is SelectedGraphicState)
+			if (e.NewState is FocusSelectedGraphicState)
 			{
-				this.ROIGraphic.State = this.ROIGraphic.CreateSelectedState();
+				this.ROIGraphic.State = this.ROIGraphic.CreateFocusSelectedState();
 				_childGraphic.StateChanged -= new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 				_childGraphic = null;
 

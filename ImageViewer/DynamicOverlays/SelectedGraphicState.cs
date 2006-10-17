@@ -1,13 +1,14 @@
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class SelectedGraphicState : GraphicState
 	{
-		public SelectedGraphicState(StatefulGraphic graphic)
-			: base(graphic)
+		public SelectedGraphicState(StatefulGraphic statefulGraphic)
+			: base(statefulGraphic)
 		{
 		}
 
@@ -15,11 +16,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			// In order to indicate which tool will be acted upon,
-			// the selected graphic must also be able to be focused.
 			if (base.StatefulGraphic.HitTest(e))
 			{
-				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusState();
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
 				return true;
 			}
 
@@ -28,22 +27,13 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public override bool OnMouseDown(XMouseEventArgs e)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			bool hit = base.StatefulGraphic.HitTest(e);
-
-			// User has clicked the graphic body
-			if (hit)
+			if (!base.StatefulGraphic.HitTest(e))
 			{
-				base.StatefulGraphic.State = new MoveGraphicState(base.StatefulGraphic);
-				base.StatefulGraphic.State.OnMouseDown(e);
-				return true;
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
+				return false;
 			}
 
-			// User has clicked elsewhere in the image, so return false so
-			// that the active modal tool can handle the click
-			base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
-			return false;
+			return true;
 		}
 
 		public override void OnEnterState(XMouseEventArgs e)

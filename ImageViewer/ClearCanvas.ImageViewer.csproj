@@ -96,6 +96,10 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="CaptureUIEventHandler.cs" />
+    <Compile Include="DynamicOverlays\FocusSelectedGraphicState.cs" />
+    <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
+    <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
+    <Compile Include="DynamicOverlays\SelectedGraphicState.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
     <Compile Include="Layers\GraphicFocusedEventArgs.cs" />
     <Compile Include="Rendering\ImageInterpolator.cs" />
@@ -166,13 +170,6 @@
     <Compile Include="DynamicOverlays\PositionInteractiveGraphicCommand.cs" />
     <Compile Include="DynamicOverlays\RectangleMemento.cs" />
     <Compile Include="DynamicOverlays\ROIGraphic.cs" />
-    <Compile Include="DynamicOverlays\SelectedGraphicState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicOverlays\SelectedInteractiveGraphicState.cs" />
-    <Compile Include="DynamicOverlays\SelectedROIGraphicState.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DynamicOverlays\StatefulGraphic.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="EventBroker.cs" />

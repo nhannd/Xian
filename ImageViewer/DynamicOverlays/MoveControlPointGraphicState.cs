@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 
 			if (e.MouseCapture != null)
-				e.MouseCapture.SetCapture(this, e);
+			    e.MouseCapture.SetCapture(this, e);
 
 			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
 
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 
 			if (e.MouseCapture != null)
-				e.MouseCapture.ReleaseCapture();
+			    e.MouseCapture.ReleaseCapture();
 
 			if (this.SupportUndo)
 			{
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 			}
 
-			base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
+			base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
 
 			return true;
 		}

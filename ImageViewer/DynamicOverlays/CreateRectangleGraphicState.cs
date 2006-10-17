@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 				}
 
-				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
 			}
 
 			return true;

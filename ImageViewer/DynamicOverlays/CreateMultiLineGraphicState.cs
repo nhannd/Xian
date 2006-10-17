@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 				}
 
-				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
 			}
 			// We're in the middle of creating
 			else if (_numberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)

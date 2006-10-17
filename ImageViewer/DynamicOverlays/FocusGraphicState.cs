@@ -15,15 +15,16 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
-			// If user has clicked on the object, then transition to selected state
 			if (base.StatefulGraphic.HitTest(e))
 			{
-				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState(); 
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState(); 
 				base.StatefulGraphic.State.OnMouseDown(e);
 
 				return true;
 			}
 
+			//We should never actually get to here, but if we did, this should happen.
+			base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
 			return false;
 		}
 
@@ -33,12 +34,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			if (!base.StatefulGraphic.HitTest(e))
 			{
-				//Transition back to selected when focus is lost.
-				if (base.StatefulGraphic.Selected)
-					base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
-				else
-					base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
-
+				base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();
 				return false;
 			}
 

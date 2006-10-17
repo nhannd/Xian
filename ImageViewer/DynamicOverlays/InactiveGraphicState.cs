@@ -11,13 +11,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return false;
-		}
-
 		public override bool OnMouseMove(XMouseEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");

@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Platform.CheckForNullReference(e, "e");
 
 			if (e.MouseCapture != null)
-				e.MouseCapture.ReleaseCapture();
+			    e.MouseCapture.ReleaseCapture();
 
 			if (this.SupportUndo)
 			{
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				this.StatefulGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 			}
 
-			base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
+			base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
 
 			return true;
 		}
