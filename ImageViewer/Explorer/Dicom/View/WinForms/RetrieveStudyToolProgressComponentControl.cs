@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _studyDate.DataBindings.Add("Text", bs, "StudyDate", true, DataSourceUpdateMode.OnPropertyChanged);
             _retrieveSourceGroupBox.DataBindings.Add("Text", bs, "RetrieveSourceGroupBox", true, DataSourceUpdateMode.OnPropertyChanged);
             _studyDescriptionGroupBox.DataBindings.Add("Text", bs, "StudyDescriptionGroupBox", true, DataSourceUpdateMode.OnPropertyChanged);
+            _totalObjectsReceivedLabel.DataBindings.Add("Text", bs, "TotalObjectsReceived", true, DataSourceUpdateMode.OnPropertyChanged);
             _progressToolTip.SetToolTip(_progressGroupBox, " ");
             _progressToolTip.SetToolTip(_retrieveProgressBar, " ");
             _progressToolTip.ShowAlways = true;

@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._host = new System.Windows.Forms.TextBox();
             this._aeTitle = new System.Windows.Forms.TextBox();
             this._progressToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this._totalObjectsReceivedLabel = new System.Windows.Forms.Label();
             this._progressGroupBox.SuspendLayout();
             this._studyDescriptionGroupBox.SuspendLayout();
             this._retrieveSourceGroupBox.SuspendLayout();
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             // _progressGroupBox
             // 
+            this._progressGroupBox.Controls.Add(this._totalObjectsReceivedLabel);
             this._progressGroupBox.Controls.Add(this._retrieveProgressBar);
             this._progressGroupBox.Location = new System.Drawing.Point(16, 19);
             this._progressGroupBox.Name = "_progressGroupBox";
@@ -65,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             this._retrieveProgressBar.Location = new System.Drawing.Point(15, 39);
             this._retrieveProgressBar.Name = "_retrieveProgressBar";
-            this._retrieveProgressBar.Size = new System.Drawing.Size(395, 23);
+            this._retrieveProgressBar.Size = new System.Drawing.Size(346, 23);
             this._retrieveProgressBar.TabIndex = 1;
             // 
             // _studyDescriptionGroupBox
@@ -200,6 +202,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._aeTitle.Size = new System.Drawing.Size(190, 22);
             this._aeTitle.TabIndex = 1;
             // 
+            // _totalObjectsReceivedLabel
+            // 
+            this._totalObjectsReceivedLabel.AutoSize = true;
+            this._totalObjectsReceivedLabel.Location = new System.Drawing.Point(368, 39);
+            this._totalObjectsReceivedLabel.Name = "_totalObjectsReceivedLabel";
+            this._totalObjectsReceivedLabel.Size = new System.Drawing.Size(0, 17);
+            this._totalObjectsReceivedLabel.TabIndex = 2;
+            // 
             // RetrieveStudyToolProgressComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -210,6 +220,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.Name = "RetrieveStudyToolProgressComponentControl";
             this.Size = new System.Drawing.Size(458, 364);
             this._progressGroupBox.ResumeLayout(false);
+            this._progressGroupBox.PerformLayout();
             this._studyDescriptionGroupBox.ResumeLayout(false);
             this._studyDescriptionGroupBox.PerformLayout();
             this._retrieveSourceGroupBox.ResumeLayout(false);
@@ -237,5 +248,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private System.Windows.Forms.TextBox _studyDate;
         private System.Windows.Forms.TextBox _patient;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label _totalObjectsReceivedLabel;
     }
 }

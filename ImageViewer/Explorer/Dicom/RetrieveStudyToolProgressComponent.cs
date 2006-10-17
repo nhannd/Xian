@@ -73,6 +73,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             foreach (StudyItem item in listOfStudyItems)
                 ++this.TotalStudyCount;
 
+            this.TotalObjectsReceived = 0;
+
             InternalRetrieve(this.StudyItemListEnumerator.Current);
         }
 
@@ -111,16 +113,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void SignalDetailsChanged()
         {
-            EventsHelper.Fire(AETitleChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(HostChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(PortChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(LocationChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(PatientChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(DescriptionChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(StudyDateChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(ProgressGroupBoxChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(RetrieveSourceGroupBoxChanged, this, EventArgs.Empty);
-            EventsHelper.Fire(StudyDescriptionGroupBoxChanged, this, EventArgs.Empty);
+            NotifyPropertyChanged("AETitle");
+            NotifyPropertyChanged("Host");
+            NotifyPropertyChanged("Port");
+            NotifyPropertyChanged("Location");
+            NotifyPropertyChanged("Patient");
+            NotifyPropertyChanged("Description");
+            NotifyPropertyChanged("StudyDate");
+            NotifyPropertyChanged("ProgressGroupBox");
+            NotifyPropertyChanged("RetrieveSourceGroupBox");
+            NotifyPropertyChanged("StudyDescriptionGroupBox");
         }
 
         private void BackgroundWorkerInitialize()
@@ -204,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void SignalProgressChanged()
         {
-            EventsHelper.Fire(ProgressBarChanged, this, EventArgs.Empty);
+            NotifyPropertyChanged("ProgressBar");
         }
 
         /// <summary>
@@ -248,7 +250,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private string _retrieveSourceGroupBox;
         private string _studyDescriptionGroupBox;
         private string _progressDetails;
+        private int _totalObjectsReceived;
 
+        public int TotalObjectsReceived
+        {
+            get { return _totalObjectsReceived; }
+            set { _totalObjectsReceived = value; }
+        }
+	
         public string ProgressDetails
         {
             get { return _progressDetails; }
@@ -374,17 +383,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	
         #endregion
         #region Published Events
-        public event EventHandler AETitleChanged;
-        public event EventHandler HostChanged;
-        public event EventHandler PortChanged;
-        public event EventHandler LocationChanged;
-        public event EventHandler PatientChanged;
-        public event EventHandler StudyDateChanged;
-        public event EventHandler DescriptionChanged;
-        public event EventHandler ProgressBarChanged;
-        public event EventHandler ProgressGroupBoxChanged;
-        public event EventHandler RetrieveSourceGroupBoxChanged;
-        public event EventHandler StudyDescriptionGroupBoxChanged;
         public event EventHandler AllRetrievalTasksCompleted;
         #endregion
 
@@ -471,7 +469,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         void OnSopInstanceReceived(object sender, SopInstanceReceivedEventArgs e)
         {
             InsertSopInstance(e.SopFileName);
+            ++this.TotalObjectsReceived;
+            NotifyPropertyChanged("TotalObjectsReceived");
         }
-
     }
 }
