@@ -16,6 +16,7 @@ DATATYPE_MAPPINGS =
 	'set' => 'ISet',
 	'idbag' => 'IList',
 	'String' => 'string',
+	'StringClob' => 'string',
 	'Boolean' => 'bool',
 	'bag' => 'IList',
 	'list' => 'IList'

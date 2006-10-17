@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("show", "global-menus/Admin/HL7/Queue")]
     [ButtonAction("show", "global-toolbars/HL7AdminToolbar/Find")]
     [Tooltip("show", "HL7 Queue")]
-    [IconSet("show", IconScheme.Colour, "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png")]
+    //[IconSet("show", IconScheme.Colour, "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png", "Icons.FindPatientMedium.png")]
     [ClickHandler("show", "Show")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]

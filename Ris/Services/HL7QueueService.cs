@@ -6,6 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.HL7;
 using ClearCanvas.HL7.Brokers;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -43,9 +45,65 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void ProcessHL7QueueItem(ClearCanvas.HL7.HL7QueueItem item)
+        public IList<Patient> ProcessHL7QueueItem(HL7QueueItem hl7QueueItem)
         {
-            UpdateItemStatusHelper(item, HL7MessageStatusCode.C, null);
+            if (hl7QueueItem.Status.Code == HL7MessageStatusCode.C)
+            {
+                //throw new Exception("Queue item has already been processed");
+            }
+
+            HL7MessageStatusCode result = HL7MessageStatusCode.C;
+            string statusDescription = null;
+            IList<Patient> referencedPatients = null;
+
+            try
+            {
+                referencedPatients = ProcessHL7QueueItemHelper(hl7QueueItem);
+                foreach (Patient patient in referencedPatients)
+                {
+                    this.CurrentContext.GetBroker<IPatientBroker>().Store(patient);
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log("Unable to process HL7 queue item: " + hl7QueueItem.ToString());
+                Platform.Log("Exception thrown: " + e.Message);
+                statusDescription = e.Message;
+                result = HL7MessageStatusCode.E;
+
+                if (referencedPatients != null)
+                {
+                    referencedPatients.Clear();
+                }
+                //can transactions be rolled back here yet have the QueueItemUpdate proceed?
+            }
+            finally
+            {
+                UpdateQueueItemStatus(hl7QueueItem, result, statusDescription);
+            }
+
+            return referencedPatients;
+        }
+
+        private IList<Patient> ProcessHL7QueueItemHelper(HL7QueueItem hl7QueueItem)
+        {
+            HL7MessageProviderFactory providerFactory = new HL7MessageProviderFactory();
+            IHL7MessageProvider messageProvider = providerFactory.GetMessageProvider(hl7QueueItem.Message.Version);
+            IHL7Message message = messageProvider.GetMessage(hl7QueueItem.Message.MessageType, hl7QueueItem.Message.Format, hl7QueueItem.Message.Text);
+
+            HL7MessageMappingFactory mappingFactory = new HL7MessageMappingFactory();
+            IHL7MessageMapping mapping = mappingFactory.GetMapping(message, hl7QueueItem.Message.Peer);
+
+            HL7ProcessorFactory processorFactory = new HL7ProcessorFactory();
+            IHL7Processor processor = processorFactory.GetProcessor(mapping);
+
+            IList<string> referencedPatientProfiles = processor.GetReferencedPatientIdentifiers();
+            string assigningAuthority = processor.GetReferencedPatientIdentifiersAssigningAuthority();
+
+            IList<Patient> referencedPatients = LoadOrCreatePatients(referencedPatientProfiles, assigningAuthority);
+            processor.UpdatePatients(referencedPatients);
+
+            return referencedPatients;
         }
 
         [UpdateOperation]
@@ -68,7 +126,7 @@ namespace ClearCanvas.Ris.Services
 
         #endregion
 
-        private void UpdateItemStatusHelper(ClearCanvas.HL7.HL7QueueItem item, ClearCanvas.HL7.HL7MessageStatusCode status, string statusDescription)
+        private void UpdateQueueItemStatus(ClearCanvas.HL7.HL7QueueItem item, ClearCanvas.HL7.HL7MessageStatusCode status, string statusDescription)
         {
             if (item == null) return;
 
@@ -77,17 +135,42 @@ namespace ClearCanvas.Ris.Services
             if (reloaded != null)
             {
                 reloaded.Status.Code = status;
-
-                if (statusDescription != null)
-                {
-                    reloaded.Status.Description = statusDescription;
-                }
-
+                reloaded.Status.Description = statusDescription;
                 reloaded.Status.UpdateDateTime = Platform.Time;
 
                 this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(reloaded);
             }
         }
 
+        private IList<Patient> LoadOrCreatePatients(IList<string> mrns, string assigningAuthority)
+        {
+            IList<Patient> patients = new List<Patient>();
+            foreach(string mrn in mrns)
+            {
+                PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
+                criteria.MRN.Id.EqualTo(mrn);
+                //criteria.MRN.AssigningAuthority.EqualTo(assigningAuthority);
+
+                IList<PatientProfile> profiles = this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
+                if (profiles.Count > 0)
+                {
+                    patients.Add(profiles[0].Patient);
+                }
+                else
+                {
+                    Patient patient = Patient.New();
+                    PatientProfile profile = PatientProfile.New();
+                    profile.MRN.Id = mrn;
+                    profile.MRN.AssigningAuthority = "TODO";
+                    profile.Patient = patient;
+                    patient.Profiles.Add(profile);
+
+                    patients.Add(patient);
+                }
+            }
+            return patients;
+        }
     }
 }
+
+

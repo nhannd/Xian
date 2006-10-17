@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _hl7QueueService = ApplicationContext.GetService<IHL7QueueService>();
             _queue = new HL7QueueItemTableData(_hl7QueueService);
+            
 
             ShowAllItems();
         }
@@ -75,7 +76,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void ProcessSelection()
         {
-            _hl7QueueService.ProcessHL7QueueItem(_selectedItem);
+            try
+            {
+                _hl7QueueService.ProcessHL7QueueItem(_selectedItem);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to process queue item:  " + e.Message);
+            }
 
             ShowAllItems();
         }

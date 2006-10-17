@@ -31,3 +31,9 @@ copy "..\..\..\..\Jscript\bin\%1\ClearCanvas.Jscript.dll" .\plugins
 :: Copy HL7
 copy "..\..\..\..\HL7\bin\%1\ClearCanvas.HL7.dll" .\plugins
 copy "..\..\..\..\HL7\Hibernate\bin\%1\ClearCanvas.HL7.Hibernate.dll" .\plugins
+copy "..\..\..\..\HL7\InboundProcessor\bin\%1\ClearCanvas.HL7.InboundProcessor.dll" .\plugins
+::copy "..\..\..\..\HL7\Xsd\bin\%1\ClearCanvas.HL7.Xsd.dll" .\plugins
+::copy "..\..\..\..\HL7\Xsd\v231\bin\%1\ClearCanvas.HL7.Xsd.v231.Generated.dll" .\plugins
+::copy "..\..\..\..\HL7\Xsd\v231\bin\%1\ClearCanvas.HL7.Xsd.v231.dll" .\plugins
+copy "..\..\..\..\HL7\NHapi\bin\%1\ClearCanvas.HL7.Hapi.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\NHapi.*" .\plugins
