@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="ExpandPatientToolBase.cs" />
     <Compile Include="PatientEditFromOverviewTool.cs" />
     <Compile Include="PatientEditFromWorklistTool.cs" />
     <Compile Include="PatientReconcileFromOverviewTool.cs" />
