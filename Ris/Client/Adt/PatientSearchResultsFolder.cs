@@ -9,13 +9,13 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class SearchResultsFolder : Folder
+    public class PatientSearchResultsFolder : Folder
     {
         private PatientProfileTable _searchResults;
         private PatientProfileSearchCriteria _searchCriteria;
         private IAdtService _adtService;
 
-        public SearchResultsFolder()
+        public PatientSearchResultsFolder()
             :base("Search Results")
         {
             _adtService = ApplicationContext.GetService<IAdtService>();

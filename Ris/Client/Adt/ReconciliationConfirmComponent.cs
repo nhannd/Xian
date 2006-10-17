@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// ConfirmReconciliationComponent class
     /// </summary>
     [AssociateView(typeof(ConfirmReconciliationComponentViewExtensionPoint))]
-    public class ConfirmReconciliationComponent : ApplicationComponent
+    public class ReconciliationConfirmComponent : ApplicationComponent
     {
         private PatientProfileTable _sourceProfiles;
         private PatientProfileTable _targetProfiles;
@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public ConfirmReconciliationComponent(Patient target, IList<Patient> sources)
+        public ReconciliationConfirmComponent(Patient target, IList<Patient> sources)
         {
             IAdtService service = ApplicationContext.GetService<IAdtService>();
 

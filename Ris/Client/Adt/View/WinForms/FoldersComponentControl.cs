@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            ToolStripBuilder.BuildToolbar(_toolbar.Items, _component.ToolbarModel.ChildNodes);
+            ToolStripBuilder.BuildToolbar(_toolbar.Items, _component.ToolbarModel.ChildNodes, ToolStripItemDisplayStyle.ImageAndText);
 
             foreach (IFolder folder in _component.Folders)
             {

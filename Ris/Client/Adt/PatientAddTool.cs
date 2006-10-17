@@ -12,8 +12,8 @@ using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/Adt/New Patient...")]
-    [ButtonAction("apply", "global-toolbars/Adt/PatientAddTool")]
+    [MenuAction("apply", "global-menus/Patient/New Patient...")]
+    [ButtonAction("apply", "global-toolbars/Patient/PatientAddTool")]
     [Tooltip("apply", "New Patient")]
     [IconSet("apply", IconScheme.Colour, "Icons.PatientAddToolSmall.png", "Icons.PatientAddToolMedium.png", "Icons.PatientAddToolLarge.png")]
     [ClickHandler("apply", "Apply")]
@@ -34,21 +34,18 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public void Apply()
         {
-            PatientEditorShellComponent editor = new PatientEditorShellComponent(PatientProfile.New(), true);
-            ApplicationComponent.LaunchAsWorkspace(
-                this.Context.DesktopWindow, editor, "New Patient", null);
-        }
-/*
-        private void PatientEditorExited(IApplicationComponent component)
-        {
-            PatientEditorShellComponent editor = (PatientEditorShellComponent)component;
-            if (editor.ExitCode == ApplicationComponentExitCode.Normal)
+            PatientProfileEditorComponent editor = new PatientProfileEditorComponent(PatientProfile.New());
+            ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
+                this.Context.DesktopWindow,
+                editor,
+                "New Patient");
+
+            if (result == ApplicationComponentExitCode.Normal)
             {
-                IAdtService service = ApplicationContext.GetService<IAdtService>();
-                service.CreatePatientForProfile(editor.Subject);
+                // open the patient overview for the newly created patient
+                Document doc = new PatientOverviewDocument(editor.Subject, this.Context.DesktopWindow);
+                doc.Open();
             }
         }
- */
-
     }
 }

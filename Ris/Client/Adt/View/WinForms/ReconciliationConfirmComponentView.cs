@@ -9,20 +9,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="PatientComponent"/>
+    /// Provides a Windows Forms view onto <see cref="ConfirmReconciliationComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(PatientComponentViewExtensionPoint))]
-    public class PatientComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(ConfirmReconciliationComponentViewExtensionPoint))]
+    public class ReconciliationConfirmComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientOverviewComponent _component;
-        private PatientComponentControl _control;
+        private ReconciliationConfirmComponent _component;
+        private ReconciliationConfirmComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientOverviewComponent)component;
+            _component = (ReconciliationConfirmComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PatientComponentControl(_component);
+                    _control = new ReconciliationConfirmComponentControl(_component);
                 }
                 return _control;
             }

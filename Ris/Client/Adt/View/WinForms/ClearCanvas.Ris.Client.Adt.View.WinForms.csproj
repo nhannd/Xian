@@ -54,13 +54,13 @@
     <Compile Include="AddressesSummaryControl.Designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConfirmReconciliationComponentControl.cs">
+    <Compile Include="ReconciliationConfirmComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ConfirmReconciliationComponentControl.Designer.cs">
-      <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
+    <Compile Include="ReconciliationConfirmComponentControl.Designer.cs">
+      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConfirmReconciliationComponentView.cs" />
+    <Compile Include="ReconciliationConfirmComponentView.cs" />
     <Compile Include="FoldersComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,19 +82,12 @@
       <DependentUpon>JscriptComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JscriptComponentView.cs" />
-    <Compile Include="PatientComponentControl.cs">
+    <Compile Include="PatientProfileDetailsEditorComponentView.cs" />
+    <Compile Include="PatientProfileDetailsEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientComponentControl.Designer.cs">
-      <DependentUpon>PatientComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PatientComponentView.cs" />
-    <Compile Include="PatientEditorComponentView.cs" />
-    <Compile Include="PatientEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PatientEditorControl.Designer.cs">
-      <DependentUpon>PatientEditorControl.cs</DependentUpon>
+    <Compile Include="PatientProfileDetailsEditorControl.Designer.cs">
+      <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientProfilePreviewComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -173,9 +166,9 @@
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConfirmReconciliationComponentControl.resx">
+    <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>ConfirmReconciliationComponentControl.cs</DependentUpon>
+      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FoldersComponentControl.resx">
       <SubType>Designer</SubType>
@@ -189,8 +182,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>JscriptComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientEditorControl.resx">
-      <DependentUpon>PatientEditorControl.cs</DependentUpon>
+    <EmbeddedResource Include="PatientProfileDetailsEditorControl.resx">
+      <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientProfilePreviewComponentControl.resx">

@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Adt
             public event EventHandler SelectedPatientProfileChanged
             {
                 add { _component.SelectedPatientChanged += value; }
-                remove { _component.SelectedPatientChanged += value; }
+                remove { _component.SelectedPatientChanged -= value; }
             }
 
 
@@ -116,6 +116,11 @@ namespace ClearCanvas.Ris.Client.Adt
             _adtService.PatientProfileChanged -= PatientProfileChangedEventHandler;
 
             base.Stop();
+        }
+
+        public override IActionSet ExportedActions
+        {
+            get { return _toolSet.Actions; }
         }
 
         public PatientProfile SelectedPatient
@@ -173,6 +178,13 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public ActionModelNode ToolbarModel
+        {
+            get
+            {
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "worklist-toolbar", _toolSet.Actions);
+            }
+        }
 
         #endregion
 

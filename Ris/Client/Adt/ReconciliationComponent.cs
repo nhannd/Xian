@@ -160,6 +160,31 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Reconcile()
         {
+            try
+            {
+                DoReconciliation();
+                this.ExitCode = ApplicationComponentExitCode.Normal;
+            }
+            catch (PatientReconciliationException e)
+            {
+                Platform.Log(e);
+                this.Host.ShowMessageBox("An error occured while attempting to reconcile the patient profiles", MessageBoxActions.Ok);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+            }
+
+            this.Host.Exit();
+        }
+
+        public void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.Host.Exit();
+        }
+
+        #endregion
+
+        private void DoReconciliation()
+        {
             IList<Patient> checkedPatients = new List<Patient>();
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
@@ -170,35 +195,15 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             // confirmation
-            ConfirmReconciliationComponent confirmComponent = new ConfirmReconciliationComponent(_selectedTargetProfile.Patient, checkedPatients);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+            ReconciliationConfirmComponent confirmComponent = new ReconciliationConfirmComponent(_selectedTargetProfile.Patient, checkedPatients);
+            ApplicationComponentExitCode confirmExitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, confirmComponent, "Confirm Reconciliation");
 
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (confirmExitCode == ApplicationComponentExitCode.Normal)
             {
-                try
-                {
-                    _adtService.ReconcilePatients(_selectedTargetProfile.Patient, checkedPatients);
-                }
-                catch (PatientReconciliationException e)
-                {
-                    Platform.Log(e);
-                    this.Host.ShowMessageBox("An error occured while attempting to reconcile the patient profiles", MessageBoxActions.Ok);
-                }
+                _adtService.ReconcilePatients(_selectedTargetProfile.Patient, checkedPatients);
             }
-
-            this.ExitCode = ApplicationComponentExitCode.Normal;
-            this.Host.Exit();
-
         }
-
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-            this.Host.Exit();
-        }
-
-        #endregion
 
         private void CandidateCheckedChangedEventHandler(object sender, EventArgs e)
         {

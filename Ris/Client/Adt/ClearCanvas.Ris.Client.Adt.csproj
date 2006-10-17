@@ -39,8 +39,15 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="ConfirmReconciliationComponent.cs" />
+    <Compile Include="ExpandPatientToolBase.cs" />
+    <Compile Include="PatientEditFromOverviewTool.cs" />
+    <Compile Include="PatientEditFromWorklistTool.cs" />
+    <Compile Include="PatientReconcileFromOverviewTool.cs" />
+    <Compile Include="PatientReconciliation.cs" />
+    <Compile Include="PatientWorklistTool.cs" />
+    <Compile Include="ReconciliationConfirmComponent.cs" />
     <Compile Include="CrudActionModel.cs" />
+    <Compile Include="Document.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FoldersComponent.cs" />
     <Compile Include="HL7QueueItemTableData.cs" />
@@ -50,14 +57,17 @@
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
     <Compile Include="PatientAddTool.cs" />
-    <Compile Include="PatientEditorShellComponent.cs" />
+    <Compile Include="PatientProfileEditorDocument.cs" />
     <Compile Include="PatientOverviewComponent.cs" />
-    <Compile Include="PatientEditorComponent.cs" />
-    <Compile Include="PatientOverviewTool.cs" />
+    <Compile Include="PatientProfileDetailsEditorComponent.cs" />
+    <Compile Include="PatientOpenFromWorklistTool.cs" />
+    <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="PatientProfilePreviewComponent.cs" />
     <Compile Include="PatientProfileTable.cs" />
+    <Compile Include="DocumentManager.cs" />
+    <Compile Include="PatientOverviewDocument.cs" />
     <Compile Include="ReconciliationComponent.cs" />
-    <Compile Include="ReconciliationTool.cs" />
+    <Compile Include="PatientReconcileFromWorklistTool.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
@@ -66,8 +76,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTable.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />
-    <Compile Include="SearchResultsFolder.cs" />
-    <Compile Include="SearchTool.cs" />
+    <Compile Include="PatientSearchResultsFolder.cs" />
+    <Compile Include="PatientSearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -120,25 +130,13 @@
     <EmbeddedResource Include="Icons\PatientReconciliationToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientRegistrationToolLarge.png" />
+    <EmbeddedResource Include="Icons\HomeToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientRegistrationToolMedium.png" />
+    <EmbeddedResource Include="Icons\HomeToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientRegistrationToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PatientPreview1.htm" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\JscriptToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\JscriptToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\JscriptToolSmall.png" />
+    <EmbeddedResource Include="Icons\HomeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\SearchToolLarge.png" />
@@ -169,6 +167,22 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PatientAddToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientEditToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OpenItemLarge.png" />
+    <EmbeddedResource Include="Icons\OpenItemMedium.png" />
+    <EmbeddedResource Include="Icons\OpenItemSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientOpenToolLarge.png" />
+    <EmbeddedResource Include="Icons\PatientOpenToolMedium.png" />
+    <EmbeddedResource Include="Icons\PatientOpenToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="actionmodels.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

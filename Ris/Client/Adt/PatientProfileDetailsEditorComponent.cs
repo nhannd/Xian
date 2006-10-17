@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Adt
     }
 
     [AssociateView(typeof(PatientEditorComponentViewExtensionPoint))]
-    public class PatientEditorComponent : ApplicationComponent
+    public class PatientProfileDetailsEditorComponent : ApplicationComponent
     {
         private PatientProfile _patient;
         private IPatientAdminService _patientAdminService;
@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
         private string[] _dummySiteChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
 
-        public PatientEditorComponent()
+        public PatientProfileDetailsEditorComponent()
         {
             _patient = PatientProfile.New();
         }

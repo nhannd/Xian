@@ -9,22 +9,22 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     [ExtensionOf(typeof(PatientEditorComponentViewExtensionPoint))]
-    public class PatientEditorComponentView : WinFormsView, IApplicationComponentView
+    public class PatientProfileDetailsEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientEditorControl _control;
-        private PatientEditorComponent _component;
+        private PatientProfileDetailsEditorControl _control;
+        private PatientProfileDetailsEditorComponent _component;
 
-        public PatientEditorComponentView()
+        public PatientProfileDetailsEditorComponentView()
         {
         }
 
-        protected PatientEditorControl Control
+        protected PatientProfileDetailsEditorControl Control
         {
             get
             {
                 if (_control == null)
                 {
-                    _control = new PatientEditorControl(_component);
+                    _control = new PatientProfileDetailsEditorControl(_component);
                 }
                 return _control;
             }
@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientEditorComponent)component;
+            _component = (PatientProfileDetailsEditorComponent)component;
         }
 
         #endregion

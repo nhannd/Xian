@@ -39,12 +39,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._patientProfileTable.MenuModel = null;
             this._patientProfileTable.MultiSelect = false;
             this._patientProfileTable.Name = "_patientProfileTable";
+            this._patientProfileTable.ReadOnly = false;
             this._patientProfileTable.Size = new System.Drawing.Size(771, 429);
             this._patientProfileTable.TabIndex = 0;
             this._patientProfileTable.Table = null;
             this._patientProfileTable.ToolbarModel = null;
-            this._patientProfileTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._patientProfileTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._patientProfileTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
+            this._patientProfileTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._patientProfileTable.ItemDoubleClicked += new System.EventHandler(this._patientProfileTable_ItemDoubleClicked);
             this._patientProfileTable.SelectionChanged += new System.EventHandler(this._patientProfileTable_SelectionChanged);
             // 

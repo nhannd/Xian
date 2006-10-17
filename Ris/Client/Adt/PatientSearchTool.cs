@@ -9,21 +9,21 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ButtonAction("search", "folders-toolbar/SearchTool")]
-    [Tooltip("search", "Find items")]
+    [ButtonAction("search", "folders-toolbar/Search")]
+    [Tooltip("search", "Search for a patient")]
     [IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
     [ClickHandler("search", "Search")]
 
     [ExtensionOf(typeof(FolderToolExtensionPoint))]
-    public class SearchTool : Tool<IFolderToolContext>
+    public class PatientSearchTool : Tool<IFolderToolContext>
     {
         private PatientSearchComponent _searchComponent;
-        private SearchResultsFolder _folder;
+        private PatientSearchResultsFolder _folder;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public SearchTool()
+        public PatientSearchTool()
         {
         }
 
@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Initialize();
 
             // TODO: add any significant initialization code here rather than in the constructor
-            this.Context.Folders.Add(_folder = new SearchResultsFolder());
+            this.Context.Folders.Add(_folder = new PatientSearchResultsFolder());
         }
 
         public void Search()

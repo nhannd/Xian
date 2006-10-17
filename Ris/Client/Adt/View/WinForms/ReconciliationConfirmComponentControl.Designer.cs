@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    partial class ConfirmReconciliationComponentControl
+    partial class ReconciliationConfirmComponentControl
     {
         /// <summary> 
         /// Required designer variable.

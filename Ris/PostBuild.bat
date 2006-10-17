@@ -2,6 +2,10 @@
 
 echo Executing RIS post-build step
 
+:: Copy config files
+copy "..\..\..\..\Ris\Client\Adt\actionmodels.xml "."
+
+
 :: Copy Enterprise	
 copy "..\..\..\..\Enterprise\bin\%1\ClearCanvas.Enterprise.dll" .\plugins
 copy "..\..\..\..\Enterprise\refs\Iesi.Collections.dll" .\plugins

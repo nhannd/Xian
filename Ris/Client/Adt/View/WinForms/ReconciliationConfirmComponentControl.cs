@@ -12,14 +12,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="ConfirmReconciliationComponent"/>
     /// </summary>
-    public partial class ConfirmReconciliationComponentControl : CustomUserControl
+    public partial class ReconciliationConfirmComponentControl : CustomUserControl
     {
-        private ConfirmReconciliationComponent _component;
+        private ReconciliationConfirmComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ConfirmReconciliationComponentControl(ConfirmReconciliationComponent component)
+        public ReconciliationConfirmComponentControl(ReconciliationConfirmComponent component)
         {
             InitializeComponent();
 

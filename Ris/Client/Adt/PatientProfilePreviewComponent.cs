@@ -156,7 +156,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (_subject != null)
             {
-                _adtService.LoadPatientProfileDetails(_subject);
+                if (!_subject.IsNew)
+                {
+                    _adtService.LoadPatientProfileDetails(_subject);
+                }
 
                 _addresses.Items.AddRange(_subject.Addresses);
                 _phoneNumbers.Items.AddRange(_subject.TelephoneNumbers);
