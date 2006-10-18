@@ -131,6 +131,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private void Refresh()
         {
             _preview.Subject = _subject;
+            this.Host.SetTitle(string.Format(SR.PatientComponentTitle, _subject.Name.Format(), _subject.MRN.Format()));
         }
     }
 }
