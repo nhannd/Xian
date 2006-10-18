@@ -66,8 +66,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				rightPane, 
 				SplitOrientation.Vertical);
 
-			SplitPane topPane = new SplitPane("Search Panel", _searchPanel, 0.25f);
-			SplitPane bottomPane = new SplitPane("Study Navigator", bottomContainer, 0.75f);
+			SplitPane topPane = new SplitPane("Search Panel", _searchPanel, true);
+			SplitPane bottomPane = new SplitPane("Study Navigator", bottomContainer, false);
 
 			_splitComponentContainer = 
 				new SplitComponentContainer(

@@ -11,10 +11,19 @@ namespace ClearCanvas.Desktop
         private IApplicationComponent _component;
 		private string _name;
         private float _weight;
+		private bool _fixed;
 
         private SplitComponentContainer.SplitPaneHost _host;
 
-        /// <summary>
+		public SplitPane(string name, IApplicationComponent component, bool fix)
+		{
+			_name = name;
+			_component = component;
+			_weight = 0F;
+			_fixed = fix;
+		}
+
+		/// <summary>
         /// Constructor
         /// </summary>
         /// <param name="name">Name of the pane</param>
@@ -25,6 +34,7 @@ namespace ClearCanvas.Desktop
             _name = name;
             _component = component;
             _weight = initialWeight;
+			_fixed = false;
         }
 
 		public string Name
@@ -47,6 +57,11 @@ namespace ClearCanvas.Desktop
         {
             get { return _weight; }
         }
+
+		public bool Fixed
+		{
+			get { return _fixed; }
+		}
 
         /// <summary>
         /// Gets the component host for this pane.  For internal use only.
