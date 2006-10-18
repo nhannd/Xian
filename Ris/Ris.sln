@@ -45,10 +45,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Adt"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Adt.View.WinForms", "Client\Adt\View\WinForms\ClearCanvas.Ris.Client.Adt.View.WinForms.csproj", "{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Samples.XmppClient", "..\Samples\XmppClient\ClearCanvas.Samples.XmppClient.csproj", "{43B34FB2-6290-4459-AE12-EC750CA62A7D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Samples.XmppClient.View.WinForms", "..\Samples\XmppClient\View\WinForms\ClearCanvas.Samples.XmppClient.View.WinForms.csproj", "{A23A6B58-0325-4A24-B499-5A3CC100041E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7", "..\HL7\ClearCanvas.HL7.csproj", "{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hibernate", "..\HL7\Hibernate\ClearCanvas.HL7.Hibernate.csproj", "{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}"
@@ -123,14 +119,6 @@ Global
 		{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43B34FB2-6290-4459-AE12-EC750CA62A7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43B34FB2-6290-4459-AE12-EC750CA62A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43B34FB2-6290-4459-AE12-EC750CA62A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43B34FB2-6290-4459-AE12-EC750CA62A7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A23A6B58-0325-4A24-B499-5A3CC100041E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
