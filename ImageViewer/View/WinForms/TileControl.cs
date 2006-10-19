@@ -9,6 +9,8 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Rendering;
 using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -42,6 +44,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
+			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
         }
 
 		public Tile Tile
@@ -206,6 +209,20 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
 		{
 			_maintainCapture = (e.UIEventHandlerGainingCapture != null);
+		}
+
+		void OnContextMenuStripOpening(object sender, CancelEventArgs e)
+		{
+			ActionModelNode menuModel = (_tile.ImageViewer as ImageViewerComponent).ContextMenuModel;
+
+			if (menuModel != null)
+			{
+				ToolStripBuilder.Clear(_contextMenuStrip.Items);
+				ToolStripBuilder.BuildMenu(_contextMenuStrip.Items, menuModel.ChildNodes);
+				e.Cancel = false;
+			}
+			else
+				e.Cancel = true;
 		}
     }
 }
