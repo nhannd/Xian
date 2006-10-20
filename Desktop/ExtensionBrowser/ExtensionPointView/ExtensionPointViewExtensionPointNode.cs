@@ -21,7 +21,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView
             List<ExtensionInfo> extensions = new List<ExtensionInfo>();
             foreach (ExtensionInfo e in Platform.PluginManager.Extensions)
             {
-                if (e.ExtensionPointClass == _ep.ExtensionPointClass)
+                if (e.PointExtended == _ep.ExtensionPointClass)
                 {
                     extensions.Add(e);
                 }
