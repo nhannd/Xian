@@ -38,11 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DicomImageLoaderToolBase.cs" />
+    <Compile Include="LocalImageWorkspaceLoader.cs" />
     <Compile Include="LocalImageExplorer.cs" />
     <Compile Include="LocalImageExplorerComponent.cs">
     </Compile>
-    <Compile Include="LocalImageExplorerComponentBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
