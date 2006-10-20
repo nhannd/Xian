@@ -142,7 +142,7 @@ namespace ClearCanvas.Common
             List<ExtensionInfo> extensions = new List<ExtensionInfo>();
             foreach (ExtensionInfo extension in Platform.PluginManager.Extensions)
             {
-                if (extension.ExtensionPointClass == extensionPointClass
+                if (extension.PointExtended == extensionPointClass
                     && (filter == null || filter.Test(extension)))
                 {
                     extensions.Add(extension);
