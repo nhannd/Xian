@@ -18,9 +18,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public ImageViewerControl(ImageViewerComponent component)
 		{
-			InitializeComponent();
-
 			_component = component;
+
+			InitializeComponent();
 
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);

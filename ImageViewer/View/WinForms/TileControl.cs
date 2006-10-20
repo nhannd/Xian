@@ -32,11 +32,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         /// </summary>
         public TileControl(Tile tile)
         {
-            InitializeComponent();
+			_tile = tile;
+			
+			InitializeComponent();
 
 			_maintainCapture = false;
-
-            _tile = tile;
 
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.BackColor = Color.Black;
@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			ActionModelNode menuModel = (_tile.ImageViewer as ImageViewerComponent).ContextMenuModel;
 
-			if (menuModel != null)
+			if (_tile.ContextMenuEnabled)
 			{
 				ToolStripBuilder.Clear(_contextMenuStrip.Items);
 				ToolStripBuilder.BuildMenu(_contextMenuStrip.Items, menuModel.ChildNodes);

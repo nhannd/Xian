@@ -33,6 +33,8 @@ namespace ClearCanvas.ImageViewer
 		private Rectangle _clientRectangle;
 		private RectangleF _normalizedRectangle;
 		private bool _selected = false;
+		private bool _contextMenuEnabled;
+		private Point _lastMousePoint;
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
@@ -215,6 +217,11 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public bool ContextMenuEnabled
+		{
+			get { return _contextMenuEnabled; }
+		}
+
 		#endregion
 
 		#region Public events
@@ -362,6 +369,9 @@ namespace ClearCanvas.ImageViewer
 			// Select this tile if user has clicked on it
 			Select();
 
+			_contextMenuEnabled = true;
+			_lastMousePoint = new Point(e.X, e.Y);
+
 			SetSelectedObjects(e);
 			return _presentationImage.OnMouseDown(e);
 		}
@@ -372,6 +382,21 @@ namespace ClearCanvas.ImageViewer
 				return true;
 
 			SetSelectedObjects(e);
+
+			// HACK: If right mouse button is pressed and the mouse is moving,
+			// the assumption we made in OnMouseDown was incorrect;
+			// the user's real intent was to use a MouseTool, not bring
+			// up the context menu.
+			if (e.Button == XMouseButtons.Right)
+			{
+				// Unfortunately, OnMouseMove is called by .NET after
+				// a mouse down even if the mouse hasn't moved, so 
+				// we have to make sure the mouse has in fact moved
+				// before we disable the context menu.
+				if (_lastMousePoint != new Point(e.X, e.Y))
+					_contextMenuEnabled = false;
+			}
+
 			return _presentationImage.OnMouseMove(e);
 		}
 

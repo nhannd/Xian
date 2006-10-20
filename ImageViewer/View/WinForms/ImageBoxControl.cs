@@ -22,9 +22,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         /// </summary>
 		public ImageBoxControl(ImageBox imageBox)
         {
-            InitializeComponent();
-
-            _imageBox = imageBox;
+			_imageBox = imageBox;
+			
+			InitializeComponent();
 
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
