@@ -19,13 +19,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private bool PaneFixed
 		{
-			get { return _component == null ? false : (_component.Pane1.Fixed || _component.Pane2.Fixed); }
+			get { return (_component.Pane1.Fixed || _component.Pane2.Fixed); }
 		}
 
 		public SplitComponentContainerControl(SplitComponentContainer component)
 		{
-			InitializeComponent();
 			_component = component;
+			InitializeComponent();
 			
 			SplitPane pane1 = _component.Pane1;
 			SplitPane pane2 = _component.Pane2;
