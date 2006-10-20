@@ -98,14 +98,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return null;
         }
 
-        public IDicomServer AddEditServerGroup(IDicomServer dataNode, bool newGroup)
+        public IDicomServer AddEditServerGroup(IDicomServer dataNode, bool isNewGroup)
         {
             if (dataNode == null || dataNode.IsServer)
                 return null;
             _dicomServerTree.CurrentServer = (DicomServerGroup)dataNode;
-            _dicomServerTree.IsMarked = newGroup;
-            string title = _dicomServerTree.IsMarked ? "Add New Server Group" : "Edit Server Group";
-            DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree);
+            string title = isNewGroup ? "Add New Server Group" : "Edit Server Group";
+            DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree, isNewGroup);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, title);
 
             if (exitCode == ApplicationComponentExitCode.Normal)
@@ -120,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             if (_selectedServers.Servers.Count == 0)
             {
-                Platform.ShowMessageBox("There are no servers selected. Please select servers and try again.", MessageBoxActions.Ok);
+                throw new DicomServerException("There are no servers selected. Please select servers and try again.");
                 return;
             }
             LocalAESettings myAESettings = new LocalAESettings();
@@ -138,15 +137,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 }
             }
             msgText.AppendFormat("\r\n");
-            Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+            throw new DicomServerException(msgText.ToString());
             return;
         }
 
         public bool DeleteServer(IDicomServer dataNode)
         {
-            if (!ServerDeleteConfirm(dataNode))
-                return false;
-
             _dicomServerTree.CurrentServer = _dicomServerTree.RemoveDicomServer(dataNode);
             if (_dicomServerTree.CurrentServer == null)
                 return false;
@@ -166,18 +162,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _selectedServers.Name = server.ServerName;
             _dicomServerTree.CurrentServer = server;
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-        }
-
-        private bool ServerDeleteConfirm(IDicomServer dataNode)
-        {
-            string msg = "";
-            if (dataNode.IsServer)
-                msg = "Are you sure you want to delete this server?";
-            else
-                msg = "Are you sure you want to delete this server group?";
-            if (this.Host.ShowMessageBox(msg, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-                return true;
-            return false;
         }
 
         public void SelectChanged(IDicomServer dataNode)

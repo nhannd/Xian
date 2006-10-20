@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
@@ -49,6 +48,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
+            if (!IsServerPropertyValid())
+                return;
             DicomServer ds = new DicomServer(_serverName, _serverPath, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
             // edit current server
             if (_dicomServerTree.CurrentServer.IsServer)
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             Host.Exit();
         }
 
-        private bool IsServerSettingValid()
+        private bool IsServerPropertyEmpty()
         {
             if (_serverName == null || _serverName.Equals("") || _serverAE == null || _serverAE.Equals("")
                 || _serverHost == null || _serverHost.Equals("") || _serverPort == null || _serverPort.Equals(""))
@@ -81,18 +82,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return false;
             }
 
-            if (_dicomServerTree.DicomServerNameExists(_dicomServerTree.MyServerGroup, _serverName, _dicomServerTree.CurrentServer.ServerPath, _dicomServerTree.CurrentServer.IsServer, true))
+            return true;
+        }
+
+        private bool IsServerPropertyValid()
+        {
+
+            if (_dicomServerTree.DicomServerNameExists(_serverName))
             {
+                this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Saver Name ({0}) exists already.\r\nPlease choose another server name.", _serverName);
-                Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+                throw new DicomServerException(msgText.ToString());
                 return false;
             }
-            if (_dicomServerTree.DicomServerAEExists(_dicomServerTree.MyServerGroup, _serverAE, _dicomServerTree.CurrentServer.ServerPath, _dicomServerTree.CurrentServer.IsServer, true))
+            if (_dicomServerTree.DicomServerAEExists(_serverAE))
             {
+                this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The AE Title ({0}) exists already.\r\nPlease choose another AE Title.", _serverAE);
-                Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+                throw new DicomServerException(msgText.ToString());
                 return false;
             }
 
@@ -102,9 +111,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             catch
             {
+                this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Port value should be a integer. \r\n\r\nPlease input an integer data.");
-                Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+                throw new DicomServerException(msgText.ToString());
                 return false;
             }
 
@@ -171,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set 
             { 
                 _serverName = value;
-                this.Modified = IsServerSettingValid();
+                this.Modified = IsServerPropertyEmpty();
             }
         }
 
@@ -189,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return _serverAE; }
             set { 
                 _serverAE = value;
-                this.Modified = IsServerSettingValid();
+                this.Modified = IsServerPropertyEmpty();
             }
         }
 
@@ -198,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return _serverHost; }
             set { 
                 _serverHost = value;
-                this.Modified = IsServerSettingValid();
+                this.Modified = IsServerPropertyEmpty();
             }
         }
 
@@ -207,12 +217,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return _serverPort; }
             set { 
                 _serverPort = value;
-                this.Modified = IsServerSettingValid();
+                this.Modified = IsServerPropertyEmpty();
             }
         }
 
         #endregion
 
+    }
+
+    public class DicomServerException : Exception
+    {
+        public DicomServerException(string message) : base(message) { }
+        public DicomServerException(string message, Exception inner) : base(message, inner) { }
     }
 
 }

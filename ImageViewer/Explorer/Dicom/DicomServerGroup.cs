@@ -25,12 +25,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (childServerGroups != null && childServerGroups.Count > 0)
             {
                 foreach(DicomAEGroup dsg in childServerGroups)
-                    base.ChildServers.Add(new DicomServerGroup(dsg.Name, dsg.Path, dsg.ChildGroups, dsg.ChildServers));
+                    AddChild(new DicomServerGroup(dsg.Name, dsg.Path, dsg.ChildGroups, dsg.ChildServers));
             }
             if (childServers != null && childServers.Count > 0)
             {
                 foreach (DicomAEServer ds in childServers)
-                    base.ChildServers.Add(new DicomServer(ds.Name, ds.Path, ds.Location, ds.Host, ds.AETitle, ds.Port));
+                    AddChild(new DicomServer(ds.Name, ds.Path, ds.Location, ds.Host, ds.AETitle, ds.Port));
             }
         }
 
@@ -44,5 +44,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return base.GroupID; }
         }
 
+        public List<IDicomServer> ChildServers
+        {
+            get
+            {
+                if (_childServers == null)
+                {
+                    _childServers = new List<IDicomServer>();
+                }
+                return _childServers;
+            }
+        }
+
+        public void AddChild(IDicomServer child)
+        {
+            ChildServers.Add(child);
+        }
+
+        private List<IDicomServer> _childServers;
     }
 }

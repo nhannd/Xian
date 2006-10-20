@@ -24,10 +24,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Constructor
         /// </summary>
-        public DicomServerGroupEditComponent(DicomServerTree dicomServerTree)
+        public DicomServerGroupEditComponent(DicomServerTree dicomServerTree, bool isNewServerGroup)
         {
+            _isNewServerGroup = isNewServerGroup;
             _dicomServerTree = dicomServerTree;
-            if (!_dicomServerTree.IsMarked)
+            if (!_isNewServerGroup)
             {
                 _serverGroupName = _dicomServerTree.CurrentServer.ServerName;
             }
@@ -40,16 +41,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
-            // edit current server group
-            if (!_dicomServerTree.IsMarked)
+            if (!IsServerGroupNameValid())
+                return;
+            if (!_isNewServerGroup)
             {
                 _dicomServerTree.RenameDicomServerGroup((DicomServerGroup)_dicomServerTree.CurrentServer, _serverGroupName, "", "", 0);
             }
-            // add new server group
             else
             {
                 DicomServerGroup dsg = new DicomServerGroup(_serverGroupName, _dicomServerTree.CurrentServer.GroupID);
-                ((DicomServerGroup)_dicomServerTree.CurrentServer).ChildServers.Add(dsg);
+                ((DicomServerGroup)_dicomServerTree.CurrentServer).AddChild(dsg);
                 _dicomServerTree.CurrentServer = dsg;
             }
             _dicomServerTree.SaveDicomServers();
@@ -75,18 +76,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             remove { this.ModifiedChanged -= value; }
         }
 
-        private bool IsServerSettingValid()
+        private bool IsServerGroupNameEmpty()
         {
             if (_serverGroupName == null || _serverGroupName.Equals(""))
             {
                 return false;
             }
 
-            if (_dicomServerTree.DicomServerNameExists(_dicomServerTree.MyServerGroup, _serverGroupName, _dicomServerTree.CurrentServer.ServerPath, !_dicomServerTree.IsMarked, true))
+            return true;
+        }
+
+        private bool IsServerGroupNameValid()
+        {
+            if (_dicomServerTree.DicomServerGroupNameExists(_serverGroupName, _isNewServerGroup))
             {
+                this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Saver Group Name ({0}) exists already.\r\nPlease choose another name.", _serverGroupName);
-                Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+                throw new DicomServerException(msgText.ToString());
                 return false;
             }
             return true;
@@ -109,6 +116,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private DicomServerTree _dicomServerTree;
         private string _serverGroupName = "";
+        private bool _isNewServerGroup;
 
         public DicomServerTree DicomServerTree
         {
@@ -122,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set
             {
                 _serverGroupName = value;
-                this.Modified = IsServerSettingValid();
+                this.Modified = IsServerGroupNameEmpty();
             }
         }
 

@@ -6,11 +6,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     public interface IDicomServer
     {
-        List<IDicomServer> ChildServers
-        {
-            get;
-        }
-
         string ServerName
         {
             get;
@@ -36,5 +31,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get;
         }
+
     }
 }

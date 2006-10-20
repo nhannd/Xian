@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -54,7 +56,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         private void OnAcceptClicked(object sender, EventArgs e)
         {
-            _component.Accept();
+            try
+            {
+                _component.Accept();
+            }
+            catch (DicomServerException dse)
+            {
+                Platform.ShowMessageBox(dse.Message.ToString(), MessageBoxActions.Ok);
+            }
         }
 
         private void OnCancelClicked(object sender, EventArgs e)

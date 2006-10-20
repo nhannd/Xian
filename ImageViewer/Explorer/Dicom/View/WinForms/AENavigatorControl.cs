@@ -74,6 +74,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 || _lastClickedNode.Text.Equals(AENavigatorComponent.MyServersTitle))
                 return;
             IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
+            string msg = "";
+            if (dataNode.IsServer)
+                msg = "Are you sure you want to delete this server?";
+            else
+                msg = "Are you sure you want to delete this server group?";
+            if (Platform.ShowMessageBox(msg, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+                return;
+
             if (_component.DeleteServer(dataNode) && _lastClickedNode != null)
             {
                 _aeTreeView.SelectedNode = _lastClickedNode.Parent;
@@ -87,8 +95,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         {
 			using (new CursorManager(Cursors.WaitCursor))
 			{
-				_component.CEchoServer();
-			}
+                try
+                {
+                    _component.CEchoServer();
+                }
+                catch (DicomServerException dse)
+                {
+                    Platform.ShowMessageBox(dse.Message.ToString(), MessageBoxActions.Ok);
+                }
+            }
         }
 
         void AddServerServerGroup(bool isservernode)
@@ -251,11 +266,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private void BuildNextTreeLevel(TreeNode treeNode)
         {
             IDicomServer dataNode = (IDicomServer)treeNode.Tag;
-            dataNode.ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
+            if (dataNode.IsServer)
+                return;
+            ((DicomServerGroup)dataNode).ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
             { string s1param = s1.IsServer ? "cc" : "bb"; s1param += s1.ServerName; 
                 string s2param = s2.IsServer ? "cc" : "bb"; s2param += s2.ServerName; 
                 return s1param.CompareTo(s2param); });
-            foreach (IDicomServer dataChild in dataNode.ChildServers)
+            foreach (IDicomServer dataChild in ((DicomServerGroup)dataNode).ChildServers)
             {
                 TreeNode treeChild = new TreeNode(dataChild.ServerName);
 				SetIcon(dataChild, treeChild);
