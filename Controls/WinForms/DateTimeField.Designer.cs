@@ -38,10 +38,10 @@ namespace ClearCanvas.Controls.WinForms
             this._dateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._dateTimePicker.Location = new System.Drawing.Point(2, 20);
-            this._dateTimePicker.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._dateTimePicker.Margin = new System.Windows.Forms.Padding(2);
             this._dateTimePicker.Name = "_dateTimePicker";
             this._dateTimePicker.Size = new System.Drawing.Size(146, 20);
-            this._dateTimePicker.TabIndex = 0;
+            this._dateTimePicker.TabIndex = 1;
             // 
             // _label
             // 
@@ -50,14 +50,14 @@ namespace ClearCanvas.Controls.WinForms
             this._label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this._label.Name = "_label";
             this._label.Size = new System.Drawing.Size(29, 13);
-            this._label.TabIndex = 1;
+            this._label.TabIndex = 0;
             this._label.Text = "label";
             // 
             // _checkBox
             // 
             this._checkBox.AutoSize = true;
             this._checkBox.Location = new System.Drawing.Point(4, 1);
-            this._checkBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._checkBox.Margin = new System.Windows.Forms.Padding(2);
             this._checkBox.Name = "_checkBox";
             this._checkBox.Size = new System.Drawing.Size(74, 17);
             this._checkBox.TabIndex = 2;
@@ -71,7 +71,7 @@ namespace ClearCanvas.Controls.WinForms
             this.Controls.Add(this._label);
             this.Controls.Add(this._dateTimePicker);
             this.Controls.Add(this._checkBox);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "DateTimeField";
             this.Size = new System.Drawing.Size(150, 41);
             this.ResumeLayout(false);
