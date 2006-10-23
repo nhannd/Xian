@@ -131,9 +131,9 @@ namespace ClearCanvas.Ris.Client.Adt
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number",
                 delegate(TelephoneNumber t) { return t.Format(); }, 3.0f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From",
-                delegate(TelephoneNumber t) { return ""; }, 1.0f));
+                delegate(TelephoneNumber t) { return t.ValidRange == null ? null : Format.Date(t.ValidRange.From); }, 1.0f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until",
-                delegate(TelephoneNumber t) { return ""; }, 1.0f));
+                delegate(TelephoneNumber t) { return t.ValidRange == null ? null : Format.Date(t.ValidRange.Until); }, 1.0f));
 
             _toolSet = new ToolSet(new PatientPreviewToolExtensionPoint(), new PatientPreviewToolContext(this));
 

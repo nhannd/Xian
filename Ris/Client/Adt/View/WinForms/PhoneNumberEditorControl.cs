@@ -29,6 +29,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _number.DataBindings.Add("Value", _component, "Number", true, DataSourceUpdateMode.OnPropertyChanged);
             _extension.DataBindings.Add("Value", _component, "Extension", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+            _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

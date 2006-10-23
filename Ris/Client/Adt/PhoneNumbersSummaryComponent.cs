@@ -42,6 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Area Code", delegate(TelephoneNumber pn) { return pn.AreaCode; }));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", delegate(TelephoneNumber pn) { return pn.Number; }));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Extension", delegate(TelephoneNumber pn) { return pn.Extension; }));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.From); }));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }));
 
             _phoneNumberActionHandler = new CrudActionModel();
             _phoneNumberActionHandler.Add.Handler = AddPhoneNumber;

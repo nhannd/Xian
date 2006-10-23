@@ -4,6 +4,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Healthcare {
@@ -36,7 +37,7 @@ namespace ClearCanvas.Healthcare {
 
         public bool IsCurrent
         {
-            get { return true; }    // TODO add concept of a valid range to the phone number entity
+            get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }    
         }
 
         public string Format()

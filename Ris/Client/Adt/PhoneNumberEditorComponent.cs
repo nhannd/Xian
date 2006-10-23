@@ -115,6 +115,25 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _phoneEquipments.Values; }
         }
 
+        public DateTime? ValidFrom
+        {
+            get { return _phoneNumber.ValidRange.From; }
+            set
+            {
+                _phoneNumber.ValidRange.From = value;
+                this.Modified = true;
+            }
+        }
+
+        public DateTime? ValidUntil
+        {
+            get { return _phoneNumber.ValidRange.Until; }
+            set
+            {
+                _phoneNumber.ValidRange.Until = value;
+                this.Modified = true;
+            }
+        }
         public void Accept()
         {
             this.ExitCode = ApplicationComponentExitCode.Normal;

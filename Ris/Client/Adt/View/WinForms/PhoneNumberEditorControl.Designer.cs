@@ -39,17 +39,20 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._use = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._equipment = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+            this._validFrom = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._validUntil = new ClearCanvas.Controls.WinForms.DateTimeField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // _acceptButton
             // 
-            this._acceptButton.Location = new System.Drawing.Point(329, 4);
-            this._acceptButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._acceptButton.Location = new System.Drawing.Point(247, 3);
             this._acceptButton.Name = "_acceptButton";
-            this._acceptButton.Size = new System.Drawing.Size(100, 28);
+            this._acceptButton.Size = new System.Drawing.Size(75, 23);
             this._acceptButton.TabIndex = 0;
             this._acceptButton.Text = "Accept";
             this._acceptButton.UseVisualStyleBackColor = true;
@@ -57,10 +60,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(437, 4);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._cancelButton.Location = new System.Drawing.Point(328, 3);
             this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(100, 28);
+            this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 1;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
@@ -78,26 +80,27 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._extension, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this._areaCode, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(549, 162);
-            this.tableLayoutPanel1.TabIndex = 8;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(412, 182);
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // _number
             // 
             this._number.Dock = System.Windows.Forms.DockStyle.Fill;
             this._number.LabelText = "Number";
-            this._number.Location = new System.Drawing.Point(221, 64);
-            this._number.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._number.Location = new System.Drawing.Point(166, 53);
+            this._number.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._number.Name = "_number";
-            this._number.Size = new System.Drawing.Size(213, 50);
+            this._number.Size = new System.Drawing.Size(160, 41);
             this._number.TabIndex = 3;
             this._number.Value = null;
             // 
@@ -105,10 +108,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._countryCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this._countryCode.LabelText = "Country Code";
-            this._countryCode.Location = new System.Drawing.Point(3, 64);
-            this._countryCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._countryCode.Location = new System.Drawing.Point(2, 53);
+            this._countryCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._countryCode.Name = "_countryCode";
-            this._countryCode.Size = new System.Drawing.Size(103, 50);
+            this._countryCode.Size = new System.Drawing.Size(78, 41);
             this._countryCode.TabIndex = 1;
             this._countryCode.Value = null;
             // 
@@ -116,10 +119,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._extension.Dock = System.Windows.Forms.DockStyle.Fill;
             this._extension.LabelText = "Extension";
-            this._extension.Location = new System.Drawing.Point(440, 64);
-            this._extension.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._extension.Location = new System.Drawing.Point(330, 53);
+            this._extension.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._extension.Name = "_extension";
-            this._extension.Size = new System.Drawing.Size(106, 50);
+            this._extension.Size = new System.Drawing.Size(80, 41);
             this._extension.TabIndex = 4;
             this._extension.Value = null;
             // 
@@ -127,10 +130,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._areaCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this._areaCode.LabelText = "Area Code";
-            this._areaCode.Location = new System.Drawing.Point(112, 64);
-            this._areaCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._areaCode.Location = new System.Drawing.Point(84, 53);
+            this._areaCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._areaCode.Name = "_areaCode";
-            this._areaCode.Size = new System.Drawing.Size(103, 50);
+            this._areaCode.Size = new System.Drawing.Size(78, 41);
             this._areaCode.TabIndex = 2;
             this._areaCode.Value = null;
             // 
@@ -142,20 +145,19 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel2.Controls.Add(this._use);
             this.flowLayoutPanel2.Controls.Add(this._equipment);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(4, 4);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(541, 54);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(406, 45);
             this.flowLayoutPanel2.TabIndex = 0;
             // 
             // _use
             // 
             this._use.DataSource = null;
             this._use.LabelText = "Use";
-            this._use.Location = new System.Drawing.Point(3, 2);
-            this._use.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._use.Location = new System.Drawing.Point(2, 2);
+            this._use.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._use.Name = "_use";
-            this._use.Size = new System.Drawing.Size(100, 50);
+            this._use.Size = new System.Drawing.Size(75, 41);
             this._use.TabIndex = 0;
             this._use.Value = null;
             // 
@@ -163,10 +165,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._equipment.DataSource = null;
             this._equipment.LabelText = "Equipment";
-            this._equipment.Location = new System.Drawing.Point(109, 2);
-            this._equipment.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._equipment.Location = new System.Drawing.Point(81, 2);
+            this._equipment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._equipment.Name = "_equipment";
-            this._equipment.Size = new System.Drawing.Size(140, 50);
+            this._equipment.Size = new System.Drawing.Size(105, 41);
             this._equipment.TabIndex = 1;
             this._equipment.Value = null;
             // 
@@ -178,27 +180,64 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel1.Controls.Add(this._cancelButton);
             this.flowLayoutPanel1.Controls.Add(this._acceptButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 120);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 150);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(541, 38);
-            this.flowLayoutPanel1.TabIndex = 5;
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(406, 29);
+            this.flowLayoutPanel1.TabIndex = 6;
+            // 
+            // flowLayoutPanel3
+            // 
+            this.flowLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.flowLayoutPanel3, 4);
+            this.flowLayoutPanel3.Controls.Add(this._validFrom);
+            this.flowLayoutPanel3.Controls.Add(this._validUntil);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 99);
+            this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(406, 45);
+            this.flowLayoutPanel3.TabIndex = 5;
+            // 
+            // _validFrom
+            // 
+            this._validFrom.LabelText = "Valid From";
+            this._validFrom.Location = new System.Drawing.Point(2, 2);
+            this._validFrom.Margin = new System.Windows.Forms.Padding(2);
+            this._validFrom.Name = "_validFrom";
+            this._validFrom.Nullable = true;
+            this._validFrom.ShowTime = false;
+            this._validFrom.Size = new System.Drawing.Size(157, 41);
+            this._validFrom.TabIndex = 0;
+            this._validFrom.Value = null;
+            // 
+            // _validUntil
+            // 
+            this._validUntil.LabelText = "Valid Until";
+            this._validUntil.Location = new System.Drawing.Point(163, 2);
+            this._validUntil.Margin = new System.Windows.Forms.Padding(2);
+            this._validUntil.Name = "_validUntil";
+            this._validUntil.Nullable = true;
+            this._validUntil.ShowTime = false;
+            this._validUntil.Size = new System.Drawing.Size(160, 41);
+            this._validUntil.TabIndex = 1;
+            this._validUntil.Value = null;
             // 
             // PhoneNumberEditorControl
             // 
             this.AcceptButton = this._acceptButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "PhoneNumberEditorControl";
-            this.Size = new System.Drawing.Size(549, 162);
+            this.Size = new System.Drawing.Size(412, 182);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -216,5 +255,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _extension;
         private ClearCanvas.Controls.WinForms.TextField _areaCode;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+        private ClearCanvas.Controls.WinForms.DateTimeField _validFrom;
+        private ClearCanvas.Controls.WinForms.DateTimeField _validUntil;
     }
 }

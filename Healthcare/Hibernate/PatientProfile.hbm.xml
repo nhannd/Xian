@@ -52,6 +52,10 @@
         <property name="Extension" column="Extension_" type="String" length="10" not-null="true"/>
         <property name="Use" column="Use_" type="ClearCanvas.Healthcare.Hibernate.TelephoneUseEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
         <property name="Equipment" column="Equipment_" type="ClearCanvas.Healthcare.Hibernate.TelephoneEquipmentEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
+          <column name="ValidFrom_"/>
+          <column name="ValidUntil_"/>
+        </property>
       </composite-element>
     </idbag>
     <idbag name="Addresses" table="PatientAddress_" lazy="true" access="nosetter.camelcase-underscore">
@@ -68,10 +72,6 @@
         <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="true"/>
         <property name="Country" column="Country_" type="String" length="50" not-null="true"/>
         <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
-        <!--
-        <property name="From" column="ValidFrom_" type="DateTime" not-null="false" access="field.camelcase-underscore"/>
-        <property name="Until" column="ValidUntil_" type="DateTime" not-null="false" access="field.camelcase-underscore"/>
-        -->
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>
