@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string DateOfBirth
         {
-            get { return _subject.DateOfBirth.ToShortDateString(); }
+            get { return ClearCanvas.Desktop.Format.Date(_subject.DateOfBirth); }
         }
 
         public string Mrn

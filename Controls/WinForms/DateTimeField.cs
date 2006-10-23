@@ -5,12 +5,14 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Controls.WinForms
 {
     public partial class DateTimeField : UserControl
     {
         private bool _nullable = false;
+        private bool _showTime = false;
         private event EventHandler _valueChanged;
 
         public DateTimeField()
@@ -49,6 +51,17 @@ namespace ClearCanvas.Controls.WinForms
                 _label.Visible = !_nullable;
                 _checkBox.Visible = _nullable;
                 _dateTimePicker.Enabled = _checkBox.Checked;
+            }
+        }
+
+        public bool ShowTime
+        {
+            get { return _showTime; }
+            set 
+            { 
+                _showTime = value;
+                _dateTimePicker.Format = DateTimePickerFormat.Custom;
+                _dateTimePicker.CustomFormat = _showTime == true ? Format.DateTimeFormat : Format.DateFormat;
             }
         }
 

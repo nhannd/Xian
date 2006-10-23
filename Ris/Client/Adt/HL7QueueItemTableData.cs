@@ -27,13 +27,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 new TableColumn<HL7QueueItem, string>("Status Description",
                     delegate(HL7QueueItem item) { return item.Status.Description; }, 0.5f));
             this.Columns.Add(
-                new TableColumn<HL7QueueItem, DateTime>("Created On",
-                    delegate(HL7QueueItem item) { return item.Status.CreationDateTime; }, 0.5f));
+                new TableColumn<HL7QueueItem, string>("Created On",
+                    delegate(HL7QueueItem item) { return ClearCanvas.Desktop.Format.DateTime(item.Status.CreationDateTime); }, 0.5f));
             this.Columns.Add(
-                new TableColumn<HL7QueueItem, DateTime?>("Updated On",
-                    delegate(HL7QueueItem item) { return item.Status.UpdateDateTime; }, 0.5f));
-
-
+                new TableColumn<HL7QueueItem, string>("Updated On",
+                    delegate(HL7QueueItem item) { return ClearCanvas.Desktop.Format.DateTime(item.Status.UpdateDateTime); }, 0.5f));
         }
     }
 }
