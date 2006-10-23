@@ -19,6 +19,9 @@ namespace ClearCanvas.Controls.WinForms
         {
             InitializeComponent();
 
+            _dateTimePicker.Format = DateTimePickerFormat.Custom;
+            _dateTimePicker.CustomFormat = Format.DateFormat;
+
             _checkBox.CheckedChanged += new EventHandler(CheckBoxCheckedChangedEventHandler);
             _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);
         }
