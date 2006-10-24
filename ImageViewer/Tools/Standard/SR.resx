@@ -234,4 +234,25 @@
   <data name="ExceptionLUTMinGreaterThanEqualToMax" xml:space="preserve">
     <value>Minimum input value greater than or equal to maximum input value</value>
   </data>
+  <data name="MenuToolsStandardProbe" xml:space="preserve">
+    <value>Probe</value>
+  </data>
+  <data name="ToolbarToolsStandardProbe" xml:space="preserve">
+    <value>Probe</value>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ModalityLut" xml:space="preserve">
+    <value>Modality</value>
+  </data>
+  <data name="PixelValue" xml:space="preserve">
+    <value>Pixel Value</value>
+  </data>
+  <data name="VOILut" xml:space="preserve">
+    <value>Voi</value>
+  </data>
+  <data name="HounsfieldUnitsAbbreviation" xml:space="preserve">
+    <value>HU</value>
+  </data>
 </root>

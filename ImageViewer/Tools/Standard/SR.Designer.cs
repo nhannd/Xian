@@ -196,6 +196,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HU.
+        /// </summary>
+        public static string HounsfieldUnitsAbbreviation {
+            get {
+                return ResourceManager.GetString("HounsfieldUnitsAbbreviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip &amp;Horizontal.
         /// </summary>
         public static string MenuToolsStandardFlipHorizontal {
@@ -219,6 +228,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         public static string MenuToolsStandardPan {
             get {
                 return ResourceManager.GetString("MenuToolsStandardPan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Probe.
+        /// </summary>
+        public static string MenuToolsStandardProbe {
+            get {
+                return ResourceManager.GetString("MenuToolsStandardProbe", resourceCulture);
             }
         }
         
@@ -304,6 +322,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modality.
+        /// </summary>
+        public static string ModalityLut {
+            get {
+                return ResourceManager.GetString("ModalityLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        public static string NotApplicable {
+            get {
+                return ResourceManager.GetString("NotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pixel Value.
+        /// </summary>
+        public static string PixelValue {
+            get {
+                return ResourceManager.GetString("PixelValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         public static string ToolbarToolsStandardFlipHorizontal {
@@ -327,6 +372,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         public static string ToolbarToolsStandardPan {
             get {
                 return ResourceManager.GetString("ToolbarToolsStandardPan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Probe.
+        /// </summary>
+        public static string ToolbarToolsStandardProbe {
+            get {
+                return ResourceManager.GetString("ToolbarToolsStandardProbe", resourceCulture);
             }
         }
         
@@ -408,6 +462,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         public static string ToolbarToolsStandardZoom4X {
             get {
                 return ResourceManager.GetString("ToolbarToolsStandardZoom4X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voi.
+        /// </summary>
+        public static string VOILut {
+            get {
+                return ResourceManager.GetString("VOILut", resourceCulture);
             }
         }
     }

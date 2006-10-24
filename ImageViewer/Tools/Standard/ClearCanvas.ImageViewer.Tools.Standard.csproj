@@ -95,6 +95,7 @@
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
     <Compile Include="PanTool.cs" />
+    <Compile Include="ProbeTool.cs" />
     <Compile Include="ResetTool.cs" />
     <Compile Include="RotateLeftTool.cs" />
     <Compile Include="RotateRightTool.cs" />
@@ -136,6 +137,15 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ProbeToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ProbeToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ProbeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

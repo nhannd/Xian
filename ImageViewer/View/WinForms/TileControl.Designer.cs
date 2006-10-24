@@ -38,6 +38,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
 			this.components = new System.ComponentModel.Container();
 			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// _contextMenuStrip
@@ -45,12 +46,20 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._contextMenuStrip.Name = "_contextMenuStrip";
 			this._contextMenuStrip.Size = new System.Drawing.Size(61, 4);
 			// 
+			// _toolTip
+			// 
+			this._toolTip.Active = false;
+			this._toolTip.AutomaticDelay = 0;
+			this._toolTip.UseAnimation = false;
+			this._toolTip.UseFading = false;
+			// 
 			// TileControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ContextMenuStrip = this._contextMenuStrip;
 			this.Name = "TileControl";
+			this.Size = new System.Drawing.Size(200, 185);
 			this.ResumeLayout(false);
 
         }
@@ -58,5 +67,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         #endregion
 
 		private System.Windows.Forms.ContextMenuStrip _contextMenuStrip;
+		private System.Windows.Forms.ToolTip _toolTip;
     }
 }

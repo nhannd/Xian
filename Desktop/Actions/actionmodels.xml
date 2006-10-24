@@ -11,6 +11,7 @@
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardWindowLevel" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardPan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardZoom" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardProbe" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipHorizontalTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardFlipHorizontal" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipVerticalTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardFlipVertical" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateLeftTool:activate" path="global-menus/MenuTools/Standard/MenuToolsStandardRotateLeft" />
@@ -30,6 +31,7 @@
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardWindowLevel" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardPan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardZoom" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardProbe" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipVerticalTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipVertical" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.FlipHorizontalTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipHorizontal" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.RotateLeftTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateLeft" />
@@ -42,6 +44,7 @@
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="imageviewer-contextmenu/MenuToolsStandardWindowLevel" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="imageviewer-contextmenu/MenuToolsStandardPan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="imageviewer-contextmenu/MenuToolsStandardZoom" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate" path="imageviewer-contextmenu/MenuToolsStandardProbe" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="imageviewer-contextmenu/ToolsMeasurementRuler" />
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.StudyBrowserComponent:dicomstudybrowser-toolbar">

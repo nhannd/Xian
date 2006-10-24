@@ -35,12 +35,14 @@ namespace ClearCanvas.ImageViewer
 		private bool _selected = false;
 		private bool _contextMenuEnabled;
 		private Point _lastMousePoint;
+		private InformationBox _informationBox;
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
 		private event EventHandler<TileEventArgs> _selectionChangedEvent;
 
 		private event EventHandler<MouseCaptureChangingEventArgs> _notifyCaptureChanging;
+		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
 
 		#endregion
 
@@ -222,6 +224,19 @@ namespace ClearCanvas.ImageViewer
 			get { return _contextMenuEnabled; }
 		}
 
+		public InformationBox InformationBox
+		{
+			get { return _informationBox; }
+			set
+			{
+				if (_informationBox == value)
+					return;
+
+				_informationBox = value;
+				EventsHelper.Fire(_informationBoxChanged, this, new InformationBoxChangedEventArgs(_informationBox));
+			}
+		}
+
 		#endregion
 
 		#region Public events
@@ -248,6 +263,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _notifyCaptureChanging += value; }
 			remove { _notifyCaptureChanging -= value; }
+		}
+
+		public event EventHandler<InformationBoxChangedEventArgs> InformationBoxChanged
+		{
+			add { _informationBoxChanged += value; }
+			remove { _informationBoxChanged -= value; }
 		}
 
 		#endregion

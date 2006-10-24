@@ -22,6 +22,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		#region Private fields
 
 		private Tile _tile;
+		private InformationBox _currentInformationBox;
+
 		private IRenderingSurface _surface;
 		private bool _maintainCapture;
 
@@ -43,7 +45,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
-			_tile.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
+			_tile.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(OnCaptureChanging);
+			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
         }
 
@@ -223,6 +226,36 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 			else
 				e.Cancel = true;
+		}
+
+		void OnInformationBoxChanged(object sender, InformationBoxChangedEventArgs e)
+		{
+			if (_currentInformationBox != null)
+				_currentInformationBox.Updated -= new EventHandler(OnUpdateInformationBox);
+
+			_currentInformationBox = e.InformationBox;
+			
+			_toolTip.Active = false;
+			_toolTip.Hide(this);
+
+			if (e.InformationBox != null)
+				_currentInformationBox.Updated += new EventHandler(OnUpdateInformationBox);
+		}
+
+		void OnUpdateInformationBox(object sender, EventArgs e)
+		{
+			if (!_currentInformationBox.Visible)
+			{
+				_toolTip.Active = false;
+				_toolTip.Hide(this);
+			}
+			else
+			{
+				_toolTip.Active = true;
+				Point point = new Point(_currentInformationBox.DestinationPoint.X, _currentInformationBox.DestinationPoint.Y);
+				point.Offset(5, 5);
+				_toolTip.Show(_currentInformationBox.Data, this, point);
+			}
 		}
     }
 }
