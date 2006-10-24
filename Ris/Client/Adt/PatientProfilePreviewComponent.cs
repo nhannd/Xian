@@ -162,7 +162,12 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
 
                 _addresses.Items.AddRange(_subject.Addresses);
+                _addresses.Items.Remove(_subject.CurrentHomeAddress);
+                //_addresses.Items.Remove(_subject.CurrentWorkAddress);
+                
                 _phoneNumbers.Items.AddRange(_subject.TelephoneNumbers);
+                _phoneNumbers.Items.Remove(_subject.CurrentHomePhone);
+                //_phoneNumbers.Items.Remove(_subject.CurrentWorkPhone);
             }
 
             NotifyAllPropertiesChanged();
@@ -174,6 +179,17 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return _showHeader; }
             set { _showHeader = value; }
+        }
+
+        public bool HasUnreconciledMatches
+        {
+            get
+            {
+                bool hasMatches = false;
+                IList<PatientProfileMatch> matches = _adtService.FindPatientReconciliationMatches(_subject);
+                hasMatches = matches.Count > 0 ? true : false;
+                return hasMatches;
+            }
         }
 
         public string Name

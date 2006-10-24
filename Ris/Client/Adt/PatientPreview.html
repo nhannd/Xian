@@ -23,6 +23,15 @@ if(component.Subject != null)
 </table>
 <p>&nbsp;</p>
 <% } // end-if(component.ShowHeader) %>
+
+<% if(component.HasUnreconciledMatches) { %>
+<div class="alert">
+<ul>
+   <li>Patient has unreconciled records</li>
+</ul>
+</div>
+<% } // end-if(component.HasUnreconciledMatches) %>
+
 <table width="640" border="0">
   <tr class="sectionheading">
     <td colspan="4">Basic Information </td>

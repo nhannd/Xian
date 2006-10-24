@@ -47,6 +47,21 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        public Address CurrentWorkAddress
+        {
+            get
+            {
+                foreach (Address address in this.Addresses)
+                {
+                    if (address.Type == AddressType.B && address.IsCurrent)
+                    {
+                        return address;
+                    }
+                }
+                return null;
+            }
+        }
+
         public TelephoneNumber CurrentHomePhone
         {
             get
@@ -54,6 +69,21 @@ namespace ClearCanvas.Healthcare {
                 foreach (TelephoneNumber phone in this.TelephoneNumbers)
                 {
                     if (phone.Use == TelephoneUse.PRN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent)
+                    {
+                        return phone;
+                    }
+                }
+                return null;
+            }
+        }
+
+        public TelephoneNumber CurrentWorkPhone
+        {
+            get
+            {
+                foreach (TelephoneNumber phone in this.TelephoneNumbers)
+                {
+                    if (phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent)
                     {
                         return phone;
                     }
