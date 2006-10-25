@@ -46,10 +46,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (!_isNewServerGroup)
             {
                 _dicomServerTree.RenameDicomServerGroup((DicomServerGroup)_dicomServerTree.CurrentServer, _serverGroupName, "", "", 0);
+                if (((DicomServerGroup)_dicomServerTree.CurrentServer).ChildServers.Count > 0)
+                    _dicomServerTree.FireServerTreeUpdatedEvent();
             }
             else
             {
-                DicomServerGroup dsg = new DicomServerGroup(_serverGroupName, _dicomServerTree.CurrentServer.GroupID);
+                DicomServerGroup dsg = new DicomServerGroup(_serverGroupName, _dicomServerTree.CurrentServer.ServerPath + "/" + _dicomServerTree.CurrentServer.ServerName);
                 ((DicomServerGroup)_dicomServerTree.CurrentServer).AddChild(dsg);
                 _dicomServerTree.CurrentServer = dsg;
             }
@@ -78,7 +80,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool IsServerGroupNameEmpty()
         {
-            if (_serverGroupName == null || _serverGroupName.Equals(""))
+            if (_serverGroupName == null || _serverGroupName.Equals("")
+                || !_isNewServerGroup && _serverGroupName.Equals(_dicomServerTree.CurrentServer.ServerName))
             {
                 return false;
             }
@@ -88,11 +91,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool IsServerGroupNameValid()
         {
-            if (_dicomServerTree.DicomServerGroupNameExists(_serverGroupName, _isNewServerGroup))
+            string msg = _dicomServerTree.DicomServerGroupNameValidation(_serverGroupName);
+            if (!msg.Equals(""))
             {
                 this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
-                msgText.AppendFormat("The Saver Group Name ({0}) exists already.\r\nPlease choose another name.", _serverGroupName);
+                msgText.AppendFormat("The Saver Group Name ({0}) is conflict with {1}.\r\nPlease choose another name.", _serverGroupName, msg);
                 throw new DicomServerException(msgText.ToString());
                 return false;
             }

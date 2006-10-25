@@ -28,11 +28,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set { _serverPath = value; }
         }
 
-        public string GroupID
-        {
-            get { return ServerPath + "/" + ServerName; }
-        }
-
         public abstract string ServerDetails
         {
             get;

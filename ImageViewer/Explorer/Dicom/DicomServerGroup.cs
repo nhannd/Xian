@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public override string ServerDetails
         {
-            get { return base.GroupID; }
+            get { return base.ServerPath + "/" + base.ServerName; }
         }
 
         public List<IDicomServer> ChildServers

@@ -27,10 +27,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get;
         }
 
-        string GroupID
-        {
-            get;
-        }
-
     }
 }

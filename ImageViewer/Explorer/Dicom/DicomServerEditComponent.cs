@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 _serverName = "";
-                _serverPath = _dicomServerTree.CurrentServer.GroupID;
+                _serverPath = _dicomServerTree.CurrentServer.ServerPath + "/" + _dicomServerTree.CurrentServer.ServerName;
                 _serverLocation = "";
                 _serverAE = "";
                 _serverHost = "";
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             // edit current server
             if (_dicomServerTree.CurrentServer.IsServer)
             {
-                _dicomServerTree.ReplaceDicomServer((DicomServer)_dicomServerTree.CurrentServer, ds);
+                _dicomServerTree.ReplaceDicomServer(ds);
             }
             // add new server
             else
@@ -87,33 +87,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool IsServerPropertyValid()
         {
-
-            if (_dicomServerTree.DicomServerNameExists(_serverName))
-            {
-                this.Modified = false;
-                StringBuilder msgText = new StringBuilder();
-                msgText.AppendFormat("The Saver Name ({0}) exists already.\r\nPlease choose another server name.", _serverName);
-                throw new DicomServerException(msgText.ToString());
-                return false;
-            }
-            if (_dicomServerTree.DicomServerAEExists(_serverAE))
-            {
-                this.Modified = false;
-                StringBuilder msgText = new StringBuilder();
-                msgText.AppendFormat("The AE Title ({0}) exists already.\r\nPlease choose another AE Title.", _serverAE);
-                throw new DicomServerException(msgText.ToString());
-                return false;
-            }
-
             try
             {
-                int.Parse(_serverPort);
+                int port = int.Parse(_serverPort);
+                if (_dicomServerTree.CurrentServer.IsServer
+                        && _serverName.Equals(_dicomServerTree.CurrentServer.ServerName)
+                        && _serverAE.Equals(((DicomServer)_dicomServerTree.CurrentServer).DicomAE.AE)
+                        && _serverHost.Equals(((DicomServer)_dicomServerTree.CurrentServer).DicomAE.Host)
+                        && port == ((DicomServer)_dicomServerTree.CurrentServer).DicomAE.Port)
+                    return true;
             }
             catch
             {
                 this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Port value should be a integer. \r\n\r\nPlease input an integer data.");
+                throw new DicomServerException(msgText.ToString());
+                return false;
+            }
+
+            string msg = _dicomServerTree.DicomServerValidation(_serverName, _serverAE, _serverHost, int.Parse(_serverPort));
+            if (!msg.Equals(""))
+            {
+                this.Modified = false;
+                StringBuilder msgText = new StringBuilder();
+                msgText.AppendFormat("The Saver Name ({0}) is conflict with {1}.\r\nPlease choose another server name.", _serverName, msg);
                 throw new DicomServerException(msgText.ToString());
                 return false;
             }
@@ -130,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get 
             {
-                return _serverName.Equals(AENavigatorComponent.MyDatastoreTitle)? true : false; 
+                return _dicomServerTree.CurrentServer.IsServer && _serverName.Equals(AENavigatorComponent.MyDatastoreTitle) ? true : false; 
             }
         }
 

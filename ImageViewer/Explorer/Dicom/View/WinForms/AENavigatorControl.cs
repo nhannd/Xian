@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             EditClicked += new EventHandler(OnEditClicked);
             DeleteClicked += new EventHandler(OnDeleteClicked);
             CEchoClicked += new EventHandler(OnCEchoClicked);
+            ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
 
 			this.addServerToolStripMenuItem.Click += OnAddClicked;
 			this.addGroupToolStripMenuItem.Click += OnAddGroupClicked;
@@ -104,6 +105,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                     Platform.ShowMessageBox(dse.Message.ToString(), MessageBoxActions.Ok);
                 }
             }
+        }
+
+        void OnServerTreeUpdated(object sender, EventArgs e)
+        {
+            RefreshToolTipText(_aeTreeView.Nodes[1]);
         }
 
         void AddServerServerGroup(bool isservernode)
@@ -283,6 +289,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             }
         }
 
+        private void RefreshToolTipText(TreeNode treeNode)
+        {
+            DicomServerGroup dataNode = (DicomServerGroup)treeNode.Tag;
+            foreach (TreeNode tnChild in treeNode.Nodes)
+            {
+                foreach (IDicomServer dataChild in (dataNode.ChildServers))
+                {
+                    if (tnChild.Text.Equals(dataChild.ServerName))
+                    {
+                        if (!tnChild.ToolTipText.Equals(dataChild.ServerDetails))
+                            tnChild.ToolTipText = dataChild.ServerDetails;
+                        break;
+                    }
+                }
+                if (!((IDicomServer)tnChild.Tag).IsServer)
+                    RefreshToolTipText(tnChild);
+            }
+        }
+
         private void SetIcon(IDicomServer browserNode, TreeNode treeNode)
 		{
             if (browserNode == null)
@@ -340,5 +365,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             add { _btnCEcho.Click += value; }
             remove { _btnCEcho.Click -= value; }
         }
+
+        public event EventHandler ServerTreeUpdated
+        {
+            add { _component.DicomServerTree.ServerTreeUpdated += value; }
+            remove { _component.DicomServerTree.ServerTreeUpdated -= value; }
+        }
+
     }
 }

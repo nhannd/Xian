@@ -76,8 +76,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_dicomServerTree.CurrentServer != null && _dicomServerTree.CurrentServer.IsServer)
             {
                 _selectedServers.Servers.Add((DicomServer)_dicomServerTree.CurrentServer);
-                _selectedServers.GroupID = _dicomServerTree.CurrentServer.GroupID;
                 _selectedServers.Name = _dicomServerTree.CurrentServer.ServerName;
+                _selectedServers.GroupID = _dicomServerTree.CurrentServer.ServerPath + "/" + _selectedServers.Name;
             }
 
         }
@@ -131,9 +131,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 foreach (DicomServer ae in _selectedServers.Servers)
                 {
                     if (client.Verify(ae.DicomAE))
-                        msgText.AppendFormat("    {0}: successful    \r\n", ae.GroupID);
+                        msgText.AppendFormat("    {0}: successful    \r\n", ae.ServerPath + "/" + ae.ServerName);
                     else
-                        msgText.AppendFormat("    {0}: fail    \r\n", ae.GroupID);
+                        msgText.AppendFormat("    {0}: fail    \r\n", ae.ServerPath + "/" + ae.ServerName);
                 }
             }
             msgText.AppendFormat("\r\n");
@@ -146,9 +146,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _dicomServerTree.CurrentServer = _dicomServerTree.RemoveDicomServer(dataNode);
             if (_dicomServerTree.CurrentServer == null)
                 return false;
-            _selectedServers.Servers = _dicomServerTree.FindChildServers(_dicomServerTree.CurrentServer, true);
-            _selectedServers.GroupID = _dicomServerTree.CurrentServer.GroupID;
+            _selectedServers.Servers = _dicomServerTree.FindChildServers(_dicomServerTree.CurrentServer);
             _selectedServers.Name = _dicomServerTree.CurrentServer.ServerName;
+            _selectedServers.GroupID = _dicomServerTree.CurrentServer.ServerPath + "/" + _selectedServers.Name;
             _dicomServerTree.SaveDicomServers();
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
             return true;
@@ -158,8 +158,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             _selectedServers = new AEServerGroup();
             _selectedServers.Servers.Add(server);
-            _selectedServers.GroupID = server.GroupID;
             _selectedServers.Name = server.ServerName;
+            _selectedServers.GroupID = server.ServerPath + "/" + server.ServerName;
             _dicomServerTree.CurrentServer = server;
             EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
@@ -173,8 +173,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 _selectedServers = new AEServerGroup();
-                _selectedServers.Servers = _dicomServerTree.FindChildServers((DicomServerGroup)dataNode, true);
-                _selectedServers.GroupID = dataNode.GroupID;
+                _selectedServers.Servers = _dicomServerTree.FindChildServers((DicomServerGroup)dataNode);
+                _selectedServers.GroupID = dataNode.ServerPath + "/" + dataNode.ServerName;
                 _selectedServers.Name = dataNode.ServerName;
                 _dicomServerTree.CurrentServer = dataNode;
                 EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);

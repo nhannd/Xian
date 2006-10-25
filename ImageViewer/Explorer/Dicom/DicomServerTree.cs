@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Serialization;
 using ClearCanvas.Dicom.Services;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -14,38 +15,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             LoadDicomServers();
         }
 
-        public bool DicomServerNameExists(string serverName)
+        public string DicomServerValidation(string serverName, string serverAE, string serverHost, int port)
         {
-            if (!CurrentServer.IsServer)
-                return DicomServerNameExists(MyServerGroup, serverName, "", false, true);
-            else
-                return DicomServerNameExists(MyServerGroup, serverName, CurrentServer.ServerPath, true, true);
+            if (serverName.Equals(AENavigatorComponent.MyDatastoreTitle) || serverName.Equals(AENavigatorComponent.MyServersTitle))
+                return "Root Server";
+            return DicomServerValidation(MyServerGroup, serverName, serverAE, serverHost, port);
         }
 
-        public bool DicomServerGroupNameExists(string serverGroupName, bool isNewServerGroup)
+        public string DicomServerGroupNameValidation(string serverGroupName)
         {
-            if (isNewServerGroup)
-                return DicomServerNameExists(MyServerGroup, serverGroupName, "", false, true);
-            else
-                return DicomServerNameExists(MyServerGroup, serverGroupName, CurrentServer.ServerPath, true, true);
+            if (serverGroupName.Equals(AENavigatorComponent.MyDatastoreTitle) || serverGroupName.Equals(AENavigatorComponent.MyServersTitle))
+                return "Root Server";
+            return DicomServerGroupNameValidation(MyServerGroup, serverGroupName);
         }
 
-        public bool DicomServerAEExists(string serverAE)
-        {
-            if (CurrentServer == null || !CurrentServer.IsServer)
-                return DicomServerAEExists(MyServerGroup, serverAE, "", false, true);
-            else
-                return DicomServerAEExists(MyServerGroup, serverAE, CurrentServer.ServerPath, true, true);
-        }
-
-        public List<DicomServer> FindChildServers(IDicomServer idsp, bool recursive)
+        public List<DicomServer> FindChildServers(IDicomServer idsp)
         {
             _childServers = new List<DicomServer>();
             if (idsp == null || idsp.IsServer)
                 return _childServers;
-            GetChildServers((DicomServerGroup)idsp, recursive);
+            GetChildServers((DicomServerGroup)idsp, true, true);
             _childServers.Sort(delegate(DicomServer s1, DicomServer s2) { return s1.ServerName.CompareTo(s2.ServerName); });
             return _childServers;
+        }
+
+        public void FireServerTreeUpdatedEvent()
+        {
+            EventsHelper.Fire(_serverTreeUpdated, this, EventArgs.Empty);
         }
 
         public DicomServerGroup RemoveDicomServer(IDicomServer ids)
@@ -64,15 +60,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return null;
         }
 
-        public bool RenameDicomServerGroup(DicomServerGroup dsg, string newName, string oldPath, string newPath, int depth)
+        public void RenameDicomServerGroup(DicomServerGroup dsg, string newName, string oldPath, string newPath, int depth)
         {
-            if (dsg == null || depth < 0)
-                return false;
             if (depth == 0)
             {
-                oldPath = dsg.GroupID;
+                oldPath = dsg.ServerPath + "/" + dsg.ServerName;
                 dsg.ServerName = newName;
-                newPath = dsg.GroupID;
+                newPath = dsg.ServerPath + "/" + dsg.ServerName;
             }
             foreach (IDicomServer ids in dsg.ChildServers)
             {
@@ -80,18 +74,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 if (!ids.IsServer)
                     RenameDicomServerGroup((DicomServerGroup)ids, "", oldPath, newPath, depth+1);
             }
-            return true;
+            return;
         }
 
-        public DicomServer ReplaceDicomServer(DicomServer oldDS, DicomServer newDS)
+        public DicomServer ReplaceDicomServer(DicomServer newDS)
         {
-            if (oldDS == null || newDS == null)
-                return null;
-            DicomServer ds = (DicomServer)FindDicomServer(_myServerGroup, oldDS.ServerName, oldDS.ServerPath.Split('/'), 1);
-            DicomServerGroup dsg = RemoveDicomServer(ds);
-            if (dsg == null)
-                return null;
+            DicomServerGroup dsg = RemoveDicomServer(CurrentServer);
             dsg.AddChild(newDS);
+            if(ReplaceDicomServersByName(_myServerGroup, newDS))
+                FireServerTreeUpdatedEvent();
             return newDS;
         }
 
@@ -107,32 +98,56 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Internal Methods
 
-        private bool DicomServerNameExists(IDicomServer ids, string serverName, string serverPath, bool exclusive, bool recursive)
+        private string DicomServerValidation(DicomServerGroup ds, string serverName, string serverAE, string serverHost, int port)
         {
-            if (ids == null || ids.IsServer || serverName == null || serverPath == null)
-                return false;
-            foreach (IDicomServer cids in ((DicomServerGroup)ids).ChildServers)
+            foreach (IDicomServer cids in (ds.ChildServers))
             {
-                if (cids.ServerName.Equals(serverName) && (!exclusive || !cids.ServerPath.Equals(serverPath)))
-                    return true;
-                if (!cids.IsServer && recursive && DicomServerNameExists(cids, serverName, serverPath, exclusive, recursive))
-                    return true;
+                if (!cids.IsServer)
+                {
+                    if (cids.ServerName.Equals(serverName) && cids.ServerPath.Equals(CurrentServer.ServerPath + "/" + CurrentServer.ServerName))
+                        return cids.ServerPath + "/" + cids.ServerName;
+                    string msg = DicomServerValidation((DicomServerGroup)cids, serverName, serverAE, serverHost, port);
+                    if (!msg.Equals(""))
+                        return msg;
+                    continue;
+                }
+                // editting server
+                if (CurrentServer.IsServer)
+                {
+                    if (!serverName.Equals(CurrentServer.ServerName) && cids.ServerName.Equals(serverName) && cids.ServerPath.Equals(CurrentServer.ServerPath))
+                        return cids.ServerPath + "/" + cids.ServerName;
+                }
+                // New server
+                else
+                {
+                    if (cids.ServerName.Equals(serverName) && (cids.ServerPath.Equals(CurrentServer.ServerPath + "/" + CurrentServer.ServerName)
+                        || !((DicomServer)cids).DicomAE.AE.Equals(serverAE) || !((DicomServer)cids).DicomAE.Host.Equals(serverHost)
+                        || ((DicomServer)cids).DicomAE.Port != port))
+                        return cids.ServerPath + "/" + cids.ServerName;
+                }
             }
-            return false;
+            return "";
         }
 
-        private bool DicomServerAEExists(IDicomServer ids, string serverAE, string serverPath, bool exclusive, bool recursive)
+        private string DicomServerGroupNameValidation(DicomServerGroup ds, string serverGroupName)
         {
-            if (ids == null || ids.IsServer || serverAE == null || serverPath == null)
-                return false;
-            foreach (IDicomServer cids in ((DicomServerGroup)ids).ChildServers)
+            foreach (IDicomServer cids in (ds.ChildServers))
             {
-                if (cids.IsServer && ((DicomServer)cids).DicomAE.AE.Equals(serverAE) && (!exclusive || !cids.ServerPath.Equals(serverPath)))
-                    return true;
-                if (!cids.IsServer && recursive && DicomServerAEExists(cids, serverAE, serverPath, exclusive, recursive))
-                    return true;
+                if (cids.IsServer)
+                {
+                    if (cids.ServerName.Equals(serverGroupName) && cids.ServerPath.Equals(CurrentServer.ServerPath + "/" + CurrentServer.ServerName))
+                        return cids.ServerPath + "/" + cids.ServerName;
+                    continue;
+                }
+                if (cids.ServerName.Equals(serverGroupName))
+                {
+                    return cids.ServerPath + "/" + cids.ServerName;
+                }
+                string msg = DicomServerGroupNameValidation((DicomServerGroup)cids, serverGroupName);
+                if (!msg.Equals(""))
+                    return msg;
             }
-            return false;
+            return "";
         }
 
         private void CheckDefaultServerSettings(bool isupdated)
@@ -193,24 +208,34 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return dsgs;
         }
 
-        private void GetChildServers(DicomServerGroup dsp, bool recursive)
+        private void GetChildServers(DicomServerGroup dsp, bool recursive, bool identicalAE)
         {
             foreach (IDicomServer ids in dsp.ChildServers)
             {
                 if (ids.IsServer)
                 {
+                    if (!identicalAE)
+                    {
+                        _childServers.Add((DicomServer)ids);
+                        continue;
+                    }
                     bool exists = false;
                     foreach (DicomServer ds in _childServers)
                     {
-                        if (ids.ServerName.Equals(ds.ServerName) || ((DicomServer)ids).DicomAE.AE.Equals(ds.DicomAE.AE))
+                        if (((DicomServer)ids).DicomAE.AE.Equals(ds.DicomAE.AE) 
+                            && ((DicomServer)ids).DicomAE.Host.Equals(ds.DicomAE.Host)
+                            && ((DicomServer)ids).DicomAE.Port == ds.DicomAE.Port)
+                        {
                             exists = true;
+                            break;
+                        }
                     }
                     if (!exists)
                         _childServers.Add((DicomServer)ids);
                 }
                 else if (recursive)
                 {
-                    GetChildServers((DicomServerGroup)ids, recursive);
+                    GetChildServers((DicomServerGroup)ids, recursive, identicalAE);
                 }
             }
         }
@@ -237,6 +262,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 }
             }
             return null;
+        }
+
+        private bool ReplaceDicomServersByName(DicomServerGroup dsg, DicomServer newDs)
+        {
+            bool isUpdated = false;
+            for(int i = 0; i < dsg.ChildServers.Count; i++) 
+            {
+                IDicomServer ids = dsg.ChildServers[i];
+                if (!ids.IsServer)
+                {
+                    if (ReplaceDicomServersByName((DicomServerGroup)ids, newDs) && !isUpdated)
+                        isUpdated = true;
+                    continue;
+                }
+                if (ids.ServerName.Equals(newDs.ServerName) && (!((DicomServer)ids).DicomAE.AE.Equals(newDs.DicomAE.AE)
+                        || !((DicomServer)ids).DicomAE.Host.Equals(newDs.DicomAE.Host) || ((DicomServer)ids).DicomAE.Port != newDs.DicomAE.Port))
+                {
+                    dsg.ChildServers[i] = new DicomServer(ids.ServerName, ids.ServerPath, ((DicomServer)ids).ServerLocation, newDs.DicomAE.Host, newDs.DicomAE.AE, newDs.DicomAE.Port);
+                    if (!isUpdated) 
+                        isUpdated = true;
+                }
+            }
+            return isUpdated;
         }
 
         private DicomServerGroup FindParentDicomServer(IDicomServer ids)
@@ -285,6 +333,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         DicomServerGroup _myServerGroup;
         List<DicomServer> _childServers;
         IDicomServer _currentServer;
+        private event EventHandler _serverTreeUpdated;
 
         public DicomServerGroup MyServerGroup
         {
@@ -302,6 +351,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get { return _currentServer; }
             set { _currentServer = value; }
+        }
+
+        public event EventHandler ServerTreeUpdated
+        {
+            add { _serverTreeUpdated += value; }
+            remove { _serverTreeUpdated -= value; }
         }
 
         #endregion
