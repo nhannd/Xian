@@ -114,9 +114,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(Address a) { return _addressTypes[a.Type].Value; }, 1.0f));
             _addresses.Columns.Add(new TableColumn<Address, string>("Address",
                 delegate(Address a) { return a.Format(); }, 3.0f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From",
-                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }, 1.0f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until",
+            _addresses.Columns.Add(new TableColumn<Address, string>("Expired On",
                 delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 1.0f));
 
 
@@ -130,9 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 }, 1.0f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number",
                 delegate(TelephoneNumber t) { return t.Format(); }, 3.0f));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From",
-                delegate(TelephoneNumber t) { return t.ValidRange == null ? null : Format.Date(t.ValidRange.From); }, 1.0f));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until",
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Expired On",
                 delegate(TelephoneNumber t) { return t.ValidRange == null ? null : Format.Date(t.ValidRange.Until); }, 1.0f));
 
             _toolSet = new ToolSet(new PatientPreviewToolExtensionPoint(), new PatientPreviewToolContext(this));
