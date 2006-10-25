@@ -73,8 +73,10 @@ if(component.Subject != null)
     <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
     <% } %>
   </tr>
+    <% var i = 0 %>
     <% for(var phone in component.PhoneNumbers.Items) {%>
-    <tr><% for(var column in component.PhoneNumbers.Columns) {%>
+    <tr class="row<%= i %>"><% for(var column in component.PhoneNumbers.Columns) {%>
+        <% i = (i + 1) % 2 %>
         <td><%= column.GetValue(phone) %></td>
         <% } %>
     </tr>
@@ -90,8 +92,10 @@ if(component.Subject != null)
   <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
   <% } %>
   </tr>
+  <% var i = 0 %>
   <% for(var address in component.Addresses.Items) {%>
-  <tr><% for(var column in component.Addresses.Columns) {%>
+  <tr class="row<%= i %>"><% for(var column in component.Addresses.Columns) {%>
+     <% i = (i + 1) % 2 %>
     <td><%= column.GetValue(address) %></td>
       <% } %>
   </tr>
