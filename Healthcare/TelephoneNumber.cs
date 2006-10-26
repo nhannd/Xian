@@ -41,11 +41,30 @@ namespace ClearCanvas.Healthcare {
             get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }    
         }
 
+        /// <summary>
+        /// Default Telephone Number string, suppresses the country code for numbers within the installed site
+        /// </summary>
+        /// <returns>A string representation of the telephone number</returns>
         public string Format()
         {
-            return _extension == null ?
-                string.Format("{0} ({1}) {2}", _countryCode, _areaCode, _number) :
-                string.Format("{0} ({1}) {2} x{3}", _countryCode, _areaCode, _number, _extension);
+            /// todo: replace hard-coded "1" with the site's default country code
+            return this.Format("1");
+        }
+
+        /// <summary>
+        /// Telephone number string, which suppresses country code output for the specified country code
+        /// </summary>
+        /// <param name="filteredCountryCode">Country code to suppress.  Null will display all country codes.</param>
+        /// <returns>A string representation of the telephone number</returns>
+        public string Format(string filteredCountryCode)
+        {
+            string number = "";
+
+            number += (_countryCode != null && _countryCode != filteredCountryCode) ? string.Format("+{0} ", _countryCode) : "";
+            number += string.Format("({0}) {1}", _areaCode, _number);
+            number += (_extension != null) ? string.Format(" x{0}", _extension) : "";
+
+            return number.ToString();
         }
 
         /// <summary>
