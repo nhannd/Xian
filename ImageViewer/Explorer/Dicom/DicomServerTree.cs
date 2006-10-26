@@ -114,7 +114,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 // editting server
                 if (CurrentServer.IsServer)
                 {
-                    if (!serverName.Equals(CurrentServer.ServerName) && cids.ServerName.Equals(serverName) && cids.ServerPath.Equals(CurrentServer.ServerPath))
+                    if (cids.ServerName.Equals(serverName) && !serverName.Equals(CurrentServer.ServerName) 
+                        && (cids.ServerPath.Equals(CurrentServer.ServerPath) || !((DicomServer)cids).DicomAE.AE.Equals(serverAE) 
+                        || !((DicomServer)cids).DicomAE.Host.Equals(serverHost) || ((DicomServer)cids).DicomAE.Port != port))
                         return cids.ServerPath + "/" + cids.ServerName;
                 }
                 // New server
