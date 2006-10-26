@@ -6,7 +6,7 @@ namespace ClearCanvas.Desktop
 {
     public static class Format
     {
-        private static readonly string _dateFormat = "MMM-dd-yyyy";
+        private static readonly string _dateFormat = "dd-MMM-yyyy";
         private static readonly string _timeFormat = "hh:mm tt";
         private static readonly string _dateTimeFormat = _dateFormat + " " + _timeFormat;
 
