@@ -157,13 +157,49 @@ namespace ClearCanvas.Ris.Client.Adt
                     _adtService.LoadPatientProfileDetails(_subject);
                 }
 
-                _addresses.Items.AddRange(_subject.Addresses);
-                _addresses.Items.Remove(_subject.CurrentHomeAddress);
-                //_addresses.Items.Remove(_subject.CurrentWorkAddress);
-                
-                _phoneNumbers.Items.AddRange(_subject.TelephoneNumbers);
-                _phoneNumbers.Items.Remove(_subject.CurrentHomePhone);
-                //_phoneNumbers.Items.Remove(_subject.CurrentWorkPhone);
+                Address mostRecentExpiredHomeAddress = null;
+                foreach (Address address in _subject.Addresses)
+                {
+                    if (address.IsCurrent)
+                    {
+                        _addresses.Items.Add(address);
+                    }
+                    else
+                    {
+                        if (address.Type == AddressType.R)
+                        {
+                            if (mostRecentExpiredHomeAddress == null || address.ValidRange.Until > mostRecentExpiredHomeAddress.ValidRange.Until)
+                            {
+                                mostRecentExpiredHomeAddress = address;
+                            }
+                        }
+                    }
+                }
+                if (mostRecentExpiredHomeAddress != null) _addresses.Items.Add(mostRecentExpiredHomeAddress);
+                if (_subject.CurrentHomeAddress != null) _addresses.Items.Remove(_subject.CurrentHomeAddress);
+                _addresses.Sort(new TableSortParams(_addresses.Columns[0], false));
+
+                TelephoneNumber mostRecentExpiredHomePhone = null;
+                foreach (TelephoneNumber phoneNumber in _subject.TelephoneNumbers)
+                {
+                    if (phoneNumber.IsCurrent)
+                    {
+                        _phoneNumbers.Items.Add(phoneNumber);
+                    }
+                    else
+                    {
+                        if (phoneNumber.Use == TelephoneUse.PRN)
+                        {
+                            if (mostRecentExpiredHomePhone == null || phoneNumber.ValidRange.Until > mostRecentExpiredHomePhone.ValidRange.Until)
+                            {
+                                mostRecentExpiredHomePhone = phoneNumber;
+                            }
+                        }
+                    }
+                }
+                if (mostRecentExpiredHomePhone != null) _phoneNumbers.Items.Add(mostRecentExpiredHomePhone);
+                if (_subject.CurrentHomePhone != null) _phoneNumbers.Items.Remove(_subject.CurrentHomePhone);
+                _phoneNumbers.Sort(new TableSortParams(_phoneNumbers.Columns[0], false));
             }
 
             NotifyAllPropertiesChanged();
@@ -236,9 +272,29 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _addresses; }
         }
 
+        public int MoreAddressesCount
+        {
+            get 
+            { 
+                return (_subject.CurrentHomeAddress != null) 
+                    ? (_subject.Addresses.Count - 1) - _addresses.Items.Count
+                    : _subject.Addresses.Count - _addresses.Items.Count; 
+            }
+        }
+
         public ITable PhoneNumbers
         {
             get { return _phoneNumbers; }
+        }
+
+        public int MorePhoneNumbersCount
+        {
+            get 
+            {
+                return (_subject.CurrentHomePhone != null)
+                    ? (_subject.TelephoneNumbers.Count - 1) - _phoneNumbers.Items.Count
+                    : _subject.TelephoneNumbers.Count - _phoneNumbers.Items.Count;
+            }
         }
 
         public ActionModelNode MenuModel

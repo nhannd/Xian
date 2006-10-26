@@ -15,7 +15,8 @@ if(component.Subject != null)
 <table width="640" border="0">
   <tr>
     <td width="422" class="pageheading"><%= component.Name %></td>
-    <td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>
+    <!--<td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>-->
+    <td rowspan="2" width="202"><img src="http://172.16.10.167/RisTemplates/logo.jpg" alt="UHN/MSH" align="left" /></td>
   </tr>
   <tr>
     <td class="pageheading2"><%= component.Mrn %></td>
@@ -55,18 +56,19 @@ if(component.Subject != null)
     <td>&nbsp;</td>
   </tr>
   <tr>
-    <td class="propertyname">Phone</td>
+    <td class="propertyname">Home Phone</td>
     <td colspan="3"><%= component.CurrentHomePhone %></td>
   </tr>
   <tr>
-    <td class="propertyname">Address</td>
+    <td class="propertyname">Home Address</td>
     <td colspan="3"><%= component.CurrentHomeAddress %></td>
   </tr>
 </table>
 <p>&nbsp;</p>
+<% if(component.PhoneNumbers.Items.Count > 0 ) { %>
 <table width="640" border="0">
   <tr class="sectionheading">
-    <td colspan="4">Additional Phone Numbers</td>
+    <td colspan="3">Additional Phone Numbers</td>
   </tr>
   <tr class="tableheading">
     <% for(var column in component.PhoneNumbers.Columns) { %>
@@ -81,11 +83,18 @@ if(component.Subject != null)
         <% } %>
     </tr>
     <% } %>
+    <% if(component.MorePhoneNumbersCount > 0) { %>
+    <tr class="additionalentriescount">
+        <td colspan="3">(<%= component.MorePhoneNumbersCount %> more...)</td>
+    </tr>
+    <% } %>
 </table>
 <p>&nbsp;</p>
+<% } %>
+<% if(component.Addresses.Items.Count > 0) { %>
 <table width="640" border="0">
   <tr class="sectionheading">
-    <td colspan="4">Additional Addresses</td>
+    <td colspan="3">Additional Addresses</td>
   </tr>
   <tr class="tableheading">
   <% for(var column in component.Addresses.Columns) { %>
@@ -100,7 +109,13 @@ if(component.Subject != null)
       <% } %>
   </tr>
   <% } %>
+    <% if(component.MoreAddressesCount > 0) { %>
+    <tr class="additionalentriescount">
+        <td colspan="3">(<%= component.MoreAddressesCount %> more...)</td>
+    </tr>
+    <% } %>
 </table>
+<% } %>
 <%} // end-if(component != null)%>    
 </body>
 </html>
