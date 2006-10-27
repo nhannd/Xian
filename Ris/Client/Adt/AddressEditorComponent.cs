@@ -58,6 +58,16 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public string Unit
+        {
+            get { return _address.Unit; }
+            set
+            {
+                _address.Unit = value;
+                this.Modified = true;
+            }
+        }
+
         public string City
         {
             get { return _address.City; }

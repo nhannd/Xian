@@ -30,6 +30,7 @@ namespace ClearCanvas.Healthcare {
         {
             _type = source.Type;
             _street = source.Street;
+            _unit = source.Unit;
             _city = source.City;
             _province = source.Province;
             _country = source.Country;
@@ -44,7 +45,10 @@ namespace ClearCanvas.Healthcare {
 
         public string Format()
         {
-            return string.Format("{0}, {1} {2} {3}", _street, _city, _province, _postalCode);
+            string address = "";
+            address += (_unit != null) ? string.Format("{0}-", _unit) : "";
+            address += string.Format("{0}, {1} {2} {3}", _street, _city, _province, _postalCode);
+            return address;
         }
 
         /// <summary>
@@ -55,6 +59,7 @@ namespace ClearCanvas.Healthcare {
         public bool IsEquivalentTo(Address that)
         {
             return (that != null) &&
+                ((this._unit == default(string)) ? (that._unit == default(string)) : this._unit.Equals(that._unit)) &&
                 ((this._street == default(string)) ? (that._street == default(string)) : this._street.Equals(that._street)) &&
                 ((this._city == default(string)) ? (that._city == default(string)) : this._city.Equals(that._city)) &&
                 ((this._province == default(string)) ? (that._province == default(string)) : this._province.Equals(that._province)) &&

@@ -36,14 +36,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _addressTypes = _patientAdminService.GetAddressTypeEnumTable();
 
 
-            _addresses.Columns.Add(new TableColumn<Address, string>("Type", delegate(Address a) { return _addressTypes[a.Type].Value; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Street", delegate(Address a) { return a.Street; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("City", delegate(Address a) { return a.City; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Province", delegate(Address a) { return a.Province; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("PostalCode", delegate(Address a) { return a.PostalCode; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Country", delegate(Address a) { return a.Country; }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Type", 
+                delegate(Address a) { return _addressTypes[a.Type].Value; }, 
+                0.10f));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Address", 
+                delegate(Address a) { return a.Format(); }, 
+                0.60f));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", 
+                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }, 
+                0.15f));
+            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
+                0.15f));
 
             _addressActionHandler = new CrudActionModel();
             _addressActionHandler.Add.Handler = AddAddress;

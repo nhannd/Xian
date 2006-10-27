@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _country.DataBindings.Add("Value", _component, "Country", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _street.DataBindings.Add("Value", _component, "Street", true, DataSourceUpdateMode.OnPropertyChanged);
+            _unit.DataBindings.Add("Value", _component, "Unit", true, DataSourceUpdateMode.OnPropertyChanged);
             _city.DataBindings.Add("Value", _component, "City", true, DataSourceUpdateMode.OnPropertyChanged);
             _postalCode.DataBindings.Add("Value", _component, "PostalCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);

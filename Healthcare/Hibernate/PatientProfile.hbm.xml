@@ -67,6 +67,7 @@
       <key column="PatientProfileOID_"/>
       <composite-element class="Address">
         <property name="Street" column="Street_" type="String" length="100" not-null="true"/>
+        <property name="Unit" column="Unit_" type="String" length="50" not-null="false"/>
         <property name="City" column="City_" type="String" length="50" not-null="true"/>
         <property name="Province" column="Province_" type="String" length="50" not-null="true"/>
         <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="true"/>

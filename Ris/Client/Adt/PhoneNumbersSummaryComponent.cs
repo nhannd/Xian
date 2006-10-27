@@ -36,14 +36,23 @@ namespace ClearCanvas.Ris.Client.Adt
             _phoneEquipments = _patientAdminService.GetTelephoneEquipmentEnumTable();
             _phoneUses = _patientAdminService.GetTelephoneUseEnumTable();
 
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Use", delegate(TelephoneNumber pn) { return _phoneUses[pn.Use].Value; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Equipment", delegate(TelephoneNumber pn) { return _phoneEquipments[pn.Equipment].Value; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Country Code", delegate(TelephoneNumber pn) { return pn.CountryCode; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Area Code", delegate(TelephoneNumber pn) { return pn.AreaCode; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", delegate(TelephoneNumber pn) { return pn.Number; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Extension", delegate(TelephoneNumber pn) { return pn.Extension; }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.From); }));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Type",
+                delegate(TelephoneNumber t)
+                {
+                    return string.Format("{0} {1}",
+                        _phoneUses[t.Use].Value,
+                        t.Equipment == TelephoneEquipment.CP ? _phoneEquipments[t.Equipment].Value : "");
+                }, 
+                0.1f)); 
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", 
+                delegate(TelephoneNumber pn) { return pn.Format(); },
+                0.6f));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", 
+                delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.From); }, 
+                0.15f));
+            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", 
+                delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }, 
+                0.15f));
 
             _phoneNumberActionHandler = new CrudActionModel();
             _phoneNumberActionHandler.Add.Handler = AddPhoneNumber;
