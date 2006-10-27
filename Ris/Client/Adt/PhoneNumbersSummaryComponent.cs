@@ -43,16 +43,16 @@ namespace ClearCanvas.Ris.Client.Adt
                         _phoneUses[t.Use].Value,
                         t.Equipment == TelephoneEquipment.CP ? _phoneEquipments[t.Equipment].Value : "");
                 }, 
-                0.1f)); 
+                1.1f)); 
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", 
                 delegate(TelephoneNumber pn) { return pn.Format(); },
-                0.6f));
+                2.2f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", 
                 delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.From); }, 
-                0.15f));
+                0.9f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", 
                 delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }, 
-                0.15f));
+                0.9f));
 
             _phoneNumberActionHandler = new CrudActionModel();
             _phoneNumberActionHandler.Add.Handler = AddPhoneNumber;

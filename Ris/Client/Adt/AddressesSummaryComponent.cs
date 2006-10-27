@@ -38,15 +38,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _addresses.Columns.Add(new TableColumn<Address, string>("Type", 
                 delegate(Address a) { return _addressTypes[a.Type].Value; }, 
-                0.10f));
+                0.5f));
             _addresses.Columns.Add(new TableColumn<Address, string>("Address", 
                 delegate(Address a) { return a.Format(); }, 
-                0.60f));
+                2.8f));
             _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", 
                 delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }, 
-                0.15f));
+                0.9f));
             _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
-                0.15f));
+                0.9f));
 
             _addressActionHandler = new CrudActionModel();
             _addressActionHandler.Add.Handler = AddAddress;

@@ -49,6 +49,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _menuModel;
 		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
         private ITable _table;
+        private bool _multiLine;
+
 
 		public TableView()
 		{
@@ -127,6 +129,27 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
 
                 InitColumns();
+            }
+        }
+
+        [DefaultValue(false)]
+        [Description("Enables or disables multi-line rows.  If enabled, text longer than the column width is wrapped and the row is auto-sized. If disabled, a single line of truncated text is followed by an ellipsis")]
+        public bool MultiLine
+        {
+            get { return _multiLine; }
+            set
+            {
+                _multiLine = value;
+                if (_multiLine == true)
+                {
+                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+                }
+                else
+                {
+                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
+                }
             }
         }
 
