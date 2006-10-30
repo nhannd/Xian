@@ -6,6 +6,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -29,8 +30,8 @@ namespace ClearCanvas.Ris.Client.Adt
               new TableColumn<PatientProfile, string>("Healthcard",
                   delegate(PatientProfile profile) { return profile.Healthcard.Id; }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, DateTime>("DOB",
-                  delegate(PatientProfile profile) { return profile.DateOfBirth; }, 1.0f));
+              new TableColumn<PatientProfile, string>("DOB",
+                  delegate(PatientProfile profile) { return Format.Date(profile.DateOfBirth); }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfile, string>("Sex",
                   delegate(PatientProfile profile) { return sexChoices[profile.Sex].Value; }, 0.5f));
