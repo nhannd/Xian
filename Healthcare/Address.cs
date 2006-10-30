@@ -46,7 +46,7 @@ namespace ClearCanvas.Healthcare {
         public string Format()
         {
             string address = "";
-            address += (_unit != null) ? string.Format("{0}-", _unit) : "";
+            address += (_unit != null && !_unit.Trim().Equals("")) ? string.Format("{0}-", _unit) : "";
             address += string.Format("{0}, {1} {2} {3}", _street, _city, _province, _postalCode);
             return address;
         }
