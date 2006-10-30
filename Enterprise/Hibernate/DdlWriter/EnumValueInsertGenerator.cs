@@ -14,6 +14,11 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
     /// </summary>
     public class EnumValueInsertGenerator : Generator
     {
+        public EnumValueInsertGenerator(string databaseType)
+            : base(databaseType)
+        {
+        }
+
         public override string[] Run(PersistentStore store)
         {
             List<string> scripts = new List<string>();

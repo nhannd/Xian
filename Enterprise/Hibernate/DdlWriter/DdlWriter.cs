@@ -34,7 +34,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 string[] scripts = gen.Run(store);
                 foreach (string s in scripts)
                 {
-                    sw.WriteLine(s);
+                    sw.WriteLine(s + ";");
                 }
             }
 

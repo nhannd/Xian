@@ -11,18 +11,23 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         public void RunApplication(string[] args)
         {
             string outputFile = "model.ddl";
+            string databaseType = "SQL";
 
             if (args.Length > 0)
             {
-                // maybe an explicit output file is specified 
+                foreach (string arg in args)
+                {
+                    ParseArg(arg, "OutputFile", ref outputFile);
+                    ParseArg(arg, "DatabaseType", ref databaseType);
+                }
             }
-
+            
             DdlWriter writer = new DdlWriter();
 
             // generators will be processed in order they are added
-            writer.AddGenerator(new DropSchemaGenerator());
-            writer.AddGenerator(new CreateSchemaGenerator());
-            writer.AddGenerator(new EnumValueInsertGenerator());
+            writer.AddGenerator(new DropSchemaGenerator(databaseType));
+            writer.AddGenerator(new CreateSchemaGenerator(databaseType));
+            writer.AddGenerator(new EnumValueInsertGenerator(databaseType));
 
 
             writer.Execute(outputFile);
