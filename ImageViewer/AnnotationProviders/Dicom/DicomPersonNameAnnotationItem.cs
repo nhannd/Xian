@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (String.IsNullOrEmpty(dicomString))
 				return String.Empty;
 
-			PatientsName patientsName = new PatientsName(dicomString);
+			PersonName patientsName = new PersonName(dicomString);
 			return (patientsName.FirstName + " " + patientsName.LastName);
 		}
 	}

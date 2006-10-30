@@ -42,19 +42,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
 
 			MockImageSop junkImageSop = new MockImageSop();
-			junkImageSop.InstanceNumber = "";
+			junkImageSop.InstanceNumber = 0;
 			junkImageSop.StudyInstanceUID = "123";
 			junkImageSop.SeriesInstanceUID = "1";
 			orderedCollection.Add(new DicomPresentationImage(junkImageSop));
 
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
 			
-			junkImageSop = new MockImageSop();
-			junkImageSop.InstanceNumber = "a";
-			junkImageSop.StudyInstanceUID = "123";
-			junkImageSop.SeriesInstanceUID = "10";
-			orderedCollection.Add(new DicomPresentationImage(junkImageSop));
-
 			AppendCollection(NewDicomSeries("123", "10", 1, 25), orderedCollection);
 			AppendCollection(NewDicomSeries("123", "111", 1, 25), orderedCollection);
 			AppendCollection(NewDicomSeries("123", "456", 1, 25), orderedCollection);
@@ -183,10 +177,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				collection.Add(image);
 		}
 
-		public List<PresentationImage> NewDicomSeries(string studyUID, string seriesUID, uint startInstanceNumber, uint numberInstances)
+		public List<PresentationImage> NewDicomSeries(string studyUID, string seriesUID, int startInstanceNumber, uint numberInstances)
 		{
 			List<PresentationImage> listImages = new List<PresentationImage>();
-			uint instanceNumber = startInstanceNumber;
+			int instanceNumber = (int)startInstanceNumber;
 			while (instanceNumber < (startInstanceNumber + numberInstances))
 			{
 				listImages.Add(NewDicomImage(studyUID, seriesUID, instanceNumber));
@@ -196,12 +190,12 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			return listImages;
 		}
 
-		public DicomPresentationImage NewDicomImage(string studyUID, string seriesUID, uint instanceNumber)
+		public DicomPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
 		{
 			MockImageSop newImageSop = new MockImageSop();
 			newImageSop.StudyInstanceUID = studyUID;
 			newImageSop.SeriesInstanceUID = seriesUID;
-			newImageSop.InstanceNumber = instanceNumber.ToString();
+			newImageSop.InstanceNumber = instanceNumber;
 			return new DicomPresentationImage(newImageSop);
 		}
 	}

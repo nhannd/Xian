@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -40,8 +41,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_imageLayer.Selected = true;
 			_graphicLayer.Selected = true;
 
-			_imageLayerGroup.SpatialTransform.PixelSpacingX = _imageSop.PixelSpacingX;
-			_imageLayerGroup.SpatialTransform.PixelSpacingY = _imageSop.PixelSpacingY;
+			_imageLayerGroup.SpatialTransform.PixelSpacingX = _imageSop.PixelSpacing.Column;
+			_imageLayerGroup.SpatialTransform.PixelSpacingY = _imageSop.PixelSpacing.Row;
 			_imageLayerGroup.SpatialTransform.SourceRectangle = new Rectangle(0, 0, _imageLayer.Columns, _imageLayer.Rows);
 			_imageLayerGroup.SpatialTransform.Calculate();
 

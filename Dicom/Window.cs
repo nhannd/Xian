@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Dicom.DataStore
+namespace ClearCanvas.Dicom
 {
     public class Window
     {
@@ -10,6 +10,12 @@ namespace ClearCanvas.Dicom.DataStore
         {
 
         }
+
+		public Window(Window window)
+		{
+			_width = window.Width;
+			_center = window.Center;
+		}
 
         public Window(double width, double center)
         {

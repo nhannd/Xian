@@ -31,7 +31,7 @@ namespace ClearCanvas.Dicom
         {
             // validate the input
             if (null == patientId)
-                throw new System.ArgumentNullException("patientId", SR.ExceptionGeneralPatientsNameNull);
+				throw new System.ArgumentNullException("patientId", SR.ExceptionGeneralPatientIdNull);
 
             _patientId = patientId;
         }

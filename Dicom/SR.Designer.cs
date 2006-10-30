@@ -241,20 +241,20 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient&apos;s Name cannot be null.
+        ///   Looks up a localized string similar to Patient&apos;s Id cannot be null.
         /// </summary>
-        public static string ExceptionGeneralPatientsNameNull {
+        public static string ExceptionGeneralPatientIdNull {
             get {
-                return ResourceManager.GetString("ExceptionGeneralPatientsNameNull", resourceCulture);
+                return ResourceManager.GetString("ExceptionGeneralPatientIdNull", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient&apos;s Name cannot be zero-length.
+        ///   Looks up a localized string similar to Patient&apos;s Name cannot be null.
         /// </summary>
-        public static string ExceptionGeneralPatientsNameZeroLength {
+        public static string ExceptionGeneralPersonsNameNull {
             get {
-                return ResourceManager.GetString("ExceptionGeneralPatientsNameZeroLength", resourceCulture);
+                return ResourceManager.GetString("ExceptionGeneralPersonsNameNull", resourceCulture);
             }
         }
         

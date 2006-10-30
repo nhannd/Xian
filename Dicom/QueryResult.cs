@@ -43,14 +43,14 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Gets Patient's Name as a PatientsName object.
         /// </summary>
-        public PatientsName PatientsName
+        public PersonName PatientsName
         {
             get
             {
                 if (this.ContainsTag(DicomTag.PatientsName))
-                    return new PatientsName(_internalDictionary[DicomTag.PatientsName]);
+                    return new PersonName(_internalDictionary[DicomTag.PatientsName]);
                 else
-                    return new PatientsName();
+                    return new PersonName();
             }
         }
 

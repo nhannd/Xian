@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom.GeneralImage
 		protected override void GetStoredDicomValue(DicomPresentationImage dicomPresentationImage, out string dicomValue, out bool storedValueExists)
 		{
 			storedValueExists = true;
-			dicomValue = dicomPresentationImage.ImageSop.InstanceNumber;
+			dicomValue = dicomPresentationImage.ImageSop.InstanceNumber.ToString();
 		}
 
 		protected override DcmTagKey DicomTag

@@ -6,6 +6,7 @@ using System.Text;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
@@ -82,8 +83,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			
 			imageSop.PixelRepresentation = pixelRepresentation;
 			imageSop.BitsStored = bitsStored;
-			imageSop.WindowWidth = windowWidth;
-			imageSop.WindowCenter = windowCenter;
+			imageSop.WindowCenterAndWidth = new Window[] { new Window(windowWidth, windowCenter) };
 
 			DicomPresentationImage image = new DicomPresentationImage(imageSop);
 

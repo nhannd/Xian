@@ -21,8 +21,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom.ImagePlane
 		{
 			double[] arrayDoubles = new double[2];
 
-			arrayDoubles[0] = dicomPresentationImage.ImageSop.PixelSpacingX;
-			arrayDoubles[1] = dicomPresentationImage.ImageSop.PixelSpacingY;
+			arrayDoubles[0] = dicomPresentationImage.ImageSop.PixelSpacing.Column;
+			arrayDoubles[1] = dicomPresentationImage.ImageSop.PixelSpacing.Row;
 
 			return arrayDoubles;
 		}

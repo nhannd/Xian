@@ -85,7 +85,7 @@ namespace ClearCanvas.Dicom.DataStore
             set { _patientId = value; }
         }
 
-        public virtual PatientsName PatientsName
+        public virtual PersonName PatientsName
         {
             get { return _patientsName; }
             set { _patientsName = value; }
@@ -164,7 +164,7 @@ namespace ClearCanvas.Dicom.DataStore
         string _procedureCodeSequenceCodeValue;
         string _admittingDiagnosesDescription;
         PatientId _patientId;
-        PatientsName _patientsName;
+        PersonName _patientsName;
         string _patientsSex;
         string _patientsBirthDate;
         ISet _internalSeries;

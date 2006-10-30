@@ -92,6 +92,8 @@
     <Compile Include="DicomImage.cs" />
     <Compile Include="DicomTag.cs" />
     <Compile Include="FileDicomImage.cs" />
+    <Compile Include="ImageOrientationPatient.cs" />
+    <Compile Include="ImagePositionPatient.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Network\ApplicationEntity.cs" />
     <Compile Include="Network\DicomClient.cs" />
@@ -107,9 +109,13 @@
     <Compile Include="Network\SopInstanceReceivedEventArgs.cs" />
     <Compile Include="Network\StudyCompletedEventArgs.cs" />
     <Compile Include="OffisConditionParser.cs" />
+    <Compile Include="PatientOrientation.cs" />
+    <Compile Include="PhotometricInterpretation.cs" />
+    <Compile Include="PixelAspectRatio.cs" />
+    <Compile Include="PixelSpacing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PatientID.cs" />
-    <Compile Include="PatientsName.cs" />
+    <Compile Include="PersonName.cs" />
     <Compile Include="QueryResult.cs" />
     <Compile Include="QueryResultCollection.cs" />
     <Compile Include="Dcm.cs">
@@ -129,6 +135,8 @@
     <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="TimeParser.cs" />
     <Compile Include="Uid.cs" />
+    <Compile Include="VMStringConverter.cs" />
+    <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codecs\ClearCanvas.Codecs.csproj">

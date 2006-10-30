@@ -17,14 +17,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_dicomImage = new FileDicomImage(filename);
 		}
 
-		public override string PatientsName
+		protected LocalImageSop()
+		{ 
+		}
+
+		public override PersonName PatientsName
 		{
 			get
 			{
 				bool tagExists;
 				string patientsName;
 				_dicomImage.GetTag(Dcm.PatientsName, out patientsName, out tagExists);
-				return patientsName;
+				if (patientsName == null)
+					patientsName = "";
+				return new PersonName(patientsName);
 			}
 			set
 			{
@@ -122,11 +128,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string ReferringPhysiciansName
+		public override PersonName ReferringPhysiciansName
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string referringPhysiciansName;
+				_dicomImage.GetTag(Dcm.ReferringPhysiciansName, out referringPhysiciansName, out tagExists);
+				if (referringPhysiciansName == null)
+					referringPhysiciansName = "";
+				return new PersonName(referringPhysiciansName);
 			}
 			set
 			{
@@ -164,11 +175,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string NameOfPhysiciansReadingStudy
+		public override PersonName[] NameOfPhysiciansReadingStudy
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string nameOfPhysiciansReadingStudy;
+				_dicomImage.GetTagArray(Dcm.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
+				return VMStringConverter.ToPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 			set
 			{
@@ -176,11 +190,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string AdmittingDiagnosesDescription
+		public override string[] AdmittingDiagnosesDescription
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string admittingDiagnosesDescription;
+				_dicomImage.GetTagArray(Dcm.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
+				return VMStringConverter.ToStringArray(admittingDiagnosesDescription);
 			}
 			set
 			{
@@ -192,7 +209,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string patientsAge;
+				_dicomImage.GetTag(Dcm.PatientsAge, out patientsAge, out tagExists);
+				return patientsAge;
 			}
 			set
 			{
@@ -204,7 +224,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string additionalPatientsHistory;
+				_dicomImage.GetTag(Dcm.AdditionalPatientHistory, out additionalPatientsHistory, out tagExists);
+				return additionalPatientsHistory;
 			}
 			set
 			{
@@ -242,12 +265,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string SeriesNumber
+		public override int SeriesNumber
 		{
 			get
 			{
 				bool tagExists;
-				string seriesNumber;
+				int seriesNumber;
 				_dicomImage.GetTag(Dcm.SeriesNumber, out seriesNumber, out tagExists);
 				return seriesNumber;
 			}
@@ -292,7 +315,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string seriesDate;
+				_dicomImage.GetTag(Dcm.SeriesDate, out seriesDate, out tagExists);
+				return seriesDate;
 			}
 			set
 			{
@@ -304,7 +330,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string seriesTime;
+				_dicomImage.GetTag(Dcm.SeriesTime, out seriesTime, out tagExists);
+				return seriesTime;
 			}
 			set
 			{
@@ -312,11 +341,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string PerformingPhysiciansName
+		public override PersonName[] PerformingPhysiciansName
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string performingPhysiciansNames;
+				_dicomImage.GetTagArray(Dcm.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
+				return VMStringConverter.ToPersonNameArray(performingPhysiciansNames);
 			}
 			set
 			{
@@ -324,11 +356,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string OperatorsName
+		public override PersonName[] OperatorsName
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string operatorsNames;
+				_dicomImage.GetTagArray(Dcm.OperatorsName, out operatorsNames, out tagExists);
+				return VMStringConverter.ToPersonNameArray(operatorsNames);
 			}
 			set
 			{
@@ -340,7 +375,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string bodyPartExamined;
+				_dicomImage.GetTag(Dcm.BodyPartExamined, out bodyPartExamined, out tagExists);
+				return bodyPartExamined;
 			}
 			set
 			{
@@ -352,7 +390,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string patientPosition;
+				_dicomImage.GetTag(Dcm.PatientPosition, out patientPosition, out tagExists);
+				return patientPosition;
 			}
 			set
 			{
@@ -364,7 +405,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string manufacturer;
+				_dicomImage.GetTag(Dcm.Manufacturer, out manufacturer, out tagExists);
+				return manufacturer;
 			}
 			set
 			{
@@ -376,7 +420,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string institutionName;
+				_dicomImage.GetTag(Dcm.InstitutionName, out institutionName, out tagExists);
+				return institutionName;
 			}
 			set
 			{
@@ -388,7 +435,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string stationName;
+				_dicomImage.GetTag(Dcm.StationName, out stationName, out tagExists);
+				return stationName;
 			}
 			set
 			{
@@ -400,7 +450,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string institutionalDepartmentName;
+				_dicomImage.GetTag(Dcm.InstitutionalDepartmentName, out institutionalDepartmentName, out tagExists);
+				return institutionalDepartmentName;
 			}
 			set
 			{
@@ -412,7 +465,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string manufacturersModelName;
+				_dicomImage.GetTag(Dcm.ManufacturersModelName, out manufacturersModelName, out tagExists);
+				return manufacturersModelName;
 			}
 			set
 			{
@@ -420,12 +476,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string InstanceNumber
+		public override int InstanceNumber
 		{
 			get
 			{
 				bool tagExists;
-				string instanceNumber;
+				int instanceNumber;
 				_dicomImage.GetTag(Dcm.InstanceNumber, out instanceNumber, out tagExists);
 				return instanceNumber;
 			}
@@ -435,11 +491,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string PatientOrientationRows
+		public override PatientOrientation PatientOrientation
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string patientOrientation;
+				_dicomImage.GetTagArray(Dcm.PatientOrientation, out patientOrientation, out tagExists);
+				if (!String.IsNullOrEmpty(patientOrientation))
+				{
+					string[] values = VMStringConverter.ToStringArray(patientOrientation);
+					return new PatientOrientation(values[0], values[1]);
+				}
+				else
+					return new PatientOrientation("", "");
 			}
 			set
 			{
@@ -447,23 +512,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string PatientOrientationColumns
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
+		// Returns the entire ImageType tag, since most of the time we would just 
+		// use the complete string array to compare against when filtering, etc.
 		public override string ImageType
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string imageType;
+				_dicomImage.GetTagArray(Dcm.ImageType, out imageType, out tagExists);
+				return imageType;
 			}
 			set
 			{
@@ -471,11 +529,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string AcquisitionNumber
+		public override int AcquisitionNumber
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				int acquisitionNumber;
+				_dicomImage.GetTag(Dcm.AcquisitionNumber, out acquisitionNumber, out tagExists);
+				return acquisitionNumber;
 			}
 			set
 			{
@@ -487,7 +548,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string acquisitionDate;
+				_dicomImage.GetTag(Dcm.AcquisitionDate, out acquisitionDate, out tagExists);
+				return acquisitionDate;
 			}
 			set
 			{
@@ -499,7 +563,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string acquisitionTime;
+				_dicomImage.GetTag(Dcm.AcquisitionTime, out acquisitionTime, out tagExists);
+				return acquisitionTime;
 			}
 			set
 			{
@@ -511,7 +578,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string acquisitionDateTime;
+				_dicomImage.GetTag(Dcm.AcquisitionDatetime, out acquisitionDateTime, out tagExists);
+				return acquisitionDateTime;
 			}
 			set
 			{
@@ -519,11 +589,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string ImagesInAcquisition
+		public override int ImagesInAcquisition
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				int imagesInAcquisition;
+				_dicomImage.GetTag(Dcm.ImagesInAcquisition, out imagesInAcquisition, out tagExists);
+				return imagesInAcquisition;
 			}
 			set
 			{
@@ -535,7 +608,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string imageComments;
+				_dicomImage.GetTag(Dcm.ImageComments, out imageComments, out tagExists);
+				return imageComments;
 			}
 			set
 			{
@@ -547,7 +623,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string lossyImageCompression;
+				_dicomImage.GetTag(Dcm.LossyImageCompression, out lossyImageCompression, out tagExists);
+				return lossyImageCompression;
 			}
 			set
 			{
@@ -555,11 +634,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string LossyImageCompressionRatio
+		public override double[] LossyImageCompressionRatio
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string lossyImageCompressionRatios;
+				_dicomImage.GetTagArray(Dcm.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
+				return VMStringConverter.ToDoubleArray(lossyImageCompressionRatios);
 			}
 			set
 			{
@@ -571,7 +653,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string presentationLUTShape;
+				_dicomImage.GetTag(Dcm.PresentationLUTShape, out presentationLUTShape, out tagExists);
+				return presentationLUTShape;
 			}
 			set
 			{
@@ -579,16 +664,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override double PixelSpacingX
+		public override PixelSpacing PixelSpacing
 		{
 			get
 			{
 				bool tagExists;
-				double pixelSpacingX;
-                _dicomImage.GetTag(Dcm.PixelSpacing, out pixelSpacingX, 0, out tagExists);
+				string pixelSpacing;
+				_dicomImage.GetTagArray(Dcm.PixelSpacing, out pixelSpacing, out tagExists);
 				if (tagExists)
-					return pixelSpacingX;
-				return -1.0;
+				{
+					double[] values = VMStringConverter.ToDoubleArray(pixelSpacing);
+					return new PixelSpacing(values[0], values[1]);
+				}
+
+				//return an invalid value that is not null, in keeping with the pre-existing logic.
+				return new PixelSpacing(-1, -1);
 			}
 			set
 			{
@@ -596,16 +686,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override double PixelSpacingY
+		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get
 			{
 				bool tagExists;
-				double pixelSpacingY;
-                _dicomImage.GetTag(Dcm.PixelSpacing, out pixelSpacingY, 1, out tagExists);
-				if (tagExists) 
-					return pixelSpacingY;
-				return -1.0;
+				string imageOrientationPatient;
+				_dicomImage.GetTagArray(Dcm.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(imageOrientationPatient);
+					return new ImageOrientationPatient(values[0], values[1], values[2], values[3], values[4], values[5]);
+				}
+
+				return new ImageOrientationPatient(double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN);
 			}
 			set
 			{
@@ -613,107 +707,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override double ImageOrientationPatientRowX
+		public override ImagePositionPatient ImagePositionPatient
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
+				bool tagExists;
+				string imagePositionPatient;
+				_dicomImage.GetTagArray(Dcm.ImagePositionPatient, out imagePositionPatient, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(imagePositionPatient);
+					return new ImagePositionPatient(values[0], values[1], values[2]);
+				}
 
-		public override double ImageOrientationPatientRowY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientRowZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
+				return new ImagePositionPatient(double.NaN, double.NaN, double.NaN);
 			}
 			set
 			{
@@ -725,7 +732,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				double sliceThickness;
+				_dicomImage.GetTag(Dcm.SliceThickness, out sliceThickness, out tagExists);
+				return sliceThickness;
 			}
 			set
 			{
@@ -737,7 +747,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				double sliceLocation;
+				_dicomImage.GetTag(Dcm.SliceLocation, out sliceLocation, out tagExists);
+				return sliceLocation;
 			}
 			set
 			{
@@ -745,23 +758,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override double PixelAspectRatioX
+		public override PixelAspectRatio PixelAspectRatio
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
+				bool tagExists;
+				string pixelAspectRatio;
+				_dicomImage.GetTagArray(Dcm.PixelAspectRatio, out pixelAspectRatio, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(pixelAspectRatio);
+					return new PixelAspectRatio(values[0], values[1]);
+				}
 
-		public override double PixelAspectRatioY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
+				return new PixelAspectRatio(1.0, 1.0);
 			}
 			set
 			{
@@ -911,7 +921,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				bool tagExists;
+				string rescaleType;
+				_dicomImage.GetTag(Dcm.RescaleType, out rescaleType, out tagExists);
+				return rescaleType;
 			}
 			set
 			{
@@ -919,17 +932,36 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override double WindowCenter
+		public override Window[] WindowCenterAndWidth
 		{
 			get
 			{
 				bool tagExists;
-				double windowCenter;
-                _dicomImage.GetTag(Dcm.WindowCenter, out windowCenter, out tagExists);
-				if (tagExists)
-					return windowCenter;
+				string windowCenterValues;
+				_dicomImage.GetTagArray(Dcm.WindowCenter, out windowCenterValues, out tagExists);
+				if (!tagExists)
+					return new Window[] { new Window(double.NaN, double.NaN) };
 
-				return double.NaN;
+				string windowWidthValues;
+				_dicomImage.GetTagArray(Dcm.WindowWidth, out windowWidthValues, out tagExists);
+				if (!tagExists)
+					return new Window[] { new Window(double.NaN, double.NaN) };
+
+				if (String.IsNullOrEmpty(windowCenterValues) || String.IsNullOrEmpty(windowWidthValues))
+					return new Window[] { new Window(double.NaN, double.NaN) };
+
+				List<Window> windows = new List<Window>();
+
+				double[] windowCenters = VMStringConverter.ToDoubleArray(windowCenterValues);
+				double[] windowWidths = VMStringConverter.ToDoubleArray(windowWidthValues);
+
+				for (int i = 0; i < windowWidths.Length; ++i)
+				{
+					windows.Add(new Window(windowWidths[i], windowCenters[i]));
+				}
+
+				return windows.ToArray();
+
 			}
 			set
 			{
@@ -937,29 +969,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override double WindowWidth
+		public override string[] WindowCenterAndWidthExplanation
 		{
 			get
 			{
 				bool tagExists;
-				double windowWidth;
-                _dicomImage.GetTag(Dcm.WindowWidth, out windowWidth, out tagExists);
-				if (tagExists)
-					return windowWidth;
-				
-				return double.NaN;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double WindowCenterAndWidthExplanation
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
+				string windowCenterAndWidthExplanations;
+				_dicomImage.GetTagArray(Dcm.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
+				return VMStringConverter.ToStringArray(windowCenterAndWidthExplanations);
 			}
 			set
 			{
@@ -1002,13 +1019,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _dicomImage.GetPixelData();
 		}
 
-
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
 
 		public override void GetTag(DcmTagKey tag, out ushort val, uint position, out bool tagExists)
+		{
+			_dicomImage.GetTag(tag, out val, position, out tagExists);
+		}
+
+		public override void GetTag(DcmTagKey tag, out int val, out bool tagExists)
+		{
+			_dicomImage.GetTag(tag, out val, out tagExists);
+		}
+
+		public override void GetTag(DcmTagKey tag, out int val, uint position, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, position, out tagExists);
 		}
@@ -1026,6 +1052,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public override void GetTag(DcmTagKey tag, out string val, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
+		}
+
+		public override void GetTag(DcmTagKey tag, out string val, uint position, out bool tagExists)
+		{
+			_dicomImage.GetTag(tag, out val, position, out tagExists);
+		}
+
+		public override void GetTagArray(DcmTagKey tag, out string arrayValues, out bool tagExists)
+		{
+			_dicomImage.GetTagArray(tag, out arrayValues, out tagExists);
 		}
 	}
 }

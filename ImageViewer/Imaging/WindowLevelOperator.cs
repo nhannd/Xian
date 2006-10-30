@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -59,8 +60,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
 
-			double windowWidth = image.ImageSop.WindowWidth;
-			double windowCenter = image.ImageSop.WindowCenter;
+			double windowWidth = double.NaN;
+			double windowCenter = double.NaN;
+
+			Window[] windows = image.ImageSop.WindowCenterAndWidth;
+			if (windows != null)
+			{
+				windowWidth = windows[0].Width;
+				windowCenter = windows[0].Center;
+			}
 
 			//Window Width must be non-zero according to DICOM.
 			//Otherwise, we want to do something simple (pick 2^BitsStored).

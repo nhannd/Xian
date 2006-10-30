@@ -311,6 +311,32 @@ namespace ClearCanvas.Dicom
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 		}
 
+		public void GetTag(DcmTagKey tag, out int val, out bool tagExists)
+		{
+			LoadDataset();
+			OFCondition status = _dataset.findAndGetSint32(tag, out val);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+
+			if (tagExists)
+				return;
+
+			status = _metaInfo.findAndGetSint32(tag, out val);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+		}
+
+		public void GetTag(DcmTagKey tag, out int val, uint position, out bool tagExists)
+		{
+			LoadDataset();
+			OFCondition status = _dataset.findAndGetSint32(tag, out val, position);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+
+			if (tagExists)
+				return;
+
+			status = _metaInfo.findAndGetSint32(tag, out val, position);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+		}
+
 		public void GetTag(DcmTagKey tag, out double val, out bool tagExists)
 		{
 			LoadDataset();
@@ -354,7 +380,50 @@ namespace ClearCanvas.Dicom
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 			val = buffer.ToString();
 		}
-		
+
+		public void GetTag(DcmTagKey tag, out string value, uint position, out bool tagExists)
+		{
+			//TODO: shouldn't hard code the buffer length like this
+			LoadDataset();
+			StringBuilder buffer = new StringBuilder(64);
+			OFCondition status = _dataset.findAndGetOFString(tag, buffer, position);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			value = buffer.ToString();
+
+			if (tagExists)
+				return;
+
+			buffer = new StringBuilder(64);
+			status = _metaInfo.findAndGetOFString(tag, buffer, position);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			value = buffer.ToString();
+		}
+
+		/// <summary>
+		/// This method will obtain an entire tag, regardless of it's Value Multiplicity (VM)
+		/// as a string.  This is useful, for example, in the case of the "Image Type" tag,
+		/// where the individual values are not necessarily as useful as the unparsed tag.
+		/// </summary>
+		/// <param name="tag">The tag that will be obtained</param>
+		/// <param name="valueArray">The object that the value will be stored in.</param>
+		/// <param name="tagExists">An indicator whether the tag exists in the dataset or not.</param>
+		public void GetTagArray(DcmTagKey tag, out string valueArray, out bool tagExists)
+		{
+			LoadDataset();
+			StringBuilder buffer = new StringBuilder(512);
+			OFCondition status = _dataset.findAndGetOFStringArray(tag, buffer);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			valueArray = buffer.ToString();
+
+			if (tagExists)
+				return;
+
+			buffer = new StringBuilder(512);
+			status = _metaInfo.findAndGetOFStringArray(tag, buffer);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			valueArray = buffer.ToString();
+		}
+
 		protected abstract void LoadDataset();
 		protected abstract void UnloadDataset();
 

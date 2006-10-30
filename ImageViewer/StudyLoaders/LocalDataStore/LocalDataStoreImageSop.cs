@@ -10,19 +10,18 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
 
-	public class LocalDataStoreImageSop : ImageSop
+	public class LocalDataStoreImageSop : LocalImageSop
 	{
-		private FileDicomImage _dicomImage;
         private ImageSopInstance _dataStoreImageSopInstance;
         private ClearCanvas.Dicom.DataStore.Study _dataStoreStudy;
         private ClearCanvas.Dicom.DataStore.Series _dataStoreSeries;
 
 		public LocalDataStoreImageSop(ImageSopInstance sop)
+			: base(sop.LocationUri.LocalDiskPath)
 		{
             _dataStoreImageSopInstance = sop;
             _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
             _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as ClearCanvas.Dicom.DataStore.Series;
-			_dicomImage = new FileDicomImage(sop.LocationUri.LocalDiskPath);
 		}
 
         /// <summary>
@@ -50,14 +49,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             set { throw new Exception("This is not yet implemented."); }
         }
 
-		public override string PatientsName
+		public override PersonName PatientsName
 		{
 			get 
             {
                 if (this.DataStoreStudy.PatientsName != null)
                     return this.DataStoreStudy.PatientsName;
                 else
-                    return "";
+                    return new PersonName("");
             }
             set { throw new Exception("This is not yet implemented."); }
 		}
@@ -129,22 +128,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             {
                 if (this.DataStoreStudy.StudyTime != null)
                     return this.DataStoreStudy.StudyTime;
-                else return "";
+                else
+					return "";
             }
             set { throw new Exception("This is not yet implemented."); }
         }
-
-		public override string ReferringPhysiciansName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
 
 		public override string AccessionNumber
 		{
@@ -171,54 +159,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             set { throw new Exception("This is not yet implemented."); }
 		}
 
-		public override string NameOfPhysiciansReadingStudy
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string AdmittingDiagnosesDescription
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PatientsAge
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string AdditionalPatientsHistory
-		{
-            get
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            set
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-		}
-
 		public override string Modality
 		{
             get 
@@ -243,11 +183,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             set { throw new Exception("This is not yet implemented."); }
 		}
 
-		public override string SeriesNumber
+		public override int SeriesNumber
 		{
             get 
             {
-                return Convert.ToString(this.DataStoreSeries.SeriesNumber);
+                return DataStoreSeries.SeriesNumber;
             }
             set { throw new Exception("This is not yet implemented."); }
 		}
@@ -276,11 +216,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             set { throw new Exception("This is not yet implemented."); }
 		}
 
-		public override string SeriesDate
+
+		public override int InstanceNumber
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+    			return DataStoreImageSopInstance.InstanceNumber;
 			}
 			set
 			{
@@ -288,461 +229,17 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
-		public override string SeriesTime
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PerformingPhysiciansName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string OperatorsName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string BodyPartExamined
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PatientPosition
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string Manufacturer
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string InstitutionName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string StationName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string InstitutionalDepartmentName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string ManufacturersModelName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string InstanceNumber
-		{
-			get
-			{
-    			return Convert.ToString(this.DataStoreImageSopInstance.InstanceNumber);
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PatientOrientationRows
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PatientOrientationColumns
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string ImageType
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string AcquisitionNumber
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string AcquisitionDate
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string AcquisitionTime
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string AcquisitionDateTime
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string ImagesInAcquisition
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string ImageComments
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string LossyImageCompression
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string LossyImageCompressionRatio
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PresentationLUTShape
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double PixelSpacingX
+		public override PixelSpacing PixelSpacing
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.PixelSpacing != null)
-                    return this.DataStoreImageSopInstance.PixelSpacing.Column;
-                else
-                    return -1.0;
+				if (this.DataStoreImageSopInstance.PixelSpacing != null)
+					return this.DataStoreImageSopInstance.PixelSpacing;
+				else
+					return new PixelSpacing(-1.0, -1.0);
             }
             set { throw new Exception("This is not yet implemented."); }
        
-		}
-
-		public override double PixelSpacingY
-		{
-            get 
-            {
-                if (this.DataStoreImageSopInstance.PixelSpacing != null)
-                    return this.DataStoreImageSopInstance.PixelSpacing.Row;
-                else
-                    return -1.0;
-            }
-            set { throw new Exception("This is not yet implemented."); }
-		}
-
-		public override double ImageOrientationPatientRowX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientRowY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientRowZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double SliceThickness
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double SliceLocation
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double PixelAspectRatioX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double PixelAspectRatioY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int SamplesPerPixel
@@ -893,58 +390,20 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
-		public override string RescaleType
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double WindowCenter
+		public override Window[]  WindowCenterAndWidth
 		{
             get
             {
-                if (this.DataStoreImageSopInstance.WindowValues != null && this.DataStoreImageSopInstance.WindowValues.Count > 0)
-                {
-                    return (this.DataStoreImageSopInstance.WindowValues[0] as Window).Center;
-                }
-                else
-                    return double.NaN;
-            }
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
+				if (this.DataStoreImageSopInstance.WindowValues == null || this.DataStoreImageSopInstance.WindowValues.Count == 0)
+					return new Window[] { new Window(double.NaN, double.NaN) };
 
-		public override double WindowWidth
-		{
-            get
-            {
-                if (this.DataStoreImageSopInstance.WindowValues != null && this.DataStoreImageSopInstance.WindowValues.Count > 0)
-                {
-                    return (this.DataStoreImageSopInstance.WindowValues[0] as Window).Width;
-                }
-                else
-                    return double.NaN;
+				List<Window> windowCentersAndWidths = new List<Window>();
+				
+				foreach(object existingWindow in this.DataStoreImageSopInstance.WindowValues)
+					windowCentersAndWidths.Add(new Window((Window)existingWindow));
+				
+				return windowCentersAndWidths.ToArray();
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double WindowCenterAndWidthExplanation
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 			set
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -980,44 +439,5 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				throw new Exception("The method or operation is not implemented.");
 			}
 		}
-
-		public override byte[] GetPixelData()
-		{
-			return _dicomImage.GetPixelData(
-				this.Rows,
-				this.Columns,
-				this.BitsAllocated,
-				this.BitsStored,
-				this.PixelRepresentation,
-				this.PhotometricInterpretation,
-				this.SamplesPerPixel,
-				this.PlanarConfiguration,
-                this.TransferSyntaxUID);
-		}
-
-		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
-		{
-			_dicomImage.GetTag(tag, out val, out tagExists);
-		}
-
-		public override void GetTag(DcmTagKey tag, out ushort val, uint position, out bool tagExists)
-		{
-			_dicomImage.GetTag(tag, out val, position, out tagExists);
-		}
-
-		public override void GetTag(DcmTagKey tag, out double val, out bool tagExists)
-		{
-			_dicomImage.GetTag(tag, out val, out tagExists);
-		}
-
-		public override void GetTag(DcmTagKey tag, out double val, uint position, out bool tagExists)
-		{
-			_dicomImage.GetTag(tag, out val, position, out tagExists);
-		}
-
-		public override void GetTag(DcmTagKey tag, out string val, out bool tagExists)
-		{
-			_dicomImage.GetTag(tag, out val, out tagExists);
-		}
-    }
+	}
 }

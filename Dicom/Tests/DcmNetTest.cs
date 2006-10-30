@@ -141,7 +141,7 @@ namespace ClearCanvas.Dicom.Tests
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientsName("HEAD EXP2"));
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PersonName("HEAD EXP2"));
 
             Assert.IsTrue(results.Count > 0);
 
@@ -172,7 +172,7 @@ namespace ClearCanvas.Dicom.Tests
             dicomClient.QueryResultReceived += QueryResultReceivedEventHandler;
             dicomClient.QueryCompleted += QueryCompletedEventHandler;
 
-            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId(""), new PatientsName(""));
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId(""), new PersonName(""));
 
             dicomClient.QueryResultReceived -= QueryResultReceivedEventHandler;
             dicomClient.QueryCompleted -= QueryCompletedEventHandler;
@@ -222,7 +222,7 @@ namespace ClearCanvas.Dicom.Tests
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId("111111111A"), new PatientsName("TEST PATIENT"), new Accession("10101010"));
+            ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new PatientId("111111111A"), new PersonName("TEST PATIENT"), new Accession("10101010"));
 
             Assert.IsTrue(results.Count > 0);
 

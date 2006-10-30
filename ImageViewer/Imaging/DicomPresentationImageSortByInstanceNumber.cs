@@ -88,12 +88,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 				else if (seriesUIDCompare == 0)
 				{
 
-					int imageNumberX, imageNumberY;
-					if (!Int32.TryParse(dicomX.ImageSop.InstanceNumber, out imageNumberX))
-						imageNumberX = 0;
-
-					if (!Int32.TryParse(dicomY.ImageSop.InstanceNumber, out imageNumberY))
-						imageNumberY = 0;
+					int imageNumberX = dicomX.ImageSop.InstanceNumber;
+					int imageNumberY = dicomY.ImageSop.InstanceNumber;
 
 					if (imageNumberX < imageNumberY)
 						return _returnValue; // x < y

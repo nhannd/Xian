@@ -27,14 +27,14 @@
 		<property name="BitsAllocated" column="BitsAllocated_" type="Int16" />
 		<property name="HighBit" column="HighBit_" type="Int16" />
 		<property name="PhotometricInterpretation" column="PhotometricInterpretation_" />
-		<component name="PixelSpacing" class="PixelSpacing">
+		<component name="PixelSpacing" class="ClearCanvas.Dicom.PixelSpacing, ClearCanvas.Dicom">
 			<property name="Row" column="Row_" />
 			<property name="Column" column="Column_" />
 		</component>
 		<list name="WindowValues" table="WindowValues_" lazy="false" access="nosetter.camelcase-underscore">
 			<key column="Oid_" />
 			<index column="VM_" /> 
-			<composite-element class="ClearCanvas.Dicom.DataStore.Window, ClearCanvas.Dicom.DataStore">
+			<composite-element class="ClearCanvas.Dicom.Window, ClearCanvas.Dicom">
 				<property name="Width" column="Width_" type="Double" />
 				<property name="Center" column="Center_" type="Double" />
 			</composite-element>

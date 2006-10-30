@@ -97,16 +97,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			rectangleGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (rectangleGraphic.BottomRight.X - rectangleGraphic.TopLeft.X);
 			double heightInPixels = (rectangleGraphic.BottomRight.Y - rectangleGraphic.TopLeft.Y);
-			double widthInCm = widthInPixels * image.ImageSop.PixelSpacingX / 10;
-			double heightInCm = heightInPixels * image.ImageSop.PixelSpacingY / 10;
+			double widthInCm = widthInPixels * image.ImageSop.PixelSpacing.Column / 10;
+			double heightInCm = heightInPixels * image.ImageSop.PixelSpacing.Row / 10;
 			rectangleGraphic.ResetCoordinateSystem();
 
 			string text;
 
-			bool pixelSpacingInvalid = image.ImageSop.PixelSpacingX <= float.Epsilon ||
-										image.ImageSop.PixelSpacingY <= float.Epsilon ||
-										double.IsNaN(image.ImageSop.PixelSpacingX) ||
-										double.IsNaN(image.ImageSop.PixelSpacingY);
+			bool pixelSpacingInvalid = image.ImageSop.PixelSpacing.Column <= float.Epsilon ||
+										image.ImageSop.PixelSpacing.Row <= float.Epsilon ||
+										double.IsNaN(image.ImageSop.PixelSpacing.Column) ||
+										double.IsNaN(image.ImageSop.PixelSpacing.Row);
 
 			//!! This has been put in as a temporary measure to stop certain modality 
 			//!! images (DX, CR, MG) from reporting the incorrect measurements in cm.

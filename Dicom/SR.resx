@@ -291,11 +291,8 @@
   <data name="ExceptionDicomSaveDirectoryNull" xml:space="preserve">
     <value>The directory where inbound DICOM objects are stored cannot be null</value>
   </data>
-  <data name="ExceptionGeneralPatientsNameNull" xml:space="preserve">
+  <data name="ExceptionGeneralPersonsNameNull" xml:space="preserve">
     <value>Patient's Name cannot be null</value>
-  </data>
-  <data name="ExceptionGeneralPatientsNameZeroLength" xml:space="preserve">
-    <value>Patient's Name cannot be zero-length</value>
   </data>
   <data name="ExceptionGeneralUidCompareToTypeIncorrect" xml:space="preserve">
     <value>The argument to CompareTo for the type Uid is not itself of type Uid</value>
@@ -335,5 +332,8 @@
   </data>
   <data name="ExceptionDicomTransferSyntaxNotSupported" xml:space="preserve">
     <value>Transfer syntax {0} for SOP UID = {1} not supported.  Compressed pixel data cannot be loaded at this time.</value>
+  </data>
+  <data name="ExceptionGeneralPatientIdNull" xml:space="preserve">
+    <value>Patient's Id cannot be null</value>
   </data>
 </root>

@@ -245,7 +245,7 @@ namespace ClearCanvas.Dicom.Network
         /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
         /// Each C-FIND result is represented by one item in the collection, and it is possible to 
         /// enumerate over all the items.</returns>
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PersonName patientsName)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, patientId, patientsName, new Accession(""));
             return results;
@@ -261,7 +261,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName(""));
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PersonName(""));
             return results;
         }
 
@@ -273,7 +273,7 @@ namespace ClearCanvas.Dicom.Network
         /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
         /// Each C-FIND result is represented by one item in the collection, and it is possible to 
         /// enumerate over all the items.</returns>
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PersonName patientsName)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId(""), patientsName);
             return results;
@@ -312,7 +312,7 @@ namespace ClearCanvas.Dicom.Network
         /// enumerate over all the items.</returns>
         public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, Accession accession)
         {
-            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PatientsName(""), accession);
+            ReadOnlyQueryResultCollection results = Query(serverAE, patientId, new PersonName(""), accession);
             return results;
         }
 
@@ -325,7 +325,7 @@ namespace ClearCanvas.Dicom.Network
         /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
         /// Each C-FIND result is represented by one item in the collection, and it is possible to 
         /// enumerate over all the items.</returns>
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientsName patientsName, Accession accession)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PersonName patientsName, Accession accession)
         {
             ReadOnlyQueryResultCollection results = Query(serverAE, new PatientId(""), patientsName, accession);
             return results;
@@ -342,7 +342,7 @@ namespace ClearCanvas.Dicom.Network
         /// <returns>A read-only version of the <see cref="QueryResultCollection">QueryResultCollection</see>.
         /// Each C-FIND result is represented by one item in the collection, and it is possible to 
         /// enumerate over all the items.</returns>
-        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PatientsName patientsName, Accession accession)
+        public ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, PatientId patientId, PersonName patientsName, Accession accession)
         {
             DcmDataset cFindDataset = new DcmDataset();
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);

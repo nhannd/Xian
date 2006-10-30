@@ -160,7 +160,7 @@ namespace ClearCanvas.Dicom.DataStore
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
             if (cond.good())
-                study.PatientsName = new PatientsName(stringValue.ToString());
+				study.PatientsName = new PersonName(stringValue.ToString());
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsSex, stringValue);
             if (cond.good())

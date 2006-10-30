@@ -5,40 +5,37 @@ namespace ClearCanvas.Dicom
     using System.Text;
 
     /// <summary>
-    /// Encapsulates the DICOM Patient's Name.
+    /// Encapsulates the DICOM Person's Name.
     /// </summary>
-    public class PatientsName
+    public class PersonName
     {
         /// <summary>
         /// Constructor for NHibernate.
         /// </summary>
-        public PatientsName()
+        public PersonName()
         {
         }
 
-        protected virtual string InternalPatientsName
+        protected virtual string InternalPersonName
         {
-            get { return _patientsName; }
+            get { return _personsName; }
             set
             {
-                _patientsName = value;
+                _personsName = value;
                 BreakApartFirstAndLastName();
             }
         }
         /// <summary>
         /// Mandatory constructor.
         /// </summary>
-        /// <param name="patientsName">The Patient's Name as a string.</param>
-        public PatientsName(string patientsName)
+		/// <param name="personsName">The Person's Name as a string.</param>
+        public PersonName(string personsName)
         {
             // validate the input
-            if (null == patientsName)
-                throw new System.ArgumentNullException("patientsName", SR.ExceptionGeneralPatientsNameNull);
+            if (null == personsName)
+				throw new System.ArgumentNullException("personsName", SR.ExceptionGeneralPersonsNameNull);
 
-            //if (0 == patientsName.Length)
-            //    throw new System.ArgumentOutOfRangeException("patientsName", SR.ExceptionGeneralPatientsNameZeroLength);
-
-            _patientsName = patientsName;
+            _personsName = personsName;
             BreakApartFirstAndLastName();
         }
 
@@ -53,20 +50,18 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Gets the Patient's Name as a string.
+        /// Gets the Person's Name as a string.
         /// </summary>
-        /// <returns>A string representation of the Patient's Name.</returns>
+        /// <returns>A string representation of the Person's Name.</returns>
         public override string ToString()
         {
-            return _patientsName;
+            return _personsName;
         }
 
         /// <summary>
         /// Implicit cast to a String object, for ease of use.
         /// </summary>
-        /// <param name="pn">The AETitle object to be casted.</param>
-        /// <returns>A String representation of the AE Title object.</returns>
-        public static implicit operator String(PatientsName pn)
+        public static implicit operator String(PersonName pn)
         {
             return pn.ToString();
         }
@@ -74,14 +69,18 @@ namespace ClearCanvas.Dicom
         protected void BreakApartFirstAndLastName()
         {
             // parse out the first and last names
-            string[] names = this.InternalPatientsName.Split('^');
+            string[] names = this.InternalPersonName.Split('^');
 
             _lastName = (names.GetUpperBound(0) >= 0) ? (names[0]) : "";
             _firstName = (names.GetUpperBound(0) >= 1) ? (names[1]) : "";
-        }
+		}
 
-        private string _patientsName;
+		#region Private Members
+
+		private string _personsName;
         private string _lastName;
         private string _firstName;
-    }
+
+		#endregion
+	}
 }

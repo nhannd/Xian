@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
@@ -10,20 +11,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 	{
 		private int _bitsStored = 16;
 		private int _pixelRepresentation = 0;
-		private double _windowWidth = 1;
-		private double _windowCenter = 0;
+		private Window[] _windowCentersAndWidths;
 
 		private double _rescaleIntercept = 0;
 		private double _rescaleSlope = 1.0;
 		private int _rows = 256;
 		private int _columns = 256;
-		private double _pixelSpacingX = 0;
-		private double _pixelSpacingY = 0;
+		private PixelSpacing _pixelSpacing;
 		private string _photometricInterpretation = "MONOCHROME1";
 
 		private string _studyInstanceUID;
 		private string _seriesInstanceUID;
-		private string _instanceNumber;
+		private int _instanceNumber;
 
 		public MockImageSop()
 		{
@@ -41,16 +40,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			set { _pixelRepresentation = value; }
 		}
 
-		public override double WindowCenter
+		public override Window[] WindowCenterAndWidth
 		{
-			get { return _windowCenter; }
-			set { _windowCenter = value; }
-		}
-
-		public override double WindowWidth
-		{
-			get { return _windowWidth; }
-			set { _windowWidth = value; }
+			get { return _windowCentersAndWidths; }
+			set { _windowCentersAndWidths = value; }
 		}
 
 		public override double RescaleIntercept
@@ -77,22 +70,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			set { _columns = value; }
 		}
 
-		public override double PixelSpacingX
-		{
-			get { return _pixelSpacingX; }
-			set { _pixelSpacingX = value; }
-		}
-
-		public override double PixelSpacingY
-		{
-			get { return _pixelSpacingY; }
-			set { _pixelSpacingY = value; }
-		}
-
 		public override string PhotometricInterpretation
 		{
 			get { return _photometricInterpretation; }
 			set { _photometricInterpretation = value; }
+		}
+
+		public override PixelSpacing PixelSpacing
+		{
+			get { return _pixelSpacing; }
+			set {_pixelSpacing = value;	}
 		}
 
 		public override string StudyInstanceUID
@@ -107,15 +94,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			set { _seriesInstanceUID = value; }
 		}
 
-		public override string InstanceNumber
+		public override int InstanceNumber
 		{
 			get { return _instanceNumber; }
 			set { _instanceNumber = value; }
 		}
 
-#region Not Implemented
+		#region Not Implemented
 
-		public override string PatientsName
+		public override PersonName PatientsName
 		{
 			get
 			{
@@ -187,7 +174,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string ReferringPhysiciansName
+		public override PersonName ReferringPhysiciansName
 		{
 			get
 			{
@@ -223,7 +210,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string NameOfPhysiciansReadingStudy
+		public override PersonName[] NameOfPhysiciansReadingStudy
 		{
 			get
 			{
@@ -235,7 +222,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string AdmittingDiagnosesDescription
+		public override string[] AdmittingDiagnosesDescription
 		{
 			get
 			{
@@ -283,7 +270,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string SeriesNumber
+		public override int SeriesNumber
 		{
 			get
 			{
@@ -343,7 +330,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string PerformingPhysiciansName
+		public override PersonName[] PerformingPhysiciansName
 		{
 			get
 			{
@@ -355,7 +342,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string OperatorsName
+		public override PersonName[] OperatorsName
 		{
 			get
 			{
@@ -451,19 +438,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string PatientOrientationRows
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PatientOrientationColumns
+		public override PatientOrientation PatientOrientation
 		{
 			get
 			{
@@ -487,7 +462,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string AcquisitionNumber
+		public override int AcquisitionNumber
 		{
 			get
 			{
@@ -535,7 +510,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string ImagesInAcquisition
+		public override int ImagesInAcquisition
 		{
 			get
 			{
@@ -571,7 +546,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string LossyImageCompressionRatio
+		public override double[] LossyImageCompressionRatio
 		{
 			get
 			{
@@ -595,7 +570,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override double ImageOrientationPatientRowX
+
+		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get
 			{
@@ -607,91 +583,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override double ImageOrientationPatientRowY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientRowZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImageOrientationPatientColumnZ
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientY
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double ImagePositionPatientZ
+		public override ImagePositionPatient ImagePositionPatient
 		{
 			get
 			{
@@ -727,19 +619,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override double PixelAspectRatioX
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override double PixelAspectRatioY
+		public override PixelAspectRatio PixelAspectRatio
 		{
 			get
 			{
@@ -804,7 +684,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override double WindowCenterAndWidthExplanation
+		public override string[] WindowCenterAndWidthExplanation
 		{
 			get
 			{
@@ -826,6 +706,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
+		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out int val, out bool tagExists)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out int val, uint position, out bool tagExists)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out double val, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
@@ -837,6 +727,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		}
 
 		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out string val, out bool tagExists)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out string val, uint pos, out bool tagExists)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void GetTagArray(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out string valueArray, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
