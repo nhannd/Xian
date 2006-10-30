@@ -125,10 +125,6 @@ namespace ClearCanvas.Dicom.DataStore
             if (cond.good())
                 study.AccessionNumber = stringValue.ToString();
 
-            cond = sopInstanceDataset.findAndGetOFString(Dcm.AdmittingDiagnosesDescription, stringValue);
-            if (cond.good())
-                study.AdmittingDiagnosesDescription = stringValue.ToString();
-
             //
             // TODO: can't access sequences yet. We will have to get
             // ProcedureCodeSequence.CodeValue and ProcedureCodeSequence.SchemeDesignator

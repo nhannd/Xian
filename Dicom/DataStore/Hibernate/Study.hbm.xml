@@ -14,7 +14,6 @@
 	<property name="StudyInstanceUid" column="StudyInstanceUid_" type="string" length="64" />	
 	<property name="StudyDescription" column="StudyDescription_" type="string" length="64" />
 	<property name="ProcedureCodeSequenceCodeValue" column="ProcedureCodeSequenceCodeValue_" type="string" length="16" />
-	<property name="AdmittingDiagnosesDescription" column="AdmittingDiagnosesDescription_" type="string" length="64" />
     <component name="PatientsName" class="ClearCanvas.Dicom.PersonName, ClearCanvas.Dicom"> <!-- class attribute optional -->
 		<property name="InternalPersonName" column="PatientsName_" type="string" length="256" />
     </component>

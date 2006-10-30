@@ -10,6 +10,6 @@ create table ImageSopInstance_ (Oid_ INTEGER not null, SamplesPerPixel_ INTEGER,
 create table Series_ (SeriesOid_ INTEGER not null, SeriesInstanceUid_ TEXT, Modality_ TEXT, SeriesNumber_ INTEGER, Laterality_ TEXT, SeriesDescription_ TEXT, StudyOid_ INTEGER, primary key (SeriesOid_));
 create table DictionaryEntries_ (EntryOid_ INTEGER not null, TagName_ TEXT, Path_ TEXT, IsComputed_ INTEGER, Index_ INTEGER not null, primary key (EntryOid_, Index_));
 create table SopClasses_ (ParcelOid_ INTEGER not null, SopClass_ TEXT, Index_ INTEGER not null, primary key (ParcelOid_, Index_));
-create table Study_ (StudyOid_ INTEGER not null, ProcedureCodeSequenceCodingSchemeDesignator_ TEXT, StudyId_ TEXT, StudyTime_ TEXT, StudyDate_ TEXT, AccessionNumber_ TEXT, StudyInstanceUid_ TEXT, StudyDescription_ TEXT, ProcedureCodeSequenceCodeValue_ TEXT, AdmittingDiagnosesDescription_ TEXT, PatientsName_ TEXT, PatientId_ TEXT, PatientsSex_ TEXT, PatientsBirthDate_ TEXT, primary key (StudyOid_));
+create table Study_ (StudyOid_ INTEGER not null, ProcedureCodeSequenceCodingSchemeDesignator_ TEXT, StudyId_ TEXT, StudyTime_ TEXT, StudyDate_ TEXT, AccessionNumber_ TEXT, StudyInstanceUid_ TEXT, StudyDescription_ TEXT, ProcedureCodeSequenceCodeValue_ TEXT, PatientsName_ TEXT, PatientId_ TEXT, PatientsSex_ TEXT, PatientsBirthDate_ TEXT, primary key (StudyOid_));
 create table hibernate_unique_key ( next_hi INTEGER );
 insert into hibernate_unique_key values ( 1 );
