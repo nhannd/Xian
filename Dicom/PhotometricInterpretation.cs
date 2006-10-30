@@ -51,5 +51,19 @@ namespace ClearCanvas.Dicom
             else
                 return null;
         }
+
+		public static PhotometricInterpretation FromString(string photometricInterpretation)
+		{
+			foreach (KeyValuePair<PhotometricInterpretation, string> pair in _dictionaryPhotometricInterpretation)
+			{
+				if (pair.Key == PhotometricInterpretation.Unknown)
+					continue;
+
+				if (photometricInterpretation == pair.Value)
+					return pair.Key;
+			}
+
+			return PhotometricInterpretation.Unknown;
+		}
     }
 }

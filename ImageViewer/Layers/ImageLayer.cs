@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		/// <summary>
 		/// Gets the photometric interpretation of the image.
 		/// </summary>
-		public abstract PhotometricInterpretations PhotometricInterpretation { get; }
+		public abstract PhotometricInterpretation PhotometricInterpretation { get; }
 
 		/// <summary>
 		/// Gets the pixel data of the image.
@@ -139,8 +139,8 @@ namespace ClearCanvas.ImageViewer.Layers
 		{
 			get
 			{
-				return (this.PhotometricInterpretation == PhotometricInterpretations.Monochrome1 ||
-						this.PhotometricInterpretation == PhotometricInterpretations.Monochrome2);
+				return (this.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
+						this.PhotometricInterpretation == PhotometricInterpretation.Monochrome2);
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		/// </summary>
 		public bool IsColor
 		{
-			get { return !this.IsGrayscale && this.PhotometricInterpretation != PhotometricInterpretations.Unknown; }
+			get { return !this.IsGrayscale && this.PhotometricInterpretation != PhotometricInterpretation.Unknown; }
 		}
 
 		/// <summary>

@@ -254,11 +254,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             set { throw new Exception("This is not yet implemented."); }
 		}
 
-		public override string PhotometricInterpretation
+		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get
 			{
-                return PhotometricInterpretationHelper.GetString(this.DataStoreImageSopInstance.PhotometricInterpretation);
+                return this.DataStoreImageSopInstance.PhotometricInterpretation;
 			}
             set { throw new Exception("This is not yet implemented."); }
 		}

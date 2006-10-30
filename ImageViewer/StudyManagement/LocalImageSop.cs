@@ -791,7 +791,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string PhotometricInterpretation
+		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get
 			{

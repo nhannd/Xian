@@ -193,7 +193,6 @@
     <Compile Include="Imaging\GrayscaleLUTPipeline.cs" />
     <Compile Include="Imaging\ImageValidationException.cs" />
     <Compile Include="Imaging\LUTComposer.cs" />
-    <Compile Include="Imaging\PhotometricInterpretations.cs" />
     <Compile Include="Imaging\SpatialTransform.cs" />
     <Compile Include="Imaging\SpatialTransformApplicator.cs" />
     <Compile Include="Imaging\SpatialTransformMemento.cs" />

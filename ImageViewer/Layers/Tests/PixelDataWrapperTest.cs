@@ -6,6 +6,7 @@ using System.Drawing;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layers.Tests
 {
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Layers.Tests
 			int samplesPerPixel = 1;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
-			PhotometricInterpretations pi = PhotometricInterpretations.Monochrome2;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
@@ -50,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Layers.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				pi,
+				photometricInterpretation,
 				pixelData);
 
 			int x = 3;
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Layers.Tests
 			int samplesPerPixel = 1;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
-			PhotometricInterpretations pi = PhotometricInterpretations.Monochrome2;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
@@ -95,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Layers.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				pi,
+				photometricInterpretation,
 				pixelData);
 
 			int x = 3;
@@ -129,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Layers.Tests
 			int samplesPerPixel = 3;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
-			PhotometricInterpretations pi = PhotometricInterpretations.Rgb;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
@@ -142,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Layers.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				pi,
+				photometricInterpretation,
 				pixelData);
 
 			int x = 3;

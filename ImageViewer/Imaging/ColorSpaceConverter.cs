@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -9,24 +10,24 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		public static void YbrToRgb(ImageLayer imageLayer)
 		{
-			if (imageLayer.PhotometricInterpretation == PhotometricInterpretations.Rgb)
+			if (imageLayer.PhotometricInterpretation == PhotometricInterpretation.Rgb)
 				return;
 
 			if (imageLayer.IsPlanar)
 			{
 				switch (imageLayer.PhotometricInterpretation)
 				{
-					case PhotometricInterpretations.YbrFull:
-					case PhotometricInterpretations.YbrFull422:
+					case PhotometricInterpretation.YbrFull:
+					case PhotometricInterpretation.YbrFull422:
 						YbrFullToRgbPlanar(imageLayer);
 						break;
-					case PhotometricInterpretations.YbrPartial422:
+					case PhotometricInterpretation.YbrPartial422:
 						YbrPartial422ToRgbPlanar(imageLayer);
 						break;
-					case PhotometricInterpretations.YbrIct:
+					case PhotometricInterpretation.YbrIct:
 						YbrIctToRgbPlanar(imageLayer);
 						break;
-					case PhotometricInterpretations.YbrRct:
+					case PhotometricInterpretation.YbrRct:
 						YbrRctToRgbPlanar(imageLayer);
 						break;
 				}
@@ -35,17 +36,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				switch (imageLayer.PhotometricInterpretation)
 				{
-					case PhotometricInterpretations.YbrFull:
-					case PhotometricInterpretations.YbrFull422:
+					case PhotometricInterpretation.YbrFull:
+					case PhotometricInterpretation.YbrFull422:
 						YbrFullToRgbTriplet(imageLayer);
 						break;
-					case PhotometricInterpretations.YbrPartial422:
+					case PhotometricInterpretation.YbrPartial422:
 						YbrPartial422ToRgbTriplet(imageLayer);
 						break;
-					case PhotometricInterpretations.YbrIct:
+					case PhotometricInterpretation.YbrIct:
 						YbrIctToRgbTriplet(imageLayer);
 						break;
-					case PhotometricInterpretations.YbrRct:
+					case PhotometricInterpretation.YbrRct:
 						YbrRctToRgbTriplet(imageLayer);
 						break;
 				}

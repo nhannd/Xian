@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
@@ -16,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Layers
 		private int _samplesPerPixel;
 		private int _pixelRepresentation;
 		private int _planarConfiguration;
-		private PhotometricInterpretations _photometricInterpretation;
+		private PhotometricInterpretation _photometricInterpretation;
 		private byte[] _pixelData;
 		private int _bytesPerPixel;
 		private int _planeOffset;
@@ -30,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Layers
 			int samplesPerPixel,
 			int pixelRepresentation,
 			int planarConfiguration,
-			PhotometricInterpretations photometricInterpretation,
+			PhotometricInterpretation photometricInterpretation,
 			byte[] pixelData)
 		{
 			_height = height;
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Layers
 			_photometricInterpretation = photometricInterpretation;
 			_pixelData = pixelData;
 
-			if (_photometricInterpretation == PhotometricInterpretations.Rgb)
+			if (_photometricInterpretation == PhotometricInterpretation.Rgb)
 			{
 				if (_planarConfiguration == 0)
 					_bytesPerPixel = 3;
@@ -118,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Layers
 
 		public void SetPixelRGB(int x, int y, byte r, byte g, byte b)
 		{
-			if (_photometricInterpretation != PhotometricInterpretations.Rgb)
+			if (_photometricInterpretation != PhotometricInterpretation.Rgb)
 				throw new InvalidOperationException();
 
 			int i = GetIndex(x, y);

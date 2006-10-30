@@ -21,7 +21,7 @@ namespace ClearCanvas.Dicom
 		private ushort _samplesPerPixel;
 		private ushort _pixelRepresentation;
 		private ushort _planarConfiguration;
-		private string _photometricInterpretation;
+		private PhotometricInterpretation _photometricInterpretation;
 		private byte[] _pixelData;
 
 		private DcmDataset _dataset;
@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom
 			} 
 		}
 
-		public string PhotometricInterpretation 
+		public PhotometricInterpretation PhotometricInterpretation 
 		{ 
 			get 
 			{ 
@@ -215,7 +215,7 @@ namespace ClearCanvas.Dicom
 			int bitsAllocated,
 			int bitsStored,
 			int pixelRepresentation,
-			string photometricInterpretation,
+			PhotometricInterpretation photometricInterpretation,
 			int samplesPerPixel,
 			int planarConfiguration, 
             string transferSyntaxUid)
@@ -258,11 +258,11 @@ namespace ClearCanvas.Dicom
 						rows,
 						columns,
 						bitsAllocated,
-						this.BitsStored,
-						this.PixelRepresentation,
-						this.PhotometricInterpretation,
+						bitsStored,
+						pixelRepresentation,
+						PhotometricInterpretationHelper.GetString(photometricInterpretation),
 						samplesPerPixel,
-						this.PlanarConfiguration,
+						planarConfiguration,
 						null);
 				}
 				catch (Exception e)
@@ -472,7 +472,7 @@ namespace ClearCanvas.Dicom
             StringBuilder buffer = new StringBuilder(64);
             status = _dataset.findAndGetOFString(Dcm.PhotometricInterpretation, buffer);
             DicomHelper.CheckReturnValue(status, Dcm.PhotometricInterpretation, out tagExists);
-            _photometricInterpretation = buffer.ToString();
+			_photometricInterpretation = PhotometricInterpretationHelper.FromString(buffer.ToString());
 
 			buffer = new StringBuilder(64);
 			status = _metaInfo.findAndGetOFString(Dcm.TransferSyntaxUID, buffer);

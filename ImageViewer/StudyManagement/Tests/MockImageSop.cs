@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		private int _rows = 256;
 		private int _columns = 256;
 		private PixelSpacing _pixelSpacing = new PixelSpacing(1.0, 1.0);
-		private string _photometricInterpretation = "MONOCHROME1";
+		private PhotometricInterpretation _photometricInterpretation = PhotometricInterpretation.Monochrome1;
 
 		private string _studyInstanceUID;
 		private string _seriesInstanceUID;
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			set { _columns = value; }
 		}
 
-		public override string PhotometricInterpretation
+		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get { return _photometricInterpretation; }
 			set { _photometricInterpretation = value; }

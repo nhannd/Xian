@@ -1,6 +1,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -37,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (image.HighBit > image.BitsAllocated - 1)
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidHighBitBitsAllocated, image.HighBit, image.BitsAllocated));
 
-			if ((String.Compare(image.PhotometricInterpretation, "MONOCHROME1") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "MONOCHROME2") == 0) &&
+			if ((image.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 
+				|| image.PhotometricInterpretation == PhotometricInterpretation.Monochrome2) && 
 				image.SamplesPerPixel != 1)
 			{
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretationSamplesPerPixel, image.PhotometricInterpretation, image.SamplesPerPixel));
@@ -52,20 +53,20 @@ namespace ClearCanvas.ImageViewer.Imaging
                     throw new ImageValidationException(String.Format(SR.ExceptionInvalidPlanarConfiguration));
             }
             
-			if ((String.Compare(image.PhotometricInterpretation, "RGB") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "HSV") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "YBR_FULL") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "YBR_FULL_422") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "YBR_PARTIAL_422") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "YBR_ICT") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "YBR_RCT") == 0) &&
+			if ((image.PhotometricInterpretation == PhotometricInterpretation.Rgb ||
+				image.PhotometricInterpretation == PhotometricInterpretation.Hsv ||
+				image.PhotometricInterpretation == PhotometricInterpretation.YbrFull ||
+				image.PhotometricInterpretation == PhotometricInterpretation.YbrFull422 ||
+				image.PhotometricInterpretation == PhotometricInterpretation.YbrPartial422 ||
+				image.PhotometricInterpretation == PhotometricInterpretation.YbrIct ||
+				image.PhotometricInterpretation == PhotometricInterpretation.YbrRct) &&
 				image.SamplesPerPixel != 3)
 			{
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretationSamplesPerPixel, image.PhotometricInterpretation, image.SamplesPerPixel));
 			}
 
-			if ((String.Compare(image.PhotometricInterpretation, "ARGB") == 0 ||
-				String.Compare(image.PhotometricInterpretation, "CMYK") == 0) &&
+			if ((image.PhotometricInterpretation == PhotometricInterpretation.Argb ||
+				 image.PhotometricInterpretation == PhotometricInterpretation.Cmyk) &&
 				image.SamplesPerPixel != 4)
 			{
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretationSamplesPerPixel, image.PhotometricInterpretation, image.SamplesPerPixel));
@@ -141,20 +142,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPixelRepresentation, pixelRepresentation));
 		}
 
-		public static void ValidatePhotometricInterpretation(string photometricInterpretation)
+		public static void ValidatePhotometricInterpretation(PhotometricInterpretation photometricInterpretation)
 		{
-			if (String.Compare(photometricInterpretation, "MONOCHROME1", true) != 0 &&
-				String.Compare(photometricInterpretation, "MONOCHROME2", true) != 0 &&
-				String.Compare(photometricInterpretation, "PALETTE COLOR", true) != 0 &&
-				String.Compare(photometricInterpretation, "RGB", true) != 0 &&
-				String.Compare(photometricInterpretation, "HSV", true) != 0 &&
-				String.Compare(photometricInterpretation, "ARGB", true) != 0 &&
-				String.Compare(photometricInterpretation, "CMYK", true) != 0 &&
-				String.Compare(photometricInterpretation, "YBR_FULL", true) != 0 &&
-				String.Compare(photometricInterpretation, "YBR_FULL_422", true) != 0 &&
-				String.Compare(photometricInterpretation, "YBR_PARTIAL_422", true) != 0 &&
-				String.Compare(photometricInterpretation, "YBR_ICT", true) != 0 &&
-				String.Compare(photometricInterpretation, "YBR_RCT", true) != 0)
+			if (photometricInterpretation == PhotometricInterpretation.Unknown)
 			{
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretation, photometricInterpretation));
 			}

@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
@@ -11,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Layers
 	{
 		private ImageSop _image;
 		private bool _photometricInterpretationDefined = false;
-		private PhotometricInterpretations _photometricInterpretation;
+		private PhotometricInterpretation _photometricInterpretation;
 		private bool _ybrConvertedToRgb = false;
 
 		public DicomImageLayer(ImageSop image)
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Layers
 
 			_image = image;
 
-			if (this.PhotometricInterpretation == PhotometricInterpretations.Monochrome1)
+			if (this.PhotometricInterpretation == PhotometricInterpretation.Monochrome1)
 				this.GrayscaleLUTPipeline.Invert = true;
 		}
 
@@ -69,33 +70,13 @@ namespace ClearCanvas.ImageViewer.Layers
 			get { return _image.PlanarConfiguration; }
 		}
 
-		public override PhotometricInterpretations PhotometricInterpretation
+		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get 
 			{
 				if (!_photometricInterpretationDefined)
 				{
-					if (_image.PhotometricInterpretation.Contains("MONOCHROME1"))
-						_photometricInterpretation = PhotometricInterpretations.Monochrome1;
-					else if (_image.PhotometricInterpretation.Contains("MONOCHROME2"))
-						_photometricInterpretation = PhotometricInterpretations.Monochrome2;
-					else if (_image.PhotometricInterpretation.Contains("PALETTE COLOR"))
-						_photometricInterpretation = PhotometricInterpretations.PaletteColor;
-					else if (_image.PhotometricInterpretation.Contains("RGB"))
-						_photometricInterpretation = PhotometricInterpretations.Rgb;
-					else if (_image.PhotometricInterpretation.Contains("YBR_FULL"))
-						_photometricInterpretation = PhotometricInterpretations.YbrFull;
-					else if (_image.PhotometricInterpretation.Contains("YBR_FULL_422"))
-						_photometricInterpretation = PhotometricInterpretations.YbrFull422;
-					else if (_image.PhotometricInterpretation.Contains("YBR_PARTIAL_422"))
-						_photometricInterpretation = PhotometricInterpretations.YbrPartial422;
-					else if (_image.PhotometricInterpretation.Contains("YBR_ICT"))
-						_photometricInterpretation = PhotometricInterpretations.YbrIct;
-					else if (_image.PhotometricInterpretation.Contains("YBR_RCT"))
-						_photometricInterpretation = PhotometricInterpretations.YbrRct;
-					else
-						_photometricInterpretation = PhotometricInterpretations.Unknown;
-
+					_photometricInterpretation = _image.PhotometricInterpretation;
 					_photometricInterpretationDefined = true;
 				}
 
@@ -109,16 +90,16 @@ namespace ClearCanvas.ImageViewer.Layers
 			// all non-indexed (i.e., non-palette) colour images in one format
 			// makes image processing much easier.
 			if (!_ybrConvertedToRgb &&
-				this.PhotometricInterpretation == PhotometricInterpretations.YbrFull ||
-				this.PhotometricInterpretation == PhotometricInterpretations.YbrFull422 ||
-				this.PhotometricInterpretation == PhotometricInterpretations.YbrPartial422 ||
-				this.PhotometricInterpretation == PhotometricInterpretations.YbrIct ||
-				this.PhotometricInterpretation == PhotometricInterpretations.YbrRct)
+				this.PhotometricInterpretation == PhotometricInterpretation.YbrFull ||
+				this.PhotometricInterpretation == PhotometricInterpretation.YbrFull422 ||
+				this.PhotometricInterpretation == PhotometricInterpretation.YbrPartial422 ||
+				this.PhotometricInterpretation == PhotometricInterpretation.YbrIct ||
+				this.PhotometricInterpretation == PhotometricInterpretation.YbrRct)
 			{
 				_ybrConvertedToRgb = true;
 				ColorSpaceConverter.YbrToRgb(this);
 				_photometricInterpretationDefined = true;
-				_photometricInterpretation = PhotometricInterpretations.Rgb;
+				_photometricInterpretation = PhotometricInterpretation.Rgb;
 			}
 
 			return  _image.GetPixelData();

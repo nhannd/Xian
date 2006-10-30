@@ -10,6 +10,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
@@ -23,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 		int _samplesPerPixel;
 		int _pixelRepresentation;
 		int _planarConfiguration;
-		PhotometricInterpretations  _photometricInterpretation;
+		PhotometricInterpretation _photometricInterpretation;
 		byte[] _pixelData;
 		PixelDataWrapper _pixelDataWrapper;
 
@@ -36,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int samplesPerPixel,
 			int pixelRepresentation,
 			int planarConfiguration,
-			PhotometricInterpretations photometricInterpretation)
+			PhotometricInterpretation photometricInterpretation)
 		{
 			_width = width;
 			_height = height;
@@ -107,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			get { return _planarConfiguration; }
 		}
 
-		public override PhotometricInterpretations  PhotometricInterpretation
+		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get { return _photometricInterpretation; }
 		}
@@ -156,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int samplesPerPixel = 1;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
-			PhotometricInterpretations pi = PhotometricInterpretations.Monochrome2;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			
 			return new MockImageLayer(
 				width, 
@@ -167,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel, 
 				pixelRepresentation, 
 				planarConfiguration, 
-				pi);
+				photometricInterpretation);
 		}
 
 		public static MockImageLayer CreateMonochrome16ImageLayer(int width, int height)
@@ -178,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int samplesPerPixel = 1;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
-			PhotometricInterpretations pi = PhotometricInterpretations.Monochrome2;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 
 			return new MockImageLayer(
 				width,
@@ -189,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				pi);
+				photometricInterpretation);
 		}
 
 		public static MockImageLayer CreateRGBTripletImageLayer(int width, int height)
@@ -200,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int samplesPerPixel = 3;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
-			PhotometricInterpretations pi = PhotometricInterpretations.Rgb;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 
 			return new MockImageLayer(
 				width,
@@ -211,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				pi);
+				photometricInterpretation);
 		}
 
 		public static MockImageLayer CreateRGBPlanarImageLayer(int width, int height)
@@ -222,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int samplesPerPixel = 3;
 			int pixelRepresentation = 0;
 			int planarConfiguration = 1;
-			PhotometricInterpretations pi = PhotometricInterpretations.Rgb;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 
 			return new MockImageLayer(
 				width,
@@ -233,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				pi);
+				photometricInterpretation);
 		}
 	}
 

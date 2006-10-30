@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		// Image Pixel Module
 		public abstract int SamplesPerPixel { get; set; }
-		public abstract string PhotometricInterpretation { get; set; }
+		public abstract PhotometricInterpretation PhotometricInterpretation { get; set; }
 		public abstract int Rows { get; set; }
 		public abstract int Columns { get; set; }
 		public abstract int BitsAllocated { get; set; }
