@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare {
             number += (_countryCode != null && !_countryCode.Trim().Equals("") && _countryCode != filteredCountryCode) 
                 ? string.Format("+{0} ", _countryCode) : "";
             number += string.Format("({0}) {1}", _areaCode, _number);
-            number += (_extension == null && !_extension.Trim().Equals(""))
+            number += (_extension != null && !_extension.Trim().Equals(""))
                 ? string.Format(" x{0}", _extension) : "";
 
             return number.ToString();
