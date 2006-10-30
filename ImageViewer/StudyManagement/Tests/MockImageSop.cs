@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		private double _rescaleSlope = 1.0;
 		private int _rows = 256;
 		private int _columns = 256;
-		private PixelSpacing _pixelSpacing;
+		private PixelSpacing _pixelSpacing = new PixelSpacing(1.0, 1.0);
 		private string _photometricInterpretation = "MONOCHROME1";
 
 		private string _studyInstanceUID;
