@@ -111,7 +111,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// titleBar1
 			// 
-			this.titleBar1.BackColor = System.Drawing.SystemColors.Control;
 			this.titleBar1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.titleBar1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.titleBar1.GradientInactiveColor = System.Drawing.Color.Gray;
