@@ -10,8 +10,9 @@ namespace ClearCanvas.Utilities.RebuildDatabase
     using System.Text;
     using System.Windows.Forms;
     using System.IO;
+	using Crownwood.DotNetMagic.Forms;
 
-    public partial class RebuildDatabaseForm : Form
+    public partial class RebuildDatabaseForm : DotNetMagicForm
     {
         delegate void UpdateProgressBarDelegate(ImageInsertCompletingEventArgs args);
         delegate void EndRebuildDelegate(DatabaseRebuildCompletedEventArgs args);

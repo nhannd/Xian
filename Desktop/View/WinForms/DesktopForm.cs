@@ -15,11 +15,12 @@ using ClearCanvas.Controls.WinForms;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
+using Crownwood.DotNetMagic.Forms;
 using System.Reflection;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public partial class DesktopForm : Form
+    public partial class DesktopForm : DotNetMagicForm
     {
         private IDesktopWindow _desktopWindow;
 
@@ -39,7 +40,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Text = String.Format("{0} {1}",
                 Application.ApplicationName,
                 GetVersion());
- 
+
+			this.Style = WinFormsView.VisualStyle;
+			_tabbedGroups.Style = WinFormsView.VisualStyle;
+
             // Subscribe to WorkspaceManager events so we know when workspaces are being
             // added, removed and activated
             _desktopWindow.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);

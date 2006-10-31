@@ -60,7 +60,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._toolbar.ImageScalingSize = new System.Drawing.Size(32, 32);
 			this._toolbar.Location = new System.Drawing.Point(3, 24);
 			this._toolbar.Name = "_toolbar";
-			this._toolbar.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
 			this._toolbar.Size = new System.Drawing.Size(111, 25);
 			this._toolbar.TabIndex = 4;
 			this._toolbar.Text = "toolStrip1";
@@ -95,6 +94,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabbedGroups.ProminentLeaf = null;
 			this._tabbedGroups.ResizeBarColor = System.Drawing.SystemColors.Control;
 			this._tabbedGroups.Size = new System.Drawing.Size(792, 512);
+			this._tabbedGroups.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._tabbedGroups.TabIndex = 0;
 			// 
 			// DesktopForm
@@ -108,6 +108,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.MainMenuStrip = this._mainMenu;
 			this.Name = "DesktopForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Silver;
 			this._toolStripContainer.ContentPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.PerformLayout();

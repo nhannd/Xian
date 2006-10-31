@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -15,9 +16,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         public AENavigatorControl(AENavigatorComponent component)
 		{
             Platform.CheckForNullReference(component, "component");
-            InitializeComponent();
+			_component = component;
+			
+			InitializeComponent();
 
-            _component = component;
             _btnAdd.ToolTipText = "Add New Server";
             _btnAddGroup.ToolTipText = "Add New Server Group";
             _btnEdit.ToolTipText = "Edit";
@@ -35,6 +37,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.editServerGroupToolStripMenuItem.Click += OnEditClicked;
 			this.deleteServerGroupToolStripMenuItem.Click += OnDeleteClicked;
 			this.verifyToolStripMenuItem.Click += OnCEchoClicked;
+
+			this.titleBar1.Style = WinFormsView.VisualStyle;
 
             _aeTreeView.Click += new EventHandler(AETreeView_Click);
             BuildServerTreeView(_aeTreeView, _component.DicomServerTree);

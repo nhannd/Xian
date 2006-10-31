@@ -28,23 +28,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
-			// 
-			// _studyTableView
-			// 
-            this._studyTableView.Table = null;
-			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._studyTableView.Location = new System.Drawing.Point(0, 23);
-			this._studyTableView.MenuModel = null;
-			this._studyTableView.Name = "_studyTableView";
-			this._studyTableView.ReadOnly = false;
-			this._studyTableView.Size = new System.Drawing.Size(623, 332);
-			this._studyTableView.TabIndex = 0;
-			this._studyTableView.ToolbarModel = null;
-			this._studyTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._studyTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
 			// 
 			// _resultsTitleBar
 			// 
@@ -53,9 +39,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._resultsTitleBar.Location = new System.Drawing.Point(0, 0);
 			this._resultsTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._resultsTitleBar.Name = "_resultsTitleBar";
-			this._resultsTitleBar.Size = new System.Drawing.Size(623, 23);
+			this._resultsTitleBar.Size = new System.Drawing.Size(623, 29);
+			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._resultsTitleBar.TabIndex = 3;
 			this._resultsTitleBar.Text = "10 results found on server";
+			// 
+			// _studyTableView
+			// 
+			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._studyTableView.Location = new System.Drawing.Point(0, 29);
+			this._studyTableView.MenuModel = null;
+			this._studyTableView.MultiSelect = true;
+			this._studyTableView.Name = "_studyTableView";
+			this._studyTableView.ReadOnly = false;
+			this._studyTableView.Size = new System.Drawing.Size(623, 326);
+			this._studyTableView.TabIndex = 0;
+			this._studyTableView.Table = null;
+			this._studyTableView.ToolbarModel = null;
+			this._studyTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._studyTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
 			// 
 			// StudyBrowserControl
 			// 

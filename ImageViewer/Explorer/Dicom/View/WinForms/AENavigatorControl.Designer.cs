@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._btnEdit,
             this._btnDelete,
             this._btnCEcho});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 23);
+			this.toolStrip1.Location = new System.Drawing.Point(0, 29);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(300, 25);
 			this.toolStrip1.TabIndex = 1;
@@ -111,12 +111,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// titleBar1
 			// 
+			this.titleBar1.BackColor = System.Drawing.SystemColors.Control;
 			this.titleBar1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.titleBar1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.titleBar1.GradientInactiveColor = System.Drawing.Color.Gray;
 			this.titleBar1.Location = new System.Drawing.Point(0, 0);
 			this.titleBar1.MouseOverColor = System.Drawing.Color.Empty;
 			this.titleBar1.Name = "titleBar1";
-			this.titleBar1.Size = new System.Drawing.Size(300, 23);
+			this.titleBar1.Size = new System.Drawing.Size(300, 29);
+			this.titleBar1.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Silver;
 			this.titleBar1.TabIndex = 2;
 			this.titleBar1.Text = "Servers";
 			// 
@@ -127,10 +130,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._aeTreeView.HideSelection = false;
 			this._aeTreeView.ImageIndex = 0;
 			this._aeTreeView.ImageList = this._imageList;
-			this._aeTreeView.Location = new System.Drawing.Point(0, 48);
+			this._aeTreeView.Location = new System.Drawing.Point(0, 54);
 			this._aeTreeView.Name = "_aeTreeView";
 			this._aeTreeView.SelectedImageIndex = 1;
-			this._aeTreeView.Size = new System.Drawing.Size(300, 254);
+			this._aeTreeView.Size = new System.Drawing.Size(300, 248);
 			this._aeTreeView.StateImageList = this._imageList;
 			this._aeTreeView.TabIndex = 3;
 			// 

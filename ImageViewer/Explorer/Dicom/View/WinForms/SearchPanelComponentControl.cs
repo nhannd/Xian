@@ -29,6 +29,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.AcceptButton = _searchButton;
             _component = component;
 
+			_titleBar.Style = WinFormsView.VisualStyle;
+
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _component;
 

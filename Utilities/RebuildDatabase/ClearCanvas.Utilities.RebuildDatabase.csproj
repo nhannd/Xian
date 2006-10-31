@@ -33,6 +33,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetMagic2005, Version=5.0.1.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>

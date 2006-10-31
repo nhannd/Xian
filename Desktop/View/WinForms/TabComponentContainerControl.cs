@@ -25,6 +25,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_tabControl.ControlRightOffset = 3;
 			_tabControl.ControlBottomOffset = 3;
 
+			_tabControl.Style = WinFormsView.VisualStyle;
+
 			foreach (TabPage page in _component.Pages)
 			{
 				Control control = page.ComponentHost.ComponentView.GuiElement as Control;

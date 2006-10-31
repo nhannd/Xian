@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
+using Crownwood.DotNetMagic.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -41,5 +42,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get;
         }
+
+		public static VisualStyle VisualStyle
+		{
+			get { return VisualStyle.Office2007Silver; }
+		}
     }
 }

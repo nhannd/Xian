@@ -5,15 +5,18 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Crownwood.DotNetMagic.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public partial class DialogBoxForm : Form
+    public partial class DialogBoxForm : DotNetMagicForm
     {
         public DialogBoxForm(string title, IView view)
         {
             InitializeComponent();
             this.Text = title;
+
+			this.Style = WinFormsView.VisualStyle;
 
             Control content = (Control)view.GuiElement;
 

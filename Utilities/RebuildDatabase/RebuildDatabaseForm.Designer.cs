@@ -55,7 +55,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// _imageFolderText
 			// 
 			this._imageFolderText.Location = new System.Drawing.Point(11, 96);
-			this._imageFolderText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._imageFolderText.Margin = new System.Windows.Forms.Padding(2);
 			this._imageFolderText.Name = "_imageFolderText";
 			this._imageFolderText.Size = new System.Drawing.Size(394, 20);
 			this._imageFolderText.TabIndex = 3;
@@ -64,7 +64,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// 
 			this._findFilesRecursivelyCheckbox.AutoSize = true;
 			this._findFilesRecursivelyCheckbox.Location = new System.Drawing.Point(11, 119);
-			this._findFilesRecursivelyCheckbox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._findFilesRecursivelyCheckbox.Margin = new System.Windows.Forms.Padding(2);
 			this._findFilesRecursivelyCheckbox.Name = "_findFilesRecursivelyCheckbox";
 			this._findFilesRecursivelyCheckbox.Size = new System.Drawing.Size(158, 17);
 			this._findFilesRecursivelyCheckbox.TabIndex = 4;
@@ -74,7 +74,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// _progressBar
 			// 
 			this._progressBar.Location = new System.Drawing.Point(4, 37);
-			this._progressBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._progressBar.Margin = new System.Windows.Forms.Padding(2);
 			this._progressBar.Name = "_progressBar";
 			this._progressBar.Size = new System.Drawing.Size(411, 19);
 			this._progressBar.TabIndex = 5;
@@ -82,7 +82,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// _startButton
 			// 
 			this._startButton.Location = new System.Drawing.Point(138, 152);
-			this._startButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._startButton.Margin = new System.Windows.Forms.Padding(2);
 			this._startButton.Name = "_startButton";
 			this._startButton.Size = new System.Drawing.Size(56, 19);
 			this._startButton.TabIndex = 7;
@@ -93,7 +93,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// _stopButton
 			// 
 			this._stopButton.Location = new System.Drawing.Point(200, 152);
-			this._stopButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._stopButton.Margin = new System.Windows.Forms.Padding(2);
 			this._stopButton.Name = "_stopButton";
 			this._stopButton.Size = new System.Drawing.Size(56, 19);
 			this._stopButton.TabIndex = 8;
@@ -104,7 +104,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// _exitButton
 			// 
 			this._exitButton.Location = new System.Drawing.Point(261, 152);
-			this._exitButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._exitButton.Margin = new System.Windows.Forms.Padding(2);
 			this._exitButton.Name = "_exitButton";
 			this._exitButton.Size = new System.Drawing.Size(56, 19);
 			this._exitButton.TabIndex = 9;
@@ -115,7 +115,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			// _browseForFolderButton
 			// 
 			this._browseForFolderButton.Location = new System.Drawing.Point(410, 94);
-			this._browseForFolderButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._browseForFolderButton.Margin = new System.Windows.Forms.Padding(2);
 			this._browseForFolderButton.Name = "_browseForFolderButton";
 			this._browseForFolderButton.Size = new System.Drawing.Size(22, 19);
 			this._browseForFolderButton.TabIndex = 10;
@@ -128,9 +128,9 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			this._statusGroupBox.Controls.Add(this._statusTextLabel);
 			this._statusGroupBox.Controls.Add(this._progressBar);
 			this._statusGroupBox.Location = new System.Drawing.Point(11, 11);
-			this._statusGroupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._statusGroupBox.Margin = new System.Windows.Forms.Padding(2);
 			this._statusGroupBox.Name = "_statusGroupBox";
-			this._statusGroupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._statusGroupBox.Padding = new System.Windows.Forms.Padding(2);
 			this._statusGroupBox.Size = new System.Drawing.Size(420, 63);
 			this._statusGroupBox.TabIndex = 11;
 			this._statusGroupBox.TabStop = false;
@@ -159,8 +159,9 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this._statusGroupBox);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "RebuildDatabaseForm";
+			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Silver;
 			this.Text = "Rebuild Database";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RebuildDatabaseFormClosing);
 			this._statusGroupBox.ResumeLayout(false);
