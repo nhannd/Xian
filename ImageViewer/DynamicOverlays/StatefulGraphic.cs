@@ -121,6 +121,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			remove { _stateChangedEvent -= value; }
 		}
 
+		public virtual bool SetCursorToken(XMouseEventArgs e)
+		{
+			return false;
+		}
+
 		public virtual GraphicState CreateCreateState()
 		{
 			throw new InvalidOperationException();

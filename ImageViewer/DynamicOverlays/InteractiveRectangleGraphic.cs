@@ -16,6 +16,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		private RectanglePrimitive _rectangleGraphic;
 
+		private CursorToken _moveToken;
+		
 		public InteractiveRectangleGraphic(bool userCreated)
 			: base(userCreated)
 		{
@@ -32,6 +34,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			get { return _rectangleGraphic.BottomRight; }
 			set { _rectangleGraphic.BottomRight = value; }
+		}
+
+		public CursorToken MoveToken
+		{
+			get { return _moveToken; }
+			set { _moveToken = value; }
 		}
 
 		#region IMemorable Members
@@ -83,6 +91,20 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public override bool HitTest(XMouseEventArgs e)
 		{
 			return _rectangleGraphic.HitTest(e);
+		}
+
+		public override bool SetCursorToken(XMouseEventArgs e)
+		{
+			if (base.SetCursorToken(e))
+				return true;
+
+			if (this.HitTest(e))
+			{
+				e.SelectedTile.CursorToken = this.MoveToken;
+				return true;
+			}
+
+			return false;
 		}
 
 		private void BuildGraphic()

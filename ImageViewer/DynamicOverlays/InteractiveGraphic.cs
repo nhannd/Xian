@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public static readonly int _hitTestDistance = 10;
 
 		private ControlPointsGraphic _controlPoints = new ControlPointsGraphic();
+		private CursorToken _stretchToken;
 
 		protected InteractiveGraphic(bool userCreated)
 		{
@@ -29,6 +30,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return _controlPoints; }
 		}
 
+		public CursorToken StretchToken
+		{
+			get { return _stretchToken; }
+			set { _stretchToken = value; }
+		}
+
 		#region IMemorable Members
 
 		public abstract IMemento CreateMemento();
@@ -36,6 +43,17 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public abstract void SetMemento(IMemento memento);
 
 		#endregion
+
+		public override bool SetCursorToken(XMouseEventArgs e)
+		{
+			if (this._controlPoints.HitTest(e))
+			{
+				e.SelectedTile.CursorToken = this.StretchToken;
+				return true;
+			}
+
+			return false;
+		}
 
 		public override GraphicState CreateFocusSelectedState()
 		{

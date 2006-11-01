@@ -79,13 +79,16 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Roi.ControlPoints.Visible = false;
 			this.Color = Color.Yellow;
 			Draw();
+
+			SetCursorToken(e);
+
 			Trace.Write("OnEnterInactiveState\n");
 		}
 
 		public override void OnEnterFocusState(XMouseEventArgs e)
 		{
 			this.Focused = true;
-
+			
 			if (this.Roi.HitTest(e))
 				this.Roi.ControlPoints.Visible = true;
 			else
@@ -93,6 +96,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			this.Color = Color.Orange;
 			Draw();
+
+			SetCursorToken(e);
+
 			Trace.Write("OnEnterFocusState\n");
 		}
 
@@ -104,6 +110,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Roi.ControlPoints.Visible = true;
 			this.Color = Color.Red;
 			Draw();
+
+			SetCursorToken(e);
 
 			Trace.Write("OnEnterSelectedState\n");
 		}
@@ -117,7 +125,21 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Color = Color.Red;
 			Draw();
 
+			SetCursorToken(e);
+
 			Trace.Write("OnEnterSelectedState\n");
+		}
+
+		public override bool SetCursorToken(XMouseEventArgs e)
+		{
+			if (this.Roi.SetCursorToken(e))
+				return true;
+			
+			if (this.Callout.SetCursorToken(e))
+				return true;
+
+			e.SelectedTile.CursorToken = null;
+			return false;
 		}
 
 		public override bool HitTest(XMouseEventArgs e)

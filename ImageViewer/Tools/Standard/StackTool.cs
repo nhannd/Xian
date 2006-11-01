@@ -4,6 +4,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -14,8 +15,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardStack")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.StackMedium.png", "Icons.StackLarge.png")]
-    
-    /// <summary>
+
+	[CursorToken("Icons.StackMedium.png", typeof(StackTool))]
+	/// <summary>
 	/// 
 	/// </summary>
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -27,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public StackTool()
             :base(XMouseButtons.Left, true)
 		{
+			this.RequiresCapture = true;
 		}
 
 		#region IUIEventHandler Members

@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
-	public sealed class LayerManager : IUIEventHandler
+	public sealed class LayerManager
 	{
 		private PresentationImage _parentPresentationImage;
 		private LayerGroup _rootLayerGroup;
@@ -15,8 +15,6 @@ namespace ClearCanvas.ImageViewer.Layers
 		private Graphic _selectedGraphic;
 		private Graphic _focusGraphic;
 
-		private CaptureUIEventHandler _mouseCapture;
-
 		public LayerManager(PresentationImage presentationImage)
 		{
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
@@ -24,8 +22,6 @@ namespace ClearCanvas.ImageViewer.Layers
 			_parentPresentationImage = presentationImage;
 			_rootLayerGroup = new LayerGroup();
 			_rootLayerGroup.ParentLayerManager = this;
-
-			_mouseCapture = new CaptureUIEventHandler();
 		}
 
 		public IImageViewer ImageViewer
@@ -134,7 +130,6 @@ namespace ClearCanvas.ImageViewer.Layers
 							new GraphicSelectedEventArgs(_selectedGraphic));
 			}
 		}
-
 		public Graphic FocusGraphic
 		{
 			get { return _focusGraphic; }
@@ -154,73 +149,5 @@ namespace ClearCanvas.ImageViewer.Layers
 							new GraphicFocusedEventArgs(_focusGraphic));
 			}
 		}
-
-		#region Public Events
-		
-		public event EventHandler<MouseCaptureChangingEventArgs> NotifyCaptureChanging
-		{
-			add { _mouseCapture.NotifyCaptureChanging += value; }
-			remove { _mouseCapture.NotifyCaptureChanging -= value; }
-		}
-
-		#endregion
-		
-		#region IUIEventHandler Members
-
-		public bool OnMouseMove(XMouseEventArgs e)
-		{
-			bool handled = _mouseCapture.OnMouseMove(e);
-			if (!handled)
-				handled = _rootLayerGroup.OnMouseMove(e);
-
-			return handled;
-		}
-
-		public bool OnMouseDown(XMouseEventArgs e)
-		{
-			bool handled = _mouseCapture.OnMouseDown(e);
-			if (!handled)
-				handled = _rootLayerGroup.OnMouseDown(e);
-
-			return handled;
-		}
-
-		public bool OnMouseUp(XMouseEventArgs e)
-		{
-			bool handled = _mouseCapture.OnMouseUp(e);
-			if (!handled)
-				handled = _rootLayerGroup.OnMouseUp(e);
-
-			return handled;
-		}
-
-		public bool OnMouseWheel(XMouseEventArgs e)
-		{
-			bool handled = _mouseCapture.OnMouseWheel(e);
-			if (!handled)
-				handled = _rootLayerGroup.OnMouseWheel(e);
-
-			return handled;
-		}
-
-		public bool OnKeyDown(XKeyEventArgs e)
-		{
-			bool handled = _mouseCapture.OnKeyDown(e);
-			if (!handled)
-				handled = _rootLayerGroup.OnKeyDown(e);
-
-			return handled;
-		}
-
-		public bool OnKeyUp(XKeyEventArgs e)
-		{
-			bool handled = _mouseCapture.OnKeyUp(e);
-			if (!handled)
-				handled = _rootLayerGroup.OnKeyUp(e);
-
-			return handled;
-		}
-
-		#endregion
 	}
 }

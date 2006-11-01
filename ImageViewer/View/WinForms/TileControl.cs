@@ -11,6 +11,7 @@ using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -25,8 +26,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private InformationBox _currentInformationBox;
 
 		private IRenderingSurface _surface;
-		private bool _maintainCapture;
-
+		private IUIEventHandler _captureUIEventHandler;
+		private CursorWrapper _currentCursorWrapper;
 		#endregion
 
 		/// <summary>
@@ -38,8 +39,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			
 			InitializeComponent();
 
-			_maintainCapture = false;
-
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.BackColor = Color.Black;
 
@@ -47,6 +46,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(OnCaptureChanging);
 			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
+			_tile.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
         }
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			this.ResumeLayout();
 		}
-
+		
 		public void Draw()
 		{
 			CodeClock clock = new CodeClock();
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			//it does not allow you to keep capture when the mouse is not down.  Even
 			// if you take out the calls to the base class OnMouseX handlers, it still
 			// turns Capture back off although it has been turned on explicitly.
-			if (this._maintainCapture)
+			if (this._captureUIEventHandler != null)
 				this.Capture = true;
 		}
 
@@ -211,7 +211,73 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
 		{
-			_maintainCapture = (e.UIEventHandlerGainingCapture != null);
+			if (_captureUIEventHandler == e.UIEventHandlerGainingCapture)
+				return;
+
+			bool setToken = false;
+			CursorToken token = null;
+
+			//This code has been provided for 2 reasons:
+			//  1. Generally, all tools must obtain capture so that other objects don't interfere with them (like ROIs) as the mouse moves.
+			//  2. Most of the time, it is desirable for the tool to set the cursor while it is active.
+			// This faciliates an easy way to set the cursor for the general Tool case.  Also, any IUIEventHandler that captures the mouse
+			// can use a CursorTokenAttribute and the cursor will be set automatically.  NOTE: The CursorTokenAttribute, although it is
+			// applied to tools in much the same ways as the ActionAttributes, it is not an ActionAttribute.
+
+			//The existing 'capturer' set the cursor before?
+			if (_captureUIEventHandler != null)
+			{
+				object[] cursor = _captureUIEventHandler.GetType().GetCustomAttributes(typeof(CursorTokenAttribute), true);
+				if (cursor != null && cursor.Length > 0)
+					setToken = true;
+			}
+
+			//New 'capturer' sets the cursor?
+			_captureUIEventHandler = e.UIEventHandlerGainingCapture;
+			if (_captureUIEventHandler != null)
+			{
+				object[] cursor = _captureUIEventHandler.GetType().GetCustomAttributes(typeof(CursorTokenAttribute), true);
+				if (cursor != null && cursor.Length > 0)
+				{
+					setToken = true;
+					token = ((CursorTokenAttribute)cursor[0]).CursorToken;
+				}
+			}
+			
+			if (setToken)
+				_tile.CursorToken = token;
+		}
+
+		void OnCursorTokenChanged(object sender, EventArgs e)
+		{
+			if (_tile.CursorToken == null)
+			{
+				this.Cursor = this.DefaultCursor;
+
+				if (_currentCursorWrapper != null)
+				{
+					_currentCursorWrapper.Dispose();
+					_currentCursorWrapper = null;
+				}
+			}
+			else
+			{
+				try
+				{
+					CursorWrapper oldCursorWrapper = _currentCursorWrapper;
+					_currentCursorWrapper = CursorFactory.CreateCursor(_tile.CursorToken);
+					this.Cursor = _currentCursorWrapper.Cursor;
+
+					if (oldCursorWrapper != null)
+						oldCursorWrapper.Dispose();
+				}
+				catch (Exception exception)
+				{
+					Platform.Log(exception);
+					this.Cursor = this.DefaultCursor;
+					_currentCursorWrapper = null;
+				}
+			}
 		}
 
 		void OnContextMenuStripOpening(object sender, CancelEventArgs e)

@@ -6,6 +6,7 @@ using ClearCanvas.ImageViewer.DynamicOverlays;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -38,6 +39,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			InteractiveRectangleGraphic rectangleGraphic = new InteractiveRectangleGraphic(true);
             ROIGraphic roiGraphic = new ROIGraphic(rectangleGraphic, true);
+
+			rectangleGraphic.StretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
+			rectangleGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+			roiGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+			
 			roiGraphic.Callout.Text = "Area:";
             e.SelectedPresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(roiGraphic);
 			roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);

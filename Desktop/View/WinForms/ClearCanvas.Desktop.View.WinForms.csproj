@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="ApplicationComponentHostShelfView.cs" />
     <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="CursorFactory.cs" />
     <Compile Include="DialogComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

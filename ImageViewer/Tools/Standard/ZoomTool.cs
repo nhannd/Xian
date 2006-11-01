@@ -17,7 +17,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardZoom")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.ZoomMedium.png", "Icons.ZoomLarge.png")]
-    
+
+	[CursorToken("Icons.ZoomMedium.png", typeof(ZoomTool))]
+
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : MouseTool
 	{
@@ -27,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public ZoomTool()
             :base(XMouseButtons.Right, false)
 		{
+			base.RequiresCapture = true;
 		}
 
 		#region IUIEventHandler Members
@@ -108,6 +111,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
-
-    }
+	}
 }

@@ -18,7 +18,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardWindowLevel")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.WindowLevelMedium.png", "Icons.WindowLevelLarge.png")]
-    
+
+	[CursorToken("Icons.WindowLevelMedium.png", typeof(WindowLevelTool))]
+
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : MouseTool
 	{
@@ -28,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public WindowLevelTool()
             :base(XMouseButtons.Right, true)
 		{
+			base.RequiresCapture = true;
         }
 
 		public override void Initialize()
@@ -147,5 +150,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
-    }
+	}
 }

@@ -11,6 +11,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	{
 		private MultiLineAnchorPointsGraphic _anchorPointsGraphic = new MultiLineAnchorPointsGraphic();
 		private int _maxAnchorPoints;
+		
+		private CursorToken _moveToken;
 
 		public InteractiveMultiLineGraphic(bool userCreated, int numberOfPoints)
 			: base(userCreated)
@@ -28,6 +30,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public MultiLineAnchorPointsGraphic AnchorPoints
 		{
 			get { return _anchorPointsGraphic; }
+		}
+
+		public CursorToken MoveToken
+		{
+			get { return _moveToken; }
+			set { _moveToken = value; }
 		}
 
 		#region IMemorable Members
@@ -65,6 +73,20 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		public override bool HitTest(XMouseEventArgs e)
 		{
 			return this.AnchorPoints.HitTest(e);
+		}
+
+		public override bool SetCursorToken(XMouseEventArgs e)
+		{
+			if (base.SetCursorToken(e))
+				return true;
+
+			if (this.HitTest(e))
+			{
+				e.SelectedTile.CursorToken = this.MoveToken;
+				return true;
+			}
+
+			return false;
 		}
 
 		// This acts as a mediator.  It listens for changes in the anchor points

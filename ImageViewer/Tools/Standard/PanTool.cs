@@ -17,8 +17,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardPan")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.PanMedium.png", "Icons.PanLarge.png")]
+
+	[CursorToken("Icons.PanMedium.png", typeof(PanTool))]
     
-    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PanTool : MouseTool
 	{
 		private UndoableCommand _command;
@@ -27,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public PanTool()
             :base(XMouseButtons.Left, false)
 		{
+			base.RequiresCapture = true;
 		}
 
 		#region IUIEventHandler Members
@@ -108,6 +111,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
-
-    }
+	}
 }

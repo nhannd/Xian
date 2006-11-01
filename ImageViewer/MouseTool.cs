@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer
         private event EventHandler _activationChangedEvent;
 
         private bool _initiallyActive;
+		private bool _requiresCapture;
 
         /// <summary>
         /// Constructs a mouse tool.
@@ -43,6 +44,7 @@ namespace ClearCanvas.ImageViewer
         {
             _mouseButton = mouseButton;
             _initiallyActive = initiallyActive;
+			_requiresCapture = false;
         }
 
         /// <summary>
@@ -83,6 +85,12 @@ namespace ClearCanvas.ImageViewer
         {
             get { return _active; }
         }
+
+		public bool RequiresCapture
+		{
+			get { return _requiresCapture; }
+			protected set { _requiresCapture = value; }
+		}
 
         /// <summary>
         /// Notifies that the value of the <see cref="Active"/> property has changed.
@@ -177,6 +185,9 @@ namespace ClearCanvas.ImageViewer
             if (e.Button != this.MouseButton)
 				return false;
 
+			if (_requiresCapture && e.MouseCapture.GetCapture() != this)
+				e.MouseCapture.SetCapture(this, e);
+
 			_lastX = e.X;
 			_lastY = e.Y;
 
@@ -185,7 +196,10 @@ namespace ClearCanvas.ImageViewer
 
         public virtual bool OnMouseUp(XMouseEventArgs e)
         {
-            return false;
+			if (e.MouseCapture.GetCapture() == this)
+				e.MouseCapture.ReleaseCapture();
+
+			return false;
         }
 
         public virtual bool OnMouseWheel(XMouseEventArgs e)

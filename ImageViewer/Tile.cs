@@ -36,6 +36,9 @@ namespace ClearCanvas.ImageViewer
 		private bool _contextMenuEnabled;
 		private Point _lastMousePoint;
 		private InformationBox _informationBox;
+		
+		private CaptureUIEventHandler _mouseCapture;
+		private CursorToken _cursorToken;
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
@@ -43,6 +46,7 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler<MouseCaptureChangingEventArgs> _notifyCaptureChanging;
 		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
+		private event EventHandler _cursorTokenChanged;
 
 		#endregion
 
@@ -51,6 +55,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public Tile()
 		{
+			_mouseCapture = new CaptureUIEventHandler();
 		}
 
 		#region Public properties
@@ -93,7 +98,6 @@ namespace ClearCanvas.ImageViewer
 					if (_presentationImage != null)
 					{
 						oldRenderer = _presentationImage.ImageRenderer;
-						_presentationImage.NotifyCaptureChanging -= new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
 					}
 
 					// Disassociate the old presentation image with this tile
@@ -107,7 +111,6 @@ namespace ClearCanvas.ImageViewer
 					// this Tile with the new image
 					if (_presentationImage != null)
 					{
-						_presentationImage.NotifyCaptureChanging += new EventHandler<MouseCaptureChangingEventArgs>(this.OnCaptureChanging);
 						_presentationImage.Tile = this;
 						_presentationImage.Selected = this.Selected;
 
@@ -237,6 +240,22 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public CursorToken CursorToken
+		{
+		    get
+		    {
+				return _cursorToken;
+		    }
+			set
+			{
+				if (_cursorToken == value)
+					return;
+
+				_cursorToken = value;
+				EventsHelper.Fire(_cursorTokenChanged, this, new EventArgs());
+			}
+		}
+
 		#endregion
 
 		#region Public events
@@ -261,14 +280,20 @@ namespace ClearCanvas.ImageViewer
 
 		public event EventHandler<MouseCaptureChangingEventArgs> NotifyCaptureChanging
 		{
-			add { _notifyCaptureChanging += value; }
-			remove { _notifyCaptureChanging -= value; }
+			add { _mouseCapture.NotifyCaptureChanging += value; }
+			remove { _mouseCapture.NotifyCaptureChanging -= value; }
 		}
 
 		public event EventHandler<InformationBoxChangedEventArgs> InformationBoxChanged
 		{
 			add { _informationBoxChanged += value; }
 			remove { _informationBoxChanged -= value; }
+		}
+
+		public event EventHandler CursorTokenChanged
+		{
+			add { _cursorTokenChanged += value; }
+			remove { _cursorTokenChanged -= value; }
 		}
 
 		#endregion
@@ -384,6 +409,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseDown(XMouseEventArgs e)
 		{
+			if (_mouseCapture.OnMouseDown(e))
+				return true;
+
 			if (_presentationImage == null)
 				return true;
 
@@ -399,6 +427,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseMove(XMouseEventArgs e)
 		{
+			if (_mouseCapture.OnMouseMove(e))
+				return true;
+
 			if (_presentationImage == null)
 				return true;
 
@@ -423,6 +454,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseUp(XMouseEventArgs e)
 		{
+			if (_mouseCapture.OnMouseUp(e))
+				return true;
+
 			if (_presentationImage == null)
 				return true;
 
@@ -432,6 +466,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseWheel(XMouseEventArgs e)
 		{
+			if (_mouseCapture.OnMouseWheel(e))
+				return true;
+
 			if (_presentationImage == null)
 				return true;
 

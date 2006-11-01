@@ -12,6 +12,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	{
         private InvariantTextPrimitive _textGraphic;
 		private LinePrimitive _lineGraphic;
+		private CursorToken _moveToken;
 
         public CalloutGraphic()
         {
@@ -50,6 +51,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				_lineGraphic.Pt2 = value;
 				SetCalloutLineStart();
 			}
+		}
+
+		public CursorToken MoveToken
+		{
+			get { return _moveToken; }
+			set { _moveToken = value; }
 		}
 
 		public event EventHandler<PointChangedEventArgs> LocationChanged
@@ -91,6 +98,17 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
         {
             return _textGraphic.HitTest(e) || _lineGraphic.HitTest(e);
         }
+
+		public override bool SetCursorToken(XMouseEventArgs e)
+		{
+			if (this.HitTest(e))
+			{
+				e.SelectedTile.CursorToken = this.MoveToken;
+				return true;
+			}
+
+			return false;
+		}
 
 		private void BuildGraphic()
 		{

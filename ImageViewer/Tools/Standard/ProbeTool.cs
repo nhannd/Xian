@@ -25,6 +25,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("activate", "Select")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	
+	[CursorToken(CursorToken.SystemCursors.Cross)]
+
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ProbeTool : MouseTool
 	{
@@ -43,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			: base(XMouseButtons.Left)
 		{
 			_enabled = true;
+			base.RequiresCapture = true;
 		}
 		/// <summary>
 		/// Called by the framework to initialize this tool.

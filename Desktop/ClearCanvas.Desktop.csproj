@@ -52,12 +52,14 @@
     <Compile Include="Actions\ActionModelStore.cs" />
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />
     <Compile Include="ApplicationComponentHost.cs" />
     <Compile Include="ApplicationComponentHostDialog.cs" />
     <Compile Include="ApplicationComponentHostShelf.cs" />
     <Compile Include="ClosingEventArgs.cs" />
+    <Compile Include="CursorTokenAttribute.cs" />
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
     <Compile Include="Format.cs" />

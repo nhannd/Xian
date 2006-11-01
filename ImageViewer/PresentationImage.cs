@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer
 		private bool _linked = true;
 
 		protected IRenderer _imageRenderer;
-		
+
 		// TODO: Perhaps each layer should have its own ILayerRenderer?  
 		// The idea is to delegate the actual rendering to the layers themselves, since
 		// they know best how to render themselves.  If the Layer.Renderer is null, then
@@ -193,16 +193,6 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region Public Events
-
-		public event EventHandler<MouseCaptureChangingEventArgs> NotifyCaptureChanging
-		{
-			add { this.LayerManager.NotifyCaptureChanging += value; }
-			remove { this.LayerManager.NotifyCaptureChanging -= value; }
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Implementation of the <see cref="IDisposable"/> pattern
 		/// </summary>
@@ -260,7 +250,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			SetSelectedObjects(e);
 
-			bool handled = this.LayerManager.OnMouseDown(e);
+			bool handled = this.LayerManager.RootLayerGroup.OnMouseDown(e);
 
 			if (!handled)
 			{
@@ -277,7 +267,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			SetSelectedObjects(e);
 
-			bool handled = this.LayerManager.OnMouseMove(e);
+			bool handled = this.LayerManager.RootLayerGroup.OnMouseMove(e);
 
 			if (!handled)
 			{
@@ -294,7 +284,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			SetSelectedObjects(e);
 
-			bool handled = this.LayerManager.OnMouseUp(e);
+			bool handled = this.LayerManager.RootLayerGroup.OnMouseUp(e);
 
 			if (!handled)
 			{

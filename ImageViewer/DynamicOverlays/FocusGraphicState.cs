@@ -32,6 +32,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			Platform.CheckForNullReference(e, "e");
 
+			base.StatefulGraphic.SetCursorToken(e);
+
 			if (!base.StatefulGraphic.HitTest(e))
 			{
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateInactiveState();

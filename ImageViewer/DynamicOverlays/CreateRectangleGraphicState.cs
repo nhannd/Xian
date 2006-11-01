@@ -64,6 +64,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 
+			this.InteractiveGraphic.SetCursorToken(e);
+
 			return true;
 		}
 
