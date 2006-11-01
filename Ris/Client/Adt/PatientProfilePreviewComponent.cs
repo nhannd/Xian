@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private Table<Address> _addresses;
         private Table<TelephoneNumber> _phoneNumbers;
         private bool _showHeader;
+        private bool _showReconciliationAlert;
 
         private IAdtService _adtService;
         private AddressTypeEnumTable _addressTypes;
@@ -72,16 +73,17 @@ namespace ClearCanvas.Ris.Client.Adt
         /// Constructor
         /// </summary>
         public PatientProfilePreviewComponent()
-            :this(true)
+            :this(true, true)
         {
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientProfilePreviewComponent(bool showHeader)
+        public PatientProfilePreviewComponent(bool showHeader, bool showReconciliationAlert)
         {
             _showHeader = showHeader;
+            _showReconciliationAlert = showReconciliationAlert;
         }
 
         public PatientProfile Subject
@@ -213,15 +215,14 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _showHeader = value; }
         }
 
-        public bool HasUnreconciledMatches
+        public bool ShowReconciliationAlert
         {
             get
             {
-                bool hasMatches = false;
-                IList<PatientProfileMatch> matches = _adtService.FindPatientReconciliationMatches(_subject);
-                hasMatches = matches.Count > 0 ? true : false;
-                return hasMatches;
+                return _showReconciliationAlert &&
+                    _adtService.FindPatientReconciliationMatches(_subject).Count > 0;
             }
+            set { _showReconciliationAlert = value; }
         }
 
         public string Name

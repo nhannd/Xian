@@ -69,10 +69,10 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             // create the preview components
-            _targetPreviewHost = new PreviewHost(this, _targetPreviewComponent = new PatientProfilePreviewComponent(false));
+            _targetPreviewHost = new PreviewHost(this, _targetPreviewComponent = new PatientProfilePreviewComponent(false, false));
             _targetPreviewHost.StartComponent();
 
-            _reconciliationPreviewHost = new PreviewHost(this, _reconciliationPreviewComponent = new PatientProfilePreviewComponent(false));
+            _reconciliationPreviewHost = new PreviewHost(this, _reconciliationPreviewComponent = new PatientProfilePreviewComponent(false, false));
             _reconciliationPreviewHost.StartComponent();
 
             // get the ADT service

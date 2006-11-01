@@ -25,13 +25,13 @@ if(component.Subject != null)
 <p>&nbsp;</p>
 <% } // end-if(component.ShowHeader) %>
 
-<% if(component.HasUnreconciledMatches) { %>
+<% if(component.ShowReconciliationAlert) { %>
 <div class="alert">
 <ul>
    <li>Patient has unreconciled records</li>
 </ul>
 </div>
-<% } // end-if(component.HasUnreconciledMatches) %>
+<% } // end-if(component.ShowReconciliationAlert) %>
 
 <table width="640" border="0">
   <tr class="sectionheading">
