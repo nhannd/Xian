@@ -106,7 +106,14 @@ CONTROLACCESSPUBLIC_DERIVED(DcmDataset)
 //
 // Rest of interface file
 //
-%include "osconfig.h"
+%include "dcmtk/config/osconfig.h"
+
+#ifdef HAVE_CONFIG_H
+%include "cfunix.h"
+#elif defined(_WIN32)
+%include "dcmtk/config/cfwin32.h"
+#endif
+
 %include "typemaps.i"
 %include "dcm_typemaps.i"
 %include "std_string.i"
@@ -141,78 +148,85 @@ CONTROLACCESSPUBLIC_DERIVED(DcmDataset)
 
 %include "ofstd.i"
 
-#include "osconfig.h"
-
 %{
+
+#include "dcmtk/config/osconfig.h"
+#ifdef HAVE_CONFIG_H
+#include "cfunix.h"
+#elif defined(_WIN32)
+#include "dcmtk/config/cfwin32.h"
+#endif
+
 // various headers
-#include "dctypes.h"
-#include "dcswap.h"
-#include "dcistrma.h"
-#include "dcostrma.h"
-#include "dcvr.h"
-#include "dcxfer.h"
-#include "dcuid.h"
-#include "dcvm.h"
-#include "dcdefine.h"
-#include "dcdebug.h"
+#include "dcmtk/dcmdata/dctypes.h"
+#include "dcmtk/dcmdata/dcswap.h"
+#include "dcmtk/dcmdata/dcistrma.h"
+#include "dcmtk/dcmdata/dcostrma.h"
+#include "dcmtk/dcmdata/dcvr.h"
+#include "dcmtk/dcmdata/dcxfer.h"
+#include "dcmtk/dcmdata/dcuid.h"
+#include "dcmtk/dcmdata/dcvm.h"
+#include "dcmtk/dcmdata/dcdefine.h"
+#include "dcmtk/dcmdata/dcdebug.h"
 
 // tags and dictionary
-#include "dctagkey.h"
-#include "dctag.h"
-#include "dcdicent.h"
-#include "dchashdi.h"
-#include "dcdict.h"
-#include "dcdeftag.h"
+#include "dcmtk/ofstd/oflist.h"
+#include "dcmtk/dcmdata/dctagkey.h"
+#include "dcmtk/dcmdata/dctag.h"
+#include "dcmtk/dcmdata/dcdicent.h"
+#include "dcmtk/dcmdata/dchashdi.h"
+#include "dcmtk/dcmdata/dcdict.h"
+#include "dcmtk/dcmdata/dcdeftag.h"
 
 // basis classes
-#include "dcobject.h"
-#include "dcelem.h"
+#include "dcmtk/dcmdata/dcobject.h"
+#include "dcmtk/dcmdata/dcelem.h"
 
 // classes for management of sequences and other lists
-#include "dcitem.h"
-#include "dcmetinf.h"
-#include "dcdatset.h"
-#include "dcsequen.h"
-#include "dcfilefo.h"
-#include "dcdicdir.h"
-#include "dcpixseq.h"
+#include "dcmtk/dcmdata/dcitem.h"
+#include "dcmtk/dcmdata/dcmetinf.h"
+#include "dcmtk/dcmdata/dcdatset.h"
+#include "dcmtk/dcmdata/dcsequen.h"
+#include "dcmtk/dcmdata/dcfilefo.h"
+#include "dcmtk/dcmdata/dcdicdir.h"
+#include "dcmtk/dcmdata/dcpixseq.h"
 
 // element classes for string management (8-bit)
-#include "dcbytstr.h"
-#include "dcvrae.h"
-#include "dcvras.h"
-#include "dcvrcs.h"
-#include "dcvrda.h"
-#include "dcvrds.h"
-#include "dcvrdt.h"
-#include "dcvris.h"
-#include "dcvrtm.h"
-#include "dcvrui.h"
+#include "dcmtk/dcmdata/dcbytstr.h"
+#include "dcmtk/dcmdata/dcvrae.h"
+#include "dcmtk/dcmdata/dcvras.h"
+#include "dcmtk/dcmdata/dcvrcs.h"
+#include "dcmtk/dcmdata/dcvrda.h"
+#include "dcmtk/dcmdata/dcvrds.h"
+#include "dcmtk/dcmdata/dcvrdt.h"
+#include "dcmtk/dcmdata/dcvris.h"
+#include "dcmtk/dcmdata/dcvrtm.h"
+#include "dcmtk/dcmdata/dcvrui.h"
 
 // element classes for string management (8-bit and/or 16-bit in later extensions)
-#include "dcchrstr.h"
-#include "dcvrlo.h"
-#include "dcvrlt.h"
-#include "dcvrpn.h"
-#include "dcvrsh.h"
-#include "dcvrst.h"
-#include "dcvrut.h"
+#include "dcmtk/dcmdata/dcchrstr.h"
+#include "dcmtk/dcmdata/dcvrlo.h"
+#include "dcmtk/dcmdata/dcvrlt.h"
+#include "dcmtk/dcmdata/dcvrpn.h"
+#include "dcmtk/dcmdata/dcvrsh.h"
+#include "dcmtk/dcmdata/dcvrst.h"
+#include "dcmtk/dcmdata/dcvrut.h"
 
 // element class for byte and word value representations
-#include "dcvrobow.h"
-#include "dcpixel.h"
-#include "dcovlay.h"
+#include "dcmtk/dcmdata/dcvrobow.h"
+#include "dcmtk/dcmdata/dcpixel.h"
+#include "dcmtk/dcmdata/dcovlay.h"
 
 // element classes for binary value fields
-#include "dcvrat.h"
-#include "dcvrss.h"
-#include "dcvrus.h"
-#include "dcvrsl.h"
-#include "dcvrul.h"
-#include "dcvrulup.h"
-#include "dcvrfl.h"
-#include "dcvrfd.h"
-#include "dcvrof.h"
+#include "dcmtk/dcmdata/dcvrat.h"
+#include "dcmtk/dcmdata/dcvrss.h"
+#include "dcmtk/dcmdata/dcvrus.h"
+#include "dcmtk/dcmdata/dcvrsl.h"
+#include "dcmtk/dcmdata/dcvrul.h"
+#include "dcmtk/dcmdata/dcvrulup.h"
+#include "dcmtk/dcmdata/dcvrfl.h"
+#include "dcmtk/dcmdata/dcvrfd.h"
+#include "dcmtk/dcmdata/dcvrof.h"
 %}
 
 %inline
@@ -228,81 +242,83 @@ DcmElement* castToDcmElement(DcmObject* pObj)
 // "out" is a keyword in C#, so rename it to "outStream"
 #define out outStream
 
-// Ignore these for now, since they're causing problems
+// Ignore these for now, since they are causing problems
 %ignore getOriginalRepresentationKey;
 %ignore getCurrentRepresentationKey;
 %ignore normalizeString;
+%ignore DcmDictEntryList;
 
 %rename(__assign__) DcmElement::operator=;
 
 // various headers
-%include "dctypes.h"
-%include "dcswap.h"
-%include "dcistrma.h"
-%include "dcostrma.h"
-%include "dcvr.h"
-%include "dcxfer.h"
-%include "dcuid.h"
-%include "dcvm.h"
-%include "dcdefine.h"
-%include "dcdebug.h"
+%include "dcmtk/dcmdata/dctypes.h"
+%include "dcmtk/dcmdata/dcswap.h"
+%include "dcmtk/dcmdata/dcistrma.h"
+%include "dcmtk/dcmdata/dcostrma.h"
+%include "dcmtk/dcmdata/dcvr.h"
+%include "dcmtk/dcmdata/dcxfer.h"
+%include "dcmtk/dcmdata/dcuid.h"
+%include "dcmtk/dcmdata/dcvm.h"
+%include "dcmtk/dcmdata/dcdefine.h"
+%include "dcmtk/dcmdata/dcdebug.h"
 
 // tags and dictionary
-%include "dctagkey.h"
-%include "dctag.h"
-%include "dcdicent.h"
-%include "dchashdi.h"
-%include "dcdict.h"
-%include "dcdeftag.h"
+%include "dcmtk/ofstd/oflist.h"
+%include "dcmtk/dcmdata/dctagkey.h"
+%include "dcmtk/dcmdata/dctag.h"
+%include "dcmtk/dcmdata/dcdicent.h"
+%include "dcmtk/dcmdata/dchashdi.h"
+%include "dcmtk/dcmdata/dcdict.h"
+%include "dcmtk/dcmdata/dcdeftag.h"
 
 // basis classes
-%include "dcobject.h"
-%include "dcelem.h"
+%include "dcmtk/dcmdata/dcobject.h"
+%include "dcmtk/dcmdata/dcelem.h"
 
 // classes for management of sequences and other lists
-%include "dcitem.h"
-%include "dcmetinf.h"
-%include "dcdatset.h"
-%include "dcsequen.h"
-%include "dcfilefo.h"
-%include "dcdicdir.h"
-%include "dcpixseq.h"
+%include "dcmtk/dcmdata/dcitem.h"
+%include "dcmtk/dcmdata/dcmetinf.h"
+%include "dcmtk/dcmdata/dcdatset.h"
+%include "dcmtk/dcmdata/dcsequen.h"
+%include "dcmtk/dcmdata/dcfilefo.h"
+%include "dcmtk/dcmdata/dcdicdir.h"
+%include "dcmtk/dcmdata/dcpixseq.h"
 
 // element classes for string management (8-bit)
-%include "dcbytstr.h"
-%include "dcvrae.h"
-%include "dcvras.h"
-%include "dcvrcs.h"
-%include "dcvrda.h"
-%include "dcvrds.h"
-%include "dcvrdt.h"
-%include "dcvris.h"
-%include "dcvrtm.h"
-%include "dcvrui.h"
+%include "dcmtk/dcmdata/dcbytstr.h"
+%include "dcmtk/dcmdata/dcvrae.h"
+%include "dcmtk/dcmdata/dcvras.h"
+%include "dcmtk/dcmdata/dcvrcs.h"
+%include "dcmtk/dcmdata/dcvrda.h"
+%include "dcmtk/dcmdata/dcvrds.h"
+%include "dcmtk/dcmdata/dcvrdt.h"
+%include "dcmtk/dcmdata/dcvris.h"
+%include "dcmtk/dcmdata/dcvrtm.h"
+%include "dcmtk/dcmdata/dcvrui.h"
 
 // element classes for string management (8-bit and/or 16-bit in later extensions)
-%include "dcchrstr.h"
-%include "dcvrlo.h"
-%include "dcvrlt.h"
-%include "dcvrpn.h"
-%include "dcvrsh.h"
-%include "dcvrst.h"
-%include "dcvrut.h"
+%include "dcmtk/dcmdata/dcchrstr.h"
+%include "dcmtk/dcmdata/dcvrlo.h"
+%include "dcmtk/dcmdata/dcvrlt.h"
+%include "dcmtk/dcmdata/dcvrpn.h"
+%include "dcmtk/dcmdata/dcvrsh.h"
+%include "dcmtk/dcmdata/dcvrst.h"
+%include "dcmtk/dcmdata/dcvrut.h"
 
 // element class for byte and word value representations
-%include "dcvrobow.h"
-%include "dcpixel.h"
-%include "dcovlay.h"
+%include "dcmtk/dcmdata/dcvrobow.h"
+%include "dcmtk/dcmdata/dcpixel.h"
+%include "dcmtk/dcmdata/dcovlay.h"
 
 // element classes for binary value fields
-%include "dcvrat.h"
-%include "dcvrss.h"
-%include "dcvrus.h"
-%include "dcvrsl.h"
-%include "dcvrul.h"
-%include "dcvrulup.h"
-%include "dcvrfl.h"
-%include "dcvrfd.h"
-%include "dcvrof.h"
+%include "dcmtk/dcmdata/dcvrat.h"
+%include "dcmtk/dcmdata/dcvrss.h"
+%include "dcmtk/dcmdata/dcvrus.h"
+%include "dcmtk/dcmdata/dcvrsl.h"
+%include "dcmtk/dcmdata/dcvrul.h"
+%include "dcmtk/dcmdata/dcvrulup.h"
+%include "dcmtk/dcmdata/dcvrfl.h"
+%include "dcmtk/dcmdata/dcvrfd.h"
+%include "dcmtk/dcmdata/dcvrof.h"
 
 %include "dcmnet.i"

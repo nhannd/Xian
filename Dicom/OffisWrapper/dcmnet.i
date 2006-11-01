@@ -3,12 +3,12 @@
 %{
 #include <string>
 #include <vector>
-#include "osconfig.h"
-#include "assoc.h"
-#include "ofcond.h"
-#include "cond.h"
-#include "diutil.h"
-#include "dimse.h"
+#include "dcmtk/config/osconfig.h"
+#include "dcmtk/dcmnet/assoc.h"
+#include "dcmtk/ofstd/ofcond.h"
+#include "dcmtk/dcmnet/cond.h"
+#include "dcmtk/dcmnet/diutil.h"
+#include "dcmtk/dcmnet/dimse.h"
 %}
 
 /////////////////////////////////////////////////////////
@@ -26,10 +26,10 @@
 	#define base baseclass
 #endif
 
-%include "osconfig.h"
-%include "dicom.h"
-%include "ofcond.h"
-%include "cond.h"
+%include "dcmtk/config/osconfig.h"
+%include "dcmtk/dcmnet/dicom.h"
+%include "dcmtk/ofstd/ofcond.h"
+%include "dcmtk/dcmnet/cond.h"
 %include "std_vector.i"
 
 namespace std
@@ -79,6 +79,9 @@ CONTROLACCESSPUBLIC(InteropMoveCallbackInfo)
 CONTROLACCESSPUBLIC(InteropStoreScuCallbackInfo)
 CONTROLACCESSPUBLIC(InteropRetrieveCallbackInfo)
 
+%template(OFGlobalBool) OFGlobal<bool>;
+%template(OFGlobalInt) OFGlobal<int>;
+
 /////////////////////////////////////////////////////////////////////////
 //
 // SECTION: Custom Exception
@@ -87,7 +90,7 @@ CONTROLACCESSPUBLIC(InteropRetrieveCallbackInfo)
 //
 %insert(runtime) %{
 
-#include "ofcond.h"
+#include "dcmtk/ofstd/ofcond.h"
 #include <stdexcept>
 #include <vector>
 #include <string>
@@ -654,9 +657,9 @@ AddStoragePresentationContexts(T_ASC_Parameters *params, std::vector<string >& s
 	{
         // add all the known storage sop classes to the list
         // the array of Storage SOP Class UIDs comes from dcuid.h
-        for (int i=0; i<numberOfDcmStorageSOPClassUIDs; i++) 
+        for (int i=0; i<numberOfAllDcmStorageSOPClassUIDs; i++) 
 		{
-            sopClasses.push_back(dcmStorageSOPClassUIDs[i]);
+            sopClasses.push_back(dcmAllStorageSOPClassUIDs[i]);
         }
     }
 
@@ -1100,7 +1103,7 @@ static OFCondition AcceptSubAssociation(T_ASC_Network * aNet, T_ASC_Association 
             /* the array of Storage SOP Class UIDs comes from dcuid.h */
             cond = ASC_acceptContextsWithPreferredTransferSyntaxes(
                 (*assoc)->params,
-                dcmStorageSOPClassUIDs, numberOfDcmStorageSOPClassUIDs,
+                dcmAllStorageSOPClassUIDs, numberOfAllDcmStorageSOPClassUIDs,
                 transferSyntaxes, numTransferSyntaxes);
         }
     }
@@ -1439,7 +1442,7 @@ struct T_ASC_Network
 		// accepts all Storage SOP classes defined in dcuid.h that
 		// match acceptable transfer syntaxes
 		cond = ASC_acceptContextsWithPreferredTransferSyntaxes(assoc->params, 
-				dcmStorageSOPClassUIDs, numberOfDcmStorageSOPClassUIDs, 
+				dcmAllStorageSOPClassUIDs, numberOfAllDcmStorageSOPClassUIDs, 
 				transferSyntaxes, numTransferSyntaxes);
 
 		if (cond.bad())
@@ -1861,7 +1864,7 @@ struct T_ASC_Association
 		*/
 	}
 
-	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, const char* saveDirectory) 
+	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, int timeout, const char* saveDirectory) 
 		throw (dicom_runtime_error)
 	{
 		T_ASC_PresentationContextID presId;
@@ -1888,8 +1891,9 @@ struct T_ASC_Association
 		req.DataSetType = DIMSE_DATASET_PRESENT;
 		ASC_getAPTitles(self->params, req.MoveDestination, NULL, NULL);
 
-		OFCondition cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
-				MoveProgressCallback, &callbackData, DIMSE_BLOCKING, 5,
+		OFCondition cond;
+		cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
+				MoveProgressCallback, &callbackData, DIMSE_BLOCKING, timeout,
 				network, CStoreSubOpCallback, (void*) saveDirectory,
 				&rsp, &statusDetail, &rspIds); 
 

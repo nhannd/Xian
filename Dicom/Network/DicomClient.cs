@@ -9,7 +9,6 @@ using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using MySR = ClearCanvas.Dicom.SR;
 using System.IO;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -684,7 +683,7 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory))
+                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory))
                                 association.Release();
                         }
                     }
@@ -1116,6 +1115,8 @@ namespace ClearCanvas.Dicom.Network
             SocketManager.DeinitializeSockets();
             _queryCallbackHelper.Dispose();
             _storeCallbackHelper.Dispose();
+            //_retrieveCallbackHelper.Dispose();
+            //_storeScuCallbackHelper.Dispose();
         }
 
         #endregion
