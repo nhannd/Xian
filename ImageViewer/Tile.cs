@@ -427,14 +427,6 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseMove(XMouseEventArgs e)
 		{
-			if (_mouseCapture.OnMouseMove(e))
-				return true;
-
-			if (_presentationImage == null)
-				return true;
-
-			SetSelectedObjects(e);
-
 			// HACK: If right mouse button is pressed and the mouse is moving,
 			// the assumption we made in OnMouseDown was incorrect;
 			// the user's real intent was to use a MouseTool, not bring
@@ -448,6 +440,14 @@ namespace ClearCanvas.ImageViewer
 				if (_lastMousePoint != new Point(e.X, e.Y))
 					_contextMenuEnabled = false;
 			}
+
+			if (_mouseCapture.OnMouseMove(e))
+				return true;
+
+			if (_presentationImage == null)
+				return true;
+
+			SetSelectedObjects(e);
 
 			return _presentationImage.OnMouseMove(e);
 		}
