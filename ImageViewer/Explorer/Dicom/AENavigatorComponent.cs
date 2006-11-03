@@ -8,7 +8,9 @@ using System.Windows.Forms;
 using System.Threading;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Explorer;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
@@ -16,19 +18,74 @@ using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[ExtensionPoint()]
-	public class AENavigatorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{
-	}
+    [ExtensionPoint()]
+    public class AENavigatorToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
 
-	[AssociateView(typeof(AENavigatorComponentViewExtensionPoint))]
+    [ExtensionPoint()]
+    public class AENavigatorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
+
+    public interface IAENavigatorToolContext : IToolContext
+    {
+        DicomServerTree DicomAEServerTree { get; set;}
+        event EventHandler SelectedServerChanged;
+        IDesktopWindow DesktopWindow { get; }
+        int UpdateType { get; set; }
+    }
+
+    [AssociateView(typeof(AENavigatorComponentViewExtensionPoint))]
 	public class AENavigatorComponent : ApplicationComponent
 	{
+        public class AENavigatorToolContext : ToolContext, IAENavigatorToolContext
+        {
+            AENavigatorComponent _component;
+
+            public AENavigatorToolContext(AENavigatorComponent component)
+            {
+                Platform.CheckForNullReference(component, "component");
+                _component = component;
+            }
+
+            #region IAENavigatorToolContext Members
+
+            public DicomServerTree DicomAEServerTree
+            {
+                get { return _component._dicomServerTree; }
+                set { _component._dicomServerTree = value; }
+            }
+
+            public event EventHandler SelectedServerChanged
+            {
+                add { _component.SelectedServerChanged += value; }
+                remove { _component.SelectedServerChanged -= value; }
+            }
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _component.Host.DesktopWindow; }
+            }
+
+            public int UpdateType
+            {
+                get { return _component.UpdateType; }
+                set { _component.UpdateType = value; }
+            }
+
+            #endregion
+        }
+
         #region Fields
 
         private DicomServerTree _dicomServerTree;
         private event EventHandler _selectedServerChanged;
         private AEServerGroup _selectedServers;
+        private int _updateType;
+        private ToolSet _toolSet;
+        private ActionModelRoot _toolbarModel;
+        private ActionModelRoot _contextMenuModel;
 
         private static String _myServersTitle = "My Servers";
         private static String _myDatastoreTitle = "My Studies";
@@ -45,6 +102,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get { return _selectedServers; }
             set { _selectedServers = value; }
+        }
+
+        public int UpdateType
+        {
+            get { return _updateType; }
+            set { _updateType = value; }
+        }
+
+        public ActionModelRoot ToolbarModel
+        {
+            get { return _toolbarModel; }
+            set { _toolbarModel = value; }
+        }
+
+        public ActionModelRoot ContextMenuModel
+        {
+            get { return _contextMenuModel; }
+            set { _contextMenuModel = value; }
         }
 
         public static String MyServersTitle
@@ -80,78 +155,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _selectedServers.GroupID = _dicomServerTree.CurrentServer.ServerPath + "/" + _selectedServers.Name;
             }
 
-        }
-
-        public IDicomServer AddEditServer(IDicomServer dataNode)
-        {
-            if (dataNode == null)
-                return null;
-            _dicomServerTree.CurrentServer = dataNode;
-            DicomServerEditComponent editor = new DicomServerEditComponent(_dicomServerTree);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add New Server");
-
-            if (exitCode == ApplicationComponentExitCode.Normal)
-            {
-                SetSelectedServer((DicomServer)_dicomServerTree.CurrentServer);
-                return _dicomServerTree.CurrentServer;
-            }
-            return null;
-        }
-
-        public IDicomServer AddEditServerGroup(IDicomServer dataNode, bool isNewGroup)
-        {
-            if (dataNode == null || dataNode.IsServer)
-                return null;
-            _dicomServerTree.CurrentServer = (DicomServerGroup)dataNode;
-            string title = isNewGroup ? "Add New Server Group" : "Edit Server Group";
-            DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree, isNewGroup);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, title);
-
-            if (exitCode == ApplicationComponentExitCode.Normal)
-            {
-                SelectChanged(_dicomServerTree.CurrentServer);
-                return _dicomServerTree.CurrentServer;
-            }
-            return null;
-        }
-
-        public void CEchoServer()
-        {
-            if (_selectedServers.Servers.Count == 0)
-            {
-                throw new DicomServerException("There are no servers selected. Please select servers and try again.");
-                return;
-            }
-            LocalAESettings myAESettings = new LocalAESettings();
-            ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
-            StringBuilder msgText = new StringBuilder();
-            msgText.AppendFormat("C-ECHO Verification:\r\n\r\n");
-            using (DicomClient client = new DicomClient(myAE))
-            {
-                foreach (DicomServer ae in _selectedServers.Servers)
-                {
-                    if (client.Verify(ae.DicomAE))
-                        msgText.AppendFormat("    {0}: successful    \r\n", ae.ServerPath + "/" + ae.ServerName);
-                    else
-                        msgText.AppendFormat("    {0}: fail    \r\n", ae.ServerPath + "/" + ae.ServerName);
-                }
-            }
-            msgText.AppendFormat("\r\n");
-            throw new DicomServerException(msgText.ToString());
-            return;
-        }
-
-        public bool DeleteServer(IDicomServer dataNode)
-        {
-            _dicomServerTree.CurrentServer = _dicomServerTree.RemoveDicomServer(dataNode);
-            if (_dicomServerTree.CurrentServer == null)
-                return false;
-            _selectedServers.Servers = _dicomServerTree.FindChildServers(_dicomServerTree.CurrentServer);
-            _selectedServers.Name = _dicomServerTree.CurrentServer.ServerName;
-            _selectedServers.GroupID = _dicomServerTree.CurrentServer.ServerPath + "/" + _selectedServers.Name;
-            _dicomServerTree.SaveDicomServers();
-            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-            return true;
         }
 
         private void SetSelectedServer(DicomServer server)
@@ -194,6 +197,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             base.Start();
 
+            _toolSet = new ToolSet(new AENavigatorToolExtensionPoint(), new AENavigatorToolContext(this));
+            _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-toolbar", _toolSet.Actions);
+            _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-contextmenu", _toolSet.Actions);
         }
 
         public override void Stop()
@@ -205,4 +211,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
     }
 
+    public enum ServerUpdateType
+    {
+        Add,
+        Edit,
+        Delete
+    }
 }

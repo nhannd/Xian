@@ -24,9 +24,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Constructor
         /// </summary>
-        public DicomServerGroupEditComponent(DicomServerTree dicomServerTree, bool isNewServerGroup)
+        public DicomServerGroupEditComponent(DicomServerTree dicomServerTree, ServerUpdateType updatedType)
         {
-            _isNewServerGroup = isNewServerGroup;
+            _isNewServerGroup = updatedType.Equals(ServerUpdateType.Add)? true : false;
             _dicomServerTree = dicomServerTree;
             if (!_isNewServerGroup)
             {
@@ -46,8 +46,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (!_isNewServerGroup)
             {
                 _dicomServerTree.RenameDicomServerGroup((DicomServerGroup)_dicomServerTree.CurrentServer, _serverGroupName, "", "", 0);
-                if (((DicomServerGroup)_dicomServerTree.CurrentServer).ChildServers.Count > 0)
-                    _dicomServerTree.FireServerTreeUpdatedEvent();
             }
             else
             {
@@ -56,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _dicomServerTree.CurrentServer = dsg;
             }
             _dicomServerTree.SaveDicomServers();
+            _dicomServerTree.FireServerTreeUpdatedEvent();
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
             return;

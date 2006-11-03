@@ -15,6 +15,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             LoadDicomServers();
         }
 
+        public void DeleteDicomServer()
+        { 
+            DicomServerGroup dsgp = FindParentDicomServer(CurrentServer);
+            if (dsgp == null)
+                return;
+            for (int i = 0; i < dsgp.ChildServers.Count; i++)
+            {
+                if (dsgp.ChildServers[i].ServerName.Equals(CurrentServer.ServerName))
+                {
+                    dsgp.ChildServers.RemoveAt(i);
+                    CurrentServer = dsgp;
+                    SaveDicomServers();
+                    FireServerTreeUpdatedEvent();
+                    return;
+                }
+            }
+            return;
+        }
+
         public string DicomServerValidation(string serverName, string serverAE, string serverHost, int port)
         {
             if (serverName.Equals(AENavigatorComponent.MyDatastoreTitle) || serverName.Equals(AENavigatorComponent.MyServersTitle))
@@ -44,28 +63,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             EventsHelper.Fire(_serverTreeUpdated, this, EventArgs.Empty);
         }
 
-        public DicomServerGroup RemoveDicomServer(IDicomServer ids)
-        {
-            DicomServerGroup dsgp = FindParentDicomServer(ids);
-            if (dsgp == null)
-                return null;
-            for (int i = 0; i < dsgp.ChildServers.Count; i++)
-            {
-                if (dsgp.ChildServers[i].ServerName.Equals(ids.ServerName))
-                {
-                    dsgp.ChildServers.RemoveAt(i);
-                    return dsgp;
-                }
-            }
-            return null;
-        }
-
         public void RenameDicomServerGroup(DicomServerGroup dsg, string newName, string oldPath, string newPath, int depth)
         {
             if (depth == 0)
             {
                 oldPath = dsg.ServerPath + "/" + dsg.ServerName;
                 dsg.ServerName = newName;
+                DicomServerGroup pdsg = FindParentDicomServer(dsg);
+                pdsg.ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
+                {
+                    string s1param = s1.IsServer ? "cc" : "bb"; s1param += s1.ServerName;
+                    string s2param = s2.IsServer ? "cc" : "bb"; s2param += s2.ServerName;
+                    return s1param.CompareTo(s2param);
+                });
                 newPath = dsg.ServerPath + "/" + dsg.ServerName;
             }
             foreach (IDicomServer ids in dsg.ChildServers)
@@ -79,10 +89,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public DicomServer ReplaceDicomServer(DicomServer newDS)
         {
-            DicomServerGroup dsg = RemoveDicomServer(CurrentServer);
+            DicomServerGroup dsg = FindParentDicomServer(CurrentServer);
+            for (int i = 0; i < dsg.ChildServers.Count; i++)
+            {
+                if (dsg.ChildServers[i].ServerName.Equals(CurrentServer.ServerName))
+                {
+                    dsg.ChildServers.RemoveAt(i);
+                    break;
+                }
+            }
             dsg.AddChild(newDS);
-            if(ReplaceDicomServersByName(_myServerGroup, newDS))
-                FireServerTreeUpdatedEvent();
+            ReplaceDicomServersByName(_myServerGroup, newDS);
             return newDS;
         }
 
@@ -282,6 +299,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                         || !((DicomServer)ids).DicomAE.Host.Equals(newDs.DicomAE.Host) || ((DicomServer)ids).DicomAE.Port != newDs.DicomAE.Port))
                 {
                     dsg.ChildServers[i] = new DicomServer(ids.ServerName, ids.ServerPath, ((DicomServer)ids).ServerLocation, newDs.DicomAE.Host, newDs.DicomAE.AE, newDs.DicomAE.Port);
+                    dsg.ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
+                    {
+                        string s1param = s1.IsServer ? "cc" : "bb"; s1param += s1.ServerName;
+                        string s2param = s2.IsServer ? "cc" : "bb"; s2param += s2.ServerName;
+                        return s1param.CompareTo(s2param);
+                    });
                     if (!isUpdated) 
                         isUpdated = true;
                 }

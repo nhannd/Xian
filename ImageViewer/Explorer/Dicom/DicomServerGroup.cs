@@ -59,6 +59,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public void AddChild(IDicomServer child)
         {
             ChildServers.Add(child);
+            ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
+            {
+                string s1param = s1.IsServer ? "cc" : "bb"; s1param += s1.ServerName;
+                string s2param = s2.IsServer ? "cc" : "bb"; s2param += s2.ServerName;
+                return s1param.CompareTo(s2param);
+            });
         }
 
         private List<IDicomServer> _childServers;

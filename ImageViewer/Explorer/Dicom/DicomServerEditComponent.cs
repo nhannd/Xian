@@ -63,6 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             _dicomServerTree.CurrentServer = ds;
             _dicomServerTree.SaveDicomServers();
+            _dicomServerTree.FireServerTreeUpdatedEvent();
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
             return;

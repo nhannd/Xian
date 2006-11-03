@@ -6,7 +6,10 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
@@ -16,139 +19,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         public AENavigatorControl(AENavigatorComponent component)
 		{
             Platform.CheckForNullReference(component, "component");
-			_component = component;
-			
-			InitializeComponent();
+            InitializeComponent();
 
-            _btnAdd.ToolTipText = "Add New Server";
-            _btnAddGroup.ToolTipText = "Add New Server Group";
-            _btnEdit.ToolTipText = "Edit";
-            _btnDelete.ToolTipText = "Delete";
-            _btnCEcho.ToolTipText = "Verify (C-ECHO)";
-            AddClicked += new EventHandler(OnAddClicked);
-            AddGroupClicked += new EventHandler(OnAddGroupClicked);
-            EditClicked += new EventHandler(OnEditClicked);
-            DeleteClicked += new EventHandler(OnDeleteClicked);
-            CEchoClicked += new EventHandler(OnCEchoClicked);
+            _component = component;
             ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
 
-			this.addServerToolStripMenuItem.Click += OnAddClicked;
-			this.addGroupToolStripMenuItem.Click += OnAddGroupClicked;
-			this.editServerGroupToolStripMenuItem.Click += OnEditClicked;
-			this.deleteServerGroupToolStripMenuItem.Click += OnDeleteClicked;
-			this.verifyToolStripMenuItem.Click += OnCEchoClicked;
-
-			this.titleBar1.Style = WinFormsView.VisualStyle;
+            this.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+            this.ToolbarModel = _component.ToolbarModel;
+            this.MenuModel = _component.ContextMenuModel;
+            this.titleBar1.Style = WinFormsView.VisualStyle;
 
             _aeTreeView.Click += new EventHandler(AETreeView_Click);
             BuildServerTreeView(_aeTreeView, _component.DicomServerTree);
         }
 
-        void OnAddClicked(object sender, EventArgs e)
-        {
-            AddServerServerGroup(true);
-        }
-
-        void OnAddGroupClicked(object sender, EventArgs e)
-        {
-            AddServerServerGroup(false);
-        }
-
-        void OnEditClicked(object sender, EventArgs e)
-        {
-            if (_lastClickedNode == null)
-                return;
-            IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
-            if (dataNode.IsServer)
-                dataNode =_component.AddEditServer(dataNode);
-            else
-                dataNode = _component.AddEditServerGroup(dataNode, false);
-            if (dataNode != null) 
-            {
-                _lastClickedNode.Text = dataNode.ServerName;
-                _lastClickedNode.Tag = dataNode;
-                _lastClickedNode.ToolTipText = dataNode.ServerDetails;
-            }
-            _aeTreeView.SelectedNode = _lastClickedNode;
-            SetButtonEnabled();
-        }
-
-        void OnDeleteClicked(object sender, EventArgs e)
-        {
-            if (_lastClickedNode == null || _lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle)
-                || _lastClickedNode.Text.Equals(AENavigatorComponent.MyServersTitle))
-                return;
-            IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
-            string msg = "";
-            if (dataNode.IsServer)
-                msg = "Are you sure you want to delete this server?";
-            else
-                msg = "Are you sure you want to delete this server group?";
-            if (Platform.ShowMessageBox(msg, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
-                return;
-
-            if (_component.DeleteServer(dataNode) && _lastClickedNode != null)
-            {
-                _aeTreeView.SelectedNode = _lastClickedNode.Parent;
-                _lastClickedNode.Remove();
-                _lastClickedNode = _aeTreeView.SelectedNode;
-            }
-            SetButtonEnabled();
-        }
-
-        void OnCEchoClicked(object sender, EventArgs e)
-        {
-			using (new CursorManager(Cursors.WaitCursor))
-			{
-                try
-                {
-                    _component.CEchoServer();
-                }
-                catch (DicomServerException dse)
-                {
-                    Platform.ShowMessageBox(dse.Message.ToString(), MessageBoxActions.Ok);
-                }
-            }
-        }
-
         void OnServerTreeUpdated(object sender, EventArgs e)
         {
-            RefreshToolTipText(_aeTreeView.Nodes[1]);
+            UpdateServerTree();
         }
 
-        void AddServerServerGroup(bool isservernode)
-        {
-            if (_lastClickedNode == null)
-                return;
-            IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
-            if (isservernode)
-                dataNode = _component.AddEditServer(dataNode);
-            else
-                dataNode = _component.AddEditServerGroup(dataNode, true);
-            _aeTreeView.SelectedNode = _lastClickedNode;
-            if (dataNode != null)
-            {
-                TreeNode newNode = new TreeNode(dataNode.ServerName);
-                newNode.Tag = dataNode;
-                newNode.ToolTipText = dataNode.ServerDetails;
-
-				if (isservernode)
-				{
-					newNode.ImageIndex = 1;
-					newNode.SelectedImageIndex = 1;
-				}
-				else
-				{
-					newNode.ImageIndex = 2;
-					newNode.SelectedImageIndex = 2;
-				}
-
-                _lastClickedNode.Nodes.Add(newNode);
-                _aeTreeView.SelectedNode = newNode;
-                _lastClickedNode = _aeTreeView.SelectedNode;
-            }
-            SetButtonEnabled();
-        }
 
         void AETreeView_Click(object sender, EventArgs e)
         {
@@ -156,81 +45,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             if (_lastClickedNode == null)
                 return;
             _aeTreeView.SelectedNode = _lastClickedNode;
-			//_aeTreeView.SelectedImageIndex = _lastClickedNode.ImageIndex;
             IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
             _component.SelectChanged(dataNode);
-            SetButtonEnabled();
-        }
-
-        void SetButtonEnabled()
-        {
-            if (_lastClickedNode == null)
-                return;
-            _btnCEcho.Enabled = true;
-            if (_lastClickedNode.Text.Equals(AENavigatorComponent.MyDatastoreTitle))
-            {
-                _btnAdd.Enabled = false;
-                _btnAddGroup.Enabled = false;
-                _btnEdit.Enabled = true;
-                _btnDelete.Enabled = false;
-				_btnCEcho.Enabled = false;
-
-				addServerToolStripMenuItem.Enabled = false;
-				addGroupToolStripMenuItem.Enabled = false;
-				editServerGroupToolStripMenuItem.Enabled = true;
-				deleteServerGroupToolStripMenuItem.Enabled = false;
-				verifyToolStripMenuItem.Enabled = false;
-
-				return;
-            }
-            if (_lastClickedNode.Text.Equals(AENavigatorComponent.MyServersTitle))
-            {
-                _btnAdd.Enabled = true;
-                _btnAddGroup.Enabled = true;
-                _btnEdit.Enabled = false;
-                _btnDelete.Enabled = false;
-				_btnCEcho.Enabled = true;
-
-				addServerToolStripMenuItem.Enabled = true;
-				addGroupToolStripMenuItem.Enabled = true;
-				editServerGroupToolStripMenuItem.Enabled = false;
-				deleteServerGroupToolStripMenuItem.Enabled = false;
-				verifyToolStripMenuItem.Enabled = true;
-
-				return;
-            }
-            IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
-            if (dataNode.IsServer)
-            {
-                _btnAdd.Enabled = false;
-                _btnAddGroup.Enabled = false;
-                _btnEdit.Enabled = true;
-                _btnDelete.Enabled = true;
-				_btnCEcho.Enabled = true;
-
-				addServerToolStripMenuItem.Enabled = false;
-				addGroupToolStripMenuItem.Enabled = false;
-				editServerGroupToolStripMenuItem.Enabled = true;
-				deleteServerGroupToolStripMenuItem.Enabled = true;
-				verifyToolStripMenuItem.Enabled = true;
-
-			}
-            else
-            {
-                _btnAdd.Enabled = true;
-                _btnAddGroup.Enabled = true;
-                _btnEdit.Enabled = true;
-                _btnDelete.Enabled = true;
-				_btnCEcho.Enabled = true;
-
-				addServerToolStripMenuItem.Enabled = true;
-				addGroupToolStripMenuItem.Enabled = true;
-				editServerGroupToolStripMenuItem.Enabled = true;
-				deleteServerGroupToolStripMenuItem.Enabled = true;
-				verifyToolStripMenuItem.Enabled = true;
-
-			}
-            return;
         }
 
         /// <summary>
@@ -266,7 +82,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 }
                 BuildNextTreeLevel(treeChild);
             }
-            SetButtonEnabled();
         }
 
         /// <summary>
@@ -278,19 +93,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             IDicomServer dataNode = (IDicomServer)treeNode.Tag;
             if (dataNode.IsServer)
                 return;
-            ((DicomServerGroup)dataNode).ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
-            { string s1param = s1.IsServer ? "cc" : "bb"; s1param += s1.ServerName; 
-                string s2param = s2.IsServer ? "cc" : "bb"; s2param += s2.ServerName; 
-                return s1param.CompareTo(s2param); });
             foreach (IDicomServer dataChild in ((DicomServerGroup)dataNode).ChildServers)
             {
-                TreeNode treeChild = new TreeNode(dataChild.ServerName);
-				SetIcon(dataChild, treeChild);
-                treeChild.Tag = dataChild;
-                treeChild.ToolTipText = dataChild.ServerDetails;
-                treeNode.Nodes.Add(treeChild);
+                TreeNode treeChild = AddTreeNode(treeNode, dataChild);
                 BuildNextTreeLevel(treeChild);
             }
+        }
+
+        private TreeNode AddTreeNode(TreeNode treeNode, IDicomServer dataChild)
+        {
+            TreeNode treeChild = new TreeNode(dataChild.ServerName);
+            SetIcon(dataChild, treeChild);
+            treeChild.Tag = dataChild;
+            treeChild.ToolTipText = dataChild.ServerDetails;
+            treeNode.Nodes.Add(treeChild);
+            return treeChild;
         }
 
         private void RefreshToolTipText(TreeNode treeNode)
@@ -309,6 +126,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 }
                 if (!((IDicomServer)tnChild.Tag).IsServer)
                     RefreshToolTipText(tnChild);
+            }
+        }
+
+        private void UpdateServerTree()
+        {
+            if (_lastClickedNode == null)
+                return;
+            if (_component.UpdateType == (int)ServerUpdateType.Add)
+            {
+                IDicomServer dataChild = _component.DicomServerTree.CurrentServer;
+                AddTreeNode(_lastClickedNode, dataChild);
+            }
+            else if (_component.UpdateType == (int)ServerUpdateType.Delete)
+            {
+                _aeTreeView.SelectedNode = _lastClickedNode.Parent;
+                _lastClickedNode.Remove();
+                _lastClickedNode = _aeTreeView.SelectedNode;
+                IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
+                _component.SelectChanged(dataNode);
+            }
+            else if (_component.UpdateType == (int)ServerUpdateType.Edit)
+            {
+                IDicomServer dataNode = _component.DicomServerTree.CurrentServer;
+                _lastClickedNode.Text = dataNode.ServerName;
+                _lastClickedNode.Tag = dataNode;
+                _lastClickedNode.ToolTipText = dataNode.ServerDetails;
+                RefreshToolTipText(_aeTreeView.Nodes[1]);
             }
         }
 
@@ -339,35 +183,46 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         private AENavigatorComponent _component;
         private TreeNode _lastClickedNode;
+        private ActionModelNode _toolbarModel;
+        private ActionModelNode _menuModel;
+        private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
 
-        public event EventHandler AddClicked
+        public ActionModelNode ToolbarModel
         {
-            add { _btnAdd.Click += value; }
-            remove { _btnAdd.Click -= value; }
+            get { return _toolbarModel; }
+            set
+            {
+                _toolbarModel = value;
+                ToolStripBuilder.Clear(_serverTools.Items);
+                if (_toolbarModel != null)
+                {
+                    //_toolbarModel.ChildNodes.Sort(delegate(ActionModelNode n1, ActionModelNode n2) { return n1.Action.Label.CompareTo(n2.Action.Label); });
+                    ToolStripBuilder.BuildToolbar(_serverTools.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
+
+                    foreach (ToolStripItem item in _serverTools.Items)
+                        item.DisplayStyle = _toolStripItemDisplayStyle;
+                }
+            }
         }
 
-        public event EventHandler AddGroupClicked
+        public ActionModelNode MenuModel
         {
-            add { _btnAddGroup.Click += value; }
-            remove { _btnAddGroup.Click -= value; }
+            get { return _menuModel; }
+            set
+            {
+                _menuModel = value;
+                ToolStripBuilder.Clear(_contextMenu.Items);
+                if (_menuModel != null)
+                {
+                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
+                }
+            }
         }
 
-        public event EventHandler EditClicked
+        public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
-            add { _btnEdit.Click += value; }
-            remove { _btnEdit.Click -= value; }
-        }
-
-        public event EventHandler DeleteClicked
-        {
-            add { _btnDelete.Click += value; }
-            remove { _btnDelete.Click -= value; }
-        }
-
-        public event EventHandler CEchoClicked
-        {
-            add { _btnCEcho.Click += value; }
-            remove { _btnCEcho.Click -= value; }
+            get { return _toolStripItemDisplayStyle; }
+            set { _toolStripItemDisplayStyle = value; }
         }
 
         public event EventHandler ServerTreeUpdated
