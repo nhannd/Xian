@@ -62,4 +62,18 @@
   <action-model id="ClearCanvas.ImageViewer.Explorer.Local.LocalImageExplorerComponent:explorerlocal-contextmenu">
     <action id="ClearCanvas.ImageViewer.Explorer.Local.Tools.DicomImageLoaderTool:Open" path="explorerlocal-contextmenu/OpenFiles" />
   </action-model>
+  <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.AENavigatorComponent:dicomaenavigator-toolbar">
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerAddTool:activate" path="dicomaenavigator-toolbar/AddServer" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerGroupAddTool:activate" path="dicomaenavigator-toolbar/AddServerGroup" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerEditTool:activate" path="dicomaenavigator-toolbar/Edit" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerDeleteTool:activate" path="dicomaenavigator-toolbar/Delete" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerVerifyTool:activate" path="dicomaenavigator-toolbar/Verify" />
+  </action-model>
+  <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.AENavigatorComponent:dicomaenavigator-contextmenu">
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerAddTool:activate" path="dicomaenavigator-contextmenu/AddServer" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerGroupAddTool:activate" path="dicomaenavigator-contextmenu/AddServerGroup" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerEditTool:activate" path="dicomaenavigator-contextmenu/Edit" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerDeleteTool:activate" path="dicomaenavigator-contextmenu/Delete" />
+    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerVerifyTool:activate" path="dicomaenavigator-contextmenu/Verify (C-ECHO)" />
+  </action-model>
 </action-models>
