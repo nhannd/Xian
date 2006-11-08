@@ -116,6 +116,7 @@ namespace ClearCanvas.ImageViewer
 		public bool LayoutRefreshRequired
 		{
 			get { return _layoutRefreshRequired; }
+			set { _layoutRefreshRequired = value; }
 		}
 		
 		public IImageViewer ImageViewer

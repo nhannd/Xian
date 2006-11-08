@@ -158,6 +158,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			foreach (TileControl control in this.Controls)
 				control.SetParentImageBoxRectangle(this.ClientRectangle, _imageBox.InsetWidth);
 
+			_imageBox.LayoutRefreshRequired = false;
+
 			this.ResumeLayout();
 		}
 

@@ -89,6 +89,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ContextMenuLayoutTool.cs" />
     <Compile Include="ImageBoxLayoutCommand.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="LayoutToolViewEventArgs.cs" />

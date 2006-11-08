@@ -34,8 +34,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			AddImageBoxControls(component);
 		}
-		
-		void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
+
+		public void Draw()
 		{
 			if (_physicalWorkspace.LayoutRefreshRequired)
 			{
@@ -46,6 +46,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				foreach (ImageBoxControl control in this.Controls)
 					control.Draw();
 			}
+		}
+
+		void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
+		{
+			Draw();
 		}
 
 		protected override void OnSizeChanged(EventArgs e)

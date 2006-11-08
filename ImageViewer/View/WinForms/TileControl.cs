@@ -137,6 +137,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			// Make sure tile gets blacked out if there's
+			// no presentation image in it
+			if (_tile.PresentationImage == null)
+				_surface = null;
+
 			if (this.Surface == null)
 			{
 				e.Graphics.Clear(Color.Black);

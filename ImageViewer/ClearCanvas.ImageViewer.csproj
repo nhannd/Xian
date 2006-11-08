@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="CaptureUIEventHandler.cs" />
+    <Compile Include="ContextMenuEventArgs.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IRenderingSurface.cs" />
     <Compile Include="Tests\BuildTreeTest.cs" />
+    <Compile Include="Tests\DisplaySetSelectionTest.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
@@ -327,7 +329,6 @@
     <None Include="Layers\Layers.cd" />
     <None Include="PostBuild.bat" />
     <None Include="Workspaces.cd" />
-    <None Include="Model.cd" />
     <None Include="StudyManagement\StudyFindersAndLoaders.cd" />
     <None Include="StudyManagement\StudyTree.cd" />
   </ItemGroup>

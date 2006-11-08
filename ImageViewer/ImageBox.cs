@@ -153,6 +153,9 @@ namespace ClearCanvas.ImageViewer
 					// Force the images in the display set to fill
 					// the tiles of this image box
 					this.TopLeftPresentationImageIndex = 0;
+
+					if (this.Selected)
+						this[0, 0].Select();
 				}
 
 			}
@@ -248,6 +251,7 @@ namespace ClearCanvas.ImageViewer
 		public bool LayoutRefreshRequired
 		{
 			get { return _layoutRefreshRequired; }
+			set { _layoutRefreshRequired = value; }
 		}
 
 		/// <summary>

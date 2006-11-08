@@ -409,6 +409,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool OnMouseDown(XMouseEventArgs e)
 		{
+			_contextMenuEnabled = true;
+			_lastMousePoint = new Point(e.X, e.Y);
+
 			if (_mouseCapture.OnMouseDown(e))
 				return true;
 
@@ -417,9 +420,6 @@ namespace ClearCanvas.ImageViewer
 
 			// Select this tile if user has clicked on it
 			Select();
-
-			_contextMenuEnabled = true;
-			_lastMousePoint = new Point(e.X, e.Y);
 
 			SetSelectedObjects(e);
 			return _presentationImage.OnMouseDown(e);
@@ -502,11 +502,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (this.Selected)
 			{
+				this.Selected = false;
+
 				if (_presentationImage != null)
-				{
-					this.Selected = false;
 					_presentationImage.Selected = false;
-				}
 			}
 		}
 

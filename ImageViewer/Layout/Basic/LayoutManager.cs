@@ -81,6 +81,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				//DisplaySet displaySet = new DisplaySet(series.SeriesDescription);
 				DisplaySet displaySet = new DisplaySet();
+				displaySet.Name = series.SeriesDescription;
 				AddImages(displaySet, series);
 				logicalWorkspace.DisplaySets.Add(displaySet);
 			}

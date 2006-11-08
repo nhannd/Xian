@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -30,12 +31,6 @@ namespace ClearCanvas.ImageViewer
     [AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
     public class ImageViewerComponent : ApplicationComponent, IImageViewer
     {
-        // study manager is shared amongst all image workspaces
-        private static StudyManager _studyManager;
-		
-		// annotation manager is shared amongst all image workspaces
-		private static AnnotationManager _annotationManager;
-		
         internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
         {
             private ImageViewerComponent _component;
@@ -63,17 +58,28 @@ namespace ClearCanvas.ImageViewer
 			}
 
             #endregion
-        }
+		}
 
-        private ILogicalWorkspace _logicalWorkspace;
+		#region Private fields
+
+		// study manager is shared amongst all image workspaces
+		private static StudyManager _studyManager;
+
+		// annotation manager is shared amongst all image workspaces
+		private static AnnotationManager _annotationManager;
+
+		private ILogicalWorkspace _logicalWorkspace;
         private IPhysicalWorkspace _physicalWorkspace;
         private ILayoutManager _layoutManager;
         private EventBroker _eventBroker;
         private MouseButtonToolMap _mouseButtonToolMap;
         private string _studyInstanceUID;
         private ToolSet _toolSet;
+		private event EventHandler<ContextMenuEventArgs> _contextMenuBuildingEvent;
 
-        public ImageViewerComponent(string studyInstanceUID)
+		#endregion
+
+		public ImageViewerComponent(string studyInstanceUID)
         {
             Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
 
@@ -109,9 +115,11 @@ namespace ClearCanvas.ImageViewer
             StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
             
             base.Stop();
-        }
+		}
 
-        public override IActionSet ExportedActions
+		#region Public Properties
+
+		public override IActionSet ExportedActions
         {
             get
             {
@@ -127,11 +135,7 @@ namespace ClearCanvas.ImageViewer
             {
 				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 
-				// insert dynamic items into model here
-
-				// NY: Disable these for now, since we haven't quite decided yet
-				// how we're going to manage display sets on the context menu.
-				//model.InsertActions(GetDisplaySetActions());
+				EventsHelper.Fire(_contextMenuBuildingEvent, this, new ContextMenuEventArgs(model));
 
 				return model;
             }
@@ -267,6 +271,20 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		#endregion
+
+		#region Events
+
+		public event EventHandler<ContextMenuEventArgs> ContextMenuBuilding
+		{
+			add { _contextMenuBuildingEvent += value; }
+			remove { _contextMenuBuildingEvent -= value; }
+		}
+
+		#endregion
+
+		#region Disposal
+
 		#region IDisposable Members
 
 		public void Dispose()
@@ -307,7 +325,11 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-        private void CreateLayoutManager()
+		#endregion 
+
+		#region Private methods
+
+		private void CreateLayoutManager()
         {
             try
             {
@@ -335,43 +357,8 @@ namespace ClearCanvas.ImageViewer
             StudyManager.StudyTree.IncrementStudyReferenceCount(_studyInstanceUID);
         }
 
-        /// <summary>
-        /// Gets an array of <see cref="IAction"/> objects that allow selection of specific display
-        /// sets for display in the currently selected image box.
-        /// </summary>
-        /// <returns></returns>
-        private IAction[] GetDisplaySetActions()
-        {
-            List<IAction> actions = new List<IAction>();
-            int i = 0;
-            foreach(DisplaySet displaySet in this.LogicalWorkspace.DisplaySets)
-            {
-                actions.Add(CreateDisplaySetAction(displaySet, ++i));
-            }
-            return actions.ToArray();
-        }
 
-        /// <summary>
-        /// Creates an <see cref="IClickAction"/> that displays the specified display set when clicked.  The index
-        /// parameter is used to generate a label for the action.
-        /// </summary>
-        /// <param name="displaySet"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        private IClickAction CreateDisplaySetAction(DisplaySet displaySet, int index)
-        {
-            ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/{0}", displaySet.Name), null);
-            MenuAction action = new MenuAction(string.Format("display{0}", index), path, ClickActionFlags.None, null);
-            action.Label = displaySet.Name;
-            action.SetClickHandler(
-                delegate()
-                {
-                    this.SelectedImageBox.DisplaySet = displaySet;
-                    //this.SelectedImageBox.Draw();
-                }
-            );
-            return action;
-        }
 
-    }
+		#endregion
+	}
 }
