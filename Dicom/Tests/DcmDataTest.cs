@@ -29,7 +29,7 @@ namespace ClearCanvas.Dicom.Tests
 		{
             string fileName = Directory.GetCurrentDirectory() + @"\..\..\..\..\..\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmDataTest.Init\1.2.840.113619.2.55.1.1762652774.2206.1153255770.288.1.dcm";
 			_fileFormat = new DcmFileFormat();
-            OFCondition cond = _fileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, E_FileReadMode.ERM_autoDetect);
+			OFCondition cond = _fileFormat.loadFile(fileName, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, OffisDcm.DCM_MaxReadLength, false);
 
 			Assert.IsTrue(cond.good());
 
