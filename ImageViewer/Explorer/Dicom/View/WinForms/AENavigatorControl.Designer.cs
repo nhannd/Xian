@@ -32,9 +32,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AENavigatorControl));
             this.titleBar1 = new Crownwood.DotNetMagic.Controls.TitleBar();
             this._aeTreeView = new System.Windows.Forms.TreeView();
+            this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._imageList = new System.Windows.Forms.ImageList(this.components);
             this._serverTools = new System.Windows.Forms.ToolStrip();
-            this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
             // titleBar1
@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             // _aeTreeView
             // 
+            this._aeTreeView.AllowDrop = true;
             this._aeTreeView.ContextMenuStrip = this._contextMenu;
             this._aeTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._aeTreeView.HideSelection = false;
@@ -61,6 +62,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._aeTreeView.Size = new System.Drawing.Size(300, 254);
             this._aeTreeView.StateImageList = this._imageList;
             this._aeTreeView.TabIndex = 3;
+            // 
+            // _contextMenu
+            // 
+            this._contextMenu.Name = "_contextMenu";
+            this._contextMenu.Size = new System.Drawing.Size(61, 4);
             // 
             // _imageList
             // 
@@ -78,11 +84,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._serverTools.Size = new System.Drawing.Size(300, 25);
             this._serverTools.TabIndex = 4;
             this._serverTools.Text = "toolStrip2";
-            // 
-            // _contextMenu
-            // 
-            this._contextMenu.Name = "_contextMenu";
-            this._contextMenu.Size = new System.Drawing.Size(61, 4);
             // 
             // AENavigatorControl
             // 

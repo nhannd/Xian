@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             public AENavigatorToolContext(AENavigatorComponent component)
             {
                 Platform.CheckForNullReference(component, "component");
-                _component = component;
+                _component = component; 
             }
 
             #region IAENavigatorToolContext Members
@@ -183,6 +183,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
             }
 
+        }
+
+        public bool NodeMoved(IDicomServer dataNodeParent, IDicomServer dataNodeNew)
+        {
+            if (dataNodeParent.IsServer || dataNodeNew.ServerPath.Equals(dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName))
+                return false;
+            if (dataNodeNew.IsServer)
+            {
+                _dicomServerTree.CurrentServer = dataNodeNew;
+                _dicomServerTree.DeleteDicomServer();
+                dataNodeNew.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
+                ((DicomServerGroup)dataNodeParent).AddChild(dataNodeNew);
+                SelectChanged(dataNodeNew);
+            }
+            else
+            {
+                DicomServerGroup dsg = (DicomServerGroup)dataNodeNew;
+                _dicomServerTree.CurrentServer = dataNodeNew;
+                _dicomServerTree.DeleteDicomServer();
+                _dicomServerTree.RenameDicomServerGroup(dsg, "", dsg.ServerPath, dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName, 1);
+                dsg.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
+                ((DicomServerGroup)dataNodeParent).AddChild(dsg);
+                _dicomServerTree.CurrentServer = dsg;
+                SelectChanged(dsg);
+            }
+            _dicomServerTree.SaveDicomServers();
+            return true;
         }
 
         public event EventHandler SelectedServerChanged
