@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void AddAddress()
         {
-            Address address = Address.New();
+            Address address = new Address();
 
             // For now, hard code default values that correspond to first entry in the the _dummy*Choices string arrays in AddressesEditorComponent
             address.Province = "Ontario";
@@ -124,8 +124,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // can occur if user double clicks while holding control
             if (_currentAddressSelection == null) return;
 
-            Address address = Address.New();
-            address.CopyFrom(_currentAddressSelection);
+            Address address = (Address)_currentAddressSelection.Clone();
 
             AddressEditorComponent editor = new AddressEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Address...");

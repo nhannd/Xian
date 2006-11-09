@@ -1,5 +1,5 @@
-require "metamodel"
-require "template"
+require 'model'
+require 'template'
 
 # Main class for program execution
 class CodeGen
@@ -33,7 +33,7 @@ class CodeGen
   @@componentTemplates = [
     Template.new("Component.ct", "<%=@className%>.cs", false),
     Template.new("Component.gen.ct", "<%=@className%>.gen.cs", true),
-    Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true)
+    Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true),
   ]
   
   

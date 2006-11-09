@@ -6,14 +6,14 @@ namespace ClearCanvas.Healthcare
 {
     public class PatientProfileMatch
     {
+        private PatientProfile _patientProfile;
+        private ScoreValue _score;
+
         public PatientProfileMatch(PatientProfile patientProfile, ScoreValue score)
         {
             _patientProfile = patientProfile;
             _score = score;
         }
-
-        private PatientProfile _patientProfile;
-        private ScoreValue _score;
 
         public PatientProfile PatientProfile
         {

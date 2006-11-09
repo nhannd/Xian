@@ -18,7 +18,7 @@
       </composite-element>
     </set>
     -->
-    <component name="MRN" class="CompositeIdentifier">
+    <component name="Mrn" class="CompositeIdentifier">
       <property name ="Id" column="MrnId_" type="String" length="30" not-null="true"/>
       <property name="AssigningAuthority" column="MrnAssigningAuthority_" type="String" length="100" not-null="true"/>
     </component>

@@ -14,14 +14,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Location : Entity
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static Location New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new Location();
-		}
-	}
+        private void CustomInitialize()
+        {
+        }
+    }
 }

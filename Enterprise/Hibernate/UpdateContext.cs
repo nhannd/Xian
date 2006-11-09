@@ -11,52 +11,85 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public class UpdateContext : PersistenceContext, IUpdateContext
     {
-        private ITransaction _transaction;
+        private ITransactionNotifier _transactionNotifier;
 
-        internal UpdateContext(ISessionFactory sessionFactory)
+        internal UpdateContext(ISessionFactory sessionFactory, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
             :base(sessionFactory, false)
         {
-            _transaction = this.Session.BeginTransaction();
+            _transactionNotifier = transactionNotifier;
+            this.Session.FlushMode = mode == UpdateContextSyncMode.Flush ? FlushMode.Auto : FlushMode.Never;
         }
 
-        public EntityChange[] EntityChangeSet
+        public override void Lock(Entity entity)
         {
-            get { return this.Interceptor.EntityChangeSet; }
+            Lock(entity, DirtyState.Clean);
         }
 
-        public bool InTransaction
+        public override void Lock(Entity entity, DirtyState dirtyState)
         {
-            get { return _transaction != null; }
+            if (dirtyState == DirtyState.Dirty)
+                this.Session.SaveOrUpdate(entity);
+            else
+                this.Session.Lock(entity, LockMode.None);
         }
 
         public void Commit()
         {
             try
             {
-                _transaction.Commit();
-                _transaction = null;
+                if (!this.InTransaction)
+                    throw new InvalidOperationException(SR.ErrorNoCurrentTransaction);
+
+                CommitTransaction();
+  
+                if (_transactionNotifier != null)
+                {
+                    _transactionNotifier.Queue(this.Interceptor.EntityChangeSet);
+                }
             }
-            catch (StaleObjectStateException e)
+            catch (Exception e)
             {
-                // wrap NHibernate exception
-                throw new ConcurrentModificationException(e);
+                WrapAndRethrow(e, SR.ErrorCommitFailure);
             }
         }
 
-        public void Rollback()
+        public override void Resume()
         {
-            _transaction.Rollback();
-            _transaction = null;
+            Resume(UpdateContextSyncMode.Flush);
         }
 
-        public override void Close()
+        public void Resume(UpdateContextSyncMode mode)
         {
-            if (_transaction != null)
+            base.Resume();
+
+            this.Session.FlushMode = mode == UpdateContextSyncMode.Flush ? FlushMode.Auto : FlushMode.Never;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                Rollback();
+                if (this.InTransaction)
+                {
+                    try
+                    {
+                        // assume the transaction failed and rollback
+                        RollbackTransaction();
+                    }
+                    catch (Exception e)
+                    {
+                        WrapAndRethrow(e, SR.ErrorCloseContext);
+                    }
+                }
             }
 
-            base.Close();
+            // important to call base class to close the session, etc.
+            base.Dispose(disposing);
+        }
+
+        protected override EntityLoadFlags DefaultEntityLoadFlags
+        {
+            get { return EntityLoadFlags.CheckVersion; }
         }
     }
 }

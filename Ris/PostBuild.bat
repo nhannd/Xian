@@ -17,6 +17,7 @@ copy "..\..\..\..\Enterprise\Hibernate\DdlWriter\bin\%1\ClearCanvas.Enterprise.H
 copy "..\..\..\..\Enterprise\Hibernate\refs\Castle.DynamicProxy.dll" .\plugins
 copy "..\..\..\..\Enterprise\Hibernate\refs\HashCodeProvider.dll" .\plugins
 copy "..\..\..\..\Enterprise\Hibernate\refs\NHibernate.dll" .\plugins
+copy "..\..\..\..\Enterprise\Hibernate\refs\NHibernate.Caches.SysCache.dll" .\plugins
 copy "..\..\..\..\Enterprise\Hibernate\hibernate.cfg.xml" .
 
 

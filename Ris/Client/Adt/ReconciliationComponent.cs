@@ -8,6 +8,7 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -78,17 +79,14 @@ namespace ClearCanvas.Ris.Client.Adt
             // get the ADT service
             _adtService = ApplicationContext.GetService<IAdtService>();
 
-            // ensure all profiles for the patient are loaded
-            _adtService.LoadPatientProfiles(_selectedTargetProfile.Patient);
-
             // add all target profiles - ensure the initially selected one is at the top of the list
             _targetProfileTable = new PatientProfileTable();
             _targetProfileTable.Items.Add(_selectedTargetProfile);
-            foreach (PatientProfile alternateProfile in _selectedTargetProfile.Patient.Profiles)
+            foreach (PatientProfile profile in _selectedTargetProfile.Patient.Profiles)
             {
-                if (!alternateProfile.MRN.Equals(_selectedTargetProfile.MRN))
+                if (!profile.Equals(_selectedTargetProfile))
                 {
-                    _targetProfileTable.Items.Add(alternateProfile);
+                    _targetProfileTable.Items.Add(profile);
                 }
             }
 
@@ -138,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (profile != _selectedTargetProfile)
             {
                 _selectedTargetProfile = profile;
-                _targetPreviewComponent.Subject = _selectedTargetProfile;
+                _targetPreviewComponent.PatientProfileRef = _selectedTargetProfile == null ? null : new EntityRef<PatientProfile>(_selectedTargetProfile);
             }
         }
 
@@ -149,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (profile != _selectedReconciliationProfile)
             {
                 _selectedReconciliationProfile = profile;
-                _reconciliationPreviewComponent.Subject = _selectedReconciliationProfile;
+                _reconciliationPreviewComponent.PatientProfileRef = _selectedReconciliationProfile == null ? null : new EntityRef<PatientProfile>(_selectedReconciliationProfile);
             }
         }
 
@@ -190,7 +188,9 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.Patient))
                 {
-                    checkedPatients.Add(entry.ProfileMatch.PatientProfile.Patient);
+                    // we need to load all the profiles for this patient, for the confirmation stage
+                    Patient patient = _adtService.LoadPatientAndAllProfiles(new EntityRef<PatientProfile>(entry.ProfileMatch.PatientProfile));
+                    checkedPatients.Add(patient);
                 }
             }
 

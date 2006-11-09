@@ -2,6 +2,6 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <joined-subclass name="Practitioner" proxy="Practitioner" table="Practitioner_" extends="Staff">
     <key column="StaffOID_" />
-    <property name="LicenseNumber" column="LicenseNumber_" type="String" length="50" />
+    <property name="LicenseNumber" column="LicenseNumber_" type="String" length="50" not-null="true"/>
   </joined-subclass>
 </hibernate-mapping>

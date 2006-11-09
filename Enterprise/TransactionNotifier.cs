@@ -13,16 +13,14 @@ namespace ClearCanvas.Enterprise
     /// exists as part of the client process.  The stub will transmit change set notifications within the client
     /// process only - hence multiple clients will not be aware of each others' changes.
     /// </summary>
-    public class TransactionMonitor : ITransactionMonitor
+    public class TransactionNotifier : ITransactionNotifier
     {
-        private Queue<EntityChange> _pending;
         private Dictionary<Type, EventHandler<EntityChangeEventArgs>> _eventMap;
         private Session _session;
 
-        internal TransactionMonitor(Session session)
+        internal TransactionNotifier(Session session)
         {
             _session = session;
-            _pending = new Queue<EntityChange>();
             _eventMap = new Dictionary<Type, EventHandler<EntityChangeEventArgs>>();
         }
 
@@ -51,17 +49,11 @@ namespace ClearCanvas.Enterprise
 
         public void Queue(EntityChange[] changeSet)
         {
+            // in a real implementation, the changeSet would be forwarded to some server
+            // but for now we just post the changes as local events within this process
             foreach (EntityChange change in changeSet)
             {
-                _pending.Enqueue(change);
-            }
-        }
-
-        public void PostPending()
-        {
-            while (_pending.Count > 0)
-            {
-                Notify(_pending.Dequeue());
+                Notify(change);
             }
         }
 
@@ -69,7 +61,11 @@ namespace ClearCanvas.Enterprise
         {
             if (_eventMap.ContainsKey(change.EntityType))
             {
-                EventsHelper.Fire(_eventMap[change.EntityType], _session, new EntityChangeEventArgs(change));
+                Type[] genericParams = new Type[] { change.EntityType };
+                EntityRefFactoryBase factory = (EntityRefFactoryBase)Activator.CreateInstance(typeof(EntityRefFactory<>).MakeGenericType(genericParams));
+                EntityRefBase entityRef = factory.CreateReference(change.EntityOID, change.Version);
+
+                EventsHelper.Fire(_eventMap[change.EntityType], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
             }
         }
 

@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -51,10 +52,10 @@ namespace ClearCanvas.Ris.Client.Adt
             FoldersComponent foldersComponent = new FoldersComponent(resultComponent);
             PatientProfilePreviewComponent previewComponent = new PatientProfilePreviewComponent();
 
-            resultComponent.SelectedPatientChanged +=
+            resultComponent.SelectedPatientProfileChanged +=
                 delegate(object sender, EventArgs e)
                 {
-                    previewComponent.Subject = resultComponent.SelectedPatient;
+                    previewComponent.PatientProfileRef = resultComponent.SelectedPatientProfile;
                 };
 
             SplitComponentContainer container = new SplitComponentContainer(

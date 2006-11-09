@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IPatientOverviewToolContext : IToolContext
     {
-        PatientProfile SelectedProfile { get; }
+        EntityRef<PatientProfile> PatientProfile { get; }
         IDesktopWindow DesktopWindow { get; }
     }
 
@@ -47,9 +47,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 _component = component;
             }
 
-            public PatientProfile SelectedProfile
+            public EntityRef<PatientProfile> PatientProfile
             {
-                get { return _component.Subject; }
+                get { return _component._patientProfileRef; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -61,8 +61,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private PatientProfilePreviewComponent _preview;
         private PatientProfilePreviewComponent _detail;
- 
-        private PatientProfile _subject;
+
+        private EntityRef<PatientProfile> _patientProfileRef;
+        private PatientProfile _patientProfile;
+
         private ToolSet _toolSet;
         private IAdtService _adtService;
 
@@ -70,23 +72,10 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientOverviewComponent(PatientProfile subject)
+        public PatientOverviewComponent(EntityRef<PatientProfile> profileRef)
             :base(SplitOrientation.Vertical)
         {
-            _subject = subject;
-        }
-
-        public PatientProfile Subject
-        {
-            get { return _subject; }
-            set
-            {
-                _subject = value;
-                if (this.IsStarted)
-                {
-                    _preview.Subject = _subject;
-                }
-            }
+            _patientProfileRef = profileRef;
         }
 
         public override void Start()
@@ -108,9 +97,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private void PatientProfileChangedEventHandler(object sender, EntityChangeEventArgs e)
         {
             // is the patient profile that changed the same one we are looking at?
-            if (_subject != null && e.Change.EntityOID == _subject.OID)
+            if (_patientProfileRef != null && e.EntityRef.Equals(_patientProfileRef))
             {
-                _subject = _adtService.LoadPatientProfile(e.Change.EntityOID, false);
                 Refresh();
             }
         }
@@ -130,8 +118,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void Refresh()
         {
-            _preview.Subject = _subject;
-            this.Host.SetTitle(string.Format(SR.PatientComponentTitle, _subject.Name.Format(), _subject.MRN.Format()));
+            _patientProfile = _adtService.LoadPatientProfile(_patientProfileRef, false);
+            this.Host.SetTitle(string.Format(SR.PatientComponentTitle, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
+
+            _preview.PatientProfileRef = _patientProfileRef;
         }
     }
 }

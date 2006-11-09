@@ -10,18 +10,20 @@ namespace ClearCanvas.Enterprise
         Update,
         Delete
     }
-
+    
     public class EntityChange
     {
         private long _entityOid;
+        private int _version;
         private Type _entityType;
         private EntityChangeType _changeType;
 
-        public EntityChange(long entityOid, Type entityType, EntityChangeType changeType)
+        public EntityChange(Type entityType, long entityOid, int version, EntityChangeType changeType)
         {
             _entityOid = entityOid;
             _entityType = entityType;
             _changeType = changeType;
+            _version = version;
         }
 
         public EntityChangeType ChangeType
@@ -37,6 +39,11 @@ namespace ClearCanvas.Enterprise
         public long EntityOID
         {
             get { return _entityOid; }
+        }
+
+        public int Version
+        {
+            get { return _version; }
         }
     }
 }

@@ -16,7 +16,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// <typeparam name="TEntity">The entity class on which this broker operates</typeparam>
     /// <typeparam name="TSearchCriteria">The corresponding <see cref="SearchCriteria"/> class.</typeparam>
     public abstract class EntityBroker<TEntity, TSearchCriteria> : Broker, IEntityBroker<TEntity, TSearchCriteria>
-        where TEntity : Entity
+        where TEntity : Entity, new()
         where TSearchCriteria : SearchCriteria
     {
         public IList<TEntity> Find(TSearchCriteria criteria)
@@ -33,17 +33,17 @@ namespace ClearCanvas.Enterprise.Hibernate
             return MakeTypeSafe<TEntity>(ExecuteHql(query));
         }
 
-        public virtual TEntity Find(long oid)
+        public TEntity Load(EntityRef<TEntity> entityRef)
         {
-            TEntity entity = (TEntity)this.Context.Session.Load(typeof(TEntity), oid);
-
-            // we don't want proxies for root objects, so ensure the object is actually materialized
-            NHibernateUtil.Initialize(entity);
-
-            return entity;
+            return (TEntity)Load(entityRef);
         }
 
-        public virtual long Count(TSearchCriteria criteria)
+        public TEntity Load(EntityRef<TEntity> entityRef, EntityLoadFlags flags)
+        {
+            return (TEntity)this.Context.Load(entityRef, flags);
+        }
+
+        public long Count(TSearchCriteria criteria)
         {
             string baseHql = string.Format("select count(*) from {0} x", typeof(TEntity).Name);
 
@@ -58,32 +58,21 @@ namespace ClearCanvas.Enterprise.Hibernate
             return (long)results[0];
         }
 
-        public virtual void Store(TEntity entity)
-        {
-            if (this.Context.ReadOnly)
-                throw new Exception();  //TODO elaborate
-
-            this.Context.Session.SaveOrUpdate(entity);
-        }
-
         public virtual void Delete(TEntity entity)
         {
-            if (this.Context.ReadOnly)
+            if(this.Context.ReadOnly)
                  throw new Exception();  //TODO elaborate
 
-             this.Context.Session.Delete(entity);
+            this.Context.Session.Delete(entity);
         }
 
-        protected void LoadRelated(TEntity entity, object property)
+        protected void LoadAssociation(TEntity entity, object association)
         {
-            // if the entity is not part of the current session, re-attach (don't ignore the version)
-            this.Context.Reattach(entity, false);
+            if(!this.Context.Session.Contains(entity))
+                throw new PersistenceException("The specified entity does not exist in the context", null);
 
-            // if the property is not initialized, initialized it
-            if (!NHibernateUtil.IsInitialized(property))
-            {
-                NHibernateUtil.Initialize(property);
-            }
+            if (!NHibernateUtil.IsInitialized(association))
+                NHibernateUtil.Initialize(association);
         }
     }
 }

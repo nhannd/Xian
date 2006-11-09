@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Services.Tests
                 Expect.Once.On(_mockPatientProfileBroker).Method("Find").Will(Return.Value(moderateMatchesViaHealthcard));
             }
 
-            IList<PatientProfileMatch> reconciliationMatches = _adtService.FindPatientReconciliationMatches(profile);
+            IList<PatientProfileMatch> reconciliationMatches = new List<PatientProfileMatch>();// _adtService.FindPatientReconciliationMatches(profile);
 
             Assert.AreEqual(5, reconciliationMatches.Count);
 
@@ -329,21 +329,24 @@ namespace ClearCanvas.Ris.Services.Tests
 
         //    _adtService.ReconcilePatients(toBeKept, toBeReconciled);
         //}
+
+
+
     }
 
     public class TestPatientProfile : PatientProfile
     {
-        public TestPatientProfile(string mrn, string site, string HC, string LastName, string GivenName, DateTime dob) : base()
+        public TestPatientProfile(string Mrn, string site, string HC, string LastName, string GivenName, DateTime dob) : base()
         {
 
-            this.MRN = new TestPatientIdentifier(mrn, site);
-            this.Healthcard = new TestPatientIdentifier(HC, "Ontario");
+            this.Mrn = new CompositeIdentifier(Mrn, site);
+            this.Healthcard = new CompositeIdentifier(HC, "Ontario");
 
             this.Name.FamilyName = LastName;
             this.Name.GivenName = GivenName;
             this.DateOfBirth = dob;
 
-            this.Patient = Patient.New();
+            this.Patient = new Patient();
             this.Patient.Profiles.Add(this);
         }
 
@@ -354,28 +357,10 @@ namespace ClearCanvas.Ris.Services.Tests
 
         public override string ToString()
         {
-            return MRN.Id + " " + Healthcard.Id + " " + Name.FamilyName + " " + Name.GivenName;
+            return Mrn.Id + " " + Healthcard.Id + " " + Name.FamilyName + " " + Name.GivenName;
         }
     }
 
-    public class TestPatientIdentifier : CompositeIdentifier
-    {
-        public TestPatientIdentifier(string id, string authority) : base()
-        {
-            this.Id = id;
-            this.AssigningAuthority = authority;
-        }
-
-        public TestPatientIdentifier(string id)  
-            : this(id, "SiteA")
-        {         
-        }
-
-        public TestPatientIdentifier()
-            : this("1234", "SiteA")
-        {
-        }
-    }
 
     public class StubPatientProfileFinder
     {

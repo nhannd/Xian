@@ -15,25 +15,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class TelephoneNumber
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static TelephoneNumber New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new TelephoneNumber();
-		}
-
-        public void CopyFrom(TelephoneNumber source)
+        private void CustomInitialize()
         {
-            _use = source.Use;
-            _equipment = source.Equipment;
-            _countryCode = source.CountryCode;
-            _areaCode = source.AreaCode;
-            _number = source.Number;
-            _extension = source.Extension;
-            _validRange = (source._validRange == null) ? null : new DateTimeRange(source._validRange.From, source._validRange.Until);
         }
 
         public bool IsCurrent

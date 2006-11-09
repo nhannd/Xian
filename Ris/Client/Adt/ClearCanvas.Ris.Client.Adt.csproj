@@ -39,34 +39,27 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="PatientEditFromOverviewTool.cs" />
-    <Compile Include="PatientEditFromWorklistTool.cs" />
-    <Compile Include="PatientReconcileFromOverviewTool.cs" />
+    <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientReconciliation.cs" />
-    <Compile Include="PatientWorklistTool.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
     <Compile Include="CrudActionModel.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FoldersComponent.cs" />
-    <Compile Include="HL7QueueItemTableData.cs" />
-    <Compile Include="HL7QueuePreviewComponent.cs" />
-    <Compile Include="HL7QueuePreviewTool.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
     <Compile Include="PatientAddTool.cs" />
-    <Compile Include="PatientProfileEditorDocument.cs" />
     <Compile Include="PatientOverviewComponent.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
-    <Compile Include="PatientOpenFromWorklistTool.cs" />
+    <Compile Include="PatientOverviewTool.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="PatientProfilePreviewComponent.cs" />
     <Compile Include="PatientProfileTable.cs" />
     <Compile Include="DocumentManager.cs" />
     <Compile Include="PatientOverviewDocument.cs" />
     <Compile Include="ReconciliationComponent.cs" />
-    <Compile Include="PatientReconcileFromWorklistTool.cs" />
+    <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
@@ -109,10 +102,6 @@
     <ProjectReference Include="..\..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\HL7\ClearCanvas.HL7.csproj">
-      <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
-      <Name>ClearCanvas.HL7</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\ClearCanvas.Ris.Services.csproj">
       <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>

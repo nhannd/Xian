@@ -30,7 +30,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="types"></param>
         public void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            _changes.Add(new EntityChange((long)id, entity.GetType(), EntityChangeType.Delete));
+            Entity ent = (Entity)entity;
+            _changes.Add(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Delete));
         }
 
         /// <summary>
@@ -45,7 +46,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            _changes.Add(new EntityChange((long)id, entity.GetType(), EntityChangeType.Update));
+            Entity ent = (Entity)entity;
+            _changes.Add(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Update));
             return false;
         }
 
@@ -60,7 +62,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            _changes.Add(new EntityChange((long)id, entity.GetType(), EntityChangeType.Create));
+            Entity ent = (Entity)entity;
+            _changes.Add(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Create));
             return false;
 
         }

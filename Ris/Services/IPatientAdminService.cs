@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -13,7 +14,7 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        IList<PatientProfile> ListPatients(PatientProfileSearchCriteria criteria);
+        IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
 
         /// <summary>
         /// Loads the specified patient, including collections and related entities
@@ -21,14 +22,14 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="oid"></param>
         /// <returns></returns>
-        PatientProfile LoadPatientDetails(long oid);
+        PatientProfile LoadPatientProfileDetails(EntityRef<PatientProfile> profileRef);
 
         /// <summary>
         /// Loads the specified patient.
         /// </summary>
         /// <param name="oid"></param>
         /// <returns></returns>
-        PatientProfile LoadPatient(long oid);
+        PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef);
 
         /// <summary>
         /// Add a new patient to the system
@@ -40,6 +41,6 @@ namespace ClearCanvas.Ris.Services
         /// Updates an existing patient
         /// </summary>
         /// <param name="patient"></param>
-        void UpdatePatient(PatientProfile patient);
+        void UpdatePatientProfile(PatientProfile patient);
     }
 }

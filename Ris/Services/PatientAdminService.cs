@@ -21,30 +21,30 @@ namespace ClearCanvas.Ris.Services
         #region IPatientAdminService Members
 
         [ReadOperation]
-        public IList<PatientProfile> ListPatients(PatientProfileSearchCriteria criteria)
+        public IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria)
         {
             IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             return profileBroker.Find(criteria);
         }
 
         [ReadOperation]
-        public PatientProfile LoadPatient(long oid)
+        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef)
         {
             IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile patient = profileBroker.Find(oid);
+            PatientProfile patient = profileBroker.Load(profileRef);
 
             return patient;
         }
 
         [ReadOperation]
-        public PatientProfile LoadPatientDetails(long oid)
+        public PatientProfile LoadPatientProfileDetails(EntityRef<PatientProfile> profileRef)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile patient = broker.Find(oid);
+            PatientProfile patient = broker.Load(profileRef);
 
             // load all relevant collections
-            broker.LoadAddresses(patient);
-            broker.LoadTelephoneNumbers(patient);
+            broker.LoadAddressesForPatientProfile(patient);
+            broker.LoadTelephoneNumbersForPatientProfile(patient);
 
             return patient;
         }
@@ -52,15 +52,13 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void AddNewPatient(PatientProfile patient)
         {
-            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
-            broker.Store(patient.Patient);
+            throw new NotImplementedException();
         }
 
         [UpdateOperation]
-        public void UpdatePatient(PatientProfile patient)
+        public void UpdatePatientProfile(PatientProfile patient)
         {
-            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
-            broker.Store(patient.Patient);
+            throw new NotImplementedException();
         }
 
         #endregion

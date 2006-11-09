@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public void Apply()
         {
-            PatientProfileEditorComponent editor = new PatientProfileEditorComponent(PatientProfile.New());
+            PatientProfileEditorComponent editor = new PatientProfileEditorComponent();
             ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
                 this.Context.DesktopWindow,
                 editor,
@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (result == ApplicationComponentExitCode.Normal)
             {
                 // open the patient overview for the newly created patient
-                Document doc = new PatientOverviewDocument(editor.Subject, this.Context.DesktopWindow);
+                Document doc = new PatientOverviewDocument(editor.PatientProfile, this.Context.DesktopWindow);
                 doc.Open();
             }
         }

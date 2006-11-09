@@ -33,7 +33,12 @@ namespace ClearCanvas.Healthcare.Hibernate
 
         public new bool Equals(object x, object y)
         {
-            return (x as DateTimeRange) == (y as DateTimeRange);
+            if (Object.ReferenceEquals(x, y))
+                return true;
+            if (x == null || y == null)
+                return false;
+
+            return x.Equals(y);
         }
 
         public string[] PropertyNames

@@ -49,10 +49,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7", "..\HL7\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hibernate", "..\HL7\Hibernate\ClearCanvas.HL7.Hibernate.csproj", "{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hapi", "..\HL7\NHapi\ClearCanvas.HL7.Hapi.csproj", "{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.InboundProcessor", "..\HL7\InboundProcessor\ClearCanvas.HL7.InboundProcessor.csproj", "{691D6421-4069-40EA-ADA4-07A82D86D0A3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,14 +123,6 @@ Global
 		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{691D6421-4069-40EA-ADA4-07A82D86D0A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{691D6421-4069-40EA-ADA4-07A82D86D0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{691D6421-4069-40EA-ADA4-07A82D86D0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{691D6421-4069-40EA-ADA4-07A82D86D0A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

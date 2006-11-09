@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -17,32 +18,22 @@ namespace ClearCanvas.Ris.Services
         /// <returns>A list of patient profiles</returns>
         IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
 
-        /// <summary>
-        /// Loads the <see cref="Patient.Profiles"/> collection, if it is not already loaded.
-        /// </summary>
-        /// <param name="patient">The patient to load profiles for</param>
-        void LoadPatientProfiles(Patient patient);
-
-        /// <summary>
-        /// Loads the details collections for the specified patient profile, if not already loaded.
-        /// </summary>
-        /// <param name="profile"></param>
-        void LoadPatientProfileDetails(PatientProfile profile);
+        Patient LoadPatientAndAllProfiles(EntityRef<PatientProfile> profileRef);
 
         /// <summary>
         /// Loads the patient profile with the specified OID, and optionally with details.
         /// </summary>
-        /// <param name="oid">The OID of the patient profile to load</param>
+        /// <param name="profileRef">A reference to the patient profile to load</param>
         /// <param name="withDetails">If true, will also load the related detail collections</param>
         /// <returns></returns>
-        PatientProfile LoadPatientProfile(long oid, bool withDetails);
+        PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef, bool withDetails);
 
         /// <summary>
         /// Searches for reconciliation candidates for the specified patient profile.
         /// </summary>
         /// <param name="patientProfile"></param>
         /// <returns>A list of matches</returns>
-        IList<PatientProfileMatch> FindPatientReconciliationMatches(PatientProfile patientProfile);
+        IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef);
 
         /// <summary>
         /// Reconciles the specified list of patients to the specified patient.

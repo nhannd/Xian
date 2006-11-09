@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientOverviewDocument : Document
     {
-        private PatientProfile _profile;
+        private EntityRef<PatientProfile> _profileRef;
 
-        public PatientOverviewDocument(PatientProfile profile, IDesktopWindow window)
-            :base(profile.OID, window)
+        public PatientOverviewDocument(EntityRef<PatientProfile> profileRef, IDesktopWindow window)
+            :base(profileRef.ToString(), window)
         {
-            _profile = profile;
+            _profileRef = profileRef;
         }
 
         protected override string GetTitle()
         {
-            return string.Format(SR.PatientComponentTitle, _profile.Name.Format(), _profile.MRN.Format());
+            return "Patient Profile";   // doesn't matter, cause the component will set the title when it starts
         }
 
         protected override IApplicationComponent GetComponent()
         {
-            return new PatientOverviewComponent(_profile);
+            return new PatientOverviewComponent(_profileRef);
         }
     }
 }

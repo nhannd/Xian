@@ -14,14 +14,30 @@ namespace <%= @model.namespace %> {
     /// </summary>
 	public partial class <%= @className %> : <%= @superClassName %>
 	{
+	
 		/// <summary>
-		/// Factory method
+		/// This method is called from the constructor.  Use this method to implement any custom
+		/// object initialization.
 		/// </summary>
-		public static <%= @isSubClass ? "new " : nil%><%= @className %> New()
+		private void CustomInitialize()
 		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new <%= @className %>();
 		}
+		
+		#region Object overrides
+		
+		public override bool Equals(object that)
+		{
+			// TODO: implement a test for business-key equality
+			return base.Equals(that);
+		}
+		
+		public override int GetHashCode()
+		{
+			// TODO: implement a hash-code based on the business-key used in the Equals() method
+			return base.GetHashCode();
+		}
+		
+		#endregion
+
 	}
 }

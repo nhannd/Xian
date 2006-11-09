@@ -6,16 +6,23 @@ namespace ClearCanvas.Enterprise
 {
     public class EntityChangeEventArgs : EventArgs
     {
-        private EntityChange _change;
+        private EntityRefBase _entityRef;
+        private EntityChangeType _changeType;
 
-        public EntityChangeEventArgs(EntityChange change)
+        public EntityChangeEventArgs(EntityRefBase entityRef, EntityChangeType changeType)
         {
-            _change = change;
+            _entityRef = entityRef;
+            _changeType = changeType;
         }
 
-        public EntityChange Change
+        public EntityChangeType ChangeType
         {
-            get { return _change; }
+            get { return _changeType; }
+        }
+
+        public EntityRefBase EntityRef
+        {
+            get { return _entityRef; }
         }
     }
 }

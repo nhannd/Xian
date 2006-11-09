@@ -14,15 +14,9 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class PersonName
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static PersonName New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new PersonName();
-		}
+        private void CustomInitialize()
+        {
+        }
 
         /// <summary>
         /// Returns a string formatting the person name for purpose of display.

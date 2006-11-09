@@ -25,18 +25,10 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// Keeps track of the object version for optimistic concurrency.  Not used by client code.
         /// </summary>
-        protected virtual int Version
+        public virtual int Version
         {
             get { return _version; }
-            set { _version = value; }
-        }
-
-        /// <summary>
-        /// Returns true if this entity has never been persisted
-        /// </summary>
-        public bool IsNew
-        {
-            get { return this.OID == 0; }
+            private set { _version = value; }
         }
     }
 }

@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void AddPhoneNumber()
         {
-            TelephoneNumber phoneNumber = TelephoneNumber.New();
+            TelephoneNumber phoneNumber = new TelephoneNumber();
 
             //provide reasonable defaults for following two fields until mapping file modified to nullable
             phoneNumber.CountryCode = "1";
@@ -132,8 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // can occur if user double clicks while holding control
             if (_currentPhoneNumberSelection == null) return;
 
-            TelephoneNumber phoneNumber = TelephoneNumber.New();
-            phoneNumber.CopyFrom(_currentPhoneNumberSelection);
+            TelephoneNumber phoneNumber = (TelephoneNumber)_currentPhoneNumberSelection.Clone();
             
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Phone Number...");

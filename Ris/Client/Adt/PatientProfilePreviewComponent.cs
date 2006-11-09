@@ -55,7 +55,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private PatientProfile _subject;
+
+        private EntityRef<PatientProfile> _patientProfileRef;
+        private PatientProfile _patientProfile;
         private Table<Address> _addresses;
         private Table<TelephoneNumber> _phoneNumbers;
         private bool _showHeader;
@@ -86,18 +88,15 @@ namespace ClearCanvas.Ris.Client.Adt
             _showReconciliationAlert = showReconciliationAlert;
         }
 
-        public PatientProfile Subject
+        public EntityRef<PatientProfile> PatientProfileRef
         {
-            get { return _subject; }
+            get { return _patientProfileRef; }
             set
             {
-                if (_subject != value)
+                _patientProfileRef = value;
+                if (this.IsStarted)
                 {
-                    _subject = value;
-                    if (this.IsStarted)
-                    {
-                        UpdateDisplay();
-                    }
+                    UpdateDisplay();
                 }
             }
         }
@@ -152,15 +151,12 @@ namespace ClearCanvas.Ris.Client.Adt
             _addresses.Items.Clear();
             _phoneNumbers.Items.Clear();
 
-            if (_subject != null)
+            if (_patientProfileRef != null)
             {
-                if (!_subject.IsNew)
-                {
-                    _adtService.LoadPatientProfileDetails(_subject);
-                }
+                _patientProfile = _adtService.LoadPatientProfile(_patientProfileRef, true);
 
                 Address mostRecentExpiredHomeAddress = null;
-                foreach (Address address in _subject.Addresses)
+                foreach (Address address in _patientProfile.Addresses)
                 {
                     if (address.IsCurrent)
                     {
@@ -178,11 +174,11 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 }
                 if (mostRecentExpiredHomeAddress != null) _addresses.Items.Add(mostRecentExpiredHomeAddress);
-                if (_subject.CurrentHomeAddress != null) _addresses.Items.Remove(_subject.CurrentHomeAddress);
+                if (_patientProfile.CurrentHomeAddress != null) _addresses.Items.Remove(_patientProfile.CurrentHomeAddress);
                 _addresses.Sort(new TableSortParams(_addresses.Columns[0], false));
 
                 TelephoneNumber mostRecentExpiredHomePhone = null;
-                foreach (TelephoneNumber phoneNumber in _subject.TelephoneNumbers)
+                foreach (TelephoneNumber phoneNumber in _patientProfile.TelephoneNumbers)
                 {
                     if (phoneNumber.IsCurrent)
                     {
@@ -200,7 +196,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 }
                 if (mostRecentExpiredHomePhone != null) _phoneNumbers.Items.Add(mostRecentExpiredHomePhone);
-                if (_subject.CurrentHomePhone != null) _phoneNumbers.Items.Remove(_subject.CurrentHomePhone);
+                if (_patientProfile.CurrentHomePhone != null) _phoneNumbers.Items.Remove(_patientProfile.CurrentHomePhone);
                 _phoneNumbers.Sort(new TableSortParams(_phoneNumbers.Columns[0], false));
             }
 
@@ -227,34 +223,34 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Name
         {
-            get { return _subject.Name.Format(); }
+            get { return _patientProfile.Name.Format(); }
         }
 
         public string DateOfBirth
         {
-            get { return ClearCanvas.Desktop.Format.Date(_subject.DateOfBirth); }
+            get { return ClearCanvas.Desktop.Format.Date(_patientProfile.DateOfBirth); }
         }
 
         public string Mrn
         {
-            get { return _subject.MRN.Format(); }
+            get { return _patientProfile.Mrn.Format(); }
         }
 
         public string Healthcard
         {
-            get { return _subject.Healthcard.Id; }
+            get { return _patientProfile.Healthcard.Id; }
         }
 
         public string Sex
         {
-            get { return _sexChoices[_subject.Sex].Value; }
+            get { return _sexChoices[_patientProfile.Sex].Value; }
         }
 
         public string CurrentHomeAddress
         {
             get
             {
-                Address address = _subject.CurrentHomeAddress;
+                Address address = _patientProfile.CurrentHomeAddress;
                 return (address == null) ? "Unknown" : address.Format();
             }
         }
@@ -263,7 +259,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                TelephoneNumber phone = _subject.CurrentHomePhone;
+                TelephoneNumber phone = _patientProfile.CurrentHomePhone;
                 return (phone == null) ? "Unknown" : phone.Format();
             }
         }
@@ -277,9 +273,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get 
             { 
-                return (_subject.CurrentHomeAddress != null) 
-                    ? (_subject.Addresses.Count - 1) - _addresses.Items.Count
-                    : _subject.Addresses.Count - _addresses.Items.Count; 
+                return (_patientProfile.CurrentHomeAddress != null) 
+                    ? (_patientProfile.Addresses.Count - 1) - _addresses.Items.Count
+                    : _patientProfile.Addresses.Count - _addresses.Items.Count; 
             }
         }
 
@@ -292,9 +288,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get 
             {
-                return (_subject.CurrentHomePhone != null)
-                    ? (_subject.TelephoneNumbers.Count - 1) - _phoneNumbers.Items.Count
-                    : _subject.TelephoneNumbers.Count - _phoneNumbers.Items.Count;
+                return (_patientProfile.CurrentHomePhone != null)
+                    ? (_patientProfile.TelephoneNumbers.Count - 1) - _phoneNumbers.Items.Count
+                    : _patientProfile.TelephoneNumbers.Count - _phoneNumbers.Items.Count;
             }
         }
 

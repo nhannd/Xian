@@ -6,8 +6,8 @@ namespace ClearCanvas.Desktop.Actions
 {
     public class ActionBuilderException : Exception
     {
-        internal ActionBuilderException(string message, Exception inner)
-            : base(message, inner)
+        internal ActionBuilderException(string message)
+            : base(message)
         {
         }
     }

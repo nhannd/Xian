@@ -68,13 +68,6 @@
       <DependentUpon>FoldersComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FoldersComponentView.cs" />
-    <Compile Include="HL7QueuePreviewComponentView.cs" />
-    <Compile Include="HL7QueuePreviewComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="HL7QueuePreviewComponentControl.Designer.cs">
-      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="JscriptComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -173,10 +166,6 @@
     <EmbeddedResource Include="FoldersComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FoldersComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JscriptComponentControl.resx">
       <SubType>Designer</SubType>

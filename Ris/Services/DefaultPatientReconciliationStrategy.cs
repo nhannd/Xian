@@ -19,10 +19,10 @@ namespace ClearCanvas.Ris.Services
              * 
              * Allow user to to select 2 or more patient records from different hospitals and merge into an MPI.  
              * 
-             * Display High-Probability match/search results from muliple HIS of patients with various MRNs when 
+             * Display High-Probability match/search results from muliple HIS of patients with various Mrns when 
              * field: healthcard # is matched/identical.
              * 
-             * Display Moderate-Probability match/search results from multiple HIS of patients with various MRNs when fields: surname, 
+             * Display Moderate-Probability match/search results from multiple HIS of patients with various Mrns when fields: surname, 
              * given name, DOB, gender are matched/identical.  
              * 
              */
@@ -66,10 +66,10 @@ namespace ClearCanvas.Ris.Services
 
         private static void IdentifyConflictsForSiteFromProposedMatches(PatientProfile existingReconciledProfile, IList<PatientProfileMatch> matches, IList<PatientProfileMatch> conflicts)
         {
-            String existingMRN = existingReconciledProfile.MRN.AssigningAuthority;
+            String existingMrn = existingReconciledProfile.Mrn.AssigningAuthority;
             foreach (PatientProfileMatch proposedMatch in matches)
             {
-                if (proposedMatch.PatientProfile.MRN.AssigningAuthority == existingMRN)
+                if (proposedMatch.PatientProfile.Mrn.AssigningAuthority == existingMrn)
                 {
                     conflicts.Add(proposedMatch);
                     RemoveAllProfilesRelatedToConflict(proposedMatch, matches, conflicts);

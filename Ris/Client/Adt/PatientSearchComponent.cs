@@ -207,7 +207,7 @@ namespace ClearCanvas.Ris.Client.Adt
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             if (_mrn != null)
             {
-                criteria.MRN.Id.Like(_mrn + "%");
+                criteria.Mrn.Id.Like(_mrn + "%");
             }
 
             if (_healthcard != null)

@@ -11,31 +11,63 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientProfileEditorComponent : NavigatorComponentContainer
     {
-        private PatientProfile _subject;
+        private EntityRef<PatientProfile> _profileRef;
+        private PatientProfile _profile;
+        private bool _isNew;
+        private IAdtService _adtService;
 
         private PatientProfileDetailsEditorComponent _patientEditor;
         private AddressesSummaryComponent _addressesSummary;
         private PhoneNumbersSummaryComponent _phoneNumbersSummary;
 
-        public PatientProfileEditorComponent(PatientProfile subject)
+        /// <summary>
+        /// Constructs an editor to edit the specified profile
+        /// </summary>
+        /// <param name="profileRef"></param>
+        public PatientProfileEditorComponent(EntityRef<PatientProfile> profileRef)
         {
-            _subject = subject;
+            _profileRef = profileRef;
+            _isNew = false;
         }
 
-        public PatientProfile Subject
+        /// <summary>
+        /// Constructs an editor to edit a new profile
+        /// </summary>
+        public PatientProfileEditorComponent()
         {
-            get { return _subject; }
+            _isNew = true;
+        }
+
+        public EntityRef<PatientProfile> PatientProfile
+        {
+            get { return _profileRef; }
         }
 
         public override void Start()
         {
+            _adtService = ApplicationContext.GetService<IAdtService>();
+
+            if (_isNew)
+            {
+                _profile = new PatientProfile();
+                _profile.Mrn.AssigningAuthority = "UHN";    // TODO remove this hack
+                _profile.Healthcard.AssigningAuthority = "Ontario";    // TODO remove this hack
+            }
+            else
+            {
+                _profile = _adtService.LoadPatientProfile(_profileRef, true);
+                this.Host.SetTitle(
+                    string.Format(SR.PatientComponentTitle, _profile.Name.Format(), _profile.Mrn.Format()));
+            }
+
+
             this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent()));
             this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent()));
             this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
 
-            _patientEditor.Subject = _subject;
-            _addressesSummary.Subject = _subject;
-            _phoneNumbersSummary.Subject = _subject;
+            _patientEditor.Subject = _profile;
+            _addressesSummary.Subject = _profile;
+            _phoneNumbersSummary.Subject = _profile;
 
             base.Start();
         }
@@ -52,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 SaveChanges();
                 this.ExitCode = ApplicationComponentExitCode.Normal;
             }
-            catch (ConcurrentModificationException)
+            catch (ConcurrencyException)
             {
                 this.Host.ShowMessageBox("The patient was modified by another user.  Your changes could not be saved.", MessageBoxActions.Ok);
                 this.ExitCode = ApplicationComponentExitCode.Error;
@@ -73,14 +105,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SaveChanges()
         {
-            IAdtService service = ApplicationContext.GetService<IAdtService>();
-            if (_subject.IsNew)
+            if (_isNew)
             {
-                service.CreatePatientForProfile(_subject);
+                _adtService.CreatePatientForProfile(_profile);
+                _profileRef = new EntityRef<PatientProfile>(_profile);
             }
             else
             {
-                service.UpdatePatientProfile(_subject);
+                _adtService.UpdatePatientProfile(_profile);
             }
         }
 

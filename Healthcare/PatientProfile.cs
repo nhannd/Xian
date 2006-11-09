@@ -14,17 +14,32 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class PatientProfile : Entity
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static PatientProfile New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			PatientProfile patientProfile = new PatientProfile();
-            patientProfile._sex = Sex.U;   // default to Unknown
-            return patientProfile;
-		}
+        private void CustomInitialize()
+        {
+        }
+
+        /// <summary>
+        /// Test for equality based on the MRN
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            PatientProfile that = obj as PatientProfile;
+            if (that == null)
+                return false;
+
+            return this.Mrn == null ? that.Mrn == null : this.Mrn.Equals(that.Mrn);
+        }
+
+        /// <summary>
+        /// Gets a hash code based on the MRN
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return this.Mrn == null ? 0 : this.Mrn.GetHashCode();
+        }
 
         public virtual DateTime DateOfBirth
         {

@@ -162,6 +162,7 @@
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />
+    <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Utilities\ComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
     <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />
@@ -169,6 +170,8 @@
     <Compile Include="Utilities\EnumeratorWrapper.cs" />
     <Compile Include="Utilities\EventsHelper.cs" />
     <Compile Include="Utilities\FileProcessor.cs" />
+    <Compile Include="Utilities\FunctionalList.cs" />
+    <Compile Include="Utilities\IFunctionalList.cs" />
     <Compile Include="Utilities\InterthreadMarshaler.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IObservablePropertyBinding.cs" />
@@ -179,6 +182,7 @@
     <Compile Include="Utilities\ObservableDictionary.cs" />
     <Compile Include="Utilities\ObservableList.cs" />
     <Compile Include="Utilities\ResourceResolver.cs" />
+    <Compile Include="Utilities\Scope.cs" />
     <Compile Include="Utilities\Win32PerformanceCounter.cs" />
   </ItemGroup>
   <ItemGroup>

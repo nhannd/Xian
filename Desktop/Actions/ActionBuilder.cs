@@ -59,6 +59,9 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action != null && is ClickAction
             ClickAction clickAction = (ClickAction)_action;
 
+            // check that the method exists, etc
+            ValidateClickHandler(a.HandlerMethodName);
+
             try
             {
                 ClickHandlerDelegate clickHandler = 
@@ -97,6 +100,10 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action != null && is ClickAction
             ClickAction clickAction = (ClickAction)_action;
 
+            // check that property, event exist, etc.
+            ValidateProperty(a.PropertyName);
+            ValidateEvent(a.ChangeEventName);
+            
             clickAction.SetCheckedObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
         }
 
@@ -104,7 +111,53 @@ namespace ClearCanvas.Desktop.Actions
         {
             // assert _action != null 
 
+            // check that property, event exist, etc.
+            ValidateProperty(a.PropertyName);
+            ValidateEvent(a.ChangeEventName);
+            
             _action.SetEnabledObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
+        }
+
+        private void ValidateClickHandler(string methodName)
+        {
+            // look for a void public method by this name
+            MethodInfo info = _actionTarget.GetType().GetMethod(methodName, Type.EmptyTypes);
+            if (info == null)
+            {
+                throw new ActionBuilderException(
+                    string.Format("The method {0} does not exist for class {1}, or it does not have the correct signature",
+                    methodName, _actionTarget.GetType().FullName));
+            }
+        }
+
+        private void ValidateEvent(string eventName)
+        {
+            EventInfo info = _actionTarget.GetType().GetEvent(eventName);
+            if (info == null)
+            {
+                throw new ActionBuilderException(
+                    string.Format("The event {0} does not exist for class {1}",
+                    eventName, _actionTarget.GetType().FullName));
+            }
+        }
+
+        private void ValidateProperty(string propertyName)
+        {
+            PropertyInfo info = _actionTarget.GetType().GetProperty(propertyName, typeof(bool));
+            if (info == null)
+            {
+                throw new ActionBuilderException(
+                    string.Format("The property {0} does not exist for class {1}, or it does not have the correct return type",
+                    propertyName, _actionTarget.GetType().FullName));
+            }
+
+            MethodInfo getter = info.GetGetMethod();
+            if (getter == null)
+            {
+                throw new ActionBuilderException(
+                    string.Format("The property {0} does not on class {1} does not have a public get method",
+                    propertyName, _actionTarget.GetType().FullName));
+            }
         }
     }
 }

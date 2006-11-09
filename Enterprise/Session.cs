@@ -22,25 +22,25 @@ namespace ClearCanvas.Enterprise
         }
 
 
-        private IPersistentStore _dataStore;
         private IServiceManager _serviceManager;
-        private TransactionMonitor _transactionMonitor;
+        private ITransactionNotifier _transactionNotifier;
+        private IPersistentStore _dataStore;
 
         internal Session()
         {
-            // initialize the data store now, rather than deferring it
-            // (the session is pretty useless without a data-store)
+            // TODO this stuff doesn't really belong here, does it?
             PersistentStoreExtensionPoint xp = new PersistentStoreExtensionPoint();
             _dataStore = (IPersistentStore)xp.CreateExtension();
             _dataStore.Initialize();
+            _dataStore.SetTransactionNotifier(this.TransactionNotifier);
         }
 
-        protected IPersistentStore DataStore
+        /// <summary>
+        /// TODO this shouldn't really be a session property, should it?
+        /// </summary>
+        public IPersistentStore DataStore
         {
-            get
-            {
-                return _dataStore;
-            }
+            get { return _dataStore; }
         }
 
         public IServiceManager ServiceManager
@@ -55,26 +55,16 @@ namespace ClearCanvas.Enterprise
             }
         }
 
-        public ITransactionMonitor TransactionMonitor
+        public ITransactionNotifier TransactionNotifier
         {
             get
             {
-                if (_transactionMonitor == null)
+                if (_transactionNotifier == null)
                 {
-                    _transactionMonitor = new TransactionMonitor(this);
+                    _transactionNotifier = new TransactionNotifier(this);
                 }
-                return _transactionMonitor;
+                return _transactionNotifier;
             }
-        }
-
-        public IReadContext GetReadContext()
-        {
-            return this.DataStore.GetReadContext();
-        }
-
-        public IUpdateContext GetUpdateContext()
-        {
-            return this.DataStore.GetUpdateContext();
         }
     }
 }

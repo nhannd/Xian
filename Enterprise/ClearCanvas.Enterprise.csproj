@@ -46,18 +46,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContext.cs" />
-    <Compile Include="ConcurrentModificationException.cs" />
+    <Compile Include="DirtyState.cs" />
+    <Compile Include="ConcurrencyException.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
+    <Compile Include="EntityRef.cs" />
+    <Compile Include="EntityRefBase.cs" />
+    <Compile Include="EntityUtils.cs" />
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="IServiceManager.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="PersistenceException.cs" />
+    <Compile Include="PersistenceScope.cs" />
     <Compile Include="SearchResultPage.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Tests\ServiceLayerTestHelper.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
-    <Compile Include="ITransactionMonitor.cs" />
+    <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="IServiceLayer.cs" />
@@ -83,9 +89,12 @@
     <Compile Include="ServiceOperationAdvice.cs" />
     <Compile Include="ServiceOperationAttribute.cs" />
     <Compile Include="ServiceManager.cs" />
-    <Compile Include="TransactionMonitor.cs" />
+    <Compile Include="TransactionNotifier.cs" />
     <Compile Include="UpdateContextAdvice.cs" />
+    <Compile Include="UpdateContextSyncMode.cs" />
     <Compile Include="UpdateOperationAttribute.cs" />
+    <Compile Include="ValueObject.cs" />
+    <Compile Include="VersionHandling.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
@@ -98,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

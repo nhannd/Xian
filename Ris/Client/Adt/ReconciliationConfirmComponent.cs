@@ -34,17 +34,13 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public ReconciliationConfirmComponent(Patient target, IList<Patient> sources)
         {
-            IAdtService service = ApplicationContext.GetService<IAdtService>();
-
             _sourceProfiles = new PatientProfileTable();
             foreach (Patient patient in sources)
             {
-                service.LoadPatientProfiles(patient);
                 _sourceProfiles.Items.AddRange(patient.Profiles);
             }
 
             _targetProfiles = new PatientProfileTable();
-            service.LoadPatientProfiles(target);
             _targetProfiles.Items.AddRange(target.Profiles);
         }
 

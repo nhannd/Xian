@@ -6,6 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -24,13 +26,38 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("view2", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
 
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
-    public class PatientOpenFromWorklistTool : PatientWorklistTool
+    public class PatientOverviewTool : Tool<IWorklistToolContext>
     {
+        private bool _enabled;
+        private event EventHandler _enabledChanged;
+        
         public override void Initialize()
         {
             base.Initialize();
-
             this.Context.DefaultAction = View;
+            this.Context.SelectedPatientProfileChanged += delegate(object sender, EventArgs args)
+            {
+                this.Enabled = (this.Context.SelectedPatientProfile != null);
+            };
+        }
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if (_enabled != value)
+                {
+                    _enabled = value;
+                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler EnabledChanged
+        {
+            add { _enabledChanged += value; }
+            remove { _enabledChanged -= value; }
         }
 
         public void View()
@@ -38,9 +65,9 @@ namespace ClearCanvas.Ris.Client.Adt
             OpenPatient(this.Context.SelectedPatientProfile, this.Context.DesktopWindow);
         }
 
-        protected void OpenPatient(PatientProfile profile, IDesktopWindow window)
+        protected void OpenPatient(EntityRef<PatientProfile> profile, IDesktopWindow window)
         {
-            Document doc = DocumentManager.Get(profile.OID);
+            Document doc = DocumentManager.Get(profile.ToString());
             if (doc == null)
             {
                 doc = new PatientOverviewDocument(profile, window);

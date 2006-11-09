@@ -4,59 +4,41 @@ using System.Text;
 
 using ClearCanvas.Enterprise;
 
-namespace <%= @model.namespace %> {
+namespace <%= model.namespace %> {
 
     /// <summary>
-    /// Search criteria for <see cref="<%= @className %>"/> entity
+    /// Search criteria for <see cref="<%= className %>"/> entity
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public partial class <%= @className %>SearchCriteria : <%= @isSubClass  ? @superClassName : nil %>SearchCriteria
+	public partial class <%= searchCriteriaClassName %> : <%= isSubClass  ? superClass.searchCriteriaClassName : "SearchCriteria" %>
 	{
 		/// <summary>
 		/// Constructor for top-level search criteria (no key required)
 		/// </summary>
-		public <%= @className %>SearchCriteria()
+		public <%= searchCriteriaClassName %>()
 		{
 		}
 	
 		/// <summary>
 		/// Constructor for sub-criteria (key required)
 		/// </summary>
-		public <%= @className %>SearchCriteria(string key)
+		public <%= searchCriteriaClassName %>(string key)
 			:base(key)
 		{
 		}
 	
-		<% @fields.each do |f|
-				if(!f.isCollection && !f.isComponent) %>
-	  	public ISearchCondition<<%= f.dataType %>> <%= f.accessorName %>
+		<% searchableFields.each do |f| %>
+	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>
 	  	{
 	  		get
 	  		{
 	  			if(!this.SubCriteria.ContainsKey("<%= f.accessorName %>"))
 	  			{
-	  				this.SubCriteria["<%= f.accessorName %>"] = new SearchCondition<<%= f.dataType %>>("<%= f.accessorName %>");
+	  				this.SubCriteria["<%= f.accessorName %>"] = new <%= f.searchCriteriaDataType %>("<%= f.accessorName %>");
 	  			}
-	  			return (ISearchCondition<<%= f.dataType %>>)this.SubCriteria["<%= f.accessorName %>"];
+	  			return (<%= f.searchCriteriaReturnType %>)this.SubCriteria["<%= f.accessorName %>"];
 	  		}
 	  	}
-	  	<%		end
-	  		end %>
-	  		
-		<% @fields.each do |f|
-				if(f.isComponent) %>
-	  	public <%= f.dataType %>SearchCriteria <%= f.accessorName %>
-	  	{
-	  		get
-	  		{
-	  			if(!this.SubCriteria.ContainsKey("<%= f.accessorName %>"))
-	  			{
-	  				this.SubCriteria["<%= f.accessorName %>"] = new <%= f.dataType %>SearchCriteria("<%= f.accessorName %>");
-	  			}
-	  			return (<%= f.dataType %>SearchCriteria)this.SubCriteria["<%= f.accessorName %>"];
-	  		}
-	  	}
-	  	<%		end
-	  		end %>
+	  	<% end %>
 	}
 }

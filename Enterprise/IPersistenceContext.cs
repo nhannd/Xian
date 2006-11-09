@@ -21,15 +21,31 @@ namespace ClearCanvas.Enterprise
         TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker;
 
         /// <summary>
-        /// Re-attaches a disconnected entity to this context, specifying whether or not to throw an exception
-        /// if the version has changed since the entity was loaded.
+        /// Locks the specified entity into the context.
         /// </summary>
         /// <param name="entity"></param>
-        void Reattach(Entity entity, bool ignoreVersion);
+        void Lock(Entity entity);
 
         /// <summary>
-        /// Closes this persistence context.  No further work can be performed.
+        /// Locks the specified entity into the context with the specified <see cref="DirtyState"/>.
+        /// Note that it does not make sense to lock an entity into a read-context with <see cref="DirtyState.Dirty"/>,
+        /// and an exception will be thrown.  Nevertheless, this method exists on this interface for
+        /// the sake of convenience.
         /// </summary>
-        void Close();
+        /// <param name="entity"></param>
+        /// <param name="state"></param>
+        void Lock(Entity entity, DirtyState state);
+
+        /// <summary>
+        /// Suspends this context.  Releases all connections and resources, but maintains the state
+        /// of all persistent objects.
+        /// </summary>
+        void Suspend();
+
+        /// <summary>
+        /// Resumes a suspended context.
+        /// </summary>
+        void Resume();
+
     }
 }

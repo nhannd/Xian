@@ -14,22 +14,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class CompositeIdentifier
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static CompositeIdentifier New()
-		{
-            // add any object initialization code here
-            // the signature of the New() method may be freely changed as needed
-            CompositeIdentifier patientIdentifier = new CompositeIdentifier();
-            patientIdentifier.AssigningAuthority = "UHN";
-            return patientIdentifier;
-        }
-
-        public void CopyFrom(CompositeIdentifier source)
+        private void CustomInitialize()
         {
-            _id = source.Id;
-            _assigningAuthority = source.AssigningAuthority;
         }
 
         public string Format()

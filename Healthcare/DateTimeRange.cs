@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare {
     /// Represents a date/time range.  Either the From or Until property may be null, in which
     /// case the range is open-ended.
     /// </summary>
-	public class DateTimeRange : IEquatable<DateTimeRange>
+	public class DateTimeRange : IEquatable<DateTimeRange>, ICloneable
 	{
         private DateTime? _from;
         private DateTime? _until;
@@ -101,6 +101,15 @@ namespace ClearCanvas.Healthcare {
         public bool Equals(DateTimeRange that)
         {
             return that != null && that._from == this._from && that._until == this._until;
+        }
+
+        #endregion
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            return new DateTimeRange(this.From, this.Until);
         }
 
         #endregion

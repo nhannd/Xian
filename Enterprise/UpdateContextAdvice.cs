@@ -17,36 +17,26 @@ namespace ClearCanvas.Enterprise
         public override object Invoke(IMethodInvocation invocation)
         {
             ServiceLayer serviceLayer = (ServiceLayer)invocation.This;
-            using(IUpdateContext uctx = this.Session.GetUpdateContext())
+            object retval = null;
+
+            try
             {
-                object retval = null;
-                try
+                using(PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                 {
                     // set the current context of the service layer
-                    serviceLayer.CurrentContext = uctx;
+                    serviceLayer.CurrentContext = PersistenceScope.Current;
                     retval = invocation.Proceed();
                     
-                    // commit transaction
-                    uctx.Commit();
-
-                    // forward the change set to the transaction monitor
-                    this.Session.TransactionMonitor.Queue(uctx.EntityChangeSet);
-
-                    return retval;
+                    // auto-commit transaction
+                    scope.Complete();
                 }
-                catch(Exception e)
-                {
-                    // rollback transaction
-                    uctx.Rollback();
 
-                    // rethrow
-                    throw e;
-                }
-                finally
-                {
-                    // be sure to remove the context from the service layer
-                    serviceLayer.CurrentContext = null;
-                }
+                return retval;
+            }
+            finally
+            {
+                // be sure to remove the context from the service layer
+                serviceLayer.CurrentContext = null;
             }
         }
     }

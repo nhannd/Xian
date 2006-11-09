@@ -25,8 +25,8 @@ namespace <%= @namespace %> {
 		/// </summary>
 		public event EventHandler<EntityChangeEventArgs> <%= e.className %>Changed
 		{
-			add { this.Session.TransactionMonitor.Subscribe(typeof(<%= e.className %>), value); }
-			remove { this.Session.TransactionMonitor.Unsubscribe(typeof(<%= e.className %>), value); }
+			add { this.Session.TransactionNotifier.Subscribe(typeof(<%= e.className %>), value); }
+			remove { this.Session.TransactionNotifier.Unsubscribe(typeof(<%= e.className %>), value); }
 		}
 	  	<% end %>
 	

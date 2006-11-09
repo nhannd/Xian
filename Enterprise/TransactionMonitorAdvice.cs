@@ -21,7 +21,7 @@ namespace ClearCanvas.Enterprise
 
         public void AfterReturning(object returnValue, System.Reflection.MethodInfo method, object[] args, object target)
         {
-            this.Session.TransactionMonitor.PostPending();
+            //this.Session.TransactionNotifier.PostPending();
         }
 
         #endregion

@@ -4,27 +4,21 @@ using System.Text;
 
 using ClearCanvas.Enterprise;
 
-namespace <%= @model.namespace %>.Brokers {
+namespace <%= model.namespace %>.Brokers {
 
     /// <summary>
-    /// Defines the interface for a <see cref="<%= @className %>"/> broker
+    /// Defines the interface for a <see cref="<%= className %>"/> broker
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public partial interface I<%= @className %>Broker : IEntityBroker<<%= @className %>, <%= @className %>SearchCriteria>
+	public partial interface I<%= className %>Broker : IEntityBroker<<%= className %>, <%= searchCriteriaClassName %>>
 	{
-	  	#region Methods for initializing lazy properties
-	  	
-	  	<% @fields.each do |f| if((f.isCollection && f.isLazy) || f.isEntityRef) %>
-	  	/// <summary>
-	  	/// Ensures that the <see cref="<%= @className %>.<%= f.accessorName %>"/> property is loaded for the specified
-        /// <see cref="<%= @className %>"/>.  This method has no effect if the property is already loaded.
-	  	/// </summary>
-	  	/// <param name="entity">The entity whose lazy property should be loaded</param>
-	  	void Load<%= f.accessorName %>(<%= @className %> entity);
-		<% end	end %>
-	  	
-	  	#endregion
-
+		<% fields.select {|f| (f.kind == :collection && f.isLazy) || f.kind == :entity }.each do |f| %>
+		/// <summary>
+		/// Ensures that the <see cref="<%= className %>.<%= f.accessorName %>"/> association is loaded.  Does
+		/// nothing if the association is already loaded.
+		/// </summary>
+		void Load<%= f.accessorName %>For<%= className %>(<%= className %> entity);
+		<% end %>
 	}
 
 }

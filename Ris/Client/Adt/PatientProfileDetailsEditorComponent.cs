@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public PatientProfileDetailsEditorComponent()
         {
-            _patient = PatientProfile.New();
+            _patient = new PatientProfile();
         }
 
         /// <summary>
@@ -122,20 +122,20 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string MrnID
         {
-            get { return _patient.MRN.Id; }
+            get { return _patient.Mrn.Id; }
             set
             {
-                _patient.MRN.Id = value;
+                _patient.Mrn.Id = value;
                 this.Modified = true;
             }
         }
 
         public string MrnSite
         {
-            get { return _patient.MRN.AssigningAuthority; }
+            get { return _patient.Mrn.AssigningAuthority; }
             set
             {
-                _patient.MRN.AssigningAuthority = value;
+                _patient.Mrn.AssigningAuthority = value;
                 this.Modified = true;
             }
         }

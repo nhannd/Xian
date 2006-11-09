@@ -5,6 +5,28 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    [Flags]
+    public enum EntityLoadFlags
+    {
+        /// <summary>
+        /// Default value
+        /// </summary>
+        None = 0x0000,
+
+        /// <summary>
+        /// Forces a version check, causing an exception to be thrown if the version does not match
+        /// </summary>
+        CheckVersion = 0x0001,
+
+        /// <summary>
+        /// Asks for a proxy to the entity, rather than loading the full entity.  There is no guarantee
+        /// that this flag will be obeyed, because the underlying implementation may not support proxies,
+        /// or the entity may not be proxiable.
+        /// </summary>
+        Proxy = 0x0002,
+    }
+
+
     /// <summary>
     /// Base interface for all entity broker interfaces.  An entity broker manages the movement of a
     /// particular domain entity class to and from a persistent store.
@@ -19,11 +41,20 @@ namespace ClearCanvas.Enterprise
         where TSearchCriteria : SearchCriteria
     {
         /// <summary>
-        /// Retrieves the specified entity from the persistent store.
+        /// Loads the entity referred to by the specified entity reference.
         /// </summary>
-        /// <param name="oid">The object ID of the entity to retrieve</param>
-        /// <returns>The entity instance</returns>
-        TEntity Find(long oid);
+        /// <param name="entityRef"></param>
+        /// <returns></returns>
+        TEntity Load(EntityRef<TEntity> entityRef);
+
+        /// <summary>
+        /// Loades the entity referred to by the specified reference, obeying the specified flags
+        /// where possible.
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        TEntity Load(EntityRef<TEntity> entityRef, EntityLoadFlags flags);
 
         /// <summary>
         /// Retrieves a list of all entities matching the specified criteria,
@@ -48,14 +79,6 @@ namespace ClearCanvas.Enterprise
         /// <param name="criteria"></param>
         /// <returns></returns>
         long Count(TSearchCriteria criteria);
-
-        /// <summary>
-        /// Stores the given entity instance in the persistent store.  If the specified entity is transient,
-        /// it will be made persistent (added to the persistent store).  If the specified entity is already persistent,
-        /// the persistent store will be updated.
-        /// </summary>
-        /// <param name="entity">The entity instance to store</param>
-        void Store(TEntity entity);
 
         /// <summary>
         /// Makes the specified entity transient (removes it from the persistent store).

@@ -16,17 +16,24 @@ namespace ClearCanvas.Enterprise
         void Initialize();
 
         /// <summary>
-        /// Obtains an <see cref="IReadContext"/> for use by the application to perform read-only
-        /// operations on this persistent store.
+        /// Sets the transaction notifier, which the store can use to notify the application of changes
+        /// made to its entities.
         /// </summary>
-        /// <returns>a read context</returns>
-        IReadContext GetReadContext();
+        /// <param name="transactionNotifier"></param>
+        void SetTransactionNotifier(ITransactionNotifier transactionNotifier);
 
         /// <summary>
-        /// Obtains an <see cref="IUpdateContext"/> for use by the application to perform read and write
-        /// operations on this persistent store.
+        /// Obtains an <see cref="IReadContext"/> for use by the application to interact
+        /// with this persistent store.
         /// </summary>
-        /// <returns>an update context</returns>
-        IUpdateContext GetUpdateContext();
+        /// <returns>a read context</returns>
+        IReadContext OpenReadContext();
+
+        /// <summary>
+        /// Obtains an <see cref="IUpdateContext"/> for use by the application to interact
+        /// with this persistent store.
+        /// </summary>
+        /// <returns>a update context</returns>
+        IUpdateContext OpenUpdateContext(UpdateContextSyncMode mode);
     }
 }

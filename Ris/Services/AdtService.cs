@@ -38,66 +38,69 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<PatientProfileMatch> FindPatientReconciliationMatches(PatientProfile patientProfile)
+        public Patient LoadPatientAndAllProfiles(EntityRef<PatientProfile> profileRef)
         {
-            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)_strategyExtensionPoint.CreateExtension();
+            IPatientProfileBroker profileBroker = CurrentContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = profileBroker.Load(profileRef, EntityLoadFlags.Proxy);
 
+            IPatientBroker patientBroker = CurrentContext.GetBroker<IPatientBroker>();
+            patientBroker.LoadProfilesForPatient(profile.Patient);
+
+            return profile.Patient;
+        }
+
+        [ReadOperation]
+        public IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef)
+        {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile patientProfile = broker.Load(patientProfileRef);
 
-            // Reload the PatientProfile so that the following call to load related works
-            // If the PatientProfile is not reloaded within this context, nHibernate will attempt to create a second PatientProfile with the
-            // same OID, which results in an exception being thrown.
-            patientProfile = broker.Find(patientProfile.OID);
-
-            Patient patient = patientProfile.Patient;
-            this.CurrentContext.GetBroker<IPatientBroker>().LoadProfiles(patient);
-
+            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)_strategyExtensionPoint.CreateExtension();
             return strategy.FindReconciliationMatches(patientProfile, broker);
         }
 
         [ReadOperation]
-        public void LoadPatientProfiles(Patient patient)
-        {
-            // ensure that the profiles collection is loaded
-            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
-            broker.LoadProfiles(patient);
-        }
-
-        [ReadOperation]
-        public void LoadPatientProfileDetails(PatientProfile profile)
+        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef, bool withDetails)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            broker.LoadAddresses(profile);
-            broker.LoadTelephoneNumbers(profile);
-        }
-
-        [ReadOperation]
-        public PatientProfile LoadPatientProfile(long oid, bool withDetails)
-        {
-            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = broker.Find(oid);
+            PatientProfile profile = broker.Load(profileRef);
             if (withDetails)
             {
-                broker.LoadAddresses(profile);
-                broker.LoadTelephoneNumbers(profile);
+                broker.LoadAddressesForPatientProfile(profile);
+                broker.LoadTelephoneNumbersForPatientProfile(profile);
             }
             return profile;
         }
 
         [UpdateOperation]
-        public void ReconcilePatients(Patient toBeKept, IList<Patient> toBeReconciled)
+        public void ReconcilePatients(Patient destPatient, IList<Patient> sourcePatients)
         {
-            DoReconciliation(toBeKept, toBeReconciled);
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+
+            // put destPatient into context
+            CurrentContext.Lock(destPatient);
+
+            foreach (Patient source in sourcePatients)
+            {
+                // put souce patient into context
+                CurrentContext.Lock(source);
+
+                // do reconciliation
+                destPatient.Reconcile(source);
+
+                // delete the source patient
+                //- NB: this doesn't work due to some NHibernate issues
+                //broker.Delete(source);
+            }
         }
 
         [UpdateOperation]
         public Patient CreatePatientForProfile(PatientProfile profile)
         {
-            Patient patient = Patient.New();
+            Patient patient = new Patient();
             patient.AddProfile(profile);
 
-            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
-            broker.Store(patient);
+            this.CurrentContext.Lock(patient);
 
             return patient;
         }
@@ -105,73 +108,10 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void UpdatePatientProfile(PatientProfile profile)
         {
-            // first save changes to the profile
-            IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            profileBroker.Store(profile);
-
-            // now save the patient itself, which should update its version
-            IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
-            patientBroker.Store(profile.Patient);
+            this.CurrentContext.Lock(profile);
+            this.CurrentContext.Lock(profile.Patient);   // do we need to do this?
         }
 
         #endregion
-
-        private void DoReconciliation(Patient destPatient, IList<Patient> sourcePatients)
-        {
-            if (PatientIdentifierConflictsFound(destPatient, sourcePatients) == true)
-            {
-                throw new PatientReconciliationException("Patient already has identifier for site");
-            }
-
-            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
-            foreach (Patient sourcePatient in sourcePatients)
-            {
-                // add each profile from the source to the dest patient
-                foreach (PatientProfile sourceProfile in sourcePatient.Profiles)
-                {
-                    destPatient.AddProfile(sourceProfile);
-                }
-
-                // remove the profiles from the now defunct source patient
-                sourcePatient.Profiles.Clear();
-
-                // delete the source patient - NB: this doesn't work due to some NHibernate issues
-                //broker.Delete(sourcePatient);
-            }
-
-            broker.Store(destPatient);
-        }
-
-        private bool PatientIdentifierConflictsFound(Patient toBeKept, IList<Patient> toBeReconciled)
-        {
-            foreach (Patient patient in toBeReconciled)
-            {
-                foreach (PatientProfile profile in patient.Profiles)
-                {
-                    CompositeIdentifier mrnToBeReconciled = profile.MRN;
-                    if (mrnToBeReconciled != null &&
-                        PatientHasProfileForSite(toBeKept, mrnToBeReconciled.AssigningAuthority) == true)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private bool PatientHasProfileForSite(Patient patient, string site)
-        {
-            foreach (PatientProfile profile in patient.Profiles)
-            {
-                CompositeIdentifier id = profile.MRN;
-                if (id != null && 
-                    id.AssigningAuthority == site)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

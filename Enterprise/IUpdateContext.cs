@@ -6,14 +6,17 @@ namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Defines the interface to an update context.  An update context allows the application to perform both read
-    /// and write operations on a persistent store within the scope of a single transaction.
+    /// and write operations on a persistent store.
     /// </summary>
     public interface IUpdateContext : IPersistenceContext
     {
         /// <summary>
-        /// Returns true if the transaction is currently open.
+        /// Resumes this context, assuming it has been suspended.  Typically specify <see cref="UpdateContextSyncMode.Flush"/>
+        /// only if this is the final step in the application transaction.
         /// </summary>
-        bool InTransaction { get; }
+        /// <param name="syncMode"></param>
+        void Resume(UpdateContextSyncMode syncMode);
+
 
         /// <summary>
         /// Attempts to flush and commit all changes made within this update context to the persistent store.
@@ -23,21 +26,5 @@ namespace ClearCanvas.Enterprise
         /// If the operation fails, an exception will be thrown.
         /// </summary>
         void Commit();
-
-        /// <summary>
-        /// Discards all changes made within this update context.  The persistent store will not be synchronized
-        /// with the state of the domain objects that are attached to this context.  Note that this implies that
-        /// these domain objects are effectively invalid and should be discarded.  After a call to this method,
-        /// this context is no longer valid for use and must be disposed.
-        /// </summary>
-        void Rollback();
-
-        /// <summary>
-        /// Returns the set of entities that were changed when this context was committed.  This
-        /// is only meaningful after the <see cref="Commit"/> method has been called successfully.
-        /// The return value of this property prior to calling <see cref="Commit"/> or in the case where
-        /// an exception was thrown during the commit is undefined.
-        /// </summary>
-        EntityChange[] EntityChangeSet { get; }
     }
 }

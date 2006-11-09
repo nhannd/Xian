@@ -72,13 +72,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public void RunScript()
         {
             Dictionary<string, object> context = new Dictionary<string,object>();
-
-            PatientProfile patient = PatientProfile.New();
-            patient.Name.FamilyName = "Johnson";
-            patient.Name.GivenName = "Ben";
-
-            context["patient"] = patient;
-            
             try
             {
                 object result = _scriptEngine.Run(_script, context);

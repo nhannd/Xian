@@ -25,6 +25,11 @@ namespace ClearCanvas.Desktop
         void Initialize(string title, IView view);
 
         /// <summary>
+        /// Gets or sets the dialog box title
+        /// </summary>
+        string Title { get; set; }
+
+        /// <summary>
         /// Displays the dialog and blocks until the dialog is closed by the user.
         /// </summary>
         /// <returns>A result representing the action taken by the user</returns>

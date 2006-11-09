@@ -12,6 +12,12 @@ namespace ClearCanvas.Healthcare {
 	public enum Sex
 	{
         /// <summary>
+        /// Unknown
+        /// </summary>
+        [EnumValue("Unknown")]
+        U,
+
+        /// <summary>
         /// Female
         /// </summary>
         [EnumValue("Female")]
@@ -28,12 +34,6 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         [EnumValue("Other")]
         O,
-
-        /// <summary>
-        /// Unknown
-        /// </summary>
-        [EnumValue("Unknown")]
-        U,
 
         /// <summary>
         /// Ambiguous

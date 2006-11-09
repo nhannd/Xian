@@ -35,6 +35,11 @@ namespace ClearCanvas.Desktop
                 get { return _owner._desktopWindow; }
             }
 
+            public override void SetTitle(string title)
+            {
+                _owner.SetTitle(title);
+            }
+
         }
 
         private IApplicationComponent _component;
@@ -67,6 +72,21 @@ namespace ClearCanvas.Desktop
             // run the dialog as modal
             _dialogBox.RunModal();
             return _component.ExitCode;
+        }
+
+        internal void SetTitle(string title)
+        {
+
+            // if the dialog box was already created, then update it's title
+            if (_dialogBox != null)
+            {
+                _dialogBox.Title = title;
+            }
+            else
+            {
+                // otherwise, just remember the title, so the dialog title will be set when it is created
+                _title = title;
+            }
         }
 
         private void _dialogBox_DialogClosing(object sender, ClosingEventArgs e)

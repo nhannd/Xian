@@ -14,14 +14,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class VisitPractitioner
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static VisitPractitioner New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new VisitPractitioner();
-		}
-	}
+        private void CustomInitialize()
+        {
+        }
+    }
 }

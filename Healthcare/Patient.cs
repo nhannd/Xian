@@ -4,6 +4,8 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Healthcare {
@@ -14,60 +16,79 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Patient : Entity
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static Patient New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new Patient();
-		}
+        private void CustomInitialize()
+        {
+        }
+
+        public override bool Equals(object obj)
+        {
+            // according to NHibernate we should be using business-key equality here
+            // however, we don't have a business key, so we really don't have a choice
+            // we should be ok as long as we don't put transient Patient objects into a Hashtable or Set
+            // (and there is really no reason to do so)
+            Patient that = obj as Patient;
+            return that != null && that.OID == this.OID;
+        }
+
+        public override int GetHashCode()
+        {
+            // according to NHibernate we should be using business-key equality here
+            // however, we don't have a business key, so we really don't have a choice
+            // we should be ok as long as we don't put transient Patient objects into a Hashtable or Set
+            // (and there is really no reason to do so)
+            return this.OID.GetHashCode();
+        }
 
         /// <summary>
-        /// Adds a profile to this patient, setting the profile's <see cref="PatientProfile.Patient"/> property
+        /// Adds a profile to this patient, setting the profile's <see cref="PatientPrrofile.Patient"/> property
         /// to refer to this object.  Use this method rather than referring to the <see cref="Patient.Profiles"/>
         /// collection directly.
         /// </summary>
         /// <param name="profile"></param>
         public void AddProfile(PatientProfile profile)
         {
-            Profiles.Add(profile);
+            if (profile.Patient != null)
+            {
+                //NB: technically we should remove the profile from the other patient's collection, but there
+                //seems to be a bug with NHibernate where it deletes the profile if we do this
+                //profile.Patient.Profiles.Remove(profile);
+            }
             profile.Patient = this;
+            this.Profiles.Add(profile);
         }
 
         /// <summary>
-        /// Overridden to compare OIDs. According to NHibernate docs this is a very bad thing to do,
-        /// because the OID will change if the object goes from a transient to a persistent state.
-        /// However, given that the Patient object has no domain fields, we have no other choice.
-        /// Also, because the application does not use transient Patient objects, we should be able
-        /// to get away with it.
+        /// Reconciles the specified patient to this patient
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
+        /// <param name="other"></param>
+        public void Reconcile(Patient other)
         {
-            // according to NHibernate docs this is a very bad thing to do,
-            // because the OID will change if the object goes from a transient to a persistent state
-            // however, because the application does not use transient Patient objects, we should be ok
-            Patient that = obj as Patient;
-            return that != null && this.OID == that.OID;
+            if (PatientIdentifierConflictsFound(other))
+                throw new PatientReconciliationException("assigning authority conflict - cannot reconcile");
+            
+            // Move profiles from the other patient to this patient
+            ArrayList otherProfiles = new ArrayList(other.Profiles);
+            foreach (PatientProfile profile in otherProfiles)
+            {
+                this.AddProfile(profile);
+            }
         }
 
         /// <summary>
-        /// Overridden to return hash code of OID. According to NHibernate docs this is a very bad thing to do,
-        /// because the OID will change if the object goes from a transient to a persistent state.
-        /// However, given that the Patient object has no domain fields, we have no other choice.
-        /// Also, because the application does not use transient Patient objects, we should be able
-        /// to get away with it.
+        /// Returns true if any profiles for the other patient and any profiles for this patient
+        /// have an Mrn with the same assigning authority.
         /// </summary>
+        /// <param name="other"></param>
         /// <returns></returns>
-        public override int GetHashCode()
+        private bool PatientIdentifierConflictsFound(Patient other)
         {
-            // according to NHibernate docs this is a very bad thing to do,
-            // because the OID will change if the object goes from a transient to a persistent state
-            // however, because the application does not use transient Patient objects, we should be ok
-            return this.OID.GetHashCode();
+            foreach (PatientProfile x in this.Profiles)
+                foreach (PatientProfile y in other.Profiles)
+                    if (x.Mrn.AssigningAuthority.Equals(y.Mrn.AssigningAuthority))
+                        return true;
+
+            return false;
         }
+
 	}
 }

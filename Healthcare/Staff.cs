@@ -14,14 +14,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Staff : Entity
 	{
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static Staff New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new Staff();
-		}
-	}
+        private void CustomInitialize()
+        {
+        }
+    }
 }

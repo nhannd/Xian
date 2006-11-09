@@ -32,13 +32,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             _form.FormClosing += new FormClosingEventHandler(_form_FormClosing);
         }
 
-        private void _form_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            ClosingEventArgs args = new ClosingEventArgs();
-            EventsHelper.Fire(_dialogClosing, this, args);
-            e.Cancel = args.Cancel;
-        }
-
         public DialogBoxAction RunModal()
         {
             DialogResult result = _form.ShowDialog();
@@ -76,6 +69,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        public string Title
+        {
+            get { return _form.Text; }
+            set { _form.Text = value; }
+        }
+
         #endregion
+    
+        private void _form_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ClosingEventArgs args = new ClosingEventArgs();
+            EventsHelper.Fire(_dialogClosing, this, args);
+            e.Cancel = args.Cancel;
+        }
+
     }
 }

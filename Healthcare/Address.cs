@@ -15,27 +15,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Address
 	{
-
-		/// <summary>
-		/// Factory method
-		/// </summary>
-		public static Address New()
-		{
-			// add any object initialization code here
-			// the signature of the New() method may be freely changed as needed
-			return new Address();
-		}
-
-        public void CopyFrom(Address source)
+        private void CustomInitialize()
         {
-            _type = source.Type;
-            _street = source.Street;
-            _unit = source.Unit;
-            _city = source.City;
-            _province = source.Province;
-            _country = source.Country;
-            _postalCode = source.PostalCode;
-            _validRange = (source._validRange == null) ? null : new DateTimeRange(source._validRange.From, source._validRange.Until);
         }
 
         public bool IsCurrent

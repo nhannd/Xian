@@ -3,21 +3,22 @@ using System.Collections;
 using System.Text;
 
 using Iesi.Collections;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 
 
-namespace <%= @model.namespace %> {
+namespace <%= model.namespace %> {
 
 
     /// <summary>
     /// <%= @className %> component
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public partial class <%= @className %> : IEquatable<<%= @className %>>
+	public sealed partial class <%= className %> : ValueObject, IEquatable<<%= @className %>>
 	{
        	#region Private fields
        	
-		<% @fields.each do |f| %>
+		<% fields.each do |f| %>
 	  	private <%= f.dataType %> <%= f.fieldName %>;
 	  	<% end %>
 	  	
@@ -28,20 +29,56 @@ namespace <%= @model.namespace %> {
 	  	/// <summary>
 	  	/// Default no-args constructor required by NHibernate
 	  	/// </summary>
-	  	protected <%= @className %>()
+	  	public <%= className %>()
 	  	{
-		 	<% @fields.each do |f| 
+		 	<% fields.each do |f| 
 		 		if(f.initialValue)%>
 		  	<%= f.fieldName %> = <%= f.initialValue %>;
 		  	<% 	end 
 		  	end %>
+		  	
+		  	CustomInitialize();
 	  	}
-	  	
+
+		<% if(mandatoryFields.length > 0) %>
+	  	/// <summary>
+	  	/// Mandatory fields constructor
+	  	/// </summary>
+	  	public <%= @className %>(<%= mandatoryFields.map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
+	  	{
+			// initialize all fields to default values
+		 	<% initializedFields.each do |f| %>
+		  	<%= f.fieldName %> = <%= f.initialValue %>;
+		  	<% end %>
+		  	
+		  	CustomInitialize();
+                        
+            // set mandatory fields
+            <% mandatoryFields.each do |f| %>
+		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
+		  	<% end %>
+	  	}
+                
+		<% if(fields.length > mandatoryFields.length) %>
+	  	/// <summary>
+	  	/// All fields constructor
+	  	/// </summary>
+	  	public <%= className %>(<%= fields.map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
+	  	{
+		  	CustomInitialize();
+
+			<% fields.each do |f| %>
+		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
+		  	<% end %>
+	  	}
+		<% end %>
+		<% end %>
+                
 	  	#endregion
 	  	
 	  	#region Public Properties
 	  	
-	  	<% @fields.each do |f| %>
+	  	<% fields.each do |f| %>
 		<% 	if(f.hasGetter || f.hasSetter) %>
 	  	public <%= f.dataType %> <%= f.accessorName %>
 	  	{
@@ -59,10 +96,10 @@ namespace <%= @model.namespace %> {
 	  	
 	  	#region IEquatable methods
 	  	
-	  	public bool Equals(<%= @className %> that)
+	  	public bool Equals(<%= className %> that)
 		{
 			return (that != null) &&
-	  	<% @fields.each do |f| %>
+	  	<% fields.each do |f| %>
 			((this.<%= f.fieldName %> == default(<%= f.dataType %>)) ? (that.<%= f.fieldName %> == default(<%= f.dataType %>)) : this.<%= f.fieldName %>.Equals(that.<%= f.fieldName %>)) &&
 	  	<% end %>
 				true;
@@ -74,17 +111,36 @@ namespace <%= @model.namespace %> {
 	  	
 	  	public override bool Equals(object that)
 		{
-			return this.Equals(that as <%= @className %>);
+			return this.Equals(that as <%= className %>);
 		}
 		
 		public override int GetHashCode()
 		{
 			return
-	  	<% @fields.each do |f| %>
+	  	<% fields.each do |f| %>
 				(<%= f.fieldName %> == default(<%= f.dataType %>) ? 0 : <%= f.fieldName %>.GetHashCode()) ^
 	  	<% end %>
 				0;
-		}		
+		}
+				
 	  	#endregion
+	  	
+	  	/// <summary>
+	  	/// Returns a clone of this object.  A deep-copy is performed, so the clone will not share
+	  	/// any mutable data with this object.
+	  	/// NB. Note that collections are not currently supported.  If this object contains collections
+	  	/// they will not be cloned.  It should be relatively easy to add collection support when the need arises.
+	  	/// </summary>
+        public override object Clone()
+        {
+			<%= className %> clone = new <%= className %>();
+		<% fields.select {|f| f.kind == :component || f.kind == :userType }.each do |f| %>
+			clone.<%= f.fieldName %> = (this.<%= f.fieldName %> == default(<%= f.dataType %>)) ? default(<%= f.dataType %>) : (<%= f.dataType %>)this.<%= f.fieldName %>.Clone();
+		<% end %>
+		<% fields.select {|f| f.kind == :primitive || f.kind == :enum || f.kind == :entity }.each do |f| %>
+	  		clone.<%= f.fieldName %> = this.<%= f.fieldName %>;
+		<% end %>
+			return clone;
+        }
 	}
 }
