@@ -24,13 +24,13 @@ class EntityFieldDef < FieldDef
     "EntityRef"
   end
   
-  def searchCriteriaDataType
-    entityDef.searchCriteriaClassName
-  end
+#  def searchCriteriaDataType
+ #   entityDef.searchCriteriaClassName
+ # end
   
-  def searchCriteriaReturnType
-    entityDef.searchCriteriaClassName
-  end
+#  def searchCriteriaReturnType
+#    entityDef.searchCriteriaClassName
+#  end
 
 protected
   def entityDef
