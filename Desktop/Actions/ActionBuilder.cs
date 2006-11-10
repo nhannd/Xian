@@ -120,8 +120,6 @@ namespace ClearCanvas.Desktop.Actions
 
         private void ValidateClickHandler(string methodName)
         {
-            // look for a void public method by this name
-            //MethodInfo info = _actionTarget.GetType().GetMethod(methodName, Type.EmptyTypes);
 			MethodInfo info = _actionTarget.GetType().GetMethod(
 				methodName, BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic,
 				null,
