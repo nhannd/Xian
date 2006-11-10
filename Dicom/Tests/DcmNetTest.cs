@@ -60,8 +60,8 @@ namespace ClearCanvas.Dicom.Tests
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(4000));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+            ApplicationEntity serverAE = new ApplicationEntity(new HostName("10.2.34.203"),
+                new AETitle("AE_TITLE"), new ListeningPort(4006));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
@@ -356,7 +356,7 @@ namespace ClearCanvas.Dicom.Tests
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
-            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory() + @"\..\..\..\..\..\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmNetTest.SendTest\");
+            string[] files = Directory.GetFiles(@"c:\temp\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmNetTest.SendTest\");
             dicomClient.Store(serverAE, files);
         }
 

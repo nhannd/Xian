@@ -38,7 +38,7 @@ namespace ClearCanvas.Dicom
 		{
 			if (!base.IsDatasetLoaded)
 			{
-				OFCondition status = _fileFormat.loadFile(_filename, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, 64, false);
+				OFCondition status = _fileFormat.loadFile(_filename, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, 64, E_FileReadMode.ERM_autoDetect);
 				DicomHelper.CheckReturnValue(status, _filename);
 
 				base.IsDatasetLoaded = true;

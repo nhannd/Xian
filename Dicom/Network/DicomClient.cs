@@ -684,7 +684,7 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, saveDirectory))
+                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory))
                                 association.Release();
                         }
                     }

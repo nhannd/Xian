@@ -9,16 +9,16 @@
 		<CppLinker>link.exe</CppLinker>
 		<SwigCompiler>..\..\swig\swig.exe</SwigCompiler>
 		<DcmTkFolderName>dcmtk</DcmTkFolderName>
-		<CppCompilerParameters>/EHsc /W3 /Zm1000 /TP /GR /D "WIN32" /D "_WINDOWS" /D "_CRT_SECURE_NO_DEPRECATE" /D "SWIG" /D "WITH_LIBXML" /D "_WINDLL" /D "MBCS" /D "HAVE_STD_STRING" /D "HAVE_CXX_BOOL" /D "HAVE_CLASS_TEMPLATE" /D "HAVE_STL" /c</CppCompilerParameters>
-		<CppCompilerIncludeParameters>/I "..\..\OFFIS\$(DcmTkFolderName)\config\include" /I "..\..\OFFIS\$(DcmTkFolderName)\dcmnet\include" /I "..\..\OFFIS\$(DcmTkFolderName)\ofstd\include" /I "..\..\OFFIS\$(DcmTkFolderName)\dcmdata\include" /I "..\..\OFFIS\$(DcmTkFolderName)\zlib-1.2.1\include"</CppCompilerIncludeParameters>
-		<SwigParameters>-v -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DUSE_STD_CXX_INCLUDES -DHAVE_STL -I..\..\OFFIS\$(DcmTkFolderName)\config\include -I..\..\OFFIS\$(DcmTkFolderName)\ofstd\include -I..\..\OFFIS\$(DcmTkFolderName)\dcmdata\include -I..\..\OFFIS\$(DcmTkFolderName)\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -Wall -makedefault -Fmicrosoft</SwigParameters>
+		<CppCompilerParameters>/EHsc /W3 /wo4800 /Gy /DHAVE_STD_STRING /DHAVE_STL /c</CppCompilerParameters>
+		<CppCompilerIncludeParameters>/I "..\..\OFFIS\$(DcmTkFolderName)\config\include" /I "..\..\OFFIS\$(DcmTkFolderName)\dcmnet\include" /I "..\..\OFFIS\$(DcmTkFolderName)\ofstd\include" /I "..\..\OFFIS\$(DcmTkFolderName)\dcmdata\include" /I "..\..\OFFIS\$(DcmTkFolderName)\zlib\include"</CppCompilerIncludeParameters> 
+		<SwigParameters>-v -csharp -c++ -D_WIN32 -DHAVE_STD_STRING -DUSE_STD_CXX_INCLUDES -DHAVE_STD_STRING -DHAVE_CXX_BOOL -DHAVE_STL -I..\..\OFFIS\$(DcmTkFolderName)\config\include -I..\..\OFFIS\$(DcmTkFolderName)\ofstd\include -I..\..\OFFIS\$(DcmTkFolderName)\dcmdata\include -I..\..\OFFIS\$(DcmTkFolderName)\dcmnet\include -I&quot;$(VCInstallDir)\include&quot; -Wall -makedefault -Fmicrosoft</SwigParameters>
 		<CppLinkerObjectFiles>ofstd.lib dcmdata.lib dcmnet.lib ws2_32.lib netapi32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib</CppLinkerObjectFiles>
 	</PropertyGroup>
 	<Choose>
 		<When Condition=" '$(Configuration)' == 'Debug' ">
 			<PropertyGroup>
-				<CppCompileDebugParameters>/D "_DEBUG" /Od /Ob0 /RTC1 /ZI /MDd</CppCompileDebugParameters>
-				<CppLinkerParameters>/LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\ofstd\libsrc\debug" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmdata\libsrc\debug" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmnet\libsrc\debug" /LIBPATH:"..\..\OFFIS\zlib-1.2.1\lib" /DLL </CppLinkerParameters>
+				<CppCompileDebugParameters>/Od /ZI /MTd</CppCompileDebugParameters>
+				<CppLinkerParameters>/LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\ofstd\libsrc\debug" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmdata\libsrc\debug" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmnet\libsrc\debug" /LIBPATH:"..\..\OFFIS\zlib\lib" /DLL </CppLinkerParameters>
 				<CppLinkerDebugParameters>/DEBUG /PDB:$(CppCompilerOutputDir)/@(CppWrapperLibraryFile->'%(filename).pdb')</CppLinkerDebugParameters>
 				<CppLinkerZlibFile>zlib_d.lib</CppLinkerZlibFile>
 				<CscEmitDebugInformation>true</CscEmitDebugInformation>
@@ -26,8 +26,8 @@
 		</When>
 		<When Condition=" '$(Configuration)' == 'Release' ">
 			<PropertyGroup>
-				<CppCompileDebugParameters>/MD /O2 /Ob2 /D "NDEBUG"</CppCompileDebugParameters>
-				<CppLinkerParameters>/LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\ofstd\libsrc\release" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmdata\libsrc\release" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmnet\libsrc\release" /LIBPATH:"..\..\OFFIS\zlib-1.2.1\lib" /DLL </CppLinkerParameters>
+				<CppCompileDebugParameters>/MT /O2 /Ob2 /D "NDEBUG"</CppCompileDebugParameters>
+				<CppLinkerParameters>/LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\ofstd\libsrc\release" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmdata\libsrc\release" /LIBPATH:"..\..\OFFIS\$(DcmTkFolderName)\dcmnet\libsrc\release" /LIBPATH:"..\..\OFFIS\zlib\lib" /DLL </CppLinkerParameters>
 				<CppLinkerDebugParameters></CppLinkerDebugParameters>
 				<CppLinkerZlibFile>zlib_o.lib</CppLinkerZlibFile>
 				<CscEmitDebugInformation>false</CscEmitDebugInformation>
@@ -35,8 +35,8 @@
 		</When>
 	</Choose>
 	<ItemGroup>
-		<SwigInterfaceFile Include="dcmdata.i" />
-		<SwigOtherInterfaceFiles Include="dcmnet.i;dcm_typemaps.i;ofstd.i" />
+		<SwigInterfaceFile Include="OffisDcm_dcmnet.i" />
+		<SwigOtherInterfaceFiles Include="dcm_typemaps.i;ofstd.i" />
 		<SwigCppOutputFile Include="Offis_Wrapper.cxx" />
 		<CppWrapperLibraryFile Include="$(CppCompilerOutputDir)\OffisDcm.dll" />
 		<AllSwigOutputFiles Include="$(SwigOutputCsharpDir)\*.cs" Condition="Exists('$(SwigOutputCsharpDir)')" />
