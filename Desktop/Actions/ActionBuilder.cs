@@ -121,8 +121,14 @@ namespace ClearCanvas.Desktop.Actions
         private void ValidateClickHandler(string methodName)
         {
             // look for a void public method by this name
-            MethodInfo info = _actionTarget.GetType().GetMethod(methodName, Type.EmptyTypes);
-            if (info == null)
+            //MethodInfo info = _actionTarget.GetType().GetMethod(methodName, Type.EmptyTypes);
+			MethodInfo info = _actionTarget.GetType().GetMethod(
+				methodName, BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic,
+				null,
+				Type.EmptyTypes,
+				null);
+
+			if (info == null)
             {
                 throw new ActionBuilderException(
                     string.Format("The method {0} does not exist for class {1}, or it does not have the correct signature",
