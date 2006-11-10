@@ -113,10 +113,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             TelephoneNumber phoneNumber = new TelephoneNumber();
 
-            //provide reasonable defaults for following two fields until mapping file modified to nullable
-            phoneNumber.CountryCode = "1";
-            phoneNumber.Extension = "N/A";
-
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Phone Number...");
             if (exitCode == ApplicationComponentExitCode.Normal)

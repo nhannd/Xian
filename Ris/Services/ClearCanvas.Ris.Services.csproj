@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdtReferenceDataService.cs" />
     <Compile Include="AdtService.cs" />
     <Compile Include="DefaultPatientReconciliationStrategy.cs" />
     <Compile Include="HL7QueueService.cs" />
+    <Compile Include="IAdtReferenceDataService.cs" />
     <Compile Include="IAdtService.cs" />
     <Compile Include="IHL7QueueService.cs" />
     <Compile Include="IPatientAdminService.cs" />

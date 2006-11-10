@@ -215,8 +215,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
+                //EntityRef<PatientProfile> patientProfileRef = new EntityRef<PatientProfile>(_
                 return _showReconciliationAlert &&
-                    _adtService.FindPatientReconciliationMatches(_subject).Count > 0;
+                    _adtService.FindPatientReconciliationMatches(_patientProfileRef).Count > 0;
             }
             set { _showReconciliationAlert = value; }
         }

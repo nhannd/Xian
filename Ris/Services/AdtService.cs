@@ -50,6 +50,35 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
+        public Patient LoadPatient(EntityRef<Patient> patientRef)
+        {
+            IPatientBroker patientBroker = CurrentContext.GetBroker<IPatientBroker>();
+            return patientBroker.Load(patientRef);
+        }
+
+        [ReadOperation]
+        public IList<Visit> ListPatientVisits(EntityRef<Patient> patientRef)
+        {
+            // ensure that the profiles collection is loaded
+            IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
+            Patient patient = patientBroker.Load(patientRef, EntityLoadFlags.Proxy);
+
+            VisitSearchCriteria criteria = new VisitSearchCriteria();
+            criteria.Patient.EqualTo(patient);
+
+            IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
+            return visitBroker.Find(criteria);
+        }
+
+        [ReadOperation]
+        public void LoadVisitDetails(Visit visit)
+        {
+            IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
+            visitBroker.LoadLocationsForVisit(visit);
+            visitBroker.LoadPractitionersForVisit(visit);
+        }
+
+        [ReadOperation]
         public IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
@@ -111,6 +140,30 @@ namespace ClearCanvas.Ris.Services
             this.CurrentContext.Lock(profile);
             this.CurrentContext.Lock(profile.Patient);   // do we need to do this?
         }
+
+        [UpdateOperation]
+        public void UpdateVisit(Visit visit)
+        {
+            this.CurrentContext.Lock(visit);
+            this.CurrentContext.Lock(visit.Patient);
+            //IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
+            //visitBroker.Store(visit);
+
+            //IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
+            //patientBroker.Store(visit.Patient);
+        }
+
+        //[UpdateOperation]
+        //public void UpdatePatientVisits(Patient patient)
+        //{
+        //    this.CurrentContext.Lock(patient);
+
+        //    foreach (Visit visit in patient.Visits)
+        //    {
+        //        this.CurrentContext.Lock(visit);
+        //    }
+
+        //}
 
         #endregion
     }

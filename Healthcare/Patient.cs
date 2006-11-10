@@ -20,6 +20,13 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
+        ///<summary>
+        /// Overridden to compare OIDs. According to NHibernate docs this is a very bad thing to do,
+        /// because the OID will change if the object goes from a transient to a persistent state.
+        /// However, given that the Patient object has no domain fields, we have no other choice.
+        /// Also, because the application does not use transient Patient objects, we should be able
+        /// to get away with it.
+        ///</summary>
         public override bool Equals(object obj)
         {
             // according to NHibernate we should be using business-key equality here

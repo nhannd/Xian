@@ -61,7 +61,8 @@ namespace ClearCanvas.Ris.Services
                 referencedPatients = ProcessHL7QueueItemHelper(hl7QueueItem);
                 foreach (Patient patient in referencedPatients)
                 {
-                    this.CurrentContext.GetBroker<IPatientBroker>().Store(patient);
+                    this.CurrentContext.Lock(patient);
+                    //this.CurrentContext.GetBroker<IPatientBroker>().Store(patient);
                 }
             }
             catch (Exception e)
@@ -109,7 +110,8 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void EnqueueHL7QueueItem(ClearCanvas.HL7.HL7QueueItem item)
         {
-            this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(item);
+            this.CurrentContext.Lock(item);
+            //this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(item);
         }
 
         [UpdateOperation]
@@ -119,7 +121,8 @@ namespace ClearCanvas.Ris.Services
             foreach (HL7ExternalQueueItem externalQueueItem in toBeSynched)
             {
                 HL7QueueItem queueItem = externalQueueItem.GetHL7QueueItem();
-                this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(queueItem);
+                this.CurrentContext.Lock(queueItem);
+                //this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(queueItem);
                 this.CurrentContext.GetBroker<IHL7ExternalQueueItemBroker>().FlagItemAsSynched(externalQueueItem.Guid);
             }
         }
@@ -130,16 +133,22 @@ namespace ClearCanvas.Ris.Services
         {
             if (item == null) return;
 
-            HL7QueueItem reloaded = this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(item.OID);
+            //HL7QueueItem reloaded = this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(item.OID);
 
-            if (reloaded != null)
-            {
-                reloaded.Status.Code = status;
-                reloaded.Status.Description = statusDescription;
-                reloaded.Status.UpdateDateTime = Platform.Time;
+            //if (reloaded != null)
+            //{
+            //    reloaded.Status.Code = status;
+            //    reloaded.Status.Description = statusDescription;
+            //    reloaded.Status.UpdateDateTime = Platform.Time;
 
-                this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(reloaded);
-            }
+            //    this.CurrentContext.Lock(reloaded);
+            //    //this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Store(reloaded);
+            //}
+            item.Status.Code = status;
+            item.Status.Description = statusDescription;
+            item.Status.UpdateDateTime = Platform.Time;
+
+            this.CurrentContext.Lock(item);
         }
 
         private IList<Patient> LoadOrCreatePatients(IList<string> mrns, string assigningAuthority)
@@ -148,7 +157,7 @@ namespace ClearCanvas.Ris.Services
             foreach(string mrn in mrns)
             {
                 PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
-                criteria.MRN.Id.EqualTo(mrn);
+                criteria.Mrn.Id.EqualTo(mrn);
                 //criteria.MRN.AssigningAuthority.EqualTo(assigningAuthority);
 
                 IList<PatientProfile> profiles = this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
@@ -158,10 +167,10 @@ namespace ClearCanvas.Ris.Services
                 }
                 else
                 {
-                    Patient patient = Patient.New();
-                    PatientProfile profile = PatientProfile.New();
-                    profile.MRN.Id = mrn;
-                    profile.MRN.AssigningAuthority = "TODO";
+                    Patient patient = new Patient();
+                    PatientProfile profile = new PatientProfile();
+                    profile.Mrn.Id = mrn;
+                    profile.Mrn.AssigningAuthority = "TODO";
                     profile.Patient = patient;
                     patient.Profiles.Add(profile);
 

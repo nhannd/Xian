@@ -18,7 +18,24 @@ namespace ClearCanvas.Ris.Services
         /// <returns>A list of patient profiles</returns>
         IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
 
+        /// <summary>
+        /// Loads the details collections for the specified patient profile, if not already loaded.
+        /// </summary>
+        /// <param name="profile"></param>
         Patient LoadPatientAndAllProfiles(EntityRef<PatientProfile> profileRef);
+
+        /// <summary>
+        /// Loads a patient from the specified patient entity reference
+        /// </summary>
+        /// <param name="patientRef"></param>
+        /// <returns></returns>
+        Patient LoadPatient(EntityRef<Patient> patientRef);
+
+        /// <summary>
+        /// Loads the <see cref="Patient.Visits"/> collection, if it is not already loaded.
+        /// </summary>
+        /// <param name="patient">The patient to load profiles for</param>
+        IList<Visit> ListPatientVisits(EntityRef<Patient> patientRef);
 
         /// <summary>
         /// Loads the patient profile with the specified OID, and optionally with details.
@@ -53,5 +70,23 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="profile"></param>
         void UpdatePatientProfile(PatientProfile profile);
+
+        /// <summary>
+        /// Updates the specified visit
+        /// </summary>
+        /// <param name="visit"></param>
+        void UpdateVisit(Visit visit);
+        
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="patient"></param>
+        //void UpdatePatientVisits(Patient patient);
+
+        /// <summary>
+        /// Loads the details collections for the specified Visit
+        /// </summary>
+        /// <param name="visit"></param>
+        void LoadVisitDetails(Visit visit);
     }
 }

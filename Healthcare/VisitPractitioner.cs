@@ -17,5 +17,13 @@ namespace ClearCanvas.Healthcare {
         private void CustomInitialize()
         {
         }
-    }
+
+        public void CopyFrom(VisitPractitioner vp)
+        {
+            this.Role = vp.Role;
+            this.Practitioner = vp.Practitioner;
+            this.StartTime = vp.StartTime;
+            this.EndTime = vp.EndTime;
+        }
+	}
 }

@@ -35,7 +35,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public TEntity Load(EntityRef<TEntity> entityRef)
         {
-            return (TEntity)Load(entityRef);
+            return (TEntity)this.Context.Load(entityRef);
         }
 
         public TEntity Load(EntityRef<TEntity> entityRef, EntityLoadFlags flags)
