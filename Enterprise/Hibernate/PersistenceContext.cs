@@ -40,6 +40,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             BeginTransaction();
         }
 
+        #region IPersistenceContext members
+
         public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
         {
             BrokerExtensionPoint xp = new BrokerExtensionPoint();
@@ -50,7 +52,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public abstract void Lock(Entity entity);
         public abstract void Lock(Entity entity, DirtyState dirtyState);
-        protected abstract EntityLoadFlags DefaultEntityLoadFlags { get; }
 
         public virtual void Suspend()
         {
@@ -87,11 +88,25 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
+        #endregion
+
+        #region IDisposable members
+
         public void Dispose()
         {
             Dispose(true);
         }
 
+        #endregion
+
+
+        /// <summary>
+        /// Allows a broker to create an ADO.NET command, rather than using NHibernate.  The command
+        /// will execute on the same connection and within the same transaction (assuming one exists)
+        /// as any other operation on this context.
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         public IDbCommand CreateSqlCommand(string sql)
         {
             IDbCommand cmd = this.Session.Connection.CreateCommand();
@@ -105,11 +120,28 @@ namespace ClearCanvas.Enterprise.Hibernate
             return cmd;
         }
 
+        
+        /// <summary>
+        /// Default <see cref="EntityLoadFlags"/> to be used by this context
+        /// </summary>
+        protected abstract EntityLoadFlags DefaultEntityLoadFlags { get; }
+
+        /// <summary>
+        /// Loads the specified entity into this context
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <returns></returns>
         internal Entity Load(EntityRefBase entityRef)
         {
             return this.Load(entityRef, this.DefaultEntityLoadFlags);
         }
 
+        /// <summary>
+        /// Loads the specified entity into this context
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         internal Entity Load(EntityRefBase entityRef, EntityLoadFlags flags)
         {
             Entity entity = null;
@@ -157,24 +189,33 @@ namespace ClearCanvas.Enterprise.Hibernate
         }
 
         /// <summary>
-        /// True if this object is read-only.
+        /// True if this context is read-only.
         /// </summary>
         internal bool ReadOnly
         {
             get { return _readOnly; }
         }
 
+        /// <summary>
+        /// True if there is currently a transaction in progress on this context
+        /// </summary>
         internal bool InTransaction
         {
             get { return _transaction != null; }
         }
 
+        /// <summary>
+        /// Begins a transaction 
+        /// </summary>
         protected void BeginTransaction()
         {
             System.Diagnostics.Debug.Assert(_transaction == null, "There is already a transaction in progress");
             _transaction = this.Session.BeginTransaction();
         }
 
+        /// <summary>
+        /// Commits the transaction
+        /// </summary>
         protected void CommitTransaction()
         {
             System.Diagnostics.Debug.Assert(_transaction != null, "There is no transaction to commit");
@@ -183,6 +224,9 @@ namespace ClearCanvas.Enterprise.Hibernate
             _transaction = null;
         }
 
+        /// <summary>
+        /// Rollsback the transaction
+        /// </summary>
         protected void RollbackTransaction()
         {
             System.Diagnostics.Debug.Assert(_transaction != null, "There is no transaction to rollback");
@@ -191,6 +235,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             _transaction = null;
         }
 
+        /// <summary>
+        /// Wraps an NHibernate exception and rethrows it
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="message"></param>
         protected void WrapAndRethrow(Exception e, string message)
         {
             if (e is StaleObjectStateException)
@@ -208,8 +257,6 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
-
-
         /// <summary>
         /// Provides access the NHibernate Session object.
         /// </summary>
@@ -218,6 +265,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             get { return _session; }
         }
 
+        /// <summary>
+        /// Implementation of the Dispose pattern
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -230,6 +281,9 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
+        /// <summary>
+        /// Provides access to the interceptor
+        /// </summary>
         protected DefaultInterceptor Interceptor
         {
             get { return _interceptor; }

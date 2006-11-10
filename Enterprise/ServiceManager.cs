@@ -17,6 +17,10 @@ namespace ClearCanvas.Enterprise
     {
     }
 
+    /// <summary>
+    /// Default implementation of <see cref="IServiceManager"/>, which allows an application to obtain
+    /// a service that implements a specified interface.
+    /// </summary>
     internal class ServiceManager : IServiceManager
     {
         private Session _session;

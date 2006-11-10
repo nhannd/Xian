@@ -5,7 +5,8 @@ using System.Text;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// Defines the public inteface for a search condition.  Note that all methods
+    /// Defines the public inteface for a search condition.  Note that not all methods
+    /// will make sense for every possible type T.  All methods
     /// will throw an exception if a null argument is passed.
     /// </summary>
     /// <typeparam name="T"></typeparam>

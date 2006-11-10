@@ -5,9 +5,9 @@ using System.Text;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// A value stored in an instance of a <see cref="EnumTable"/>.
+    /// Holds meta-data about an instance of a C# enum.
     /// </summary>
-    /// <typeparam name="TEnum">The C# enum type on which this value is based</typeparam>
+    /// <typeparam name="e">The C# enum type on which this value is based</typeparam>
     public class EnumValue<e>
         where e : struct
     {

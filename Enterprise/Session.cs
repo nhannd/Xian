@@ -10,6 +10,9 @@ namespace ClearCanvas.Enterprise
     {
     }
 
+    /// <summary>
+    /// Implementation of <see cref="ISession"/>
+    /// </summary>
     internal class Session : ISession
     {
         private static Session _current;

@@ -13,6 +13,12 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         private ITransactionNotifier _transactionNotifier;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sessionFactory"></param>
+        /// <param name="transactionNotifier"></param>
+        /// <param name="mode"></param>
         internal UpdateContext(ISessionFactory sessionFactory, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
             :base(sessionFactory, false)
         {
@@ -32,6 +38,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             else
                 this.Session.Lock(entity, LockMode.None);
         }
+
+        #region IUpdateContext members
 
         public void Commit()
         {
@@ -53,16 +61,22 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
-        public override void Resume()
-        {
-            Resume(UpdateContextSyncMode.Flush);
-        }
-
         public void Resume(UpdateContextSyncMode mode)
         {
             base.Resume();
 
             this.Session.FlushMode = mode == UpdateContextSyncMode.Flush ? FlushMode.Auto : FlushMode.Never;
+
+            // clear the previous change set
+            // (this is only necessary if the context was previously opened in Flush mode, which is not a typical usage)
+            this.Interceptor.ClearChangeSet();
+        }
+
+        #endregion
+
+        public override void Resume()
+        {
+            Resume(UpdateContextSyncMode.Flush);
         }
 
         protected override void Dispose(bool disposing)
@@ -87,6 +101,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Specifies that the version should be checked.  This makes sense, as a default, in an update context
+        /// to ensure versioning isn't violated.
+        /// </summary>
         protected override EntityLoadFlags DefaultEntityLoadFlags
         {
             get { return EntityLoadFlags.CheckVersion; }

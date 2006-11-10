@@ -4,22 +4,43 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Controls the type of peristence context that <see cref="PersistenceScope"/> creates.
+    /// </summary>
     public enum PersistenceContextType
     {
         Read,
         Update
     }
 
+    /// <summary>
+    /// Possible actions that will be taken on a persistence context when the <see cref="PersistenceScope"/>
+    /// terminates.
+    /// </summary>
     public enum PersistenceScopeDisposeAction
     {
+        /// <summary>
+        /// Closes the context and disposes it
+        /// </summary>
         Close,
+
+        /// <summary>
+        /// Suspends the context
+        /// </summary>
         Suspend
     }
 
+
+    
+
     /// <summary>
-    /// Taken and modified from the following MSDN article by Stephen Toub:
-    /// http://msdn.microsoft.com/msdnmag/issues/06/09/NETMatters/default.aspx
+    /// Used primarily by the AOP advice classes to manage the scoping of persistence contexts around service method calls.
+    /// Can also be used by application code for the same purpose.
+    /// 
+    /// Semantics of use are similar to the .NET framework <see cref="System.Transactions.TransactionScope"/> class.
     /// </summary>
+    // Taken and modified from the following MSDN article by Stephen Toub:
+    // http://msdn.microsoft.com/msdnmag/issues/06/09/NETMatters/default.aspx
     public class PersistenceScope : IDisposable
     {
         enum Vote

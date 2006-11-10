@@ -3,25 +3,24 @@ namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Base interface for a persistence context.  A persistence context is an implementation of the unit-of-work
-    /// pattern, and defines a scope in which the application can perform a set of operations on a persistent store.
-    /// This interface is not implemented directly.  See <see cref="IReadContext"/> and <see cref="IUpdateContext"/>.
-    /// 
-    /// Also acts as a factory to obtain instances of <see cref="IPersistenceBroker"/>.
+    /// and identity map patterns, and defines a scope in which the application can perform a set of operations on
+    /// a persistent store.  This interface is not implemented directly.
+    /// See <see cref="IReadContext"/> and <see cref="IUpdateContext"/>.
     /// </summary>
     /// <seealso cref="IReadContext"/>
     /// <seealso cref="IUpdateContext"/>
     public interface IPersistenceContext : IDisposable
     {
         /// <summary>
-        /// Returns a broker that implements the specified interface and that is configured to operate on
-        /// this persistence context.
+        /// Returns a broker that implements the specified interface to retrieve data into this persistence context.
         /// </summary>
         /// <typeparam name="TBrokerInterface">The interface of the broker to obtain</typeparam>
         /// <returns></returns>
         TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker;
 
         /// <summary>
-        /// Locks the specified entity into the context.
+        /// Locks the specified entity into the context.  If this is an update context, the entity will be
+        /// treated as "clean".  Use the other overload to specify that the entity is dirty.
         /// </summary>
         /// <param name="entity"></param>
         void Lock(Entity entity);

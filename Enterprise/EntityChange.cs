@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Used by class <see cref="EntityChange"/> to record the type of change made to an entity.
+    /// </summary>
     public enum EntityChangeType
     {
         Create,
@@ -11,37 +14,59 @@ namespace ClearCanvas.Enterprise
         Delete
     }
     
+    /// <summary>
+    /// Acts as a memento of a change made to an entity.
+    /// </summary>
     public class EntityChange
     {
         private long _entityOid;
         private int _version;
-        private Type _entityType;
+        private Type _entityClass;
         private EntityChangeType _changeType;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="entityType"></param>
+        /// <param name="entityOid"></param>
+        /// <param name="version"></param>
+        /// <param name="changeType"></param>
         public EntityChange(Type entityType, long entityOid, int version, EntityChangeType changeType)
         {
             _entityOid = entityOid;
-            _entityType = entityType;
+            _entityClass = entityType;
             _changeType = changeType;
             _version = version;
         }
 
-        public EntityChangeType ChangeType
+        /// <summary>
+        /// The type of change
+        /// </summary>
+        internal EntityChangeType ChangeType
         {
             get { return _changeType; }
         }
 
-        public Type EntityType
+        /// <summary>
+        /// The class of the entity
+        /// </summary>
+        internal Type EntityClass
         {
-            get { return _entityType; }
+            get { return _entityClass; }
         }
 
-        public long EntityOID
+        /// <summary>
+        /// The entity OID
+        /// </summary>
+        internal long EntityOID
         {
             get { return _entityOid; }
         }
 
-        public int Version
+        /// <summary>
+        /// The entity version
+        /// </summary>
+        internal int Version
         {
             get { return _version; }
         }

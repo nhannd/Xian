@@ -43,31 +43,6 @@ namespace ClearCanvas.Enterprise
             internal set { _currentContext = value; }
         }
 
-        /// <summary>
-        /// Provides subclass access to the current read context, if one is available 
-        /// </summary>
-        protected IReadContext ReadContext
-        {
-            get
-            {
-                if (CurrentContext == null || !(CurrentContext is IReadContext))
-                    throw new Exception("No read context available");   // todo elaborate
-                return (IReadContext)CurrentContext;
-            }
-        }
-
-        /// <summary>
-        /// Provides subclass access to the current update context, if one is available 
-        /// </summary>
-        protected IUpdateContext UpdateContext
-        {
-            get
-            {
-                if (CurrentContext == null || !(CurrentContext is IUpdateContext))
-                    throw new Exception("No update context available");   // todo elaborate
-                return (IUpdateContext)CurrentContext;
-            }
-        }
 /*
         /// <summary>
         /// Obtains the domain enumeration table for the specified C# enum type.

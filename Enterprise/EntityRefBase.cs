@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Abstract base class for <see cref="EntityRef"/>
+    /// </summary>
     public abstract class EntityRefBase
     {
         private Type _entityClass;
@@ -97,9 +100,14 @@ namespace ClearCanvas.Enterprise
             return this.Equals(obj, false);
         }
 
+        /// <summary>
+        /// Overridden comply with <see cref="Equals"/>.  Note that the version is not considered
+        /// in the hash-code computation.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
-            return _entityOid.GetHashCode() ^ _version.GetHashCode() ^ _entityClass.GetHashCode();
+            return _entityOid.GetHashCode() ^ _entityClass.GetHashCode();
         }
 
         /// <summary>

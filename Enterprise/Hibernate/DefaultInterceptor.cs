@@ -6,6 +6,9 @@ using NHibernate;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
+    /// <summary>
+    /// Implementation of NHibernate IInterceptor, used to record entity change-set for a transaction.
+    /// </summary>
     public class DefaultInterceptor : IInterceptor
     {
         private List<EntityChange> _changes = new List<EntityChange>();
@@ -16,6 +19,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         public EntityChange[] EntityChangeSet
         {
             get { return _changes.ToArray(); }
+        }
+
+        public void ClearChangeSet()
+        {
+            _changes.Clear();
         }
 
         #region IInterceptor Members

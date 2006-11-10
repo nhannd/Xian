@@ -13,8 +13,9 @@ namespace ClearCanvas.Enterprise
         private int _version;
 
         /// <summary>
-        /// OID is short for Object ID, and is used to store the surrogate key that uniquely identifies the 
-        /// object in the database.  Client code can read this value but cannot set it.
+        /// OID is short for object identifier, and is used to store the surrogate key that uniquely identifies the 
+        /// object in the database.  This property is public for compatibility with NHibernate proxies.  It should
+        /// not be used by application code.
         /// </summary>
         public virtual long OID
         {
@@ -23,7 +24,8 @@ namespace ClearCanvas.Enterprise
         }
 
         /// <summary>
-        /// Keeps track of the object version for optimistic concurrency.  Not used by client code.
+        /// Keeps track of the object version for optimistic concurrency.  This property is public for compatibility
+        /// with NHibernate proxies.  It should not be used by application code.
         /// </summary>
         public virtual int Version
         {

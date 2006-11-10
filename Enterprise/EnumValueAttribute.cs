@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Allows meta-data to be specified for each member of a C# enum.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple=false, Inherited=false)]
     public class EnumValueAttribute : Attribute
     {

@@ -4,6 +4,10 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Provides a set of utility methods for use with instance of <see cref="Entity"/> and <see cref="EntityRef"/>.
+    /// This class is not intended for use by application code.
+    /// </summary>
     public static class EntityUtils
     {
         public static bool CheckVersion(EntityRefBase entityRef, Entity entity)

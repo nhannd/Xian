@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Provides a mechanism for requesting a "page" of search results from a persistent store.
+    /// </summary>
     public class SearchResultPage
     {
         private int _firstRow;

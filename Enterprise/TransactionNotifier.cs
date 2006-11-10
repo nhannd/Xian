@@ -57,18 +57,18 @@ namespace ClearCanvas.Enterprise
             }
         }
 
+        #endregion
+
         private void Notify(EntityChange change)
         {
-            if (_eventMap.ContainsKey(change.EntityType))
+            if (_eventMap.ContainsKey(change.EntityClass))
             {
-                Type[] genericParams = new Type[] { change.EntityType };
+                Type[] genericParams = new Type[] { change.EntityClass };
                 EntityRefFactoryBase factory = (EntityRefFactoryBase)Activator.CreateInstance(typeof(EntityRefFactory<>).MakeGenericType(genericParams));
                 EntityRefBase entityRef = factory.CreateReference(change.EntityOID, change.Version);
 
-                EventsHelper.Fire(_eventMap[change.EntityType], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
+                EventsHelper.Fire(_eventMap[change.EntityClass], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
             }
         }
-
-        #endregion
     }
 }

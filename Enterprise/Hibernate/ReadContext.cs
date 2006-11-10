@@ -11,6 +11,10 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public class ReadContext : PersistenceContext, IReadContext
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sessionFactory"></param>
         internal ReadContext(ISessionFactory sessionFactory)
             :base(sessionFactory, true)
         {
@@ -18,6 +22,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             this.Session.FlushMode = FlushMode.Never;
         }
 
+        /// <summary>
+        /// Commits the transaction (does not flush anything to the database)
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)

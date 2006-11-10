@@ -5,15 +5,16 @@ using System.Text;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// Defines the interface for a broker that returns instances of <see cref="EnumTable"/> to the application.
+    /// Defines the interface for a broker that returns a list of <see cref="EnumValue"/> that contain
+    /// meta-data about a C# enum.
     /// </summary>
+    /// <typeparam name="E">The <see cref="EnumValue"/> class that this broker returns</typeparam>
     public interface IEnumBroker<E> : IPersistenceBroker
     {
         /// <summary>
-        /// Loads the domain enumeration corresponding to the specified C# enum type.
+        /// Loads the domain enumeration from a persistent store.
         /// </summary>
-        /// <typeparam name="TEnum">The C# enum type on which the enumeration is based.</typeparam>
-        /// <returns>a domain enumeration table</returns>
+        /// <returns></returns>
         IList<E> Load();
     }
 }

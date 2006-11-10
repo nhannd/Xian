@@ -5,7 +5,7 @@ using System.Text;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// base class for all exceptions related to persistence
+    /// Base class for all exceptions related to persistence
     /// </summary>
     public class PersistenceException : Exception
     {

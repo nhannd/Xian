@@ -28,6 +28,11 @@ namespace ClearCanvas.Enterprise
         }
     }
 
+    /// <summary>
+    /// Provides a mechanism to refer to an entity at the enterprise level, independent of any 
+    /// <see cref="IPersistenceContext"/> or instance of <see cref="Entity"/>
+    /// </summary>
+    /// <typeparam name="TEntity">The class of entity this reference refers to</typeparam>
     public class EntityRef<TEntity> : EntityRefBase
         where TEntity : Entity
     {
@@ -62,7 +67,7 @@ namespace ClearCanvas.Enterprise
             // cannot include the Type in this comparison, because the entity in question may just be a proxy
             // rather than the real entity, however that shouldn't matter because the parameter is strongly typed
 
-            // also cannot check version here, because if the entity is a proxy, the Version property will not
+            // also cannot check version here, because if the entity is an NHibernate proxy, the Version property will not
             // be initialized
             return entity.OID == this.EntityOID;
         }

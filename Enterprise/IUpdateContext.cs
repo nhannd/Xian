@@ -5,8 +5,8 @@ using System.Text;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// Defines the interface to an update context.  An update context allows the application to perform both read
-    /// and write operations on a persistent store.
+    /// Defines the interface to an update context.  An update context allows the application read
+    /// data from a persistent store, and to synchronize the persistent store with changes made to that data.
     /// </summary>
     public interface IUpdateContext : IPersistenceContext
     {

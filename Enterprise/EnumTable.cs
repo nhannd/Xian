@@ -6,17 +6,11 @@ using System.Reflection;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
-    /// Holds a domain enumeration table in memory.
-    /// 
-    /// A domain enumeration is an enumeration, or set of coded values, that is part of the domain model.
-    /// In order to create a domain enumeration, a C# enum struct must first be defined based on the codes
-    /// in the enumeration.  Additional data about the enumeration, such as the values corresponding to the codes,
-    /// and descriptions of the meanings of those values, is typically stored in persistent storage.
-    /// 
-    /// An instance of <see cref="IEnumBroker"/> is used to load the <see cref="EnumTable"/>.
-    /// See <cref="IEnumBroker.LoadEnumeration"/>.
+    /// Holds meta-data for a domain enumeration.  The table holds a set of <see cref="EnumValue"/> instances
+    /// that hold meta-data about a C# enum, one instance for each possible value of the enum.
     /// </summary>
-    /// <typeparam name="TEnum">The C# enum that this table corresponds to</typeparam>
+    /// <typeparam name="e">The C# enum that this table corresponds to</typeparam>
+    /// <typeparam name="e">The <see cref="EnumValue"/> class that this table corresponds to</typeparam>
     public class EnumTable<e, E>
         where e : struct
         where E : EnumValue<e>, new()

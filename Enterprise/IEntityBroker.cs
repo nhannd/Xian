@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
+    /// <summary>
+    /// Used by <see cref="IEntityBroker.Load"/> to provide fine control over the loading of entities.
+    /// </summary>
     [Flags]
     public enum EntityLoadFlags
     {
@@ -28,10 +31,8 @@ namespace ClearCanvas.Enterprise
 
 
     /// <summary>
-    /// Base interface for all entity broker interfaces.  An entity broker manages the movement of a
-    /// particular domain entity class to and from a persistent store.
-    /// 
-    /// This interface should not be implemented directly.
+    /// Base interface for all entity broker interfaces.  An entity broker allows entities to be retrieved
+    /// from persistent storage. This interface should not be implemented directly.
     /// Instead, a sub-interface should be defined that extends this interface for a given entity.
     /// </summary>
     /// <typeparam name="TEntity">The <see cref="Entity"/> sub-class on which this broker acts</typeparam>
