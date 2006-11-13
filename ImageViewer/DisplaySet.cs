@@ -205,6 +205,21 @@ namespace ClearCanvas.ImageViewer
 			_presentationImages = null;
 		}
 
+		public IDisplaySet Clone()
+		{
+			IDisplaySet displaySet = new DisplaySet();
+
+			foreach (IPresentationImage image in this.PresentationImages)
+				displaySet.PresentationImages.Add(image.Clone());
+
+			return displaySet;
+		}
+
+		public override string ToString()
+		{
+			return this.Name;
+		}
+
 		public void Draw()
 		{
 			if (this.Visible)

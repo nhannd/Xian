@@ -4,6 +4,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -15,6 +16,32 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ContextMenuLayoutTool : Tool<IImageViewerToolContext>
 	{
+		public class BooleanPropertyBinding : IObservablePropertyBinding<bool>
+		{
+			private bool _property;
+			private event EventHandler _propertyChangedEvent;
+
+			#region IObservablePropertyBinding<bool> Members
+
+			public event EventHandler PropertyChanged
+			{
+				add { _propertyChangedEvent += value; }
+				remove { _propertyChangedEvent -= value; }
+			}
+        
+			public bool PropertyValue
+			{
+				get { return _property; }
+				set
+				{
+					_property = value;
+					EventsHelper.Fire(_propertyChangedEvent, this, EventArgs.Empty);
+				}
+			}
+
+			#endregion
+		}
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -49,13 +76,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <returns></returns>
 		private IAction[] GetDisplaySetActions()
 		{
-
 			List<IAction> actions = new List<IAction>();
 			int i = 0;
-			foreach (DisplaySet displaySet in this.ImageViewer.LogicalWorkspace.DisplaySets)
+
+			foreach (IDisplaySet displaySet in this.ImageViewer.LogicalWorkspace.DisplaySets)
 			{
 				actions.Add(CreateDisplaySetAction(displaySet, ++i));
 			}
+
 			return actions.ToArray();
 		}
 
@@ -66,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <param name="displaySet"></param>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		private IClickAction CreateDisplaySetAction(DisplaySet displaySet, int index)
+		private IClickAction CreateDisplaySetAction(IDisplaySet displaySet, int index)
 		{
 			ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/{0}", displaySet.Name), null);
 			MenuAction action = new MenuAction(string.Format("display{0}", index), path, ClickActionFlags.None, null);
@@ -74,11 +102,39 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			action.SetClickHandler(
 				delegate()
 				{
-					this.ImageViewer.SelectedImageBox.DisplaySet = displaySet;
-					this.ImageViewer.SelectedImageBox.Draw();
+					AssignDisplaySetToImageBox(displaySet);
 				}
 			);
+
+			BooleanPropertyBinding binding = new BooleanPropertyBinding();
+			action.SetCheckedObservable(binding);
+
+			if (this.ImageViewer.SelectedImageBox.DisplaySet == displaySet)
+				binding.PropertyValue = true;
+			else
+				binding.PropertyValue = false;
+
 			return action;
+		}
+
+		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)
+		{
+			UndoableCommand command = new UndoableCommand(this.ImageViewer.SelectedImageBox);
+			command.BeginState = this.ImageViewer.SelectedImageBox.CreateMemento();
+
+			// If the display set is already visible, then we make a copy;
+			// otherwise, we use the original
+			if (displaySet.Visible)
+				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.Clone();
+			else
+				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet;
+
+			this.ImageViewer.SelectedImageBox.Draw();
+			this.ImageViewer.SelectedImageBox[0, 0].Select();
+
+			command.EndState = this.ImageViewer.SelectedImageBox.CreateMemento();
+
+			this.ImageViewer.CommandHistory.AddCommand(command);
 		}
 	}
 }

@@ -175,6 +175,8 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region Disposal
+
 		#region IDisposable Members
 
 		public void Dispose()
@@ -223,6 +225,12 @@ namespace ClearCanvas.ImageViewer
 			// TODO: Add disposal to LayerManager
 			//this.LayerManager.Dispose();
 		}
+
+		#endregion
+
+		#region Public methods
+
+		public abstract IPresentationImage Clone();
 
 		public void Draw()
 		{
@@ -312,6 +320,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			return true;
 		}
+
+		#endregion
 
 		#endregion
 

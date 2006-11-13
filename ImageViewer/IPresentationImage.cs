@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageViewer
 		bool Selected { get; }
 		bool Visible { get; }
 
+		IPresentationImage Clone();
 		void Draw();
 	}
 }

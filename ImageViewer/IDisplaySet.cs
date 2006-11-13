@@ -15,6 +15,7 @@ namespace ClearCanvas.ImageViewer
 		bool Selected { get; }
 		bool Visible { get; }
 
+		IDisplaySet Clone();
 		void Draw();
 	}
 }

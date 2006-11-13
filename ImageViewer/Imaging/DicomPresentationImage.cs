@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			InstallDefaultLUTs();
 		}
 
+		#region Public properties
+
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
@@ -70,6 +72,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#endregion
+
+		#region Disposal
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -77,6 +83,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 
 			base.Dispose(disposing);
+		}
+
+		#endregion
+
+		#region Public methods
+
+		public override IPresentationImage Clone()
+		{
+			return new DicomPresentationImage(_imageSop);
+		}
+
+		public override string ToString()
+		{
+			return _imageSop.InstanceNumber.ToString();
 		}
 
 		public override void OnDraw(DrawArgs drawArgs)
@@ -91,6 +111,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			base.OnDraw(drawArgs);
 		}
+
+		#endregion
 
 		private void InstallDefaultLUTs()
 		{
