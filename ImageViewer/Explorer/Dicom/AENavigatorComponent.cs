@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public bool NodeMoved(IDicomServer dataNodeParent, IDicomServer dataNodeNew)
         {
-            if (dataNodeParent.IsServer || dataNodeNew.ServerPath.Equals(dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName))
+            if (dataNodeParent.IsServer || isNodeExists((DicomServerGroup)dataNodeParent, dataNodeNew))
                 return false;
             if (dataNodeNew.IsServer)
             {
@@ -216,6 +216,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             add { _selectedServerChanged += value; }
             remove { _selectedServerChanged -= value; }
+        }
+
+        private bool isNodeExists(DicomServerGroup dataNodeParent, IDicomServer dataNodeNew)
+        {
+            if (dataNodeNew.ServerPath.Equals(dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName))
+                return true;
+            foreach (IDicomServer ids in dataNodeParent.ChildServers)
+            {
+                if (ids.ServerName.Equals(dataNodeNew.ServerName))
+                    return true;
+            }
+            return false;
         }
 
         #region IApplicationComponent overrides
