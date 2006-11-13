@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     // stop listening to the old image viewer, if one was set
                     if (_imageViewer != null)
                     {
-                        _imageViewer.EventBroker.ImageBoxSelected -= ImageBoxSelectedEventHandler;
+                        _imageViewer.EventBroker.TileSelected -= TileSelectedEventHandler;
                     }
 
                     _imageViewer = value;
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     // start listening to the new image viewer, if one has been set
                     if (_imageViewer != null)
                     {
-                        _imageViewer.EventBroker.ImageBoxSelected += ImageBoxSelectedEventHandler;
+						_imageViewer.EventBroker.TileSelected += TileSelectedEventHandler;
                     }
                     UpdateFromImageViewer();
                 }
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 return;
 
 			IPhysicalWorkspace physicalWorkspace = _imageViewer.PhysicalWorkspace;
-			ImageBoxLayoutCommand command = new ImageBoxLayoutCommand(physicalWorkspace);
+			UndoableCommand command = new UndoableCommand(physicalWorkspace);
 			command.Name = SR.CommandLayoutImageBoxes;
 			command.BeginState = physicalWorkspace.CreateMemento();
 
@@ -174,6 +174,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
             LayoutManager.FillPhysicalWorkspace(physicalWorkspace, physicalWorkspace.LogicalWorkspace);
             physicalWorkspace.Draw();
+			physicalWorkspace.SelectDefaultImageBox();
 
 			command.EndState = physicalWorkspace.CreateMemento();
 
@@ -192,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 return;
 
 			IImageBox imageBox = _imageViewer.PhysicalWorkspace.SelectedImageBox;
-			TileLayoutCommand command = new TileLayoutCommand(imageBox);
+			UndoableCommand command = new UndoableCommand(imageBox);
 			command.Name = SR.CommandLayoutTiles;
 			command.BeginState = imageBox.CreateMemento();
 
@@ -201,6 +202,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             imageBox.SetTileGrid(_tileRows, _tileColumns);
             imageBox.TopLeftPresentationImageIndex = index;
             imageBox.Draw();
+			imageBox.SelectDefaultTile();
 
 			command.EndState = imageBox.CreateMemento();
 
@@ -219,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ImageBoxSelectedEventHandler(object sender, ImageBoxSelectedEventArgs e)
+        private void TileSelectedEventHandler(object sender, TileSelectedEventArgs e)
         {
             UpdateFromImageViewer();
         }

@@ -98,14 +98,7 @@ namespace ClearCanvas.ImageViewer
             CreateLayoutManager();
             ApplyLayout();
 
-            // Select top left tile by default
-            if (this.PhysicalWorkspace.SelectedImageBox == null)
-            {
-                ITile topLeftTile = this.PhysicalWorkspace.ImageBoxes[0].Tiles[0];
-
-				if (topLeftTile != null)
-					topLeftTile.Select();
-            }
+			_physicalWorkspace.SelectDefaultImageBox();
         }
 
         public override void Stop()

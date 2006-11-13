@@ -21,5 +21,6 @@ namespace ClearCanvas.ImageViewer
 
 		void Draw();
 		void SetTileGrid(int numberOfRows, int numberOfColumns);
+		void SelectDefaultTile();
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -9,28 +10,30 @@ namespace ClearCanvas.ImageViewer
 		private IDisplaySet _displaySet;
 		private int _rows;
 		private int _columns;
-		private TileCollection _tiles;
-		private MementoList _tileMementos;
+		private int _topLeftPresentationImageIndex;
+		private RectangleF _normalizedRectangle;
+		private int _indexOfSelectedTile;
 
 		public ImageBoxMemento(
 			IDisplaySet displaySet, 
 			int rows,
 			int columns,
-			TileCollection tiles,
-			MementoList tileMementos)
+			int topLeftPresentationImageIndex,
+			RectangleF normalizedRectangle,
+			int indexOfSelectedTile)
 		{
 			// displaySet can be null, as that would correspond to an
 			// empty imageBox
 			Platform.CheckNonNegative(rows, "rows");
 			Platform.CheckNonNegative(columns, "columns");
-			Platform.CheckForNullReference(tiles, "tiles");
-			Platform.CheckForNullReference(tileMementos, "tiles");
+			Platform.CheckNonNegative(_topLeftPresentationImageIndex, "_topLeftPresentationImageIndex");
 
 			_displaySet = displaySet;
 			_rows = rows;
 			_columns = columns;
-			_tiles = tiles;
-			_tileMementos = tileMementos;
+			_topLeftPresentationImageIndex = topLeftPresentationImageIndex;
+			_normalizedRectangle = normalizedRectangle;
+			_indexOfSelectedTile = indexOfSelectedTile;
 		}
 
 		public IDisplaySet DisplaySet
@@ -48,14 +51,19 @@ namespace ClearCanvas.ImageViewer
 			get { return _columns; }
 		}
 
-		public TileCollection Tiles
+		public int TopLeftPresentationImageIndex
 		{
-			get { return _tiles; }
+			get { return _topLeftPresentationImageIndex; }
 		}
 
-		public MementoList TileMementos
+		public RectangleF NormalizedRectangle
 		{
-			get { return _tileMementos; }
+			get { return _normalizedRectangle; }
+		}
+
+		public int IndexOfSelectedTile
+		{
+			get { return _indexOfSelectedTile; }
 		}
 	}
 }

@@ -381,29 +381,7 @@ namespace ClearCanvas.ImageViewer
 			_presentationImage.OnDraw(drawArgs);
 		}
 
-		#region IMemorable Members
 
-		public IMemento CreateMemento()
-		{
-			// For the memento, we'll remember what PresentationImage was in this tile
-			// and the location and dimensions of the tile itself
-			TileMemento tileMemento = new TileMemento(this.PresentationImage);
-			IMemento memento = tileMemento as IMemento;
-
-			return memento;
-		}
-
-		public void SetMemento(IMemento memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
-			TileMemento tileMemento = memento as TileMemento;
-			Platform.CheckForInvalidCast(tileMemento, "memento", "TileMemento");
-
-			this.PresentationImage = null;
-			this.PresentationImage = tileMemento.PresentationImage;
-		}
-
-		#endregion
 
 		#region IUIEventHandler Members
 

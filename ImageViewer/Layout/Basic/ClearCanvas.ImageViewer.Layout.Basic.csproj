@@ -90,7 +90,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContextMenuLayoutTool.cs" />
-    <Compile Include="ImageBoxLayoutCommand.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="LayoutToolViewEventArgs.cs" />
     <Compile Include="LayoutManager.cs" />
@@ -105,7 +104,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="TileLayoutCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutLarge.png" />

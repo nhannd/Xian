@@ -7,27 +7,27 @@ namespace ClearCanvas.ImageViewer
 {
 	internal class PhysicalWorkspaceMemento : IMemento
 	{
-		private ILogicalWorkspace _logicalWorkspace;
 		private ImageBoxCollection _imageBoxes;
 		private MementoList _imageBoxMementos;
+		private bool _isRectangularImageBoxGrid;
+		private int _rows;
+		private int _columns;
 
 		public PhysicalWorkspaceMemento(
-			ILogicalWorkspace logicalWorkspace,
 			ImageBoxCollection imageBoxes,
-			MementoList imageBoxMementos)
+			MementoList imageBoxMementos,
+			bool isRectangularImageBoxGrid,
+			int rows,
+			int columns)
 		{
-			Platform.CheckForNullReference(logicalWorkspace, "LogicalWorkspace");
 			Platform.CheckForNullReference(imageBoxes, "imageBoxes");
 			Platform.CheckForNullReference(imageBoxMementos, "imageBoxMementos");
 
-			_logicalWorkspace = logicalWorkspace;
 			_imageBoxes = imageBoxes;
 			_imageBoxMementos = imageBoxMementos;
-		}
-
-		public ILogicalWorkspace LogicalWorkspace
-		{
-			get { return _logicalWorkspace; }
+			_isRectangularImageBoxGrid = IsRectangularImageBoxGrid;
+			_rows = rows;
+			_columns = columns;
 		}
 
 		public ImageBoxCollection ImageBoxes
@@ -38,6 +38,21 @@ namespace ClearCanvas.ImageViewer
 		public MementoList ImageBoxMementos
 		{
 			get { return _imageBoxMementos; }
+		}
+
+		public bool IsRectangularImageBoxGrid
+		{
+			get { return _isRectangularImageBoxGrid; }
+		}
+
+		public int Rows
+		{
+			get { return _rows; }
+		}
+
+		public int Columns
+		{
+			get { return _columns; }
 		}
 	}
 }

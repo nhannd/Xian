@@ -22,8 +22,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				if (_physicalWorkspace != null)
 				{
 					_physicalWorkspace.Drawing -= new EventHandler(OnPhysicalWorkspaceDrawing);
-					_physicalWorkspace.ImageBoxAdded -= new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
-					_physicalWorkspace.ImageBoxRemoved -= new EventHandler<ImageBoxEventArgs>(OnImageBoxRemoved);
+					_physicalWorkspace.LayoutCompleted -= new EventHandler(OnLayoutCompleted);
 				}
 			}
 			base.Dispose(disposing);

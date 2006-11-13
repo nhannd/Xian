@@ -66,6 +66,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ImageBoxEventArgs> _imageBoxAddedEvent;
 		private event EventHandler<ImageBoxEventArgs> _imageBoxRemovedEvent;
+		private event EventHandler _layoutCompletedEvent;
 
 		#endregion
 
@@ -101,17 +102,17 @@ namespace ClearCanvas.ImageViewer
 			get { return _columns; }
 		}
 
-		//public bool IsRectangularImageBoxGrid
-		//{
-		//    get { return _isRectangularImageBoxGrid; }
+		public bool IsRectangularImageBoxGrid
+		{
+			get { return _isRectangularImageBoxGrid; }
 
-		//    // This is temporary.  Ideally, given a number of rectangles,
-		//    // this class should be able to determine whether rectangles
-		//    // form a rectangular grid.  Until we implement that, we'll have
-		//    // to rely on the client of this class to set this property to 
-		//    // false if it's not a rectangular gride of image boxes.
-		//    set { _isRectangularImageBoxGrid = value; }
-		//}
+			// This is temporary.  Ideally, given a number of rectangles,
+			// this class should be able to determine whether rectangles
+			// form a rectangular grid.  Until we implement that, we'll have
+			// to rely on the client of this class to set this property to 
+			// false if it's not a rectangular gride of image boxes.
+			set { _isRectangularImageBoxGrid = value; }
+		}
 
 		public bool LayoutRefreshRequired
 		{
@@ -174,6 +175,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _imageBoxRemovedEvent += value; }
 			remove { _imageBoxRemovedEvent -= value; }
+		}
+
+		public event EventHandler LayoutCompleted
+		{
+			add { _layoutCompletedEvent += value; }
+			remove { _layoutCompletedEvent -= value; }
 		}
 
 		#endregion
@@ -272,6 +279,24 @@ namespace ClearCanvas.ImageViewer
 					this.ImageBoxes.Add(imageBox);
 				}
 			}
+
+			CompleteLayout();
+		}
+
+		public void CompleteLayout()
+		{
+			EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
+		}
+
+		public void SelectDefaultImageBox()
+		{
+			if (this.ImageBoxes.Count > 0)
+			{
+				IImageBox topLeftImageBox = this.ImageBoxes[0];
+
+				if (topLeftImageBox != null)
+					topLeftImageBox.SelectDefaultTile();
+			}
 		}
 
 		public void Draw()
@@ -301,9 +326,11 @@ namespace ClearCanvas.ImageViewer
 				imageBoxMementos.AddMemento(imageBox.CreateMemento());
 
 			PhysicalWorkspaceMemento workspaceMemento =
-				new PhysicalWorkspaceMemento(this.LogicalWorkspace,
-											 new ImageBoxCollection(this.ImageBoxes),
-											 imageBoxMementos);
+				new PhysicalWorkspaceMemento(new ImageBoxCollection(this.ImageBoxes),
+											 imageBoxMementos, 
+											 this.IsRectangularImageBoxGrid,
+											 this.Rows,
+											 this.Columns);
 
 			return workspaceMemento;
 		}
@@ -325,6 +352,10 @@ namespace ClearCanvas.ImageViewer
 
 			this.ImageBoxes.Clear();
 
+			_rows = workspaceMemento.Rows;
+			_columns = workspaceMemento.Columns;
+			_isRectangularImageBoxGrid = workspaceMemento.IsRectangularImageBoxGrid;
+
 			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
 			{
 				IMemento imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
@@ -333,6 +364,10 @@ namespace ClearCanvas.ImageViewer
 
 				this.ImageBoxes.Add(imageBox);
 			}
+
+			CompleteLayout();
+
+			Draw();
 		}
 
 		#endregion

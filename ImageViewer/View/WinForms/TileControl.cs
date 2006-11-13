@@ -28,19 +28,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private IRenderingSurface _surface;
 		private IUIEventHandler _captureUIEventHandler;
 		private CursorWrapper _currentCursorWrapper;
+
 		#endregion
 
 		/// <summary>
         /// Constructor
         /// </summary>
-        public TileControl(Tile tile)
+        public TileControl(Tile tile, Rectangle parentRectangle, int parentImageBoxInsetWidth)
         {
 			_tile = tile;
+			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
 			
 			InitializeComponent();
 
-			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.BackColor = Color.Black;
+			this.Dock = DockStyle.None;
+			this.Anchor = AnchorStyles.None;
 
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
@@ -96,12 +99,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			this.SuspendLayout();
 
-			this.Left = left + parentImageBoxBorderWidth;
-			this.Top = top + parentImageBoxBorderWidth;
-			this.Width = right - left;
-			this.Height = bottom - top;
+			this.Location = new Point(left + parentImageBoxBorderWidth, top + parentImageBoxBorderWidth);
+			this.Size = new Size(right - left, bottom - top);
 
-			this.ResumeLayout();
+			this.ResumeLayout(false);
 		}
 		
 		public void Draw()
@@ -109,20 +110,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			Render();
-
+			DrawArgs args = new DrawArgs(this.Surface, this.ClientRectangle, this.ClientRectangle, ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
+			_tile.OnDraw(args);
 			Invalidate();
 			Update();
 
 			clock.Stop();
-			string str = String.Format("OnImageDrawing: {0}\n", clock.ToString());
+			string str = String.Format("TileControl.Draw: {0}, {1}\n", clock.ToString(), this.Size.ToString());
 			Trace.Write(str);
-		}
-
-		private void Render()
-		{
-			DrawArgs args = new DrawArgs(this.Surface, this.ClientRectangle, this.ClientRectangle, ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
-			_tile.OnDraw(args);
 		}
 
 		private void OnDrawing(object sender, EventArgs e)
@@ -161,13 +156,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// We're double buffering manually, so override this and do nothing
 		}
 
+		protected override void OnLayout(LayoutEventArgs e)
+		{
+			base.OnLayout(e);
+
+		}
+
 		protected override void OnSizeChanged(EventArgs e)
 		{
+			base.OnSizeChanged(e);
+
+			Trace.Write("TileControl.OnSizeChanged()\n");
+
 			// Set the surface to null so when it's accessed, a new surface
 			// will be created.
 			_surface = null;
-			Render();
-			base.OnSizeChanged(e);
+			Draw();
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)

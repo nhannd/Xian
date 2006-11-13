@@ -16,66 +16,73 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private PhysicalWorkspace _physicalWorkspace;
 		private ImageViewerComponent _component;
 
-		public ImageViewerControl(ImageViewerComponent component)
+		internal ImageViewerControl(ImageViewerComponent component)
 		{
 			_component = component;
+			_physicalWorkspace = _component.PhysicalWorkspace as PhysicalWorkspace;
 
 			InitializeComponent();
 
-			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
 			this.BackColor = Color.Black;
 
-			_physicalWorkspace = _component.PhysicalWorkspace as PhysicalWorkspace;
 			_physicalWorkspace.Drawing += new EventHandler(OnPhysicalWorkspaceDrawing);
-			_physicalWorkspace.ImageBoxAdded += new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
-			_physicalWorkspace.ImageBoxRemoved += new EventHandler<ImageBoxEventArgs>(OnImageBoxRemoved);
-
-			AddImageBoxControls(component);
+			_physicalWorkspace.LayoutCompleted += new EventHandler(OnLayoutCompleted);
 		}
 
-		public void Draw()
+		internal void Draw()
 		{
-			if (_physicalWorkspace.LayoutRefreshRequired)
-			{
-				LayoutImageBoxes();
-			}
-			else
-			{
-				foreach (ImageBoxControl control in this.Controls)
-					control.Draw();
-			}
+			foreach (ImageBoxControl control in this.Controls)
+				control.Draw();
+
+			Invalidate();
 		}
 
-		void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
+		#region Protected members
+
+		protected override void OnLoad(EventArgs e)
 		{
-			Draw();
+			AddImageBoxControls(_physicalWorkspace);
+
+			base.OnLoad(e);
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			LayoutImageBoxes();
+			this.SuspendLayout();
 
-			base.OnSizeChanged(e);
-		}
-
-		void OnImageBoxAdded(object sender, ImageBoxEventArgs e)
-		{
-			AddImageBoxControl(e.ImageBox as ImageBox);
-		}
-
-		void OnImageBoxRemoved(object sender, ImageBoxEventArgs e)
-		{
 			foreach (ImageBoxControl control in this.Controls)
-			{
-				if (e.ImageBox == control.ImageBox)
-				{
-					control.Dispose();
-					this.Controls.Remove(control);
-					return;
-				}
-			}
+				control.ParentRectangle = this.ClientRectangle;
+
+			this.ResumeLayout(false);
+
+			Invalidate();
+		}
+
+		#endregion
+
+		#region Private members
+
+		private void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
+		{
+			Draw();
+		}
+
+		private void OnLayoutCompleted(object sender, EventArgs e)
+		{
+			List<Control> oldControlList = new List<Control>();
+
+			foreach (Control control in this.Controls)
+				oldControlList.Add(control);
+
+			// We add all the new tile controls to the image box control first,
+			// then we remove the old ones. Removing them first then adding them
+			// results in flickering, which we don't want.
+			AddImageBoxControls(_physicalWorkspace);
+
+			foreach (Control control in oldControlList)
+				this.Controls.Remove(control);
 		}
 
 		private void OnContextMenuOpening(object sender, CancelEventArgs e)
@@ -92,19 +99,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				e.Cancel = true;
 		}
 
-		private void LayoutImageBoxes()
+		private void AddImageBoxControls(PhysicalWorkspace physicalWorkspace)
 		{
-			this.SuspendLayout();
-
-			foreach (ImageBoxControl control in this.Controls)
-				control.ParentRectangle = this.ClientRectangle;
-
-			this.ResumeLayout();
-		}
-
-		private void AddImageBoxControls(ImageViewerComponent component)
-		{
-			foreach (ImageBox imageBox in component.PhysicalWorkspace.ImageBoxes)
+			foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
 				AddImageBoxControl(imageBox);
 		}
 
@@ -113,9 +110,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			ImageBoxView view = ViewFactory.CreateAssociatedView(typeof(ImageBox)) as ImageBoxView;
 
 			view.ImageBox = imageBox;
-
+			view.ParentRectangle = this.ClientRectangle;
+			
 			ImageBoxControl control = view.GuiElement as ImageBoxControl;
+
+			control.SuspendLayout();
 			this.Controls.Add(control);
+			control.ResumeLayout(false);
 		}
+
+		#endregion
 	}
 }

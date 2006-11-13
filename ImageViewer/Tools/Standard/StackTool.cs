@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackTool : MouseTool
 	{
-		//private StackCommand _command;
+		private UndoableCommand _command;
 		private int _initialPresentationImageIndex;
 
 		public StackTool()
@@ -41,13 +41,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (e.SelectedTile == null)
 				return true;
 
-			//_command = new StackCommand(e.SelectedImageBox);
-			//_command.Name = SR.CommandStack;
+			_command = new UndoableCommand(e.SelectedImageBox);
+			_command.Name = SR.CommandStack;
 
-			//// Capture state before stack
-			//_command.BeginState = e.SelectedImageBox.CreateMemento();
+			// Capture state before stack
+			_command.BeginState = e.SelectedImageBox.CreateMemento();
 
-			//_initialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
+			_initialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
 
 			return true;
 		}
@@ -72,20 +72,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.OnMouseUp(e); 
 			
-			//if (_command == null)
-			//    return true;
+			if (_command == null)
+			    return true;
 
 			// If nothing's changed then just return
-			//if (_initialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
-			//{
-			//    //_command = null;
-			//    return true;
-			//}
+			if (_initialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
+			{
+			    //_command = null;
+			    return true;
+			}
 
 			// Capture state after stack
-			//_command.EndState = e.SelectedImageBox.CreateMemento();
+			_command.EndState = e.SelectedImageBox.CreateMemento();
 
-			//this.Context.Viewer.CommandHistory.AddCommand(_command);
+			this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			return true;
 		}

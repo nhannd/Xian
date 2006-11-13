@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -16,6 +17,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     {
 		private ImageBox _imageBox;
 		private ImageBoxControl _imageBoxControl;
+		private Rectangle _parentRectangle;
 
 		public ImageBox ImageBox
 		{
@@ -23,14 +25,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			set { _imageBox = value; }
 		}
 
+		public Rectangle ParentRectangle
+		{
+			get { return _parentRectangle; }
+			set { _parentRectangle = value; }
+		}
+
         public override object GuiElement
         {
             get
             {
-				// TODO: Should a reference be held?
                 if (_imageBoxControl == null)
                 {
-					_imageBoxControl = new ImageBoxControl(this.ImageBox);
+					_imageBoxControl = new ImageBoxControl(this.ImageBox, this.ParentRectangle);
                 }
                 return _imageBoxControl;
             }

@@ -33,12 +33,12 @@ namespace ClearCanvas.ImageViewer
 		private bool _selected = false;
 		private int _rows;
 		private int _columns;
-		private bool _layoutRefreshRequired;
 
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ImageBoxEventArgs> _selectionChangedEvent;
 		private event EventHandler<TileEventArgs> _tileAddedEvent;
 		private event EventHandler<TileEventArgs> _tileRemovedEvent;
+		private event EventHandler _layoutCompletedEvent;
 
 		#endregion
 		
@@ -116,8 +116,8 @@ namespace ClearCanvas.ImageViewer
 				// and if the tile layout hasn't changed.  Note that if the tile
 				// layout has changed, then we can't just return, since we
 				// need to reassign the images to all the tiles.
-				if (_displaySet == value /*&& !_tileLayoutChanged*/)
-					return;
+				//if (_displaySet == value && !_layoutRefreshRequired)
+				//	return;
 
 				//if (value.PresentationImages.Count == 0)
 				//	throw new InvalidOperationException("A DisplaySet must have at least one PresentationImage in it before it can be put in an ImageBox");
@@ -153,11 +153,7 @@ namespace ClearCanvas.ImageViewer
 					// Force the images in the display set to fill
 					// the tiles of this image box
 					this.TopLeftPresentationImageIndex = 0;
-
-					if (this.Selected)
-						this[0, 0].Select();
 				}
-
 			}
 		}
 
@@ -207,6 +203,17 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public int IndexOfSelectedTile
+		{
+			get
+			{
+				if (this.SelectedTile == null)
+					return -1;
+				else
+					return this.Tiles.IndexOf(this.SelectedTile);
+			}
+		}
+
 		public Color BorderColor
 		{
 			get
@@ -246,12 +253,6 @@ namespace ClearCanvas.ImageViewer
 		public int Columns
 		{
 			get { return _columns; }
-		}
-
-		public bool LayoutRefreshRequired
-		{
-			get { return _layoutRefreshRequired; }
-			set { _layoutRefreshRequired = value; }
 		}
 
 		/// <summary>
@@ -388,6 +389,12 @@ namespace ClearCanvas.ImageViewer
 			remove { _tileRemovedEvent -= value; }
 		}
 
+		public event EventHandler LayoutCompleted
+		{
+			add { _layoutCompletedEvent += value; }
+			remove { _layoutCompletedEvent -= value; }
+		}
+
 		#endregion
 
 		#region Disposal
@@ -456,8 +463,8 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckPositive(numberOfColumns, "numberOfColumns");
 
 			// Don't bother if nothing's changed.
-			if (numberOfRows == _rows &&
-				numberOfColumns == _columns)
+			if (numberOfRows == this.Rows &&
+				numberOfColumns == this.Columns)
 				return;
 
 			_rows = numberOfRows;
@@ -481,12 +488,21 @@ namespace ClearCanvas.ImageViewer
 					this.Tiles.Add(tile);
 				}
 			}
+
+			EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
 		}
 
 		public void Draw()
 		{
 			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
-			_layoutRefreshRequired = false;
+		}
+
+		public void SelectDefaultTile()
+		{
+			ITile topLeftTile = this.Tiles[0];
+
+			if (topLeftTile != null)
+				topLeftTile.Select();
 		}
 
 		private void Select()
@@ -518,28 +534,13 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IMemento CreateMemento()
 		{
-			// When creating the memento, we have to remember the
-			// display set, client area, rows, columns, tiles mementos AND
-			// the tiles themselves.  We have to remember the actual
-			// instances of the tiles, since command objects
-			// have references to them.  If during image box reconstitution
-			// we simply created new tiles and restored their state with
-			// tile mementos, those command objects, when undone/redone,
-			// would be operating on objects that are simply floating around
-			// on the heap and not part of the logical workspace tree, and thus
-			// would not work.  A similar argument exists for
-			// PhysicalWorkspace.CreateMemento.
-			MementoList tileMementos = new MementoList();
-
-			foreach (ITile tile in this.Tiles)
-				tileMementos.AddMemento(tile.CreateMemento());
-
 			ImageBoxMemento imageBoxMemento =
 					new ImageBoxMemento(this.DisplaySet,
-										_rows,
-										_columns,
-										new TileCollection(this.Tiles),
-										tileMementos);
+										this.Rows,
+										this.Columns,
+										this.TopLeftPresentationImageIndex,
+										this.NormalizedRectangle,
+										this.IndexOfSelectedTile);
 
 			return imageBoxMemento;
 		}
@@ -560,19 +561,26 @@ namespace ClearCanvas.ImageViewer
 
 			Platform.CheckForInvalidCast(imageBoxMemento, "memento", "ImageBoxMemento");
 
-			this.Tiles.Clear();
+			_rows = 0;
+			_columns = 0;
+			_normalizedRectangle = RectangleF.Empty;
 
-			for (int i = 0; i < imageBoxMemento.Tiles.Count; i++)
-			{
-				IMemento tileMemento = imageBoxMemento.TileMementos[i];
-				ITile tile = imageBoxMemento.Tiles[i];
-				tile.SetMemento(tileMemento);
-				this.Tiles.Add(tile);
-			}
+			if (imageBoxMemento.Rows > 0 && imageBoxMemento.Columns > 0)
+				this.SetTileGrid(imageBoxMemento.Rows, imageBoxMemento.Columns);
 
 			this.DisplaySet = imageBoxMemento.DisplaySet;
-			_rows = imageBoxMemento.Rows;
-			_columns = imageBoxMemento.Columns;
+			this.NormalizedRectangle = imageBoxMemento.NormalizedRectangle;
+
+			if (imageBoxMemento.TopLeftPresentationImageIndex != -1)
+				this.TopLeftPresentationImageIndex = imageBoxMemento.TopLeftPresentationImageIndex;
+
+			Draw();
+
+			if (imageBoxMemento.IndexOfSelectedTile != -1)
+			{
+				ITile selectedTile = this.Tiles[imageBoxMemento.IndexOfSelectedTile];
+				selectedTile.Select();
+			}
 		}
 
 		#endregion
@@ -666,13 +674,14 @@ namespace ClearCanvas.ImageViewer
 			// If there are no images left (the case when there are fewer images than tiles)
 			// then just set the tile to blank
 			else
+			{
 				tile.PresentationImage = null;
+				tile.Deselect();
+			}
 		}
 
 		private void OnTileAdded(object sender, TileEventArgs e)
 		{
-			_layoutRefreshRequired = true;
-
 			Tile tile = e.Tile as Tile;
 			tile.ImageViewer = this.ImageViewer;
 			tile.ParentImageBox = this;
@@ -681,8 +690,6 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnTileRemoved(object sender, TileEventArgs e)
 		{
-			_layoutRefreshRequired = true;
-
 			if (e.Tile.Selected)
 				this.SelectedTile = null;
 

@@ -14,6 +14,11 @@ namespace ClearCanvas.ImageViewer.Tests
 		{
 			get { return null; }
 		}
+
+		public override IPresentationImage Clone()
+		{
+			return new TestPresentationImage();
+		}
 	}
 
 	class TestTree

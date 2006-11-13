@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -20,31 +21,30 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         /// <summary>
         /// Constructor
         /// </summary>
-		public ImageBoxControl(ImageBox imageBox)
+		internal ImageBoxControl(ImageBox imageBox, Rectangle parentRectangle)
         {
 			_imageBox = imageBox;
-			
+			this.ParentRectangle = parentRectangle;
+
 			InitializeComponent();
 
-			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			this.BackColor = Color.Black;
+			this.Dock = DockStyle.None;
+			this.Anchor = AnchorStyles.None;
 
 			_imageBox.Drawing += new EventHandler(OnDrawing);
 			_imageBox.SelectionChanged += new EventHandler<ImageBoxEventArgs>(OnImageBoxSelectionChanged);
-			_imageBox.TileAdded += new EventHandler<TileEventArgs>(OnTileAdded);
-			_imageBox.TileRemoved += new EventHandler<TileEventArgs>(OnTileRemoved);
-
-			AddTileControls(imageBox);
+			_imageBox.LayoutCompleted += new EventHandler(OnLayoutCompleted);
         }
 
-		public ImageBox ImageBox
+		internal ImageBox ImageBox
 		{
 			get { return _imageBox; }
 		}
 
-		public Rectangle ParentRectangle
+		internal Rectangle ParentRectangle
 		{
 			get { return _parentRectangle; }
 			set 
@@ -58,50 +58,114 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				this.SuspendLayout();
 
-				this.Left = left;
-				this.Top = top;
-				this.Width = right - left;
-				this.Height = bottom - top;
+				this.Location = new Point(left, top);
+				this.Size = new Size(right - left, bottom - top);
 
-				this.ResumeLayout();
+				this.ResumeLayout(false);
 			}
 		}
 
-		public void Draw()
+		internal void Draw()
 		{
-			if (this.ImageBox.LayoutRefreshRequired)
-			{
-				LayoutTiles();
-			}
-			else
-			{
-				foreach (TileControl control in this.Controls)
-					control.Draw();
-			}
+			Trace.Write("ImageBoxControl.Draw\n");
+
+			foreach (TileControl control in this.Controls)
+				control.Draw();
+			
+			Invalidate();
 		}
 
-		void OnDrawing(object sender, EventArgs e)
+		#region Protected methods
+
+		protected override void OnLoad(EventArgs e)
 		{
-			Draw();
+			AddTileControls(_imageBox);
+
+			base.OnLoad(e);
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			LayoutTiles();
-
 			base.OnSizeChanged(e);
+
+			Trace.Write("ImageBoxControl.OnSizeChanged\n");
+
+			this.SuspendLayout();
+
+			foreach (TileControl control in this.Controls)
+				control.SetParentImageBoxRectangle(this.ClientRectangle, _imageBox.InsetWidth);
+
+			this.ResumeLayout(false);
+
+			Invalidate();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			Trace.Write("ImageBoxControl.OnPaint\n");
+
+			e.Graphics.Clear(Color.Black);
+
+			DrawImageBoxBorder(e);
+			DrawTileBorders(e);
+
+			base.OnPaint(e);
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void OnImageBoxSelectionChanged(object sender, ImageBoxEventArgs e)
+		{
+			Invalidate();
+			Update();
+		}
+
+		private void OnTileSelectionChanged(object sender, TileEventArgs e)
+		{
+			Invalidate();
+			Update();
+		}
+
+		private void OnDrawing(object sender, EventArgs e)
+		{
+			Draw();
+		}
+
+		private void OnLayoutCompleted(object sender, EventArgs e)
+		{
+			List<Control> oldControlList = new List<Control>();
+
+			foreach (Control control in this.Controls)
+				oldControlList.Add(control);
+
+			this.SuspendLayout();
+
+			// We add all the new tile controls to the image box control first,
+			// then we remove the old ones. Removing them first then adding them
+			// results in flickering, which we don't want.
+			AddTileControls(_imageBox);
+
+			foreach (Control control in oldControlList)
+				this.Controls.Remove(control);
+
+			this.ResumeLayout(true);
+		}
+
+		private void DrawImageBoxBorder(PaintEventArgs e)
+		{
 			// Draw image box border
 			DrawBorder(
-				e.Graphics, 
+				e.Graphics,
 				this.ClientRectangle,
 				_imageBox.BorderColor,
-				_imageBox.BorderWidth, 
+				_imageBox.BorderWidth,
 				_imageBox.InsetWidth);
+		}
 
+		private void DrawTileBorders(PaintEventArgs e)
+		{
 			// Draw tile border, provided there's more than one tile
 			if (this.Controls.Count > 1)
 			{
@@ -117,50 +181,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 						control.Tile.InsetWidth);
 				}
 			}
-
-			base.OnPaint(e);
-		}
-
-		void OnImageBoxSelectionChanged(object sender, ImageBoxEventArgs e)
-		{
-			Invalidate();
-			Update();
-		}
-
-		void OnTileSelectionChanged(object sender, TileEventArgs e)
-		{
-			Invalidate();
-			Update();
-		}
-
-		void OnTileAdded(object sender, TileEventArgs e)
-		{
-			AddTileControl(e.Tile as Tile);
-		}
-
-		void OnTileRemoved(object sender, TileEventArgs e)
-		{
-			foreach (TileControl control in this.Controls)
-			{
-				if (e.Tile == control.Tile)
-				{
-					control.Dispose();
-					this.Controls.Remove(control);
-					return;
-				}
-			}
-		}
-
-		private void LayoutTiles()
-		{
-			this.SuspendLayout();
-
-			foreach (TileControl control in this.Controls)
-				control.SetParentImageBoxRectangle(this.ClientRectangle, _imageBox.InsetWidth);
-
-			_imageBox.LayoutRefreshRequired = false;
-
-			this.ResumeLayout();
 		}
 
 		private Rectangle GetTileRectangle(TileControl control)
@@ -189,8 +209,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void AddTileControls(ImageBox imageBox)
 		{
+			this.SuspendLayout();
+
 			foreach (Tile tile in imageBox.Tiles)
 				AddTileControl(tile);
+
+			this.ResumeLayout(false);
 		}
 
 		private void AddTileControl(Tile tile)
@@ -198,10 +222,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			TileView view = ViewFactory.CreateAssociatedView(typeof(Tile)) as TileView;
 
 			view.Tile = tile;
+			view.ParentRectangle = this.ClientRectangle;
+			view.ParentImageBoxInsetWidth = _imageBox.InsetWidth;
 
 			TileControl control = view.GuiElement as TileControl;
 			control.Tile.SelectionChanged += new EventHandler<TileEventArgs>(OnTileSelectionChanged);
+
+			control.SuspendLayout();
 			this.Controls.Add(control);
+			control.ResumeLayout(false);
 		}
-    }
+
+		#endregion
+	}
 }

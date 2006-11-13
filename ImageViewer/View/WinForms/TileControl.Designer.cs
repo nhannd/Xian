@@ -55,13 +55,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			// TileControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ContextMenuStrip = this._contextMenuStrip;
 			this.Name = "TileControl";
-			this.Size = new System.Drawing.Size(200, 185);
 			this.ResumeLayout(false);
-
         }
 
         #endregion

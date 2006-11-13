@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -16,6 +17,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     {
         private Tile _tile;
         private TileControl _tileControl;
+		private Rectangle _parentRectangle;
+		private int _parentImageBoxInsetWidth;
 
 		public Tile Tile
 		{
@@ -23,13 +26,25 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			set { _tile = value; }
 		}
 
-        public override object GuiElement
+		public Rectangle ParentRectangle
+		{
+			get { return _parentRectangle; }
+			set { _parentRectangle = value; }
+		}
+
+		public int ParentImageBoxInsetWidth
+		{
+			get { return _parentImageBoxInsetWidth; }
+			set { _parentImageBoxInsetWidth = value; }
+		}
+
+		public override object GuiElement
         {
             get
             {
                 if (_tileControl == null)
                 {
-                    _tileControl = new TileControl(this.Tile);
+                    _tileControl = new TileControl(this.Tile, this.ParentRectangle, this.ParentImageBoxInsetWidth);
                 }
                 return _tileControl;
             }

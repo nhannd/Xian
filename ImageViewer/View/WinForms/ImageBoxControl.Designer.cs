@@ -23,8 +23,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					_imageBox.Drawing -= new EventHandler(OnDrawing);
 					_imageBox.SelectionChanged -= new EventHandler<ImageBoxEventArgs>(OnImageBoxSelectionChanged);
-					_imageBox.TileAdded -= new EventHandler<TileEventArgs>(OnTileAdded);
-					_imageBox.TileRemoved -= new EventHandler<TileEventArgs>(OnTileRemoved);
+					_imageBox.LayoutCompleted -= new EventHandler(OnLayoutCompleted);
 				}
             }
             base.Dispose(disposing);
@@ -39,7 +38,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         }
 
         #endregion

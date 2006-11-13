@@ -14,5 +14,7 @@ namespace ClearCanvas.ImageViewer
 
 		void Draw();
 		void SetImageBoxGrid(int rows, int columns);
+		void CompleteLayout();
+		void SelectDefaultImageBox();
 	}
 }
