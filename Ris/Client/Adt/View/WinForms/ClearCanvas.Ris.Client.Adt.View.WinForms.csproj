@@ -117,13 +117,27 @@
     <Compile Include="PhoneNumbersSummaryControl.Designer.cs">
       <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="VisitEditorComponentControl.cs">
+    <Compile Include="VisitDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VisitEditorComponentControl.Designer.cs">
-      <DependentUpon>VisitEditorComponentControl.cs</DependentUpon>
+    <Compile Include="VisitDetailsEditorComponentControl.Designer.cs">
+      <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="VisitEditorComponentView.cs" />
+    <Compile Include="VisitDetailsEditorComponentView.cs" />
+    <Compile Include="VisitLocationsSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VisitLocationsSummaryComponentControl.Designer.cs">
+      <DependentUpon>VisitLocationsSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisitLocationsSummaryComponentView.cs" />
+    <Compile Include="VisitPractitionersSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VisitPractitionersSummaryComponentControl.Designer.cs">
+      <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisitPractitionersSummaryComponentView.cs" />
     <Compile Include="VisitSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -209,9 +223,9 @@
       <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="VisitEditorComponentControl.resx">
+    <EmbeddedResource Include="VisitDetailsEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>VisitEditorComponentControl.cs</DependentUpon>
+      <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VisitSummaryComponentControl.resx">
       <SubType>Designer</SubType>

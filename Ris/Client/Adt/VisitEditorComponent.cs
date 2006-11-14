@@ -10,65 +10,87 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="VisitEditorComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class VisitEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class VisitEditorComponent : NavigatorComponentContainer
     {
-    }
-
-    /// <summary>
-    /// VisitEditorComponent class
-    /// </summary>
-    [AssociateView(typeof(VisitEditorComponentViewExtensionPoint))]
-    public class VisitEditorComponent : ApplicationComponent
-    {
+        private EntityRef<Patient> _patientRef;
+        private Patient _patient;
+        private EntityRef<Visit> _visitRef;
         private Visit _visit;
+
         private IAdtService _adtService;
         private IAdtReferenceDataService _adtReferenceDataService;
-        private IList<Facility> _facilities;
+
+        private VisitDetailsEditorComponent _visitEditor;
+        private VisitPractitionersSummaryComponent _visitPractionersSummary;
+        private VisitLocationsSummaryComponent _visitLocationsSummary;
+
+        private bool _isNew;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitEditorComponent(Visit visit)
+        public VisitEditorComponent(EntityRef<Patient> patientRef, EntityRef<Visit> visitRef)
         {
-            _visit = visit;
+            _isNew = false;
+            _patientRef = patientRef;
+            _visitRef = visitRef;
 
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _adtReferenceDataService = ApplicationContext.GetService<IAdtReferenceDataService>();
+            //#region testing
 
-            _facilities = _adtReferenceDataService.GetFacilities();
+            //if (_facilities.Count > 0)
+            //{
+            //    _visit.Facility = _facilities[0];
+            //}
+            //else
+            //{
+            //    Facility facility = new Facility();
+            //    facility.Name = "TGH";
+            //    _adtReferenceDataService.AddFacility(facility);
+            //    _facilities = _adtReferenceDataService.GetFacilities();
+            //    _visit.Facility = _facilities[0];
+            //}
 
-            #region testing
-
-            if (_facilities.Count > 0)
-            {
-                _visit.Facility = _facilities[0];
-            }
-            else
-            {
-                Facility facility = new Facility();
-                facility.Name = "TGH";
-                _adtReferenceDataService.AddFacility(facility);
-                _facilities = _adtReferenceDataService.GetFacilities();
-                _visit.Facility = _facilities[0];
-            }
-
-            _visit.VisitNumber.Id = "12345";
-            _visit.VisitNumber.AssigningAuthority = "UHN";
-            //_visit.Practitioners.Add(VisitPractitioner.New());
-            //_visit.Locations.Add(VisitLocation.New());
+            //_visit.VisitNumber.Id = "12345";
+            //_visit.VisitNumber.AssigningAuthority = "UHN";
+            ////_visit.Practitioners.Add(VisitPractitioner.New());
+            ////_visit.Locations.Add(VisitLocation.New());
 
 
-            #endregion
+            //#endregion
 
+        }
+
+        public VisitEditorComponent(EntityRef<Patient> patientRef)
+        {
+            _isNew = true;
+            _patientRef = patientRef;
         }
 
         public override void Start()
         {
-            // TODO prepare the component for its live phase
+            _adtService = ApplicationContext.GetService<IAdtService>();
+            _adtReferenceDataService = ApplicationContext.GetService<IAdtReferenceDataService>();
+
+            if (_isNew)
+            {
+                _visit = new Visit();
+            }
+            else
+            {
+                _visit = _adtService.LoadVisit(_visitRef, true);
+                //this.Host.SetTitle(
+                //    string.Format(SR.PatientComponentTitle, _profile.Name.Format(), _profile.Mrn.Format()));
+            }
+
+
+            this.Pages.Add(new NavigatorPage("Visit", _visitEditor = new VisitDetailsEditorComponent()));
+            this.Pages.Add(new NavigatorPage("Visit/Practitioners", _visitPractionersSummary = new VisitPractitionersSummaryComponent()));
+            this.Pages.Add(new NavigatorPage("Visit/Location", _visitLocationsSummary = new VisitLocationsSummaryComponent()));
+
+            _visitEditor.Visit = _visit;
+            //_visitPractionersSummary.Visit = _visit;
+            //_visitLocationsSummary.Visit = _visit;
+
             base.Start();
         }
 
@@ -79,16 +101,44 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        public void Accept()
+        public override void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            try
+            {
+                SaveChanges();
+                this.ExitCode = ApplicationComponentExitCode.Normal;
+            }
+            catch (ConcurrencyException)
+            {
+                this.Host.ShowMessageBox("The visit was modified by another user.  Your changes could not be saved.", MessageBoxActions.Ok);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(e);
+                this.Host.ShowMessageBox("An error occured while attempting to save changes to this item", MessageBoxActions.Ok);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+            }
             this.Host.Exit();
         }
 
-        public void Cancel()
+        public override void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
+        }
+
+        private void SaveChanges()
+        {
+            if (_isNew)
+            {
+                _adtService.UpdateVisit(_visit);
+                _visitRef = new EntityRef<Visit>(_visit);
+            }
+            else
+            {
+                _adtService.UpdateVisit(_visit);
+            }
         }
     }
 }

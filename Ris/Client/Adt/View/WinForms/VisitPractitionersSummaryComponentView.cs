@@ -9,20 +9,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="VisitEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="VisitPractitionerSummaryComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(VisitEditorComponentViewExtensionPoint))]
-    public class VisitEditorComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(VisitPractitionerSummaryComponentViewExtensionPoint))]
+    public class VisitPractitionersSummaryComponentView : WinFormsView, IApplicationComponentView
     {
-        private VisitEditorComponent _component;
-        private VisitEditorComponentControl _control;
+        private VisitPractitionersSummaryComponent _component;
+        private VisitPractitionersSummaryComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (VisitEditorComponent)component;
+            _component = (VisitPractitionersSummaryComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new VisitEditorComponentControl(_component);
+                    _control = new VisitPractitionersSummaryComponentControl(_component);
                 }
                 return _control;
             }

@@ -32,9 +32,10 @@ namespace ClearCanvas.Ris.Services
         #region IAdtService Members
 
         [ReadOperation]
-        public IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria)
+        public Patient LoadPatient(EntityRef<Patient> patientRef)
         {
-            return this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
+            IPatientBroker patientBroker = CurrentContext.GetBroker<IPatientBroker>();
+            return patientBroker.Load(patientRef);
         }
 
         [ReadOperation]
@@ -50,10 +51,36 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Patient LoadPatient(EntityRef<Patient> patientRef)
+        public IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria)
         {
-            IPatientBroker patientBroker = CurrentContext.GetBroker<IPatientBroker>();
-            return patientBroker.Load(patientRef);
+            return this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
+        }
+
+        [ReadOperation]
+        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef, bool withDetails)
+        {
+            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = broker.Load(profileRef);
+            if (withDetails)
+            {
+                broker.LoadAddressesForPatientProfile(profile);
+                broker.LoadTelephoneNumbersForPatientProfile(profile);
+            }
+            return profile;
+        }
+
+        [ReadOperation]
+        public Visit LoadVisit(EntityRef<Visit> visitRef, bool withDetails)
+        {
+            IVisitBroker visitBroker = CurrentContext.GetBroker<IVisitBroker>();
+            Visit visit = visitBroker.Load(visitRef);
+            visitBroker.LoadFacilityForVisit(visit);
+            if( withDetails )
+            {
+                visitBroker.LoadLocationsForVisit(visit);
+                visitBroker.LoadPractitionersForVisit(visit);
+            }
+            return visit;
         }
 
         [ReadOperation]
@@ -71,14 +98,6 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public void LoadVisitDetails(Visit visit)
-        {
-            IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
-            visitBroker.LoadLocationsForVisit(visit);
-            visitBroker.LoadPractitionersForVisit(visit);
-        }
-
-        [ReadOperation]
         public IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
@@ -86,19 +105,6 @@ namespace ClearCanvas.Ris.Services
 
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)_strategyExtensionPoint.CreateExtension();
             return strategy.FindReconciliationMatches(patientProfile, broker);
-        }
-
-        [ReadOperation]
-        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef, bool withDetails)
-        {
-            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = broker.Load(profileRef);
-            if (withDetails)
-            {
-                broker.LoadAddressesForPatientProfile(profile);
-                broker.LoadTelephoneNumbersForPatientProfile(profile);
-            }
-            return profile;
         }
 
         [UpdateOperation]
@@ -144,26 +150,8 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void UpdateVisit(Visit visit)
         {
-            this.CurrentContext.Lock(visit);
-            this.CurrentContext.Lock(visit.Patient);
-            //IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
-            //visitBroker.Store(visit);
-
-            //IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
-            //patientBroker.Store(visit.Patient);
+            this.CurrentContext.Lock(visit, DirtyState.Dirty);
         }
-
-        //[UpdateOperation]
-        //public void UpdatePatientVisits(Patient patient)
-        //{
-        //    this.CurrentContext.Lock(patient);
-
-        //    foreach (Visit visit in patient.Visits)
-        //    {
-        //        this.CurrentContext.Lock(visit);
-        //    }
-
-        //}
 
         #endregion
     }

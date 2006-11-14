@@ -11,32 +11,22 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="VisitEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="VisitPractitionerSummaryComponent"/>
     /// </summary>
-    public partial class VisitEditorComponentControl : CustomUserControl
+    public partial class VisitPractitionersSummaryComponentControl : CustomUserControl
     {
-        private VisitEditorComponent _component;
+        private VisitPractitionersSummaryComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitEditorComponentControl(VisitEditorComponent component)
+        public VisitPractitionersSummaryComponentControl(VisitPractitionersSummaryComponent component)
         {
             InitializeComponent();
 
             _component = component;
 
             // TODO add .NET databindings to _component
-        }
-
-        private void _cancelButton_Click(object sender, EventArgs e)
-        {
-            _component.Cancel();
-        }
-
-        private void _acceptButton_Click(object sender, EventArgs e)
-        {
-            _component.Accept();
         }
     }
 }

@@ -38,6 +38,13 @@ namespace ClearCanvas.Ris.Services
         IList<Visit> ListPatientVisits(EntityRef<Patient> patientRef);
 
         /// <summary>
+        /// Loads the Visit for the specified Visit reference
+        /// </summary>
+        /// <param name="visitRef"></param>
+        /// <returns></returns>
+        Visit LoadVisit(EntityRef<Visit> visitRef, bool withDetails);
+
+        /// <summary>
         /// Loads the patient profile with the specified OID, and optionally with details.
         /// </summary>
         /// <param name="profileRef">A reference to the patient profile to load</param>
@@ -75,18 +82,6 @@ namespace ClearCanvas.Ris.Services
         /// Updates the specified visit
         /// </summary>
         /// <param name="visit"></param>
-        void UpdateVisit(Visit visit);
-        
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="patient"></param>
-        //void UpdatePatientVisits(Patient patient);
-
-        /// <summary>
-        /// Loads the details collections for the specified Visit
-        /// </summary>
-        /// <param name="visit"></param>
-        void LoadVisitDetails(Visit visit);
+        void UpdateVisit(Visit visit);        
     }
 }

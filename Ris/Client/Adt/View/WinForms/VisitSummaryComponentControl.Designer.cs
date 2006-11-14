@@ -30,8 +30,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._okButton = new System.Windows.Forms.Button();
+            this._closeButton = new System.Windows.Forms.Button();
             this._visits = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -59,33 +58,22 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.Controls.Add(this._cancelButton);
-            this.flowLayoutPanel1.Controls.Add(this._okButton);
+            this.flowLayoutPanel1.Controls.Add(this._closeButton);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 428);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowLayoutPanel1.Size = new System.Drawing.Size(643, 29);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // _cancelButton
+            // _closeButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(565, 3);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 0;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _okButton
-            // 
-            this._okButton.Location = new System.Drawing.Point(484, 3);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
-            this._okButton.TabIndex = 1;
-            this._okButton.Text = "OK";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
+            this._closeButton.Location = new System.Drawing.Point(565, 3);
+            this._closeButton.Name = "_closeButton";
+            this._closeButton.Size = new System.Drawing.Size(75, 23);
+            this._closeButton.TabIndex = 1;
+            this._closeButton.Text = "Close";
+            this._closeButton.UseVisualStyleBackColor = true;
+            this._closeButton.Click += new System.EventHandler(this._closeButton_Click);
             // 
             // _visits
             // 
@@ -125,8 +113,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.Button _okButton;
+        private System.Windows.Forms.Button _closeButton;
         private ClearCanvas.Desktop.View.WinForms.TableView _visits;
 
     }
