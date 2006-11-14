@@ -33,10 +33,18 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public override void Lock(Entity entity, DirtyState dirtyState)
         {
-            if (dirtyState == DirtyState.Dirty)
-                this.Session.SaveOrUpdate(entity);
-            else
-                this.Session.Lock(entity, LockMode.None);
+            switch (dirtyState)
+            {
+                case DirtyState.Dirty:
+                    this.Session.Update(entity);
+                    break;
+                case DirtyState.New:
+                    this.Session.Save(entity);
+                    break;
+                case DirtyState.Clean:
+                    this.Session.Lock(entity, LockMode.None);
+                    break;
+            }
         }
 
         #region IUpdateContext members

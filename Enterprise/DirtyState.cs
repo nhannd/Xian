@@ -9,7 +9,19 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     public enum DirtyState
     {
+        /// <summary>
+        /// Treat the entity as clean
+        /// </summary>
         Clean,
-        Dirty
+
+        /// <summary>
+        /// Treat the entity as dirty
+        /// </summary>
+        Dirty,
+
+        /// <summary>
+        /// Treat the entity as new (unsaved)
+        /// </summary>
+        New
     }
 }
