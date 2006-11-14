@@ -207,12 +207,15 @@ namespace ClearCanvas.ImageViewer
 
 		public IDisplaySet Clone()
 		{
-			IDisplaySet displaySet = new DisplaySet();
+			DisplaySet displaySet = new DisplaySet();
+
+			displaySet.Name = this.Name;
+			displaySet.ParentLogicalWorkspace = this.ParentLogicalWorkspace;
 
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.Clone());
 
-			return displaySet;
+			return displaySet as IDisplaySet;
 		}
 
 		public override string ToString()

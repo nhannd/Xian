@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			BooleanPropertyBinding binding = new BooleanPropertyBinding();
 			action.SetCheckedObservable(binding);
 
-			if (this.ImageViewer.SelectedImageBox.DisplaySet == displaySet)
+			if (this.ImageViewer.SelectedImageBox.DisplaySet.Name == displaySet.Name)
 				binding.PropertyValue = true;
 			else
 				binding.PropertyValue = false;
