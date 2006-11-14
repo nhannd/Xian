@@ -51,12 +51,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PatientIdentifierTypeEnum.hbm.xml" />
-    <EmbeddedResource Include="SexEnum.hbm.xml" />
-    <EmbeddedResource Include="TelephoneEquipmentEnum.hbm.xml" />
-    <EmbeddedResource Include="TelephoneUseEnum.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
@@ -75,31 +69,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AddressTypeEnum.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PatientProfile.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Patient.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Facility.hbm.xml" />
-    <EmbeddedResource Include="Location.hbm.xml" />
-    <EmbeddedResource Include="PatientClassEnum.hbm.xml" />
-    <EmbeddedResource Include="Practitioner.hbm.xml" />
-    <EmbeddedResource Include="Staff.hbm.xml" />
-    <EmbeddedResource Include="Visit.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VisitLocationRoleEnum.hbm.xml" />
-    <EmbeddedResource Include="VisitPractitionerRoleEnum.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="AdmissionTypeEnum.hbm.xml" />
-    <EmbeddedResource Include="AmbulatoryStatusEnum.hbm.xml" />
-    <EmbeddedResource Include="PatientTypeEnum.hbm.xml" />
-    <EmbeddedResource Include="VisitStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\AddressTypeEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\AdmissionTypeEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\AmbulatoryStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Facility.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Location.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Patient.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientClassEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientIdentifierTypeEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientProfile.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientTypeEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Practitioner.hbm.xml" />
+    <EmbeddedResource Include="Mappings\SexEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Staff.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TelephoneEquipmentEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TelephoneUseEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Visit.hbm.xml" />
+    <EmbeddedResource Include="Mappings\VisitLocationRoleEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\VisitPractitionerRoleEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\VisitStatusEnum.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
