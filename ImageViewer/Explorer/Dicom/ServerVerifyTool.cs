@@ -30,7 +30,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (!_dicomServerTree.CurrentServer.IsServer && _dicomServerTree.ChildServers.Count == 0)
             {
                 throw new DicomServerException("There are no servers selected. Please select servers and try again.");
-                return;
             }
             LocalAESettings myAESettings = new LocalAESettings();
             ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));

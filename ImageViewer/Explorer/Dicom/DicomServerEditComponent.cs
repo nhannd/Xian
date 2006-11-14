@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
-            if (!IsServerPropertyValid())
+            if (!IsServerPropertyValid() || !this.Modified)
                 return;
             DicomServer ds = new DicomServer(_serverName, _serverPath, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
             // edit current server
@@ -104,7 +104,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Port value should be a integer. \r\n\r\nPlease input an integer data.");
                 throw new DicomServerException(msgText.ToString());
-                return false;
             }
 
             string msg = _dicomServerTree.DicomServerValidation(_serverName, _serverAE, _serverHost, int.Parse(_serverPort));
@@ -114,7 +113,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Saver Name ({0}) is conflict with {1}.\r\nPlease choose another server name.", _serverName, msg);
                 throw new DicomServerException(msgText.ToString());
-                return false;
             }
 
             return true;

@@ -157,16 +157,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
-        private void SetSelectedServer(DicomServer server)
-        {
-            _selectedServers = new AEServerGroup();
-            _selectedServers.Servers.Add(server);
-            _selectedServers.Name = server.ServerName;
-            _selectedServers.GroupID = server.ServerPath + "/" + server.ServerName;
-            _dicomServerTree.CurrentServer = server;
-            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-        }
-
         public void SelectChanged(IDicomServer dataNode)
         {
             if (dataNode.IsServer)
@@ -192,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (dataNodeNew.IsServer)
             {
                 _dicomServerTree.CurrentServer = dataNodeNew;
-                _dicomServerTree.DeleteDicomServer();
+                _dicomServerTree.DeleteDicomServer(true);
                 dataNodeNew.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
                 ((DicomServerGroup)dataNodeParent).AddChild(dataNodeNew);
                 SelectChanged(dataNodeNew);
@@ -201,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 DicomServerGroup dsg = (DicomServerGroup)dataNodeNew;
                 _dicomServerTree.CurrentServer = dataNodeNew;
-                _dicomServerTree.DeleteDicomServer();
+                _dicomServerTree.DeleteDicomServer(true);
                 _dicomServerTree.RenameDicomServerGroup(dsg, "", dsg.ServerPath, dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName, 1);
                 dsg.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
                 ((DicomServerGroup)dataNodeParent).AddChild(dsg);
@@ -216,6 +206,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             add { _selectedServerChanged += value; }
             remove { _selectedServerChanged -= value; }
+        }
+
+        private void SetSelectedServer(DicomServer server)
+        {
+            _selectedServers = new AEServerGroup();
+            _selectedServers.Servers.Add(server);
+            _selectedServers.Name = server.ServerName;
+            _selectedServers.GroupID = server.ServerPath + "/" + server.ServerName;
+            _dicomServerTree.CurrentServer = server;
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
 
         private bool isNodeExists(DicomServerGroup dataNodeParent, IDicomServer dataNodeNew)

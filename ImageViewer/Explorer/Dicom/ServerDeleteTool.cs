@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
 
             this.Context.UpdateType = (int)ServerUpdateType.Delete;
-            _dicomServerTree.DeleteDicomServer();
+            _dicomServerTree.DeleteDicomServer(true);
             return;
         }
 

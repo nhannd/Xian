@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             LoadDicomServers();
         }
 
-        public void DeleteDicomServer()
+        public void DeleteDicomServer(bool isUpdate)
         { 
             DicomServerGroup dsgp = FindParentDicomServer(CurrentServer);
             if (dsgp == null)
@@ -26,7 +26,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 {
                     dsgp.ChildServers.RemoveAt(i);
                     CurrentServer = dsgp;
-                    SaveDicomServers();
+                    if (isUpdate)
+                        SaveDicomServers();
                     FireServerTreeUpdatedEvent();
                     return;
                 }

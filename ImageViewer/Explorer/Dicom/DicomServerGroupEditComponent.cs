@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
-            if (!IsServerGroupNameValid())
+            if (!IsServerGroupNameValid() || !this.Modified)
                 return;
             if (!_isNewServerGroup)
             {
@@ -97,7 +97,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Saver Group Name ({0}) is conflict with {1}.\r\nPlease choose another name.", _serverGroupName, msg);
                 throw new DicomServerException(msgText.ToString());
-                return false;
             }
             return true;
         }
