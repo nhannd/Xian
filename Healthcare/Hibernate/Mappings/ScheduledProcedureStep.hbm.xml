@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="ScheduledProcedureStep" proxy="ScheduledProcedureStep" table="ScheduledProcedureStep_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <many-to-one name="RequestedProcedure" class="RequestedProcedure" column="RequestedProcedureOID_" not-null="true"/>
+    <many-to-one name="Type" class="ScheduledProcedureStepType" column="ScheduledProcedureStepTypeOID_" not-null="true"/>
+    <many-to-one name="Modality" class="Modality" column="ModalityOID_" not-null="true"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ScheduledProcedureStepStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <property name="StartTime" column="StartTime_" type="DateTime" not-null="true"/>
+    <property name="EndTime" column="EndTime_" type="DateTime"/>
+  </class>
+</hibernate-mapping>

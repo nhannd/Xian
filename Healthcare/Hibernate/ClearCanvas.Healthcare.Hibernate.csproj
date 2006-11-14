@@ -89,6 +89,17 @@
     <EmbeddedResource Include="Mappings\VisitPractitionerRoleEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\VisitStatusEnum.hbm.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mappings\DiagnosticService.hbm.xml" />
+    <Content Include="Mappings\Modality.hbm.xml" />
+    <Content Include="Mappings\Order.hbm.xml" />
+    <Content Include="Mappings\OrderPriorityEnum.hbm.xml" />
+    <Content Include="Mappings\RequestedProcedure.hbm.xml" />
+    <Content Include="Mappings\RequestedProcedureType.hbm.xml" />
+    <Content Include="Mappings\ScheduledProcedureStep.hbm.xml" />
+    <Content Include="Mappings\ScheduledProcedureStepStatusEnum.hbm.xml" />
+    <Content Include="Mappings\ScheduledProcedureStepType.hbm.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

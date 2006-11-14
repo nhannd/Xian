@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="RequestedProcedure" proxy="RequestedProcedure" table="RequestedProcedure_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <many-to-one name="Order" class="Order" column="OrderOID_" not-null="true"/>
+    <many-to-one name="Type" class="RequestedProcedureType" column="RequestedProcedureTypeOID_" not-null="true"/>
+    <property name="Index" column="Index_" type="String" length="10" not-null="true"/>
+    <set name="ScheduledProcedureSteps" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="RequestedProcedureOID_"/>
+      <one-to-many class="ScheduledProcedureStep"/>
+    </set>
+  </class>
+</hibernate-mapping>

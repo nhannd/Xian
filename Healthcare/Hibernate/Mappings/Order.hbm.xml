@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="Order" proxy="Order" table="Order_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true"/>
+    <many-to-one name="Visit" class="Visit" column="VisitOID_" not-null="true"/>
+
+    <!-- Placer may need to be more than simple string (eg may need a namespace or assigning authority ) -->
+    <property name="PlacerNumber" column="PlacerNumber_" type="String" length="30"/>
+    <property name="AccessionNumber" column="AccessionNumber_" type="String" length="30" not-null="true"/>
+ 
+    <many-to-one name="DiagnosticService" class="DiagnosticService" column="DiagnosticServiceOID_" not-null="true"/>
+
+    <!-- Time that the order was entered -->
+    <property name="EnteredDateTime" column="EnteredDateTime_" type="DateTime" not-null="true"/>
+
+    <!-- Time that the order should ideally be scheduled at.  Don't know if we really need this or not-->
+    <property name="SchedulingRequestDateTime" column="SchedulingRequestDateTime_" type="DateTime" not-null="true"/>
+
+    <many-to-one name="OrderingPractitioner" class="Practitioner" column="OrderingPractitionerOID_" not-null="true"/>
+    <many-to-one name="OrderingFacility" class="Facility" column="FacilityOID_" not-null="true"/>
+
+    <set name="ResultCopiesToPractitioners" table="OrderResultCopiesToPractitioners_" lazy="true" access="nosetter.camelcase-underscore">
+      <key column="OrderOID_"/>
+      <many-to-many column="PractitionerOID_" class="Practitioner" fetch="join"/>
+    </set>
+
+    <!-- Indications.... may need to be a coded-value, not sure yet -->
+    <property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="200"/>
+    <property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    
+    <set name="RequestedProcedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="OrderOID_"/>
+      <one-to-many class="RequestedProcedure"/>
+    </set>
+  </class>
+</hibernate-mapping>
