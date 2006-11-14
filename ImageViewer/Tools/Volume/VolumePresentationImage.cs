@@ -64,6 +64,11 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		#endregion
 
+		public override IPresentationImage Clone()
+		{
+			return null;
+		}
+
 		private DicomImageLayer DicomImage
 		{
 			get
@@ -109,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			ImageSop imageSop = this.DicomImage.ImageSop;
 			vtkImageData volume = new vtkImageData();
 			volume.SetDimensions(this.Width, this.Height, this.Depth);
-			volume.SetSpacing(imageSop.PixelSpacing.Column, imageSop.PixelSpacing.Row, 3);
+			volume.SetSpacing(imageSop.PixelSpacing.Column, imageSop.PixelSpacing.Row, imageSop.SliceThickness);
 			volume.AllocateScalars();
 			volume.SetScalarTypeToUnsignedShort();
 
