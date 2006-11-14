@@ -1,3 +1,3 @@
 cd ..\Enterprise\codegen
-ruby codegen.rb ../../Healthcare/Hibernate ../..
+ruby codegen.rb ../../Healthcare/Hibernate/Mappings ../..
 
