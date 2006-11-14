@@ -133,9 +133,9 @@ namespace ClearCanvas.Ris.Services
         public Patient CreatePatientForProfile(PatientProfile profile)
         {
             Patient patient = new Patient();
-            patient.AddProfile(profile);
+            this.CurrentContext.Lock(patient, DirtyState.New);
 
-            this.CurrentContext.Lock(patient);
+            patient.AddProfile(profile);
 
             return patient;
         }
@@ -143,8 +143,8 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void UpdatePatientProfile(PatientProfile profile)
         {
-            this.CurrentContext.Lock(profile);
-            this.CurrentContext.Lock(profile.Patient);   // do we need to do this?
+            this.CurrentContext.Lock(profile, DirtyState.Dirty);
+            //this.CurrentContext.Lock(profile.Patient);   // do we need to do this?
         }
 
         [UpdateOperation]

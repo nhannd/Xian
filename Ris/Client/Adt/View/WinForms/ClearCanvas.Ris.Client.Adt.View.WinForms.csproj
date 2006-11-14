@@ -227,6 +227,14 @@
       <SubType>Designer</SubType>
       <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="VisitLocationsSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>VisitLocationsSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VisitPractitionersSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="VisitSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>VisitSummaryComponentControl.cs</DependentUpon>

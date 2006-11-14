@@ -91,7 +91,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             if (_currentVisitSelection != null)
             {
-                //_adtService.LoadVisitDetails(_currentVisitSelection);
                 _visitActionHandler.Edit.Enabled = true;
                 _visitActionHandler.Delete.Enabled = true;
             }

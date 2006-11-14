@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<Visit, string>("Visit Type",
                 delegate(Visit v)
                 {
-                    return patientClasses[v.PatientClass].Value + (v.PatientType != null ? " - " + patientTypes[v.PatientType].Value : v.AdmissionType != null ? " - " + admissionTypes[v.AdmissionType].Value : "");
+                    return patientClasses[v.PatientClass].Value + (v.PatientType != PatientType.X ? " - " + patientTypes[v.PatientType].Value : v.AdmissionType != AdmissionType.X ? " - " + admissionTypes[v.AdmissionType].Value : "");
                 },
                 1.0f));
 

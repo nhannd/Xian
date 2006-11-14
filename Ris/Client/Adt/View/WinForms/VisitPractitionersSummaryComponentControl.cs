@@ -26,7 +26,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
+            _visitPractitioners.Table = _component.VisitPractitioners;
+            _visitPractitioners.MenuModel = _component.VisitPractionersActionModel;
+            _visitPractitioners.ToolbarModel = _component.VisitPractionersActionModel;
+
             // TODO add .NET databindings to _component
+        }
+
+        private void _visitPractitioners_SelectionChanged(object sender, EventArgs e)
+        {
+            _component.SetSelectedVisitPractitioner(_visitPractitioners.CurrentSelection);
+        }
+
+        private void VisitPractitionersSummaryComponentControl_Load(object sender, EventArgs e)
+        {
+            _component.LoadVisitPractioners();
         }
     }
 }

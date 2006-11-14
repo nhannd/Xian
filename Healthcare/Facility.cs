@@ -17,5 +17,10 @@ namespace ClearCanvas.Healthcare {
         private void CustomInitialize()
         {
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -26,7 +26,19 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
+            _locations.Table = _component.Locations;
+            _locations.ToolbarModel = _component.VisitLocationActionModel;
+            _locations.MenuModel = _component.VisitLocationActionModel;
+        }
+
+        private void VisitLocationsSummaryComponentControl_Load(object sender, EventArgs e)
+        {
+            _component.LoadLocations();
+        }
+
+        private void _locations_SelectionChanged(object sender, EventArgs e)
+        {
+            _component.SetSelectedVisitLocation(_locations.CurrentSelection);
         }
     }
 }

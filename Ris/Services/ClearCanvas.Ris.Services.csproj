@@ -54,7 +54,9 @@
     <Compile Include="IHL7QueueService.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="IPatientReconciliationStrategy.cs" />
+    <Compile Include="IPractitionerService.cs" />
     <Compile Include="PatientAdminService.cs" />
+    <Compile Include="PractitionerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
   </ItemGroup>

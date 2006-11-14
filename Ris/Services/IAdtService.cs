@@ -82,6 +82,6 @@ namespace ClearCanvas.Ris.Services
         /// Updates the specified visit
         /// </summary>
         /// <param name="visit"></param>
-        void UpdateVisit(Visit visit);        
+        void UpdateVisit(Visit visit);
     }
 }

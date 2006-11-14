@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Services
         #region IAdtReferenceDataService Members
 
         [ReadOperation]
-        public IList<Facility> GetFacilities()
+        public IList<Facility> GetAllFacilities()
         {
             FacilitySearchCriteria allMatches = new FacilitySearchCriteria();
             IFacilityBroker facilityBroker = this.CurrentContext.GetBroker<IFacilityBroker>();
@@ -23,11 +23,30 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void AddFacility(Facility facility)
+        public void AddFacility(string facilityName)
         {
-            this.CurrentContext.Lock(facility);
-            //IFacilityBroker facilityBroker = this.CurrentContext.GetBroker<IFacilityBroker>();
-            //facilityBroker.Store(facility);
+            Facility facility = new Facility();
+            this.CurrentContext.Lock(facility, DirtyState.New);
+            facility.Name = facilityName;
+        }
+
+        [ReadOperation]
+        public IList<Location> GetAllLocations()
+        {
+            ILocationBroker broker = this.CurrentContext.GetBroker<ILocationBroker>();
+            return broker.Find(new LocationSearchCriteria());
+        }
+
+        [ReadOperation]
+        public IList<Location> GetLocations(EntityRef<Facility> facility)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        [UpdateOperation]
+        public void AddLocation(Location location)
+        {
+            this.CurrentContext.Lock(location, DirtyState.Dirty);
         }
 
         #endregion

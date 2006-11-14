@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Adt
     public class VisitEditorComponent : NavigatorComponentContainer
     {
         private EntityRef<Patient> _patientRef;
-        private Patient _patient;
+        //private Patient _patient;
         private EntityRef<Visit> _visitRef;
         private Visit _visit;
 
@@ -34,30 +34,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _isNew = false;
             _patientRef = patientRef;
             _visitRef = visitRef;
-
-            //#region testing
-
-            //if (_facilities.Count > 0)
-            //{
-            //    _visit.Facility = _facilities[0];
-            //}
-            //else
-            //{
-            //    Facility facility = new Facility();
-            //    facility.Name = "TGH";
-            //    _adtReferenceDataService.AddFacility(facility);
-            //    _facilities = _adtReferenceDataService.GetFacilities();
-            //    _visit.Facility = _facilities[0];
-            //}
-
-            //_visit.VisitNumber.Id = "12345";
-            //_visit.VisitNumber.AssigningAuthority = "UHN";
-            ////_visit.Practitioners.Add(VisitPractitioner.New());
-            ////_visit.Locations.Add(VisitLocation.New());
-
-
-            //#endregion
-
         }
 
         public VisitEditorComponent(EntityRef<Patient> patientRef)
@@ -88,8 +64,8 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Pages.Add(new NavigatorPage("Visit/Location", _visitLocationsSummary = new VisitLocationsSummaryComponent()));
 
             _visitEditor.Visit = _visit;
-            //_visitPractionersSummary.Visit = _visit;
-            //_visitLocationsSummary.Visit = _visit;
+            _visitPractionersSummary.Visit = _visit;
+            _visitLocationsSummary.Visit = _visit;
 
             base.Start();
         }

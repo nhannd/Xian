@@ -17,5 +17,10 @@ namespace ClearCanvas.Healthcare {
         private void CustomInitialize()
         {
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}, {2}, {3}, {4}", this.Bed, this.Room, this.Floor, this.Building, this.Facility.ToString());
+        }
     }
 }

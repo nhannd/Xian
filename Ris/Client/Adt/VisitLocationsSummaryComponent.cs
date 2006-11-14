@@ -1,9 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Desktop.Actions;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -21,16 +25,67 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(VisitLocationsSummaryComponentViewExtensionPoint))]
     public class VisitLocationsSummaryComponent : ApplicationComponent
     {
+        private Visit _visit;
+        private Table<VisitLocation> _locationsTable;
+        private VisitLocation _currentVisitLocationSelection;
+
+        private IAdtService _adtService;
+        private IAdtReferenceDataService _adtReferenceService;
+        private VisitLocationRoleEnumTable _visitLocationRole;
+
+        private CrudActionModel _visitLocationActionHandler;
+
         /// <summary>
         /// Constructor
         /// </summary>
         public VisitLocationsSummaryComponent()
         {
+            _adtService = ApplicationContext.GetService<IAdtService>();
+            _adtReferenceService = ApplicationContext.GetService<IAdtReferenceDataService>();
+
+            _visitLocationRole = _adtService.GetVisitLocationRoleEnumTable();
+
+            _locationsTable = new Table<VisitLocation>();
+
+            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
+                "Role",
+                delegate(VisitLocation vl)
+                {
+                    return _visitLocationRole[vl.Role].Value;
+                },
+                0.8f));
+            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
+                "Location",
+                delegate(VisitLocation vl)
+                {
+                    return vl.Location.ToString();
+                },
+                2.5f));
+            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
+                "Start Time",
+                delegate(VisitLocation vl)
+                {
+                    return Format.DateTime(vl.StartTime);
+                },
+                0.8f));
+            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
+                "End Time",
+                delegate(VisitLocation vl)
+                {
+                    return Format.DateTime(vl.EndTime);
+                },
+                0.8f));
+
+            _visitLocationActionHandler = new CrudActionModel();
+            _visitLocationActionHandler.Add.Handler = AddVisitLocation;
+            _visitLocationActionHandler.Edit.Handler = UpdateSelectedVisitLocation;
+            _visitLocationActionHandler.Delete.Handler = DeleteSelectedVisitLocation;
+
+            _visitLocationActionHandler.Add.Enabled = true;
         }
 
         public override void Start()
         {
-            // TODO prepare the component for its live phase
             base.Start();
         }
 
@@ -39,6 +94,128 @@ namespace ClearCanvas.Ris.Client.Adt
             // TODO prepare the component to exit the live phase
             // This is a good place to do any clean up
             base.Stop();
+        }
+
+        public Visit Visit
+        {
+            get { return _visit; }
+            set { _visit = value; }
+        }
+
+        public ITable Locations
+        {
+            get { return _locationsTable; }
+        }
+
+        public VisitLocation CurrentVisitLocationSelection
+        {
+            get { return _currentVisitLocationSelection; }
+            set
+            {
+                _currentVisitLocationSelection = value;
+                VisitLocationSelectionChanged();
+            }
+        }
+
+        public void SetSelectedVisitLocation(ISelection selection)
+        {
+            this.CurrentVisitLocationSelection = (VisitLocation)selection.Item;
+        }
+
+        private void VisitLocationSelectionChanged()
+        {
+            if (_currentVisitLocationSelection != null)
+            {
+                _visitLocationActionHandler.Edit.Enabled = true;
+                _visitLocationActionHandler.Delete.Enabled = true;
+            }
+            else
+            {
+                _visitLocationActionHandler.Edit.Enabled = false;
+                _visitLocationActionHandler.Delete.Enabled = false;
+            }
+        }
+
+
+        public ActionModelNode VisitLocationActionModel
+        {
+            get { return _visitLocationActionHandler; }
+        }
+
+        public void AddVisitLocation()
+        {
+            StubAddVisitLocation();
+            
+            LoadLocations();
+            this.Modified = true;
+        }
+
+        private void StubAddVisitLocation()
+        {
+            IList<Facility> facilities = _adtReferenceService.GetAllFacilities();
+            if (facilities.Count == 0)
+            {
+                _adtReferenceService.AddFacility("Test Facility");
+                facilities = _adtReferenceService.GetAllFacilities();
+            }
+
+            IList<Location> locations = _adtReferenceService.GetAllLocations();
+            if (locations.Count == 0)
+            {
+                Location location = new Location();
+
+                location.Active = true;
+                location.Bed = "Bed";
+                location.Building = "Building";
+                location.Facility = facilities[0];
+                location.Floor = "Floor";
+                location.InactiveDate = Platform.Time;
+                location.PointOfCare = "Point of Care";
+                location.Room = "Room";
+
+                _adtReferenceService.AddLocation(location);
+
+                locations = _adtReferenceService.GetAllLocations();
+            }
+
+            VisitLocation vl = new VisitLocation();
+
+            vl.Role = VisitLocationRole.CR;
+            vl.Location = locations[0];
+            vl.StartTime = Platform.Time;
+            vl.EndTime = null;
+
+            _visit.Locations.Add(vl);
+        }
+
+        public void UpdateSelectedVisitLocation()
+        {
+            StubUpdateSelectedVisitLocaiont();
+
+            LoadLocations();
+            this.Modified = true;
+        }
+
+        private void StubUpdateSelectedVisitLocaiont()
+        {
+            VisitLocation vl = _currentVisitLocationSelection;
+
+            vl.Role = VisitLocationRole.PR;
+            vl.EndTime = Platform.Time;
+        }
+
+        public void DeleteSelectedVisitLocation()
+        {
+            _visit.Locations.Remove(_currentVisitLocationSelection);
+
+            LoadLocations();
+            this.Modified = true;
+        }
+
+        public void LoadLocations()
+        {
+            _locationsTable.Items.Clear();
+            _locationsTable.Items.AddRange(_visit.Locations);
         }
     }
 }
