@@ -43,6 +43,7 @@
     <Compile Include="AddressType.cs" />
     <Compile Include="AdmissionType.cs" />
     <Compile Include="AmbulatoryStatus.cs" />
+    <Compile Include="Brokers\IAccessionNumberBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
     <Compile Include="CompositeIdentifier.cs" />
     <Compile Include="DateTimeRange.cs" />
