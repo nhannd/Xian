@@ -1,7 +1,10 @@
 using System;
 using System.Windows.Forms;
+using System.IO;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Hibernate.Ddl;
+using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
@@ -17,27 +20,36 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             {
                 foreach (string arg in args)
                 {
-                    ParseArg(arg, "OutputFile", ref outputFile);
-                    ParseArg(arg, "DatabaseType", ref databaseType);
+                    TryParseArg(arg, "OutputFile", ref outputFile);
+                    TryParseArg(arg, "DatabaseType", ref databaseType);
                 }
             }
-            
-            DdlWriter writer = new DdlWriter();
 
-            // generators will be processed in order they are added
-            writer.AddGenerator(new DropSchemaGenerator(databaseType));
-            writer.AddGenerator(new CreateSchemaGenerator(databaseType));
-            writer.AddGenerator(new EnumValueInsertGenerator(databaseType));
+            Dialect dialect = (databaseType == "SQLite") ? (Dialect)new NHibernate.Dialect.SQLiteDialect() : (Dialect)new CustomSqlDialect();
 
+            PersistentStore store = new PersistentStore();
+            store.Initialize();
 
-            writer.Execute(outputFile);
+            ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
+            StreamWriter sw = File.CreateText(outputFile);
+
+            // for now, write the drop script first, and then write the create script to the same file
+            // in future, might be good to control this using command line flags
+            scriptWriter.WriteDropScript(sw);
+            scriptWriter.WriteCreateScript(sw);
+
+            sw.Close();
         }
 
-        private void ParseArg(string arg, string command, ref string val)
+        private bool TryParseArg(string arg, string command, ref string val)
         {
             string lookFor = string.Format("/{0}:", command);
             if (arg.IndexOf(lookFor) > -1)
+            {
                 val = arg.Replace(lookFor, "");
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -7,19 +7,16 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Hibernate;
 using NHibernate.Metadata;
 
-namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
+namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     /// <summary>
-    /// Processes all domain enum types to generate a set SQL insert statements that  
+    /// Generates scripts to insert enumeration values into tables  
     /// </summary>
-    public class EnumValueInsertGenerator : Generator
+    class EnumValueInsertGenerator : IDdlScriptGenerator
     {
-        public EnumValueInsertGenerator(string databaseType)
-            : base(databaseType)
-        {
-        }
+        #region IDdlScriptGenerator Members
 
-        public override string[] Run(PersistentStore store)
+        public string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
         {
             List<string> scripts = new List<string>();
             foreach (IClassMetadata metaData in store.Metadata.Values)
@@ -58,6 +55,13 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             return scripts.ToArray();
         }
 
+        public string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+        {
+            return new string[] { };    // nothing to do
+        }
+
+        #endregion
+
         private EnumValueAttribute GetAttribute(FieldInfo fi)
         {
             object[] attrs = fi.GetCustomAttributes(typeof(EnumValueAttribute), false);
@@ -68,5 +72,6 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         {
             return str == null ? "NULL" : string.Format("'{0}'", str);
         }
+
     }
 }

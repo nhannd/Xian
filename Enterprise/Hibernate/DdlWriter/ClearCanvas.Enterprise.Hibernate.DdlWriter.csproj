@@ -39,12 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateSchemaGenerator.cs" />
-    <Compile Include="DdlWriter.cs" />
     <Compile Include="DdlWriterApplication.cs" />
-    <Compile Include="DropSchemaGenerator.cs" />
-    <Compile Include="EnumValueInsertGenerator.cs" />
-    <Compile Include="Generator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
