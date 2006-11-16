@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [Tooltip("activate", "ToolsMeasurementRuler")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RulerMedium.png", "Icons.RulerLarge.png")]
 
-	[MouseToolButton(XMouseButtons.Right, false)]
+	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RulerTool : MouseTool
 	{
