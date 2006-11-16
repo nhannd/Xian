@@ -7,67 +7,53 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
     [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardZoom", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardZoom/Activate", KeyStroke = XKeys.Z)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardZoom")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.ZoomMedium.png", "Icons.ZoomLarge.png")]
 
-	[CursorToken("Icons.ZoomMedium.png", typeof(ZoomTool))]
+	//Mark the delegates as keyboard controllable, without assigning a default keystroke.
+	[KeyboardAction("zoomin", "imageviewer-keyboard/ToolsStandardZoom/ZoomIn", KeyStroke = XKeys.OemPeriod)]
+	[ClickHandler("zoomin", "ZoomIn")]
 
-    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[KeyboardAction("zoomout", "imageviewer-keyboard/ToolsStandardZoom/ZoomOut", KeyStroke = XKeys.Oemcomma)]
+	[ClickHandler("zoomout", "ZoomOut")]
+
+	[MouseWheelControl("ZoomIn", "ZoomOut", ModifierFlags.Control)]
+
+	[CursorToken("Icons.ZoomMedium.png", typeof(ZoomTool))]
+	[MouseToolButton(XMouseButtons.Right, false)]
+
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : MouseTool
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
-            :base(XMouseButtons.Right, false)
 		{
-			base.RequiresCapture = true;
 		}
 
-		#region IUIEventHandler Members
-
-		public override bool OnMouseDown(XMouseEventArgs e)
+		private void CaptureBeginState(IPresentationImage image)
 		{
-			base.OnMouseDown(e);
-
-			if (e.SelectedPresentationImage == null)
-				return true;
-
-			_applicator = new SpatialTransformApplicator(e.SelectedPresentationImage);
+			_applicator = new SpatialTransformApplicator(image);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandZoom;
 			_command.BeginState = _applicator.CreateMemento();
-
-			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		private void CaptureEndState()
 		{
-			base.OnMouseMove(e);
-
-			SpatialTransform spatialTransform = e.SelectedPresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
-			spatialTransform.ScaleToFit = false;
-			spatialTransform.Scale += (float)base.DeltaY * 0.025f;
-			spatialTransform.Calculate();
-			e.SelectedPresentationImage.Draw();
-
-			return true;
-		}
-
-		public override bool OnMouseUp(XMouseEventArgs e)
-		{
-			base.OnMouseUp(e); 
-			
 			if (_command == null)
-				return true;
+				return;
 
 			_command.EndState = _applicator.CreateMemento();
 
@@ -75,41 +61,84 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_command.EndState.Equals(_command.BeginState))
 			{
 				_command = null;
-				return true;
+				return;
 			}
 
 			// Apply the final state to all linked images
 			_applicator.SetMemento(_command.EndState);
 
-            this.Context.Viewer.CommandHistory.AddCommand(_command);
+			this.Context.Viewer.CommandHistory.AddCommand(_command);
+		}
+
+		private void ZoomIn()
+		{
+			ITile tile = this.Context.Viewer.SelectedTile;
+			if (tile == null || tile.PresentationImage == null)
+				return;
+
+			CaptureBeginState(tile.PresentationImage);
+
+			IncrementZoom(tile, 0.2F);
+
+			CaptureEndState();
+		}
+
+		private void ZoomOut()
+		{
+			ITile tile = this.Context.Viewer.SelectedTile;
+			if (tile == null || tile.PresentationImage == null)
+				return;
+
+			CaptureBeginState(tile.PresentationImage);
+
+			IncrementZoom(tile, -0.2F);
+
+			CaptureEndState();
+		}
+
+		private void IncrementZoom(ITile tile, float scaleIncrement)
+		{
+			if (tile == null || tile.PresentationImage == null)
+				return;
+
+			SpatialTransform spatialTransform = tile.PresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
+			spatialTransform.ScaleToFit = false;
+			spatialTransform.Scale += scaleIncrement;
+			spatialTransform.Calculate();
+			tile.PresentationImage.Draw();
+		}
+
+		public override bool Start(MouseInformation mouseInformation)
+		{
+			base.Start(mouseInformation);
+
+			if (mouseInformation.Tile.PresentationImage == null)
+				return true;
+
+			CaptureBeginState(mouseInformation.Tile.PresentationImage);
 
 			return true;
 		}
 
-		public override bool OnMouseWheel(XMouseEventArgs e)
+		public override bool Track(MouseInformation mouseInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
+			base.Track(mouseInformation);
 
-			//SpatialTransform spatialTransform = e.SelectedPresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
-			//spatialTransform.ScaleToFit = false;
-			//spatialTransform.Scale += (float)e.Delta * 0.001f;
-			//spatialTransform.Calculate();
-			//e.SelectedPresentationImage.Draw(true);
+			if (_command == null)
+				return true;
+
+			IncrementZoom(mouseInformation.Tile, (float)base.DeltaY * 0.025F);
 
 			return true;
 		}
 
-		public override bool OnKeyDown(XKeyEventArgs e)
+		public override bool Stop(MouseInformation mouseInformation)
 		{
-			return false;
+			base.Stop(mouseInformation);
+			
+			CaptureEndState();
+			
+			return true;
 		}
-
-
-		public override bool OnKeyUp(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		#endregion
 	}
 }

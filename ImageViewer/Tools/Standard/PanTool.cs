@@ -7,18 +7,35 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardPan/Activate", KeyStroke = XKeys.P)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardPan")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.PanMedium.png", "Icons.PanLarge.png")]
 
-	[CursorToken("Icons.PanMedium.png", typeof(PanTool))]
+	[KeyboardAction("panleft", "imageviewer-keyboard/ToolsStandardPan/PanLeft", KeyStroke = XKeys.Control | XKeys.Left)]
+	[ClickHandler("panleft", "PanLeft")]
+
+	[KeyboardAction("panright", "imageviewer-keyboard/ToolsStandardPan/PanRight", KeyStroke = XKeys.Control | XKeys.Right)]
+	[ClickHandler("panright", "PanRight")]
+
+	[KeyboardAction("panup", "imageviewer-keyboard/ToolsStandardPan/PanUp", KeyStroke = XKeys.Control | XKeys.Up)]
+	[ClickHandler("panup", "PanUp")]
+
+	[KeyboardAction("pandown", "imageviewer-keyboard/ToolsStandardPan/PanDown", KeyStroke = XKeys.Control | XKeys.Down)]
+	[ClickHandler("pandown", "PanDown")]
+
+	[MouseButtonControl(XMouseButtons.Left, ModifierFlags.Control)]
+
+	[CursorToken("Icons.PanMedium.png", typeof(PanTool))]	
+	[MouseToolButton(XMouseButtons.Left, false)]
     
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PanTool : MouseTool
@@ -27,53 +44,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public PanTool()
-            :base(XMouseButtons.Left, false)
 		{
-			base.RequiresCapture = true;
 		}
 
-		#region IUIEventHandler Members
-
-		public override bool OnMouseDown(XMouseEventArgs e)
+		private void CaptureBeginState(IPresentationImage image)
 		{
-			base.OnMouseDown(e);
-
-			if (e.SelectedPresentationImage == null)
-				return true;
-
-			_applicator = new SpatialTransformApplicator(e.SelectedPresentationImage);
+			_applicator = new SpatialTransformApplicator(image);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandPan;
 			_command.BeginState = _applicator.CreateMemento();
-
-			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		private void CaptureEndState()
 		{
-			base.OnMouseMove(e);
-
 			if (_command == null)
-				return true;
-
-			SpatialTransform spatialTransform = e.SelectedPresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
-			float scale = spatialTransform.Scale;
-			Platform.CheckPositive(scale, "spatialTransform.Scale");
-
-			spatialTransform.TranslationX += (float)base.DeltaX / scale;
-			spatialTransform.TranslationY += (float)base.DeltaY / scale;
-			spatialTransform.Calculate();
-			e.SelectedPresentationImage.Draw();
-
-			return true;
-		}
-
-		public override bool OnMouseUp(XMouseEventArgs e)
-		{
-			base.OnMouseUp(e);
-
-			if (_command == null)
-				return true;
+				return;
 
 			_command.EndState = _applicator.CreateMemento();
 
@@ -81,35 +66,92 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_command.EndState.Equals(_command.BeginState))
 			{
 				_command = null;
-				return true;
+				return;
 			}
 
 			// Apply the final state to all linked images
 			_applicator.SetMemento(_command.EndState);
 
-            this.Context.Viewer.CommandHistory.AddCommand(_command);
+			this.Context.Viewer.CommandHistory.AddCommand(_command);
+		}
+
+		private void PanLeft()
+		{
+			IncrementPan(-20, 0);
+		}
+
+		private void PanRight()
+		{
+			IncrementPan(20, 0);
+		}
+
+		private void PanUp()
+		{
+			IncrementPan(0, -20);
+		}
+
+		private void PanDown()
+		{
+			IncrementPan(0, 20);
+		}
+
+		private void IncrementPan(int xIncrement, int yIncrement)
+		{
+			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+			if (image == null)
+				return;
+
+			this.CaptureBeginState(image);
+			this.IncrementPan(image, xIncrement, yIncrement);
+			this.CaptureEndState();
+		}
+
+		private void IncrementPan(IPresentationImage image, int xIncrement, int yIncrement)
+		{
+			SpatialTransform spatialTransform = image.LayerManager.SelectedLayerGroup.SpatialTransform;
+			float scale = spatialTransform.Scale;
+			Platform.CheckPositive(scale, "spatialTransform.Scale");
+
+			spatialTransform.TranslationX += xIncrement / scale;
+			spatialTransform.TranslationY += yIncrement / scale;
+			spatialTransform.Calculate();
+			image.Draw();
+		}
+
+		public override bool Start(MouseInformation mouseInformation)
+		{
+			base.Start(mouseInformation);
+
+			if (mouseInformation.Tile.PresentationImage == null)
+				return true;
+
+			CaptureBeginState(mouseInformation.Tile.PresentationImage);
 
 			return true;
 		}
 
-		public override bool OnMouseWheel(XMouseEventArgs e)
+		public override bool Track(MouseInformation mouseInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
+			base.Track(mouseInformation);
+
+			if (mouseInformation.Tile.PresentationImage == null)
+				return true;
+
+			if (_command == null)
+				return true;
+
+			this.IncrementPan(mouseInformation.Tile.PresentationImage, base.DeltaX, base.DeltaY);
 
 			return true;
 		}
 
-		public override bool OnKeyDown(XKeyEventArgs e)
+		public override bool Stop(MouseInformation mouseInformation)
 		{
-			return false;
+			base.Stop(mouseInformation);
+
+			CaptureEndState();
+
+			return true;
 		}
-
-
-		public override bool OnKeyUp(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		#endregion
 	}
 }

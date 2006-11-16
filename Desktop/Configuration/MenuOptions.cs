@@ -10,8 +10,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Configuration
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuOptions")]
-	//[ButtonAction("show", "global-toolbars/ToolbarMyTools/MenuOptions")]
+	[MenuAction("show", "global-menus/MenuTools/MenuOptions", KeyStroke = XKeys.Control | XKeys.O)]
 	[Tooltip("show", "TooltipMenuOptions")]
 	[IconSet("show", IconScheme.Colour, "Icons.MenuOptionsSmall.png", "Icons.MenuOptionsMedium.png", "Icons.MenuOptionsLarge.png")]
 	[ClickHandler("show", "Show")]

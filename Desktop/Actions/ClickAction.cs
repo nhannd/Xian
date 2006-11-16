@@ -12,8 +12,9 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ClickAction : Action, IClickAction
     {
-        private ClickActionFlags _flags;
+		private ClickActionFlags _flags;
         private ClickHandlerDelegate _clickHandler;
+		private XKeys _keyStroke;
 
         private IObservablePropertyBinding<bool> _checkedPropertyBinding;
 
@@ -48,6 +49,11 @@ namespace ClearCanvas.Desktop.Actions
             _clickHandler = clickHandler;
         }
 
+
+		public void SetKeyStroke(XKeys keyStroke)
+		{
+			_keyStroke = keyStroke;
+		}
 
         #region IClickAction members
 
@@ -87,7 +93,11 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        #endregion
+		public XKeys KeyStroke
+		{
+			get { return _keyStroke; }
+		}
 
-    }
+        #endregion
+	}
 }

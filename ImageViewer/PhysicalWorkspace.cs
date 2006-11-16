@@ -40,14 +40,6 @@ namespace ClearCanvas.ImageViewer
 	/// the physical workspace's image boxes and tiles are also resized accordingly.
 	/// </para>
 	/// <para>
-	/// Because <b>PhysicalWorkspace</b> is always associated with a 
-	/// <see cref="System.Windows.Forms.Control"/> of some kind in the View plugin, it
-	/// also acts as a entry conduit for mouse and keyboard input messages via
-	/// <b>PhysicalWorkspace</b>'s <see cref="IUIEventHandler"/> interface.  Input messages
-	/// are sent downward to the image boxes, tiles, presentation images, and layers,
-	/// giving each a chance to handle the message.  
-	/// </para>
-	/// <para>
 	/// By default, when constructed, <b>PhysicalWorkspace</b> contains zero image boxes.
 	/// </para>
 	/// </remarks>

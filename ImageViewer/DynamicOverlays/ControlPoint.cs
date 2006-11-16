@@ -58,11 +58,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			remove { _controlPointChangedEvent -= value; }
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			PointF ptMouse = this.SpatialTransform.ConvertToSource(new PointF(e.X,e.Y));
+			PointF ptMouse = this.SpatialTransform.ConvertToSource(point);
 
 			_rectElement.CoordinateSystem = CoordinateSystem.Source;
 

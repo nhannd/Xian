@@ -232,11 +232,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		#endregion
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
 			foreach (LinePrimitive line in this.Graphics)
 			{
-				if (line.HitTest(e))
+				if (line.HitTest(point))
 					return true;
 			}
 

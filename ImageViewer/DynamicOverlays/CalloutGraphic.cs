@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -94,16 +95,16 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			_textGraphic.Move(delta);
 		}
  
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
         {
-            return _textGraphic.HitTest(e) || _lineGraphic.HitTest(e);
+			return _textGraphic.HitTest(point) || _lineGraphic.HitTest(point);
         }
 
-		public override bool SetCursorToken(XMouseEventArgs e)
+		public override bool SetCursorToken(MouseInformation pointerInformation)
 		{
-			if (this.HitTest(e))
+			if (this.HitTest(pointerInformation.Point))
 			{
-				e.SelectedTile.CursorToken = this.MoveToken;
+				pointerInformation.Tile.CursorToken = this.MoveToken;
 				return true;
 			}
 
@@ -114,12 +115,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 			_textGraphic = new InvariantTextPrimitive();
 			base.Graphics.Add(_textGraphic);
-			_textGraphic.AutoHandleMouse = false;
 			_textGraphic.BoundingBoxChanged += new EventHandler<RectangleChangedEventArgs>(OnTextBoundingBoxChanged);
 
 			_lineGraphic = new LinePrimitive();
 			base.Graphics.Add(_lineGraphic);
-			_lineGraphic.AutoHandleMouse = false;
 			_lineGraphic.LineStyle = LineStyle.Dash;
 		}
 

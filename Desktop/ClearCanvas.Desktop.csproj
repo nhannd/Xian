@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +53,8 @@
     <Compile Include="Actions\ActionModelStore.cs" />
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="Actions\KeyboardAction.cs" />
+    <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />
@@ -62,6 +65,7 @@
     <Compile Include="CursorTokenAttribute.cs" />
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
+    <Compile Include="Enumerations.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="StackComponentContainer.cs" />
     <Compile Include="Tables\ITable.cs" />

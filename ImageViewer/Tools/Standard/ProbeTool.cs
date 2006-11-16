@@ -14,17 +14,20 @@ using System.Drawing;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.Mathematics;
 using System.Diagnostics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardProbe", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardProbe", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardProbe", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardProbe/Activate", KeyStroke = XKeys.B)]
 	[Tooltip("activate", "ToolbarToolsStandardProbe")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
 	[ClickHandler("activate", "Select")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	
+
+	[MouseToolButton(XMouseButtons.Left, false)]
 	[CursorToken(CursorToken.SystemCursors.Cross)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -42,11 +45,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// framework.  Do not remove.
 		/// </summary>
 		public ProbeTool()
-			: base(XMouseButtons.Left)
 		{
 			_enabled = true;
-			base.RequiresCapture = true;
 		}
+
 		/// <summary>
 		/// Called by the framework to initialize this tool.
 		/// </summary>
@@ -84,26 +86,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { _enabledChanged -= value; }
 		}
 
-		#region IUIEventHandler Members
-
-		/// <summary>
-		/// Called by framework when the assigned mouse button was pressed.
-		/// </summary>
-		/// <param name="e">Mouse event args</param>
-		/// <returns>True if the event was handled, false otherwise</returns>
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation mouseInformation)
 		{
-			if (!(e.SelectedTile is Tile) ||
-				e.SelectedPresentationImage == null ||
-				e.SelectedPresentationImage.LayerManager == null ||
-				e.SelectedPresentationImage.LayerManager.SelectedImageLayer == null)
-			{
-				return false;
-			}
-			
-			base.OnMouseDown(e);
+			base.Start(mouseInformation);
 
-			_selectedTile = e.SelectedTile as Tile;
+			if (!(mouseInformation.Tile is Tile) ||
+				mouseInformation.Tile.PresentationImage == null ||
+				mouseInformation.Tile.PresentationImage.LayerManager == null ||
+				mouseInformation.Tile.PresentationImage.LayerManager.SelectedImageLayer == null)
+			{
+				return true;
+			}
+
+			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
 			_selectedImageLayer = _selectedTile.PresentationImage.LayerManager.SelectedImageLayer;
 
@@ -121,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					_selectedImageLayer.GetPixelData()
 				);
 
-			Probe(new Point(e.X, e.Y));
+			Probe(mouseInformation.Point);
 
 			return true;
 		}
@@ -132,14 +127,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		/// <param name="e">Mouse event args</param>
 		/// <returns>True if the event was handled, false otherwise</returns>
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation mouseInformation)
 		{
 			if (_selectedTile == null || _selectedImageLayer == null)
-				return false;
+				return true;
 
-			base.OnMouseMove(e);
+			base.Track(mouseInformation);
 
-			Probe(new Point(e.X, e.Y));
+			Probe(mouseInformation.Point);
 			
 			return true;
 		}
@@ -149,12 +144,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		/// <param name="e">Mouse event args</param>
 		/// <returns>True if the event was handled, false otherwise</returns>
-		public override bool OnMouseUp(XMouseEventArgs e)
+		public override bool Stop(MouseInformation mouseInformation)
 		{
 			if (_selectedTile == null || _selectedImageLayer == null)
 				return false;
 
-			base.OnMouseUp(e);
+			base.Stop(mouseInformation);
 
 			_selectedImageLayer = null;
 
@@ -246,7 +241,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			_selectedTile.InformationBox.Update(probeString, destinationPoint);
 		}
-
-		#endregion
 	}
 }

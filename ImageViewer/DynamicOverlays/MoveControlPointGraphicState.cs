@@ -4,10 +4,11 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class MoveControlPointGraphicState : GraphicState
+	public class MoveControlPointGraphicState : GraphicState, IMouseButtonHandler
 	{
 		private PointF _currentPoint;
 		private int _controlPointIndex;
@@ -28,14 +29,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as InteractiveGraphic; }
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
+			pointerInformation.Tile.CurrentPointerAction = this;
 
-			if (e.MouseCapture != null)
-			    e.MouseCapture.SetCapture(this, e);
-
-			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
 
 			if (this.SupportUndo)
 			{
@@ -48,17 +46,15 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			if (base.Command == null)
 				return false;
 
-			Point mousePoint = new Point(e.X, e.Y);
-			PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.SpatialTransform.DestinationRectangle);
+			//Point mousePoint = new Point(e.X, e.Y);
+			//PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.SpatialTransform.DestinationRectangle);
 
-			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(new PointF(mousePoint.X, mousePoint.Y));
+			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
 			_currentPoint = this.InteractiveGraphic.CalcControlPointPosition(_controlPointIndex, base.LastPoint, _currentPoint);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = _currentPoint;
@@ -70,12 +66,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool OnMouseUp(XMouseEventArgs e)
+		public override bool Stop(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (e.MouseCapture != null)
-			    e.MouseCapture.ReleaseCapture();
+			pointerInformation.Tile.CurrentPointerAction = null;
 
 			if (this.SupportUndo)
 			{

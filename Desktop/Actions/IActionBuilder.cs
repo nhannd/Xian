@@ -15,6 +15,7 @@ namespace ClearCanvas.Desktop.Actions
         void Apply(IconSetAttribute a);
         void Apply(MenuActionAttribute a);
         void Apply(TooltipAttribute a);
+		void Apply(KeyboardActionAttribute a);
 
         void Apply(CheckedStateObserverAttribute a);
         void Apply(EnabledStateObserverAttribute a);

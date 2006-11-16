@@ -9,14 +9,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Edit
 {
-    [MenuAction("undo", "global-menus/MenuEdit/MenuEditUndo")]
+    [MenuAction("undo", "global-menus/MenuEdit/MenuEditUndo", KeyStroke = XKeys.Control | XKeys.Z)]
     [ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarStandardUndo")]
     [ClickHandler("undo", "Undo")]
     [EnabledStateObserver("undo", "UndoEnabled", "UndoEnabledChanged")]
     [IconSet("undo", IconScheme.Colour, "", "Icons.UndoMedium.png", "Icons.UndoLarge.png")]
     [Tooltip("undo", "ToolbarStandardUndo")]
 
-    [MenuAction("redo", "global-menus/MenuEdit/MenuEditRedo")]
+	[MenuAction("redo", "global-menus/MenuEdit/MenuEditRedo", KeyStroke = XKeys.Control | XKeys.Y)]
     [ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarStandardRedo")]
     [ClickHandler("redo", "Redo")]
     [EnabledStateObserver("redo", "RedoEnabled", "RedoEnabledChanged")]

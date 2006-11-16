@@ -6,13 +6,14 @@ using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public class CreateROIGraphicState : GraphicState
 	{
 		private StatefulGraphic _childGraphic;
-		private IMouseCapture _mouseCapture; //objects with atomic mouse capture (up-down up-down, etc) should store this interface and use it.
+		private ITile _currentTile;
 
 		public CreateROIGraphicState(ROIGraphic roiGraphic)
 			: base(roiGraphic)
@@ -24,34 +25,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as ROIGraphic; }
 		}
 
-		private void ReleaseCapture()
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			//release capture when not in the create state anymore.
-			if (_mouseCapture != null)
-			{
-				if (this.Equals(_mouseCapture.GetCapture()))
-					_mouseCapture.ReleaseCapture();
-
-				_mouseCapture = null;
-			}
-		}
-
-		public override bool OnMouseDown(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			//set capture on first mouse down.
-			if (_mouseCapture == null && e.MouseCapture != null)
-			{
-				_mouseCapture = e.MouseCapture;
-				_mouseCapture.SetCapture(this, e);
-			}
+			_currentTile = pointerInformation.Tile;
+			_currentTile.CurrentPointerAction = this.ROIGraphic;
 
 			if (_childGraphic == null)
 			{
-				// Create the callout
-				PointF mousePoint = new PointF(e.X, e.Y);
-
+				PointF mousePoint = new PointF(pointerInformation.Point.X, pointerInformation.Point.Y);
 #if MONO
 				Size offset = new Size(50, 30);
 #else
@@ -73,29 +54,20 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 				this.ROIGraphic.Callout.Draw();
 
-				// We want to route mouse messages to this.ROIGraphic.Roi so that
-				// the creation of the ROI is delegated to that object
 				_childGraphic = this.ROIGraphic.Roi;
 				_childGraphic.State.SupportUndo = false;
 				_childGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 			}
 
-			// Actually route the mouse down message
-			return _childGraphic.OnMouseDown(e);
+			return _childGraphic.Start(pointerInformation);
 		}
 
-		public override bool OnMouseUp(XMouseEventArgs e)
-		{
-			if (!this.ROIGraphic.State.Equals(this))
-				ReleaseCapture();
 
-			return false;
-		}
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
 			// Route mouse move message to the child roi object
 			if (_childGraphic != null)
-				return _childGraphic.OnMouseMove(e);
+				return _childGraphic.Track(pointerInformation);
 
 			return false;
 		}
@@ -109,6 +81,8 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				this.ROIGraphic.State = this.ROIGraphic.CreateFocusSelectedState();
 				_childGraphic.StateChanged -= new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 				_childGraphic = null;
+
+				_currentTile.CurrentPointerAction = null;
 
 				// We're done creating, so create a command
 				this.Command = new PositionGraphicCommand(this.ROIGraphic, true);

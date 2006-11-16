@@ -30,6 +30,11 @@ namespace ClearCanvas.Desktop.Actions
         /// </remarks>
         bool Checked { get; }
 
+		/// <summary>
+		/// The keystroke that the UI should attempt to intercept and invoke the action.
+		/// </summary>
+		XKeys KeyStroke { get; }
+
         /// <summary>
         /// Called by the UI when the user clicks on the action.
         /// </summary>

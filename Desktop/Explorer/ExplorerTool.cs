@@ -13,7 +13,7 @@ namespace ClearCanvas.Desktop.Explorer
 	{
 	}
 
-    [MenuAction("show", "global-menus/MenuFile/MenuFileSearch")]
+    [MenuAction("show", "global-menus/MenuFile/MenuFileSearch", KeyStroke = XKeys.Control | XKeys.S)]
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarToolsStandardExplorer")]
 	[ClickHandler("show", "Show")]
 	[IconSet("show", IconScheme.Colour, "", "Icons.DashboardMedium.png", "Icons.DashboardLarge.png")]

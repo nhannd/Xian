@@ -5,56 +5,157 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
-    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardStack", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardStack/Activate", KeyStroke = XKeys.S)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardStack")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.StackMedium.png", "Icons.StackLarge.png")]
 
+	[MouseWheelControl("StackDown", "StackUp")]
 	[CursorToken("Icons.StackMedium.png", typeof(StackTool))]
-	/// <summary>
-	/// 
-	/// </summary>
-    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[MouseToolButton(XMouseButtons.Left, true)]
+
+	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", KeyStroke = XKeys.PageUp)]
+	[ClickHandler("stackup", "StackUp")]
+
+	[KeyboardAction("stackdown", "imageviewer-keyboard/ToolsStandardStack/StackDown", KeyStroke = XKeys.PageDown)]
+	[ClickHandler("stackdown", "StackDown")]
+
+	[KeyboardAction("jumptobeginning", "imageviewer-keyboard/ToolsStandardStack/JumpToBeginning", KeyStroke = XKeys.Home)]
+	[ClickHandler("jumptobeginning", "JumpToBeginning")]
+
+	[KeyboardAction("jumptoend", "imageviewer-keyboard/ToolsStandardStack/JumpToEnd", KeyStroke = XKeys.End)]
+	[ClickHandler("jumptoend", "JumpToEnd")]
+
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackTool : MouseTool
 	{
 		private UndoableCommand _command;
 		private int _initialPresentationImageIndex;
+		private IImageBox _currentImageBox;
 
 		public StackTool()
-            :base(XMouseButtons.Left, true)
 		{
-			this.RequiresCapture = true;
 		}
 
-		#region IUIEventHandler Members
-
-		public override bool OnMouseDown(XMouseEventArgs e)
+		private void CaptureBeginState(IImageBox imageBox)
 		{
-			base.OnMouseDown(e);
-
-			if (e.SelectedTile == null)
-				return true;
-
-			_command = new UndoableCommand(e.SelectedImageBox);
+			_command = new UndoableCommand(imageBox);
 			_command.Name = SR.CommandStack;
 
 			// Capture state before stack
-			_command.BeginState = e.SelectedImageBox.CreateMemento();
+			_command.BeginState = imageBox.CreateMemento();
+			_currentImageBox = imageBox;
 
-			_initialPresentationImageIndex = e.SelectedTile.PresentationImageIndex;
+			_initialPresentationImageIndex = imageBox.SelectedTile.PresentationImageIndex;
+		}
+
+		private void CaptureEndState()
+		{
+			if (_command == null || _currentImageBox == null)
+			{
+				_currentImageBox = null;
+				return;
+			}
+
+			// If nothing's changed then just return
+			if (_initialPresentationImageIndex == _currentImageBox.SelectedTile.PresentationImageIndex)
+			{
+				_command = null;
+				_currentImageBox = null;
+				return;
+			}
+
+			// Capture state after stack
+			_command.EndState = _currentImageBox.CreateMemento();
+			this.Context.Viewer.CommandHistory.AddCommand(_command);
+
+			_command = null;
+			_currentImageBox = null;
+		}
+
+		private void JumpToBeginning()
+		{
+			if (this.Context.Viewer.SelectedTile == null)
+				return;
+
+			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
+
+			CaptureBeginState(imageBox);
+			imageBox.TopLeftPresentationImageIndex = 0;
+			imageBox.Draw();
+			CaptureEndState();
+		}
+
+		private void JumpToEnd()
+		{
+			if (this.Context.Viewer.SelectedTile == null)
+				return;
+
+			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
+
+			if (imageBox.DisplaySet == null)
+				return;
+
+			CaptureBeginState(imageBox);
+			imageBox.TopLeftPresentationImageIndex = imageBox.DisplaySet.PresentationImages.Count - 1;
+			imageBox.Draw();
+			CaptureEndState();
+		}
+
+		private void StackUp()
+		{
+			if (this.Context.Viewer.SelectedTile == null)
+				return;
+
+			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
+			CaptureBeginState(imageBox);
+			AdvanceImage(-1, imageBox);
+			CaptureEndState();
+		}
+
+		private void StackDown()
+		{
+			if (this.Context.Viewer.SelectedTile == null)
+				return;
+
+			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
+			CaptureBeginState(imageBox);
+			AdvanceImage(+1, imageBox);
+			CaptureEndState();
+		}
+
+		private void AdvanceImage(int increment, IImageBox selectedImageBox)
+		{
+			selectedImageBox.TopLeftPresentationImageIndex += increment;
+			selectedImageBox.Draw();
+		}
+
+		public override bool Start(MouseInformation mouseInformation)
+		{
+			base.Start(mouseInformation);
+
+			if (mouseInformation.Tile == null)
+				return true;
+
+			CaptureBeginState(mouseInformation.Tile.ParentImageBox);
 
 			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation mouseInformation)
 		{
-			base.OnMouseMove(e);
+			base.Track(mouseInformation);
+
+			if (mouseInformation.Tile == null)
+				return true;
 
 			int increment;
 
@@ -63,75 +164,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			else
 				increment = -1;
 
-			AdvanceImage(increment, e.SelectedTile, e.SelectedImageBox);
+			AdvanceImage(increment, mouseInformation.Tile.ParentImageBox);
 
 			return true;
 		}
 
-		public override bool OnMouseUp(XMouseEventArgs e)
+		public override bool Stop(MouseInformation mouseInformation)
 		{
-			base.OnMouseUp(e); 
-			
-			if (_command == null)
-			    return true;
+			base.Stop(mouseInformation);
 
-			// If nothing's changed then just return
-			if (_initialPresentationImageIndex == e.SelectedTile.PresentationImageIndex)
-			{
-			    //_command = null;
-			    return true;
-			}
-
-			// Capture state after stack
-			_command.EndState = e.SelectedImageBox.CreateMemento();
-
-			this.Context.Viewer.CommandHistory.AddCommand(_command);
+			CaptureEndState();
 
 			return true;
 		}
-
-		public override bool OnMouseWheel(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			//int increment;
-
-			//if (e.Delta > 0)
-			//    increment = -1;
-			//else
-			//    increment = 1;
-
-			//Tile selectedTile = e.SelectedTile;
-			//ImageBox selectedImageBox = e.SelectedImageBox;
-
-			//AdvanceImage(increment, selectedTile, selectedImageBox);
-
-			return true;
-		}
-
-		public override bool OnKeyDown(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-
-		public override bool OnKeyUp(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		#endregion
-
-		private void AdvanceImage(int increment, ITile selectedTile, IImageBox selectedImageBox)
-		{
-			selectedImageBox.TopLeftPresentationImageIndex += increment;
-			selectedImageBox.Draw();
-		}
-	
-		//protected override void OnDynamicActionStopped(XMouseEventArgs e)
-		//{
-		//    //stack tool changes the state of all tiles in the imagebox, so redraw the image box.
-		//    e.SelectedImageBox.Draw(true);
-		//}
 	}
 }

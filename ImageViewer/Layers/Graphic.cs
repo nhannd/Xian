@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Layers
 			}
 		}
 
-		public virtual bool Focused
+		public override bool Focused
 		{
 			get { return base.Focused; }	// this is required for compilation on MONO
 			set
@@ -119,9 +119,9 @@ namespace ClearCanvas.ImageViewer.Layers
 		/// <summary>
 		/// Returns a value indicating whether the mouse is over the <see cref="Graphic"/>.
 		/// </summary>
-		/// <param name="e"></param>
+		/// <param name="point"></param>
 		/// <returns></returns>
-		public abstract bool HitTest(XMouseEventArgs e);
+		public abstract bool HitTest(Point point);
 
 		public override void Draw()
 		{

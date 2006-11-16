@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsTrue(imageBox[0, 0].Selected);
 			Assert.IsFalse(imageBox[0, 1].Selected);
 
-			Tile tile = imageBox[0, 0] as Tile;
-			Assert.IsTrue(tile.ContextMenuEnabled);
+			//Tile tile = imageBox[0, 0] as Tile;
+			//Assert.IsTrue(tile.ContextMenuEnabled);
 		}
 
 

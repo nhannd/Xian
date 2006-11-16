@@ -134,6 +134,7 @@
       <SubType>Designer</SubType>
       <DependentUpon>TileControl.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="IInputTranslator.cs" />
     <Compile Include="ImageBoxView.cs" />
     <Compile Include="ImageBoxControl.cs">
       <SubType>UserControl</SubType>
@@ -148,6 +149,7 @@
     <Compile Include="ImageViewerControl.Designer.cs">
       <DependentUpon>ImageViewerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="InputTranslator.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

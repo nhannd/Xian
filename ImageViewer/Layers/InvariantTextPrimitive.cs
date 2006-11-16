@@ -89,15 +89,13 @@ namespace ClearCanvas.ImageViewer.Layers
 			remove { _boundingBoxChangedEvent -= value; }
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			PointF point = new PointF(e.X, e.Y);
+			PointF pointF = new PointF(point.X, point.Y);
 
 			this.CoordinateSystem = CoordinateSystem.Destination;
 
-			bool hit = this.BoundingBox.Contains(point);
+			bool hit = this.BoundingBox.Contains(pointF);
 
 			this.ResetCoordinateSystem();
 

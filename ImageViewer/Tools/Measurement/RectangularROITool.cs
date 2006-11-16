@@ -7,6 +7,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -16,26 +17,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolsMeasurementRectangularROI")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RectangularROIMedium.png", "Icons.RectangularROILarge.png")]
-    
+
+	[MouseToolButton(XMouseButtons.Right, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RectangularROITool : MouseTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
 
 		public RectangularROITool()
-            :base(XMouseButtons.Left, false)
 		{
 		}
 
-		#region IUIEventHandler Members
-
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			base.OnMouseDown(e);
-
-			if (e.SelectedTile == null ||
-				e.SelectedPresentationImage == null)
+			if (pointerInformation.Tile == null || pointerInformation.Tile.PresentationImage == null)
 				return true;
+
+			base.Start(pointerInformation);
 
 			InteractiveRectangleGraphic rectangleGraphic = new InteractiveRectangleGraphic(true);
             ROIGraphic roiGraphic = new ROIGraphic(rectangleGraphic, true);
@@ -45,43 +43,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			roiGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 			
 			roiGraphic.Callout.Text = "Area:";
-            e.SelectedPresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(roiGraphic);
+			pointerInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(roiGraphic);
 			roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);
-            roiGraphic.OnMouseDown(e);
+
+			roiGraphic.Start(pointerInformation);
 
 			return false;
 		}
-
-		public override bool OnMouseMove(XMouseEventArgs e)
-		{
-			base.OnMouseMove(e);
-
-			return false;
-		}
-
-		public override bool OnMouseUp(XMouseEventArgs e)
-		{
-			return false;
-		}
-
-		public override bool OnMouseWheel(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return true;
-		}
-
-		public override bool OnKeyDown(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		public override bool OnKeyUp(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		#endregion
 
 		private bool PixelSpacingNotAllowed(ImageSop imageSop)
 		{

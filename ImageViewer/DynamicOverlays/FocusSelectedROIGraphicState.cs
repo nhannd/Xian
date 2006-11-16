@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
+using System.Drawing;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -38,13 +40,13 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 		}
 
-		private void SetCurrentChildGraphic(XMouseEventArgs e)
+		private void SetCurrentChildGraphic(Point point)
 		{
-			if (this.ROIGraphic.Roi.HitTest(e))
+			if (this.ROIGraphic.Roi.HitTest(point))
 			{
 				_currentChildGraphic = this.ROIGraphic.Roi;
 			}
-			else if (this.ROIGraphic.Callout.HitTest(e))
+			else if (this.ROIGraphic.Callout.HitTest(point))
 			{
 				_currentChildGraphic = this.ROIGraphic.Callout;
 			}
@@ -54,34 +56,32 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			SetCurrentChildGraphic(e);
+			SetCurrentChildGraphic(pointerInformation.Point);
 
 			if (_currentChildGraphic != null)
-				return _currentChildGraphic.OnMouseDown(e);
+				return _currentChildGraphic.Start(pointerInformation);
 
 			//We should never actually get to here, but if we did, this should happen.
 			SetGraphicStates(false);
 			return false;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
-			SetCurrentChildGraphic(e);
+			SetCurrentChildGraphic(pointerInformation.Point);
 
 			if (_currentChildGraphic != null)
-				return _currentChildGraphic.OnMouseMove(e);
+				return _currentChildGraphic.Track(pointerInformation);
 
 			SetGraphicStates(false);
 			return false;
 		}
 
-		public override void OnEnterState(XMouseEventArgs e)
+		public override void OnEnterState(MouseInformation pointerInformation)
 		{
-			base.StatefulGraphic.OnEnterFocusSelectedState(e);
+			base.StatefulGraphic.OnEnterFocusSelectedState(pointerInformation);
 		}
 
 		public override string ToString()

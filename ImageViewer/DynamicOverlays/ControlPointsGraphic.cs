@@ -133,29 +133,26 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		#endregion
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			foreach (ControlPoint controlPoint in this.Graphics)
 			{
 				if (controlPoint != null)
-					if (controlPoint.HitTest(e))
+					if (controlPoint.HitTest(point))
 						return true;
 			}
 
 			return false;
 		}
 
-		public int HitTestControlPoint(XMouseEventArgs e)
+		public int HitTestControlPoint(Point point)
 		{
-			Platform.CheckForNullReference(e, "e");
 			int controlPointIndex = 0;
 
 			// Check if mouse is over a control point
 			foreach (ControlPoint controlPoint in this.Graphics)
 			{
-				if (controlPoint.HitTest(e))
+				if (controlPoint.HitTest(point))
 					return controlPointIndex;
 
 				controlPointIndex++;

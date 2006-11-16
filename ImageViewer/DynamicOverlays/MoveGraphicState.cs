@@ -5,10 +5,11 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class MoveGraphicState : GraphicState
+	public class MoveGraphicState : GraphicState, IMouseButtonHandler
 	{
 		private PointF _currentPoint = new Point(0,0);
 
@@ -17,14 +18,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
+			pointerInformation.Tile.CurrentPointerAction = this;
 
-			if (e.MouseCapture != null)
-				e.MouseCapture.SetCapture(this, e);
-
-			base.LastPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			base.LastPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
 
 			if (this.SupportUndo)
 			{
@@ -36,15 +34,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
+			//Point mousePoint = new Point(e.X, e.Y);
+			//PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.ParentLayerManager.RootLayerGroup.DestinationRectangle);
 
-			//When moving, graphics are confined to 
-			Point mousePoint = new Point(e.X, e.Y);
-			PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.ParentLayerManager.RootLayerGroup.DestinationRectangle);
-
-			_currentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(new PointF(mousePoint.X, mousePoint.Y));
+			_currentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
 
 			base.StatefulGraphic.CoordinateSystem = CoordinateSystem.Source;
 			SizeF delta = Graphic.CalcGraphicPositionDelta(base.LastPoint, _currentPoint);
@@ -57,12 +52,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool OnMouseUp(XMouseEventArgs e)
+		public override bool Stop(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (e.MouseCapture != null)
-			    e.MouseCapture.ReleaseCapture();
+			pointerInformation.Tile.CurrentPointerAction = null;
 
 			if (this.SupportUndo)
 			{

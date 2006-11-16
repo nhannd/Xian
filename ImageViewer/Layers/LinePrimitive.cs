@@ -89,11 +89,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			}
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
 			double distance;
 			PointF ptNearest = new PointF(0, 0);
-			PointF ptMouse = this.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			PointF ptMouse = this.SpatialTransform.ConvertToSource(new PointF(point.X, point.Y));
 
 			this.CoordinateSystem = CoordinateSystem.Source;
 			distance = Vector.DistanceFromPointToLine(ptMouse, this.Pt1, this.Pt2, ref ptNearest);

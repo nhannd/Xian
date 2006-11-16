@@ -85,9 +85,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -95,13 +92,31 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
-    <Compile Include="CaptureUIEventHandler.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
     <Compile Include="DynamicOverlays\SelectedGraphicState.cs" />
+    <Compile Include="InputManagement\CaptureChangingEventArgs.cs" />
+    <Compile Include="InputManagement\IInputMessage.cs" />
+    <Compile Include="InputManagement\KeyboardButtonShortcut.cs" />
+    <Compile Include="InputManagement\Modifiers.cs" />
+    <Compile Include="InputManagement\IMouseButtonHandler.cs" />
+    <Compile Include="InputManagement\IInputController.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />
+    <Compile Include="InputManagement\MouseButtonControlAttribute.cs" />
+    <Compile Include="InputManagement\MouseButtonShortcut.cs" />
+    <Compile Include="InputManagement\KeyboardButtonMessage.cs" />
+    <Compile Include="InputManagement\MouseToolButtonAttribute.cs" />
+    <Compile Include="InputManagement\MouseWheelControlAttribute.cs" />
+    <Compile Include="InputManagement\MouseWheelDelegatePair.cs" />
+    <Compile Include="InputManagement\MouseWheelMessage.cs" />
+    <Compile Include="InputManagement\ViewerShortcutManager.cs" />
+    <Compile Include="InputManagement\MouseButtonMessage.cs" />
+    <Compile Include="InputManagement\MouseInformation.cs" />
+    <Compile Include="InputManagement\MouseWheelShortcut.cs" />
+    <Compile Include="InputManagement\TrackMousePositionMessage.cs" />
+    <Compile Include="InputManagement\TileInputController.cs" />
     <Compile Include="Layers\GraphicFocusedEventArgs.cs" />
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
@@ -218,8 +233,6 @@
     <Compile Include="Imaging\VOILUTLinear.cs" />
     <Compile Include="Imaging\WindowLevelMemento.cs" />
     <Compile Include="Imaging\WindowLevelOperator.cs" />
-    <Compile Include="IMouseCapture.cs" />
-    <Compile Include="IUIEventHandler.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Layers\BaseLayerCollection.cs" />
     <Compile Include="Layers\GraphicLayer.cs">
@@ -252,9 +265,6 @@
     <Compile Include="Layers\Tests\LayerGroupTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
-    <Compile Include="MouseButtonToolMap.cs" />
-    <Compile Include="MouseButtonToolMappedEventArgs.cs" />
-    <Compile Include="MouseCaptureChangingEventArgs.cs" />
     <Compile Include="MouseTool.cs" />
     <Compile Include="OpenStudyException.cs" />
     <Compile Include="PhysicalWorkspace.cs" />
@@ -308,8 +318,6 @@
     <Compile Include="TileEventArgs.cs" />
     <Compile Include="TileMemento.cs" />
     <Compile Include="TileSelectedEventArgs.cs" />
-    <Compile Include="XKeyEventArgs.cs" />
-    <Compile Include="XMouseEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">

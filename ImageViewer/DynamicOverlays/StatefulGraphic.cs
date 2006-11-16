@@ -4,13 +4,14 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
 	public abstract class StatefulGraphic : Graphic
 	{
 		private GraphicState _state;
-		private XMouseEventArgs _mouseArgs;
+		private MouseInformation _currentPointerInformation;
 		private event EventHandler<GraphicStateChangedEventArgs> _stateChangedEvent;
 
 		public StatefulGraphic()
@@ -31,7 +32,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 				// Perform any cleanup necessary in the old state
 				if (_state != null)
-					_state.OnExitState(_mouseArgs);
+					_state.OnExitState(_currentPointerInformation);
 
 				GraphicStateChangedEventArgs args = new GraphicStateChangedEventArgs();
 
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				if (args.OldState != null)
 				{
 					// Perform any intialization necessary in the new state
-					_state.OnEnterState(_mouseArgs);
+					_state.OnEnterState(_currentPointerInformation);
 
 					OnStateChanged(args);
 				}
@@ -121,7 +122,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			remove { _stateChangedEvent -= value; }
 		}
 
-		public virtual bool SetCursorToken(XMouseEventArgs e)
+		public virtual bool SetCursorToken(MouseInformation pointerInformation)
 		{
 			return false;
 		}
@@ -151,98 +152,64 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new SelectedGraphicState(this);	
 		}
 
-		public virtual void OnEnterInactiveState(XMouseEventArgs e)
+		public virtual void OnEnterInactiveState(MouseInformation pointerInformation)
 		{
 			//this.Color = Color.Yellow;
 			//Draw();
 		}
 
-		public virtual void OnEnterFocusState(XMouseEventArgs e)
+		public virtual void OnEnterFocusState(MouseInformation pointerInformation)
 		{
 			//this.Color = Color.Orange;
 			//Draw();
 		}
 
-		public virtual void OnEnterFocusSelectedState(XMouseEventArgs e)
+		public virtual void OnEnterFocusSelectedState(MouseInformation pointerInformation)
 		{
 			//this.Color = Color.Red;
 			//Draw();
 		}
 
-		public virtual void OnEnterSelectedState(XMouseEventArgs e)
+		public virtual void OnEnterSelectedState(MouseInformation pointerInformation)
 		{ 
 		}
 
-		public virtual void OnExitInactiveState(XMouseEventArgs e)
+		public virtual void OnExitInactiveState(MouseInformation pointerInformation)
 		{
 		}
 
-		public virtual void OnExitFocusState(XMouseEventArgs e)
+		public virtual void OnExitFocusState(MouseInformation pointerInformation)
 		{
 		}
 
-		public virtual void OnExitSelectedState(XMouseEventArgs e)
+		public virtual void OnExitSelectedState(MouseInformation pointerInformation)
 		{
 		}
 
-		public virtual void OnExitFocusSelectedState(XMouseEventArgs e)
+		public virtual void OnExitFocusSelectedState(MouseInformation pointerInformation)
 		{ 
 		}
 
-		#region IUIEventHandler Members
-
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public virtual bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
 			Platform.CheckMemberIsSet(this.State, "State");
-
-			_mouseArgs = e;
-			return this.State.OnMouseDown(e);;
+			_currentPointerInformation = pointerInformation;
+			return this.State.Start(pointerInformation);
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public virtual bool Track(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
 			Platform.CheckMemberIsSet(this.State, "State");
-
-			_mouseArgs = e;
-			return this.State.OnMouseMove(e);
+			_currentPointerInformation = pointerInformation;
+			return this.State.Track(pointerInformation);
 		}
 
-		public override bool OnMouseUp(XMouseEventArgs e)
+		public virtual bool Stop(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
 			Platform.CheckMemberIsSet(this.State, "State");
-
-			_mouseArgs = e;
-			return this.State.OnMouseUp(e);
+			_currentPointerInformation = pointerInformation;
+			return this.State.Stop(pointerInformation);
 		}
-
-		public override bool OnMouseWheel(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-			Platform.CheckMemberIsSet(this.State, "State");
-
-			return this.State.OnMouseWheel(e);
-		}
-
-		public override bool OnKeyDown(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-			Platform.CheckMemberIsSet(this.State, "State");
-
-			return this.State.OnKeyDown(e);
-		}
-
-		public override bool OnKeyUp(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-			Platform.CheckMemberIsSet(this.State, "State");
-
-			return this.State.OnKeyUp(e);
-		}
-
-		#endregion
 
 		public virtual void OnStateChanged(GraphicStateChangedEventArgs e)
 		{

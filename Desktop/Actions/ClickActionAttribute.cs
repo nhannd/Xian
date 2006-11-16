@@ -11,6 +11,7 @@ namespace ClearCanvas.Desktop.Actions
     {
         private string _path;
         private ClickActionFlags _flags;
+		private XKeys _keyStroke;
 
         public ClickActionAttribute(string actionID, string path)
             :base(actionID)
@@ -27,6 +28,12 @@ namespace ClearCanvas.Desktop.Actions
             get { return _flags; }
             set { _flags = value; }
         }
+
+		public XKeys KeyStroke
+		{
+			get { return _keyStroke; }
+			set { _keyStroke = value; }
+		}
 
         /// <summary>
         /// The suggested location of the action in the action model.

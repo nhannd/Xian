@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -72,7 +73,7 @@ namespace ClearCanvas.ImageViewer
         private IPhysicalWorkspace _physicalWorkspace;
         private ILayoutManager _layoutManager;
         private EventBroker _eventBroker;
-        private MouseButtonToolMap _mouseButtonToolMap;
+		private ViewerShortcutManager _shortcutManager;
         private string _studyInstanceUID;
         private ToolSet _toolSet;
 		private event EventHandler<ContextMenuEventArgs> _contextMenuBuildingEvent;
@@ -95,7 +96,9 @@ namespace ClearCanvas.ImageViewer
 
             _toolSet = new ToolSet(new ImageViewerToolExtensionPoint(), new ImageViewerToolContext(this));
 
-            CreateLayoutManager();
+			RegisterShortcuts();
+
+			CreateLayoutManager();
             ApplyLayout();
 
 			_physicalWorkspace.SelectDefaultImageBox();
@@ -133,6 +136,14 @@ namespace ClearCanvas.ImageViewer
 				return model;
             }
         }
+
+		public ActionModelNode KeyboardModel
+		{
+			get
+			{
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-keyboard", _toolSet.Actions);
+			}
+		}
 
         /// <summary>
         /// Gets the <see cref="StudyManager"/>
@@ -230,30 +241,15 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-        /// <summary>
-        /// Gets the workspace's currently selected mappable modal tools.
-        /// </summary>
-        /// <value>The workspace's current selected mappable modal tools.</value>
-        /// <remarks>
-        /// A <i>Mappable modal tool</i> or <i>MMT</i> is a tool that when selected
-        /// causes a mouse button to be mapped to the tool's function; an MMT that
-        /// is already mapped to the same button becomes deselected.  Examples
-        /// of MMTs in ClearCanvas include Window/Level, Stack, Zoom, Pan, etc.  This
-        /// property gets an index that stores which mouse buttons are currently
-        /// mapped to which MMT.
-        /// </remarks>
-        internal MouseButtonToolMap MouseButtonToolMap
+		public ViewerShortcutManager ShortcutManager
         {
             get 
 			{
-				if (_mouseButtonToolMap == null)
-					_mouseButtonToolMap = new MouseButtonToolMap();
-
-				return _mouseButtonToolMap; 
+				return _shortcutManager; 
 			}
         }
 
-		public static AnnotationManager AnnotationManager
+ 		public static AnnotationManager AnnotationManager
 		{
 			get
 			{
@@ -351,6 +347,18 @@ namespace ClearCanvas.ImageViewer
         }
 
 
+
+		private void RegisterShortcuts()
+		{
+			_shortcutManager = new ViewerShortcutManager();
+
+			_shortcutManager.RegisterKeyboardShortcuts(this.KeyboardModel.ChildNodes);
+			
+			foreach (ITool tool in _toolSet.Tools)
+			{
+				_shortcutManager.RegisterMouseShortcuts(tool);
+			}
+		}
 
 		#endregion
 	}

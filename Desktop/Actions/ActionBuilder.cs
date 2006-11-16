@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action == null
 			ActionPath path = new ActionPath(a.Path, _resolver);
 			_action = new ButtonAction(_actionID, path, a.Flags, _resolver);
+			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
 			_action.Label = path.LastSegment.LocalizedText;
 		}
 
@@ -50,11 +51,20 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action == null
             ActionPath path = new ActionPath(a.Path, _resolver);
             _action = new MenuAction(_actionID, path, a.Flags, _resolver);
+			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
             _action.Label = path.LastSegment.LocalizedText;
-
         }
 
-        public void Apply(ClickHandlerAttribute a)
+		public void Apply(KeyboardActionAttribute a)
+		{
+			// assert _action == null
+			ActionPath path = new ActionPath(a.Path, _resolver);
+			_action = new KeyboardAction(_actionID, path, a.Flags, _resolver);
+			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
+			_action.Label = path.LastSegment.LocalizedText;
+		}
+
+		public void Apply(ClickHandlerAttribute a)
         {
             // assert _action != null && is ClickAction
             ClickAction clickAction = (ClickAction)_action;

@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Layers
 			}
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
 			throw new NotImplementedException();
 		}

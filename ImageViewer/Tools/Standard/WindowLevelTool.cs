@@ -8,29 +8,43 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Tools.Standard;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
-    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
+	[MouseToolButton(XMouseButtons.Right, true)]
+	[CursorToken("Icons.WindowLevelMedium.png", typeof(WindowLevelTool))]
+
+	[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", KeyStroke = XKeys.W)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
-    [CheckedStateObserver("activate", "Active", "ActivationChanged")]
-    [ClickHandler("activate", "Select")]
+	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
+	[ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardWindowLevel")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.WindowLevelMedium.png", "Icons.WindowLevelLarge.png")]
 
-	[CursorToken("Icons.WindowLevelMedium.png", typeof(WindowLevelTool))]
+	[KeyboardAction("incrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowWidth", KeyStroke = XKeys.Right)]
+	[ClickHandler("incrementwindowwidth", "IncrementWindowWidth")]
 
-    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[KeyboardAction("decrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/DecrementWindowWidth", KeyStroke = XKeys.Left)]
+	[ClickHandler("decrementwindowwidth", "DecrementWindowWidth")]
+
+	[KeyboardAction("incrementwindowcenter", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowCenter", KeyStroke = XKeys.Up)]
+	[ClickHandler("incrementwindowcenter", "IncrementWindowCenter")]
+
+	[KeyboardAction("decrementwindowcenter", "imageviewer-keyboard/ToolsStandardWindowLevel/DecrementWindowCenter", KeyStroke = XKeys.Down)]
+	[ClickHandler("decrementwindowcenter", "DecrementWindowCenter")]
+
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : MouseTool
 	{
 		private UndoableCommand _command;
 		private WindowLevelApplicator _applicator;
 
 		public WindowLevelTool()
-            :base(XMouseButtons.Right, true)
 		{
-			base.RequiresCapture = true;
         }
 
 		public override void Initialize()
@@ -38,82 +52,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             base.Initialize();
 		}
 
-		#region IUIEventHandler Members
-
-		public override bool OnMouseDown(XMouseEventArgs e)
+		private void CaptureBeginState(IPresentationImage image)
 		{
-			base.OnMouseDown(e);
+			if (image == null)
+				return;
 
-			if (e.SelectedTile == null)
-				return true;
-
-			DicomPresentationImage dicomImage = e.SelectedPresentationImage as DicomPresentationImage;
-
-			if (dicomImage == null ||
-				dicomImage.LayerManager.SelectedImageLayer == null ||
-				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
-				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
-				return true;
-
-			IGrayscaleLUT lut = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.VoiLUT;
-
-			// If the VOILUT of the image is not linear anymore, install a linear one
-			if (!(lut is VOILUTLinear))
-				WindowLevelOperator.InstallVOILUTLinear(e.SelectedPresentationImage as DicomPresentationImage);
-
-			_applicator = new WindowLevelApplicator(e.SelectedPresentationImage);
+			_applicator = new WindowLevelApplicator(image);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandWindowLevel;
 			_command.BeginState = _applicator.CreateMemento();
-
-			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		private void CaptureEndState()
 		{
-			base.OnMouseMove(e);
-
 			if (_command == null)
-				return true;
-
-            CodeClock counter = new CodeClock();
-			counter.Start();
-
-			DicomPresentationImage dicomImage = e.SelectedPresentationImage as DicomPresentationImage;
-
-			if (dicomImage == null ||
-				dicomImage.LayerManager.SelectedImageLayer == null ||
-				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
-				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
-				return true;
-
-			GrayscaleLUTPipeline pipeline = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
-			VOILUTLinear voiLUT = pipeline.VoiLUT as VOILUTLinear;
-
-			// This should never happens since we insure that linear VOILUT is
-			// installed in OnMouseDown
-			if (voiLUT == null)
-				return true;
-
-			voiLUT.WindowWidth += (double)base.DeltaX * 10;
-			voiLUT.WindowCenter += (double)base.DeltaY * 10;
-
-			e.SelectedPresentationImage.Draw();
-
-			counter.Stop();
-
-			string str = String.Format("WindowLevel: {0}\n", counter.ToString());
-			Trace.Write(str);
-
-			return true;
-		}
-
-		public override bool OnMouseUp(XMouseEventArgs e)
-		{
-			base.OnMouseUp(e); 
-			
-			if (_command == null)
-				return true;
+				return;
 
 			_command.EndState = _applicator.CreateMemento();
 
@@ -121,34 +74,132 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_command.EndState.Equals(_command.BeginState))
 			{
 				_command = null;
-				return true;
+				return;
 			}
 
 			// Apply the final state to all linked images
 			_applicator.SetMemento(_command.EndState);
 
-            this.Context.Viewer.CommandHistory.AddCommand(_command);
-
-			return true;
+			this.Context.Viewer.CommandHistory.AddCommand(_command);
 		}
 
-		public override bool OnMouseWheel(XMouseEventArgs e)
+		private void InitImage(IPresentationImage image)
 		{
-			Platform.CheckForNullReference(e, "e");
+			DicomPresentationImage dicomImage = image as DicomPresentationImage;
 
-			return true;
+			if (dicomImage == null ||
+				dicomImage.LayerManager.SelectedImageLayer == null ||
+				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
+				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
+				return;
+
+			IGrayscaleLUT lut = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.VoiLUT;
+
+			// If the VOILUT of the image is not linear anymore, install a linear one
+			if (!(lut is VOILUTLinear))
+				WindowLevelOperator.InstallVOILUTLinear(dicomImage);
 		}
 
-		public override bool OnKeyDown(XKeyEventArgs e)
+		private void IncrementWindowWidth()
 		{
-			return true;
+			IncrementWindow(10, 0);
 		}
 
-		public override bool OnKeyUp(XKeyEventArgs e)
+		private void DecrementWindowWidth()
 		{
+			IncrementWindow(-10, 0);
+		}
+
+		private void IncrementWindowCenter()
+		{
+			IncrementWindow(0, 10);
+		}
+
+		private void DecrementWindowCenter()
+		{
+			IncrementWindow(0, -10);
+		}
+
+		public void IncrementWindow(double windowIncrement, double levelIncrement)
+		{
+			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+			if (image == null)
+				return;
+
+			InitImage(image);
+			this.CaptureBeginState(image);
+			this.IncrementWindow(image, windowIncrement, levelIncrement);
+			this.CaptureEndState();
+		}
+
+		private void IncrementWindow(IPresentationImage image, double windowIncrement, double levelIncrement)
+		{
+			CodeClock counter = new CodeClock();
+			counter.Start();
+
+			DicomPresentationImage dicomImage = image as DicomPresentationImage;
+
+			if (dicomImage == null ||
+				dicomImage.LayerManager.SelectedImageLayer == null ||
+				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
+				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
+				return;
+
+			GrayscaleLUTPipeline pipeline = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
+			VOILUTLinear voiLUT = pipeline.VoiLUT as VOILUTLinear;
+
+			// This should never happens since we insure that linear VOILUT is
+			// installed in OnMouseDown
+			if (voiLUT == null)
+				return;
+
+			voiLUT.WindowWidth += windowIncrement;
+			voiLUT.WindowCenter += levelIncrement;
+
+			dicomImage.Draw();
+
+			counter.Stop();
+
+			string str = String.Format("WindowLevel: {0}\n", counter.ToString());
+			Trace.Write(str);
+		}
+
+		public override bool Start(MouseInformation mouseInformation)
+		{
+			base.Start(mouseInformation);
+
+			if (mouseInformation.Tile == null)
+				return true;
+
+			InitImage(mouseInformation.Tile.PresentationImage);
+
+			CaptureBeginState(mouseInformation.Tile.PresentationImage);
+
 			return true;
 		}
 
-		#endregion
+		public override bool Track(MouseInformation mouseInformation)
+		{
+			base.Track(mouseInformation);
+
+			if (mouseInformation.Tile == null)
+				return true;
+
+			if (_command == null)
+				return true;
+
+			this.IncrementWindow(mouseInformation.Tile.PresentationImage, this.DeltaX * 10, this.DeltaY * 10);
+
+			return true;
+		}
+
+		public override bool Stop(MouseInformation mouseInformation)
+		{
+			base.Stop(mouseInformation);
+
+			this.CaptureEndState();
+
+			return true;
+		}
 	}
 }

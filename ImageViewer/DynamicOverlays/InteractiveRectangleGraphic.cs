@@ -4,6 +4,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -88,19 +89,19 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new CreateRectangleGraphicState(this);
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
-			return _rectangleGraphic.HitTest(e);
+			return _rectangleGraphic.HitTest(point);
 		}
 
-		public override bool SetCursorToken(XMouseEventArgs e)
+		public override bool SetCursorToken(MouseInformation pointerInformation)
 		{
-			if (base.SetCursorToken(e))
+			if (base.SetCursorToken(pointerInformation))
 				return true;
 
-			if (this.HitTest(e))
+			if (this.HitTest(pointerInformation.Point))
 			{
-				e.SelectedTile.CursorToken = this.MoveToken;
+				pointerInformation.Tile.CursorToken = this.MoveToken;
 				return true;
 			}
 

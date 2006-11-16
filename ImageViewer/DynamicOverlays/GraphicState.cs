@@ -3,10 +3,11 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public abstract class GraphicState : IUIEventHandler
+	public abstract class GraphicState
 	{
 		private StatefulGraphic _statefulGraphic;
 		private bool _supportUndo;
@@ -60,45 +61,26 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			set { _lastPoint = value; }
 		}
 
-		#region IUIEventHandler Members
-
-		public virtual bool OnMouseDown(XMouseEventArgs e)
+		public virtual bool Start(MouseInformation pointerInformation)
 		{
 			return false;
 		}
 
-		public virtual bool OnMouseMove(XMouseEventArgs e)
+		public virtual bool Track(MouseInformation pointerInformation)
 		{
 			return false;
 		}
 
-		public virtual bool OnMouseUp(XMouseEventArgs e)
+		public virtual bool Stop(MouseInformation pointerInformation)
 		{
 			return false;
 		}
 
-		public virtual bool OnMouseWheel(XMouseEventArgs e)
-		{
-			return false;
-		}
-
-		public virtual bool OnKeyDown(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		public virtual bool OnKeyUp(XKeyEventArgs e)
-		{
-			return false;
-		}
-
-		#endregion
-
-		public virtual void OnEnterState(XMouseEventArgs e)
+		public virtual void OnEnterState(MouseInformation pointerInformation)
 		{
 		}
 
-		public virtual void OnExitState(XMouseEventArgs e)
+		public virtual void OnExitState(MouseInformation pointerInformation)
 		{
 		}
 	}

@@ -144,13 +144,11 @@ namespace ClearCanvas.ImageViewer.Layers
 			remove { _bottomRightChangedEvent -= value; }
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			double distance;
 			PointF ptNearest = new PointF(0, 0);
-			PointF ptMouse = this.SpatialTransform.ConvertToSource(new PointF(e.X, e.Y));
+			PointF ptMouse = this.SpatialTransform.ConvertToSource(new PointF(point.X, point.Y));
 
 			this.CoordinateSystem = CoordinateSystem.Source;
 

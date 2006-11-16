@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// between rectangles when either the height and/or width is negative.
 		///
 		/// NOTE: the order in which rectangles are passed into this function is IMPORTANT!
-		/// The function maintains the sense/direction (of the width & height) of the first
+		/// The function maintains the sense/direction (of the width and height) of the first
 		/// rectangle passed in.
 		/// </remarks>
 		public static RectangleF Intersect(RectangleF primaryRectangle, RectangleF secondaryRectangle)

@@ -8,6 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -23,7 +24,7 @@ namespace ClearCanvas.ImageViewer
 	/// TileComponent class
 	/// </summary>
 	[AssociateView(typeof(TileViewExtensionPoint))]
-	public class Tile : ITile, IUIEventHandler
+	public class Tile : ITile
 	{
 		#region Private Fields
 
@@ -33,19 +34,16 @@ namespace ClearCanvas.ImageViewer
 		private Rectangle _clientRectangle;
 		private RectangleF _normalizedRectangle;
 		private bool _selected = false;
-		private bool _contextMenuEnabled;
-		private Point _lastMousePoint;
 		private InformationBox _informationBox;
-		
-		private CaptureUIEventHandler _mouseCapture;
 		private CursorToken _cursorToken;
+		private IMouseButtonHandler _currentPointerAction;
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
 		private event EventHandler<TileEventArgs> _selectionChangedEvent;
 
-		private event EventHandler<MouseCaptureChangingEventArgs> _notifyCaptureChanging;
 		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
+		private event EventHandler _currentPointerActionChanged;
 		private event EventHandler _cursorTokenChanged;
 
 		#endregion
@@ -55,7 +53,6 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public Tile()
 		{
-			_mouseCapture = new CaptureUIEventHandler();
 		}
 
 		#region Public properties
@@ -222,11 +219,6 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public bool ContextMenuEnabled
-		{
-			get { return _contextMenuEnabled; }
-		}
-
 		public InformationBox InformationBox
 		{
 			get { return _informationBox; }
@@ -242,10 +234,10 @@ namespace ClearCanvas.ImageViewer
 
 		public CursorToken CursorToken
 		{
-		    get
-		    {
+			get
+			{
 				return _cursorToken;
-		    }
+			}
 			set
 			{
 				if (_cursorToken == value)
@@ -253,6 +245,19 @@ namespace ClearCanvas.ImageViewer
 
 				_cursorToken = value;
 				EventsHelper.Fire(_cursorTokenChanged, this, new EventArgs());
+			}
+		}
+
+		public IMouseButtonHandler CurrentPointerAction
+		{
+			get { return _currentPointerAction; }
+			set
+			{
+				if (_currentPointerAction == value)
+					return;
+
+				_currentPointerAction = value;
+				EventsHelper.Fire(_currentPointerActionChanged, this, new EventArgs());
 			}
 		}
 
@@ -278,12 +283,6 @@ namespace ClearCanvas.ImageViewer
 			remove { _selectionChangedEvent -= value; }
 		}
 
-		public event EventHandler<MouseCaptureChangingEventArgs> NotifyCaptureChanging
-		{
-			add { _mouseCapture.NotifyCaptureChanging += value; }
-			remove { _mouseCapture.NotifyCaptureChanging -= value; }
-		}
-
 		public event EventHandler<InformationBoxChangedEventArgs> InformationBoxChanged
 		{
 			add { _informationBoxChanged += value; }
@@ -294,6 +293,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _cursorTokenChanged += value; }
 			remove { _cursorTokenChanged -= value; }
+		}
+
+		public event EventHandler CurrentPointerActionChanged
+		{
+			add { _currentPointerActionChanged += value; }
+			remove { _currentPointerActionChanged -= value; }
 		}
 
 		#endregion
@@ -383,95 +388,6 @@ namespace ClearCanvas.ImageViewer
 
 
 
-		#region IUIEventHandler Members
-
-		public bool OnMouseDown(XMouseEventArgs e)
-		{
-			_contextMenuEnabled = true;
-			_lastMousePoint = new Point(e.X, e.Y);
-
-			if (_mouseCapture.OnMouseDown(e))
-				return true;
-
-			if (_presentationImage == null)
-				return true;
-
-			// Select this tile if user has clicked on it
-			Select();
-
-			SetSelectedObjects(e);
-			return _presentationImage.OnMouseDown(e);
-		}
-
-		public bool OnMouseMove(XMouseEventArgs e)
-		{
-			// HACK: If right mouse button is pressed and the mouse is moving,
-			// the assumption we made in OnMouseDown was incorrect;
-			// the user's real intent was to use a MouseTool, not bring
-			// up the context menu.
-			if (e.Button == XMouseButtons.Right)
-			{
-				// Unfortunately, OnMouseMove is called by .NET after
-				// a mouse down even if the mouse hasn't moved, so 
-				// we have to make sure the mouse has in fact moved
-				// before we disable the context menu.
-				if (_lastMousePoint != new Point(e.X, e.Y))
-					_contextMenuEnabled = false;
-			}
-
-			if (_mouseCapture.OnMouseMove(e))
-				return true;
-
-			if (_presentationImage == null)
-				return true;
-
-			SetSelectedObjects(e);
-
-			return _presentationImage.OnMouseMove(e);
-		}
-
-		public bool OnMouseUp(XMouseEventArgs e)
-		{
-			if (_mouseCapture.OnMouseUp(e))
-				return true;
-
-			if (_presentationImage == null)
-				return true;
-
-			SetSelectedObjects(e);
-			return _presentationImage.OnMouseUp(e);
-		}
-
-		public bool OnMouseWheel(XMouseEventArgs e)
-		{
-			if (_mouseCapture.OnMouseWheel(e))
-				return true;
-
-			if (_presentationImage == null)
-				return true;
-
-			SetSelectedObjects(e);
-			return _presentationImage.OnMouseWheel(e);
-		}
-
-		public bool OnKeyDown(XKeyEventArgs e)
-		{
-			if (_presentationImage == null)
-				return true;
-
-			return _presentationImage.OnKeyDown(e);
-		}
-
-		public bool OnKeyUp(XKeyEventArgs e)
-		{
-			if (_presentationImage == null)
-				return true;
-
-			return _presentationImage.OnKeyUp(e);
-		}
-
-		#endregion
-
 		#endregion
 
 		#region Internal/private methods
@@ -485,17 +401,6 @@ namespace ClearCanvas.ImageViewer
 				if (_presentationImage != null)
 					_presentationImage.Selected = false;
 			}
-		}
-
-		private void SetSelectedObjects(XMouseEventArgs e)
-		{
-			e.SelectedImageBox = this.ParentImageBox;
-			e.SelectedTile = this;
-		}
-
-		private void OnCaptureChanging(object sender, MouseCaptureChangingEventArgs e)
-		{
-			EventsHelper.Fire(_notifyCaptureChanging, sender, e);
 		}
 
 		#endregion

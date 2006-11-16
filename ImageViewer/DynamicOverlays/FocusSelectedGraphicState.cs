@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -11,13 +12,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
+			base.StatefulGraphic.SetCursorToken(pointerInformation); 
 
-			base.StatefulGraphic.SetCursorToken(e); 
-			
-			if (!base.StatefulGraphic.HitTest(e))
+			if (!base.StatefulGraphic.HitTest(pointerInformation.Point))
 			{
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
 				return false;
@@ -26,15 +25,13 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			// User has clicked the graphic body
-			if (base.StatefulGraphic.HitTest(e))
+			if (base.StatefulGraphic.HitTest(pointerInformation.Point))
 			{
 				base.StatefulGraphic.State = new MoveGraphicState(base.StatefulGraphic);
-				base.StatefulGraphic.State.OnMouseDown(e);
+				base.StatefulGraphic.State.Start(pointerInformation);
 				return true;
 			}
 
@@ -43,18 +40,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return false;
 		}
 
-		public override bool OnMouseUp(XMouseEventArgs e)
+		public override void OnEnterState(MouseInformation pointerInformation)
 		{
-			// Must return true.  If we just go with the base class
-			// implementation which returns false, PresentationImage.OnMouseUp
-			// will think we haven't handled this and then route the MouseUp message
-			// to some other mouse tool, which we don't want.
-			return true;
-		}
-
-		public override void OnEnterState(XMouseEventArgs e)
-		{
-			base.StatefulGraphic.OnEnterFocusSelectedState(e);
+			base.StatefulGraphic.OnEnterFocusSelectedState(pointerInformation);
 		}
 
 		public override string ToString()

@@ -10,14 +10,13 @@ namespace ClearCanvas.ImageViewer.Layers
 	/// <summary>
 	/// The base layer object.
 	/// </summary>
-	public abstract class Layer : IUIEventHandler
+	public abstract class Layer
 	{
 		private BaseLayerCollection _baseLayers;
 		private string _name;
 		private double _transparency = 1.0f;
 		private bool _visible = true;
 		private bool _redrawRequired = true;
-		private bool _autoHandleMouse = true;
 		private bool _selected = false;
 		private bool _focused = false;
 		private bool _isLeaf = false;
@@ -120,36 +119,6 @@ namespace ClearCanvas.ImageViewer.Layers
 
 				foreach (Layer layer in this.BaseLayers)
 					layer.RedrawRequired = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this layer should automatically
-		/// handle mouse messages.
-		/// </summary>
-		/// <remarks>
-		/// By default this property is <b>true</b>, meaning that as a mouse message
-		/// is passed down the chain of layers, each layer has an opportunity to handle it.
-		/// However, there are situation in which this is not desirable.  A good example
-		/// is when a parent layer wants full control over which of its child layers should
-		/// handle the messages.  In such a scenario, a child layer should never handle 
-		/// the messages automatically, only when its parent tells it to do so, and thus
-		/// this property should be set to <b>false</b>.
-		/// This property is recursive.  That is, when set, the
-		/// new value is applied to all child layers, right down to the leaves.		
-		/// </remarks>
-		public bool AutoHandleMouse
-		{
-			get { return _autoHandleMouse; }
-			set 
-			{
-				_autoHandleMouse = value; 
-
-				if (this.IsLeaf)
-					return;
-
-				foreach (Layer layer in this.BaseLayers)
-					layer.AutoHandleMouse = value;
 			}
 		}
 
@@ -288,112 +257,6 @@ namespace ClearCanvas.ImageViewer.Layers
 				return this.ParentPresentationImage.ImageViewer; 
 			}
 		}
-
-		#region IUIEventHandler Members
-
-		/// <summary>
-		/// Processes a MouseDown message.
-		/// </summary>
-		/// <param name="e"></param>
-		/// <returns><b>true</b> if a child layer has handled the message.
-		/// <b>false</b> otherwise.</returns>
-		public virtual bool OnMouseDown(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.IsLeaf)
-				return false;
-
-			foreach (Layer layer in this.BaseLayers)
-			{
-				if (layer.Visible && layer.AutoHandleMouse)
-				{
-					bool handled = layer.OnMouseDown(e);
-
-					if (handled)
-						return true;
-				}
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Processes a MouseMove message.
-		/// </summary>
-		/// <param name="e"></param>
-		/// <returns><b>true</b> if a child layer has handled the message.
-		/// <b>false</b> otherwise.</returns>
-		public virtual bool OnMouseMove(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.IsLeaf)
-				return false;
-
-			foreach (Layer layer in this.BaseLayers)
-			{
-				if (layer.Visible && layer.AutoHandleMouse)
-				{
-					bool handled = layer.OnMouseMove(e);
-
-					if (handled)
-						return true;
-				}
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Processes a MouseUp message.
-		/// </summary>
-		/// <param name="e"></param>
-		/// <returns><b>true</b> if a child layer has handled the message.
-		/// <b>false</b> otherwise.</returns>
-		public virtual bool OnMouseUp(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			if (this.IsLeaf)
-				return false;
-
-			foreach (Layer layer in this.BaseLayers)
-			{
-				if (layer.Visible && layer.AutoHandleMouse)
-				{
-					bool handled = layer.OnMouseUp(e);
-
-					if (handled)
-						return true;
-				}
-			}
-
-			return false;
-		}
-
-		public virtual bool OnMouseWheel(XMouseEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return false;
-		}
-
-		public virtual bool OnKeyDown(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return false;
-		}
-
-		public virtual bool OnKeyUp(XKeyEventArgs e)
-		{
-			Platform.CheckForNullReference(e, "e");
-
-			return false;
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Resets the <see cref="CoordinateSystem"/> to its old value.

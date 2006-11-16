@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -22,16 +23,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as InteractiveMultiLineGraphic; }
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			_numberOfPointsAnchored++;
 
 			// We just started creating
 			if (_numberOfPointsAnchored == 1)
 			{
-				PointF mousePoint = new PointF(e.X, e.Y);
+				PointF mousePoint = new PointF(pointerInformation.Point.X, pointerInformation.Point.Y);
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
 				this.InteractiveGraphic.ControlPoints[0] = mousePoint;
 				this.InteractiveGraphic.ControlPoints[1] = mousePoint;
@@ -52,11 +51,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			// We're in the middle of creating
 			else if (_numberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)
 			{
-				PointF pt = new PointF(e.X, e.Y);
+				PointF mousePoint = new PointF(pointerInformation.Point.X, pointerInformation.Point.Y);
 
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-				this.InteractiveGraphic.AnchorPoints.Add(pt);
-				this.InteractiveGraphic.ControlPoints.Add(pt);
+				this.InteractiveGraphic.AnchorPoints.Add(mousePoint);
+				this.InteractiveGraphic.ControlPoints.Add(mousePoint);
 				this.InteractiveGraphic.ResetCoordinateSystem();
 
 				_controlPointIndex = this.InteractiveGraphic.ControlPoints.Count - 1;
@@ -65,18 +64,16 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
-			PointF pt = new PointF(e.X, e.Y);
+			PointF pt = new PointF(pointerInformation.Point.X, pointerInformation.Point.Y);
 
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = pt;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 
-			this.InteractiveGraphic.SetCursorToken(e);
+			this.InteractiveGraphic.SetCursorToken(pointerInformation);
 
 			return true;
 		}

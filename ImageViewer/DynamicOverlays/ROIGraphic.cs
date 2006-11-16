@@ -8,10 +8,11 @@ using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-    public class ROIGraphic : StatefulGraphic, IMemorable
+	public class ROIGraphic : StatefulGraphic, IMemorable, IMouseButtonHandler
     {
         private InteractiveGraphic _roiGraphic;
         private CalloutGraphic _calloutGraphic;
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new FocusSelectedROIGraphicState(this);
 		}
 
-		public override void OnEnterInactiveState(XMouseEventArgs e)
+		public override void OnEnterInactiveState(MouseInformation pointerInformation)
 		{
 			// If the currently selected graphic is this one,
 			// and we're about to go inactive, set the selected graphic
@@ -80,16 +81,16 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Color = Color.Yellow;
 			Draw();
 
-			SetCursorToken(e);
+			SetCursorToken(pointerInformation);
 
 			Trace.Write("OnEnterInactiveState\n");
 		}
 
-		public override void OnEnterFocusState(XMouseEventArgs e)
+		public override void OnEnterFocusState(MouseInformation pointerInformation)
 		{
 			this.Focused = true;
 			
-			if (this.Roi.HitTest(e))
+			if (this.Roi.HitTest(pointerInformation.Point))
 				this.Roi.ControlPoints.Visible = true;
 			else
 				this.Roi.ControlPoints.Visible = false;
@@ -97,12 +98,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Color = Color.Orange;
 			Draw();
 
-			SetCursorToken(e);
+			SetCursorToken(pointerInformation);
 
 			Trace.Write("OnEnterFocusState\n");
 		}
 
-		public override void OnEnterFocusSelectedState(XMouseEventArgs e)
+		public override void OnEnterFocusSelectedState(MouseInformation pointerInformation)
 		{
 			this.Selected = true;
 			this.Focused = true;
@@ -111,12 +112,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Color = Color.Red;
 			Draw();
 
-			SetCursorToken(e);
+			SetCursorToken(pointerInformation);
 
 			Trace.Write("OnEnterSelectedState\n");
 		}
 
-		public override void OnEnterSelectedState(XMouseEventArgs e)
+		public override void OnEnterSelectedState(MouseInformation pointerInformation)
 		{
 			if (this.ParentLayerManager.FocusGraphic == this)
 				this.ParentLayerManager.FocusGraphic = null;
@@ -125,26 +126,26 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			this.Color = Color.Red;
 			Draw();
 
-			SetCursorToken(e);
+			SetCursorToken(pointerInformation);
 
 			Trace.Write("OnEnterSelectedState\n");
 		}
 
-		public override bool SetCursorToken(XMouseEventArgs e)
+		public override bool SetCursorToken(MouseInformation pointerInformation)
 		{
-			if (this.Roi.SetCursorToken(e))
+			if (this.Roi.SetCursorToken(pointerInformation))
 				return true;
 			
-			if (this.Callout.SetCursorToken(e))
+			if (this.Callout.SetCursorToken(pointerInformation))
 				return true;
 
-			e.SelectedTile.CursorToken = null;
+			pointerInformation.Tile.CursorToken = null;
 			return false;
 		}
 
-		public override bool HitTest(XMouseEventArgs e)
+		public override bool HitTest(Point point)
 		{
-			return _roiGraphic.HitTest(e) || _calloutGraphic.HitTest(e);
+			return _roiGraphic.HitTest(point) || _calloutGraphic.HitTest(point);
 		}
 
 		#region IMemorable Members
@@ -163,11 +164,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		private void BuildGraphic()
 		{
 			base.Graphics.Add(_roiGraphic);
-			_roiGraphic.AutoHandleMouse = false;
 
 			_calloutGraphic = new CalloutGraphic();
 			base.Graphics.Add(_calloutGraphic);
-			_calloutGraphic.AutoHandleMouse = false;
 
 			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutTopLeftChanged);

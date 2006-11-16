@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -12,28 +13,21 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool OnMouseDown(XMouseEventArgs e)
+		public override bool Start(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			InteractiveGraphic interactiveGraphic = base.StatefulGraphic as InteractiveGraphic;
-			int controlPointIndex = interactiveGraphic.ControlPoints.HitTestControlPoint(e);
+			int controlPointIndex = interactiveGraphic.ControlPoints.HitTestControlPoint(pointerInformation.Point);
 
 			// User has clicked a control point
 			if (controlPointIndex != -1)
 			{
 				Trace.Write(String.Format("Control Point {0}\n", controlPointIndex.ToString()));
 				base.StatefulGraphic.State = new MoveControlPointGraphicState(interactiveGraphic, controlPointIndex);
-				base.StatefulGraphic.State.OnMouseDown(e);
+				base.StatefulGraphic.State.Start(pointerInformation);
 				return true;
 			}
 
-			return base.OnMouseDown(e);
-		}
-
-		public override bool OnMouseUp(XMouseEventArgs e)
-		{
-			return base.OnMouseUp(e);
+			return base.Start(pointerInformation);
 		}
 
 		public override string ToString()

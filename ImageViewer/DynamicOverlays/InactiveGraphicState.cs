@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -11,12 +12,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool OnMouseMove(XMouseEventArgs e)
+		public override bool Track(MouseInformation pointerInformation)
 		{
-			Platform.CheckForNullReference(e, "e");
-
 			// If mouse is over object, transition to focused state
-			if (base.StatefulGraphic.HitTest(e))
+			if (base.StatefulGraphic.HitTest(pointerInformation.Point))
 			{
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusState();
 				return true;
@@ -25,9 +24,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return false;
 		}
 
-		public override void OnEnterState(XMouseEventArgs e)
+		public override void OnEnterState(MouseInformation pointerInformation)
 		{
-			base.StatefulGraphic.OnEnterInactiveState(e);
+			base.StatefulGraphic.OnEnterInactiveState(pointerInformation);
 		}
 
 		public override string ToString()

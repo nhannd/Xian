@@ -9,7 +9,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardRotateRight")]
+	[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardRotateRight")]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardRotateRight", KeyStroke = XKeys.R)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateRight")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardRotateRight")]

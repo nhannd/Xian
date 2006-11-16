@@ -5,6 +5,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -44,11 +45,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		#endregion
 
-		public override bool SetCursorToken(XMouseEventArgs e)
+		public override bool SetCursorToken(MouseInformation pointerInformation)
 		{
-			if (this._controlPoints.HitTest(e))
+			if (this._controlPoints.HitTest(pointerInformation.Point))
 			{
-				e.SelectedTile.CursorToken = this.StretchToken;
+				pointerInformation.Tile.CursorToken = this.StretchToken;
 				return true;
 			}
 
@@ -60,19 +61,19 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new FocusSelectedInteractiveGraphicState(this);
 		}
 
-		public override void OnEnterInactiveState(XMouseEventArgs e)
+		public override void OnEnterInactiveState(MouseInformation pointerInformation)
 		{
 			//this.ControlPoints.Visible = false;
 			//base.OnEnterInactiveState(e);
 		}
 
-		public override void OnEnterFocusState(XMouseEventArgs e)
+		public override void OnEnterFocusState(MouseInformation pointerInformation)
 		{
 			//this.ControlPoints.Visible = true;
 			//base.OnEnterFocusState(e);
 		}
 
-		public override void OnEnterFocusSelectedState(XMouseEventArgs e)
+		public override void OnEnterFocusSelectedState(MouseInformation pointerInformation)
 		{
 			//this.ControlPoints.Visible = true;
 			//base.OnEnterSelectedState(e);

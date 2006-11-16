@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
 {
-	public abstract class PresentationImage : IPresentationImage, IUIEventHandler
+	public abstract class PresentationImage : IPresentationImage
 	{
 		#region Private Fields
 
@@ -250,85 +250,8 @@ namespace ClearCanvas.ImageViewer
 			this.LayerManager.RootLayerGroup.DestinationRectangle = drawArgs.ClientRectangle;
 
 			this.ImageRenderer.Draw(drawArgs);
-		}
-
-		#region IUIEventHandler Members
-
-		public bool OnMouseDown(XMouseEventArgs e)
-		{
-			SetSelectedObjects(e);
-
-			bool handled = this.LayerManager.RootLayerGroup.OnMouseDown(e);
-
-			if (!handled)
-			{
-				MouseTool tool = _imageViewer.MouseButtonToolMap[e.Button];
-
-				if (tool != null)
-					tool.OnMouseDown(e);
-			}
-
-			return true;
-		}
-
-		public bool OnMouseMove(XMouseEventArgs e)
-		{
-			SetSelectedObjects(e);
-
-			bool handled = this.LayerManager.RootLayerGroup.OnMouseMove(e);
-
-			if (!handled)
-			{
-				MouseTool tool = _imageViewer.MouseButtonToolMap[e.Button];
-
-				if (tool != null)
-					tool.OnMouseMove(e);
-			}
-
-			return true;
-		}
-
-		public bool OnMouseUp(XMouseEventArgs e)
-		{
-			SetSelectedObjects(e);
-
-			bool handled = this.LayerManager.RootLayerGroup.OnMouseUp(e);
-
-			if (!handled)
-			{
-				MouseTool tool = _imageViewer.MouseButtonToolMap[e.Button];
-
-				if (tool != null)
-					tool.OnMouseUp(e);
-			}
-
-			return true;
-		}
-
-		public bool OnMouseWheel(XMouseEventArgs e)
-		{
-
-			return true;
-		}
-
-		public bool OnKeyDown(XKeyEventArgs e)
-		{
-			return true;
-		}
-
-		public bool OnKeyUp(XKeyEventArgs e)
-		{
-			return true;
-		}
-
 		#endregion
-
-		#endregion
-
-		private void SetSelectedObjects(XMouseEventArgs e)
-		{
-			e.SelectedPresentationImage = this;
-			e.SelectedDisplaySet = this.ParentDisplaySet;
+		
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -37,8 +38,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 if (node.IsLeaf)
                 {
-                    // this is a leaf node (terminal menu item)
-                    menuItem = new ActiveMenuItem((IClickAction)node.Action);
+                    IClickAction clickAction = (IClickAction)node.Action;
+					// this is a leaf node (terminal menu item)
+                    menuItem = new ActiveMenuItem(clickAction);
+
+					try
+					{
+						menuItem.ShortcutKeys = (Keys)clickAction.KeyStroke;
+					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
                 }
                 else
                 {
@@ -46,7 +57,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     menuItem = new ToolStripMenuItem(node.PathSegment.LocalizedText);
                     BuildMenu(menuItem.DropDownItems, node.ChildNodes);
                 }
-                menuItem.Tag = node;
+
+				menuItem.Tag = node;
                 parentItemCollection.Add(menuItem);
             }
         }
