@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
         public void Init()
         {
             dst = new DicomServerTree();
+            dst.LoadDicomServers(true);
             myDsg = dst.MyServerGroup;
             serverCount = 1;
         }
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
             Assert.IsTrue(myDsg.ChildServers[0].ServerName.Equals(groupName1));
 
             // Restore the default for the next tests
-            dst = new DicomServerTree();
+            dst.LoadDicomServers(true);
             myDsg = dst.MyServerGroup;
             serverCount = 1;
             Assert.IsTrue(myDsg.ChildServers[1].ServerName.Equals(AENavigatorComponent.MyDatastoreTitle));
@@ -124,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
             }
 
             // Restore the default for the next tests
-            dst = new DicomServerTree();
+            dst.LoadDicomServers(true);
             myDsg = dst.MyServerGroup;
             serverCount = 1;
         }
@@ -205,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
             Assert.AreEqual(dst.ChildServers.Count, serverCount);
 
             // Restore the default for the next tests
-            dst = new DicomServerTree();
+            dst.LoadDicomServers(true);
             myDsg = dst.MyServerGroup;
             serverCount = 1;
         }
@@ -220,20 +221,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
             dst.CurrentServer = ds;
 
             // Delete "S22" under "My Servers"; The number of child servers is not changed
-            dst.DeleteDicomServer(false);
+            dst.DeleteDicomServer();
             dst.FindChildServers(myDsg);
             Assert.AreEqual(dst.ChildServers.Count, serverCount);
             Assert.AreEqual(dsg.ChildServers.Count, n-1);
 
             // Delete "Group1" from "My Servers", back to default status
             dst.CurrentServer = dsg.ChildServers[0];
-            dst.DeleteDicomServer(false);
+            dst.DeleteDicomServer();
             Assert.AreEqual(dsg.ChildServers.Count, 0);
             dst.FindChildServers(myDsg);
             Assert.AreEqual(dst.ChildServers.Count, 1);
 
             // Restore the default for the next tests
-            dst = new DicomServerTree();
+            dst.LoadDicomServers(true);
             myDsg = dst.MyServerGroup;
             serverCount = 1;
         }

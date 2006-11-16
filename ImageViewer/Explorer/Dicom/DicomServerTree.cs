@@ -12,10 +12,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     {
         public DicomServerTree()
         {
-            LoadDicomServers();
+            LoadDicomServers(false);
         }
 
-        public void DeleteDicomServer(bool isUpdate)
+        public void DeleteDicomServer()
         { 
             DicomServerGroup dsgp = FindParentDicomServer(CurrentServer);
             if (dsgp == null)
@@ -26,8 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 {
                     dsgp.ChildServers.RemoveAt(i);
                     CurrentServer = dsgp;
-                    if (isUpdate)
-                        SaveDicomServers();
+                    SaveDicomServers();
                     FireServerTreeUpdatedEvent();
                     return;
                 }
@@ -329,11 +328,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return (DicomServerGroup)dsg;
         }
 
-        private void LoadDicomServers()
+        public void LoadDicomServers(bool initDefault)
         {
             _myServerGroup = new DicomServerGroup();
             bool isupdated = true;
-            if (File.Exists(AENavigatorComponent.MyServersXmlFile))
+            if (!initDefault && File.Exists(AENavigatorComponent.MyServersXmlFile))
             {
                 Stream fStream = File.OpenRead(AENavigatorComponent.MyServersXmlFile);
                 XmlSerializer xmlFormat = new XmlSerializer(typeof(DicomAEGroup), new Type[] { typeof(List<DicomAEGroup>), typeof(DicomAEGroup), typeof(List<DicomAEServer>), typeof(DicomAEServer) });

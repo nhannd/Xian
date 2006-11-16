@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (dataNodeNew.IsServer)
             {
                 _dicomServerTree.CurrentServer = dataNodeNew;
-                _dicomServerTree.DeleteDicomServer(true);
+                _dicomServerTree.DeleteDicomServer();
                 dataNodeNew.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
                 ((DicomServerGroup)dataNodeParent).AddChild(dataNodeNew);
                 SelectChanged(dataNodeNew);
@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 DicomServerGroup dsg = (DicomServerGroup)dataNodeNew;
                 _dicomServerTree.CurrentServer = dataNodeNew;
-                _dicomServerTree.DeleteDicomServer(true);
+                _dicomServerTree.DeleteDicomServer();
                 _dicomServerTree.RenameDicomServerGroup(dsg, "", dsg.ServerPath, dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName, 1);
                 dsg.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
                 ((DicomServerGroup)dataNodeParent).AddChild(dsg);
