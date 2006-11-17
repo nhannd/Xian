@@ -144,9 +144,14 @@ namespace ClearCanvas.Enterprise
         public void Complete()
         {
             if (_vote == Vote.Undecided)
+            {
+
                 _vote = Vote.Complete;
+            }
             else
-                throw new InvalidOperationException("The vote has already been placed");
+            {
+                //throw new InvalidOperationException("The vote has already been placed");
+            }
         }
 
         public void Dispose()
@@ -171,10 +176,12 @@ namespace ClearCanvas.Enterprise
                 {
                     // if the vote is still "undecided", treat it as an abort
                     if (_vote == Vote.Undecided)
+                    {
                         _vote = Vote.Abort;
 
-                    // we have an inherited context, so we need to propagate the vote back up to the parent
-                    _parent._vote = this._vote;
+                        // we have an inherited context, so we need to propagate "aborts" up to the parent
+                        _parent._vote = Vote.Abort;
+                    }
                 }
             }
         }
