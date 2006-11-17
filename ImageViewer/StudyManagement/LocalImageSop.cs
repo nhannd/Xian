@@ -21,6 +21,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{ 
 		}
 
+        public override object NativeDicomObject
+        {
+            get { return _dicomImage; }
+        }
+
 		public override PersonName PatientsName
 		{
 			get

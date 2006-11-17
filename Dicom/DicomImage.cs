@@ -34,10 +34,14 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// The underlying DcmDataset object of this image.
         /// </summary>
-		protected DcmDataset Dataset
+		public DcmDataset Dataset
 		{
-			get { return _dataset; }
-			set { _dataset = value; }
+			get 
+            {
+                Load();
+                return _dataset; 
+            }
+			protected set { _dataset = value; }
 		}
 
         /// <summary>
@@ -47,10 +51,14 @@ namespace ClearCanvas.Dicom
         /// onto media, where the meta-header is used to describe the format
         /// of the storage.
         /// </summary>
-		protected DcmMetaInfo MetaInfo
+        public DcmMetaInfo MetaInfo
 		{
-			get { return _metaInfo; }
-			set { _metaInfo = value; }
+			get 
+            {
+                Load();
+                return _metaInfo; 
+            }
+			protected set { _metaInfo = value; }
 		}
 
         /// <summary>
@@ -78,7 +86,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _rows; 
 			}
@@ -88,7 +96,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _columns; 
 			} 
@@ -98,7 +106,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _bitsAllocated; 
 			} 
@@ -108,7 +116,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _bitsStored; 
 			} 
@@ -118,7 +126,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _highBit; 
 			} 
@@ -128,7 +136,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _samplesPerPixel; 
 			} 
@@ -138,7 +146,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _pixelRepresentation; 
 			} 
@@ -148,7 +156,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return (int) _planarConfiguration; 
 			} 
@@ -158,7 +166,7 @@ namespace ClearCanvas.Dicom
 		{ 
 			get 
 			{ 
-				LoadDataset();
+				Load();
                 LoadImageParameterSet();
 				return _photometricInterpretation; 
 			} 
@@ -173,7 +181,7 @@ namespace ClearCanvas.Dicom
 		public byte[] GetPixelData()
 		{
 			if (!IsDatasetLoaded)
-                LoadDataset();
+                Load();
 
             if (!IsImageParameterSetLoaded)
                 LoadImageParameterSet();
@@ -222,7 +230,7 @@ namespace ClearCanvas.Dicom
         {
             // assume that if bitsAllocated, etc. are provided, IsImageParameterSetLoaded is true
             if (!IsDatasetLoaded)
-                LoadDataset();
+                Load();
 
             if (_pixelData == null)
             {
@@ -287,7 +295,7 @@ namespace ClearCanvas.Dicom
         /// <param name="tagExists">An indicator whether the tag exists in the dataset or not.</param>
 		public void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			OFCondition status = _dataset.findAndGetUint16(tag, out val);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 
@@ -300,7 +308,7 @@ namespace ClearCanvas.Dicom
 
 		public void GetTag(DcmTagKey tag, out ushort val, uint position, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			OFCondition status = _dataset.findAndGetUint16(tag, out val, position);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 
@@ -313,7 +321,7 @@ namespace ClearCanvas.Dicom
 
 		public void GetTag(DcmTagKey tag, out int val, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			OFCondition status = _dataset.findAndGetSint32(tag, out val);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 
@@ -326,7 +334,7 @@ namespace ClearCanvas.Dicom
 
 		public void GetTag(DcmTagKey tag, out int val, uint position, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			OFCondition status = _dataset.findAndGetSint32(tag, out val, position);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 
@@ -339,7 +347,7 @@ namespace ClearCanvas.Dicom
 
 		public void GetTag(DcmTagKey tag, out double val, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			OFCondition status = _dataset.findAndGetFloat64(tag, out val);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 
@@ -352,7 +360,7 @@ namespace ClearCanvas.Dicom
 
 		public void GetTag(DcmTagKey tag, out double val, uint position, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			OFCondition status = _dataset.findAndGetFloat64(tag, out val, position);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 
@@ -366,7 +374,7 @@ namespace ClearCanvas.Dicom
 		public void GetTag(DcmTagKey tag, out string val, out bool tagExists)
 		{
 			//TODO: shouldn't hard code the buffer length like this
-			LoadDataset();
+			Load();
 			StringBuilder buffer = new StringBuilder(64);
 			OFCondition status = _dataset.findAndGetOFString(tag, buffer);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
@@ -384,7 +392,7 @@ namespace ClearCanvas.Dicom
 		public void GetTag(DcmTagKey tag, out string value, uint position, out bool tagExists)
 		{
 			//TODO: shouldn't hard code the buffer length like this
-			LoadDataset();
+			Load();
 			StringBuilder buffer = new StringBuilder(64);
 			OFCondition status = _dataset.findAndGetOFString(tag, buffer, position);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
@@ -409,7 +417,7 @@ namespace ClearCanvas.Dicom
 		/// <param name="tagExists">An indicator whether the tag exists in the dataset or not.</param>
 		public void GetTagArray(DcmTagKey tag, out string valueArray, out bool tagExists)
 		{
-			LoadDataset();
+			Load();
 			StringBuilder buffer = new StringBuilder(512);
 			OFCondition status = _dataset.findAndGetOFStringArray(tag, buffer);
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
@@ -424,8 +432,9 @@ namespace ClearCanvas.Dicom
 			valueArray = buffer.ToString();
 		}
 
-		protected abstract void LoadDataset();
-		protected abstract void UnloadDataset();
+		public abstract void Load();
+        public abstract void WriteToMedia(E_TransferSyntax TransferSyntax);
+		protected abstract void Unload();
 
         /// <summary>
         /// Loads the minmum set of image parameter tags that is
@@ -437,7 +446,7 @@ namespace ClearCanvas.Dicom
                 return;
 
             if (!IsDatasetLoaded)
-                LoadDataset();
+                Load();
 
             OFCondition status;
             bool tagExists;

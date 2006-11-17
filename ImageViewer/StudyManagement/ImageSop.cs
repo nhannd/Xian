@@ -8,6 +8,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class ImageSop : Sop
 	{
+        public abstract object NativeDicomObject { get; }
+
 		// Patient Module
 		public abstract PersonName PatientsName { get; set; }
 		public abstract string PatientId { get; set; }

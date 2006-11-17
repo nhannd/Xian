@@ -61,6 +61,7 @@
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Explorer.Local.LocalImageExplorerComponent:explorerlocal-contextmenu">
     <action id="ClearCanvas.ImageViewer.Explorer.Local.Tools.DicomImageLoaderTool:Open" path="explorerlocal-contextmenu/OpenFiles" />
+    <action id="ClearCanvas.Utilities.DicomEditor.DicomEditor:Dump" path="explorerlocal-contextmenu/DumpFiles" />
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.AENavigatorComponent:dicomaenavigator-toolbar">
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerAddTool:activate" path="dicomaenavigator-toolbar/AddServer" />
@@ -75,5 +76,22 @@
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerEditTool:activate" path="dicomaenavigator-contextmenu/Edit" />
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerDeleteTool:activate" path="dicomaenavigator-contextmenu/Delete" />
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.ServerVerifyTool:activate" path="dicomaenavigator-contextmenu/Verify (C-ECHO)" />
+  </action-model>
+  <action-model id="ClearCanvas.Utilities.DicomEditor.DicomEditorComponent:dicomeditor-toolbar">
+    <action id="ClearCanvas.Utilities.DicomEditor.PreviousTool:activate" path="dicomeditor-toolbar/Previous" />
+    <action id="ClearCanvas.Utilities.DicomEditor.NextTool:activate" path="dicomeditor-toolbar/Next" />
+    <action id="ClearCanvas.Utilities.DicomEditor.QuickAnonymizeTool:activate" path="dicomeditor-toolbar/Quick Anonymize" />
+    <action id="ClearCanvas.Utilities.DicomEditor.CreateTool:activate" path="dicomeditor-toolbar/Create" />
+    <action id="ClearCanvas.Utilities.DicomEditor.DeleteTool:activate" path="dicomeditor-toolbar/Delete" />
+    <action id="ClearCanvas.Utilities.DicomEditor.ReplicateTool:activate" path="dicomeditor-toolbar/Replicate" />
+    <action id="ClearCanvas.Utilities.DicomEditor.RevertTool:activate" path="dicomeditor-toolbar/Revert" />
+    <action id="ClearCanvas.Utilities.DicomEditor.SaveTool:activate" path="dicomeditor-toolbar/Save All" />
+  </action-model>
+  <action-model id="ClearCanvas.Utilities.DicomEditor.DicomEditorComponent:dicomeditor-contextmenu">
+    <action id="ClearCanvas.Utilities.DicomEditor.QuickAnonymizeTool:activate" path="dicomeditor-contextmenu/Quick Anonymize" />
+    <action id="ClearCanvas.Utilities.DicomEditor.CreateTool:activate" path="dicomeditor-contextmenu/Create" />
+    <action id="ClearCanvas.Utilities.DicomEditor.DeleteTool:activate" path="dicomeditor-contextmenu/Delete" />
+    <action id="ClearCanvas.Utilities.DicomEditor.ReplicateTool:activate" path="dicomeditor-contextmenu/Replicate" />
+    <action id="ClearCanvas.Utilities.DicomEditor.RevertTool:activate" path="dicomeditor-contextmenu/Revert" />
   </action-model>
 </action-models>

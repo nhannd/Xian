@@ -30,11 +30,12 @@ namespace ClearCanvas.Dicom
 			_filename = filename;
 		}
 
-		// Protected methods
+		
+        //Public Methods
         /// <summary>
         /// Loads the dataset from the filesystem into memory.
         /// </summary>
-		protected override void LoadDataset()
+		public override void Load()
 		{
 			if (!base.IsDatasetLoaded)
 			{
@@ -47,10 +48,16 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+        public override void WriteToMedia(E_TransferSyntax transferSyntax)
+        {
+            _fileFormat.saveFile(_filename, transferSyntax);
+        }
+
+        // Protected methods
         /// <summary>
         /// Unload the dataset from memory, and release system resources.
         /// </summary>
-		protected override void UnloadDataset()
+		protected override void Unload()
 		{
 			_fileFormat.Dispose();
 		}

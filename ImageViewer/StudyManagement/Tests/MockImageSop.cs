@@ -28,6 +28,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		{
 		}
 
+        public override object NativeDicomObject
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
+
 		public override int BitsStored
 		{
 			get { return _bitsStored; }
