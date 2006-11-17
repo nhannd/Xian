@@ -21,7 +21,8 @@ namespace ClearCanvas.Enterprise
 
             try
             {
-                using(PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
+                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, a.PersistenceScopeOption))
                 {
                     // set the current context of the service layer
                     serviceLayer.CurrentContext = PersistenceScope.Current;

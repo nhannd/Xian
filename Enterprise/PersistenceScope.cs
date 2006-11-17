@@ -30,6 +30,22 @@ namespace ClearCanvas.Enterprise
         Suspend
     }
 
+    /// <summary>
+    /// Controls whether the scope will attempt to inherit an existing persistence context, or create a new one
+    /// </summary>
+    public enum PersistenceScopeOption
+    {
+        /// <summary>
+        /// Inherits an existing context, or creates a new context if no context exists
+        /// </summary>
+        Required,
+
+        /// <summary>
+        /// Creates a new context
+        /// </summary>
+        RequiresNew
+    }
+
 
     
 
@@ -82,18 +98,42 @@ namespace ClearCanvas.Enterprise
         }
 
         /// <summary>
-        /// Creates a new persistence scope for the specified context type.  If there is no parent scope,
-        /// a new context of the specified type will be opened.  If there is a parent scope holding a context
-        /// of the correct type, that context will be inherited.  If there is a parent scope holding a context
-        /// of a different type, a new context of the specified type will be opened.  If a new context is opened,
-        /// the scope owns the context, and closes it when the scope terminates.  If a context was inherited,
-        /// the scope does not own the context, and takes no action on it when the scope terminates.
+        /// Creates a new persistence scope for the specified context type, inheriting an existing context if possible.
         /// </summary>
+        /// <remarks>
+        /// If there is no parent scope, a new context of the specified type will be opened.
+        /// If there is a parent scope holding a context of the correct type, that context will be inherited.
+        /// If a new context is opened, the scope owns the context, and closes it when the scope terminates.
+        /// If a context was inherited, the scope does not own the context, and takes no action on it when the scope terminates.
+        /// If an update context is requested and while a parent scope is holding a read context, an exception will be thrown.
+        /// If a read context is requested while a parent scope is holding an update context, the update context will be inherited.
+        /// </remarks>
         /// <param name="contextType"></param>
         public PersistenceScope(PersistenceContextType contextType)
-            :this(InheritOrCreateContext(contextType), PersistenceScopeDisposeAction.Close)
+            :this(InheritOrCreateContext(contextType, PersistenceScopeOption.Required), PersistenceScopeDisposeAction.Close)
         {
         }
+
+        /// <summary>
+        /// Creates a new persistence scope for the specified context type, using the specified option to determine
+        /// whether to create a new persistence context, or attempt to inherit an existing context.
+        /// </summary>
+        /// <remarks>
+        /// If there is no parent scope, or <see cref = "PersistenceScopeOption.RequiresNew"/> was specified, 
+        /// a new context of the specified type will be opened.  Otherwise, 
+        /// if there is a parent scope holding a context of the correct type, that context will be inherited.
+        /// If a new context is opened, the scope owns the context, and closes it when the scope terminates.
+        /// If a context was inherited, the scope does not own the context, and takes no action on it when the scope terminates.
+        /// If an update context is requested and while a parent scope is holding a read context, an exception will be thrown.
+        /// If a read context is requested while a parent scope is holding an update context, the update context will be inherited.
+        /// </remarks>
+        /// <param name="contextType"></param>
+        /// <param name="scopeOption"></param>
+        public PersistenceScope(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
+            : this(InheritOrCreateContext(contextType, scopeOption), PersistenceScopeDisposeAction.Close)
+        {
+        }
+
 
         /// <summary>
         /// Private constructor, used by public constructors
@@ -109,30 +149,42 @@ namespace ClearCanvas.Enterprise
             _head = this;
         }
 
-        private static IPersistenceContext InheritOrCreateContext(PersistenceContextType contextType)
+        private static IPersistenceContext InheritOrCreateContext(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
         {
-            if (contextType == PersistenceContextType.Update)
+            if (scopeOption == PersistenceScopeOption.RequiresNew)
             {
-                // if no current context, create an update context
-                if (PersistenceScope.Current == null)
-                    return Session.Current.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush);
-
-                // if the current context is an update context, inherit
-                if (PersistenceScope.Current is IUpdateContext)
-                    return PersistenceScope.Current;
-
-                // can't ask for an update context when current context is a read context
-                throw new InvalidOperationException("Cannot execute updates inside of an existing read-only context");
+                // need to create a new context
+                return (contextType == PersistenceContextType.Update) ?
+                    (IPersistenceContext)Session.Current.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush) :
+                    (IPersistenceContext)Session.Current.DataStore.OpenReadContext();
             }
-            else
+            else 
             {
-                // if no current context, create a read context
-                if (PersistenceScope.Current == null)
-                    return Session.Current.DataStore.OpenReadContext();
+                // create a context if one doesn't exist, or attempt to inherit the existing one
 
-                // otherwise return the current context, regardless of its type
-                // (read operations are allowed to execute in an update context)
-                return PersistenceScope.Current;
+                if (contextType == PersistenceContextType.Update)
+                {
+                    // if no current context, create an update context
+                    if (PersistenceScope.Current == null)
+                        return Session.Current.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush);
+
+                    // if the current context is an update context, inherit
+                    if (PersistenceScope.Current is IUpdateContext)
+                        return PersistenceScope.Current;
+
+                    // can't ask for an update context when current context is a read context
+                    throw new InvalidOperationException("Cannot inherit read-context as an update-context");
+                }
+                else
+                {
+                    // if no current context, create a read context
+                    if (PersistenceScope.Current == null)
+                        return Session.Current.DataStore.OpenReadContext();
+
+                    // otherwise return the current context, regardless of its type
+                    // (read operations are allowed to execute in an update context)
+                    return PersistenceScope.Current;
+                }
             }
         }
 

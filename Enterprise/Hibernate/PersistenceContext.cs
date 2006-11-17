@@ -111,7 +111,6 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             IDbCommand cmd = this.Session.Connection.CreateCommand();
             cmd.CommandText = sql;
-
             if (this.InTransaction)
             {
                 this.Session.Transaction.Enlist(cmd);

@@ -19,11 +19,12 @@ namespace ClearCanvas.Enterprise
             ServiceLayer serviceLayer = (ServiceLayer)invocation.This;
             try
             {
-                using (new PersistenceScope(PersistenceContextType.Read))
+                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
+                using (new PersistenceScope(PersistenceContextType.Read, a.PersistenceScopeOption))
                 {
-                        // set the read context as the current context of the service layer
-                        serviceLayer.CurrentContext = PersistenceScope.Current;
-                        return invocation.Proceed();
+                    // set the read context as the current context of the service layer
+                    serviceLayer.CurrentContext = PersistenceScope.Current;
+                    return invocation.Proceed();
                 }
             }
             finally
