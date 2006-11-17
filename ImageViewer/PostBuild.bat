@@ -45,3 +45,6 @@ copy "..\..\..\..\Dicom\Services\View\WinForms\bin\%1\ClearCanvas.Dicom.Services
 
 copy "..\..\..\..\ImageViewer\Tools\Volume\bin\%1\ClearCanvas.ImageViewer.Tools.Volume.dll" ".\plugins"
 copy "..\..\..\..\ReferencedAssemblies\vtk\*.*" .\plugins
+copy "..\..\..\..\Utilities\DicomEditor\bin\%1\ClearCanvas.Utilities.DicomEditor.dll" ".\plugins"
+copy "..\..\..\..\Utilities\DicomEditor\View\WinForms\bin\%1\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" ".\plugins"
+

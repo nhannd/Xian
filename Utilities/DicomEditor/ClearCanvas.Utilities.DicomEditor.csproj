@@ -158,6 +158,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"</PostBuildEvent>
+    <PostBuildEvent>:: copy "$(TargetPath)" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>
