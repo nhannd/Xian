@@ -14,6 +14,8 @@
 #include "dcmtk/dcmdata/dctypes.h"
 #include "dcmtk/dcmdata/dctag.h"
 #include "dcmtk/dcmdata/dcdeftag.h"
+#include "dcmtk/dcmdata/dcdict.h"
+#include "dcmtk/dcmdata/dcdicent.h"
 %}
 
 %include "OffisDcm_typemaps.i"
@@ -29,6 +31,9 @@
 %include "dcmtk/dcmdata/dcxfer.h"
 %include "dcmtk/dcmdata/dctypes.h"
 %include "dcmtk/dcmdata/dctag.h"
+%include "dcmtk/dcmdata/dcdict.h"
+%include "dcmtk/dcmdata/dcdicent.h"
+%include "dcmtk/dcmdata/dcvr.h"
 
 CONTROLOWNER_DERIVED(DcmCodeString, DcmTag)
 CONTROLOWNER_DERIVED(DcmLongString, DcmTag)
