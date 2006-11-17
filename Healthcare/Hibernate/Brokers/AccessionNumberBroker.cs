@@ -11,17 +11,18 @@ using ClearCanvas.Enterprise.Hibernate.Ddl;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class AccessionNumberBroker : Broker, IAccessionNumberBroker
     {
-        private static string TABLE_NAME = "AccessionSequence_";
-        private static string COLUMN_NAME = "NextValue_";
-        private static long INITIAL_VALUE = 100000000;
+        private static readonly string TABLE_NAME = "AccessionSequence_";
+        private static readonly string COLUMN_NAME = "NextValue_";
+        private static readonly long INITIAL_VALUE = 100000000;
 
         /// <summary>
         /// Extension to generate DDL to create and initialize the Accession Sequence table
         /// </summary>
         [ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
-        public class AccessionSequenceTableGenerator : IDdlScriptGenerator
+        public class AccessionSequenceDdlScriptGenerator : IDdlScriptGenerator
         {
             #region IDdlScriptGenerator Members
 
@@ -48,45 +49,59 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public string GetNextAccessionNumber()
         {
-            // try to read the next accession number
-            long accNum = 0;
-            try
-            {
-                IDbCommand select = this.Context.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
-                accNum = (long)select.ExecuteScalar();
-            }
-            catch (Exception e)
-            {
-                throw new PersistenceException(SR.ErrorFailedReadNextSequenceNumber, e);
-            }
-
-            if (accNum == 0)
-            {
-                throw new HealthcareWorkflowException(SR.ErrorSequenceNotInitialized);
-            }
-
-            // update the sequence
             int updatedRows = 0;
-            try
-            {
-                IDbCommand update = this.Context.CreateSqlCommand(string.Format("UPDATE {0} SET {1} = ? WHERE {2} = ?", TABLE_NAME, COLUMN_NAME, COLUMN_NAME));
+            long accNum = 0;
 
-                ((IDbDataParameter)update.Parameters[0]).Value = accNum + 1;
-                ((IDbDataParameter)update.Parameters[1]).Value = accNum;
-
-                updatedRows = update.ExecuteNonQuery();
-            }
-            catch (Exception e)
+            // the loop is necessary to ensure that we succeed in obtaining an accession number
+            // It is possible that another process is trying to do this at the same time,
+            // hence there is an inevitable race condition which may cause the operation to occassionally fail
+            // can we avoid the need for a loop by using Serializable transaction isolation for this operation???
+            do
             {
-                throw new PersistenceException(SR.ErrorFailedUpdateNextSequenceNumber, e);
-            }
+                // try to read the next accession number
+                try
+                {
+                    IDbCommand select = this.Context.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
+                    accNum = (long)select.ExecuteScalar();
+                }
+                catch (Exception e)
+                {
+                    throw new PersistenceException(SR.ErrorFailedReadNextSequenceNumber, e);
+                }
 
-            if (updatedRows == 0)
-            {
-                throw new PersistenceException(SR.ErrorFailedUpdateNextSequenceNumber, null);
+                if (accNum == 0)
+                {
+                    throw new HealthcareWorkflowException(SR.ErrorSequenceNotInitialized);
+                }
+
+                // update the sequence, by trying to update a row containing the previous number
+                // this may fail if another process has updated in the meantime, in which case
+                // the loop will just try again
+                try
+                {
+                    string updateSql = string.Format("UPDATE {0} SET {1} = @next WHERE {2} = @prev", TABLE_NAME, COLUMN_NAME, COLUMN_NAME);
+                    IDbCommand update = this.Context.CreateSqlCommand(updateSql);
+                    AddParameter(update, "next", accNum + 1);
+                    AddParameter(update, "prev", accNum);
+
+                    updatedRows = update.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    throw new PersistenceException(SR.ErrorFailedUpdateNextSequenceNumber, e);
+                }
             }
+            while (updatedRows == 0);
 
             return accNum.ToString();
+        }
+
+        private void AddParameter(IDbCommand cmd, string name, object value)
+        {
+            IDbDataParameter p = cmd.CreateParameter();
+            p.ParameterName = name;
+            p.Value = value;
+            cmd.Parameters.Add(p);
         }
 
         #endregion
