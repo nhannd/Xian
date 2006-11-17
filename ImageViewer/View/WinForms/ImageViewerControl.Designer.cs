@@ -36,20 +36,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.SuspendLayout();
-			// 
-			// _contextMenu
-			// 
-			this._contextMenu.Name = "_contextMenu";
-			this._contextMenu.Size = new System.Drawing.Size(153, 26);
-			this._contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.OnContextMenuOpening);
 			// 
 			// ImageViewerControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Name = "ImageViewerControl";
 			this.ResumeLayout(false);
 
@@ -57,6 +47,5 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#endregion
 
-		private System.Windows.Forms.ContextMenuStrip _contextMenu;
 	}
 }

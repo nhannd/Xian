@@ -385,6 +385,8 @@ namespace ClearCanvas.ImageViewer
 			if (e.ImageBox.Selected)
 				this.SelectedImageBox = null;
 
+			e.ImageBox.DisplaySet = null;
+
 			EventsHelper.Fire(_imageBoxRemovedEvent, this, e);
 		}
 

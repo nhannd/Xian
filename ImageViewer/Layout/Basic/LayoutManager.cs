@@ -129,10 +129,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				if (displaySetIndex == logicalWorkspace.DisplaySets.Count)
 					break;
 
-				// Select the first image of the first display set
-				//if (displaySetIndex == 0)
-				//	logicalWorkspace[0][0].SetSelected(true, SelectionType.Single);
-
 				imageBox.DisplaySet = logicalWorkspace.DisplaySets[displaySetIndex];
 				displaySetIndex++;
 			}

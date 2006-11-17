@@ -26,11 +26,11 @@ namespace ClearCanvas.ImageViewer.Tests
 		}
 
 		[Test]
-		public void ImageBox_DisplaySet()
+		public void SetDisplaySet()
 		{
 			ImageBox imageBox = new ImageBox();
-			DisplaySet displaySet1 = new DisplaySet();
-			DisplaySet displaySet2 = new DisplaySet();
+			IDisplaySet displaySet1 = new DisplaySet();
+			IDisplaySet displaySet2 = new DisplaySet();
 			PresentationImage image1 = new TestPresentationImage();
 			PresentationImage image2 = new TestPresentationImage();
 			displaySet1.PresentationImages.Add(image1);
@@ -55,7 +55,26 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsNull(displaySet1.ImageBox);
 		}
 
+		[Test]
+		public void LayoutImageBoxes()
+		{
+			IImageViewer viewer = new ImageViewerComponent("test");
+			viewer.PhysicalWorkspace.SetImageBoxGrid(2, 1);
 
+			IDisplaySet displaySet1 = new DisplaySet();
+			IDisplaySet displaySet2 = new DisplaySet();
+			PresentationImage image1 = new TestPresentationImage();
+			PresentationImage image2 = new TestPresentationImage();
+			displaySet1.PresentationImages.Add(image1);
+			displaySet2.PresentationImages.Add(image2);
+
+			viewer.PhysicalWorkspace.ImageBoxes[0].DisplaySet = displaySet1;
+			viewer.PhysicalWorkspace.ImageBoxes[1].DisplaySet = displaySet2;
+			viewer.PhysicalWorkspace.SetImageBoxGrid(1, 1);
+
+			Assert.IsFalse(displaySet1.Visible);
+			Assert.IsFalse(displaySet2.Visible);
+		}
 	}
 }
 

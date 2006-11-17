@@ -104,12 +104,15 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					return true;
 			}
 
-			foreach (Layer layer in _tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics)
+			if (_tile.PresentationImage.LayerManager.SelectedGraphicLayer != null)
 			{
-				if (layer is IMouseButtonHandler)
+				foreach (Layer layer in _tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics)
 				{
-					if (ControlPointer(layer as IMouseButtonHandler, message))
-						return true;
+					if (layer is IMouseButtonHandler)
+					{
+						if (ControlPointer(layer as IMouseButtonHandler, message))
+							return true;
+					}
 				}
 			}
 

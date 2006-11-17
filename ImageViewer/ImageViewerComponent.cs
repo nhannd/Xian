@@ -78,6 +78,8 @@ namespace ClearCanvas.ImageViewer
         private ToolSet _toolSet;
 		private event EventHandler<ContextMenuEventArgs> _contextMenuBuildingEvent;
 
+		private event EventHandler _closingEvent;
+
 		#endregion
 
 		public ImageViewerComponent(string studyInstanceUID)
@@ -109,7 +111,9 @@ namespace ClearCanvas.ImageViewer
             // TODO: What would be better is if the study tree listened for workspaces
             // being addded/removed then increased/decreased the reference count itself.
             StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
-            
+
+			EventsHelper.Fire(_closingEvent, this, EventArgs.Empty);
+
             base.Stop();
 		}
 
@@ -263,6 +267,12 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		#region Events
+
+		public event EventHandler Closing
+		{
+			add { _closingEvent += value; }
+			remove { _closingEvent -= value; }
+		}
 
 		public event EventHandler<ContextMenuEventArgs> ContextMenuBuilding
 		{

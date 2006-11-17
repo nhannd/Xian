@@ -33,6 +33,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		public IntPtr WindowID
 		{
 			get { return _windowID; }
+			set { _windowID = value; }
 		}
 
 		public IntPtr ContextID 

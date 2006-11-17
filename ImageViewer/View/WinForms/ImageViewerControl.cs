@@ -27,6 +27,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			this.BackColor = Color.Black;
 
+			_component.Closing += new EventHandler(OnComponentClosing);
 			_physicalWorkspace.Drawing += new EventHandler(OnPhysicalWorkspaceDrawing);
 			_physicalWorkspace.LayoutCompleted += new EventHandler(OnLayoutCompleted);
 		}
@@ -69,6 +70,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
+		void OnComponentClosing(object sender, EventArgs e)
+		{
+			foreach (Control control in this.Controls)
+				control.Dispose();
+
+			this.Controls.Clear();
+		}
+
 		private void OnLayoutCompleted(object sender, EventArgs e)
 		{
 			List<Control> oldControlList = new List<Control>();
@@ -82,21 +91,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			AddImageBoxControls(_physicalWorkspace);
 
 			foreach (Control control in oldControlList)
-				this.Controls.Remove(control);
-		}
-
-		private void OnContextMenuOpening(object sender, CancelEventArgs e)
-		{
-			ActionModelNode menuModel = _component.ContextMenuModel;
-
-			if (menuModel != null)
 			{
-				ToolStripBuilder.Clear(_contextMenu.Items);
-				ToolStripBuilder.BuildMenu(_contextMenu.Items, menuModel.ChildNodes);
-				e.Cancel = false;
+				this.Controls.Remove(control);
+				control.Dispose();
 			}
-			else
-				e.Cancel = true;
 		}
 
 		private void AddImageBoxControls(PhysicalWorkspace physicalWorkspace)

@@ -98,7 +98,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private void IncrementPan(int xIncrement, int yIncrement)
 		{
 			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+
 			if (image == null)
+				return;
+
+			if (image.LayerManager.SelectedImageLayer == null)
 				return;
 
 			this.CaptureBeginState(image);
@@ -122,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (mouseInformation.Tile.PresentationImage == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return true;
 
 			CaptureBeginState(mouseInformation.Tile.PresentationImage);
@@ -134,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			if (mouseInformation.Tile.PresentationImage == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return true;
 
 			if (_command == null)
@@ -148,6 +152,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Stop(MouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
+
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+				return true;
 
 			CaptureEndState();
 

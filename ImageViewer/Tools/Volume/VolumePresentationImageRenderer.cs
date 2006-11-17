@@ -18,12 +18,22 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		}
 
+		public vtkRenderWindowInteractor Interactor
+		{
+			get { return _surface.Interactor; }
+		}
+
 		#region IRenderer Members
 
 		public IRenderingSurface GetRenderingSurface(IntPtr windowID, int width, int height)
 		{
 			if (_surface == null)
 				_surface = new VtkRenderingSurface(windowID);
+			else
+			{
+				if (_surface.WindowID == IntPtr.Zero)
+					_surface.WindowID = windowID;
+			}
 
 			_surface.SetSize(width, height);
 
@@ -37,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				RenderVolume(args);
 				_volumeCreated = true;
 			}
+			_surface.Draw();
 		}
 
 		private void RenderVolume(DrawArgs args)
@@ -48,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			renderer.AddActor(volumeActor);
 			renderer.SetBackground(0.0f, 0.0f, 0.0f);
 
-			_surface.vtkRenderWindow.AddRenderer(renderer);
+			_surface.RenderWindow.AddRenderer(renderer);
 
 		}
 

@@ -245,6 +245,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Capture = true;
 		}
 
+		protected override void OnHandleDestroyed(EventArgs e)
+		{
+			// Notify the surface that the tile control's window handle is
+			// about to be destroyed so that any objects using the handle have
+			// a chance to deal with it
+			if (_surface != null)
+				_surface.WindowID = IntPtr.Zero;
+
+			base.OnHandleDestroyed(e);
+		}
+
 		private void OnCaptureChanging(object sender, CaptureChangingEventArgs e)
 		{
 			if (_currentMouseButtonHandler == e.GainingCapture)

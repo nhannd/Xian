@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 	// Specifies tooltip text for the "apply" action
 	// TODO: Replace tooltip text
-	[Tooltip("apply", "Place tooltip text here")]
+	[Tooltip("apply", "Create Volume")]
 
 	// Specifies icon resources to use for the "apply" action
 	// TODO: Replace the icon resource names with your desired icon resources
@@ -116,6 +116,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			IDisplaySet selectedDisplaySet = this.ImageViewer.SelectedImageBox.DisplaySet;
 			VolumePresentationImage image = new VolumePresentationImage(selectedDisplaySet);
 			IDisplaySet displaySet = new DisplaySet();
+			displaySet.Name = String.Format("{0} (3D)", selectedDisplaySet.Name);
 			displaySet.PresentationImages.Add(image);
 			this.ImageViewer.LogicalWorkspace.DisplaySets.Add(displaySet);
 			IImageBox imageBox = this.ImageViewer.SelectedImageBox;

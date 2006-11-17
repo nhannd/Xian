@@ -123,7 +123,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public void IncrementWindow(double windowIncrement, double levelIncrement)
 		{
 			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
-			if (image == null)
+
+			if (!IsImageValid(image))
 				return;
 
 			InitImage(image);
@@ -168,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (mouseInformation.Tile == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return true;
 
 			InitImage(mouseInformation.Tile.PresentationImage);
@@ -182,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			if (mouseInformation.Tile == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return true;
 
 			if (_command == null)
@@ -196,6 +197,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Stop(MouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
+
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+				return true;
 
 			this.CaptureEndState();
 

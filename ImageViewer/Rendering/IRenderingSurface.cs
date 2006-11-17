@@ -9,6 +9,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		IntPtr WindowID
 		{
 			get;
+			set;
 		}
 
 		IntPtr ContextID

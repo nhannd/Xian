@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		internal void Draw()
 		{
-			Trace.Write("ImageBoxControl.Draw\n");
+			//Trace.Write("ImageBoxControl.Draw\n");
 
 			foreach (TileControl control in this.Controls)
 				control.Draw();
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			base.OnSizeChanged(e);
 
-			Trace.Write("ImageBoxControl.OnSizeChanged\n");
+			//Trace.Write("ImageBoxControl.OnSizeChanged\n");
 
 			this.SuspendLayout();
 
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			Trace.Write("ImageBoxControl.OnPaint\n");
+			//Trace.Write("ImageBoxControl.OnPaint\n");
 
 			e.Graphics.Clear(Color.Black);
 
@@ -148,7 +148,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			AddTileControls(_imageBox);
 
 			foreach (Control control in oldControlList)
+			{
 				this.Controls.Remove(control);
+				control.Dispose();
+			}
 
 			this.ResumeLayout(true);
 		}

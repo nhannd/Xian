@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (mouseInformation.Tile.PresentationImage == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return true;
 
 			CaptureBeginState(mouseInformation.Tile.PresentationImage);
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			if (_command == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return true;
 
 			IncrementZoom(mouseInformation.Tile, (float)base.DeltaY * 0.025F);
@@ -135,7 +135,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Stop(MouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
-			
+
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+				return true;
+
 			CaptureEndState();
 			
 			return true;

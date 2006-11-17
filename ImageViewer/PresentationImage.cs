@@ -92,15 +92,6 @@ namespace ClearCanvas.ImageViewer
 
 					if (_tile != null)
 						_tile.PresentationImage = this;
-					else
-					{
-						// If the image is no longer associated with a Tile,
-						// i.e., it's no longer visible, then dispose of the
-						// renderer and set the renderer to null so we don't
-						// hog memory.  (It may be better to keep the renderer
-						// around for performance reasons, but we'll see.)
-						DisposeRenderer();
-					}
 				}
 			}
 		}
