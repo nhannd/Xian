@@ -72,40 +72,42 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomIn()
 		{
-			ITile tile = this.Context.Viewer.SelectedTile;
-			if (tile == null || tile.PresentationImage == null)
+			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+			if (!IsImageValid(image))
 				return;
 
-			CaptureBeginState(tile.PresentationImage);
+			CaptureBeginState(image);
 
-			IncrementZoom(tile, 0.2F);
+			float increment = 0.1F * image.LayerManager.SelectedLayerGroup.SpatialTransform.Scale;
+			IncrementZoom(image, increment);
 
 			CaptureEndState();
 		}
 
 		private void ZoomOut()
 		{
-			ITile tile = this.Context.Viewer.SelectedTile;
-			if (tile == null || tile.PresentationImage == null)
+			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+			if (!IsImageValid(image))
 				return;
 
-			CaptureBeginState(tile.PresentationImage);
+			CaptureBeginState(image);
 
-			IncrementZoom(tile, -0.2F);
+			float increment = -0.1F * image.LayerManager.SelectedLayerGroup.SpatialTransform.Scale;
+			IncrementZoom(image, increment);
 
 			CaptureEndState();
 		}
 
-		private void IncrementZoom(ITile tile, float scaleIncrement)
+		private void IncrementZoom(IPresentationImage image, float scaleIncrement)
 		{
-			if (tile == null || tile.PresentationImage == null)
+			if (!IsImageValid(image))
 				return;
 
-			SpatialTransform spatialTransform = tile.PresentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
+			SpatialTransform spatialTransform = image.LayerManager.SelectedLayerGroup.SpatialTransform;
 			spatialTransform.ScaleToFit = false;
 			spatialTransform.Scale += scaleIncrement;
 			spatialTransform.Calculate();
-			tile.PresentationImage.Draw();
+			image.Draw();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -127,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return false;
 
-			IncrementZoom(mouseInformation.Tile, (float)base.DeltaY * 0.025F);
+			IncrementZoom(mouseInformation.Tile.PresentationImage, (float)base.DeltaY * 0.025F);
 
 			return true;
 		}

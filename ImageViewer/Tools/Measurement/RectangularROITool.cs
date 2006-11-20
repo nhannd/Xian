@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [Tooltip("activate", "ToolsMeasurementRectangularROI")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RectangularROIMedium.png", "Icons.RectangularROILarge.png")]
 
-	[MouseToolButton(XMouseButtons.Right, false)]
+	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RectangularROITool : MouseTool
 	{
@@ -33,10 +33,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.Start(mouseInformation);
 
-			if (mouseInformation.Tile == null ||
-				mouseInformation.Tile.PresentationImage == null ||
-				mouseInformation.Tile.PresentationImage.LayerManager == null ||
-				mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer == null)
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage)) 
 				return false;
 
 			if (_createGraphic != null)

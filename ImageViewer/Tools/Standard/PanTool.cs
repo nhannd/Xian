@@ -77,32 +77,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void PanLeft()
 		{
-			IncrementPan(-20, 0);
+			IncrementPan(-15, 0);
 		}
 
 		private void PanRight()
 		{
-			IncrementPan(20, 0);
+			IncrementPan(15, 0);
 		}
 
 		private void PanUp()
 		{
-			IncrementPan(0, -20);
+			IncrementPan(0, -15);
 		}
 
 		private void PanDown()
 		{
-			IncrementPan(0, 20);
+			IncrementPan(0, 15);
 		}
 
 		private void IncrementPan(int xIncrement, int yIncrement)
 		{
 			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
 
-			if (image == null)
-				return;
-
-			if (image.LayerManager.SelectedImageLayer == null)
+			if (!IsImageValid(image))
 				return;
 
 			this.CaptureBeginState(image);

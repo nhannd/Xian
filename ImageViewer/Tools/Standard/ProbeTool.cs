@@ -91,13 +91,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			//base.Start(mouseInformation);
 
-			if (!(mouseInformation.Tile is Tile) ||
-				mouseInformation.Tile.PresentationImage == null ||
-				mouseInformation.Tile.PresentationImage.LayerManager == null ||
-				mouseInformation.Tile.PresentationImage.LayerManager.SelectedImageLayer == null)
-			{
+			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
 				return false;
-			}
 
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
