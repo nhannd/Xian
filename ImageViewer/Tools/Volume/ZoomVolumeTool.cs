@@ -21,13 +21,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
     [Tooltip("activate", "Zoom Volume")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolLarge.png", "Icons.CreateVolumeToolLarge.png")]
 
-	[CursorToken("Icons.CreateVolumeToolSmall.png", typeof(RotateVolumeTool))]
-    
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomVolumeTool : MouseTool
 	{
+		private CursorToken _cursorToken;
+
 		public ZoomVolumeTool()
   		{
+			_cursorToken = new CursorToken("Icons.CreateVolumeToolSmall.png", this.GetType().Assembly);
 		}
 
 		vtkGenericRenderWindowInteractor GetInteractor(IPresentationImage selectedImage)
@@ -52,57 +53,73 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		#region IMouseButtonHandler Members
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-		 	base.Start(pointerInformation);
+		 	base.Start(mouseInformation);
 
 			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			vtkGenericRenderWindowInteractor interactor = GetInteractor(selectedImage);
 
 			if (interactor == null)
-				return true;
+				return false;
 
-			interactor.SetEventPositionFlipY(pointerInformation.Point.X, pointerInformation.Point.Y);
+			interactor.SetEventPositionFlipY(mouseInformation.Location.X, mouseInformation.Location.Y);
 			interactor.RightButtonPressEvent();
 
 			return true;
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
- 			base.Track(pointerInformation);
+			base.Track(mouseInformation);
 
 			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			vtkGenericRenderWindowInteractor interactor = GetInteractor(selectedImage);
 
 			if (interactor == null)
-				return true;
+				return false;
 
-			interactor.SetEventPositionFlipY(pointerInformation.Point.X, pointerInformation.Point.Y);
+			interactor.SetEventPositionFlipY(mouseInformation.Location.X, mouseInformation.Location.Y);
 			interactor.MouseMoveEvent();
 
 			return true;
 		}
 
-		public override bool Stop(MouseInformation pointerInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
-		 	base.Stop(pointerInformation);
+			base.Stop(mouseInformation);
 
 			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
 
 			vtkGenericRenderWindowInteractor interactor = GetInteractor(selectedImage);
 
 			if (interactor == null)
-				return true;
+				return false;
 
-			interactor.SetEventPositionFlipY(pointerInformation.Point.X, pointerInformation.Point.Y);
+			interactor.SetEventPositionFlipY(mouseInformation.Location.X, mouseInformation.Location.Y);
 			interactor.RightButtonReleaseEvent();
 
-			return true;
+			return false;
 		}
 
+		public override void Cancel()
+		{
+			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
+
+			vtkGenericRenderWindowInteractor interactor = GetInteractor(selectedImage);
+
+			if (interactor == null)
+				return;
+
+			interactor.RightButtonReleaseEvent();
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			return _cursorToken;
+		}
 
 		#endregion
 	}

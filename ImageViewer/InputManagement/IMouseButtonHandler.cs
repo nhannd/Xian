@@ -6,8 +6,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public interface IMouseButtonHandler
 	{
-		bool Start(MouseInformation pointerInformation);
-		bool Track(MouseInformation pointerInformation);
-		bool Stop(MouseInformation pointerInformation);
+		bool Start(IMouseInformation mouseInformation);
+		bool Track(IMouseInformation mouseInformation);
+		bool Stop(IMouseInformation mouseInformation);
+		void Cancel();
+
+		bool SuppressContextMenu { get; }
 	}
 }

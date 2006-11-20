@@ -12,10 +12,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			// If mouse is over object, transition to focused state
-			if (base.StatefulGraphic.HitTest(pointerInformation.Point))
+			if (base.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusState();
 				return true;
@@ -24,9 +24,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return false;
 		}
 
-		public override void OnEnterState(MouseInformation pointerInformation)
+		public override void OnEnterState(IMouseInformation mouseInformation)
 		{
-			base.StatefulGraphic.OnEnterInactiveState(pointerInformation);
+			base.StatefulGraphic.OnEnterInactiveState(mouseInformation);
 		}
 
 		public override string ToString()

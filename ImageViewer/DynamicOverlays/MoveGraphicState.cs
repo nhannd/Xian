@@ -9,7 +9,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class MoveGraphicState : GraphicState, IMouseButtonHandler
+	public class MoveGraphicState : GraphicState
 	{
 		private PointF _currentPoint = new Point(0,0);
 
@@ -18,11 +18,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			pointerInformation.Tile.CurrentPointerAction = this;
-
-			base.LastPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
+			base.LastPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 
 			if (this.SupportUndo)
 			{
@@ -34,12 +32,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
-			//Point mousePoint = new Point(e.X, e.Y);
-			//PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.ParentLayerManager.RootLayerGroup.DestinationRectangle);
-
-			_currentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
+			_currentPoint = this.StatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 
 			base.StatefulGraphic.CoordinateSystem = CoordinateSystem.Source;
 			SizeF delta = Graphic.CalcGraphicPositionDelta(base.LastPoint, _currentPoint);
@@ -52,10 +47,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool Stop(MouseInformation pointerInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			pointerInformation.Tile.CurrentPointerAction = null;
+			Cancel();
+			return false;
+		}
 
+		public override void Cancel()
+		{
 			if (this.SupportUndo)
 			{
 				base.Command.EndState = (base.StatefulGraphic as IMemorable).CreateMemento();
@@ -63,8 +62,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 
 			base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
-
-			return true;
 		}
 
 		public override string ToString()

@@ -16,7 +16,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			: base(roiGraphic)
 		{
 			_currentChildGraphic = null;
-			SetGraphicStates(true);
 		}
 
 		private ROIGraphic ROIGraphic
@@ -24,64 +23,59 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as ROIGraphic; }
 		}
 
-		private void SetGraphicStates(bool focus)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			if (focus)
-			{
-				this.ROIGraphic.Roi.State = this.ROIGraphic.Roi.CreateFocusSelectedState();
-				this.ROIGraphic.Callout.State = this.ROIGraphic.Callout.CreateFocusSelectedState();
-			}
-			else
-			{
-				this.ROIGraphic.Roi.State = this.ROIGraphic.Roi.CreateSelectedState();
-				this.ROIGraphic.Callout.State = this.ROIGraphic.Callout.CreateSelectedState();
+			_currentChildGraphic = this.ROIGraphic.Roi;
+			if (_currentChildGraphic.Start(mouseInformation))
+				return true;
 
-				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
-			}
+			_currentChildGraphic = this.ROIGraphic.Callout;
+			if(_currentChildGraphic.Start(mouseInformation))
+				return true;
+
+			_currentChildGraphic = null;
+			return false;
 		}
 
-		private void SetCurrentChildGraphic(Point point)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (this.ROIGraphic.Roi.HitTest(point))
-			{
-				_currentChildGraphic = this.ROIGraphic.Roi;
-			}
-			else if (this.ROIGraphic.Callout.HitTest(point))
-			{
-				_currentChildGraphic = this.ROIGraphic.Callout;
-			}
-			else
-			{
+			if (_currentChildGraphic != null)
+				return _currentChildGraphic.Track(mouseInformation);
+
+			bool returnValue = this.ROIGraphic.Roi.Track(mouseInformation);
+			returnValue |= this.ROIGraphic.Callout.Track(mouseInformation);
+
+			if (returnValue)
+				return true;
+
+			this.StatefulGraphic.State = this.StatefulGraphic.CreateSelectedState();
+			return false;
+		}
+
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
+			bool returnValue = false;
+
+			if (_currentChildGraphic != null)
+				returnValue = _currentChildGraphic.Stop(mouseInformation);
+
+			if (!returnValue)
 				_currentChildGraphic = null;
-			}
+
+			return returnValue;
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override void Cancel()
 		{
-			SetCurrentChildGraphic(pointerInformation.Point);
-
 			if (_currentChildGraphic != null)
-				return _currentChildGraphic.Start(pointerInformation);
+				_currentChildGraphic.Cancel();
 
-			//We should never actually get to here, but if we did, this should happen.
-			SetGraphicStates(false);
-			return false;
+			_currentChildGraphic = null;
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override void OnEnterState(IMouseInformation mouseInformation)
 		{
-			SetCurrentChildGraphic(pointerInformation.Point);
-
-			if (_currentChildGraphic != null)
-				return _currentChildGraphic.Track(pointerInformation);
-
-			SetGraphicStates(false);
-			return false;
-		}
-
-		public override void OnEnterState(MouseInformation pointerInformation)
-		{
-			base.StatefulGraphic.OnEnterFocusSelectedState(pointerInformation);
+			base.StatefulGraphic.OnEnterFocusSelectedState(mouseInformation);
 		}
 
 		public override string ToString()

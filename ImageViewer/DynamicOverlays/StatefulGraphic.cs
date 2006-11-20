@@ -5,13 +5,14 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public abstract class StatefulGraphic : Graphic
+	public abstract class StatefulGraphic : Graphic, IMouseButtonHandler, ICursorTokenProvider
 	{
 		private GraphicState _state;
-		private MouseInformation _currentPointerInformation;
+		private IMouseInformation _currentMouseInformation;
 		private event EventHandler<GraphicStateChangedEventArgs> _stateChangedEvent;
 
 		public StatefulGraphic()
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 				// Perform any cleanup necessary in the old state
 				if (_state != null)
-					_state.OnExitState(_currentPointerInformation);
+					_state.OnExitState(_currentMouseInformation);
 
 				GraphicStateChangedEventArgs args = new GraphicStateChangedEventArgs();
 
@@ -47,7 +48,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				if (args.OldState != null)
 				{
 					// Perform any intialization necessary in the new state
-					_state.OnEnterState(_currentPointerInformation);
+					_state.OnEnterState(_currentMouseInformation);
 
 					OnStateChanged(args);
 				}
@@ -122,11 +123,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			remove { _stateChangedEvent -= value; }
 		}
 
-		public virtual bool SetCursorToken(MouseInformation pointerInformation)
-		{
-			return false;
-		}
-
 		public virtual GraphicState CreateCreateState()
 		{
 			throw new InvalidOperationException();
@@ -152,64 +148,87 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new SelectedGraphicState(this);	
 		}
 
-		public virtual void OnEnterInactiveState(MouseInformation pointerInformation)
+		public virtual void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
 			//this.Color = Color.Yellow;
 			//Draw();
 		}
 
-		public virtual void OnEnterFocusState(MouseInformation pointerInformation)
+		public virtual void OnEnterFocusState(IMouseInformation mouseInformation)
 		{
 			//this.Color = Color.Orange;
 			//Draw();
 		}
 
-		public virtual void OnEnterFocusSelectedState(MouseInformation pointerInformation)
+		public virtual void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
 		{
 			//this.Color = Color.Red;
 			//Draw();
 		}
 
-		public virtual void OnEnterSelectedState(MouseInformation pointerInformation)
+		public virtual void OnEnterSelectedState(IMouseInformation mouseInformation)
 		{ 
 		}
 
-		public virtual void OnExitInactiveState(MouseInformation pointerInformation)
+		public virtual void OnExitInactiveState(IMouseInformation mouseInformation)
 		{
 		}
 
-		public virtual void OnExitFocusState(MouseInformation pointerInformation)
+		public virtual void OnExitFocusState(IMouseInformation mouseInformation)
 		{
 		}
 
-		public virtual void OnExitSelectedState(MouseInformation pointerInformation)
+		public virtual void OnExitSelectedState(IMouseInformation mouseInformation)
 		{
 		}
 
-		public virtual void OnExitFocusSelectedState(MouseInformation pointerInformation)
-		{ 
-		}
-
-		public virtual bool Start(MouseInformation pointerInformation)
+		public virtual void OnExitFocusSelectedState(IMouseInformation mouseInformation)
 		{
-			Platform.CheckMemberIsSet(this.State, "State");
-			_currentPointerInformation = pointerInformation;
-			return this.State.Start(pointerInformation);
 		}
 
-		public virtual bool Track(MouseInformation pointerInformation)
+		#region IMouseButtonHandler Members
+
+		public virtual bool Start(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
-			_currentPointerInformation = pointerInformation;
-			return this.State.Track(pointerInformation);
+			_currentMouseInformation = mouseInformation;
+			return this.State.Start(mouseInformation);
 		}
 
-		public virtual bool Stop(MouseInformation pointerInformation)
+		public virtual bool Track(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
-			_currentPointerInformation = pointerInformation;
-			return this.State.Stop(pointerInformation);
+			_currentMouseInformation = mouseInformation;
+			return this.State.Track(mouseInformation);
 		}
+
+		public virtual bool Stop(IMouseInformation mouseInformation)
+		{
+			Platform.CheckMemberIsSet(this.State, "State");
+			_currentMouseInformation = mouseInformation;
+			return this.State.Stop(mouseInformation);
+		}
+
+		public virtual void Cancel()
+		{
+			this.State.Cancel();
+		}
+
+		public virtual bool SuppressContextMenu
+		{
+			get { return false; }
+		}
+
+		#endregion
+
+		#region ICursorTokenProvider Members
+
+		public virtual CursorToken GetCursorToken(Point point)
+		{
+			return null;
+		}
+
+		#endregion
 
 		public virtual void OnStateChanged(GraphicStateChangedEventArgs e)
 		{

@@ -28,18 +28,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("zoomout", "ZoomOut")]
 
 	[MouseWheelControl("ZoomIn", "ZoomOut", ModifierFlags.Control)]
-
-	[CursorToken("Icons.ZoomMedium.png", typeof(ZoomTool))]
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : MouseTool
 	{
+		private CursorToken _cursorToken; 
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
 		{
+			_cursorToken = new CursorToken("Icons.ZoomMedium.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IPresentationImage image)
@@ -108,31 +108,31 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			tile.PresentationImage.Draw();
 		}
 
-		public override bool Start(MouseInformation mouseInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
+				return false;
 
 			CaptureBeginState(mouseInformation.Tile.PresentationImage);
 
 			return true;
 		}
 
-		public override bool Track(MouseInformation mouseInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			base.Track(mouseInformation);
 
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
+				return false;
 
 			IncrementZoom(mouseInformation.Tile, (float)base.DeltaY * 0.025F);
 
 			return true;
 		}
 
-		public override bool Stop(MouseInformation mouseInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
 
@@ -141,7 +141,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			CaptureEndState();
 			
-			return true;
+			return false;
+		}
+
+		public override void Cancel()
+		{
+			this.CaptureEndState();
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			return _cursorToken;
 		}
 	}
 }

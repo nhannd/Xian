@@ -33,8 +33,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("pandown", "PanDown")]
 
 	[MouseButtonControl(XMouseButtons.Left, ModifierFlags.Control)]
-
-	[CursorToken("Icons.PanMedium.png", typeof(PanTool))]	
 	[MouseToolButton(XMouseButtons.Left, false)]
     
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -42,9 +40,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
+		private CursorToken _cursorToken;
 
 		public PanTool()
 		{
+			_cursorToken = new CursorToken("Icons.PanMedium.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IPresentationImage image)
@@ -122,34 +122,34 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			image.Draw();
 		}
 
-		public override bool Start(MouseInformation mouseInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
+				return false;
 
 			CaptureBeginState(mouseInformation.Tile.PresentationImage);
 
 			return true;
 		}
 
-		public override bool Track(MouseInformation mouseInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			base.Track(mouseInformation);
 
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
+				return false;
 
 			if (_command == null)
-				return true;
+				return false;
 
 			this.IncrementPan(mouseInformation.Tile.PresentationImage, base.DeltaX, base.DeltaY);
 
 			return true;
 		}
 
-		public override bool Stop(MouseInformation mouseInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
 
@@ -158,7 +158,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			CaptureEndState();
 
-			return true;
+			return false;
+		}
+
+		public override void Cancel()
+		{
+			this.CaptureEndState();
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			return _cursorToken;
 		}
 	}
 }

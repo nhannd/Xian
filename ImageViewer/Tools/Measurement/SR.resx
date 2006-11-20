@@ -129,4 +129,10 @@
   <data name="ToolsMeasurementProtractor" xml:space="preserve">
     <value>Protractor</value>
   </data>
+  <data name="CloseMenu" xml:space="preserve">
+    <value>Close Menu</value>
+  </data>
+  <data name="DeleteGraphicTool" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

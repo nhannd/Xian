@@ -2,9 +2,36 @@ using System;
 using System.Drawing;
 using System.Collections;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Layers
 {
+	[ExtensionPoint()]
+	public class GraphicToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
+	public interface IGraphicToolContext : IToolContext
+	{
+		//you can go all the way up the chain to the imageviewer, so this is the only property needed.
+		Graphic Graphic { get; }
+	}
+
+	public class GraphicToolContext : ToolContext, IGraphicToolContext
+	{
+		private Graphic _graphic;
+
+		public GraphicToolContext(Graphic graphic)
+		{
+			_graphic = graphic;
+		}
+
+		public Graphic Graphic
+		{
+			get { return _graphic; }
+		}
+	}
+
 	public enum LineStyle
 	{
 		Solid = 0,

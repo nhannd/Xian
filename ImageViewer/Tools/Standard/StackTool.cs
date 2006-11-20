@@ -19,7 +19,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "", "Icons.StackMedium.png", "Icons.StackLarge.png")]
 
 	[MouseWheelControl("StackDown", "StackUp")]
-	[CursorToken("Icons.StackMedium.png", typeof(StackTool))]
 	[MouseToolButton(XMouseButtons.Left, true)]
 
 	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", KeyStroke = XKeys.PageUp)]
@@ -37,12 +36,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackTool : MouseTool
 	{
+		private CursorToken _cursorToken; 
+		
 		private UndoableCommand _command;
 		private int _initialPresentationImageIndex;
 		private IImageBox _currentImageBox;
 
 		public StackTool()
 		{
+			_cursorToken = new CursorToken("Icons.StackMedium.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IImageBox imageBox)
@@ -138,23 +140,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			selectedImageBox.Draw();
 		}
 
-		public override bool Start(MouseInformation mouseInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
 			if (mouseInformation.Tile == null)
-				return true;
+				return false;
 
 			CaptureBeginState(mouseInformation.Tile.ParentImageBox);
 
 			return true;
 		}
 
-		public override bool Track(MouseInformation mouseInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			base.Track(mouseInformation);
 
 			if (mouseInformation.Tile == null)
+				return false;
+
+			if (base.DeltaY == 0)
 				return true;
 
 			int increment;
@@ -169,13 +174,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return true;
 		}
 
-		public override bool Stop(MouseInformation mouseInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
 
 			CaptureEndState();
 
-			return true;
+			return false;
+		}
+
+		public override void Cancel()
+		{
+			this.CaptureEndState();
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			return _cursorToken;
 		}
 	}
 }

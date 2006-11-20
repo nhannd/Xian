@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close Menu.
+        /// </summary>
+        public static string CloseMenu {
+            get {
+                return ResourceManager.GetString("CloseMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string DeleteGraphicTool {
+            get {
+                return ResourceManager.GetString("DeleteGraphicTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Elliptcal ROI.
         /// </summary>
         public static string ToolsMeasurementEllipticalROI {

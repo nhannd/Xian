@@ -12,11 +12,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		{
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
-			base.StatefulGraphic.SetCursorToken(pointerInformation); 
-
-			if (!base.StatefulGraphic.HitTest(pointerInformation.Point))
+			if (!base.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
 				base.StatefulGraphic.State = base.StatefulGraphic.CreateSelectedState();
 				return false;
@@ -25,13 +23,13 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
 			// User has clicked the graphic body
-			if (base.StatefulGraphic.HitTest(pointerInformation.Point))
+			if (base.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
 				base.StatefulGraphic.State = new MoveGraphicState(base.StatefulGraphic);
-				base.StatefulGraphic.State.Start(pointerInformation);
+				base.StatefulGraphic.State.Start(mouseInformation);
 				return true;
 			}
 
@@ -40,9 +38,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return false;
 		}
 
-		public override void OnEnterState(MouseInformation pointerInformation)
+		public override void OnEnterState(IMouseInformation mouseInformation)
 		{
-			base.StatefulGraphic.OnEnterFocusSelectedState(pointerInformation);
+			base.StatefulGraphic.OnEnterFocusSelectedState(mouseInformation);
 		}
 
 		public override string ToString()

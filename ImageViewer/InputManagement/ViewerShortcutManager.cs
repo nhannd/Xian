@@ -163,7 +163,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					if (!replaceExisting)
 						return;
 					
-					//!!Resolve this issue with the IMouseButtonHandler vs MouseTool
 					MouseTool oldMouseTool = (MouseTool)_activeMouseButtonShortcutMap[shortcut];
 					oldMouseTool.Active = false;
 					_activeMouseButtonShortcutMap[shortcut] = activateMouseTool;

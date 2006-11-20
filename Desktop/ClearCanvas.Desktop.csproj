@@ -62,7 +62,6 @@
     <Compile Include="ApplicationComponentHostDialog.cs" />
     <Compile Include="ApplicationComponentHostShelf.cs" />
     <Compile Include="ClosingEventArgs.cs" />
-    <Compile Include="CursorTokenAttribute.cs" />
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
     <Compile Include="Enumerations.cs" />

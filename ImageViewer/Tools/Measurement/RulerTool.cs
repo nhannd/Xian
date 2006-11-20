@@ -20,39 +20,88 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [Tooltip("activate", "ToolsMeasurementRuler")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RulerMedium.png", "Icons.RulerLarge.png")]
 
-	[MouseToolButton(XMouseButtons.Left, false)]
+	[MouseToolButton(XMouseButtons.Right, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RulerTool : MouseTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
+		private ROIGraphic _createGraphic;
 
 		public RulerTool()
 		{
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			base.Start(pointerInformation);
+			base.Start(mouseInformation);
 
-			if (pointerInformation.Tile == null || pointerInformation.Tile.PresentationImage == null)
-				return true;
+			if (mouseInformation.Tile == null ||
+				mouseInformation.Tile.PresentationImage == null ||
+				mouseInformation.Tile.PresentationImage.LayerManager == null ||
+				mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer == null)
+				return false;
 
-			// Create a new ruler; subsequent UI messages will be handled by the
-			// ruler itself.
+			if (_createGraphic != null)
+				return _createGraphic.Start(mouseInformation);
+
 			InteractiveMultiLineGraphic multilineGraphic = new InteractiveMultiLineGraphic(true, 2);
-			ROIGraphic roiGraphic = new ROIGraphic(multilineGraphic, true);
+			_createGraphic = new ROIGraphic(multilineGraphic, true);
 
 			multilineGraphic.StretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
 			multilineGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-			roiGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+			_createGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 
-			roiGraphic.Callout.Text = "Line ROI";
-			pointerInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(roiGraphic);
-			roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);
+			_createGraphic.Callout.Text = "Line ROI";
+			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
+			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
-			roiGraphic.Start(pointerInformation);
+			if (_createGraphic.Start(mouseInformation))
+				return true;
+
+			this.Cancel();
+			return false;
+		}
+
+		public override bool Track(IMouseInformation mouseInformation)
+		{
+			if (_createGraphic != null)
+				return _createGraphic.Track(mouseInformation);
 
 			return false;
+		}
+
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
+			if (_createGraphic != null)
+			{
+				if (_createGraphic.Stop(mouseInformation))
+					return true;
+			}
+
+			_createGraphic = null;
+			return false;
+		}
+
+		public override void Cancel()
+		{
+			if (_createGraphic != null)
+				_createGraphic.Cancel();
+
+			_createGraphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(_createGraphic);
+			_createGraphic = null;
+		}
+
+		public override bool SuppressContextMenu
+		{
+			get { return true; }
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			if (_createGraphic != null)
+				return _createGraphic.GetCursorToken(point);
+
+			return null;
 		}
 
 		private bool PixelSpacingNotAllowed(ImageSop imageSop)
@@ -71,6 +120,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
 			ROIGraphic roiGraphic = sender as ROIGraphic;
+			
 			InteractiveMultiLineGraphic multiLineGraphic = roiGraphic.Roi as InteractiveMultiLineGraphic;
 			DicomPresentationImage image = roiGraphic.ParentPresentationImage as DicomPresentationImage;
 

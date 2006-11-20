@@ -14,7 +14,6 @@ using ClearCanvas.ImageViewer.Tools.Standard;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MouseToolButton(XMouseButtons.Right, true)]
-	[CursorToken("Icons.WindowLevelMedium.png", typeof(WindowLevelTool))]
 
 	[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardWindowLevel", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", KeyStroke = XKeys.W)]
@@ -40,11 +39,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : MouseTool
 	{
+		private CursorToken _cursorToken; 
+		
 		private UndoableCommand _command;
 		private WindowLevelApplicator _applicator;
 
 		public WindowLevelTool()
 		{
+			_cursorToken = new CursorToken("Icons.WindowLevelMedium.png", this.GetType().Assembly);
         }
 
 		public override void Initialize()
@@ -165,12 +167,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			Trace.Write(str);
 		}
 
-		public override bool Start(MouseInformation mouseInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
+				return false;
 
 			InitImage(mouseInformation.Tile.PresentationImage);
 
@@ -179,22 +181,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return true;
 		}
 
-		public override bool Track(MouseInformation mouseInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			base.Track(mouseInformation);
 
 			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
+				return false;
 
 			if (_command == null)
-				return true;
+				return false;
 
 			this.IncrementWindow(mouseInformation.Tile.PresentationImage, this.DeltaX * 10, this.DeltaY * 10);
 
 			return true;
 		}
 
-		public override bool Stop(MouseInformation mouseInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
 
@@ -203,7 +205,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			this.CaptureEndState();
 
-			return true;
+			return false;
+		}
+
+		public override void Cancel()
+		{
+			this.CaptureEndState();
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			return _cursorToken;
 		}
 	}
 }

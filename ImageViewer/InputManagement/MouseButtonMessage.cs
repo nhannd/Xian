@@ -26,6 +26,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_mouseButtonShortcut = new MouseButtonShortcut(mouseButton, control, alt, shift);
 		}
 
+		public MouseButtonMessage(Point location, XMouseButtons mouseButton, ButtonActions buttonAction, ModifierFlags modifierFlags)
+		{
+			_location = location;
+			_buttonAction = buttonAction;
+			_mouseButtonShortcut = new MouseButtonShortcut(mouseButton, modifierFlags);
+		}
+
 		private MouseButtonMessage()
 		{
 		}

@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public sealed class KeyboardButtonMessage : IInputMessage
 	{
-		public enum ButtonActions { Down, Up, Press };
+		public enum ButtonActions { Down, Up };
 
 		private ButtonActions _buttonAction;
 		private KeyboardButtonShortcut _buttonShortcut;

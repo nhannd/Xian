@@ -24,6 +24,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			get { return _keyData; }
 		}
 
+		public XKeys KeyCode
+		{
+			get { return _keyData & XKeys.KeyCode; }
+		}
+
 		public bool Control
 		{
 			get { return ((_keyData & XKeys.Control) == XKeys.Control); }

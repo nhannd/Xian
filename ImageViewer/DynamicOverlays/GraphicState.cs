@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public abstract class GraphicState
+	public abstract class GraphicState : IMouseButtonHandler
 	{
 		private StatefulGraphic _statefulGraphic;
 		private bool _supportUndo;
@@ -61,26 +61,39 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			set { _lastPoint = value; }
 		}
 
-		public virtual bool Start(MouseInformation pointerInformation)
+		#region IMouseButtonHandler Members
+
+		public virtual bool Start(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
 
-		public virtual bool Track(MouseInformation pointerInformation)
+		public virtual bool Track(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
 
-		public virtual bool Stop(MouseInformation pointerInformation)
+		public virtual bool Stop(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
 
-		public virtual void OnEnterState(MouseInformation pointerInformation)
+		public virtual void Cancel()
 		{
 		}
 
-		public virtual void OnExitState(MouseInformation pointerInformation)
+		public virtual bool SuppressContextMenu
+		{
+			get { return false; }
+		}
+
+		#endregion
+
+		public virtual void OnEnterState(IMouseInformation mouseInformation)
+		{
+		}
+
+		public virtual void OnExitState(IMouseInformation mouseInformation)
 		{
 		}
 	}

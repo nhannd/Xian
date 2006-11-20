@@ -9,14 +9,17 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class ROIGraphic : StatefulGraphic, IMemorable, IMouseButtonHandler
+	public class ROIGraphic : StatefulGraphic, IMemorable, IContextMenuProvider
     {
         private InteractiveGraphic _roiGraphic;
         private CalloutGraphic _calloutGraphic;
 		private event EventHandler _roiChangedEvent;
+		private ToolSet _toolSet;
 
         public ROIGraphic(InteractiveGraphic graphic, bool userCreated)
         {
@@ -66,7 +69,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return new FocusSelectedROIGraphicState(this);
 		}
 
-		public override void OnEnterInactiveState(MouseInformation pointerInformation)
+		public override void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
 			// If the currently selected graphic is this one,
 			// and we're about to go inactive, set the selected graphic
@@ -77,70 +80,73 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			if (this.ParentLayerManager.FocusGraphic == this)
 				this.ParentLayerManager.FocusGraphic = null;
 
+			this.Roi.State = this.Roi.CreateInactiveState();
+			this.Callout.State = this.Callout.CreateInactiveState();
+
 			this.Roi.ControlPoints.Visible = false;
 			this.Color = Color.Yellow;
 			Draw();
 
-			SetCursorToken(pointerInformation);
-
 			Trace.Write("OnEnterInactiveState\n");
 		}
 
-		public override void OnEnterFocusState(MouseInformation pointerInformation)
+		public override void OnEnterFocusState(IMouseInformation mouseInformation)
 		{
 			this.Focused = true;
 			
-			if (this.Roi.HitTest(pointerInformation.Point))
+			if (this.Roi.HitTest(mouseInformation.Location))
 				this.Roi.ControlPoints.Visible = true;
 			else
 				this.Roi.ControlPoints.Visible = false;
 
+			this.Roi.State = this.Roi.CreateFocusState();
+			this.Callout.State = this.Callout.CreateFocusState();
+
 			this.Color = Color.Orange;
 			Draw();
-
-			SetCursorToken(pointerInformation);
 
 			Trace.Write("OnEnterFocusState\n");
 		}
 
-		public override void OnEnterFocusSelectedState(MouseInformation pointerInformation)
+		public override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
 		{
 			this.Selected = true;
 			this.Focused = true;
 
+			//synchronize the states of the child graphics on entering this state so that everything works correctly.
+			this.Roi.State = this.Roi.CreateFocusSelectedState();
+			this.Callout.State = this.Callout.CreateFocusSelectedState();
+
 			this.Roi.ControlPoints.Visible = true;
 			this.Color = Color.Red;
 			Draw();
 
-			SetCursorToken(pointerInformation);
-
 			Trace.Write("OnEnterSelectedState\n");
 		}
 
-		public override void OnEnterSelectedState(MouseInformation pointerInformation)
+		public override void OnEnterSelectedState(IMouseInformation mouseInformation)
 		{
 			if (this.ParentLayerManager.FocusGraphic == this)
 				this.ParentLayerManager.FocusGraphic = null;
 
+			//synchronize the states of the child graphics on entering this state so that everything works correctly.
+			this.Roi.State = this.Roi.CreateSelectedState();
+			this.Callout.State = this.Callout.CreateSelectedState();
+
 			this.Roi.ControlPoints.Visible = true;
 			this.Color = Color.Red;
 			Draw();
 
-			SetCursorToken(pointerInformation);
-
 			Trace.Write("OnEnterSelectedState\n");
 		}
 
-		public override bool SetCursorToken(MouseInformation pointerInformation)
+		public override CursorToken GetCursorToken(Point point)
 		{
-			if (this.Roi.SetCursorToken(pointerInformation))
-				return true;
-			
-			if (this.Callout.SetCursorToken(pointerInformation))
-				return true;
+			CursorToken token = _roiGraphic.GetCursorToken(point);
+			if (token == null)
+				token = _calloutGraphic.GetCursorToken(point);
 
-			pointerInformation.Tile.CursorToken = null;
-			return false;
+			return token;
 		}
 
 		public override bool HitTest(Point point)
@@ -213,5 +219,20 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 			return closestPoint;
 		}
+
+		#region IContextMenuProvider Members
+
+		public virtual ActionModelNode GetContextMenuModel(Point point)
+		{
+			if (!this.HitTest(point))
+				return null;
+
+			if (_toolSet == null)
+				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this));
+
+			return ActionModelRoot.CreateModel(this.GetType().FullName, "basicgraphic-menu", _toolSet.Actions);
+		}
+
+		#endregion
 	}
 }

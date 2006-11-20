@@ -14,8 +14,6 @@ namespace ClearCanvas.ImageViewer
 		RectangleF NormalizedRectangle { get; set; }
 		int PresentationImageIndex { get; set; }
 		bool Selected { get; }
-		CursorToken CursorToken { get; set; }
-		IMouseButtonHandler CurrentPointerAction { get; set; }
 
 		void Draw();
 		void Select();

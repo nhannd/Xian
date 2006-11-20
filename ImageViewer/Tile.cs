@@ -35,16 +35,12 @@ namespace ClearCanvas.ImageViewer
 		private RectangleF _normalizedRectangle;
 		private bool _selected = false;
 		private InformationBox _informationBox;
-		private CursorToken _cursorToken;
-		private IMouseButtonHandler _currentPointerAction;
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
 		private event EventHandler<TileEventArgs> _selectionChangedEvent;
 
 		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
-		private event EventHandler _currentPointerActionChanged;
-		private event EventHandler _cursorTokenChanged;
 
 		#endregion
 
@@ -232,35 +228,6 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public CursorToken CursorToken
-		{
-			get
-			{
-				return _cursorToken;
-			}
-			set
-			{
-				if (_cursorToken == value)
-					return;
-
-				_cursorToken = value;
-				EventsHelper.Fire(_cursorTokenChanged, this, new EventArgs());
-			}
-		}
-
-		public IMouseButtonHandler CurrentPointerAction
-		{
-			get { return _currentPointerAction; }
-			set
-			{
-				if (_currentPointerAction == value)
-					return;
-
-				_currentPointerAction = value;
-				EventsHelper.Fire(_currentPointerActionChanged, this, new EventArgs());
-			}
-		}
-
 		#endregion
 
 		#region Public events
@@ -287,18 +254,6 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _informationBoxChanged += value; }
 			remove { _informationBoxChanged -= value; }
-		}
-
-		public event EventHandler CursorTokenChanged
-		{
-			add { _cursorTokenChanged += value; }
-			remove { _cursorTokenChanged -= value; }
-		}
-
-		public event EventHandler CurrentPointerActionChanged
-		{
-			add { _currentPointerActionChanged += value; }
-			remove { _currentPointerActionChanged -= value; }
 		}
 
 		#endregion

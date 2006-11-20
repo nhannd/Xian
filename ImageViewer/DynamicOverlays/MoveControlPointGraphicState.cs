@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class MoveControlPointGraphicState : GraphicState, IMouseButtonHandler
+	public class MoveControlPointGraphicState : GraphicState
 	{
 		private PointF _currentPoint;
 		private int _controlPointIndex;
@@ -29,11 +29,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as InteractiveGraphic; }
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			pointerInformation.Tile.CurrentPointerAction = this;
-
-			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
+			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 
 			if (this.SupportUndo)
 			{
@@ -46,15 +44,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (base.Command == null)
 				return false;
 
-			//Point mousePoint = new Point(e.X, e.Y);
-			//PointUtilities.ConfinePointToRectangle(ref mousePoint, this.StatefulGraphic.SpatialTransform.DestinationRectangle);
-
-			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
+			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 			_currentPoint = this.InteractiveGraphic.CalcControlPointPosition(_controlPointIndex, base.LastPoint, _currentPoint);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = _currentPoint;
@@ -66,10 +61,14 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool Stop(MouseInformation pointerInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			pointerInformation.Tile.CurrentPointerAction = null;
+			Cancel();
+			return false;
+		}
 
+		public override void Cancel()
+		{
 			if (this.SupportUndo)
 			{
 				PositionGraphicCommand cmd = base.Command as PositionGraphicCommand;
@@ -78,8 +77,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 
 			base.StatefulGraphic.State = base.StatefulGraphic.CreateFocusSelectedState();
-
-			return true;
 		}
 
 		public override string ToString()

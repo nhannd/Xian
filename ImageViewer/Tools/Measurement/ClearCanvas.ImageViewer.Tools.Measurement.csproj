@@ -96,6 +96,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DeleteGraphicTool.cs" />
     <Compile Include="RectangularROITool.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="SpatialMeasurementParams.cs" />
@@ -118,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteGraphicSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

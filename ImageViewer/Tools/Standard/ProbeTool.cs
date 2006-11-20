@@ -28,11 +28,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[CursorToken(CursorToken.SystemCursors.Cross)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ProbeTool : MouseTool
 	{
+		private CursorToken _cursorToken; 
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
 
@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public ProbeTool()
 		{
 			_enabled = true;
+			_cursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
 		}
 
 		/// <summary>
@@ -86,16 +87,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { _enabledChanged -= value; }
 		}
 
-		public override bool Start(MouseInformation mouseInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			base.Start(mouseInformation);
+			//base.Start(mouseInformation);
 
 			if (!(mouseInformation.Tile is Tile) ||
 				mouseInformation.Tile.PresentationImage == null ||
 				mouseInformation.Tile.PresentationImage.LayerManager == null ||
 				mouseInformation.Tile.PresentationImage.LayerManager.SelectedImageLayer == null)
 			{
-				return true;
+				return false;
 			}
 
 			_selectedTile = mouseInformation.Tile as Tile;
@@ -116,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					_selectedImageLayer.GetPixelData()
 				);
 
-			Probe(mouseInformation.Point);
+			Probe(mouseInformation.Location);
 
 			return true;
 		}
@@ -127,14 +128,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		/// <param name="e">Mouse event args</param>
 		/// <returns>True if the event was handled, false otherwise</returns>
-		public override bool Track(MouseInformation mouseInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (_selectedTile == null || _selectedImageLayer == null)
-				return true;
+				return false;
 
-			base.Track(mouseInformation);
+			//base.Track(mouseInformation);
 
-			Probe(mouseInformation.Point);
+			Probe(mouseInformation.Location);
 			
 			return true;
 		}
@@ -144,12 +145,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		/// <param name="e">Mouse event args</param>
 		/// <returns>True if the event was handled, false otherwise</returns>
-		public override bool Stop(MouseInformation mouseInformation)
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
+			Cancel();			
+			return false;
+		}
+
+		public override void Cancel()
 		{
 			if (_selectedTile == null || _selectedImageLayer == null)
-				return false;
+				return;
 
-			base.Stop(mouseInformation);
+			//base.Stop(mouseInformation);
 
 			_selectedImageLayer = null;
 
@@ -158,8 +165,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile = null;
 
 			_wrapper = null;
-			
-			return true;
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			return _cursorToken;
 		}
 
 		private void Probe(Point destinationPoint)

@@ -18,37 +18,91 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [Tooltip("activate", "ToolsMeasurementRectangularROI")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RectangularROIMedium.png", "Icons.RectangularROILarge.png")]
 
-	[MouseToolButton(XMouseButtons.Left, false)]
+	[MouseToolButton(XMouseButtons.Right, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RectangularROITool : MouseTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
+		private ROIGraphic _createGraphic;
 
 		public RectangularROITool()
 		{
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			if (pointerInformation.Tile == null || pointerInformation.Tile.PresentationImage == null)
-				return true;
+			base.Start(mouseInformation);
 
-			base.Start(pointerInformation);
+			if (mouseInformation.Tile == null ||
+				mouseInformation.Tile.PresentationImage == null ||
+				mouseInformation.Tile.PresentationImage.LayerManager == null ||
+				mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer == null)
+				return false;
 
+			if (_createGraphic != null)
+				return _createGraphic.Start(mouseInformation);
+
+			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
+			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
+			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
 			InteractiveRectangleGraphic rectangleGraphic = new InteractiveRectangleGraphic(true);
-            ROIGraphic roiGraphic = new ROIGraphic(rectangleGraphic, true);
+			_createGraphic = new ROIGraphic(rectangleGraphic, true);
 
 			rectangleGraphic.StretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
 			rectangleGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-			roiGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-			
-			roiGraphic.Callout.Text = "Area:";
-			pointerInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(roiGraphic);
-			roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);
+			_createGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 
-			roiGraphic.Start(pointerInformation);
+			_createGraphic.Callout.Text = "Area:";
+			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
+			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
+
+			if (_createGraphic.Start(mouseInformation))
+				return true;
+
+			this.Cancel();
+			return false;
+		}
+
+		public override bool Track(IMouseInformation mouseInformation)
+		{
+			if (_createGraphic != null)
+				return _createGraphic.Track(mouseInformation);
 
 			return false;
+		}
+
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
+			if (_createGraphic != null)
+			{
+				if (_createGraphic.Stop(mouseInformation))
+					return true;
+			}
+
+			_createGraphic = null;
+			return false;
+		}
+
+		public override void Cancel()
+		{
+			if (_createGraphic != null)
+				_createGraphic.Cancel();
+
+			_createGraphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(_createGraphic);
+			_createGraphic = null;
+		}
+
+		public override bool SuppressContextMenu
+		{
+			get { return true; }
+		}
+
+		public override CursorToken GetCursorToken(Point point)
+		{
+			if (_createGraphic != null)
+				return _createGraphic.GetCursorToken(point);
+
+			return null;
 		}
 
 		private bool PixelSpacingNotAllowed(ImageSop imageSop)
@@ -61,10 +115,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			return false;
 		}
-		
+
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
 			ROIGraphic roiGraphic = sender as ROIGraphic;
+
 			InteractiveRectangleGraphic rectangleGraphic = roiGraphic.Roi as InteractiveRectangleGraphic;
 			DicomPresentationImage image = roiGraphic.ParentPresentationImage as DicomPresentationImage;
 

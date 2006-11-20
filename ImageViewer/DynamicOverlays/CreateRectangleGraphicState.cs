@@ -24,12 +24,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as InteractiveGraphic; }
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
 			// We just started creating
 			if (_numberOfPointsAnchored == 1)
 			{
-				PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
+				PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 				this.InteractiveGraphic.ControlPoints[0] = mousePoint;
 				this.InteractiveGraphic.ControlPoints[3] = mousePoint;
@@ -53,16 +53,19 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return true;
 		}
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
-			PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(pointerInformation.Point);
+			PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = mousePoint;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 
-			this.InteractiveGraphic.SetCursorToken(pointerInformation);
+			return true;
+		}
 
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
 			return true;
 		}
 

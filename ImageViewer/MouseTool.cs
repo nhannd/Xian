@@ -3,6 +3,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
+using System.Drawing;
+using ClearCanvas.Desktop;
 
 
 namespace ClearCanvas.ImageViewer
@@ -16,7 +18,7 @@ namespace ClearCanvas.ImageViewer
     /// implementing mouse tools should subclass this class rather than <see cref="Tool"/>.
     /// </remarks>
 	
-    public abstract class MouseTool : Tool<IImageViewerToolContext>, IMouseButtonHandler
+    public abstract class MouseTool : Tool<IImageViewerToolContext>, IMouseButtonHandler, ICursorTokenProvider
 	{
 		private int _lastX;
 		private int _lastY;
@@ -125,37 +127,40 @@ namespace ClearCanvas.ImageViewer
 
 		#region IMouseButtonHandler
 
-		public virtual bool Start(MouseInformation pointerInformation)
+		public virtual bool Start(IMouseInformation mouseInformation)
 		{
-			if (_requiresCapture)
-				pointerInformation.Tile.CurrentPointerAction = this;
-
-			_lastX = pointerInformation.Point.X;
-			_lastY = pointerInformation.Point.Y;
+			_lastX = mouseInformation.Location.X;
+			_lastY = mouseInformation.Location.Y;
 
 			return false;
 		}
 
-		public virtual bool Track(MouseInformation pointerInformation)
+		public virtual bool Track(IMouseInformation mouseInformation)
 		{
-			_deltaX = pointerInformation.Point.X - _lastX;
-			_deltaY = pointerInformation.Point.Y - _lastY;
+			_deltaX = mouseInformation.Location.X - _lastX;
+			_deltaY = mouseInformation.Location.Y - _lastY;
 
-			_lastX = pointerInformation.Point.X;
-			_lastY = pointerInformation.Point.Y;
+			_lastX = mouseInformation.Location.X;
+			_lastY = mouseInformation.Location.Y;
 
 			return false;
 		}
 
-		public virtual bool Stop(MouseInformation pointerInformation)
+		public virtual bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_requiresCapture && pointerInformation.Tile.CurrentPointerAction == this)
-				pointerInformation.Tile.CurrentPointerAction = null;
-
 			_lastX = 0;
 			_lastY = 0;
 
 			return false;
+		}
+
+		public virtual void Cancel()
+		{
+		}
+
+		public virtual bool SuppressContextMenu
+		{
+			get { return false; }
 		}
 
 		#endregion
@@ -170,5 +175,14 @@ namespace ClearCanvas.ImageViewer
 
 			return true;
 		}
+
+		#region ICursorTokenProvider Members
+
+		public virtual CursorToken GetCursorToken(Point point)
+		{
+			return null;
+		}
+
+		#endregion
 	}
 }

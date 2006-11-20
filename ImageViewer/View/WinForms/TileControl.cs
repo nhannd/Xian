@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private Tile _tile;
 		private InputTranslator _inputTranslator;
-		private TileInputController _tileController;
+		private TileController _tileController;
 
 		private InformationBox _currentInformationBox;
 
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
 
 			_inputTranslator = new InputTranslator(this.GetModifiers);
-			_tileController = new TileInputController(_tile);
+			_tileController = new TileController(_tile);
 			
 			InitializeComponent();
 
@@ -55,11 +55,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
-			_tile.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
 
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
 
-			_tileController.NotifyCaptureChanging += new EventHandler<CaptureChangingEventArgs>(OnCaptureChanging);
+			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
+			_tileController.CaptureChanging += new EventHandler<CaptureChangingEventArgs>(OnCaptureChanging);
 		}
 
 		public Tile Tile
@@ -191,27 +191,48 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			this.Focus();
-			_tileController.ProcessMessage(_inputTranslator.OnMouseDown(e));
+
+			IInputMessage message = _inputTranslator.OnMouseDown(e);
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			_tileController.ProcessMessage(_inputTranslator.OnMouseMove(e));
+			IInputMessage message = _inputTranslator.OnMouseMove(e);
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			_tileController.ProcessMessage(_inputTranslator.OnMouseUp(e));
+			IInputMessage message = _inputTranslator.OnMouseUp(e);
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			_tileController.ProcessMessage(_inputTranslator.OnMouseWheel(e));
+			IInputMessage message = _inputTranslator.OnMouseWheel(e);
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (_tileController.ProcessMessage(_inputTranslator.OnKeyDown(e)))
+			IInputMessage message = _inputTranslator.OnKeyDown(e);
+			if (message == null)
+				return;
+
+			if (_tileController.ProcessMessage(message))
 				e.Handled = true;
 
 			base.OnKeyDown(e);
@@ -219,7 +240,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			if (_tileController.ProcessMessage(_inputTranslator.OnKeyUp(e)))
+			IInputMessage message = _inputTranslator.OnKeyUp(e);
+			if (message == null)
+				return;
+
+			if (_tileController.ProcessMessage(message))
 				e.Handled = true;
 
 			base.OnKeyUp(e);
@@ -229,6 +254,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			//We want the tile control to receive keydown messages for *all* keys.
 			return true;
+		}
+
+		public override bool PreProcessMessage(ref Message msg)
+		{
+			bool returnValue = base.PreProcessMessage(ref msg);
+
+			IInputMessage message = _inputTranslator.PostProcessMessage(msg, returnValue);
+			if (message != null)
+				_tileController.ProcessMessage(message);
+
+			return returnValue;
 		}
 
 		protected override void OnMouseCaptureChanged(EventArgs e)
@@ -261,43 +297,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (_currentMouseButtonHandler == e.GainingCapture)
 				return;
 
-			bool setToken = false;
-			CursorToken token = null;
-
-			//This code has been provided for 2 reasons:
-			//  1. Generally, all tools must obtain capture so that other objects don't interfere with them (like ROIs) as the mouse moves.
-			//  2. Most of the time, it is desirable for the tool to set the cursor while it is active.
-			// This faciliates an easy way to set the cursor for the general Tool case.  Also, any IUIEventHandler that captures the mouse
-			// can use a CursorTokenAttribute and the cursor will be set automatically.  NOTE: The CursorTokenAttribute, although it is
-			// applied to tools in much the same ways as the ActionAttributes, it is not an ActionAttribute.
-
-			//The existing 'capturer' set the cursor before?
-			if (_currentMouseButtonHandler != null)
-			{
-				object[] cursor = _currentMouseButtonHandler.GetType().GetCustomAttributes(typeof(CursorTokenAttribute), true);
-				if (cursor != null && cursor.Length > 0)
-					setToken = true;
-			}
-
-			//New 'capturer' sets the cursor?
 			_currentMouseButtonHandler = e.GainingCapture;
-			if (_currentMouseButtonHandler != null)
-			{
-				object[] cursor = _currentMouseButtonHandler.GetType().GetCustomAttributes(typeof(CursorTokenAttribute), true);
-				if (cursor != null && cursor.Length > 0)
-				{
-					setToken = true;
-					token = ((CursorTokenAttribute)cursor[0]).CursorToken;
-				}
-			}
-			
-			if (setToken)
-				_tile.CursorToken = token;
+			this.Capture = (_currentMouseButtonHandler != null);
 		}
 
 		void OnCursorTokenChanged(object sender, EventArgs e)
 		{
-			if (_tile.CursorToken == null)
+			if (_tileController.CursorToken == null)
 			{
 				this.Cursor = this.DefaultCursor;
 
@@ -312,7 +318,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				try
 				{
 					CursorWrapper oldCursorWrapper = _currentCursorWrapper;
-					_currentCursorWrapper = CursorFactory.CreateCursor(_tile.CursorToken);
+					_currentCursorWrapper = CursorFactory.CreateCursor(_tileController.CursorToken);
 					this.Cursor = _currentCursorWrapper.Cursor;
 
 					if (oldCursorWrapper != null)
@@ -329,7 +335,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
-			ActionModelNode menuModel = (_tile.ImageViewer as ImageViewerComponent).ContextMenuModel;
+			ActionModelNode menuModel = _tileController.ContextMenuModel;
 
 			if (_tileController.ContextMenuEnabled)
 			{
@@ -339,6 +345,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 			else
 				e.Cancel = true;
+
+			_tileController.ContextMenuModel = null;
 		}
 
 		void OnInformationBoxChanged(object sender, InformationBoxChangedEventArgs e)

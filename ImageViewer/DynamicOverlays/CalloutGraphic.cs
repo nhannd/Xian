@@ -100,15 +100,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return _textGraphic.HitTest(point) || _lineGraphic.HitTest(point);
         }
 
-		public override bool SetCursorToken(MouseInformation pointerInformation)
+		public override CursorToken GetCursorToken(Point point)
 		{
-			if (this.HitTest(pointerInformation.Point))
-			{
-				pointerInformation.Tile.CursorToken = this.MoveToken;
-				return true;
-			}
+			if (this.HitTest(point))
+				return this.MoveToken;
 
-			return false;
+			return null;
 		}
 
 		private void BuildGraphic()

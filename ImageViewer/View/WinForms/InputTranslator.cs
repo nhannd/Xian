@@ -9,9 +9,18 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
-	public sealed class InputTranslator : IInputTranslator
+	public sealed class InputTranslator
 	{
 		private PropertyGetDelegate<Keys> _getModifiersDelegate;
+
+		private Keys[] _consumeKeyStrokes = 
+						{	Keys.ControlKey,
+							Keys.LControlKey,
+							Keys.RControlKey,
+							Keys.ShiftKey,
+							Keys.LShiftKey,
+							Keys.RShiftKey,
+						};
 
 		public InputTranslator(PropertyGetDelegate<Keys> getModifiersDelegate)
 		{
@@ -35,7 +44,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			get { return (_getModifiersDelegate() & Keys.Shift) == Keys.Shift; }
 		}
 
-		//#region IInputTranslator Members
+		private bool ConsumeKeyStroke(Keys keyCode)
+		{
+			foreach (Keys keyStroke in _consumeKeyStrokes)
+			{
+				if (keyCode == keyStroke)
+					return true;
+			}
+
+			return false;
+		}
 
 		public IInputMessage OnMouseMove(MouseEventArgs e)
 		{
@@ -59,12 +77,33 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public IInputMessage OnKeyDown(KeyEventArgs e)
 		{
+			if (ConsumeKeyStroke(e.KeyCode))
+				return null;
+
 			return new KeyboardButtonMessage((XKeys)e.KeyData, KeyboardButtonMessage.ButtonActions.Down);
 		}
 
 		public IInputMessage OnKeyUp(KeyEventArgs e)
 		{
+			if (ConsumeKeyStroke(e.KeyCode))
+				return null;
+
 			return new KeyboardButtonMessage((XKeys)e.KeyData, KeyboardButtonMessage.ButtonActions.Up);
+		}
+
+		public IInputMessage PostProcessMessage(Message msg, bool alreadyHandled)
+		{
+			if (msg.Msg == 0x100 && alreadyHandled)
+			{
+				Keys keyData = (Keys)msg.WParam;
+				if (ConsumeKeyStroke(keyData))
+					return null;
+
+				//when a keystroke gets handled by a control other than the tile, we release the capture.
+				return new ReleaseCaptureMessage();
+			}
+
+			return null;
 		}
 	}
 }

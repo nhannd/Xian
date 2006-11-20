@@ -13,7 +13,6 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 	public class CreateROIGraphicState : GraphicState
 	{
 		private StatefulGraphic _childGraphic;
-		private ITile _currentTile;
 
 		public CreateROIGraphicState(ROIGraphic roiGraphic)
 			: base(roiGraphic)
@@ -25,14 +24,11 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			get { return base.StatefulGraphic as ROIGraphic; }
 		}
 
-		public override bool Start(MouseInformation pointerInformation)
+		public override bool Start(IMouseInformation mouseInformation)
 		{
-			_currentTile = pointerInformation.Tile;
-			_currentTile.CurrentPointerAction = this.ROIGraphic;
-
 			if (_childGraphic == null)
 			{
-				PointF mousePoint = new PointF(pointerInformation.Point.X, pointerInformation.Point.Y);
+				PointF mousePoint = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
 #if MONO
 				Size offset = new Size(50, 30);
 #else
@@ -59,15 +55,24 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				_childGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 			}
 
-			return _childGraphic.Start(pointerInformation);
+			return _childGraphic.Start(mouseInformation);
 		}
 
 
-		public override bool Track(MouseInformation pointerInformation)
+		public override bool Track(IMouseInformation mouseInformation)
 		{
 			// Route mouse move message to the child roi object
 			if (_childGraphic != null)
-				return _childGraphic.Track(pointerInformation);
+				return _childGraphic.Track(mouseInformation);
+
+			return false;
+		}
+
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
+			// Route mouse move message to the child roi object
+			if (_childGraphic != null)
+				return _childGraphic.Stop(mouseInformation);
 
 			return false;
 		}
@@ -78,11 +83,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			// cause "this" to transition to selected state too.
 			if (e.NewState is FocusSelectedGraphicState)
 			{
-				this.ROIGraphic.State = this.ROIGraphic.CreateFocusSelectedState();
 				_childGraphic.StateChanged -= new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 				_childGraphic = null;
 
-				_currentTile.CurrentPointerAction = null;
+				this.ROIGraphic.State = this.ROIGraphic.CreateFocusSelectedState();
 
 				// We're done creating, so create a command
 				this.Command = new PositionGraphicCommand(this.ROIGraphic, true);
