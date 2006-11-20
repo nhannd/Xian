@@ -101,15 +101,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mappings\DiagnosticService.hbm.xml" />
-    <Content Include="Mappings\Modality.hbm.xml" />
-    <Content Include="Mappings\Order.hbm.xml" />
-    <Content Include="Mappings\OrderPriorityEnum.hbm.xml" />
-    <Content Include="Mappings\RequestedProcedure.hbm.xml" />
-    <Content Include="Mappings\RequestedProcedureType.hbm.xml" />
-    <Content Include="Mappings\ScheduledProcedureStep.hbm.xml" />
-    <Content Include="Mappings\ScheduledProcedureStepStatusEnum.hbm.xml" />
-    <Content Include="Mappings\ScheduledProcedureStepType.hbm.xml" />
+    <EmbeddedResource Include="Mappings\DiagnosticService.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Modality.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Order.hbm.xml" />
+    <EmbeddedResource Include="Mappings\OrderPriorityEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\RequestedProcedure.hbm.xml" />
+    <EmbeddedResource Include="Mappings\RequestedProcedureType.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ScheduledProcedureStep.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ScheduledProcedureStepStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ScheduledProcedureStepType.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
