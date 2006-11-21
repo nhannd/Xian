@@ -54,6 +54,13 @@
     <Compile Include="AddressesSummaryControl.Designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="OrderEntryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OrderEntryComponentControl.Designer.cs">
+      <DependentUpon>OrderEntryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OrderEntryComponentView.cs" />
     <Compile Include="HL7QueuePreviewComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -193,6 +200,10 @@
     <EmbeddedResource Include="AddressesSummaryControl.resx">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OrderEntryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OrderEntryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
       <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>

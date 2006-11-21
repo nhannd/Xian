@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     return string.Format("{0} {1}",
                         _phoneUses[t.Use].Value,
-                        t.Equipment == TelephoneEquipment.CP ? _phoneEquipments[t.Equipment].Value : "");
+                        t.Equipment == TelephoneEquipment.PH ? "" : _phoneEquipments[t.Equipment].Value);
                 }, 1.0f));
             _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number",
                 delegate(TelephoneNumber t) { return t.Format(); }, 3.0f));

@@ -207,19 +207,19 @@ namespace ClearCanvas.Ris.Client.Adt
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             if (_mrn != null)
             {
-                criteria.Mrn.Id.Like(_mrn + "%");
+                criteria.Mrn.Id.StartsWith(_mrn);
             }
 
             if (_healthcard != null)
             {
-                criteria.Healthcard.Id.Like(_healthcard + "%");
+                criteria.Healthcard.Id.StartsWith(_healthcard);
             }
 
             if (_familyName != null)
-                criteria.Name.FamilyName.Like(_familyName + "%");
+                criteria.Name.FamilyName.StartsWith(_familyName);
 
             if (_givenName != null)
-                criteria.Name.GivenName.Like(_givenName + "%");
+                criteria.Name.GivenName.StartsWith(_givenName);
 
             if (_sex != null)
                 criteria.Sex.EqualTo((Sex)_sex);

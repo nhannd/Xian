@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
+    <Compile Include="OrderEntryComponent.cs" />
     <Compile Include="HL7QueueItemTableData.cs" />
     <Compile Include="HL7QueuePreviewComponent.cs" />
     <Compile Include="HL7QueuePreviewTool.cs" />

@@ -1,0 +1,157 @@
+namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+{
+    partial class OrderEntryComponentControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this._visitTable = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.label1 = new System.Windows.Forms.Label();
+            this._diagnosticService = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this.label2 = new System.Windows.Forms.Label();
+            this._orderingPhysician = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._orderingFacility = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._priority = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindableTreeView();
+            this.SuspendLayout();
+            // 
+            // _visitTable
+            // 
+            this._visitTable.Location = new System.Drawing.Point(26, 27);
+            this._visitTable.Margin = new System.Windows.Forms.Padding(4);
+            this._visitTable.MenuModel = null;
+            this._visitTable.MultiSelect = true;
+            this._visitTable.Name = "_visitTable";
+            this._visitTable.ReadOnly = false;
+            this._visitTable.Size = new System.Drawing.Size(826, 156);
+            this._visitTable.TabIndex = 0;
+            this._visitTable.Table = null;
+            this._visitTable.ToolbarModel = null;
+            this._visitTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._visitTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(23, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 17);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Select Visit";
+            // 
+            // _diagnosticService
+            // 
+            this._diagnosticService.DataSource = null;
+            this._diagnosticService.LabelText = "Diagnostic Service";
+            this._diagnosticService.Location = new System.Drawing.Point(26, 220);
+            this._diagnosticService.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._diagnosticService.Name = "_diagnosticService";
+            this._diagnosticService.Size = new System.Drawing.Size(200, 50);
+            this._diagnosticService.TabIndex = 2;
+            this._diagnosticService.Value = null;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(23, 296);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(199, 17);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Diagnostic Service Breakdown";
+            // 
+            // _orderingPhysician
+            // 
+            this._orderingPhysician.DataSource = null;
+            this._orderingPhysician.LabelText = "Ordering Physician";
+            this._orderingPhysician.Location = new System.Drawing.Point(334, 316);
+            this._orderingPhysician.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._orderingPhysician.Name = "_orderingPhysician";
+            this._orderingPhysician.Size = new System.Drawing.Size(200, 50);
+            this._orderingPhysician.TabIndex = 5;
+            this._orderingPhysician.Value = null;
+            // 
+            // _orderingFacility
+            // 
+            this._orderingFacility.DataSource = null;
+            this._orderingFacility.LabelText = "Ordering Facility";
+            this._orderingFacility.Location = new System.Drawing.Point(334, 386);
+            this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._orderingFacility.Name = "_orderingFacility";
+            this._orderingFacility.Size = new System.Drawing.Size(200, 50);
+            this._orderingFacility.TabIndex = 6;
+            this._orderingFacility.Value = null;
+            // 
+            // _priority
+            // 
+            this._priority.DataSource = null;
+            this._priority.LabelText = "Priority";
+            this._priority.Location = new System.Drawing.Point(334, 220);
+            this._priority.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._priority.Name = "_priority";
+            this._priority.Size = new System.Drawing.Size(200, 50);
+            this._priority.TabIndex = 7;
+            this._priority.Value = null;
+            // 
+            // _diagnosticServiceBreakdown
+            // 
+            this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(26, 325);
+            this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
+            this._diagnosticServiceBreakdown.RootNode = null;
+            this._diagnosticServiceBreakdown.RootNodes = null;
+            this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(259, 197);
+            this._diagnosticServiceBreakdown.TabIndex = 8;
+            // 
+            // OrderEntryComponentControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._diagnosticServiceBreakdown);
+            this.Controls.Add(this._priority);
+            this.Controls.Add(this._orderingFacility);
+            this.Controls.Add(this._orderingPhysician);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this._diagnosticService);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this._visitTable);
+            this.Name = "OrderEntryComponentControl";
+            this.Size = new System.Drawing.Size(887, 554);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private ClearCanvas.Desktop.View.WinForms.TableView _visitTable;
+        private System.Windows.Forms.Label label1;
+        private ClearCanvas.Controls.WinForms.ComboBoxField _diagnosticService;
+        private System.Windows.Forms.Label label2;
+        private ClearCanvas.Controls.WinForms.ComboBoxField _orderingPhysician;
+        private ClearCanvas.Controls.WinForms.ComboBoxField _orderingFacility;
+        private ClearCanvas.Controls.WinForms.ComboBoxField _priority;
+        private ClearCanvas.Desktop.View.WinForms.BindableTreeView _diagnosticServiceBreakdown;
+    }
+}
