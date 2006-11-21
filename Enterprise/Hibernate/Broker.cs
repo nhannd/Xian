@@ -43,7 +43,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         protected IList<T> MakeTypeSafe<T>(IList list)
         {
-            return new ListWrapper<T>(list);
+            return new TypeSafeListWrapper<T>(list);
         }
     }
 }
