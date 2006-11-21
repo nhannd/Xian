@@ -6,6 +6,8 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
+using ClearCanvas.Controls.WinForms;
+
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     public partial class HL7QueuePreviewComponentControl : UserControl
@@ -30,7 +32,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _process_Click(object sender, EventArgs e)
         {
-            _component.ProcessSelection();
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.ProcessSelection();
+            }
         }
 
         private void _showAll_Click(object sender, EventArgs e)
@@ -45,7 +50,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _resync_Click(object sender, EventArgs e)
         {
-            _component.SyncQueues();
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.SyncQueues();
+            }
         }
     }
 }

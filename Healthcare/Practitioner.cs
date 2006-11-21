@@ -17,5 +17,10 @@ namespace ClearCanvas.Healthcare {
         private void CustomInitialize()
         {
         }
+
+        public string Format()
+        {
+            return this.Name.Format();
+        }
     }
 }

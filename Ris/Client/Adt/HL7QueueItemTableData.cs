@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(HL7QueueItem item) { return service.GetHL7MessageStatusCodeEnumTable()[item.Status.Code].Value; }, 0.5f));
             this.Columns.Add(
                 new TableColumn<HL7QueueItem, string>("Status Description",
-                    delegate(HL7QueueItem item) { return item.Status.Description; }, 0.5f));
+                    delegate(HL7QueueItem item) { return item.Status.Description; }, 7f));
             this.Columns.Add(
                 new TableColumn<HL7QueueItem, string>("Created On",
                     delegate(HL7QueueItem item) { return ClearCanvas.Desktop.Format.DateTime(item.Status.CreationDateTime); }, 0.5f));

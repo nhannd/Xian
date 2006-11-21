@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 "Practitioner",
                 delegate(VisitPractitioner vp)
                 {
-                    return vp.Practitioner.ToString();
+                    return vp.Practitioner.Format();
                 },
                 2.5f));
             _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
@@ -205,6 +205,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private void DummyUpdateVisitPractitioner()
         {
             VisitPractitioner vp = _currentVisitPractitionerSelection;
+            vp.Role = VisitPractitionerRole.CN;
             vp.EndTime = Platform.Time;
         }
     	#endregion    

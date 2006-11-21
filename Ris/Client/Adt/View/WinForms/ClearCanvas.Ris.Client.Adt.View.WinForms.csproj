@@ -54,6 +54,13 @@
     <Compile Include="AddressesSummaryControl.Designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="HL7QueuePreviewComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HL7QueuePreviewComponentControl.Designer.cs">
+      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HL7QueuePreviewComponentView.cs" />
     <Compile Include="ReconciliationConfirmComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -185,6 +192,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AddressesSummaryControl.resx">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
+      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
