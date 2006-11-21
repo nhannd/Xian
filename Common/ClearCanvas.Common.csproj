@@ -84,6 +84,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -162,11 +163,11 @@
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
-    <Compile Include="Utilities\TypeSafeComparer.cs" />
+    <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
     <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />
-    <Compile Include="Utilities\TypeSafeEnumerable.cs" />
-    <Compile Include="Utilities\TypeSafeEnumerator.cs" />
+    <Compile Include="Utilities\TypeSafeEnumerableWrapper.cs" />
+    <Compile Include="Utilities\TypeSafeEnumeratorWrapper.cs" />
     <Compile Include="Utilities\EventsHelper.cs" />
     <Compile Include="Utilities\FileProcessor.cs" />
     <Compile Include="Utilities\FunctionalList.cs" />
@@ -177,7 +178,7 @@
     <Compile Include="Utilities\IPerformanceCounter.cs" />
     <Compile Include="Utilities\IResourceResolver.cs" />
     <Compile Include="LocalTimeProvider.cs" />
-    <Compile Include="Utilities\TypeSafeList.cs" />
+    <Compile Include="Utilities\TypeSafeListWrapper.cs" />
     <Compile Include="Utilities\ObservableDictionary.cs" />
     <Compile Include="Utilities\ObservableList.cs" />
     <Compile Include="Utilities\ResourceResolver.cs" />
