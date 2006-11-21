@@ -7,6 +7,7 @@ using NHibernate;
 using NHibernate.Expression;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -17,12 +18,11 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// <typeparam name="TSearchCriteria">The corresponding <see cref="SearchCriteria"/> class.</typeparam>
     public abstract class EntityBroker<TEntity, TSearchCriteria> : Broker, IEntityBroker<TEntity, TSearchCriteria>
         where TEntity : Entity, new()
-        where TSearchCriteria : SearchCriteria
+        where TSearchCriteria : SearchCriteria, new()
     {
         public IList<TEntity> Find(TSearchCriteria criteria)
         {
-            // use default page constraint
-            return Find(criteria, new SearchResultPage());
+            return Find(criteria, null);
         }
 
         public virtual IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
@@ -31,6 +31,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             HqlQuery query = HqlQuery.FromSearchCriteria(baseHql, "x", criteria, page);
 
             return MakeTypeSafe<TEntity>(ExecuteHql(query));
+        }
+
+        public IList<TEntity> FindAll()
+        {
+            return Find(new TSearchCriteria(), null);
         }
 
         public TEntity Load(EntityRef<TEntity> entityRef)

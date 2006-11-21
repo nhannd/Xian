@@ -12,10 +12,24 @@ namespace ClearCanvas.Enterprise
         private int _firstRow;
         private int _maxRows;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public SearchResultPage()
         {
             _firstRow = 0;  // default
             _maxRows = 100; // default
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="firstRow">The first row to return</param>
+        /// <param name="maxRows">The maximum number of rows to return</param>
+        public SearchResultPage(int firstRow, int maxRows)
+        {
+            _firstRow = firstRow;
+            _maxRows = maxRows;
         }
 
         /// <summary>
@@ -28,7 +42,8 @@ namespace ClearCanvas.Enterprise
         }
 
         /// <summary>
-        /// The maximum number of rows to return.
+        /// The maximum number of rows to return.  A value of -1 can be used to indicate that all rows should
+        /// be returned.  This feature should be used with caution however.
         /// </summary>
         public int MaxRows
         {

@@ -41,6 +41,14 @@ namespace ClearCanvas.Enterprise
         void NotLike(T val);
 
         /// <summary>
+        /// Specifies that the condition variable starts with the specified value.  This test makes
+        /// sense only when T is a string.  The specified value should not contain any % characters.
+        /// Calling this method is identical to calling <code>Like(val + "%")</code>
+        /// </summary>
+        /// <param name="val"></param>
+        void StartsWith(T val);
+
+        /// <summary>
         /// Specifies that the condition variable be between the specified values.
         /// </summary>
         /// <param name="lower"></param>

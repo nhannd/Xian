@@ -182,8 +182,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             // if limits were specified, pass them to nhibernate
             if (_page != null)
             {
-                q.SetFirstResult(_page.FirstRow);
-                q.SetMaxResults(_page.MaxRows);
+                if(_page.FirstRow > -1)
+                    q.SetFirstResult(_page.FirstRow);
+                if(_page.MaxRows > -1)
+                    q.SetMaxResults(_page.MaxRows);
             }
 
             return q;

@@ -31,6 +31,14 @@ namespace ClearCanvas.Enterprise
             SetCondition(SearchConditionTest.NotLike, val);
         }
 
+        public void StartsWith(T val)
+        {
+            if(!typeof(T).Equals(typeof(string)))
+                throw new InvalidOperationException("Method can be applied only to String arguments");
+
+            SetCondition(SearchConditionTest.Like, val + "%");
+        }
+
         public void Between(T lower, T upper)
         {
             SetCondition(SearchConditionTest.Between, lower, upper);
