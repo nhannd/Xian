@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise;
 namespace ClearCanvas.Healthcare {
 
     /// <summary>
-    /// TelephoneEquipment enumeration
+    /// TelephoneEquipment enumeration - HL7 2.9.55.3
     /// </summary>
 	public enum TelephoneEquipment
 	{
@@ -21,6 +21,18 @@ namespace ClearCanvas.Healthcare {
         /// Cell phone
         /// </summary>
         [EnumValue("Cellphone")]
-        CP
+        CP,
+
+        /// <summary>
+        /// Fax
+        /// </summary>
+        [EnumValue("Fax")]
+        FX,
+
+        /// <summary>
+        /// Pager
+        /// </summary>
+        [EnumValue("Pager")]
+        BP
 	}
 }

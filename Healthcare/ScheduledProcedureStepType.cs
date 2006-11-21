@@ -24,18 +24,22 @@ namespace ClearCanvas.Healthcare {
 		}
 		
 		#region Object overrides
-		
-		public override bool Equals(object that)
-		{
-			// TODO: implement a test for business-key equality
-			return base.Equals(that);
-		}
-		
-		public override int GetHashCode()
-		{
-			// TODO: implement a hash-code based on the business-key used in the Equals() method
-			return base.GetHashCode();
-		}
+
+        public override bool Equals(object that)
+        {
+            ScheduledProcedureStepType other = that as ScheduledProcedureStepType;
+            return other != null && other.Id == this.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", this.Name, this.Id);
+        }
 		
 		#endregion
 
