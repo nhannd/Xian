@@ -37,7 +37,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="inner"></param>
         public FunctionalList(System.Collections.IList inner)
         {
-            _inner = new ListWrapper<T>(inner);
+            _inner = new TypeSafeListWrapper<T>(inner);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="source"></param>
         public FunctionalList(System.Collections.IEnumerable source)
         {
-            _inner = new List<T>(new EnumerableWrapper<T>(source));
+            _inner = new List<T>(new TypeSafeEnumerableWrapper<T>(source));
         }
 
         #region IFunctionalList<T> members

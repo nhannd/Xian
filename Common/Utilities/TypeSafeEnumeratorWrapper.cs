@@ -9,11 +9,11 @@ namespace ClearCanvas.Common.Utilities
     /// Utility class used to wrap an untyped <see cref="IEnumerator"/> as a type-safe one.
     /// </summary>
     /// <typeparam name="T">The type of the items to be enumerated</typeparam>
-    public class EnumeratorWrapper<T> : IEnumerator<T>
+    public class TypeSafeEnumeratorWrapper<T> : IEnumerator<T>, IEnumerator
     {
         private IEnumerator _inner;
 
-        public EnumeratorWrapper(IEnumerator inner)
+        public TypeSafeEnumeratorWrapper(IEnumerator inner)
         {
             _inner = inner;
         }
@@ -49,6 +49,21 @@ namespace ClearCanvas.Common.Utilities
         }
 
         public void Reset()
+        {
+            _inner.Reset();
+        }
+
+        #endregion
+
+        #region IEnumerator Members
+
+
+        bool IEnumerator.MoveNext()
+        {
+            return _inner.MoveNext();
+        }
+
+        void IEnumerator.Reset()
         {
             _inner.Reset();
         }

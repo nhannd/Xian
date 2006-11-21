@@ -117,6 +117,10 @@
     <Compile Include="Actions\StateObserverAttribute.cs" />
     <Compile Include="Actions\TooltipAttribute.cs" />
     <Compile Include="Tools\ToolBase.cs" />
+    <Compile Include="Trees\ITreeNode.cs" />
+    <Compile Include="Trees\ITreeNodeCollection.cs" />
+    <Compile Include="Trees\TreeNode.cs" />
+    <Compile Include="Trees\TreeNodeCollection.cs" />
     <Compile Include="Validation\IValidator.cs" />
     <Compile Include="Validation\ValidateMatchRegexAttribute.cs" />
     <Compile Include="Validation\RegexValidator.cs" />

@@ -9,10 +9,10 @@ namespace ClearCanvas.Common.Utilities
     /// Utility class used to wrap an untyped <see cref="IComparer"/> as a type-safe one.
     /// </summary>
     /// <typeparam name="T">The type of the items to be compared</typeparam>
-    public class ComparerWrapper<T> : Comparer<T>
+    public class TypeSafeComparerWrapper<T> : Comparer<T>, IComparer
     {
         private IComparer _inner;
-        public ComparerWrapper(IComparer inner)
+        public TypeSafeComparerWrapper(IComparer inner)
         {
             _inner = inner;
         }
@@ -20,5 +20,14 @@ namespace ClearCanvas.Common.Utilities
         {
             return _inner.Compare(x, y);
         }
+
+        #region IComparer Members
+
+        int IComparer.Compare(object x, object y)
+        {
+            return _inner.Compare(x, y);
+        }
+
+        #endregion
     }
 }

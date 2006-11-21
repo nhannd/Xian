@@ -91,7 +91,7 @@ namespace ClearCanvas.Desktop.Tables
         {
             if (_sortParams != null)
             {
-                _data.Sort(new ComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
+                _data.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
 
                 // notify that the list has been sorted
                 NotifyDataChanged(TableItemChangeType.Reset, -1);

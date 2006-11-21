@@ -60,7 +60,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="enumerable"></param>
         public void AddRange(IEnumerable enumerable)
         {
-            _list.AddRange(new EnumerableWrapper<TItem>(enumerable));
+            _list.AddRange(new TypeSafeEnumerableWrapper<TItem>(enumerable));
             _owner.NotifyDataChanged(TableItemChangeType.Reset, -1);
         }
 
