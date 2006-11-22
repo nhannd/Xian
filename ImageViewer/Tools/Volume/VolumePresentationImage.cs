@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		#region Private fields
 
 		private IDisplaySet _displaySet;
-		private vtkActor _volumeActor;
+		private vtkProp _vtkProp;
 
 		#endregion
 
@@ -24,7 +24,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			_displaySet = displaySet;
 
 			ValidateSliceData();
-			_volumeActor = CreateVolume();
+			_vtkProp = CreateIsocontourVolume();
+			//_vtkProp = CreateVolumeRendering();
 		}
 
 
@@ -41,9 +42,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		public vtkActor VolumeActor
+		public vtkProp VtkProp
 		{
-			get { return _volumeActor; }
+			get { return _vtkProp; }
 		}
 
 		public int Width
@@ -70,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public override IPresentationImage Clone()
 		{
-			return null;
+			return new VolumePresentationImage(_displaySet);
 		}
 
 		private DicomPresentationImage GetDicomPresentationImage(int i)
@@ -98,29 +99,31 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			return (GetImageSop().PixelRepresentation == 0);
 		}
 
-		private vtkActor CreateVolume()
+		private vtkProp CreateIsocontourVolume()
 		{
-			vtkImageData vtkVolume = CreateVtkVolume();
+			vtkImageData imageData = CreateVolumeImageData();
 
 			if (IsDataUnsigned())
-				vtkVolume.GetPointData().SetScalars(BuildUnsignedVolumeData());
+				imageData.GetPointData().SetScalars(BuildUnsignedVolumeImageData());
 			else
-				vtkVolume.GetPointData().SetScalars(BuildSignedVolumeData());
+				imageData.GetPointData().SetScalars(BuildSignedVolumeImageData());
 
 			vtkContourFilter extractor = new vtk.vtkContourFilter();
-			extractor.SetInput(vtkVolume);
-			extractor.SetValue(0, 450);
-			//extractor.SetValue(0, 1450);
+			extractor.SetInput(imageData);
+			//extractor.SetValue(0, 100);
+			extractor.SetValue(0, 400);
+			//extractor.GenerateValues(5, 2, 30);
 
 			vtkPolyDataNormals normals = new vtk.vtkPolyDataNormals();
 			normals.SetInputConnection(extractor.GetOutputPort());
 			normals.SetFeatureAngle(60.0);
-			
+
 			vtkStripper stripper = new vtk.vtkStripper();
 			stripper.SetInputConnection(normals.GetOutputPort());
-			
+
 			vtkPolyDataMapper mapper = new vtk.vtkPolyDataMapper();
 			mapper.SetInputConnection(stripper.GetOutputPort());
+			//mapper.SetScalarRange(2, 30);
 			mapper.ScalarVisibilityOff();
 
 			vtkActor actor = new vtk.vtkActor();
@@ -133,7 +136,69 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			return actor;
 		}
 
-		private vtkImageData CreateVtkVolume()
+		private vtkProp CreateVolumeRendering()
+		{
+			vtkImageData imageData = CreateVolumeImageData();
+
+			if (IsDataUnsigned())
+				imageData.GetPointData().SetScalars(BuildUnsignedVolumeImageData());
+			else
+				imageData.GetPointData().SetScalars(BuildSignedVolumeImageData());
+
+			int window = 500;
+			int level = -240 +1024;
+
+			vtkPiecewiseFunction opacityTransferFunction = new vtkPiecewiseFunction();
+			//opacityTransferFunction.AddSegment(level - window / 2, 1.0, level + window / 2, 1.0);
+			opacityTransferFunction.AddPoint(level - window / 2, 0.0);
+			opacityTransferFunction.AddPoint(level, 1.0);
+			opacityTransferFunction.AddPoint(level + window / 2, 0.0);
+			//opacityTransferFunction.AddSegment(900, 1.0, 4000, 1.0);
+			opacityTransferFunction.ClampingOff();
+
+			vtkColorTransferFunction colorMap = new vtkColorTransferFunction();
+			//vtkPiecewiseFunction colorMap = new vtkPiecewiseFunction();
+			//colorMap.AddRGBSegment(0, 0, 0, 0, 2000, 255, 255, 128);
+			colorMap.SetColorSpaceToRGB();
+
+			//colorMap.AddPoint(level-window/2, 0);
+			//colorMap.AddPoint(level+window/2, 255);
+			//colorMap.AddRGBPoint(level - window / 2, 200.0 / 255.0f, 4.0 / 255.0f, 10.0 / 255.0f);
+			//colorMap.AddRGBPoint(level, 200, 4, 10);
+			//colorMap.AddRGBPoint(level + window / 2, 255.0 / 255.0f, 255.0 / 255.0f, 128.0 / 255.0f);
+			colorMap.AddRGBSegment(level - window / 2, 200.0/255.0f, 4.0/255.0f, 10.0/255.0f, level + window / 2, 255.0/255.0f, 255.0/255.0f, 128.0/255.0f);
+			colorMap.ClampingOff();
+
+			vtkVolumeProperty volumeProperty = new vtkVolumeProperty();
+			volumeProperty.ShadeOn();
+			volumeProperty.SetInterpolationTypeToLinear();
+			volumeProperty.SetColor(colorMap);
+			volumeProperty.SetScalarOpacity(opacityTransferFunction);
+			volumeProperty.SetDiffuse(0.7);
+			volumeProperty.SetAmbient(0.1);
+			volumeProperty.SetSpecular(.3);
+			volumeProperty.SetSpecularPower(20);
+
+			//int numChannels = volumeProperty.GetColorChannels();
+
+			//vtkPiecewiseFunction grayFunction = volumeProperty.GetGrayTransferFunction();
+			//vtkColorTransferFunction colorFunction = volumeProperty.GetRGBTransferFunction();
+
+			//vtkOpenGLVolumeTextureMapper3D volumeMapper = new vtkOpenGLVolumeTextureMapper3D();
+			//volumeMapper.SetPreferredMethodToNVidia();
+			//volumeMapper.SetInput(imageData);
+
+			vtkFixedPointVolumeRayCastMapper volumeMapper = new vtkFixedPointVolumeRayCastMapper();
+			volumeMapper.SetInput(imageData);
+
+			vtkVolume volume = new vtkVolume();
+			volume.SetMapper(volumeMapper);
+			volume.SetProperty(volumeProperty);
+
+			return volume;
+		}
+
+		private vtkImageData CreateVolumeImageData()
 		{
 			vtkImageData volume = new vtkImageData();
 			volume.SetDimensions(this.Width, this.Height, this.Depth);
@@ -148,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			return volume;
 		}
 
-		private vtkUnsignedShortArray BuildUnsignedVolumeData()
+		private vtkUnsignedShortArray BuildUnsignedVolumeImageData()
 		{
 			ushort[] volumeData = new ushort[this.SizeInVoxels];
 
@@ -166,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			return vtkVolumeData;
 		}
 
-		private vtkShortArray BuildSignedVolumeData()
+		private vtkShortArray BuildSignedVolumeImageData()
 		{
 			short[] volumeData = new short[this.SizeInVoxels];
 
@@ -213,7 +278,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			{
 				ushort lowbyte = sliceData[j];
 				ushort highbyte = sliceData[j + 1];
-				volumeData[i] = (short)((highbyte << 8) | lowbyte);
+
+				short val = (short)((highbyte << 8) | lowbyte);
+
+//				if (val >= 0)
+					volumeData[i] = val;
+//				else
+//					volumeData[i] = 0;
+
 				j += 2;
 			}
 		}
@@ -240,9 +312,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && _volumeActor != null)
+			if (disposing && _vtkProp != null)
 			{
-				_volumeActor.Dispose();
+				_vtkProp.Dispose();
 			}
 
 			base.Dispose(disposing);

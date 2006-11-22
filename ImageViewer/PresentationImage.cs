@@ -241,8 +241,8 @@ namespace ClearCanvas.ImageViewer
 			this.LayerManager.RootLayerGroup.DestinationRectangle = drawArgs.ClientRectangle;
 
 			this.ImageRenderer.Draw(drawArgs);
-		#endregion
-		
 		}
+
+		#endregion
 	}
 }

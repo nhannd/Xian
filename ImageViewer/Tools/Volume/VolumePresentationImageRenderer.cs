@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	public class VolumePresentationImageRenderer : IRenderer
 	{
 		private VtkRenderingSurface _surface;
-		private bool _volumeCreated = false;
+		private bool _propCreated = false;
 
 		public VolumePresentationImageRenderer()
 		{
@@ -42,25 +42,24 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public void Draw(DrawArgs args)
 		{
-			if (!_volumeCreated && _surface != null)
+			if (!_propCreated && _surface != null)
 			{
-				RenderVolume(args);
-				_volumeCreated = true;
+				AddProp(args);
+				_propCreated = true;
 			}
 			_surface.Draw();
 		}
 
-		private void RenderVolume(DrawArgs args)
+		private void AddProp(DrawArgs args)
 		{
 			VolumePresentationImage volumePresentationImage = args.PresentationImage as VolumePresentationImage;
-			vtkActor volumeActor = volumePresentationImage.VolumeActor;
+			vtkProp vtkProp = volumePresentationImage.VtkProp;
 
 			vtk.vtkRenderer renderer = new vtk.vtkRenderer();
-			renderer.AddActor(volumeActor);
+			renderer.AddViewProp(vtkProp);
 			renderer.SetBackground(0.0f, 0.0f, 0.0f);
 
 			_surface.RenderWindow.AddRenderer(renderer);
-
 		}
 
 		#endregion

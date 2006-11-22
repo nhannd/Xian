@@ -83,6 +83,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TissueSettings.cs" />
+    <Compile Include="TissueSettingsCollection.cs" />
+    <Compile Include="TissueSettingsEventArgs.cs" />
+    <Compile Include="VolumeComponent.cs" />
     <Compile Include="ZoomVolumeTool.cs" />
     <Compile Include="CreateVolumeTool.cs" />
     <Compile Include="RotateVolumeTool.cs" />

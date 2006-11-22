@@ -1,0 +1,204 @@
+namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
+{
+	partial class TissueControl
+	{
+		/// <summary> 
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
+		#region Component Designer generated code
+
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this._visibleCheckBox = new System.Windows.Forms.CheckBox();
+			this._presetComboBox = new System.Windows.Forms.ComboBox();
+			this._presetLabel = new System.Windows.Forms.Label();
+			this._windowLabel = new System.Windows.Forms.Label();
+			this._levelLabel = new System.Windows.Forms.Label();
+			this._opacityLabel = new System.Windows.Forms.Label();
+			this._opacityControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._windowControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._levelControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this.SuspendLayout();
+			// 
+			// _visibleCheckBox
+			// 
+			this._visibleCheckBox.AutoSize = true;
+			this._visibleCheckBox.Location = new System.Drawing.Point(17, 13);
+			this._visibleCheckBox.Name = "_visibleCheckBox";
+			this._visibleCheckBox.Size = new System.Drawing.Size(56, 17);
+			this._visibleCheckBox.TabIndex = 0;
+			this._visibleCheckBox.Text = "Visible";
+			this._visibleCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// _presetComboBox
+			// 
+			this._presetComboBox.FormattingEnabled = true;
+			this._presetComboBox.Location = new System.Drawing.Point(101, 43);
+			this._presetComboBox.Name = "_presetComboBox";
+			this._presetComboBox.Size = new System.Drawing.Size(156, 21);
+			this._presetComboBox.TabIndex = 1;
+			// 
+			// _presetLabel
+			// 
+			this._presetLabel.AutoSize = true;
+			this._presetLabel.Location = new System.Drawing.Point(14, 46);
+			this._presetLabel.Name = "_presetLabel";
+			this._presetLabel.Size = new System.Drawing.Size(37, 13);
+			this._presetLabel.TabIndex = 6;
+			this._presetLabel.Text = "Preset";
+			// 
+			// _windowLabel
+			// 
+			this._windowLabel.AutoSize = true;
+			this._windowLabel.Location = new System.Drawing.Point(14, 138);
+			this._windowLabel.Name = "_windowLabel";
+			this._windowLabel.Size = new System.Drawing.Size(46, 13);
+			this._windowLabel.TabIndex = 7;
+			this._windowLabel.Text = "Window";
+			// 
+			// _levelLabel
+			// 
+			this._levelLabel.AutoSize = true;
+			this._levelLabel.Location = new System.Drawing.Point(14, 187);
+			this._levelLabel.Name = "_levelLabel";
+			this._levelLabel.Size = new System.Drawing.Size(33, 13);
+			this._levelLabel.TabIndex = 8;
+			this._levelLabel.Text = "Level";
+			// 
+			// _opacityLabel
+			// 
+			this._opacityLabel.AutoSize = true;
+			this._opacityLabel.Location = new System.Drawing.Point(14, 91);
+			this._opacityLabel.Name = "_opacityLabel";
+			this._opacityLabel.Size = new System.Drawing.Size(43, 13);
+			this._opacityLabel.TabIndex = 9;
+			this._opacityLabel.Text = "Opacity";
+			// 
+			// _opacityControl
+			// 
+			this._opacityControl.AutoSize = true;
+			this._opacityControl.DecimalPlaces = 2;
+			this._opacityControl.Location = new System.Drawing.Point(91, 82);
+			this._opacityControl.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+			this._opacityControl.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			this._opacityControl.Name = "_opacityControl";
+			this._opacityControl.Size = new System.Drawing.Size(256, 42);
+			this._opacityControl.TabIndex = 10;
+			this._opacityControl.TrackBarIncrements = 100;
+			this._opacityControl.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			// 
+			// _windowControl
+			// 
+			this._windowControl.AutoSize = true;
+			this._windowControl.DecimalPlaces = 0;
+			this._windowControl.Location = new System.Drawing.Point(91, 130);
+			this._windowControl.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+			this._windowControl.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			this._windowControl.Name = "_windowControl";
+			this._windowControl.Size = new System.Drawing.Size(256, 42);
+			this._windowControl.TabIndex = 11;
+			this._windowControl.TrackBarIncrements = 100;
+			this._windowControl.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			// 
+			// _levelControl
+			// 
+			this._levelControl.AutoSize = true;
+			this._levelControl.DecimalPlaces = 0;
+			this._levelControl.Location = new System.Drawing.Point(91, 178);
+			this._levelControl.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+			this._levelControl.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			this._levelControl.Name = "_levelControl";
+			this._levelControl.Size = new System.Drawing.Size(256, 42);
+			this._levelControl.TabIndex = 12;
+			this._levelControl.TrackBarIncrements = 100;
+			this._levelControl.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			// 
+			// TissueControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this._visibleCheckBox);
+			this.Controls.Add(this._presetLabel);
+			this.Controls.Add(this._presetComboBox);
+			this.Controls.Add(this._opacityLabel);
+			this.Controls.Add(this._opacityControl);
+			this.Controls.Add(this._windowLabel);
+			this.Controls.Add(this._windowControl);
+			this.Controls.Add(this._levelLabel);
+			this.Controls.Add(this._levelControl);
+			this.Name = "TissueControl";
+			this.Size = new System.Drawing.Size(363, 235);
+			this.ResumeLayout(false);
+			this.PerformLayout();
+
+		}
+
+		#endregion
+
+		private System.Windows.Forms.CheckBox _visibleCheckBox;
+		private System.Windows.Forms.ComboBox _presetComboBox;
+		private System.Windows.Forms.Label _presetLabel;
+		private System.Windows.Forms.Label _windowLabel;
+		private System.Windows.Forms.Label _levelLabel;
+		private System.Windows.Forms.Label _opacityLabel;
+		private ClearCanvas.Controls.WinForms.TrackBarUpDown _opacityControl;
+		private ClearCanvas.Controls.WinForms.TrackBarUpDown _windowControl;
+		private ClearCanvas.Controls.WinForms.TrackBarUpDown _levelControl;
+
+	}
+}
