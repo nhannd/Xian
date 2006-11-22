@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 ((DicomServerGroup)_dicomServerTree.CurrentServer).AddChild(ds);
+                _dicomServerTree.ChildServers.Add(ds);
             }
             _dicomServerTree.CurrentServer = ds;
             _dicomServerTree.SaveDicomServers();
@@ -88,9 +89,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool IsServerPropertyValid()
         {
+            int port = -1;
             try
             {
-                int port = int.Parse(_serverPort);
+                port = int.Parse(_serverPort);
                 if (_dicomServerTree.CurrentServer.IsServer
                         && _serverName.Equals(_dicomServerTree.CurrentServer.ServerName)
                         && _serverAE.Equals(((DicomServer)_dicomServerTree.CurrentServer).DicomAE.AE)
@@ -104,6 +106,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 StringBuilder msgText = new StringBuilder();
                 msgText.AppendFormat("The Port value should be a integer. \r\n\r\nPlease input an integer data.");
                 throw new DicomServerException(msgText.ToString());
+            }
+
+            if (port <= 0)
+            {
+                this.Modified = false;
+                throw new DicomServerException("The port number should be a positive integer.\r\nPlease choose another port number.");
             }
 
             string msg = _dicomServerTree.DicomServerValidation(_serverName, _serverAE, _serverHost, int.Parse(_serverPort));

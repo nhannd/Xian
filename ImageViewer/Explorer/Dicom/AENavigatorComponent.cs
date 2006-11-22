@@ -157,6 +157,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
+        public void FireSelectedServerChangedEvent()
+        {
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+        }
+
         public void SelectChanged(IDicomServer dataNode)
         {
             if (dataNode.IsServer)
@@ -170,14 +175,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _selectedServers.GroupID = dataNode.ServerPath + "/" + dataNode.ServerName;
                 _selectedServers.Name = dataNode.ServerName;
                 _dicomServerTree.CurrentServer = dataNode;
-                EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+                FireSelectedServerChangedEvent();
             }
 
         }
 
         public bool NodeMoved(IDicomServer dataNodeParent, IDicomServer dataNodeNew)
         {
-            if (dataNodeParent.IsServer || isNodeExists((DicomServerGroup)dataNodeParent, dataNodeNew))
+            if (dataNodeParent.IsServer || isMovingInvalid((DicomServerGroup)dataNodeParent, dataNodeNew))
                 return false;
             if (dataNodeNew.IsServer)
             {
@@ -215,18 +220,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _selectedServers.Name = server.ServerName;
             _selectedServers.GroupID = server.ServerPath + "/" + server.ServerName;
             _dicomServerTree.CurrentServer = server;
-            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
+            FireSelectedServerChangedEvent();
         }
 
-        private bool isNodeExists(DicomServerGroup dataNodeParent, IDicomServer dataNodeNew)
+        private bool isMovingInvalid(DicomServerGroup dataNodeParent, IDicomServer dataNodeNew)
         {
-            if (dataNodeNew.ServerPath.Equals(dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName))
+            if (dataNodeNew.ServerName.Equals(_myServersTitle) || dataNodeNew.ServerName.Equals(_myDatastoreTitle) || dataNodeNew.ServerPath.Equals(dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName))
                 return true;
             foreach (IDicomServer ids in dataNodeParent.ChildServers)
             {
                 if (ids.ServerName.Equals(dataNodeNew.ServerName))
                     return true;
             }
+            if (!dataNodeNew.IsServer && dataNodeParent.ServerPath.StartsWith(dataNodeNew.ServerPath + "/" + dataNodeNew.ServerName))
+                return true;
             return false;
         }
 

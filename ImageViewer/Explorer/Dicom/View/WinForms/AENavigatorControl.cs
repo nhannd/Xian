@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _lastClickedNode.ToolTipText = dataNode.ServerDetails;
                 RefreshToolTipText(_aeTreeView.Nodes[1]);
             }
+            _component.FireSelectedServerChangedEvent();
         }
 
 

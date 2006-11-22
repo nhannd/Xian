@@ -63,7 +63,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle);
+            this.Enabled = !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle)
+                            && this.Context.DicomAEServerTree.ChildServers.Count > 0;
         }
     }
 }
