@@ -13,28 +13,21 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
-	[MenuAction("apply", "global-menus/MenuTools/MenuToolsMyTools/CreateVolumeTool")]
-	[ButtonAction("apply", "global-toolbars/ToolbarMyTools/CreateVolumeTool")]
-	[Tooltip("apply", "Create Volume")]
-	[IconSet("apply", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolMedium.png", "Icons.CreateVolumeToolLarge.png")]
-	[ClickHandler("apply", "Apply")]
-	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[MenuAction("show", "global-menus/MenuTools/MenuToolsMyTools/CreateVolumeTool")]
+	[ButtonAction("show", "global-toolbars/ToolbarMyTools/CreateVolumeTool")]
+	[Tooltip("show", "Create Volume")]
+	[IconSet("show", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolMedium.png", "Icons.CreateVolumeToolLarge.png")]
+	[ClickHandler("show", "Show")]
 
-	public class CreateVolumeTool : Tool<IImageViewerToolContext>
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class CreateVolumeTool : ImageViewerDesktopTool
 	{
-		private VolumeComponent _volumeComponent;
-
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
 		/// framework.  Do not remove.
 		/// </summary>
 		public CreateVolumeTool()
 		{
-			_enabled = true;
 		}
 
 		/// <summary>
@@ -43,47 +36,23 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		public override void Initialize()
 		{
 			base.Initialize();
-
-			this.ImageViewer.EventBroker.PresentationImageSelected += OnPresentationImageSelected;
-			this.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
-
 		}
 
-		public bool Enabled
+		public void Show()
 		{
-			get { return _enabled; }
-			protected set
-			{
-				if (_enabled != value)
-				{
-					_enabled = value;
-					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
-		}
-
-		public void Apply()
-		{
-			if (_volumeComponent == null)
+			if (this.ImageViewerToolComponent == null)
 			{
 				// create and initialize the layout component
-				_volumeComponent = new VolumeComponent();
-				//_volumeComponent.Subject = GetSubjectImageViewer();
+				this.ImageViewerToolComponent = new VolumeComponent(GetSubjectImageViewer());
 
 				// launch the layout component in a shelf
 				// note that the component is thrown away when the shelf is closed by the user
 				ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
-					_volumeComponent,
+					this.ImageViewerToolComponent,
 					"Volume Controller",
 					ShelfDisplayHint.DockLeft,
-					delegate(IApplicationComponent component) { _volumeComponent = null; });
+					delegate(IApplicationComponent component) { this.ImageViewerToolComponent = null; });
 			}
 
 
@@ -96,20 +65,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			//IImageBox imageBox = this.ImageViewer.SelectedImageBox;
 			//imageBox.DisplaySet = displaySet;
 			//imageBox.Draw();
-		}
-
-		private IImageViewer ImageViewer
-		{
-			get { return this.Context.Viewer; }
-		}
-
-
-		private void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
-		{
-		}
-
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
 		}
 	}
 }

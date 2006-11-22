@@ -28,19 +28,19 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this.CreateVolumeButton = new System.Windows.Forms.Button();
+			this._createVolumeButton = new System.Windows.Forms.Button();
 			this._tabControl = new System.Windows.Forms.TabControl();
 			this.SuspendLayout();
 			// 
-			// CreateVolumeButton
+			// _createVolumeButton
 			// 
-			this.CreateVolumeButton.AutoSize = true;
-			this.CreateVolumeButton.Location = new System.Drawing.Point(14, 13);
-			this.CreateVolumeButton.Name = "CreateVolumeButton";
-			this.CreateVolumeButton.Size = new System.Drawing.Size(111, 28);
-			this.CreateVolumeButton.TabIndex = 0;
-			this.CreateVolumeButton.Text = "Create Volume";
-			this.CreateVolumeButton.UseVisualStyleBackColor = true;
+			this._createVolumeButton.AutoSize = true;
+			this._createVolumeButton.Location = new System.Drawing.Point(14, 13);
+			this._createVolumeButton.Name = "_createVolumeButton";
+			this._createVolumeButton.Size = new System.Drawing.Size(111, 28);
+			this._createVolumeButton.TabIndex = 0;
+			this._createVolumeButton.Text = "Create Volume";
+			this._createVolumeButton.UseVisualStyleBackColor = true;
 			// 
 			// _tabControl
 			// 
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// 
 			this.AutoSize = true;
 			this.Controls.Add(this._tabControl);
-			this.Controls.Add(this.CreateVolumeButton);
+			this.Controls.Add(this._createVolumeButton);
 			this.Name = "VolumeComponentControl";
 			this.Size = new System.Drawing.Size(422, 423);
 			this.ResumeLayout(false);
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 
         #endregion
 
-		private System.Windows.Forms.Button CreateVolumeButton;
+		private System.Windows.Forms.Button _createVolumeButton;
 		private System.Windows.Forms.TabControl _tabControl;
     }
 }

@@ -97,6 +97,8 @@
     <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
     <Compile Include="DynamicOverlays\SelectedGraphicState.cs" />
+    <Compile Include="ImageViewerDesktopTool.cs" />
+    <Compile Include="ImageViewerToolComponent.cs" />
     <Compile Include="InputManagement\IContextMenuProvider.cs" />
     <Compile Include="InputManagement\ICursorTokenProvider.cs" />
     <Compile Include="InputManagement\IMouseButtonHandler.cs" />

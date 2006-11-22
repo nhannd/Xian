@@ -16,11 +16,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class LayoutTool : Tool<IDesktopToolContext>
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class LayoutTool : ImageViewerDesktopTool
 	{
-        private LayoutComponent _layoutComponent;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -34,8 +32,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
-
-            this.Context.DesktopWindow.WorkspaceManager.ActiveWorkspaceChanged += WorkspaceActivatedEventHandler;
         }
 
         /// <summary>
@@ -45,50 +41,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public void Show()
 		{
             // check if a layout component is already displayed
-            if (_layoutComponent == null)
+            if (this.ImageViewerToolComponent == null)
             {
                 // create and initialize the layout component
-                _layoutComponent = new LayoutComponent();
-                _layoutComponent.Subject = GetSubjectImageViewer();
+				this.ImageViewerToolComponent = new LayoutComponent(GetSubjectImageViewer());
 
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user
                 ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
-                    _layoutComponent,
+					this.ImageViewerToolComponent,
                     SR.MenuLayoutLayoutManager,
                     ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
-                    delegate(IApplicationComponent component) { _layoutComponent = null; });
+					delegate(IApplicationComponent component) { this.ImageViewerToolComponent = null; });
             }
         }
 
-        /// <summary>
-        /// Associate the layout component with the active workspace
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void WorkspaceActivatedEventHandler(object sender, WorkspaceActivationChangedEventArgs e)
-        {
-            if (_layoutComponent != null)
-            {
-                _layoutComponent.Subject = GetSubjectImageViewer();
-            }
-        }
-
-        /// <summary>
-        /// Gets a reference to the <see cref="IImageViewer"/> hosted by the active workspace,
-        /// if it exists, otherwise null.
-        /// </summary>
-        /// <returns></returns>
-        private IImageViewer GetSubjectImageViewer()
-        {
-            IWorkspace workspace = this.Context.DesktopWindow.ActiveWorkspace;
-            if(workspace is ApplicationComponentHostWorkspace
-                && ((ApplicationComponentHostWorkspace)workspace).Component is IImageViewer)
-            {
-                return (IImageViewer)((ApplicationComponentHostWorkspace)workspace).Component;
-            }
-            return null;
-        }
 	}
 }

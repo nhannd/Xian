@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.ImageViewer;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -22,50 +23,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// that is to be controlled.
     /// </summary>
     [AssociateView(typeof(LayoutComponentViewExtensionPoint))]
-    public class LayoutComponent : ApplicationComponent
+	public class LayoutComponent : ImageViewerToolComponent
     {
         private int _imageBoxRows;
         private int _imageBoxColumns;
         private int _tileRows;
         private int _tileColumns;
-        private event EventHandler _layoutSubjectChanged;
-
-        private IImageViewer _imageViewer;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public LayoutComponent()
+        public LayoutComponent(IImageViewer imageViewer)
         {
-        }
-
-        /// <summary>
-        /// Gets/sets the subject <see cref="IImageViewer"/> that this component is associated with.  Note that
-        /// null is a valid value.  Setting this property to null dissociates it from any image viewer.
-        /// </summary>
-        public IImageViewer Subject
-        {
-            get { return _imageViewer; }
-            set
-            {
-                if (value != _imageViewer)
-                {
-                    // stop listening to the old image viewer, if one was set
-                    if (_imageViewer != null)
-                    {
-                        _imageViewer.EventBroker.TileSelected -= TileSelectedEventHandler;
-                    }
-
-                    _imageViewer = value;
-
-                    // start listening to the new image viewer, if one has been set
-                    if (_imageViewer != null)
-                    {
-						_imageViewer.EventBroker.TileSelected += TileSelectedEventHandler;
-                    }
-                    UpdateFromImageViewer();
-                }
-            }
+			this.Subject = imageViewer;
         }
 
         #region ApplicationComponent overrides
@@ -76,8 +46,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Start()
         {
             base.Start();
-
-            UpdateFromImageViewer();
         }
 
         /// <summary>
@@ -92,22 +60,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
         #region Public properties and methods for use by the view
 
-        /// <summary>
-        /// Notifies the view that the layout subject has changed.  The view should
-        /// refresh itself entirely to reflect the state of this component.
-        /// </summary>
-        public event EventHandler LayoutSubjectChanged
-        {
-            add { _layoutSubjectChanged += value; }
-            remove { _layoutSubjectChanged -= value; }
-        }
 
         /// <summary>
         /// Indicates to the view whether the image-box section of the user-interface should be enabled
         /// </summary>
         public bool ImageBoxSectionEnabled
         {
-            get { return _imageViewer != null; }
+            get { return this.Subject != null; }
         }
 
         /// <summary>
@@ -115,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public bool TileSectionEnabled
         {
-            get { return this.ImageBoxSectionEnabled && _imageViewer.PhysicalWorkspace.SelectedImageBox != null; }
+            get { return this.ImageBoxSectionEnabled && this.Subject.PhysicalWorkspace.SelectedImageBox != null; }
         }
 
         /// <summary>
@@ -159,10 +118,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public void ApplyImageBoxLayout()
         {
-            if (_imageViewer == null)
+            if (this.Subject == null)
                 return;
 
-			IPhysicalWorkspace physicalWorkspace = _imageViewer.PhysicalWorkspace;
+			IPhysicalWorkspace physicalWorkspace = this.Subject.PhysicalWorkspace;
 			UndoableCommand command = new UndoableCommand(physicalWorkspace);
 			command.Name = SR.CommandLayoutImageBoxes;
 			command.BeginState = physicalWorkspace.CreateMemento();
@@ -178,9 +137,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			command.EndState = physicalWorkspace.CreateMemento();
 
-			_imageViewer.CommandHistory.AddCommand(command);
+			this.Subject.CommandHistory.AddCommand(command);
 
-            // need to update the controls since no tile will be selected now
             UpdateFromImageViewer();
         }
 
@@ -189,10 +147,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public void ApplyTileLayout()
         {
-            if (_imageViewer == null)
+            if (this.Subject == null)
                 return;
 
-			IImageBox imageBox = _imageViewer.PhysicalWorkspace.SelectedImageBox;
+			IImageBox imageBox = this.Subject.PhysicalWorkspace.SelectedImageBox;
 			UndoableCommand command = new UndoableCommand(imageBox);
 			command.Name = SR.CommandLayoutTiles;
 			command.BeginState = imageBox.CreateMemento();
@@ -206,46 +164,28 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			command.EndState = imageBox.CreateMemento();
 
-			_imageViewer.CommandHistory.AddCommand(command);
+			this.Subject.CommandHistory.AddCommand(command);
 
-            // need to update the controls since no tile will be selected now
             UpdateFromImageViewer();
         }
 
         #endregion
 
-        #region Internal methods and event handlers
+		protected override void UpdateFromImageViewer()
+		{
+			if (this.Subject != null)
+			{
+				_imageBoxRows = this.Subject.PhysicalWorkspace.Rows;
+				_imageBoxColumns = this.Subject.PhysicalWorkspace.Columns;
 
-        /// <summary>
-        /// Updates the component in response to a change in the selected image box
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TileSelectedEventHandler(object sender, TileSelectedEventArgs e)
-        {
-            UpdateFromImageViewer();
-        }
+				if (this.Subject.PhysicalWorkspace.SelectedImageBox != null)
+				{
+					_tileRows = this.Subject.PhysicalWorkspace.SelectedImageBox.Rows;
+					_tileColumns = this.Subject.PhysicalWorkspace.SelectedImageBox.Columns;
+				}
+			}
 
-        /// <summary>
-        /// Updates this component to reflect the state of the currently selected
-        /// image box in the subject image viewer.
-        /// </summary>
-        private void UpdateFromImageViewer()
-        {
-            if (_imageViewer != null)
-            {
-                _imageBoxRows = _imageViewer.PhysicalWorkspace.Rows;
-                _imageBoxColumns = _imageViewer.PhysicalWorkspace.Columns;
-
-                if (_imageViewer.PhysicalWorkspace.SelectedImageBox != null)
-                {
-                    _tileRows = _imageViewer.PhysicalWorkspace.SelectedImageBox.Rows;
-                    _tileColumns = _imageViewer.PhysicalWorkspace.SelectedImageBox.Columns;
-                }
-            }
-            EventsHelper.Fire(_layoutSubjectChanged, this, new EventArgs());
-        }
-
-        #endregion
+			base.UpdateFromImageViewer();
+		}
     }
 }

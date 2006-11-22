@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 
 
             // listen for changes to the layout subject
-            _layoutComponent.LayoutSubjectChanged += new EventHandler(LayoutSubjectChangedEventHandler);
+            _layoutComponent.SubjectChanged += new EventHandler(LayoutSubjectChangedEventHandler);
      
         }
 

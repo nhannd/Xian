@@ -20,16 +20,53 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	/// VolumeComponent class
 	/// </summary>
 	[AssociateView(typeof(VolumeComponentViewExtensionPoint))]
-	public class VolumeComponent : ApplicationComponent
+	public class VolumeComponent : ImageViewerToolComponent
 	{
 		private TissueSettingsCollection _tissueSettingsCollection;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public VolumeComponent()
+		public VolumeComponent(IImageViewer imageViewer)
 		{
+			this.Subject = imageViewer;
 			this.TissueSettingsCollection.ItemAdded += new EventHandler<TissueSettingsEventArgs>(OnTissueSettingsAdded);
+		}
+
+		public bool CreateVolumeEnabled
+		{
+			get 
+			{
+				if (this.Subject == null)
+				{
+					return false;
+				}
+				else
+				{
+					if (this.Subject.SelectedTile == null)
+						return false;
+					else
+						return !(this.Subject.SelectedPresentationImage is VolumePresentationImage);
+				}
+			}
+		}
+
+		public bool VolumeSettingsEnabled
+		{
+			get
+			{
+				if (this.Subject == null)
+				{
+					return false;
+				}
+				else
+				{
+					if (this.Subject.SelectedTile == null)
+						return false;
+					else
+						return this.Subject.SelectedPresentationImage is VolumePresentationImage;
+				}
+			}
 		}
 
 		public TissueSettingsCollection TissueSettingsCollection

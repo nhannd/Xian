@@ -15,7 +15,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
     /// </summary>
     public partial class VolumeComponentControl : CustomUserControl
     {
-        private VolumeComponent _component;
+		private BindingSource _bindingSource;
+		private VolumeComponent _component;
 
         /// <summary>
         /// Constructor
@@ -28,9 +29,17 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 
 			_component.TissueSettingsCollection.ItemAdded += new EventHandler<TissueSettingsEventArgs>(OnTissueSettingsAdded);
 			AddDefaultTissueSettings();
-			this.CreateVolumeButton.Click += new EventHandler(OnCreateVolumeButtonClick);
+			this._createVolumeButton.Click += new EventHandler(OnCreateVolumeButtonClick);
 			_tabControl.Selected += new TabControlEventHandler(OnTabSelected);
-        }
+
+			_bindingSource = new BindingSource();
+			_bindingSource.DataSource = _component;
+
+			_component.SubjectChanged += new EventHandler(OnSubjectChanged);
+			_createVolumeButton.DataBindings.Add("Enabled", _bindingSource, "CreateVolumeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_tabControl.DataBindings.Add("Enabled", _bindingSource, "VolumeSettingsEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
 
 		private void AddDefaultTissueSettings()
 		{
@@ -48,7 +57,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			_tabControl.TabPages.Add(tabPage);
 		}
 
-
 		void OnCreateVolumeButtonClick(object sender, EventArgs e)
 		{
 			_component.CreateVolume();
@@ -58,5 +66,11 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 		{
 			_component.SelectTissue(e.TabPageIndex);
 		}
+
+		void OnSubjectChanged(object sender, EventArgs e)
+		{
+			_bindingSource.ResetBindings(false);
+		}
+
     }
 }
