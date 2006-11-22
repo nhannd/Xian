@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _queue.Table = _component.Queue;
             _queue.MenuModel = _component.MenuModel;
             _queue.ToolbarModel = _component.ToolbarModel;
-
+            
             _message.DataBindings.Add("Text", _component, "Message", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _direction.DataSource = _component.DirectionChoices;
@@ -58,14 +58,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void _queue_SelectionChanged(object sender, EventArgs e)
         {
             _component.SetSelectedItem(_queue.CurrentSelection);
-        }
-
-        private void _process_Click(object sender, EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.ProcessSelection();
-            }
         }
 
         private void _showAll_Click(object sender, EventArgs e)

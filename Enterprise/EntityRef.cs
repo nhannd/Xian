@@ -71,5 +71,14 @@ namespace ClearCanvas.Enterprise
             // be initialized
             return entity.OID == this.EntityOID;
         }
+
+        /// <summary>
+        /// Provide a string representatin of the reference
+        /// </summary>
+        /// <returns>Formatted string containing the type and OID of the referenced object</returns>
+        public override string ToString()
+        {
+            return String.Format("Type: {0}, OID: {1}", this.EntityClass.ToString(), this.EntityOID.ToString());
+        }
     }
 }

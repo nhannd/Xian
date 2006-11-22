@@ -23,6 +23,13 @@ namespace ClearCanvas.Ris.Services
         #region IHL7QueueService Members
 
         [ReadOperation]
+        public HL7QueueItem LoadHL7QueueItem(EntityRef<HL7QueueItem> queueItemRef)
+        {
+            IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
+            return broker.Load(queueItemRef);
+        }
+
+        [ReadOperation]
         public IList<HL7QueueItem> GetNextInboundHL7QueueItemBatch()
         {
             // Find the first pending item in the queue
@@ -47,6 +54,38 @@ namespace ClearCanvas.Ris.Services
         public IList<HL7QueueItem> GetFilteredHL7QueueItems(HL7QueueItemSearchCriteria criteria)
         {
             return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria);
+        }
+
+        [ReadOperation]
+        public PatientProfile GetReferencedPatient(EntityRef<HL7QueueItem> hl7QueueItemRef)
+        {
+            IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
+            HL7QueueItem queueItem = broker.Load(hl7QueueItemRef);
+
+            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message);
+
+            IList<string> identifiers = processor.ListReferencedPatientIdentifiers();
+            if (identifiers.Count == 0)
+            {
+                return null;
+            }
+            string assigningAuthority = processor.ReferencedPatientIdentifiersAssigningAuthority();
+
+            PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
+            criteria.Mrn.Id.EqualTo(identifiers[0]);
+            criteria.Mrn.AssigningAuthority.EqualTo(assigningAuthority);
+
+            IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            IList<PatientProfile> profiles = profileBroker.Find(criteria);
+
+            if (profiles.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return profiles[0];
+            }
         }
 
         [UpdateOperation]

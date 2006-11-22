@@ -41,8 +41,10 @@
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="OrderEntryComponent.cs" />
     <Compile Include="HL7QueueItemTableData.cs" />
+    <Compile Include="HL7QueuePatientSearchTool.cs" />
     <Compile Include="HL7QueuePreviewComponent.cs" />
     <Compile Include="HL7QueuePreviewTool.cs" />
+    <Compile Include="HL7QueueProcessItemTool.cs" />
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientReconciliation.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
@@ -186,6 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\HL7QueueProcessItemToolMedium.png" />
+    <EmbeddedResource Include="Icons\HL7QueueProcessItemToolLarge.png" />
+    <EmbeddedResource Include="Icons\HL7QueueProcessItemToolSmall.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolLarge.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolMedium.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolSmall.png" />

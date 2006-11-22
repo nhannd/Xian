@@ -30,6 +30,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         EntityRef<HL7QueueItem> SelectedHL7QueueItem { get; }
         event EventHandler SelectedHL7QueueItemChanged;
+
+        void Refresh();
     }
 
     /// <summary>
@@ -79,6 +81,10 @@ namespace ClearCanvas.Ris.Client.Adt
                 remove { _component.SelectedHL7QueueItemChanged -= value; }
             }
 
+            public void Refresh()
+            {
+                _component.ShowAllItems();
+            }
 
             #endregion
         }
@@ -88,7 +94,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private HL7QueueItemTableData _queue;
         private IHL7QueueService _hl7QueueService;
-        private IAdtService _adtService;
 
         private ToolSet _toolSet;
         private ClickHandlerDelegate _defaultAction;
@@ -106,11 +111,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _peerChecked;
         private bool _typeChecked;
         private bool _statusChecked;
-        private bool _createdOnStartChecked;
-        private bool _createdOnEndChecked;
-        private bool _updatedOnStartChecked;
-        private bool _updatedOnEndChecked;
-
 
         private HL7MessageDirectionEnumTable _directionChoices;
         private HL7MessagePeerEnumTable _peerChoices;
@@ -125,13 +125,14 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
 
-            _adtService = ApplicationContext.GetService<IAdtService>();
             _hl7QueueService = ApplicationContext.GetService<IHL7QueueService>();
             _queue = new HL7QueueItemTableData(_hl7QueueService);
 
             _directionChoices = _hl7QueueService.GetHL7MessageDirectionEnumTable();
             _peerChoices = _hl7QueueService.GetHL7MessagePeerEnumTable();
             _statusChoices = _hl7QueueService.GetHL7MessageStatusCodeEnumTable();
+
+            _type = _dummyTypes[0];
 
             _toolSet = new ToolSet(new HL7QueueToolExtensionPoint(), new HL7QueueToolContext(this));
         }
@@ -227,17 +228,6 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _createdOnEnd = value; }
         }
 
-        public bool CreatedOnStartChecked
-        {
-            get { return _createdOnStartChecked; }
-            set { _createdOnStartChecked = value; }
-        }
-
-        public bool CreatedOnEndChecked
-        {
-            get { return _createdOnEndChecked; }
-            set { _createdOnEndChecked = value; }
-        }
         #endregion
 
         #region Updated On
@@ -253,17 +243,6 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _updatedOnEnd = value; }
         }
 
-        public bool UpdatedOnStartChecked
-        {
-            get { return _updatedOnStartChecked; }
-            set { _updatedOnStartChecked = value; }
-        }
-
-        public bool UpdatedOnEndChecked
-        {
-            get { return _updatedOnEndChecked; }
-            set { _updatedOnEndChecked = value; }
-        }
         #endregion
 
         public HL7QueueItemTableData Queue
@@ -274,13 +253,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public string Message
         {
             get { return _selectedHL7QueueItem.Message.Text; }
-        }
-
-    	#endregion        
-
-        public override IActionSet ExportedActions
-        {
-            get { return _toolSet.Actions; }
         }
 
         public ActionModelNode MenuModel
@@ -299,51 +271,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public void ShowAllItems()
-        {
-            IList<HL7QueueItem> items = _hl7QueueService.GetAllHL7QueueItems();
+        #endregion
 
-            _queue.Items.Clear();
-            _queue.Items.AddRange(items);
-        }
-
-        public void ShowNextPendingBatchItems()
-        {
-            IList<HL7QueueItem> items = _hl7QueueService.GetNextInboundHL7QueueItemBatch();
-
-            _queue.Items.Clear();
-            _queue.Items.AddRange(items);
-        }
-
-        public void SyncQueues()
-        {
-            _hl7QueueService.SyncExternalQueue();
-        }
-
-        public void ProcessSelection()
-        {
-            try
-            {
-                _hl7QueueService.ProcessHL7QueueItem(_selectedHL7QueueItem);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to process queue item:  " + e.Message);
-            }
-
-            ShowAllItems();
-        }
-
-        public void SetSelectedItem(ISelection selection)
-        {
-            HL7QueueItem queueItem = selection.Item as HL7QueueItem;
-            if (queueItem != _selectedHL7QueueItem)
-            {
-                _selectedHL7QueueItem = queueItem;
-                EventsHelper.Fire(_selectedHL7QueueItemChanged, this, EventArgs.Empty);
-                NotifyPropertyChanged("Message");
-            }
-        }
+        #region HL7QueueToolContext Helpers
 
         public EntityRef<HL7QueueItem> SelectedHL7QueueItem
         {
@@ -356,6 +286,31 @@ namespace ClearCanvas.Ris.Client.Adt
             remove { _selectedHL7QueueItemChanged -= value; }
         }
 
+        public override IActionSet ExportedActions
+        {
+            get { return _toolSet.Actions; }
+        }
+
+        #endregion
+
+        public void SetSelectedItem(ISelection selection)
+        {
+            HL7QueueItem queueItem = selection.Item as HL7QueueItem;
+            if (queueItem != _selectedHL7QueueItem)
+            {
+                _selectedHL7QueueItem = queueItem;
+                EventsHelper.Fire(_selectedHL7QueueItemChanged, this, EventArgs.Empty);
+                NotifyPropertyChanged("Message");
+            }
+        }
+
+        public void ShowAllItems()
+        {
+            IList<HL7QueueItem> items = _hl7QueueService.GetAllHL7QueueItems();
+
+            _queue.Items.Clear();
+            _queue.Items.AddRange(items);
+        }
 
         public void ShowFilteredItems()
         {
@@ -388,6 +343,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _queue.Items.Clear();
             _queue.Items.AddRange(items);
+        }
+
+        public void SyncQueues()
+        {
+            _hl7QueueService.SyncExternalQueue();
         }
     }
 }
