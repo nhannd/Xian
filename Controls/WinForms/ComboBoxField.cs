@@ -21,6 +21,12 @@ namespace ClearCanvas.Controls.WinForms
             set { _label.Text = value; }
         }
 
+        public ComboBoxStyle DropDownStyle
+        {
+            get { return _comboBox.DropDownStyle; }
+            set { _comboBox.DropDownStyle = value; }
+        }
+
         public object Value
         {
             get { return _comboBox.SelectedItem; }

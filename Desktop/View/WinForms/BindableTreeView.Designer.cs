@@ -29,7 +29,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._treeCtrl = new System.Windows.Forms.TreeView();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.toolStrip1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this._toolStrip, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._treeCtrl, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -49,13 +49,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.tableLayoutPanel1.Size = new System.Drawing.Size(486, 372);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // toolStrip1
+            // _toolStrip
             // 
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(486, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
+            this._toolStrip.Location = new System.Drawing.Point(0, 0);
+            this._toolStrip.Name = "_toolStrip";
+            this._toolStrip.Size = new System.Drawing.Size(486, 25);
+            this._toolStrip.TabIndex = 0;
+            this._toolStrip.Text = "toolStrip1";
             // 
             // _treeCtrl
             // 
@@ -82,7 +82,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip _toolStrip;
         private System.Windows.Forms.TreeView _treeCtrl;
     }
 }

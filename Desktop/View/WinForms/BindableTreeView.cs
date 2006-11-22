@@ -93,6 +93,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             _treeCtrl.ExpandAll();
         }
 
+        [DefaultValue(true)]
+        public bool ShowToolbar
+        {
+            get { return _toolStrip.Visible; }
+            set { _toolStrip.Visible = value; }
+        }
+
+
         /// <summary>
         /// When the user is about to expand a node, need to build the level beneath it
         /// </summary>
