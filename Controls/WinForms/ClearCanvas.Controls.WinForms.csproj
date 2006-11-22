@@ -121,6 +121,12 @@
     <Compile Include="TextField.Designer.cs">
       <DependentUpon>TextField.cs</DependentUpon>
     </Compile>
+    <Compile Include="TrackBarUpDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TrackBarUpDown.Designer.cs">
+      <DependentUpon>TrackBarUpDown.cs</DependentUpon>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
@@ -158,6 +164,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>TextField.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TrackBarUpDown.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TrackBarUpDown.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="FileBrowser\Images\BrowseFolders.png" />
@@ -166,6 +176,10 @@
     <Content Include="FileBrowser\Images\BrowserUp.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
