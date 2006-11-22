@@ -44,6 +44,7 @@
     <Compile Include="HL7QueuePatientSearchTool.cs" />
     <Compile Include="HL7QueuePreviewComponent.cs" />
     <Compile Include="HL7QueuePreviewTool.cs" />
+    <Compile Include="OrderListComponent.cs" />
     <Compile Include="HL7QueueProcessItemTool.cs" />
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientReconciliation.cs" />

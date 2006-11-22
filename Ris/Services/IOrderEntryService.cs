@@ -15,7 +15,15 @@ namespace ClearCanvas.Ris.Services
         IList<Practitioner> ListOrderingPhysicianChoices();
         DiagnosticService LoadDiagnosticServiceBreakdown(EntityRef<DiagnosticService> diagnosticServiceRef);
 
-        string GenerateNewAccessionNumber();
-        void PlaceOrder(Order order);
+        //string GenerateNewAccessionNumber();
+        void PlaceOrder(
+            Patient patient,
+            Visit visit,
+            DiagnosticService diagnosticService,
+            OrderPriority priority,
+            Practitioner orderingPhysician,
+            Facility orderingFacility);
+
+        IList<WorklistItem> GetOrdersWorklist();
     }
 }

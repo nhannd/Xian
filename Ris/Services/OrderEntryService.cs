@@ -70,6 +70,14 @@ namespace ClearCanvas.Ris.Services
             return this.CurrentContext.GetBroker<IPractitionerBroker>().FindAll();
         }
 
+        [ReadOperation]
+        public IList<WorklistItem> GetOrdersWorklist()
+        {
+            IWorklistBroker broker = this.CurrentContext.GetBroker<IWorklistBroker>();
+            return broker.GetWorklist();
+        }
+
+/*
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public string GenerateNewAccessionNumber()
         {
@@ -81,11 +89,36 @@ namespace ClearCanvas.Ris.Services
             IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
             return broker.GetNextAccessionNumber();
         }
-
+*/
         [UpdateOperation]
-        public void PlaceOrder(Order order)
+        public void PlaceOrder(
+            Patient patient,
+            Visit visit,
+            DiagnosticService diagnosticService,
+            OrderPriority priority,
+            Practitioner orderingPhysician,
+            Facility orderingFacility)
         {
-            throw new Exception("The method or operation is not implemented.");
+            Platform.CheckForNullReference(patient, "patient");
+            Platform.CheckForNullReference(visit, "visit");
+            Platform.CheckForNullReference(diagnosticService, "diagnosticService");
+            Platform.CheckForNullReference(priority, "priority");
+            Platform.CheckForNullReference(orderingPhysician, "orderingPhysician");
+            Platform.CheckForNullReference(orderingFacility, "orderingFacility");
+
+            this.CurrentContext.Lock(patient);
+            this.CurrentContext.Lock(visit);
+            this.CurrentContext.Lock(diagnosticService);
+            this.CurrentContext.Lock(orderingPhysician);
+            this.CurrentContext.Lock(orderingFacility);
+
+            IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
+            string accNum = broker.GetNextAccessionNumber();
+
+            Order order = Order.NewOrder(
+                accNum, patient, visit, diagnosticService, Platform.Time, orderingPhysician, orderingFacility, priority);
+
+            this.CurrentContext.Lock(order, DirtyState.New);
         }
 
         #endregion

@@ -68,6 +68,13 @@
       <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="HL7QueuePreviewComponentView.cs" />
+    <Compile Include="OrderListComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OrderListComponentControl.Designer.cs">
+      <DependentUpon>OrderListComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OrderListComponentView.cs" />
     <Compile Include="ReconciliationConfirmComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -208,6 +215,10 @@
     <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
       <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OrderListComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OrderListComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
       <SubType>Designer</SubType>

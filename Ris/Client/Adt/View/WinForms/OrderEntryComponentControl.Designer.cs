@@ -36,6 +36,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingFacility = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._priority = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindableTreeView();
+            this._placeOrderButton = new System.Windows.Forms.Button();
+            this._cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _visitTable
@@ -52,6 +54,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitTable.ToolbarModel = null;
             this._visitTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._visitTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._visitTable.SelectionChanged += new System.EventHandler(this._visitTable_SelectionChanged);
             // 
             // label1
             // 
@@ -65,11 +68,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _diagnosticService
             // 
             this._diagnosticService.DataSource = null;
+            this._diagnosticService.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._diagnosticService.LabelText = "Diagnostic Service";
             this._diagnosticService.Location = new System.Drawing.Point(26, 220);
             this._diagnosticService.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._diagnosticService.Name = "_diagnosticService";
-            this._diagnosticService.Size = new System.Drawing.Size(200, 50);
+            this._diagnosticService.Size = new System.Drawing.Size(259, 50);
             this._diagnosticService.TabIndex = 2;
             this._diagnosticService.Value = null;
             // 
@@ -85,8 +89,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _orderingPhysician
             // 
             this._orderingPhysician.DataSource = null;
+            this._orderingPhysician.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingPhysician.LabelText = "Ordering Physician";
-            this._orderingPhysician.Location = new System.Drawing.Point(334, 316);
+            this._orderingPhysician.Location = new System.Drawing.Point(334, 296);
             this._orderingPhysician.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._orderingPhysician.Name = "_orderingPhysician";
             this._orderingPhysician.Size = new System.Drawing.Size(200, 50);
@@ -96,8 +101,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _orderingFacility
             // 
             this._orderingFacility.DataSource = null;
+            this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingFacility.LabelText = "Ordering Facility";
-            this._orderingFacility.Location = new System.Drawing.Point(334, 386);
+            this._orderingFacility.Location = new System.Drawing.Point(334, 379);
             this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._orderingFacility.Name = "_orderingFacility";
             this._orderingFacility.Size = new System.Drawing.Size(200, 50);
@@ -107,6 +113,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _priority
             // 
             this._priority.DataSource = null;
+            this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._priority.LabelText = "Priority";
             this._priority.Location = new System.Drawing.Point(334, 220);
             this._priority.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -121,13 +128,36 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
             this._diagnosticServiceBreakdown.RootNode = null;
             this._diagnosticServiceBreakdown.RootNodes = null;
+            this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(259, 197);
             this._diagnosticServiceBreakdown.TabIndex = 8;
+            // 
+            // _placeOrderButton
+            // 
+            this._placeOrderButton.Location = new System.Drawing.Point(648, 498);
+            this._placeOrderButton.Name = "_placeOrderButton";
+            this._placeOrderButton.Size = new System.Drawing.Size(105, 23);
+            this._placeOrderButton.TabIndex = 9;
+            this._placeOrderButton.Text = "Place Order";
+            this._placeOrderButton.UseVisualStyleBackColor = true;
+            this._placeOrderButton.Click += new System.EventHandler(this._placeOrderButton_Click);
+            // 
+            // _cancelButton
+            // 
+            this._cancelButton.Location = new System.Drawing.Point(759, 498);
+            this._cancelButton.Name = "_cancelButton";
+            this._cancelButton.Size = new System.Drawing.Size(75, 23);
+            this._cancelButton.TabIndex = 10;
+            this._cancelButton.Text = "Cancel";
+            this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
             // OrderEntryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._cancelButton);
+            this.Controls.Add(this._placeOrderButton);
             this.Controls.Add(this._diagnosticServiceBreakdown);
             this.Controls.Add(this._priority);
             this.Controls.Add(this._orderingFacility);
@@ -153,5 +183,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.ComboBoxField _orderingFacility;
         private ClearCanvas.Controls.WinForms.ComboBoxField _priority;
         private ClearCanvas.Desktop.View.WinForms.BindableTreeView _diagnosticServiceBreakdown;
+        private System.Windows.Forms.Button _placeOrderButton;
+        private System.Windows.Forms.Button _cancelButton;
     }
 }
