@@ -12,7 +12,7 @@
     <many-to-one name="Type" class="ScheduledProcedureStepType" column="ScheduledProcedureStepTypeOID_" not-null="true"/>
     <many-to-one name="Modality" class="Modality" column="ModalityOID_" not-null="true"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ScheduledProcedureStepStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-    <property name="StartTime" column="StartTime_" type="DateTime" not-null="true"/>
+    <property name="StartTime" column="StartTime_" type="DateTime"/>
     <property name="EndTime" column="EndTime_" type="DateTime"/>
   </class>
 </hibernate-mapping>

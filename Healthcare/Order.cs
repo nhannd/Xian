@@ -4,6 +4,8 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Healthcare {
@@ -14,6 +16,47 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Order : Entity
 	{
+        public static Order NewOrder(
+            string accessionNumber,
+            Patient patient,
+            Visit visit,
+            DiagnosticService diagnosticService,
+            DateTime schedulingRequestDateTime,
+            Practitioner orderingPhysician,
+            Facility orderingFacility,
+            OrderPriority priority)
+        {
+            // create the basic order
+            Order order = new Order(
+                                patient,
+                                visit,
+                                accessionNumber,
+                                diagnosticService,
+                                Platform.Time,
+                                schedulingRequestDateTime,
+                                orderingPhysician,
+                                orderingFacility,
+                                priority);
+
+            // add requested procedures according to the diagnostic service breakdown
+            int rpIndex = 0;
+            foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
+            {
+                RequestedProcedure rp = new RequestedProcedure(order, rpt, string.Format("{0}", ++rpIndex));
+                order.RequestedProcedures.Add(rp);
+
+                // add scheduled procedure steps according to the diagnostic service breakdown
+                foreach (ScheduledProcedureStepType spt in rpt.ScheduledProcedureStepTypes)
+                {
+                    ScheduledProcedureStep sps = new ScheduledProcedureStep(rp, spt, spt.DefaultModality, ScheduledProcedureStepStatus.SCHEDULED);
+                    rp.ScheduledProcedureSteps.Add(sps);
+                }
+            }
+
+            return order;
+        }
+
+
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -27,14 +70,13 @@ namespace ClearCanvas.Healthcare {
 		
 		public override bool Equals(object that)
 		{
-			// TODO: implement a test for business-key equality
-			return base.Equals(that);
+            Order other = that as Order;
+			return other != null && other.AccessionNumber == this.AccessionNumber;
 		}
 		
 		public override int GetHashCode()
 		{
-			// TODO: implement a hash-code based on the business-key used in the Equals() method
-			return base.GetHashCode();
+            return this.AccessionNumber.GetHashCode();
 		}
 		
 		#endregion

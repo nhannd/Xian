@@ -45,6 +45,7 @@
     <Compile Include="AmbulatoryStatus.cs" />
     <Compile Include="Brokers\IAccessionNumberBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
+    <Compile Include="Brokers\IWorklistBroker.cs" />
     <Compile Include="CompositeIdentifier.cs" />
     <Compile Include="DateTimeRange.cs" />
     <Compile Include="DiagnosticService.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="PatientClass.cs" />
     <Compile Include="PatientIdentifierType.cs" />
     <Compile Include="PatientProfile.cs" />
+    <Compile Include="PatientProfileDiscrepancy.cs" />
     <Compile Include="PatientProfileMatch.cs" />
     <Compile Include="PatientReconciliationException.cs" />
     <Compile Include="PatientType.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="VisitPractitioner.cs" />
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
+    <Compile Include="WorklistItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
