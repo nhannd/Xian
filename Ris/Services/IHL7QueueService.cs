@@ -11,6 +11,7 @@ namespace ClearCanvas.Ris.Services
     {
         IList<HL7QueueItem> GetNextInboundHL7QueueItemBatch();
         IList<HL7QueueItem> GetAllHL7QueueItems();
+        IList<HL7QueueItem> GetFilteredHL7QueueItems(HL7QueueItemSearchCriteria criteria);
         IList<Patient> ProcessHL7QueueItem(HL7QueueItem item);
         void EnqueueHL7QueueItem(HL7QueueItem item);
         void SyncExternalQueue();
