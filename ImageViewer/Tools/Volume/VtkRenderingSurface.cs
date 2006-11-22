@@ -31,12 +31,15 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			get { return _windowID; }
 			set 
 			{
-				_windowID = value;
+				if (_windowID != value)
+				{
+					_windowID = value;
 
-				if (_windowID == IntPtr.Zero)
-					_vtkWin32OpenGLRW.Clean();	
-				else
-					SetRenderWindowID();
+					if (_windowID == IntPtr.Zero)
+						_vtkWin32OpenGLRW.Clean();
+					else
+						SetRenderWindowID();
+				}
 			}
 		}
 

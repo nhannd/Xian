@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		/// </summary>
 		public VolumeComponent(IImageViewer imageViewer)
 		{
-			this.Subject = imageViewer;
+			this.ImageViewer = imageViewer;
 			this.TissueSettingsCollection.ItemAdded += new EventHandler<TissueSettingsEventArgs>(OnTissueSettingsAdded);
 		}
 
@@ -37,16 +38,16 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			get 
 			{
-				if (this.Subject == null)
+				if (this.ImageViewer == null)
 				{
 					return false;
 				}
 				else
 				{
-					if (this.Subject.SelectedTile == null)
+					if (this.ImageViewer.SelectedTile == null)
 						return false;
 					else
-						return !(this.Subject.SelectedPresentationImage is VolumePresentationImage);
+						return !(this.ImageViewer.SelectedPresentationImage is VolumePresentationImage);
 				}
 			}
 		}
@@ -55,16 +56,16 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			get
 			{
-				if (this.Subject == null)
+				if (this.ImageViewer == null)
 				{
 					return false;
 				}
 				else
 				{
-					if (this.Subject.SelectedTile == null)
+					if (this.ImageViewer.SelectedTile == null)
 						return false;
 					else
-						return this.Subject.SelectedPresentationImage is VolumePresentationImage;
+						return this.ImageViewer.SelectedPresentationImage is VolumePresentationImage;
 				}
 			}
 		}
@@ -99,16 +100,45 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		#endregion
 
 
-		public void SelectTissue(int tissueSettingsIndex)
-		{
-		}
-
 		public void CreateVolume()
 		{
+			if (this.ImageViewer == null)
+				return;
+
+			if (this.ImageViewer.SelectedImageBox == null)
+				return;
+
+			IDisplaySet selectedDisplaySet = this.ImageViewer.SelectedImageBox.DisplaySet;
+			VolumePresentationImage image = new VolumePresentationImage(selectedDisplaySet);
+
+			AddTissueLayers(image);
+
+			IDisplaySet displaySet = new DisplaySet();
+			displaySet.Name = String.Format("{0} (3D)", selectedDisplaySet.Name);
+			displaySet.PresentationImages.Add(image);
+			this.ImageViewer.LogicalWorkspace.DisplaySets.Add(displaySet);
+
+			IImageBox imageBox = this.ImageViewer.SelectedImageBox;
+			imageBox.DisplaySet = displaySet;
+			imageBox.Draw();
+			imageBox[0, 0].Select();
+
+			UpdateFromImageViewer();
+		}
+
+		private void AddTissueLayers(VolumePresentationImage image)
+		{
+			LayerCollection layers = image.LayerManager.RootLayerGroup.Layers;
+
+			foreach (TissueSettings tissueSettings in this.TissueSettingsCollection)
+			{
+				layers.Add(new VolumeLayer(tissueSettings));
+			}
 		}
 
 		private void OnTissueSettingsAdded(object sender, TissueSettingsEventArgs e)
 		{
+
 		}
 	}
 }

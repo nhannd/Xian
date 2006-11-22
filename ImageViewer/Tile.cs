@@ -95,7 +95,10 @@ namespace ClearCanvas.ImageViewer
 
 					// Disassociate the old presentation image with this tile
 					if (_presentationImage != null)
+					{
 						_presentationImage.Tile = null;
+						_presentationImage.Selected = false;
+					}
 
 					// Assign the new presentation image.  Can be null.
 					_presentationImage = value as PresentationImage;
@@ -303,8 +306,8 @@ namespace ClearCanvas.ImageViewer
 				if (_presentationImage != null)
 				{
 					this.Selected = true;
-					_presentationImage.Selected = true;
 					_parentImageBox.SelectedTile = this;
+					_presentationImage.Selected = true;
 					this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this as ITile));
 				}
 			}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -10,20 +11,31 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	{
 		private bool _tissueVisible = true;
 
-		private decimal _opacityMinValue = 0.0M;
-		private decimal _opacityMaxValue = 1.0M;
-		private decimal _opacityValue = 0.8M;
+		private decimal _minimumOpacity = 0.0M;
+		private decimal _maximumOpacity = 1.0M;
+		private decimal _opacity = 1.0M;
 
-		private decimal _windowMinValue = 1;
-		private decimal _windowMaxValue = 5000;
-		private decimal _windowValue = 400;
+		private decimal _minimumWindow = 1;
+		private decimal _maximumWindow = 5000;
+		private decimal _window = 500;
 
-		private decimal _levelMinValue = -2000;
-		private decimal _levelMaxValue = 3000;
-		private decimal _levelValue = 200;
+		private decimal _minimumLevel = -2000;
+		private decimal _maximumLevel = 3000;
+		private decimal _level = 400;
+
+		private Color _minimumColor;
+		private Color _maximumColor;
+
+		private string[] _presets = {"Bone", "Blood", "Muscle", "Soft", "Lung"};
+		private string _selectedPreset;
 
 		public TissueSettings()
 		{
+		}
+
+		public string[] Presets
+		{
+			get { return _presets; }
 		}
 
 		public bool TissueVisible
@@ -42,41 +54,41 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		#region Opacity properties
 
 
-		public decimal OpacityMinValue
+		public decimal MinimumOpacity
 		{
-			get { return _opacityMinValue; }
+			get { return _minimumOpacity; }
 			set
 			{
-				if (_opacityMinValue != value)
+				if (_minimumOpacity != value)
 				{
-					_opacityMinValue = value;
-					OnPropertyChanged("OpacityMinValue");
+					_minimumOpacity = value;
+					OnPropertyChanged("MinimumOpacity");
 				}
 			}
 		}
 
-		public decimal OpacityMaxValue
+		public decimal MaximumOpacity
 		{
-			get { return _opacityMaxValue; }
+			get { return _maximumOpacity; }
 			set
 			{
-				if (_opacityMaxValue != value)
+				if (_maximumOpacity != value)
 				{
-					_opacityMaxValue = value;
-					OnPropertyChanged("OpacityMaxValue");
+					_maximumOpacity = value;
+					OnPropertyChanged("MaximumOpacity");
 				}
 			}
 		}
 
-		public decimal OpacityValue
+		public decimal Opacity
 		{
-			get { return _opacityValue; }
+			get { return _opacity; }
 			set
 			{
-				if (_opacityValue != value)
+				if (_opacity != value)
 				{
-					_opacityValue = value;
-					OnPropertyChanged("OpacityValue");
+					_opacity = value;
+					OnPropertyChanged("Opacity");
 				}
 			}
 		}
@@ -85,41 +97,41 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		#region Window properties
 
-		public decimal WindowMinValue
+		public decimal MinimumWindow
 		{
-			get { return _windowMinValue; }
+			get { return _minimumWindow; }
 			set
 			{
-				if (_windowMinValue != value)
+				if (_minimumWindow != value)
 				{
-					_windowMinValue = value;
-					OnPropertyChanged("WindowMinValue");
+					_minimumWindow = value;
+					OnPropertyChanged("MinimumWindow");
 				}
 			}
 		}
 
-		public decimal WindowMaxValue
+		public decimal MaximumWindow
 		{
-			get { return _windowMaxValue; }
+			get { return _maximumWindow; }
 			set
 			{
-				if (_windowMaxValue != value)
+				if (_maximumWindow != value)
 				{
-					_windowMaxValue = value;
-					OnPropertyChanged("WindowMaxValue");
+					_maximumWindow = value;
+					OnPropertyChanged("MaximumWindow");
 				}
 			}
 		}
 
-		public decimal WindowValue
+		public decimal Window
 		{
-			get { return _windowValue; }
+			get { return _window; }
 			set
 			{
-				if (_windowValue != value)
+				if (_window != value)
 				{
-					_windowValue = value;
-					OnPropertyChanged("WindowValue");
+					_window = value;
+					OnPropertyChanged("Window");
 				}
 			}
 		}
@@ -128,46 +140,135 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		#region Level properties
 
-		public decimal LevelMinValue
+		public decimal MinimumLevel
 		{
-			get { return _levelMinValue; }
+			get { return _minimumLevel; }
 			set
 			{
-				if (_levelMinValue != value)
+				if (_minimumLevel != value)
 				{
-					_levelMinValue = value;
-					OnPropertyChanged("LevelMinValue");
+					_minimumLevel = value;
+					OnPropertyChanged("MinimumLevel");
 				}
 			}
 		}
 
-		public decimal LevelMaxValue
+		public decimal MaximumLevel
 		{
-			get { return _levelMaxValue; }
+			get { return _maximumLevel; }
 			set
 			{
-				if (_levelMaxValue != value)
+				if (_maximumLevel != value)
 				{
-					_levelMaxValue = value;
-					OnPropertyChanged("LevelMaxValue");
+					_maximumLevel = value;
+					OnPropertyChanged("MaximumLevel");
 				}
 			}
 		}
 
-		public decimal LevelValue
+		public decimal Level
 		{
-			get { return _levelValue; }
+			get { return _level; }
 			set
 			{
-				if (_levelValue != value)
+				if (_level != value)
 				{
-					_levelValue = value;
-					OnPropertyChanged("LevelValue");
+					_level = value;
+					OnPropertyChanged("Level");
 				}
 			}
 		}
 
 		#endregion
+
+		#region Color properties
+
+		public Color MinimumColor
+		{
+			get { return _minimumColor; }
+			set 
+			{
+				if (_minimumColor != value)
+				{
+					_minimumColor = value;
+					OnPropertyChanged("MinimumColor");
+				}
+			}
+		}
+
+		public Color MaximumColor
+		{
+			get { return _maximumColor; }
+			set
+			{
+				if (_maximumColor != value)
+				{
+					_maximumColor = value;
+					OnPropertyChanged("MaximumColor");
+				}
+			}
+		}
+
+		#endregion
+
+		public string SelectedPreset
+		{
+			get { return _selectedPreset; }
+			set
+			{
+				if (_selectedPreset != value)
+				{
+					_selectedPreset = value;
+					OnPropertyChanged("SelectedPreset");
+				}
+			}
+		}
+
+		public void SelectPreset(string preset)
+		{
+			this.SelectedPreset = preset;
+
+			if (preset == "Bone")
+			{
+				this.Opacity = 1.0M;
+				this.Window = 500;
+				this.Level = 400;
+				this.MinimumColor = Color.White;
+				this.MaximumColor = Color.White;
+			}
+			else if (preset == "Blood")
+			{
+				this.Opacity = 0.2M;
+				this.Window = 200;
+				this.Level = 220;
+				this.MinimumColor = Color.FromArgb(200, 4, 10);
+				this.MaximumColor = Color.FromArgb(255, 255, 128);
+			}
+			else if (preset == "Muscle")
+			{
+				this.Opacity = 0.8M;
+				this.Window = 200;
+				this.Level = 100;
+				this.MinimumColor = Color.FromArgb(233, 90, 94);
+				this.MaximumColor = Color.FromArgb(233, 90, 94);
+			}
+			else if (preset == "Soft")
+			{
+				this.Opacity = 0.8M;
+				this.Window = 500;
+				this.Level = -240;
+				this.MinimumColor = Color.FromArgb(251, 138, 96);
+				this.MaximumColor = Color.FromArgb(251, 138, 96);
+			}
+			else
+			{
+				this.Opacity = 0.5M;
+				this.Window = 600;
+				this.Level = -500;
+				this.MinimumColor = Color.FromArgb(254, 142, 126);
+				this.MaximumColor = Color.FromArgb(254, 142, 126);
+			}
+		}
 
 		#region INotifyPropertyChanged Members
 

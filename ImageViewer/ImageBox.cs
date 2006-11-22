@@ -145,7 +145,6 @@ namespace ClearCanvas.ImageViewer
 				else
 				{
 					_displaySet.ImageBox = this;
-					_displaySet.Selected = this.Selected;
 
 					if (_displaySet.ImageViewer == null)
 						_displaySet.ImageViewer = this.ImageViewer;
@@ -153,6 +152,7 @@ namespace ClearCanvas.ImageViewer
 					// Force the images in the display set to fill
 					// the tiles of this image box
 					this.TopLeftPresentationImageIndex = 0;
+					_displaySet.Selected = this.Selected;
 				}
 			}
 		}
@@ -514,8 +514,8 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckMemberIsSet(this.ImageViewer, "ImageBox.ImageViewer");
 
 				this.Selected = true;
-				_displaySet.Selected = true;
 				_parentPhysicalWorkspace.SelectedImageBox = this;
+				_displaySet.Selected = true;
 				this.ImageViewer.EventBroker.OnImageBoxSelected(new ImageBoxSelectedEventArgs(this));
 			}
 		}
@@ -670,7 +670,10 @@ namespace ClearCanvas.ImageViewer
 
 			// If there's an image, put it in a tile
 			if (startImageIndex + tileIndex < _displaySet.PresentationImages.Count)
+			{
 				tile.PresentationImage = this.DisplaySet.PresentationImages[startImageIndex + tileIndex];
+
+			}
 			// If there are no images left (the case when there are fewer images than tiles)
 			// then just set the tile to blank
 			else

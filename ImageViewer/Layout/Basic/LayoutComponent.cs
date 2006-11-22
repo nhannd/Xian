@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public LayoutComponent(IImageViewer imageViewer)
         {
-			this.Subject = imageViewer;
+			this.ImageViewer = imageViewer;
         }
 
         #region ApplicationComponent overrides
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public bool ImageBoxSectionEnabled
         {
-            get { return this.Subject != null; }
+            get { return this.ImageViewer != null; }
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public bool TileSectionEnabled
         {
-            get { return this.ImageBoxSectionEnabled && this.Subject.PhysicalWorkspace.SelectedImageBox != null; }
+            get { return this.ImageBoxSectionEnabled && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
         }
 
         /// <summary>
@@ -118,10 +118,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public void ApplyImageBoxLayout()
         {
-            if (this.Subject == null)
+            if (this.ImageViewer == null)
                 return;
 
-			IPhysicalWorkspace physicalWorkspace = this.Subject.PhysicalWorkspace;
+			IPhysicalWorkspace physicalWorkspace = this.ImageViewer.PhysicalWorkspace;
 			UndoableCommand command = new UndoableCommand(physicalWorkspace);
 			command.Name = SR.CommandLayoutImageBoxes;
 			command.BeginState = physicalWorkspace.CreateMemento();
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			command.EndState = physicalWorkspace.CreateMemento();
 
-			this.Subject.CommandHistory.AddCommand(command);
+			this.ImageViewer.CommandHistory.AddCommand(command);
 
             UpdateFromImageViewer();
         }
@@ -147,10 +147,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public void ApplyTileLayout()
         {
-            if (this.Subject == null)
+            if (this.ImageViewer == null)
                 return;
 
-			IImageBox imageBox = this.Subject.PhysicalWorkspace.SelectedImageBox;
+			IImageBox imageBox = this.ImageViewer.PhysicalWorkspace.SelectedImageBox;
 			UndoableCommand command = new UndoableCommand(imageBox);
 			command.Name = SR.CommandLayoutTiles;
 			command.BeginState = imageBox.CreateMemento();
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			command.EndState = imageBox.CreateMemento();
 
-			this.Subject.CommandHistory.AddCommand(command);
+			this.ImageViewer.CommandHistory.AddCommand(command);
 
             UpdateFromImageViewer();
         }
@@ -173,15 +173,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		protected override void UpdateFromImageViewer()
 		{
-			if (this.Subject != null)
+			if (this.ImageViewer != null)
 			{
-				_imageBoxRows = this.Subject.PhysicalWorkspace.Rows;
-				_imageBoxColumns = this.Subject.PhysicalWorkspace.Columns;
+				_imageBoxRows = this.ImageViewer.PhysicalWorkspace.Rows;
+				_imageBoxColumns = this.ImageViewer.PhysicalWorkspace.Columns;
 
-				if (this.Subject.PhysicalWorkspace.SelectedImageBox != null)
+				if (this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null)
 				{
-					_tileRows = this.Subject.PhysicalWorkspace.SelectedImageBox.Rows;
-					_tileColumns = this.Subject.PhysicalWorkspace.SelectedImageBox.Columns;
+					_tileRows = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Rows;
+					_tileColumns = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Columns;
 				}
 			}
 

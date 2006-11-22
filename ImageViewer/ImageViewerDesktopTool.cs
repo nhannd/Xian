@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (_imageViewerToolComponent != null)
 			{
-				_imageViewerToolComponent.Subject = GetSubjectImageViewer();
+				_imageViewerToolComponent.ImageViewer = GetSubjectImageViewer();
 			}
 		}
 

@@ -30,7 +30,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			_component.TissueSettingsCollection.ItemAdded += new EventHandler<TissueSettingsEventArgs>(OnTissueSettingsAdded);
 			AddDefaultTissueSettings();
 			this._createVolumeButton.Click += new EventHandler(OnCreateVolumeButtonClick);
-			_tabControl.Selected += new TabControlEventHandler(OnTabSelected);
 
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _component;
@@ -43,9 +42,16 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 
 		private void AddDefaultTissueSettings()
 		{
-			_component.TissueSettingsCollection.Add(new TissueSettings());
-			_component.TissueSettingsCollection.Add(new TissueSettings());
-			_component.TissueSettingsCollection.Add(new TissueSettings());
+			TissueSettings tissue = new TissueSettings();
+			tissue.SelectPreset("Bone");
+
+			_component.TissueSettingsCollection.Add(tissue);
+
+			tissue = new TissueSettings();
+			tissue.SelectPreset("Blood");
+
+			_component.TissueSettingsCollection.Add(tissue);
+			//_component.TissueSettingsCollection.Add(new TissueSettings());
 		}
 
 		void OnTissueSettingsAdded(object sender, TissueSettingsEventArgs e)
@@ -60,11 +66,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 		void OnCreateVolumeButtonClick(object sender, EventArgs e)
 		{
 			_component.CreateVolume();
-		}
-
-		void OnTabSelected(object sender, TabControlEventArgs e)
-		{
-			_component.SelectTissue(e.TabPageIndex);
 		}
 
 		void OnSubjectChanged(object sender, EventArgs e)

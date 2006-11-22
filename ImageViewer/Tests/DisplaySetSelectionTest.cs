@@ -62,7 +62,38 @@ namespace ClearCanvas.ImageViewer.Tests
 			//Assert.IsTrue(tile.ContextMenuEnabled);
 		}
 
+		[Test]
+		public void ReplaceDisplaySet()
+		{
+			IDisplaySet displaySet1 = new DisplaySet();
+			IPresentationImage image1 = new TestPresentationImage();
+			displaySet1.PresentationImages.Add(image1);
 
+			IDisplaySet displaySet2 = new DisplaySet();
+			IPresentationImage image2 = new TestPresentationImage();
+			displaySet2.PresentationImages.Add(image2);
+
+			IImageViewer viewer = new ImageViewerComponent("test");
+
+			IImageBox imageBox1 = new ImageBox();
+			viewer.PhysicalWorkspace.ImageBoxes.Add(imageBox1);
+
+			imageBox1.SetTileGrid(2, 2);
+			imageBox1.DisplaySet = displaySet1;
+			imageBox1[0,0].Select();
+
+			Assert.IsTrue(displaySet1.Selected);
+			Assert.IsTrue(image1.Selected);
+
+			imageBox1.DisplaySet = displaySet2;
+
+			Assert.IsFalse(displaySet1.Selected);
+			Assert.IsFalse(image1.Selected);
+
+			Assert.IsTrue(displaySet2.Selected);
+			Assert.IsTrue(image2.Selected);
+
+		}
 	}
 }
 

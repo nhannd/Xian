@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer
 		/// Gets/sets the subject <see cref="IImageViewer"/> that this component is associated with.  Note that
 		/// null is a valid value.  Setting this property to null dissociates it from any image viewer.
 		/// </summary>
-		public IImageViewer Subject
+		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
 			set
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer
 					// stop listening to the old image viewer, if one was set
 					if (_imageViewer != null)
 					{
-						_imageViewer.EventBroker.TileSelected -= OnTileSelected;
+						_imageViewer.EventBroker.DisplaySetSelected -= OnTileSelected;
 					}
 
 					_imageViewer = value;
@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer
 					// start listening to the new image viewer, if one has been set
 					if (_imageViewer != null)
 					{
-						_imageViewer.EventBroker.TileSelected += OnTileSelected;
+						_imageViewer.EventBroker.DisplaySetSelected += OnTileSelected;
 					}
 					UpdateFromImageViewer();
 				}
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void OnTileSelected(object sender, TileSelectedEventArgs e)
+		private void OnTileSelected(object sender, DisplaySetSelectedEventArgs e)
 		{
 			UpdateFromImageViewer();
 		}

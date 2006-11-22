@@ -54,17 +54,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 					ShelfDisplayHint.DockLeft,
 					delegate(IApplicationComponent component) { this.ImageViewerToolComponent = null; });
 			}
-
-
-			//IDisplaySet selectedDisplaySet = this.ImageViewer.SelectedImageBox.DisplaySet;
-			//VolumePresentationImage image = new VolumePresentationImage(selectedDisplaySet);
-			//IDisplaySet displaySet = new DisplaySet();
-			//displaySet.Name = String.Format("{0} (3D)", selectedDisplaySet.Name);
-			//displaySet.PresentationImages.Add(image);
-			//this.ImageViewer.LogicalWorkspace.DisplaySets.Add(displaySet);
-			//IImageBox imageBox = this.ImageViewer.SelectedImageBox;
-			//imageBox.DisplaySet = displaySet;
-			//imageBox.Draw();
 		}
 	}
 }

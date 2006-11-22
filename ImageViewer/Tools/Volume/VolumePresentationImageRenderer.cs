@@ -5,13 +5,14 @@ using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.Common;
 using vtk;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
 	public class VolumePresentationImageRenderer : IRenderer
 	{
 		private VtkRenderingSurface _surface;
-		private bool _propCreated = false;
+		private bool _propsCreated = false;
 
 		public VolumePresentationImageRenderer()
 		{
@@ -30,10 +31,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			if (_surface == null)
 				_surface = new VtkRenderingSurface(windowID);
 			else
-			{
-				if (_surface.WindowID == IntPtr.Zero)
-					_surface.WindowID = windowID;
-			}
+				_surface.WindowID = windowID;
 
 			_surface.SetSize(width, height);
 
@@ -42,22 +40,25 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public void Draw(DrawArgs args)
 		{
-			if (!_propCreated && _surface != null)
+			if (!_propsCreated && _surface != null)
 			{
-				AddProp(args);
-				_propCreated = true;
+				AddLayers(args);
+				_propsCreated = true;
 			}
 			_surface.Draw();
 		}
 
-		private void AddProp(DrawArgs args)
+		private void AddLayers(DrawArgs args)
 		{
-			VolumePresentationImage volumePresentationImage = args.PresentationImage as VolumePresentationImage;
-			vtkProp vtkProp = volumePresentationImage.VtkProp;
-
 			vtk.vtkRenderer renderer = new vtk.vtkRenderer();
-			renderer.AddViewProp(vtkProp);
 			renderer.SetBackground(0.0f, 0.0f, 0.0f);
+
+			LayerCollection layers = args.PresentationImage.LayerManager.RootLayerGroup.Layers;
+
+			foreach (VolumeLayer volumeLayer in layers)
+			{
+				renderer.AddViewProp(volumeLayer.VtkProp);
+			}
 
 			_surface.RenderWindow.AddRenderer(renderer);
 		}
