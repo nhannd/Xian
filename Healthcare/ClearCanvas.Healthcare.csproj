@@ -59,6 +59,7 @@
     <Compile Include="PatientClass.cs" />
     <Compile Include="PatientIdentifierType.cs" />
     <Compile Include="PatientProfile.cs" />
+    <Compile Include="PatientProfileDiscrepancyTest.cs" />
     <Compile Include="PatientProfileDiscrepancy.cs" />
     <Compile Include="PatientProfileMatch.cs" />
     <Compile Include="PatientReconciliationException.cs" />

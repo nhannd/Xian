@@ -48,7 +48,7 @@ namespace ClearCanvas.Healthcare {
             set { _dateOfBirth = value.Date; }
         }
 
-        public Address CurrentHomeAddress
+        public virtual Address CurrentHomeAddress
         {
             get
             {
@@ -57,7 +57,7 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public Address CurrentWorkAddress
+        public virtual Address CurrentWorkAddress
         {
             get
             {
@@ -66,7 +66,7 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public TelephoneNumber CurrentHomePhone
+        public virtual TelephoneNumber CurrentHomePhone
         {
             get
             {
@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public TelephoneNumber CurrentWorkPhone
+        public virtual TelephoneNumber CurrentWorkPhone
         {
             get
             {
