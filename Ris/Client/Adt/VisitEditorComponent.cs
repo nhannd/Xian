@@ -50,12 +50,20 @@ namespace ClearCanvas.Ris.Client.Adt
             if (_isNew)
             {
                 _visit = new Visit();
+
+                ///TODO: expose facility in the UI
+                IList<Facility> facilities = _adtReferenceDataService.GetAllFacilities();
+                if (facilities.Count == 0)
+                {
+                    _adtReferenceDataService.AddFacility("Test Facility");
+                    facilities = _adtReferenceDataService.GetAllFacilities();
+                }
+
+                _visit.Facility = facilities[0];
             }
             else
             {
                 _visit = _adtService.LoadVisit(_visitRef, true);
-                //this.Host.SetTitle(
-                //    string.Format(SR.PatientComponentTitle, _profile.Name.Format(), _profile.Mrn.Format()));
             }
 
 
@@ -108,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             if (_isNew)
             {
-                _adtService.UpdateVisit(_visit);
+                _adtService.SaveNewVisit(_visit, _patientRef);
                 _visitRef = new EntityRef<Visit>(_visit);
             }
             else

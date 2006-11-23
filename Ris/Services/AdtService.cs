@@ -148,6 +148,14 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
+        public void SaveNewVisit(Visit visit, EntityRef<Patient> patientRef)
+        {
+            IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
+            visit.Patient = broker.Load(patientRef);
+            this.CurrentContext.Lock(visit, DirtyState.New);
+        }
+
+        [UpdateOperation]
         public void UpdateVisit(Visit visit)
         {
             this.CurrentContext.Lock(visit, DirtyState.Dirty);

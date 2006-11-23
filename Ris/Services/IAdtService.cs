@@ -79,6 +79,13 @@ namespace ClearCanvas.Ris.Services
         void UpdatePatientProfile(PatientProfile profile);
 
         /// <summary>
+        /// Saves a new visit entity and associates it with the specified patient
+        /// </summary>
+        /// <param name="visit"></param>
+        /// <param name="patientRef"></param>
+        void SaveNewVisit(Visit visit, EntityRef<Patient> patientRef);
+
+        /// <summary>
         /// Updates the specified visit
         /// </summary>
         /// <param name="visit"></param>

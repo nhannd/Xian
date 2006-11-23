@@ -55,6 +55,11 @@ namespace ClearCanvas.Ris.Client.Adt
             _ambulatoryStatuses = service.GetAmbulatoryStatusEnumTable();
             _visitStatuses = service.GetVisitStatusEnumTable();
 
+            if (_visit.VisitNumber.AssigningAuthority == null)
+            {
+                _visit.VisitNumber.AssigningAuthority = _dummySiteChoices[0];
+            }
+
             // TODO prepare the component for its live phase
             base.Start();
         }
