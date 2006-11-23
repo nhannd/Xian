@@ -26,16 +26,19 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		private Color _minimumColor;
 		private Color _maximumColor;
 
-		private string[] _presets = {"Bone", "Blood", "Muscle", "Soft", "Lung"};
 		private string _selectedPreset;
 
 		public TissueSettings()
 		{
 		}
 
-		public string[] Presets
+		static public string[] Presets
 		{
-			get { return _presets; }
+			get 
+			{ 
+				string[] presets = {"Bone", "Blood", "Muscle", "Soft", "Lung"};
+				return presets;
+			}
 		}
 
 		public bool TissueVisible

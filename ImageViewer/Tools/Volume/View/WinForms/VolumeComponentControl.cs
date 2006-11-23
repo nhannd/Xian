@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Layers;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 {
@@ -27,8 +28,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 
 			InitializeComponent();
 
-			_component.TissueSettingsCollection.ItemAdded += new EventHandler<TissueSettingsEventArgs>(OnTissueSettingsAdded);
-			AddDefaultTissueSettings();
+			AddDefaultTabs();
+
 			this._createVolumeButton.Click += new EventHandler(OnCreateVolumeButtonClick);
 
 			_bindingSource = new BindingSource();
@@ -39,28 +40,16 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			_tabControl.DataBindings.Add("Enabled", _bindingSource, "VolumeSettingsEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
-
-		private void AddDefaultTissueSettings()
+		void AddDefaultTabs()
 		{
-			TissueSettings tissue = new TissueSettings();
-			tissue.SelectPreset("Bone");
-
-			_component.TissueSettingsCollection.Add(tissue);
-
-			tissue = new TissueSettings();
-			tissue.SelectPreset("Blood");
-
-			_component.TissueSettingsCollection.Add(tissue);
-			//_component.TissueSettingsCollection.Add(new TissueSettings());
-		}
-
-		void OnTissueSettingsAdded(object sender, TissueSettingsEventArgs e)
-		{
-			TabPage tabPage = new TabPage("Tissue");
-			TissueControl control = new TissueControl(e.TissueSettings);
-			tabPage.Controls.Add(control);
-			control.Dock = DockStyle.Fill;
-			_tabControl.TabPages.Add(tabPage);
+			for (int i = 0; i < 2; i++)
+			{
+				TabPage tabPage = new TabPage("Tissue");
+				TissueControl control = new TissueControl();
+				tabPage.Controls.Add(control);
+				control.Dock = DockStyle.Fill;
+				_tabControl.TabPages.Add(tabPage);
+			}
 		}
 
 		void OnCreateVolumeButtonClick(object sender, EventArgs e)
@@ -71,7 +60,32 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 		void OnSubjectChanged(object sender, EventArgs e)
 		{
 			_bindingSource.ResetBindings(false);
+
+			UpdateTabControl();
 		}
 
+		private void UpdateTabControl()
+		{
+			if (_component.VolumeLayers == null)
+				return;
+
+			int i = 0;
+
+			foreach (Layer layer in _component.VolumeLayers)
+			{
+				VolumeLayer volumeLayer = layer as VolumeLayer;
+
+				if (volumeLayer != null)
+				{
+					TabPage page = _tabControl.TabPages[i];
+					TissueControl control = page.Controls[0] as TissueControl;
+
+					if (control != null)
+						control.TissueSettings = volumeLayer.TissueSettings;
+				}
+
+				i++;
+			}
+		}
     }
 }

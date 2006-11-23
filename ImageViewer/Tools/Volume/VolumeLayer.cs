@@ -20,6 +20,11 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			_tissueSettings.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(OnTissueSettingsChanged);
 		}
 
+		public TissueSettings TissueSettings
+		{
+			get { return _tissueSettings; }
+		}
+
 		public vtkProp VtkProp
 		{
 			get 
@@ -94,12 +99,13 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			volumeProperty.SetSpecular(.3);
 			volumeProperty.SetSpecularPower(20);
 
-			//vtkOpenGLVolumeTextureMapper3D volumeMapper = new vtkOpenGLVolumeTextureMapper3D();
-			//volumeMapper.SetPreferredMethodToNVidia();
-			//volumeMapper.SetInput(imageData);
-
-			vtkFixedPointVolumeRayCastMapper volumeMapper = new vtkFixedPointVolumeRayCastMapper();
+			vtkOpenGLVolumeTextureMapper3D volumeMapper = new vtkOpenGLVolumeTextureMapper3D();
+			volumeMapper.SetPreferredMethodToNVidia();
 			volumeMapper.SetInput(imageData);
+			int supported = volumeMapper.IsRenderSupported(volumeProperty);
+
+			//vtkFixedPointVolumeRayCastMapper volumeMapper = new vtkFixedPointVolumeRayCastMapper();
+			//volumeMapper.SetInput(imageData);
 
 			vtkVolume volume = new vtkVolume();
 			volume.SetMapper(volumeMapper);

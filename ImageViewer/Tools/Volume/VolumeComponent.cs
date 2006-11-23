@@ -31,7 +31,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		public VolumeComponent(IImageViewer imageViewer)
 		{
 			this.ImageViewer = imageViewer;
-			this.TissueSettingsCollection.ItemAdded += new EventHandler<TissueSettingsEventArgs>(OnTissueSettingsAdded);
 		}
 
 		public bool CreateVolumeEnabled
@@ -70,17 +69,19 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		public TissueSettingsCollection TissueSettingsCollection
+		public LayerCollection VolumeLayers
 		{
-			get 
+			get
 			{
-				if (_tissueSettingsCollection == null)
-					_tissueSettingsCollection = new TissueSettingsCollection();
+				if (this.ImageViewer == null)
+					return null;
 
-				return _tissueSettingsCollection; 
+				if (this.ImageViewer.SelectedPresentationImage == null)
+					return null;
+
+				return this.ImageViewer.SelectedPresentationImage.LayerManager.RootLayerGroup.Layers;
 			}
 		}
-
 
 		#region IApplicationComponent methods
 
@@ -130,15 +131,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			LayerCollection layers = image.LayerManager.RootLayerGroup.Layers;
 
-			foreach (TissueSettings tissueSettings in this.TissueSettingsCollection)
-			{
-				layers.Add(new VolumeLayer(tissueSettings));
-			}
+			TissueSettings tissue = new TissueSettings();
+			tissue.SelectPreset("Bone");
+			layers.Add(new VolumeLayer(tissue));
+
+			tissue = new TissueSettings();
+			tissue.SelectPreset("Blood");
+			layers.Add(new VolumeLayer(tissue));
 		}
 
-		private void OnTissueSettingsAdded(object sender, TissueSettingsEventArgs e)
-		{
-
-		}
 	}
 }
