@@ -15,13 +15,13 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [MenuAction("Dump", "global-menus/Utilities/DicomEditor")]
-    [ClickHandler("Dump", "Dump")]
-    [MenuAction("Dump", "explorerlocal-contextmenu/DumpFiles")]
-    [ClickHandler("Dump", "Dump")]
-    [Tooltip("Dump", "OpenDicomFilesVerbose")]
-    [IconSet("Dump", IconScheme.Colour, "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png")]
-    [EnabledStateObserver("Dump", "Enabled", "EnabledChanged")]
+    [MenuAction("activate", "explorerlocal-contextmenu/DumpFiles")]
+    [ClickHandler("activate", "Dump")]
+    [MenuAction("activate", "global-menus/Utilities/DicomEditor")]
+    [ClickHandler("activate", "Dump")]
+    [Tooltip("activate", "OpenDicomFilesVerbose")]
+    [IconSet("activate", IconScheme.Colour, "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png")]
+    [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
@@ -68,19 +68,59 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         private void Dump()
         {
-            if (_component == null)
+            if (this.ContextBase is IImageViewerToolContext)
             {
-                _component = new DicomEditorComponent();
-                
-                DicomEditorFileDumper dumper = DicomEditorFileDumper.New(this.ContextBase, _component);
-                dumper.LaunchAsShelf();
-                _component.Files = dumper.GetFiles();
+                IImageViewerToolContext context = this.ContextBase as IImageViewerToolContext;
+                DicomPresentationImage image = context.Viewer.SelectedPresentationImage as DicomPresentationImage;
+                FileDicomImage file = image.ImageSop.NativeDicomObject as FileDicomImage;
+
+                if (_component == null)
+                {
+                    _component = new DicomEditorComponent();
+
+                    ApplicationComponent.LaunchAsShelf(
+                                context.DesktopWindow,
+                                _component,
+                                "DICOM Editor",
+                                ShelfDisplayHint.DockRight,
+                                delegate(IApplicationComponent component) { _component = null; });
+
+                    _component.Files = new FileDicomImage[1] { file };
+                }
+                else
+                {
+                    _component.Files = new FileDicomImage[1] { file };
+                }
             }
-            else
+            else if (this.ContextBase is ILocalImageExplorerToolContext)
             {
-                DicomEditorFileDumper dumper = DicomEditorFileDumper.New(this.ContextBase, _component);
-                _component.Files = dumper.GetFiles();
-            }
+                ILocalImageExplorerToolContext context = this.ContextBase as ILocalImageExplorerToolContext;
+                List<FileDicomImage> files = new List<FileDicomImage>();
+
+                foreach (string rawPath in context.SelectedPaths)
+                {
+                    FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(delegate(string path) { files.Add(new FileDicomImage(path)); });
+                    FileProcessor.Process(rawPath, "*.*", process, true);
+                }
+
+                if (_component == null)
+                {
+                    _component = new DicomEditorComponent();
+
+                    ApplicationComponent.LaunchAsShelf(
+                                context.DesktopWindow,
+                                _component,
+                                "DICOM Editor",
+                                ShelfDisplayHint.DockRight,
+                                delegate(IApplicationComponent component) { _component = null; });
+
+                    _component.Files = files;
+                }
+                else
+                {
+                    _component.Files = files;
+                }
+            }            
         }
 
         private bool _enabled;

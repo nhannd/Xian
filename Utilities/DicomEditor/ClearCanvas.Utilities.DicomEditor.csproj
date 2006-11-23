@@ -52,7 +52,6 @@
     <Compile Include="CreateTool.cs" />
     <Compile Include="DeleteTool.cs" />
     <Compile Include="DicomEditorCreateToolComponent.cs" />
-    <Compile Include="DicomEditorFileDumper.cs" />
     <Compile Include="DicomEditorTag.cs" />
     <Compile Include="DicomEditorTagKey.cs" />
     <Compile Include="DicomFileAccessor.cs" />
