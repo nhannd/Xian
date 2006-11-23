@@ -4,6 +4,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Healthcare {
@@ -51,14 +52,8 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                foreach (Address address in this.Addresses)
-                {
-                    if (address.Type == AddressType.R && address.IsCurrent)
-                    {
-                        return address;
-                    }
-                }
-                return null;
+                return CollectionUtils.SelectFirst<Address>(this.Addresses,
+                    delegate(Address address) { return address.Type == AddressType.R && address.IsCurrent; });
             }
         }
 
@@ -66,14 +61,8 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                foreach (Address address in this.Addresses)
-                {
-                    if (address.Type == AddressType.B && address.IsCurrent)
-                    {
-                        return address;
-                    }
-                }
-                return null;
+                return CollectionUtils.SelectFirst<Address>(this.Addresses,
+                   delegate(Address address) { return address.Type == AddressType.B && address.IsCurrent; });
             }
         }
 
@@ -81,14 +70,8 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                foreach (TelephoneNumber phone in this.TelephoneNumbers)
-                {
-                    if (phone.Use == TelephoneUse.PRN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent)
-                    {
-                        return phone;
-                    }
-                }
-                return null;
+                return CollectionUtils.SelectFirst<TelephoneNumber>(this.TelephoneNumbers,
+                  delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.PRN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
             }
         }
 
@@ -96,14 +79,8 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                foreach (TelephoneNumber phone in this.TelephoneNumbers)
-                {
-                    if (phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent)
-                    {
-                        return phone;
-                    }
-                }
-                return null;
+                return CollectionUtils.SelectFirst<TelephoneNumber>(this.TelephoneNumbers,
+                    delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
             }
         }
     }
