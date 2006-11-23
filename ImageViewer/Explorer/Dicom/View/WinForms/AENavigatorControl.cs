@@ -51,8 +51,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _aeTreeView.SelectedNode = _lastClickedNode.Parent;
                 _lastClickedNode.Remove();
                 _lastClickedNode = _aeTreeView.SelectedNode;
-                IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
-                _component.SelectChanged(dataNode);
             }
             else if (_component.UpdateType == (int)ServerUpdateType.Edit)
             {
@@ -62,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _lastClickedNode.ToolTipText = dataNode.ServerDetails;
                 RefreshToolTipText(_aeTreeView.Nodes[1]);
             }
-            _component.FireSelectedServerChangedEvent();
+            _component.SelectChanged((IDicomServer)_lastClickedNode.Tag);
         }
 
 

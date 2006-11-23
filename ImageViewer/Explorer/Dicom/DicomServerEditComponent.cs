@@ -60,7 +60,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 ((DicomServerGroup)_dicomServerTree.CurrentServer).AddChild(ds);
-                _dicomServerTree.ChildServers.Add(ds);
             }
             _dicomServerTree.CurrentServer = ds;
             _dicomServerTree.SaveDicomServers();

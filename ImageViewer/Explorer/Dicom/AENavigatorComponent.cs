@@ -157,11 +157,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
-        public void FireSelectedServerChangedEvent()
-        {
-            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
-        }
-
         public void SelectChanged(IDicomServer dataNode)
         {
             if (dataNode.IsServer)
@@ -235,6 +230,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (!dataNodeNew.IsServer && dataNodeParent.ServerPath.StartsWith(dataNodeNew.ServerPath + "/" + dataNodeNew.ServerName))
                 return true;
             return false;
+        }
+
+        private void FireSelectedServerChangedEvent()
+        {
+            EventsHelper.Fire(_selectedServerChanged, this, EventArgs.Empty);
         }
 
         #region IApplicationComponent overrides
