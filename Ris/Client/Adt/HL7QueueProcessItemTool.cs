@@ -65,7 +65,22 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IHL7QueueService service = ApplicationContext.GetService<IHL7QueueService>();
                 HL7QueueItem queueItem = service.LoadHL7QueueItem(queueItemRef);
-                service.ProcessHL7QueueItem(queueItem);
+
+                try
+                {
+                    using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+                    {
+                        service.ProcessHL7QueueItem(queueItem);
+                        service.SetHL7QueueItemComplete(queueItem);
+                        scope.Complete();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log("Unable to process HL7 queue item: " + queueItem.ToString());
+                    Platform.Log("Exception thrown: " + e.Message);
+                    service.SetHL7QueueItemError(queueItem, e.Message);
+                }          
             }
             catch (Exception e)
             {

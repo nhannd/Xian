@@ -91,51 +91,47 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public IList<Patient> ProcessHL7QueueItem(HL7QueueItem hl7QueueItem)
         {
-            if (hl7QueueItem.Status.Code == HL7MessageStatusCode.C)
-            {
-                //throw new Exception("Queue item has already been processed");
-            }
-
             IList<Patient> referencedPatients = null;
 
-            try
+            //IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItem.Message);
+            //processor.Process();
+            //foreach (Entity newEntity in processor.NewEntities)
+            //{
+            //    this.CurrentContext.Lock(newEntity, DirtyState.New);
+            //}
+            //foreach (Entity dirtyEntity in processor.DirtyEntities)
+            //{
+            //    this.CurrentContext.Lock(dirtyEntity, DirtyState.Dirty);
+            //}
+            
+            referencedPatients = ProcessHL7QueueItemMessage(hl7QueueItem.Message);
+
+            foreach (Patient patient in referencedPatients)
             {
-                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-                {
-                    referencedPatients = ProcessHL7QueueItemMessage(hl7QueueItem.Message);
-
-                    foreach (Patient patient in referencedPatients)
-                    {
-                        this.CurrentContext.Lock(patient, DirtyState.New);
-                    }
-
-                    this.CurrentContext.Lock(hl7QueueItem);
-                    hl7QueueItem.SetComplete();
-
-                    scope.Complete();
-                }
-            }
-            catch (Exception e)
-            {
-                Platform.Log("Unable to process HL7 queue item: " + hl7QueueItem.ToString());
-                Platform.Log("Exception thrown: " + e.Message);
-
-                this.CurrentContext.Lock(hl7QueueItem);
-                hl7QueueItem.SetError(e.Message);
-
-                if (referencedPatients != null)
-                {
-                    referencedPatients.Clear();
-                }
+                this.CurrentContext.Lock(patient, DirtyState.New);
             }
 
             return referencedPatients;
         }
 
         [UpdateOperation]
+        public void SetHL7QueueItemComplete(HL7QueueItem item)
+        {
+            this.CurrentContext.Lock(item);
+            item.SetComplete();
+        }
+
+        [UpdateOperation]
+        public void SetHL7QueueItemError(HL7QueueItem item, string errorMessage)
+        {
+            this.CurrentContext.Lock(item);
+            item.SetError(errorMessage);
+        }
+
+        [UpdateOperation]
         public void EnqueueHL7QueueItem(ClearCanvas.HL7.HL7QueueItem item)
         {
-            this.CurrentContext.Lock(item, DirtyState.Dirty);
+            this.CurrentContext.Lock(item, DirtyState.New);
         }
 
         [UpdateOperation]
