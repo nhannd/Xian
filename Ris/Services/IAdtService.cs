@@ -60,6 +60,16 @@ namespace ClearCanvas.Ris.Services
         IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef);
 
         /// <summary>
+        /// Loads specified profiles, with details, and computes the discrepancy according to the specified set
+        /// of testable discrepancies.
+        /// </summary>
+        /// <param name="profileRefs"></param>
+        /// <param name="testables"></param>
+        /// <returns></returns>
+        PatientProfileDiff LoadPatientProfileDiff(EntityRef<PatientProfile>[] profileRefs, PatientProfileDiscrepancy testables);
+ 
+            
+        /// <summary>
         /// Reconciles the specified list of patients to the specified patient.
         /// </summary>
         /// <param name="toBeKept">Destination patient</param>

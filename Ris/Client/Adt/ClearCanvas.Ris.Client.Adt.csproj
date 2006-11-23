@@ -47,6 +47,7 @@
     <Compile Include="OrderListComponent.cs" />
     <Compile Include="HL7QueueProcessItemTool.cs" />
     <Compile Include="PatientEditTool.cs" />
+    <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconciliation.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
     <Compile Include="CrudActionModel.cs" />
@@ -189,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="PatientProfileDiff.html" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolMedium.png" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolLarge.png" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolSmall.png" />

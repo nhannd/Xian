@@ -29,13 +29,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _targetTableView.Table = _component.TargetProfileTable;
             _reconciliationTableView.Table = _component.ReconciliationProfileTable;
 
-            Control targetPreview = (Control)_component.TargetPreviewComponentView.GuiElement;
-            targetPreview.Dock = DockStyle.Fill;
-            _leftPreviewPanel.Controls.Add(targetPreview);
-
-            Control recPreview = (Control)_component.ReconciliationPreviewComponentView.GuiElement;
-            recPreview.Dock = DockStyle.Fill;
-            _rightPreviewPanel.Controls.Add(recPreview);
+            Control diffView = (Control)_component.DiffComponentView.GuiElement;
+            diffView.Dock = DockStyle.Fill;
+            _diffViewPanel.Controls.Add(diffView);
 
             _reconcileButton.DataBindings.Add("Enabled", _component, "ReconcileEnabled");
         }

@@ -26,12 +26,12 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PatientReconciliationComponentViewExtensionPoint))]
     public class ReconciliationComponent : ApplicationComponent
     {
-        class PreviewHost : ApplicationComponentHost
+        class DiffHost : ApplicationComponentHost
         {
             private ReconciliationComponent _owner;
 
-            public PreviewHost(ReconciliationComponent owner, PatientProfilePreviewComponent preview)
-                :base(preview)
+            public DiffHost(ReconciliationComponent owner, PatientProfileDiffComponent diff)
+                : base(diff)
 	        {
                 _owner = owner;
 	        }
@@ -42,11 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private PatientProfilePreviewComponent _targetPreviewComponent;
-        private ApplicationComponentHost _targetPreviewHost;
-
-        private PatientProfilePreviewComponent _reconciliationPreviewComponent;
-        private ApplicationComponentHost _reconciliationPreviewHost;
+        private PatientProfileDiffComponent _diffComponent;
+        private ApplicationComponentHost _diffComponentHost;
 
         private PatientProfile _selectedTargetProfile;
         private PatientProfile _selectedReconciliationProfile;
@@ -69,12 +66,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            // create the preview components
-            _targetPreviewHost = new PreviewHost(this, _targetPreviewComponent = new PatientProfilePreviewComponent(false, false));
-            _targetPreviewHost.StartComponent();
-
-            _reconciliationPreviewHost = new PreviewHost(this, _reconciliationPreviewComponent = new PatientProfilePreviewComponent(false, false));
-            _reconciliationPreviewHost.StartComponent();
+            // create the diff component
+            _diffComponentHost = new DiffHost(this, _diffComponent = new PatientProfileDiffComponent());
+            _diffComponentHost.StartComponent();
 
             // get the ADT service
             _adtService = ApplicationContext.GetService<IAdtService>();
@@ -103,19 +97,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Stop()
         {
-            _targetPreviewHost.StopComponent();
-            _reconciliationPreviewHost.StopComponent();
+            _diffComponentHost.StopComponent();
             base.Stop();
         }
 
-        public IApplicationComponentView TargetPreviewComponentView
+        public IApplicationComponentView DiffComponentView
         {
-            get { return _targetPreviewHost.ComponentView; }
-        }
-
-        public IApplicationComponentView ReconciliationPreviewComponentView
-        {
-            get { return _reconciliationPreviewHost.ComponentView; }
+            get { return _diffComponentHost.ComponentView; }
         }
 
         #region Presentation Model
@@ -136,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (profile != _selectedTargetProfile)
             {
                 _selectedTargetProfile = profile;
-                _targetPreviewComponent.PatientProfileRef = _selectedTargetProfile == null ? null : new EntityRef<PatientProfile>(_selectedTargetProfile);
+                UpdateDiff();
             }
         }
 
@@ -147,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (profile != _selectedReconciliationProfile)
             {
                 _selectedReconciliationProfile = profile;
-                _reconciliationPreviewComponent.PatientProfileRef = _selectedReconciliationProfile == null ? null : new EntityRef<PatientProfile>(_selectedReconciliationProfile);
+                UpdateDiff();
             }
         }
 
@@ -180,6 +168,20 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         #endregion
+
+        private void UpdateDiff()
+        {
+            if (_selectedTargetProfile == null || _selectedReconciliationProfile == null)
+            {
+                _diffComponent.ProfilesToCompare = null;
+            }
+            else
+            {
+                _diffComponent.ProfilesToCompare = new EntityRef<PatientProfile>[] {
+                    new EntityRef<PatientProfile>(_selectedTargetProfile),
+                    new EntityRef<PatientProfile>(_selectedReconciliationProfile) };
+            }
+        }
 
         private void DoReconciliation()
         {

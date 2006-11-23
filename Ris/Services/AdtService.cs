@@ -107,6 +107,26 @@ namespace ClearCanvas.Ris.Services
             return strategy.FindReconciliationMatches(patientProfile, broker);
         }
 
+        [ReadOperation]
+        public PatientProfileDiff LoadPatientProfileDiff(EntityRef<PatientProfile>[] profileRefs, PatientProfileDiscrepancy testables)
+        {
+            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            List<PatientProfile> profiles = new List<PatientProfile>();
+
+            // load each profile, and load its details
+            foreach (EntityRef<PatientProfile> profileRef in profileRefs)
+            {
+                PatientProfile profile = broker.Load(profileRef);
+                broker.LoadAddressesForPatientProfile(profile);
+                broker.LoadTelephoneNumbersForPatientProfile(profile);
+                profiles.Add(profile);
+            }
+
+            PatientProfileDiscrepancy discrepancies = PatientProfileDiscrepancyTest.GetDiscrepancies(profiles, testables);
+
+            return new PatientProfileDiff(profiles.ToArray(), discrepancies);
+        }
+
         [UpdateOperation]
         public void ReconcilePatients(Patient destPatient, IList<Patient> sourcePatients)
         {
