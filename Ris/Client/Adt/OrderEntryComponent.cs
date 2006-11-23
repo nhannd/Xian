@@ -56,13 +56,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private VisitTable _visitChoices;
         private Visit _selectedVisit;
 
-        private List<DiagnosticService> _diagnosticServiceChoices;
+        private IList<DiagnosticService> _diagnosticServiceChoices;
         private DiagnosticService _selectedDiagnosticService;
 
-        private List<Facility> _facilityChoices;
+        private IList<Facility> _facilityChoices;
         private Facility _selectedFacility;
 
-        private List<Practitioner> _orderingPhysicianChoices;
+        private IList<Practitioner> _orderingPhysicianChoices;
         private Practitioner _selectedOrderingPhysician;
 
         private OrderPriorityEnumTable _priorityChoices;
@@ -89,13 +89,11 @@ namespace ClearCanvas.Ris.Client.Adt
             _visitChoices = new VisitTable();
             _visitChoices.Items.AddRange(visits);
 
-            _diagnosticServiceChoices = new List<DiagnosticService>();
-            _diagnosticServiceChoices.AddRange(_orderEntryService.ListDiagnosticServiceChoices());
-
-            _facilityChoices = new List<Facility>(_orderEntryService.ListOrderingFacilityChoices());
+            _diagnosticServiceChoices = _orderEntryService.ListDiagnosticServiceChoices();
+            _facilityChoices = _orderEntryService.ListOrderingFacilityChoices();
+            _orderingPhysicianChoices = _orderEntryService.ListOrderingPhysicianChoices();
             _priorityChoices = _orderEntryService.GetOrderPriorityEnumTable();
 
-            _orderingPhysicianChoices = new List<Practitioner>(_orderEntryService.ListOrderingPhysicianChoices());
 
             base.Start();
         }
@@ -121,17 +119,30 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public IList DiagnosticServiceChoices
         {
-            get { return _diagnosticServiceChoices; }
+            get
+            {
+                List<string> dsStrings = new List<string>();
+                dsStrings.Add("");
+                dsStrings.AddRange(
+                    CollectionUtils.Map<DiagnosticService, string>(
+                        _diagnosticServiceChoices, delegate(DiagnosticService ds) { return ds.Format(); }));
+
+                return dsStrings;
+            }
         }
 
-        public DiagnosticService SelectedDiagnosticService
+        public string SelectedDiagnosticService
         {
-            get { return _selectedDiagnosticService; }
+            get { return _selectedDiagnosticService == null ? "" : _selectedDiagnosticService.Format(); }
             set
             {
-                if (value == null || !value.Equals(_selectedDiagnosticService))
+                DiagnosticService diagnosticService = (value == "") ? null :
+                    CollectionUtils.SelectFirst<DiagnosticService>(_diagnosticServiceChoices,
+                            delegate(DiagnosticService ds) { return ds.Format() == value; });
+
+                if (diagnosticService == null || !diagnosticService.Equals(_selectedDiagnosticService))
                 {
-                    _selectedDiagnosticService = value;
+                    _selectedDiagnosticService = diagnosticService;
                     UpdateDiagnosticServiceBreakdown();
                 }
             }
@@ -150,24 +161,52 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public IList FacilityChoices
         {
-            get { return _facilityChoices; }
+            get
+            {
+                List<string> facilityStrings = new List<string>();
+                facilityStrings.Add("");
+                facilityStrings.AddRange(
+                    CollectionUtils.Map<Facility, string>(_facilityChoices,
+                            delegate(Facility f) { return f.Format(); }));
+
+                return facilityStrings;
+            }
         }
 
-        public Facility SelectedFacility
+        public string SelectedFacility
         {
-            get { return _selectedFacility; }
-            set { _selectedFacility = value; }
+            get { return _selectedFacility == null ? "" : _selectedFacility.Format(); }
+            set
+            {
+                _selectedFacility = (value == "") ? null : 
+                    CollectionUtils.SelectFirst<Facility>(_facilityChoices,
+                        delegate(Facility f) { return f.Format() == value; });
+            }
         }
 
         public IList OrderingPhysicianChoices
         {
-            get { return _orderingPhysicianChoices; }
+            get
+            {
+                List<string> physicianStrings = new List<string>();
+                physicianStrings.Add("");
+                physicianStrings.AddRange(
+                    CollectionUtils.Map<Practitioner, string>(_orderingPhysicianChoices,
+                            delegate(Practitioner p) { return p.Format(); }));
+
+                return physicianStrings;
+            }
         }
 
-        public Practitioner SelectedOrderingPhysician
+        public string SelectedOrderingPhysician
         {
-            get { return _selectedOrderingPhysician; }
-            set { _selectedOrderingPhysician = value; }
+            get { return _selectedOrderingPhysician == null ? "" : _selectedOrderingPhysician.Format(); }
+            set
+            {
+                _selectedOrderingPhysician = (value == "") ? null :
+                   CollectionUtils.SelectFirst<Practitioner>(_orderingPhysicianChoices,
+                       delegate(Practitioner p) { return p.Format() == value; });
+            }
         }
 
 
@@ -228,7 +267,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(RequestedProcedureType rpt)
                     {
                         return new TreeNode<RequestedProcedureType>(rpt,
-                            delegate(RequestedProcedureType rpt1) { return rpt1.ToString(); },
+                            delegate(RequestedProcedureType rpt1) { return rpt1.Format(); },
                             delegate(RequestedProcedureType rpt1)
                             {
                                 return new TreeNodeCollection<ScheduledProcedureStepType>(
@@ -236,7 +275,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                     delegate(ScheduledProcedureStepType spt)
                                     {
                                         return new TreeNode<ScheduledProcedureStepType>(spt,
-                                            delegate(ScheduledProcedureStepType spt1) { return spt1.ToString(); },
+                                            delegate(ScheduledProcedureStepType spt1) { return spt1.Format(); },
                                             null);
                                     });
                             });

@@ -18,9 +18,9 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        public override string ToString()
+        public virtual string Format()
         {
-            return this._name.Format();
+            return this.Name.Format();
         }
     }
 }

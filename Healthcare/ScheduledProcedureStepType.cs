@@ -22,8 +22,13 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-		
-		#region Object overrides
+
+        public virtual string Format()
+        {
+            return string.Format("{0} ({1})", _name, _id);
+        }
+        
+        #region Object overrides
 
         public override bool Equals(object that)
         {
@@ -36,12 +41,7 @@ namespace ClearCanvas.Healthcare {
             return this.Id.GetHashCode();
         }
 
-        public override string ToString()
-        {
-            return string.Format("{0} ({1})", this.Name, this.Id);
-        }
-		
-		#endregion
+        #endregion
 
 	}
 }

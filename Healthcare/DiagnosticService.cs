@@ -22,6 +22,12 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
+
+        public virtual string Format()
+        {
+            return string.Format("{0} ({1})", _name, _id);
+        }
+		
 		
 		#region Object overrides
 
@@ -36,11 +42,6 @@ namespace ClearCanvas.Healthcare {
             return this.Id.GetHashCode();
         }
 
-        public override string ToString()
-        {
-            return string.Format("{0} ({1})", _name, _id);
-        }
-		
 		#endregion
 
 	}

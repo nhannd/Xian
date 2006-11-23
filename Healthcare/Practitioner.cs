@@ -18,9 +18,5 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        public string Format()
-        {
-            return this.Name.Format();
-        }
     }
 }
