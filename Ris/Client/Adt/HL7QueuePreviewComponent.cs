@@ -252,7 +252,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Message
         {
-            get { return _selectedHL7QueueItem.Message.Text; }
+            get 
+            {
+                if (_selectedHL7QueueItem != null)
+                    return _selectedHL7QueueItem.Message.Text;
+                else
+                    return string.Empty;
+            }
         }
 
         public ActionModelNode MenuModel
