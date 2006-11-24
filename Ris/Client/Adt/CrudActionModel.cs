@@ -50,8 +50,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     if (_handler != null) _handler();
                 });
                 this.SetEnabledObservable(new EnabledObserver(this));
-                this.Tooltip = name;
-                this.Label = name;
+                this.SetDefaultTooltip(name);
+                this.SetDefaultLabel(name);
                 this.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
             }
 
