@@ -9,24 +9,27 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 {
 	public class TissueSettings : INotifyPropertyChanged
 	{
-		private bool _tissueVisible = true;
+		private bool _visible = true;
 
 		private decimal _minimumOpacity = 0.0M;
 		private decimal _maximumOpacity = 1.0M;
 		private decimal _opacity = 1.0M;
 
 		private decimal _minimumWindow = 1;
-		private decimal _maximumWindow = 5000;
+		private decimal _maximumWindow = 1000;
 		private decimal _window = 500;
 
-		private decimal _minimumLevel = -2000;
-		private decimal _maximumLevel = 3000;
+		private decimal _minimumLevel = -1000;
+		private decimal _maximumLevel = 1000;
 		private decimal _level = 400;
 
 		private Color _minimumColor;
 		private Color _maximumColor;
 
 		private string _selectedPreset;
+		private bool _presetSetting;
+
+		private VolumeLayer _volumeLayer;
 
 		public TissueSettings()
 		{
@@ -36,26 +39,32 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			get 
 			{ 
-				string[] presets = {"Bone", "Blood", "Muscle", "Soft", "Lung"};
+				string[] presets = {"Custom", "Bone", "Blood", "Muscle", "Soft", "Lung"};
 				return presets;
 			}
 		}
 
-		public bool TissueVisible
+		internal VolumeLayer VolumeLayer
 		{
-			get { return _tissueVisible; }
+			get { return _volumeLayer; }
+			set { _volumeLayer = value; }
+		}
+
+		public bool Visible
+		{
+			get { return _visible; }
 			set
 			{
-				if (_tissueVisible != value)
+				if (_visible != value)
 				{
-					_tissueVisible = value;
-					OnPropertyChanged("TissueVisible");
+					_visible = value;
+					OnPropertyChanged("Visible");
+					Apply();
 				}
 			}
 		}
 
 		#region Opacity properties
-
 
 		public decimal MinimumOpacity
 		{
@@ -92,6 +101,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				{
 					_opacity = value;
 					OnPropertyChanged("Opacity");
+
+					if (!_presetSetting)
+					{
+						SelectPreset("Custom");
+						Apply();
+					}
 				}
 			}
 		}
@@ -135,6 +150,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				{
 					_window = value;
 					OnPropertyChanged("Window");
+
+					if (!_presetSetting)
+					{
+						SelectPreset("Custom");
+						Apply();
+					}
 				}
 			}
 		}
@@ -178,6 +199,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				{
 					_level = value;
 					OnPropertyChanged("Level");
+
+					if (!_presetSetting)
+					{
+						SelectPreset("Custom");
+						Apply();
+					}
 				}
 			}
 		}
@@ -231,6 +258,11 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			this.SelectedPreset = preset;
 
+			if (preset == "Custom")
+				return;
+
+			_presetSetting = true;
+
 			if (preset == "Bone")
 			{
 				this.Opacity = 1.0M;
@@ -241,7 +273,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 			else if (preset == "Blood")
 			{
-				this.Opacity = 0.2M;
+				this.Opacity = 0.20M;
 				this.Window = 200;
 				this.Level = 220;
 				this.MinimumColor = Color.FromArgb(200, 4, 10);
@@ -249,7 +281,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 			else if (preset == "Muscle")
 			{
-				this.Opacity = 0.8M;
+				this.Opacity = 0.40M;
 				this.Window = 200;
 				this.Level = 100;
 				this.MinimumColor = Color.FromArgb(233, 90, 94);
@@ -257,20 +289,24 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 			else if (preset == "Soft")
 			{
-				this.Opacity = 0.8M;
+				this.Opacity = 0.30M;
 				this.Window = 500;
 				this.Level = -240;
 				this.MinimumColor = Color.FromArgb(251, 138, 96);
 				this.MaximumColor = Color.FromArgb(251, 138, 96);
 			}
-			else
+			else if (preset == "Lung")
 			{
-				this.Opacity = 0.5M;
+				this.Opacity = 0.25M;
 				this.Window = 600;
 				this.Level = -500;
 				this.MinimumColor = Color.FromArgb(254, 142, 126);
 				this.MaximumColor = Color.FromArgb(254, 142, 126);
 			}
+
+			_presetSetting = false;
+
+			Apply();
 		}
 
 		#region INotifyPropertyChanged Members
@@ -278,6 +314,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+
+		public void Apply()
+		{
+			if (_volumeLayer != null)
+				_volumeLayer.Draw();
+		}
 
 		private void OnPropertyChanged(string propertyName)
 		{

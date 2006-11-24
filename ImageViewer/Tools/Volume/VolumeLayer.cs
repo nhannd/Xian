@@ -17,7 +17,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		public VolumeLayer(TissueSettings tissueSettings) : base(true)
 		{
 			_tissueSettings = tissueSettings;
-			_tissueSettings.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(OnTissueSettingsChanged);
+			_tissueSettings.VolumeLayer = this;
+			_tissueSettings.PropertyChanged += new PropertyChangedEventHandler(OnTissueSettingsChanged);
 		}
 
 		public TissueSettings TissueSettings
@@ -157,12 +158,23 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		void OnTissueSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
-			SetOpacityTransferFunction();
-
-			if (e.PropertyName != "OpacityValue")
-				SetColorTransferFunction();
-
 			vtkVolume volume = vtkVolume.SafeDownCast(_vtkProp);
+
+			if (e.PropertyName == "Visible")
+			{
+				if (_tissueSettings.Visible)
+					volume.VisibilityOn();
+				else
+					volume.VisibilityOff();
+			}
+			else
+			{
+				SetOpacityTransferFunction();
+
+				if (e.PropertyName != "OpacityValue")
+					SetColorTransferFunction();
+			}
+
 			volume.Update();
 		}
 
