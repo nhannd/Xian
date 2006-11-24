@@ -14,15 +14,17 @@ namespace ClearCanvas.Controls.WinForms
 		private bool _trackBarValueChanging;
 		private bool _upDownValueChanging;
 
-		public event EventHandler ValueChanged;
-		public event EventHandler MinimumChanged;
-		public event EventHandler MaximumChanged;
+		private event EventHandler _valueChangedEvent;
+		private event EventHandler _minimumChangedEvent;
+		private event EventHandler _maximumChangedEvent;
 
+		private DelayedEventDispatcher _valueChangedDispatcher;
 
 		public TrackBarUpDown()
 		{
 			InitializeComponent();
 
+			_valueChangedDispatcher = new DelayedEventDispatcher(new EventHandler(NotifyValueChanged), 500, true);
 			_trackBar.ValueChanged += new EventHandler(OnTrackBarValueChanged);
 			_numericUpDown.ValueChanged += new EventHandler(OnNumericUpDownValueChanged);
 		}
@@ -48,7 +50,7 @@ namespace ClearCanvas.Controls.WinForms
 				if (_numericUpDown.Minimum != value)
 				{
 					_numericUpDown.Minimum = value;
-					EventsHelper.Fire(this.MinimumChanged, this, EventArgs.Empty);
+					EventsHelper.Fire(_minimumChangedEvent, this, EventArgs.Empty);
 				}
 			}
 		}
@@ -64,7 +66,7 @@ namespace ClearCanvas.Controls.WinForms
 				if (_numericUpDown.Maximum != value)
 				{
 					_numericUpDown.Maximum = value;
-					EventsHelper.Fire(this.MaximumChanged, this, EventArgs.Empty);
+					EventsHelper.Fire(_maximumChangedEvent, this, EventArgs.Empty);
 				}
 			}
 		}
@@ -85,16 +87,36 @@ namespace ClearCanvas.Controls.WinForms
 			set 
 			{
 				if (_numericUpDown.Value != value)
-				{
 					_numericUpDown.Value = value;
-					EventsHelper.Fire(this.ValueChanged, this, EventArgs.Empty);
-				}
 			}
+		}
+
+		public event EventHandler ValueChanged
+		{
+			add { _valueChangedEvent += value; }
+			remove { _valueChangedEvent -= value; }
+		}
+
+		public event EventHandler MinimumChanged
+		{
+			add { _minimumChangedEvent += value; }
+			remove { _minimumChangedEvent -= value; }
+		}
+
+		public event EventHandler MaximumChanged
+		{
+			add { _maximumChangedEvent += value; }
+			remove { _maximumChangedEvent -= value; }
 		}
 
 		private decimal Range
 		{
 			get { return this.Maximum - this.Minimum; }
+		}
+
+		private void NotifyValueChanged(object sender, EventArgs e)
+		{
+			EventsHelper.Fire(_valueChangedEvent, sender, e);
 		}
 
 		void OnTrackBarValueChanged(object sender, EventArgs e)
@@ -123,8 +145,9 @@ namespace ClearCanvas.Controls.WinForms
 				_trackBar.Value = (int)Math.Round(trackBarValue, 0);
 
 				_upDownValueChanging = false;
-				EventsHelper.Fire(this.ValueChanged, this, EventArgs.Empty);
+				_valueChangedDispatcher.RegisterAuthenticEvent(this, EventArgs.Empty);
 			}
 		}
+
 	}
 }
