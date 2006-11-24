@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ArrayOfKeyStrokeSetting xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <KeyStrokeSetting>
+    <KeyStroke>F3</KeyStroke>
+    <ActionId>ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:Preset1</ActionId>
+    <ActionPath>imageviewer-keyboard/ToolsStandardLutPresets/Preset1</ActionPath>
+  </KeyStrokeSetting>
+  <KeyStrokeSetting>
+    <KeyStroke>F4</KeyStroke>
+    <ActionId>ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:Preset2</ActionId>
+    <ActionPath>imageviewer-keyboard/ToolsStandardLutPresets/Preset2</ActionPath>
+  </KeyStrokeSetting>
+  <KeyStrokeSetting>
+    <KeyStroke>F5</KeyStroke>
+    <ActionId>ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:Preset3</ActionId>
+    <ActionPath>imageviewer-keyboard/ToolsStandardLutPresets/Preset3</ActionPath>
+  </KeyStrokeSetting>
+  <KeyStrokeSetting>
+    <KeyStroke>F6</KeyStroke>
+    <ActionId>ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:Preset4</ActionId>
+    <ActionPath>imageviewer-keyboard/ToolsStandardLutPresets/Preset4</ActionPath>
+  </KeyStrokeSetting>
+  <KeyStrokeSetting>
+    <KeyStroke>F7</KeyStroke>
+    <ActionId>ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:Preset5</ActionId>
+    <ActionPath>imageviewer-keyboard/ToolsStandardLutPresets/Preset5</ActionPath>
+  </KeyStrokeSetting>
+</ArrayOfKeyStrokeSetting>

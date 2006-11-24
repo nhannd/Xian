@@ -9,6 +9,8 @@ IF NOT EXIST ".\datastore\ripp.sqb" copy "..\..\..\..\Dicom\DataStore\AuxiliaryF
 :: Copy Hibernate configuration file
 copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" "."
 copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" "ClearCanvas.Dicom.Services.cfg.xml"
+copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresets.xml" "."
+copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresetKeyAssignments.xml" "."
 
 :: Copy database rebuild utility
 copy "..\..\..\..\Utilities\RebuildDatabase\bin\%1\ClearCanvas.Utilities.RebuildDatabase.exe" "."

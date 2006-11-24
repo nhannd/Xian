@@ -17,7 +17,11 @@ namespace ClearCanvas.Desktop.Actions
         void Apply(TooltipAttribute a);
 		void Apply(KeyboardActionAttribute a);
 
+		void Apply(LabelValueObserverAttribute a);
+		void Apply(TooltipValueObserverAttribute a);
+
         void Apply(CheckedStateObserverAttribute a);
         void Apply(EnabledStateObserverAttribute a);
-    }
+		void Apply(VisibleStateObserverAttribute a);
+	}
 }

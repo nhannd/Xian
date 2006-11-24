@@ -22,6 +22,10 @@ namespace ClearCanvas.Desktop.Actions
         private string _label;
 
         private IObservablePropertyBinding<bool> _enabledPropertyBinding;
+		private IObservablePropertyBinding<bool> _visiblePropertyBinding;
+
+		private IObservablePropertyBinding<string> _labelPropertyBinding;
+		private IObservablePropertyBinding<string> _tooltipPropertyBinding;
 
         /// <summary>
         /// Constructor
@@ -45,6 +49,39 @@ namespace ClearCanvas.Desktop.Actions
             _enabledPropertyBinding = enabledPropertyBinding;
         }
 
+		public void SetVisibleObservable(IObservablePropertyBinding<bool> visiblePropertyBinding)
+		{
+			_visiblePropertyBinding = visiblePropertyBinding;
+		}
+
+		public void SetLabelObservable(IObservablePropertyBinding<string> labelPropertyBinding)
+		{
+			_labelPropertyBinding = labelPropertyBinding;
+			_label = _labelPropertyBinding.PropertyValue;
+		}
+
+		public void SetTooltipObservable(IObservablePropertyBinding<string> tooltipPropertyBinding)
+		{
+			_tooltipPropertyBinding = tooltipPropertyBinding;
+			_tooltip = _tooltipPropertyBinding.PropertyValue;
+		}
+
+		public void SetDefaultLabel(string label)
+		{
+			if (_labelPropertyBinding != null)
+				return;
+
+			_label = label;
+		}
+
+		public void SetDefaultTooltip(string tooltip)
+		{
+			if (_tooltipPropertyBinding != null)
+				return;
+
+			_tooltip = tooltip;
+		}
+
         #region IAction members
 
         public string ActionID
@@ -65,15 +102,19 @@ namespace ClearCanvas.Desktop.Actions
 
         public string Label
         {
-            get { return _label; }
-            set { _label = value; }
+            get 
+			{
+				return _labelPropertyBinding == null ? _label : _labelPropertyBinding.PropertyValue;
+			}
         }
 
         public string Tooltip
         {
-            get { return _tooltip; }
-            set { _tooltip = value; }
-        }
+			get
+			{
+				return _tooltipPropertyBinding == null ? _tooltip : _tooltipPropertyBinding.PropertyValue;
+			}
+		}
 
         public IconSet IconSet
         {
@@ -90,7 +131,16 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        public event EventHandler EnabledChanged
+		public bool Visible
+		{
+			get
+			{
+				return _visiblePropertyBinding == null ? true // smart default
+					:  _visiblePropertyBinding.PropertyValue;
+			}
+		}
+		
+		public event EventHandler EnabledChanged
         {
             add
             {
@@ -104,7 +154,50 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        #endregion
+		public event EventHandler VisibleChanged
+		{
+			add
+			{
+				if (_visiblePropertyBinding != null)
+					_visiblePropertyBinding.PropertyChanged += value;
+			}
+			remove
+			{
+				if (_visiblePropertyBinding != null)
+					_visiblePropertyBinding.PropertyChanged -= value;
+			}
+		}
+
+		public event EventHandler LabelChanged
+		{
+			add
+			{
+				if (_labelPropertyBinding != null)
+					_labelPropertyBinding.PropertyChanged += value;
+			}
+			remove
+			{
+				if (_labelPropertyBinding != null)
+					_labelPropertyBinding.PropertyChanged -= value;
+			}
+		}
+
+		public event EventHandler TooltipChanged
+		{
+			add
+			{
+				if (_tooltipPropertyBinding != null)
+					_tooltipPropertyBinding.PropertyChanged += value;
+			}
+			remove
+			{
+				if (_tooltipPropertyBinding != null)
+					_tooltipPropertyBinding.PropertyChanged -= value;
+			}
+		}
+
+		
+		#endregion
 
     }
 }

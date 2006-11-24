@@ -249,6 +249,9 @@ namespace ClearCanvas.ImageViewer
         {
             get 
 			{
+				if (_shortcutManager == null)
+					_shortcutManager = new ViewerShortcutManager();
+
 				return _shortcutManager; 
 			}
         }
@@ -360,13 +363,11 @@ namespace ClearCanvas.ImageViewer
 
 		private void RegisterShortcuts()
 		{
-			_shortcutManager = new ViewerShortcutManager();
-
-			_shortcutManager.RegisterKeyboardShortcuts(this.KeyboardModel.ChildNodes);
+			this.ShortcutManager.RegisterKeyboardShortcuts(this.KeyboardModel.ChildNodes);
 			
 			foreach (ITool tool in _toolSet.Tools)
 			{
-				_shortcutManager.RegisterMouseShortcuts(tool);
+				this.ShortcutManager.RegisterMouseShortcuts(tool);
 			}
 		}
 

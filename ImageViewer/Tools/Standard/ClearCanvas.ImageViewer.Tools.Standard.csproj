@@ -114,6 +114,17 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StackTool.cs" />
+    <Compile Include="LutPresets\LutPresetToolGeneratedAction.cs" />
+    <Compile Include="LutPresets\LutPresetImageFilter.cs" />
+    <Compile Include="LutPresets\LutPresetImageFilterByModality.cs" />
+    <Compile Include="LutPresets\LutPresetImageFilterSet.cs" />
+    <Compile Include="LutPresets\FilteredLutPreset.cs" />
+    <Compile Include="LutPresets\NamedVoiLutPreset.cs" />
+    <Compile Include="LutPresets\VoiLutPreset.cs" />
+    <Compile Include="LutPresets\LutPreset.cs" />
+    <Compile Include="LutPresets\LutPresetGroup.cs" />
+    <Compile Include="LutPresets\LutPresetSettings.cs" />
+    <Compile Include="LutPresetTool.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="Zoom1XTool.cs" />
     <Compile Include="Zoom2XTool.cs" />
@@ -150,6 +161,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ProbeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LutPresets\DefaultLutPresets.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

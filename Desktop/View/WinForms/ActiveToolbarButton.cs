@@ -13,6 +13,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         private IClickAction _action;
         private EventHandler _actionEnabledChangedHandler;
         private EventHandler _actionCheckedChangedHandler;
+		private EventHandler _actionVisibleChangedHandler;
+		private EventHandler _actionLabelChangedHandler;
+		private EventHandler _actionTooltipChangedHandler;
 
         public ActiveToolbarButton(IClickAction action)
         {
@@ -20,13 +23,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _actionEnabledChangedHandler = new EventHandler(OnActionEnabledChanged);
             _actionCheckedChangedHandler = new EventHandler(OnActionCheckedChanged);
+			_actionVisibleChangedHandler = new EventHandler(OnActionVisibleChanged);
+			_actionLabelChangedHandler = new EventHandler(OnActionLabelChanged);
+			_actionTooltipChangedHandler = new EventHandler(OnActionTooltipChanged);
 
             _action.EnabledChanged += _actionEnabledChangedHandler;
             _action.CheckedChanged += _actionCheckedChangedHandler;
+			_action.VisibleChanged += _actionVisibleChangedHandler;
+			_action.LabelChanged += _actionLabelChangedHandler;
+			_action.TooltipChanged += _actionTooltipChangedHandler;
 
             this.Text = _action.Label;
             this.Enabled = _action.Enabled;
             this.Checked = _action.Checked;
+			this.Visible = _action.Visible;
             this.ToolTipText = _action.Tooltip;
 
             this.Click += delegate(object sender, EventArgs e)
@@ -59,7 +69,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Enabled = _action.Enabled;
         }
 
-        protected override void Dispose(bool disposing)
+		private void OnActionVisibleChanged(object sender, EventArgs e)
+		{
+			this.Visible = _action.Visible;
+		}
+
+		private void OnActionLabelChanged(object sender, EventArgs e)
+		{
+			this.Text = _action.Label;
+		}
+
+		private void OnActionTooltipChanged(object sender, EventArgs e)
+		{
+			this.ToolTipText = _action.Tooltip;
+		}
+		
+		protected override void Dispose(bool disposing)
         {
             if (disposing && _action != null)
             {
@@ -71,6 +96,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 // even though this object is no longer needed
                 _action.EnabledChanged -= _actionEnabledChangedHandler;
                 _action.CheckedChanged -= _actionCheckedChangedHandler;
+				_action.VisibleChanged -= _actionVisibleChangedHandler;
+				_action.LabelChanged -= _actionLabelChangedHandler;
+				_action.TooltipChanged -= _actionTooltipChangedHandler;
 
                 _action = null;
             }

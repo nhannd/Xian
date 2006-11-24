@@ -55,6 +55,10 @@
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\KeyboardAction.cs" />
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
+    <Compile Include="Actions\LabelValueObserverAttribute.cs" />
+    <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
+    <Compile Include="Actions\ValueObserverAttribute.cs" />
+    <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
     <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />

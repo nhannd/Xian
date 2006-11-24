@@ -29,6 +29,7 @@
     <action id="ClearCanvas.ImageViewer.Layout.Basic.LayoutTool:show" path="global-toolbars/ToolbarStandard/MenuLayoutLayoutManager" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardStack" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardWindowLevel" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:auto" path="global-menus/MenuTools/Standard/MenuToolsStandardLutPresets/auto" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardPan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardZoom" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate" path="global-toolbars/ToolbarStandard/ToolbarToolsStandardProbe" />
@@ -42,6 +43,7 @@
   <action-model id="ClearCanvas.ImageViewer.ImageViewerComponent:imageviewer-contextmenu">
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="imageviewer-contextmenu/MenuToolsStandardStack" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="imageviewer-contextmenu/MenuToolsStandardWindowLevel" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:auto" path="imageviewer-contextmenu/MenuToolsStandardLutPresets/auto" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="imageviewer-contextmenu/MenuToolsStandardPan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="imageviewer-contextmenu/MenuToolsStandardZoom" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate" path="imageviewer-contextmenu/MenuToolsStandardProbe" />

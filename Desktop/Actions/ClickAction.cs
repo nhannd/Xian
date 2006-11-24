@@ -96,6 +96,7 @@ namespace ClearCanvas.Desktop.Actions
 		public XKeys KeyStroke
 		{
 			get { return _keyStroke; }
+			set { _keyStroke = value; }
 		}
 
         #endregion

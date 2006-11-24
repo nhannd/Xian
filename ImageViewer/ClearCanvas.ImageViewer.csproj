@@ -105,6 +105,7 @@
     <Compile Include="InputManagement\CaptureChangingEventArgs.cs" />
     <Compile Include="InputManagement\IInputMessage.cs" />
     <Compile Include="InputManagement\KeyboardButtonShortcut.cs" />
+    <Compile Include="InputManagement\KeyStrokeSettings.cs" />
     <Compile Include="InputManagement\Modifiers.cs" />
     <Compile Include="InputManagement\IInputController.cs" />
     <Compile Include="Imaging\DicomPresentationImageSortByInstanceNumber.cs" />

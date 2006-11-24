@@ -11,6 +11,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public class ViewerShortcutManager
 	{
+		private KeyStrokeSettings _keyStrokeSettings;
+
 		private Dictionary<MouseTool, XMouseButtons> _mouseToolButtonMap;
 		private Dictionary<MouseButtonShortcut, IMouseButtonHandler> _activeMouseButtonShortcutMap;
 		private Dictionary<MouseWheelShortcut, MouseWheelDelegatePair> _activeMouseWheelShortcutMap;
@@ -18,12 +20,52 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		public ViewerShortcutManager()
 		{
+			_keyStrokeSettings = new KeyStrokeSettings();
+
 			_mouseToolButtonMap = new Dictionary<MouseTool, XMouseButtons>();
 			_activeMouseButtonShortcutMap = new Dictionary<MouseButtonShortcut, IMouseButtonHandler>();
 			_activeMouseWheelShortcutMap = new Dictionary<MouseWheelShortcut, MouseWheelDelegatePair>();
 			_keyStrokeShortcutMap = new Dictionary<KeyboardButtonShortcut, IClickAction>();
 		}
 
+		public object this[IInputMessage message]
+		{
+			get
+			{
+				if (message is MouseButtonMessage)
+				{
+					MouseButtonShortcut shortcut = ((MouseButtonMessage)message).Shortcut;
+
+					if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
+						return _activeMouseButtonShortcutMap[shortcut];
+				}
+				else if (message is MouseWheelMessage)
+				{
+					MouseWheelMessage wheelMessage = (MouseWheelMessage)message;
+
+					if (_activeMouseWheelShortcutMap.ContainsKey(wheelMessage.Shortcut))
+					{
+						MouseWheelDelegatePair delegates = _activeMouseWheelShortcutMap[wheelMessage.Shortcut];
+						if (wheelMessage.WheelDelta > 0)
+							return delegates.WheelDecrementDelegate;
+
+						return delegates.WheelIncrementDelegate;
+					}
+				}
+				else if (message is KeyboardButtonMessage)
+				{
+					KeyboardButtonMessage buttonMessage = message as KeyboardButtonMessage;
+					if (buttonMessage.ButtonAction == KeyboardButtonMessage.ButtonActions.Down &&
+						_keyStrokeShortcutMap.ContainsKey(buttonMessage.Shortcut))
+					{
+						return _keyStrokeShortcutMap[buttonMessage.Shortcut];
+					}
+				}
+
+				return null;
+			}
+		}
+		
 		public void RegisterMouseShortcuts(ITool tool)
 		{
 			if (tool is MouseTool)
@@ -89,12 +131,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 					if (action is IClickAction)
 					{
-						IClickAction clickAction = (IClickAction)action;
-						KeyboardButtonShortcut shortcut = new KeyboardButtonShortcut(clickAction.KeyStroke);
-						if (!_keyStrokeShortcutMap.ContainsKey(shortcut))
-						{
-							_keyStrokeShortcutMap.Add(shortcut, clickAction);
-						}
+						RegisterKeyboardShortcut(action as IClickAction);
 					}
 				}
 				else
@@ -104,44 +141,26 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		public object this[IInputMessage message]
+		private void RegisterKeyboardShortcut(IClickAction clickAction)
 		{
-			get
+			if (_keyStrokeSettings.Settings != null && _keyStrokeSettings.Settings.Count > 0)
 			{
-				if (message is MouseButtonMessage)
-				{
-					MouseButtonShortcut shortcut = ((MouseButtonMessage)message).Shortcut;
-
-					if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
-						return _activeMouseButtonShortcutMap[shortcut];
-				}
-				else if (message is MouseWheelMessage)
-				{
-					MouseWheelMessage wheelMessage = (MouseWheelMessage)message;
-
-					if (_activeMouseWheelShortcutMap.ContainsKey(wheelMessage.Shortcut))
-					{
-						MouseWheelDelegatePair delegates = _activeMouseWheelShortcutMap[wheelMessage.Shortcut];
-						if (wheelMessage.WheelDelta > 0)
-							return delegates.WheelDecrementDelegate;
-
-						return delegates.WheelIncrementDelegate;
-					}
-				}
-				else if (message is KeyboardButtonMessage)
-				{
-					KeyboardButtonMessage buttonMessage = message as KeyboardButtonMessage;
-					if (buttonMessage.ButtonAction == KeyboardButtonMessage.ButtonActions.Down &&
-						_keyStrokeShortcutMap.ContainsKey(buttonMessage.Shortcut))
-					{
-						return _keyStrokeShortcutMap[buttonMessage.Shortcut];
-					}
-				}
-
-				return null;
+				KeyStrokeSetting keyOverride = _keyStrokeSettings.Settings.Find(delegate(KeyStrokeSetting setting) { return clickAction.Path.ToString() == setting.ActionPath; });
+				if (keyOverride != null)
+					clickAction.KeyStroke = keyOverride.KeyStroke;
 			}
+						
+			if (clickAction.KeyStroke == 0)
+				return;
+
+			KeyboardButtonShortcut shortcut = new KeyboardButtonShortcut(clickAction.KeyStroke);
+
+			if (_keyStrokeShortcutMap.ContainsKey(shortcut))
+				return;
+
+			_keyStrokeShortcutMap.Add(shortcut, clickAction);
 		}
-		
+
 		private void OnMouseToolActivationChanged(object sender, EventArgs e)
 		{
 			MouseTool mouseTool = (MouseTool)sender;

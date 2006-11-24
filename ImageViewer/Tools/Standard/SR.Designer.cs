@@ -223,6 +223,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lut Presets.
+        /// </summary>
+        public static string MenuToolsStandardLutPresets {
+            get {
+                return ResourceManager.GetString("MenuToolsStandardLutPresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Pan.
         /// </summary>
         public static string MenuToolsStandardPan {
@@ -462,6 +471,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         public static string ToolbarToolsStandardZoom4X {
             get {
                 return ResourceManager.GetString("ToolbarToolsStandardZoom4X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lut Presets.
+        /// </summary>
+        public static string ToolsStandardLutPresets {
+            get {
+                return ResourceManager.GetString("ToolsStandardLutPresets", resourceCulture);
             }
         }
         

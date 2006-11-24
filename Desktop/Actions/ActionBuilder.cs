@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Actions
 			ActionPath path = new ActionPath(a.Path, _resolver);
 			_action = new ButtonAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
-			_action.Label = path.LastSegment.LocalizedText;
+			_action.SetDefaultLabel(path.LastSegment.LocalizedText);
 		}
 
         public void Apply(MenuActionAttribute a)
@@ -52,7 +52,7 @@ namespace ClearCanvas.Desktop.Actions
             ActionPath path = new ActionPath(a.Path, _resolver);
             _action = new MenuAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
-            _action.Label = path.LastSegment.LocalizedText;
+			_action.SetDefaultLabel(path.LastSegment.LocalizedText);
         }
 
 		public void Apply(KeyboardActionAttribute a)
@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.Actions
 			ActionPath path = new ActionPath(a.Path, _resolver);
 			_action = new KeyboardAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
-			_action.Label = path.LastSegment.LocalizedText;
+			_action.SetDefaultLabel(path.LastSegment.LocalizedText);
 		}
 
 		public void Apply(ClickHandlerAttribute a)
@@ -102,16 +102,43 @@ namespace ClearCanvas.Desktop.Actions
         public void Apply(TooltipAttribute a)
         {
             // assert _action != null
-            _action.Tooltip = _resolver.LocalizeString(a.TooltipText);
+            _action.SetDefaultTooltip(_resolver.LocalizeString(a.TooltipText));
         }
 
-        public void Apply(CheckedStateObserverAttribute a)
+		public void Apply(LabelValueObserverAttribute a)
+		{
+			// check that property, event exist, etc.
+			ValidateProperty(a.PropertyName, typeof(string));
+			ValidateEvent(a.ChangeEventName);
+
+			_action.SetLabelObservable(new DynamicObservablePropertyBinding<string>(_actionTarget, a.PropertyName, a.ChangeEventName));
+		}
+		
+		public void Apply(TooltipValueObserverAttribute a)
+		{
+			// check that property, event exist, etc.
+			ValidateProperty(a.PropertyName, typeof(string));
+			ValidateEvent(a.ChangeEventName);
+
+			_action.SetTooltipObservable(new DynamicObservablePropertyBinding<string>(_actionTarget, a.PropertyName, a.ChangeEventName));
+		}
+
+		public void Apply(VisibleStateObserverAttribute a)
+		{
+			// check that property, event exist, etc.
+			ValidateProperty(a.PropertyName, typeof(bool));
+			ValidateEvent(a.ChangeEventName);
+
+			_action.SetVisibleObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
+		}
+
+		public void Apply(CheckedStateObserverAttribute a)
         {
             // assert _action != null && is ClickAction
             ClickAction clickAction = (ClickAction)_action;
 
             // check that property, event exist, etc.
-            ValidateProperty(a.PropertyName);
+			ValidateProperty(a.PropertyName, typeof(bool));
             ValidateEvent(a.ChangeEventName);
             
             clickAction.SetCheckedObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
@@ -122,7 +149,7 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action != null 
 
             // check that property, event exist, etc.
-            ValidateProperty(a.PropertyName);
+			ValidateProperty(a.PropertyName, typeof(bool));
             ValidateEvent(a.ChangeEventName);
             
             _action.SetEnabledObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
@@ -155,9 +182,9 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        private void ValidateProperty(string propertyName)
+        private void ValidateProperty(string propertyName, Type type)
         {
-            PropertyInfo info = _actionTarget.GetType().GetProperty(propertyName, typeof(bool));
+			PropertyInfo info = _actionTarget.GetType().GetProperty(propertyName, type);
             if (info == null)
             {
                 throw new ActionBuilderException(

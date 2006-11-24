@@ -255,4 +255,10 @@
   <data name="HounsfieldUnitsAbbreviation" xml:space="preserve">
     <value>HU</value>
   </data>
+  <data name="MenuToolsStandardLutPresets" xml:space="preserve">
+    <value>Lut Presets</value>
+  </data>
+  <data name="ToolsStandardLutPresets" xml:space="preserve">
+    <value>Lut Presets</value>
+  </data>
 </root>

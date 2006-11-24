@@ -20,6 +20,9 @@ namespace ClearCanvas.Desktop.Actions
         /// Fired when the <see cref="Enabled"/> property of this action changes.
         /// </summary>
         event EventHandler EnabledChanged;
+		event EventHandler VisibleChanged;
+		event EventHandler LabelChanged;
+		event EventHandler TooltipChanged; 
 
         /// <summary>
         /// The fully-qualified logical identifier for this action.
@@ -50,6 +53,11 @@ namespace ClearCanvas.Desktop.Actions
         /// The enablement state that the action should present in the UI.
         /// </summary>
         bool Enabled { get; }
+
+		/// <summary>
+		/// The visibility state that the action should present in the UI.
+		/// </summary>
+		bool Visible { get; }
 
         /// <summary>
         /// Gets the resource resolver associated with this action, that will be used to resolve
