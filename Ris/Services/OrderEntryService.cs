@@ -97,7 +97,8 @@ namespace ClearCanvas.Ris.Services
             DiagnosticService diagnosticService,
             OrderPriority priority,
             Practitioner orderingPhysician,
-            Facility orderingFacility)
+            Facility orderingFacility,
+            DateTime schedulingRequestTime)
         {
             Platform.CheckForNullReference(patient, "patient");
             Platform.CheckForNullReference(visit, "visit");
@@ -116,7 +117,7 @@ namespace ClearCanvas.Ris.Services
             string accNum = broker.GetNextAccessionNumber();
 
             Order order = Order.NewOrder(
-                accNum, patient, visit, diagnosticService, Platform.Time, orderingPhysician, orderingFacility, priority);
+                accNum, patient, visit, diagnosticService, schedulingRequestTime, orderingPhysician, orderingFacility, priority);
 
             this.CurrentContext.Lock(order, DirtyState.New);
         }

@@ -71,6 +71,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _diagnosticServiceChanged;
         private TreeNodeCollection<RequestedProcedureType> _diagnosticServiceBreakdown;
 
+        private DateTime _schedulingRequestDateTime;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -93,6 +95,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _facilityChoices = _orderEntryService.ListOrderingFacilityChoices();
             _orderingPhysicianChoices = _orderEntryService.ListOrderingPhysicianChoices();
             _priorityChoices = _orderEntryService.GetOrderPriorityEnumTable();
+
+            _schedulingRequestDateTime = Platform.Time;
 
 
             base.Start();
@@ -221,6 +225,12 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _diagnosticServiceBreakdown; }
         }
 
+        public DateTime SchedulingRequestDateTime
+        {
+            get { return _schedulingRequestDateTime; }
+            set { _schedulingRequestDateTime = value; }
+        }
+
         public void PlaceOrder()
         {
             try
@@ -231,7 +241,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         _selectedDiagnosticService,
                         _selectedPriority,
                         _selectedOrderingPhysician,
-                        _selectedFacility);
+                        _selectedFacility,
+                        _schedulingRequestDateTime);
 
             }
             catch (Exception e)

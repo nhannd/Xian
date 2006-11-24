@@ -22,7 +22,8 @@ namespace ClearCanvas.Ris.Services
             DiagnosticService diagnosticService,
             OrderPriority priority,
             Practitioner orderingPhysician,
-            Facility orderingFacility);
+            Facility orderingFacility,
+            DateTime schedulingRequestTime);
 
         IList<WorklistItem> GetOrdersWorklist();
     }

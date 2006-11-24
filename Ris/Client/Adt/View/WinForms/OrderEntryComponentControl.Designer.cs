@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindableTreeView();
             this._placeOrderButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
+            this._schedulingRequestDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
             this.SuspendLayout();
             // 
             // _visitTable
@@ -152,10 +153,23 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
+            // _schedulingRequestDateTime
+            // 
+            this._schedulingRequestDateTime.LabelText = "Schedule For";
+            this._schedulingRequestDateTime.Location = new System.Drawing.Point(334, 471);
+            this._schedulingRequestDateTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._schedulingRequestDateTime.Name = "_schedulingRequestDateTime";
+            this._schedulingRequestDateTime.Nullable = false;
+            this._schedulingRequestDateTime.ShowTime = true;
+            this._schedulingRequestDateTime.Size = new System.Drawing.Size(200, 50);
+            this._schedulingRequestDateTime.TabIndex = 11;
+            this._schedulingRequestDateTime.Value = null;
+            // 
             // OrderEntryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._schedulingRequestDateTime);
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._placeOrderButton);
             this.Controls.Add(this._diagnosticServiceBreakdown);
@@ -185,5 +199,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.BindableTreeView _diagnosticServiceBreakdown;
         private System.Windows.Forms.Button _placeOrderButton;
         private System.Windows.Forms.Button _cancelButton;
+        private ClearCanvas.Controls.WinForms.DateTimeField _schedulingRequestDateTime;
     }
 }
