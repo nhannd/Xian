@@ -93,24 +93,31 @@ namespace ClearCanvas.Ris.Services
         {
             IList<Patient> referencedPatients = null;
 
-            //IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItem.Message);
-            //processor.Process();
+            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItem.Message);
+
+            processor.Patients = LoadOrCreatePatientsFromMrn(
+                processor.ListReferencedPatientIdentifiers(), 
+                processor.ReferencedPatientIdentifiersAssigningAuthority());
+            processor.Visits = LoadOrCreateVisitFromVisitNumber(
+                processor.ListReferencedVisitIdentifiers(),
+                processor.ReferencedVisitIdentifierAssigningAuthority());
+
+            processor.Process();
+
             //foreach (Entity newEntity in processor.NewEntities)
-            //{
-            //    this.CurrentContext.Lock(newEntity, DirtyState.New);
-            //}
-            //foreach (Entity dirtyEntity in processor.DirtyEntities)
-            //{
-            //    this.CurrentContext.Lock(dirtyEntity, DirtyState.Dirty);
-            //}
-            
-            referencedPatients = ProcessHL7QueueItemMessage(hl7QueueItem.Message);
-
-            foreach (Patient patient in referencedPatients)
+            foreach (Entity newEntity in processor.Patients)
             {
-                this.CurrentContext.Lock(patient, DirtyState.New);
+                this.CurrentContext.Lock(newEntity, DirtyState.New);
             }
-
+            foreach (Visit newEntity in processor.Visits)
+            {
+                this.CurrentContext.Lock(newEntity, DirtyState.New);
+            }
+            foreach (Entity dirtyEntity in processor.DirtyEntities)
+            {
+                this.CurrentContext.Lock(dirtyEntity, DirtyState.Dirty);
+            }
+            
             return referencedPatients;
         }
 
@@ -151,26 +158,6 @@ namespace ClearCanvas.Ris.Services
 
         #region Private Methods
 
-		private IList<Patient> ProcessHL7QueueItemMessage(HL7QueueItemMessage hl7QueueItemMessage)
-        {
-            //IHL7MessageProvider messageProvider = HL7MessageProviderFactory.GetMessageProvider(hl7QueueItemMessage.Version);
-            //IHL7Message message = messageProvider.GetMessage(hl7QueueItemMessage.MessageType, hl7QueueItemMessage.Format, hl7QueueItemMessage.Text);
-
-            //IHL7MessageMapping mapping = HL7MessageMappingFactory.GetMapping(message, hl7QueueItemMessage.Peer);
-
-            //IHL7Processor processor = HL7ProcessorFactory.GetProcessor(mapping);
-
-            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItemMessage);
-
-            IList<string> identifiers = processor.ListReferencedPatientIdentifiers();
-            string assigningAuthority = processor.ReferencedPatientIdentifiersAssigningAuthority();
-
-            IList<Patient> referencedPatients = LoadOrCreatePatientsFromMrn(identifiers, assigningAuthority);
-            processor.UpdatePatients(referencedPatients);
-
-            return referencedPatients;
-        }
-
         private IList<Patient> LoadOrCreatePatientsFromMrn(IList<string> mrns, string assigningAuthority)
         {
             IList<Patient> loadedPatients = new List<Patient>();
@@ -203,7 +190,41 @@ namespace ClearCanvas.Ris.Services
             return loadedPatients;
         }
 
-	    #endregion    
+        private IList<Visit> LoadOrCreateVisitFromVisitNumber(IList<string> visitNumbers, string assigningAuthority)
+        {
+            IList<Visit> loadedVisits = new List<Visit>();
+
+            if (visitNumbers.Count == 0) return loadedVisits;
+
+            foreach (string visitNumber in visitNumbers)
+            {
+                VisitSearchCriteria criteria = new VisitSearchCriteria();
+                criteria.VisitNumber.Id.EqualTo(visitNumber);
+                criteria.VisitNumber.AssigningAuthority.EqualTo(assigningAuthority);
+
+                IList<Visit> visits = this.CurrentContext.GetBroker<IVisitBroker>().Find(criteria);
+                if (visits.Count > 0)
+                {
+                    loadedVisits.Add(visits[0]);
+                }
+                else
+                {
+                    Visit visit = new Visit();
+
+                    visit.VisitNumber.Id = visitNumber;
+                    visit.VisitNumber.AssigningAuthority = assigningAuthority;
+
+                    IList<Facility> facilities = this.CurrentContext.GetBroker<IFacilityBroker>().FindAll();
+                    visit.Facility = facilities[0];
+
+                    loadedVisits.Add(visit);
+                }
+            }
+
+            return loadedVisits;
+        }
+
+        #endregion    
     }
 }
 

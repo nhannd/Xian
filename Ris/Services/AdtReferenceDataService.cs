@@ -16,10 +16,7 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<Facility> GetAllFacilities()
         {
-            FacilitySearchCriteria allMatches = new FacilitySearchCriteria();
-            IFacilityBroker facilityBroker = this.CurrentContext.GetBroker<IFacilityBroker>();
-
-            return facilityBroker.Find(allMatches);
+            return this.CurrentContext.GetBroker<IFacilityBroker>().FindAll();
         }
 
         [UpdateOperation]
@@ -33,8 +30,7 @@ namespace ClearCanvas.Ris.Services
         [ReadOperation]
         public IList<Location> GetAllLocations()
         {
-            ILocationBroker broker = this.CurrentContext.GetBroker<ILocationBroker>();
-            return broker.Find(new LocationSearchCriteria());
+            return this.CurrentContext.GetBroker<ILocationBroker>().FindAll();
         }
 
         [ReadOperation]
@@ -46,7 +42,7 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void AddLocation(Location location)
         {
-            this.CurrentContext.Lock(location, DirtyState.Dirty);
+            this.CurrentContext.Lock(location, DirtyState.New);
         }
 
         #endregion
