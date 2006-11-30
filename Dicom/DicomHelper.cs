@@ -124,24 +124,23 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Takes in a string that contains a DICOM DT value
-        /// and returns it in the format of the current user-configured
-        /// culture. This function assumes that the DT value is formatted
-        /// correctly, i.e. in the ANSI format of YYYYMMDD
+        /// Convert from a DICOM DT string into a string that uses
+        /// the currently configured culture. Makes use of the DateParser
+        /// static class.
         /// </summary>
-        public static string ConvertFromDicomDA(string dicomDAValue)
+        public static string GetDateStringFromDicomDA(string dicomDAValue)
         {
             if (dicomDAValue.Length < 8)
                 return dicomDAValue;
 
-            DateTime newDate = new DateTime(
-                Convert.ToInt32(dicomDAValue.Substring(0, 4)),
-                Convert.ToInt32(dicomDAValue.Substring(4, 2)),
-                Convert.ToInt32(dicomDAValue.Substring(6, 2))
-                );
-
-            string[] formats = newDate.GetDateTimeFormats(Thread.CurrentThread.CurrentCulture);
-            return formats[0];
+            DateTime newDate;
+            if (DateParser.Parse(dicomDAValue, out newDate))
+            {
+                string[] formats = newDate.GetDateTimeFormats(Thread.CurrentThread.CurrentCulture);
+                return formats[0];
+            }
+            else
+                return dicomDAValue;
         }
 
         private DicomHelper() { }
