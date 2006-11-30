@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			foreach (FilteredLutPreset filteredPreset in _filteredPresets)
 			{
-				if (filteredPreset.Preset.Apply(image))
+				if (filteredPreset.Apply(image))
 					return true;
 			}
 
