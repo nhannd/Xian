@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			// We're attaching the callout to the ROI, so make sure the two
 			// graphics are in the same coordinate system before we do that.
 			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.End = FindClosestControlPoint();
+			_calloutGraphic.EndPoint = FindClosestControlPoint();
 			_calloutGraphic.ResetCoordinateSystem();
 			EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}
@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		private void OnCalloutTopLeftChanged(object sender, PointChangedEventArgs e)
 		{
 			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.End = FindClosestControlPoint();
+			_calloutGraphic.EndPoint = FindClosestControlPoint();
 			_calloutGraphic.ResetCoordinateSystem();
 		}
 
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			double distance;
 			double shortest;
 			PointF closestPoint;
-			PointF calloutStart = _calloutGraphic.Start;
+			PointF calloutStart = _calloutGraphic.StartPoint;
 
 			shortest = double.MaxValue;
 			closestPoint = new PointF(float.MaxValue, float.MaxValue);
@@ -222,9 +222,9 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		#region IContextMenuProvider Members
 
-		public virtual ActionModelNode GetContextMenuModel(Point point)
+		public virtual ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
-			if (!this.HitTest(point))
+			if (!this.HitTest(mouseInformation.Location))
 				return null;
 
 			if (_toolSet == null)

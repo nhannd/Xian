@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 		}
 
-		public PointF Start
+		public PointF StartPoint
 		{
 			get
 			{
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			}
 		}
 
-		public PointF End
+		public PointF EndPoint
 		{
 			get { return _lineGraphic.Pt2; }
 			set 
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			Point center = Vector.Midpoint(topLeft, bottomRight);
 
 			Point intersectionPoint;
-			Point attachmentPoint = new Point((int) this.End.X, (int) this.End.Y);
+			Point attachmentPoint = new Point((int) this.EndPoint.X, (int) this.EndPoint.Y);
 
 			_textGraphic.ResetCoordinateSystem();
 			_lineGraphic.ResetCoordinateSystem();

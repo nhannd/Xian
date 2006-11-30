@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				PointF calloutLocation = mousePoint - offset;
 				this.ROIGraphic.Callout.CoordinateSystem = CoordinateSystem.Destination;
 				this.ROIGraphic.Callout.Location = calloutLocation;
-				this.ROIGraphic.Callout.End = mousePoint;
+				this.ROIGraphic.Callout.EndPoint = mousePoint;
 				this.ROIGraphic.Callout.ResetCoordinateSystem();
 
 				this.ROIGraphic.Roi.CoordinateSystem = CoordinateSystem.Destination;

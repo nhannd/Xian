@@ -27,13 +27,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private CursorToken _cursorToken;
 		
 		private bool _contextMenuEnabled; 
-		private ActionModelNode _contextMenuModel;
+		private IContextMenuProvider _contextMenuProvider;
 
 		private event EventHandler _cursorTokenChanged;
 		private event EventHandler<CaptureChangingEventArgs> _captureChangingEvent;
 
-		private XMouseButtons _buttonDown;
-
+		private XMouseButtons _activeButton;
+		private uint _clickCount;
+		
 		#endregion
 
 		public TileController(Tile tile)
@@ -53,18 +54,18 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			get { return _contextMenuEnabled; }
 		}
 
-		public ActionModelNode ContextMenuModel
+		public IContextMenuProvider ContextMenuProvider
 		{
 			get
 			{
-				if (_contextMenuModel == null)
-					_contextMenuModel = (_tile.ImageViewer as ImageViewerComponent).ContextMenuModel;
+				if (_contextMenuProvider == null)
+					_contextMenuProvider = _tile.ImageViewer as IContextMenuProvider;
 
-				return _contextMenuModel;
+				return _contextMenuProvider;
 			}
 			set
 			{
-				_contextMenuModel = value;
+				_contextMenuProvider = value;
 			}
 		}
 
@@ -130,18 +131,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		private void SetContextMenu(IMouseButtonHandler handler, Point location)
-		{
-			if (handler is IContextMenuProvider)
-			{
-				this.ContextMenuModel = (handler as IContextMenuProvider).GetContextMenuModel(location);
-			}
-			else
-			{
-				this.ContextMenuModel = null;
-			}
-		}
-
 		private void ReleaseCapture(bool cancel)
 		{
 			if (this.CaptureHandler != null && cancel)
@@ -149,7 +138,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			this.CaptureHandler = null;
 			this.CursorToken = null;
-			this.ContextMenuModel = null;
+			this.ContextMenuProvider = null;
 		}
 
 		private bool ProcessKeyboardMessage(KeyboardButtonMessage keyboardMessage)
@@ -190,13 +179,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private bool ProcessMouseButtonDownMessage(MouseButtonMessage buttonMessage)
 		{
 			//don't allow multiple buttons, it's just cleaner and easier to manage behaviour.
-			if (_buttonDown != 0)
+			if (_activeButton != 0)
 			{
 				_contextMenuEnabled = false;
 				return true;
 			}
 
-			_buttonDown = buttonMessage.Shortcut.MouseButton;
+			_activeButton = buttonMessage.Shortcut.MouseButton;
+			_clickCount = buttonMessage.ClickCount;
 
 			if (this.CaptureHandler != null)
 			{
@@ -215,9 +205,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_startMousePoint = buttonMessage.Location;
 
 			//give unfocused graphics a chance to focus (in the case of going straight from context menu to a graphic).
-			FindHandlingGraphic(TrackHandler);
+			FindHandlingLayer(TrackHandler);
 
-			IMouseButtonHandler handler = FindHandlingGraphic(StartHandler);
+			IMouseButtonHandler handler = FindHandlingLayer(StartHandler);
 			if (handler != null)
 			{
 				this.CaptureHandler = handler;
@@ -225,8 +215,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (handler.SuppressContextMenu)
 					_contextMenuEnabled = false;
 
-				SetCursorToken(handler, buttonMessage.Location); 
-				SetContextMenu(handler, buttonMessage.Location);
+				SetCursorToken(handler, buttonMessage.Location);
+				this.ContextMenuProvider = handler as IContextMenuProvider;
 
 				return true;
 			}
@@ -255,10 +245,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private bool ProcessMouseButtonUpMessage(MouseButtonMessage buttonMessage)
 		{
-			if (_buttonDown != buttonMessage.Shortcut.MouseButton)
+			if (_activeButton != buttonMessage.Shortcut.MouseButton)
 				return true;
 
-			_buttonDown = 0;
+			_activeButton = 0;
+			_clickCount = 0;
 
 			if (this.CaptureHandler != null)
 			{
@@ -305,7 +296,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 			}
 
-			IMouseButtonHandler handler = FindHandlingGraphic(TrackHandler);
+			IMouseButtonHandler handler = FindHandlingLayer(TrackHandler);
 			SetCursorToken(handler, trackMessage.Location);
 			return (handler != null);
 		}
@@ -325,25 +316,46 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return handler.Stop(this);
 		}
 
-		private IMouseButtonHandler FindHandlingGraphic(CallHandlerMethodDelegate handlerDelegate)
+		private IMouseButtonHandler FindHandlingLayer(CallHandlerMethodDelegate handlerDelegate)
 		{
-			GraphicLayer selectedGraphicLayer = _tile.PresentationImage.LayerManager.SelectedGraphicLayer;
-			if (selectedGraphicLayer == null)
-				return null;
+			return FindHandlingLayer(this.Tile.PresentationImage.LayerManager.RootLayerGroup, handlerDelegate);
+		}
 
-			//Traverse the graphics in reverse order, that way the last one drawn will be the first focus candidate.
-			for (int i = selectedGraphicLayer.Graphics.Count - 1; i >= 0; --i)
+		private IMouseButtonHandler FindHandlingLayer(LayerGroup layerGroup, CallHandlerMethodDelegate handlerDelegate)
+		{
+			for (int layerIndex = layerGroup.Layers.Count - 1; layerIndex >= 0; --layerIndex)
 			{
-				Layer layer = selectedGraphicLayer.Graphics[i];
-				
-				if (!layer.Visible)
+				Layer layer = layerGroup.Layers[layerIndex];
+
+				if (layer.IsLeaf || !layer.Visible)
 					continue;
 
-				if (layer is IMouseButtonHandler)
+				if (layer is LayerGroup)
 				{
-					IMouseButtonHandler handler = (IMouseButtonHandler)layer;
-					if (handlerDelegate(handler))
-						return handler;
+					return FindHandlingLayer(layer as LayerGroup, handlerDelegate);
+				}
+				else if (layer is ImageLayer)
+				{
+					if (layer is IMouseButtonHandler)
+					{
+						IMouseButtonHandler handler = (IMouseButtonHandler)layer;
+						if (handlerDelegate(handler))
+							return handler;
+					}
+				}
+				else if (layer is GraphicLayer)
+				{
+					GraphicLayer graphicLayer = layer as GraphicLayer;
+					for (int graphicIndex = graphicLayer.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
+					{
+						Layer graphic = graphicLayer.Graphics[graphicIndex];
+						if (graphic is IMouseButtonHandler)
+						{
+							IMouseButtonHandler handler = (IMouseButtonHandler)graphic;
+							if (handlerDelegate(handler))
+								return handler;
+						}
+					}
 				}
 			}
 
@@ -408,9 +420,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			private set { _currentMousePoint = value; }
 		}
 
-		public XMouseButtons MouseButtonDown
+		public XMouseButtons ActiveButton
 		{
-			get { return _buttonDown; }
+			get { return _activeButton; }
+		}
+
+		public uint ClickCount
+		{
+			get { return _clickCount; }
 		}
 
 		#endregion

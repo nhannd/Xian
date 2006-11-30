@@ -36,7 +36,6 @@ namespace ClearCanvas.ImageViewer
         /// and a preference for being the initially active tool.  There is no guarantee
         /// that this tool will actuall be initially active.
         /// </summary>
-        /// <param name="initiallyActive">A preference for being the initially active tool.</param>
         public MouseTool()
         {
 			_requiresCapture = true;
@@ -98,6 +97,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _deltaY; }
 		}
 
+		/// <summary>
 		/// Notifies that the value of the <see cref="Active"/> property has changed.
 		/// </summary>
 		public event EventHandler ActivationChanged

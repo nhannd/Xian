@@ -62,12 +62,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public IInputMessage OnMouseDown(MouseEventArgs e)
 		{
-			return new MouseButtonMessage(e.Location, (XMouseButtons)e.Button, MouseButtonMessage.ButtonActions.Down, this.Control, this.Alt, this.Shift);
+			return new MouseButtonMessage(e.Location, (XMouseButtons)e.Button, MouseButtonMessage.ButtonActions.Down, (uint)e.Clicks, this.Control, this.Alt, this.Shift);
 		}
 
 		public IInputMessage OnMouseUp(MouseEventArgs e)
 		{
-			return new MouseButtonMessage(e.Location, (XMouseButtons)e.Button, MouseButtonMessage.ButtonActions.Up, this.Control, this.Alt, this.Shift);
+			return new MouseButtonMessage(e.Location, (XMouseButtons)e.Button, MouseButtonMessage.ButtonActions.Up, 0, this.Control, this.Alt, this.Shift);
 		}
 
 		public IInputMessage OnMouseWheel(MouseEventArgs e)

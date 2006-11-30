@@ -8,6 +8,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public interface IContextMenuProvider
 	{
-		ActionModelNode GetContextMenuModel(Point point);
+		ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation);
 	}
 }

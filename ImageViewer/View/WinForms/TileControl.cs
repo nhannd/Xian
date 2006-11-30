@@ -335,18 +335,21 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
-			ActionModelNode menuModel = _tileController.ContextMenuModel;
+			if (_tileController.ContextMenuProvider == null)
+			{
+				e.Cancel = true;
+				return;
+			}
 
 			if (_tileController.ContextMenuEnabled)
 			{
+				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController); 
 				ToolStripBuilder.Clear(_contextMenuStrip.Items);
 				ToolStripBuilder.BuildMenu(_contextMenuStrip.Items, menuModel.ChildNodes);
 				e.Cancel = false;
 			}
 			else
 				e.Cancel = true;
-
-			_tileController.ContextMenuModel = null;
 		}
 
 		void OnInformationBoxChanged(object sender, InformationBoxChangedEventArgs e)

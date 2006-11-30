@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer
     }
 
     [AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
-    public class ImageViewerComponent : ApplicationComponent, IImageViewer
+	public class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
     {
         internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
         {
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-        public ActionModelNode ContextMenuModel
+        private ActionModelNode ContextMenuModel
         {
             get
             {
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-		public ActionModelNode KeyboardModel
+		private ActionModelNode KeyboardModel
 		{
 			get
 			{
@@ -369,6 +369,15 @@ namespace ClearCanvas.ImageViewer
 			{
 				this.ShortcutManager.RegisterMouseShortcuts(tool);
 			}
+		}
+
+		#endregion
+
+		#region IContextMenuProvider Members
+
+		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		{
+			return this.ContextMenuModel;
 		}
 
 		#endregion
