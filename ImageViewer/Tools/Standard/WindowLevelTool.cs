@@ -39,14 +39,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : MouseTool
 	{
-		private CursorToken _cursorToken; 
-		
 		private UndoableCommand _command;
 		private WindowLevelApplicator _applicator;
 
 		public WindowLevelTool()
 		{
-			_cursorToken = new CursorToken("Icons.WindowLevelMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.WindowLevelMedium.png", this.GetType().Assembly);
         }
 
 		public override void Initialize()
@@ -211,11 +209,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			return _cursorToken;
 		}
 	}
 }

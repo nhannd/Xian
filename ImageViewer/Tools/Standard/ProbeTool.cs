@@ -32,7 +32,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ProbeTool : MouseTool
 	{
-		private CursorToken _cursorToken; 
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
 
@@ -47,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public ProbeTool()
 		{
 			_enabled = true;
-			_cursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
 		}
 
 		/// <summary>
@@ -160,11 +159,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile = null;
 
 			_wrapper = null;
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			return _cursorToken;
 		}
 
 		private void Probe(Point destinationPoint)

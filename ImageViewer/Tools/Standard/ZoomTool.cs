@@ -33,13 +33,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : MouseTool
 	{
-		private CursorToken _cursorToken; 
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
 		{
-			_cursorToken = new CursorToken("Icons.ZoomMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.ZoomMedium.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IPresentationImage image)
@@ -149,11 +148,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			return _cursorToken;
 		}
 	}
 }

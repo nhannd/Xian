@@ -40,11 +40,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
-		private CursorToken _cursorToken;
 
 		public PanTool()
 		{
-			_cursorToken = new CursorToken("Icons.PanMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.PanMedium.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IPresentationImage image)
@@ -161,11 +160,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			return _cursorToken;
 		}
 	}
 }

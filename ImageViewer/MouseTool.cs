@@ -29,7 +29,8 @@ namespace ClearCanvas.ImageViewer
         private event EventHandler _activationChangedEvent;
 
 		private bool _requiresCapture;
-
+		private CursorToken _cursorToken;
+		
         /// <summary>
         /// Constructs a mouse tool.
         /// Subclasses must initialize this constructor with the preferred mouse button
@@ -45,6 +46,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _requiresCapture; }
 			protected set { _requiresCapture = value; }
+		}
+
+		public CursorToken CursorToken
+		{
+			get { return _cursorToken; }
+			protected set { _cursorToken = value; }
 		}
 
 		/// <summary>
@@ -180,7 +187,7 @@ namespace ClearCanvas.ImageViewer
 
 		public virtual CursorToken GetCursorToken(Point point)
 		{
-			return null;
+			return this.CursorToken;
 		}
 
 		#endregion

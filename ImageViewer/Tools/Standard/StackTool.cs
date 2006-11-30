@@ -36,15 +36,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackTool : MouseTool
 	{
-		private CursorToken _cursorToken; 
-		
 		private UndoableCommand _command;
 		private int _initialPresentationImageIndex;
 		private IImageBox _currentImageBox;
 
 		public StackTool()
 		{
-			_cursorToken = new CursorToken("Icons.StackMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.StackMedium.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IImageBox imageBox)
@@ -186,11 +184,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			return _cursorToken;
 		}
 	}
 }

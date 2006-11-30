@@ -24,11 +24,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class RotateVolumeTool : MouseTool
 	{
-		private CursorToken _cursorToken;
-
 		public RotateVolumeTool()
   		{
-			_cursorToken = new CursorToken("Icons.CreateVolumeToolSmall.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.CreateVolumeToolSmall.png", this.GetType().Assembly);
 		}
 
 		vtkGenericRenderWindowInteractor GetInteractor(IPresentationImage selectedImage)
@@ -114,11 +112,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				return;
 
 			interactor.LeftButtonReleaseEvent();
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			return _cursorToken;
 		}
 
 		#endregion
