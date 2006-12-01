@@ -336,7 +336,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             studyList.Columns.Add(
                 new TableColumn<StudyItem, string>(
                     "DOB",
-                    delegate(StudyItem item) { return DicomHelper.ConvertFromDicomDA(item.PatientsBirthDate); },
+                    delegate(StudyItem item) { return DicomHelper.GetDateStringFromDicomDA(item.PatientsBirthDate); },
                     null,
                     1.0f,
                     delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); }
@@ -349,7 +349,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					"Study Date",
-					delegate(StudyItem item) { return DicomHelper.ConvertFromDicomDA(item.StudyDate); },
+					delegate(StudyItem item) { return DicomHelper.GetDateStringFromDicomDA(item.StudyDate); },
                     null,
                     1.0f,
                     delegate(StudyItem one, StudyItem two) {  return one.StudyDate.CompareTo(two.StudyDate); }

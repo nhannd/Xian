@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             this.Port = Convert.ToString(item.Server.Port);
             this.Patient = item.FirstName + " " + item.LastName;
             this.Description = item.StudyDescription;
-            this.StudyDate = DicomHelper.ConvertFromDicomDA(item.StudyDate);
+            this.StudyDate = DicomHelper.GetDateStringFromDicomDA(item.StudyDate);
 
             // set up the overall progress counter display
             this.ProgressGroupBox = "Retrieving Study #" + 
