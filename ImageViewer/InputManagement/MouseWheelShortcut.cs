@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
@@ -16,6 +17,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public MouseWheelShortcut(Modifiers modifiers)
 		{
 			_modifiers = modifiers;
+		}
+
+		public MouseWheelShortcut(ModifierFlags modifierFlags)
+		{
+			_modifiers = new Modifiers(modifierFlags);
 		}
 
 		public MouseWheelShortcut(bool control, bool alt, bool shift)

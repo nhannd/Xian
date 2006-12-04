@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	{
 		private string _wheelIncrementDelegateName;
 		private string _wheelDecrementDelegateName;
-		private Modifiers _modifiers;
+		private MouseWheelShortcut _shortcut;
 
 		public MouseWheelControlAttribute(string wheelIncrementDelegateName, string wheelDecrementDelegateName)
 			: this(wheelIncrementDelegateName, wheelDecrementDelegateName, ModifierFlags.None)
@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			_wheelIncrementDelegateName = wheelIncrementDelegateName;
 			_wheelDecrementDelegateName = wheelDecrementDelegateName;
-			_modifiers = new Modifiers(modifiers);
+			_shortcut = new MouseWheelShortcut(modifiers);
 		}
 
 		private MouseWheelControlAttribute()
@@ -38,17 +38,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			get { return _wheelDecrementDelegateName; }
 		}
 
-		public Modifiers Modifiers
+		public MouseWheelShortcut Shortcut
 		{
-			get { return _modifiers; }
-		}
-
-		public MouseWheelDelegatePair CreateDelegatePair(object wheelControlObject)
-		{
-			MouseWheelDelegate wheelIncrementDelegate = (MouseWheelDelegate)Delegate.CreateDelegate(typeof(MouseWheelDelegate), wheelControlObject, _wheelIncrementDelegateName);
-			MouseWheelDelegate wheelDecrementDelegate = (MouseWheelDelegate)Delegate.CreateDelegate(typeof(MouseWheelDelegate), wheelControlObject, _wheelDecrementDelegateName);
-
-			return new MouseWheelDelegatePair(wheelIncrementDelegate, wheelDecrementDelegate);
+			get { return _shortcut; }
 		}
 	}
 }

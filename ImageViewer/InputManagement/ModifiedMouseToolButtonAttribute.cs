@@ -6,20 +6,20 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.InputManagement
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public class MouseButtonControlAttribute : Attribute
+	public class ModifiedMouseToolButtonAttribute : Attribute
 	{
 		private MouseButtonShortcut _shortcut;
 
-		public MouseButtonControlAttribute(XMouseButtons mouseButton, ModifierFlags modifierFlags)
+		public ModifiedMouseToolButtonAttribute(XMouseButtons mouseButton, ModifierFlags modifierFlags)
 		{
 			_shortcut = new MouseButtonShortcut(mouseButton, modifierFlags);
 		}
 
-		private MouseButtonControlAttribute()
+		private ModifiedMouseToolButtonAttribute()
 		{
 		}
 
-		public MouseButtonShortcut ShortCut
+		public MouseButtonShortcut Shortcut
 		{
 			get { return _shortcut; }
 		}

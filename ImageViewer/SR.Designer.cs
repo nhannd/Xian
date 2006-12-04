@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional mouse tool shortcuts must be modified ({0})..
+        /// </summary>
+        public static string AdditionalMouseToolAssignmentsMustBeModified {
+            get {
+                return ResourceManager.GetString("AdditionalMouseToolAssignmentsMustBeModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ClearCanvas Workstation.
         /// </summary>
         public static string ApplicationName {
@@ -547,6 +556,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified keystroke is already in use.  The assignment has been ignored..
+        /// </summary>
+        public static string KeyStrokeAssignmentInUse {
+            get {
+                return ResourceManager.GetString("KeyStrokeAssignmentInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Clipboard .
         /// </summary>
         public static string MenuClipboard {
@@ -777,6 +795,42 @@ namespace ClearCanvas.ImageViewer {
         public static string MenuWindow {
             get {
                 return ResourceManager.GetString("MenuWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored..
+        /// </summary>
+        public static string MouseToolAssignmentInUse {
+            get {
+                return ResourceManager.GetString("MouseToolAssignmentInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated..
+        /// </summary>
+        public static string MouseToolHasNoAssignment {
+            get {
+                return ResourceManager.GetString("MouseToolHasNoAssignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A mouse tool should have a default button assignment ({0}).  The tool may have no effect..
+        /// </summary>
+        public static string MouseToolShouldHaveDefault {
+            get {
+                return ResourceManager.GetString("MouseToolShouldHaveDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified mouse wheel assignment is in use ({0})..
+        /// </summary>
+        public static string MouseWheelAssignmentInUse {
+            get {
+                return ResourceManager.GetString("MouseWheelAssignmentInUse", resourceCulture);
             }
         }
         

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdditionalMouseToolAssignmentsMustBeModified" xml:space="preserve">
+    <value>Additional mouse tool shortcuts must be modified ({0}).</value>
+  </data>
   <data name="ApplicationName" xml:space="preserve">
     <value>ClearCanvas Workstation</value>
   </data>
@@ -279,6 +282,9 @@
   <data name="ExceptionWorkstationViewNotCreated" xml:space="preserve">
     <value>The main workstation view has not been created.</value>
   </data>
+  <data name="KeyStrokeAssignmentInUse" xml:space="preserve">
+    <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
+  </data>
   <data name="MenuClipboard" xml:space="preserve">
     <value>&amp;Clipboard </value>
   </data>
@@ -356,6 +362,18 @@
   </data>
   <data name="MenuWindow" xml:space="preserve">
     <value>&amp;Window</value>
+  </data>
+  <data name="MouseToolAssignmentInUse" xml:space="preserve">
+    <value>Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored.</value>
+  </data>
+  <data name="MouseToolHasNoAssignment" xml:space="preserve">
+    <value>The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated.</value>
+  </data>
+  <data name="MouseToolShouldHaveDefault" xml:space="preserve">
+    <value>A mouse tool should have a default button assignment ({0}).  The tool may have no effect.</value>
+  </data>
+  <data name="MouseWheelAssignmentInUse" xml:space="preserve">
+    <value>The specified mouse wheel assignment is in use ({0}).</value>
   </data>
   <data name="Toolbar3D" xml:space="preserve">
     <value>3D</value>

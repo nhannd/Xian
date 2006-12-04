@@ -9,13 +9,13 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
-	public class ViewerShortcutManager
+	public class ViewerShortcutManager : IViewerShortcutManager
 	{
 		private KeyStrokeSettings _keyStrokeSettings;
 
 		private Dictionary<MouseTool, XMouseButtons> _mouseToolButtonMap;
 		private Dictionary<MouseButtonShortcut, IMouseButtonHandler> _activeMouseButtonShortcutMap;
-		private Dictionary<MouseWheelShortcut, MouseWheelDelegatePair> _activeMouseWheelShortcutMap;
+		private Dictionary<MouseWheelShortcut, IMouseWheelHandler> _activeMouseWheelShortcutMap;
 		private Dictionary<KeyboardButtonShortcut, IClickAction> _keyStrokeShortcutMap;
 
 		public ViewerShortcutManager()
@@ -24,100 +24,178 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			_mouseToolButtonMap = new Dictionary<MouseTool, XMouseButtons>();
 			_activeMouseButtonShortcutMap = new Dictionary<MouseButtonShortcut, IMouseButtonHandler>();
-			_activeMouseWheelShortcutMap = new Dictionary<MouseWheelShortcut, MouseWheelDelegatePair>();
+			_activeMouseWheelShortcutMap = new Dictionary<MouseWheelShortcut, IMouseWheelHandler>();
 			_keyStrokeShortcutMap = new Dictionary<KeyboardButtonShortcut, IClickAction>();
 		}
 
-		public object this[IInputMessage message]
+		private void RegisterMouseToolButton(MouseTool mouseTool)
 		{
-			get
+			try
 			{
-				if (message is MouseButtonMessage)
-				{
-					MouseButtonShortcut shortcut = ((MouseButtonMessage)message).Shortcut;
+				object[] buttonAssignment = mouseTool.GetType().GetCustomAttributes(typeof(MouseToolButtonAttribute), true);
+				if (buttonAssignment == null || buttonAssignment.Length == 0)
+					throw new InvalidOperationException(String.Format(SR.MouseToolShouldHaveDefault, mouseTool.GetType().FullName));
 
-					if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
-						return _activeMouseButtonShortcutMap[shortcut];
-				}
-				else if (message is MouseWheelMessage)
-				{
-					MouseWheelMessage wheelMessage = (MouseWheelMessage)message;
+				MouseToolButtonAttribute attribute = buttonAssignment[0] as MouseToolButtonAttribute;
+				_mouseToolButtonMap.Add(mouseTool, attribute.MouseButton);
 
-					if (_activeMouseWheelShortcutMap.ContainsKey(wheelMessage.Shortcut))
-					{
-						MouseWheelDelegatePair delegates = _activeMouseWheelShortcutMap[wheelMessage.Shortcut];
-						if (wheelMessage.WheelDelta > 0)
-							return delegates.WheelDecrementDelegate;
+				if (attribute.InitiallyActive)
+					ActivateMouseTool(mouseTool, false);
 
-						return delegates.WheelIncrementDelegate;
-					}
-				}
-				else if (message is KeyboardButtonMessage)
-				{
-					KeyboardButtonMessage buttonMessage = message as KeyboardButtonMessage;
-					if (buttonMessage.ButtonAction == KeyboardButtonMessage.ButtonActions.Down &&
-						_keyStrokeShortcutMap.ContainsKey(buttonMessage.Shortcut))
-					{
-						return _keyStrokeShortcutMap[buttonMessage.Shortcut];
-					}
-				}
+				mouseTool.ActivationChanged += new EventHandler(OnMouseToolActivationChanged);
 
-				return null;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e, LogLevel.Warn);
 			}
 		}
-		
-		public void RegisterMouseShortcuts(ITool tool)
+
+		private void RegisterModifiedMouseToolButton(MouseTool mouseTool)
 		{
-			if (tool is MouseTool)
+			try
 			{
-				MouseTool mouseTool = (MouseTool)tool;
+				object[] modifiedButtonAssignments = mouseTool.GetType().GetCustomAttributes(typeof(ModifiedMouseToolButtonAttribute), true);
+				if (modifiedButtonAssignments == null || modifiedButtonAssignments.Length == 0)
+					return;
 
-				object[] buttonAssignment = mouseTool.GetType().GetCustomAttributes(typeof(MouseToolButtonAttribute), true);
-				if (buttonAssignment != null && buttonAssignment.Length > 0)
-				{
-					MouseToolButtonAttribute attribute = buttonAssignment[0] as MouseToolButtonAttribute;
-					_mouseToolButtonMap.Add(mouseTool, attribute.MouseButton);
+				ModifiedMouseToolButtonAttribute attribute = modifiedButtonAssignments[0] as ModifiedMouseToolButtonAttribute;
 
-					if (attribute.InitiallyActive)
-						ActivateMouseTool(mouseTool, false);
+				if (attribute.Shortcut.Modifiers.ModifierFlags == ModifierFlags.None)
+					throw new InvalidOperationException(String.Format(SR.AdditionalMouseToolAssignmentsMustBeModified, mouseTool.GetType().FullName));
 
-					mouseTool.ActivationChanged += new EventHandler(OnMouseToolActivationChanged);
-				}
-				else
-				{
-					Exception logException = new InvalidOperationException("A MouseTool must have a default button assignment.  The tool will have no effect.");
-					Platform.Log(logException);
-				}
+				if (_activeMouseButtonShortcutMap.ContainsKey(attribute.Shortcut))
+					throw new InvalidOperationException(String.Format(SR.MouseToolAssignmentInUse, mouseTool.GetType().FullName));
 
-				//These must be modified!!!
-				object[] additionalButtonAssignments = tool.GetType().GetCustomAttributes(typeof(MouseButtonControlAttribute), true);
-				if (additionalButtonAssignments != null && additionalButtonAssignments.Length > 0)
-				{
-					MouseButtonControlAttribute attribute = additionalButtonAssignments[0] as MouseButtonControlAttribute;
-
-					if (!_activeMouseButtonShortcutMap.ContainsKey(attribute.ShortCut))
-						_activeMouseButtonShortcutMap[attribute.ShortCut] = mouseTool;
-				}
-				else
-				{
-					Exception logException = new InvalidOperationException("Another tool is already using the specified mouse button assignment.  The assignment has been ignored.");
-					Platform.Log(logException);
-				}
+				_activeMouseButtonShortcutMap.Add(attribute.Shortcut, mouseTool);
 			}
-
-			object[] wheelAssignment = tool.GetType().GetCustomAttributes(typeof(MouseWheelControlAttribute), true);
-			if (wheelAssignment != null && wheelAssignment.Length > 0)
+			catch (Exception e)
 			{
-				MouseWheelControlAttribute attribute = wheelAssignment[0] as MouseWheelControlAttribute;
+				Platform.Log(e);
+			}
+		}
 
+		private void RegisterMouseWheelShortcuts(MouseTool mouseTool)
+		{
+			object[] mouseWheelControlAssignments = mouseTool.GetType().GetCustomAttributes(typeof(MouseWheelControlAttribute), true);
+			if (mouseWheelControlAssignments == null || mouseWheelControlAssignments.Length == 0)
+				return;
+
+			foreach (MouseWheelControlAttribute attribute in mouseWheelControlAssignments)
+			{
 				try
 				{
-					_activeMouseWheelShortcutMap.Add(new MouseWheelShortcut(attribute.Modifiers), attribute.CreateDelegatePair(tool));
+					if (_activeMouseWheelShortcutMap.ContainsKey(attribute.Shortcut))
+						throw new InvalidOperationException(String.Format(SR.MouseWheelAssignmentInUse, mouseTool));
+
+					IMouseWheelHandler handler = new MouseWheelHandler(mouseTool, attribute.WheelIncrementDelegateName, attribute.WheelDecrementDelegateName);
+					_activeMouseWheelShortcutMap.Add(attribute.Shortcut, handler);
 				}
 				catch (Exception e)
 				{
 					Platform.Log(e);
 				}
+			}
+		}
+
+		private void RegisterKeyboardShortcut(IClickAction clickAction)
+		{
+			try
+			{
+				if (_keyStrokeSettings.Settings != null && _keyStrokeSettings.Settings.Count > 0)
+				{
+					KeyStrokeSetting keyOverride = _keyStrokeSettings.Settings.Find(delegate(KeyStrokeSetting setting) { return clickAction.Path.ToString() == setting.ActionPath; });
+					if (keyOverride != null)
+						clickAction.KeyStroke = keyOverride.KeyStroke;
+				}
+
+				if (clickAction.KeyStroke == 0)
+					return;
+
+				KeyboardButtonShortcut shortcut = new KeyboardButtonShortcut(clickAction.KeyStroke);
+
+				if (_keyStrokeShortcutMap.ContainsKey(shortcut))
+					throw new InvalidOperationException(String.Format(SR.KeyStrokeAssignmentInUse, clickAction.Path.ToString()));
+
+				_keyStrokeShortcutMap.Add(shortcut, clickAction);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+			}
+		}
+
+		private void OnMouseToolActivationChanged(object sender, EventArgs e)
+		{
+			MouseTool mouseTool = (MouseTool)sender;
+
+			if (mouseTool.Active)
+				ActivateMouseTool(mouseTool, true);
+			else
+				DeactivateMouseTool(mouseTool);
+		}
+
+		private void DeactivateMouseTool(MouseTool mouseTool)
+		{
+			if (_mouseToolButtonMap.ContainsKey(mouseTool))
+			{
+				MouseButtonShortcut shortcut = new MouseButtonShortcut(_mouseToolButtonMap[mouseTool]);
+
+				if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
+				{
+					if (_activeMouseButtonShortcutMap[shortcut] == mouseTool)
+						_activeMouseButtonShortcutMap.Remove(shortcut);
+				}
+			}
+		}
+
+		private void ActivateMouseTool(MouseTool activateMouseTool, bool replaceExisting)
+		{
+			try
+			{
+				if (!_mouseToolButtonMap.ContainsKey(activateMouseTool))
+					throw new InvalidOperationException(String.Format(SR.MouseToolHasNoAssignment, activateMouseTool.GetType().FullName));
+
+				MouseButtonShortcut shortcut = new MouseButtonShortcut(_mouseToolButtonMap[activateMouseTool]);
+
+				if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
+				{
+					if (!replaceExisting)
+						return;
+					
+					MouseTool oldMouseTool = (MouseTool)_activeMouseButtonShortcutMap[shortcut];
+					if (oldMouseTool != activateMouseTool)
+					{
+						_activeMouseButtonShortcutMap[shortcut] = activateMouseTool;
+						oldMouseTool.Active = false;
+					}
+				}
+				else
+				{
+					_activeMouseButtonShortcutMap.Add(shortcut, activateMouseTool);
+				}
+
+				if (!activateMouseTool.Active)
+					activateMouseTool.Active = true;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+			}
+		}
+
+		public void RegisterMouseShortcuts(IEnumerable<ITool> tools)
+		{
+			foreach (ITool tool in tools)
+			{
+				if (!(tool is MouseTool))
+					continue;
+
+				MouseTool mouseTool = tool as MouseTool;
+
+				RegisterMouseToolButton(mouseTool);
+				RegisterModifiedMouseToolButton(mouseTool);
+				RegisterMouseWheelShortcuts(mouseTool);
 			}
 		}
 
@@ -130,9 +208,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					IAction action = node.Action;
 
 					if (action is IClickAction)
-					{
 						RegisterKeyboardShortcut(action as IClickAction);
-					}
 				}
 				else
 				{
@@ -141,62 +217,56 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		private void RegisterKeyboardShortcut(IClickAction clickAction)
+		#region IViewerShortcutManager Members
+
+		public void ChangeMouseToolAssignment(MouseTool mouseTool, XMouseButtons button)
 		{
-			if (_keyStrokeSettings.Settings != null && _keyStrokeSettings.Settings.Count > 0)
+			Platform.CheckForNullReference(mouseTool, "mouseTool");
+
+			if (!_mouseToolButtonMap.ContainsKey(mouseTool))
 			{
-				KeyStrokeSetting keyOverride = _keyStrokeSettings.Settings.Find(delegate(KeyStrokeSetting setting) { return clickAction.Path.ToString() == setting.ActionPath; });
-				if (keyOverride != null)
-					clickAction.KeyStroke = keyOverride.KeyStroke;
+				_mouseToolButtonMap.Add(mouseTool, button);
 			}
-						
-			if (clickAction.KeyStroke == 0)
-				return;
+			else
+			{
+				if (_mouseToolButtonMap[mouseTool] == button)
+					return;
 
-			KeyboardButtonShortcut shortcut = new KeyboardButtonShortcut(clickAction.KeyStroke);
+				//remove it from the active map, if it's there.
+				DeactivateMouseTool(mouseTool);
 
-			if (_keyStrokeShortcutMap.ContainsKey(shortcut))
-				return;
+				_mouseToolButtonMap[mouseTool] = button;
+			}
 
-			_keyStrokeShortcutMap.Add(shortcut, clickAction);
-		}
-
-		private void OnMouseToolActivationChanged(object sender, EventArgs e)
-		{
-			MouseTool mouseTool = (MouseTool)sender;
+			//Add it to the active map with the new key.
 			if (mouseTool.Active)
 				ActivateMouseTool(mouseTool, true);
 		}
 
-		private void ActivateMouseTool(MouseTool activateMouseTool, bool replaceExisting)
+		public IClickAction GetKeyboardAction(KeyboardButtonShortcut shortcut)
 		{
-			try
-			{
-				if (!_mouseToolButtonMap.ContainsKey(activateMouseTool))
-					throw new Exception("The selected Mouse Tool does not exist in the dictionary.");
+			if (_keyStrokeShortcutMap.ContainsKey(shortcut))
+				return _keyStrokeShortcutMap[shortcut];
 
-				MouseButtonShortcut shortcut = new MouseButtonShortcut(_mouseToolButtonMap[activateMouseTool]);
-
-				if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
-				{
-					if (!replaceExisting)
-						return;
-					
-					MouseTool oldMouseTool = (MouseTool)_activeMouseButtonShortcutMap[shortcut];
-					oldMouseTool.Active = false;
-					_activeMouseButtonShortcutMap[shortcut] = activateMouseTool;
-				}
-				else
-				{
-					_activeMouseButtonShortcutMap.Add(shortcut, activateMouseTool);
-					if (!activateMouseTool.Active)
-						activateMouseTool.Active = true;
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(e);
-			}
+			return null;
 		}
+
+		public IMouseButtonHandler GetMouseButtonHandler(MouseButtonShortcut shortcut)
+		{
+			if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
+				return _activeMouseButtonShortcutMap[shortcut];
+
+			return null;
+		}
+
+		public IMouseWheelHandler GetMouseWheelHandler(MouseWheelShortcut shortcut)
+		{
+			if (_activeMouseWheelShortcutMap.ContainsKey(shortcut))
+				return _activeMouseWheelShortcutMap[shortcut];
+
+			return null;
+		}
+
+		#endregion
 	}
 }

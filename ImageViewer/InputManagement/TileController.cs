@@ -34,13 +34,18 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private XMouseButtons _activeButton;
 		private uint _clickCount;
-		
+
+		private IViewerShortcutManager _shortcutManager;
+
 		#endregion
 
-		public TileController(Tile tile)
+		public TileController(Tile tile, IViewerShortcutManager shortcutManager)
 		{
 			Platform.CheckForNullReference(tile, "tile");
+			Platform.CheckForNullReference(shortcutManager, "shortcutManager");
+
 			_tile = tile;
+			_shortcutManager = shortcutManager;
 		}
 
 		private TileController()
@@ -149,11 +154,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			ReleaseCapture(true);
 
-			ImageViewerComponent viewer = _tile.ImageViewer as ImageViewerComponent;
-			object handler = viewer.ShortcutManager[keyboardMessage];
-			if (handler is IClickAction)
+			IClickAction action = _shortcutManager.GetKeyboardAction(keyboardMessage.Shortcut);
+			if (action != null)
 			{
-				((IClickAction)handler).Click();
+				action.Click();
 				return true;
 			}
 
@@ -164,12 +168,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			ReleaseCapture(true);
 
-			ImageViewerComponent viewer = _tile.ImageViewer as ImageViewerComponent;
-			object handler = viewer.ShortcutManager[wheelMessage];
-
-			if (handler is MouseWheelDelegate)
+			IMouseWheelHandler handler = _shortcutManager.GetMouseWheelHandler(wheelMessage.Shortcut);
+			if (handler != null)
 			{
-				(handler as MouseWheelDelegate)();
+				handler.Activate(wheelMessage.WheelDelta);
 				return true;
 			}
 
@@ -221,12 +223,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 			}
 
-			ImageViewerComponent viewer = _tile.ImageViewer as ImageViewerComponent;
-			object shortcutobject = viewer.ShortcutManager[buttonMessage];
-
-			if (shortcutobject is IMouseButtonHandler)
+			handler = _shortcutManager.GetMouseButtonHandler(buttonMessage.Shortcut);
+			if (handler != null)
 			{
-				handler = shortcutobject as IMouseButtonHandler;
 				if (StartHandler(handler))
 				{
 					this.CaptureHandler = handler;
