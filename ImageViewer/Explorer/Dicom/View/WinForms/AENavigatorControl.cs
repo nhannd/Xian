@@ -25,6 +25,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
             this._aeTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
             this._aeTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView_DragEnter);
+            this._aeTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
             this._aeTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
 
             this.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -184,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
         private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+        private TreeNode OldNode = null;
 
         public ActionModelNode ToolbarModel
         {
@@ -238,6 +240,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             e.Effect = DragDropEffects.Move;
         }
 
+        private void treeView_DragOver(object sender, DragEventArgs e)
+        {
+            TreeNode aNode = _aeTreeView.GetNodeAt(_aeTreeView.PointToClient(new Point(e.X, e.Y)));
+            if (aNode != null && !((IDicomServer)aNode.Tag).IsServer && aNode != _lastClickedNode)
+            {
+                aNode.BackColor = Color.DarkBlue;
+                aNode.ForeColor = Color.White;
+                if ((OldNode != null) && (OldNode != aNode))
+                {
+                    OldNode.BackColor = Color.White;
+                    OldNode.ForeColor = Color.Black;
+                }
+                if ((OldNode == null) || (OldNode != aNode))
+                    OldNode = aNode;
+            }
+        }
+
         private void treeView_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
             if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
@@ -245,13 +264,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
                 TreeNode DestinationNode = ((TreeView)sender).GetNodeAt(pt);
                 TreeNode newNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+                if (OldNode != null)
+                {
+                    OldNode.BackColor = Color.White;
+                    OldNode.ForeColor = Color.Black;
+                    OldNode = null;
+                }
                 if (!_component.NodeMoved((IDicomServer)DestinationNode.Tag, (IDicomServer)newNode.Tag))
                     return;
-                _lastClickedNode = AddTreeNode(DestinationNode, (IDicomServer)newNode.Tag);
+                newNode.Remove();
+                _lastClickedNode = DestinationNode;
+                DestinationNode.Nodes.Clear();
                 BuildNextTreeLevel(_lastClickedNode);
                 DestinationNode.Expand(); 
                 _aeTreeView.SelectedNode = _lastClickedNode;
-                newNode.Remove();
             }
         }
 
