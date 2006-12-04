@@ -120,4 +120,7 @@
   <data name="PatientComponentTitle" xml:space="preserve">
     <value>Patient - {0} {1}</value>
   </data>
+  <data name="VisitSummaryComponentTitle" xml:space="preserve">
+    <value>Patient Visits - {0} {1}</value>
+  </data>
 </root>

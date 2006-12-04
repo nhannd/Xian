@@ -27,7 +27,9 @@ namespace ClearCanvas.Ris.Client.Adt
     public class VisitSummaryComponent : ApplicationComponent
     {
         private EntityRef<Patient> _patientRef;
+        private EntityRef<PatientProfile> _patientProfileRef;
         private Patient _patient;
+        private PatientProfile _patientProfile;
 
         private IAdtService _adtService;
         private VisitTable _visitTable;
@@ -35,18 +37,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private CrudActionModel _visitActionHandler;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public VisitSummaryComponent(EntityRef<Patient> patientRef)
+        public VisitSummaryComponent(EntityRef<PatientProfile> patientProfileRef)
         {
-            _patientRef = patientRef;
+            _patientProfileRef = patientProfileRef;
         }
 
         public override void Start()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
-            _patient = _adtService.LoadPatient(_patientRef);
+
+            _patientProfile = _adtService.LoadPatientProfile(_patientProfileRef, false);
+            _patient = _adtService.LoadPatientAndAllProfiles(_patientProfileRef);
+            _patientRef = new EntityRef<Patient>(_patient);
 
             _visitTable = new VisitTable();
 
@@ -56,6 +58,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _visitActionHandler.Delete.Handler = DeleteSelectedVisit;
 
             _visitActionHandler.Add.Enabled = true;
+
+            this.Host.SetTitle(string.Format(SR.VisitSummaryComponentTitle, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
 
             base.Start();
         }

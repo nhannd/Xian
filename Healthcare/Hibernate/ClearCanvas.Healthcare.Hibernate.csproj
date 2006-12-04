@@ -44,6 +44,7 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
+    <Compile Include="Brokers\LocationBroker.cs" />
     <Compile Include="Brokers\PatientProfileBroker.cs" />
     <Compile Include="Brokers\WorklistBroker.cs" />
     <Compile Include="DateTimeRangeHbm.cs" />

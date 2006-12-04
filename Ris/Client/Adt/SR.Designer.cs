@@ -68,5 +68,14 @@ namespace ClearCanvas.Ris.Client.Adt {
                 return ResourceManager.GetString("PatientComponentTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Visits - {0} {1}.
+        /// </summary>
+        internal static string VisitSummaryComponentTitle {
+            get {
+                return ResourceManager.GetString("VisitSummaryComponentTitle", resourceCulture);
+            }
+        }
     }
 }

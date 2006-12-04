@@ -82,20 +82,14 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void ShowVisitSummaryDialog(ClearCanvas.Enterprise.EntityRef<ClearCanvas.Healthcare.PatientProfile> patientProfile, IDesktopWindow iDesktopWindow)
+        private void ShowVisitSummaryDialog(EntityRef<PatientProfile> patientProfileRef, IDesktopWindow iDesktopWindow)
         {
-            // TODO
-            // Add code here to implement the functionality of the tool
-            // If this tool is associated with a workspace, you can access the workspace
-            // using the Workspace property
-            IAdtService adtService = ApplicationContext.GetService<IAdtService>();
-            Patient patient = adtService.LoadPatientAndAllProfiles(patientProfile);
-
-            VisitSummaryComponent component = new VisitSummaryComponent(new EntityRef<Patient>(patient));
-            ApplicationComponent.LaunchAsDialog(
+            VisitSummaryComponent component = new VisitSummaryComponent(patientProfileRef);
+            ApplicationComponent.LaunchAsWorkspace(
                 iDesktopWindow,
                 component,
-                "Patient Visits");
+                "Patient Visits",
+                null);
         }
     }
 }
