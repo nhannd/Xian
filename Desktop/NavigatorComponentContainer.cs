@@ -110,9 +110,31 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
-        private void Component_ModifiedChanged(object sender, EventArgs e)
+        protected override IEnumerable<IApplicationComponent> ContainedComponents
         {
-            this.AcceptEnabled = this.Modified = AnyPageModified();
+            get
+            {
+                return CollectionUtils.Map<NavigatorPage, IApplicationComponent>(_pages,
+                    delegate(NavigatorPage p) { return p.Component; });
+            }
+        }
+
+        public override void ShowValidation(bool show)
+        {
+            // propagate to each page
+            base.ShowValidation(show);
+
+            if (show)
+            {
+                // if there are no errors on the current page, find the first page with errors and switch to it
+                if (!this.CurrentPage.Component.HasValidationErrors)
+                {
+                    NavigatorPage firstPageWithErrors = CollectionUtils.SelectFirst<NavigatorPage>(_pages, 
+                        delegate(NavigatorPage p) { return p.Component.HasValidationErrors; });
+                    if (firstPageWithErrors != null)
+                        this.CurrentPage = firstPageWithErrors;
+                }
+            }
         }
 
 
@@ -318,5 +340,11 @@ namespace ClearCanvas.Desktop
             }
             return false;
         }
+
+        private void Component_ModifiedChanged(object sender, EventArgs e)
+        {
+            this.AcceptEnabled = this.Modified = AnyPageModified();
+        }
+
     }
 }

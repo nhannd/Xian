@@ -127,6 +127,9 @@
       <DependentUpon>TableView.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripBuilder.cs" />
+    <Compile Include="ValidationErrorProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinFormsView.cs" />
     <Compile Include="DesktopForm.cs">
       <SubType>Form</SubType>

@@ -91,6 +91,11 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
+        protected override IEnumerable<IApplicationComponent> ContainedComponents
+        {
+            get { return new IApplicationComponent[] { _contentHost.Component }; }
+        }
+
 		public void OK()
 		{
 			this.ExitCode = ApplicationComponentExitCode.Normal;
@@ -102,5 +107,6 @@ namespace ClearCanvas.Desktop
 			this.ExitCode = ApplicationComponentExitCode.Cancelled;
             this.Host.Exit();
 		}
+
     }
 }

@@ -138,5 +138,10 @@ namespace ClearCanvas.Desktop
                 return _pane1.Component.ExportedActions.Union(_pane2.Component.ExportedActions);
             }
         }
+
+        protected override IEnumerable<IApplicationComponent> ContainedComponents
+        {
+            get { return new IApplicationComponent[] { _pane1.Component, _pane2.Component }; }
+        }
     }
 }

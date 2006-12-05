@@ -125,6 +125,7 @@
     <Compile Include="Trees\ITreeNodeCollection.cs" />
     <Compile Include="Trees\TreeNode.cs" />
     <Compile Include="Trees\TreeNodeCollection.cs" />
+    <Compile Include="Validation\IValidation.cs" />
     <Compile Include="Validation\IValidator.cs" />
     <Compile Include="Validation\ValidateMatchRegexAttribute.cs" />
     <Compile Include="Validation\RegexValidator.cs" />
@@ -132,8 +133,9 @@
     <Compile Include="Validation\RequiredFieldValidator.cs" />
     <Compile Include="Validation\ValidationAttribute.cs" />
     <Compile Include="Validation\ValidationAttributeProcessor.cs" />
+    <Compile Include="Validation\ValidationResult.cs" />
+    <Compile Include="Validation\ValidationSystem.cs" />
     <Compile Include="Validation\Validator.cs" />
-    <Compile Include="Validation\ValidatorGroup.cs" />
     <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />

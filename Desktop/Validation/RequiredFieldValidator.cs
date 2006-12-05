@@ -9,8 +9,8 @@ namespace ClearCanvas.Desktop.Validation
         private string _fieldDisplayName;
         private object _nullValue;
 
-        public RequiredFieldValidator(TestValueCallbackDelegate testValueCallback, string fieldDisplayName, object nullValue)
-            :base(testValueCallback)
+        public RequiredFieldValidator(string propertyName, TestValueCallbackDelegate testValueCallback, string fieldDisplayName, object nullValue)
+            :base(propertyName, testValueCallback)
         {
             _fieldDisplayName = fieldDisplayName;
             _nullValue = nullValue;

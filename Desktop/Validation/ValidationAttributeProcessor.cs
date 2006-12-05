@@ -7,10 +7,9 @@ namespace ClearCanvas.Desktop.Validation
 {
     public static class ValidationAttributeProcessor
     {
-        public static IDictionary<string, ValidatorGroup> Process(object target)
+        public static List<IValidator> Process(object target)
         {
-            Dictionary<string, ValidatorGroup> groups = new Dictionary<string, ValidatorGroup>();
-
+            List<IValidator> validators = new List<IValidator>();
             foreach (PropertyInfo propInfo in target.GetType().GetProperties())
             {
                 object[] validationAttributes = propInfo.GetCustomAttributes(typeof(ValidationAttribute), false);
@@ -21,15 +20,13 @@ namespace ClearCanvas.Desktop.Validation
                     TestValueCallbackDelegate getter = (TestValueCallbackDelegate)
                         Delegate.CreateDelegate(typeof(TestValueCallbackDelegate), target, getMethod);
 
-                    List<IValidator> validators = new List<IValidator>();
                     foreach (ValidationAttribute attr in validationAttributes)
                     {
-                        validators.Add(attr.CreateValidator(getter));
+                        validators.Add(attr.CreateValidator(propInfo.Name, getter));
                     }
-                    groups.Add(propInfo.Name, new ValidatorGroup(validators));
                 }
             }
-            return groups;
+            return validators;
         }
     }
 }

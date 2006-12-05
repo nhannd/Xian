@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler _allPropertiesChanged;
         private event PropertyChangedEventHandler _propertyChanged;
 
-        private IDictionary<string, ValidatorGroup> _validators;
+        private ValidationSystem _validation;
         private bool _showValidationErrors;
         private event EventHandler _showValidationErrorsChanged;
 
@@ -109,7 +109,12 @@ namespace ClearCanvas.Desktop
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
 
-            _validators = ValidationAttributeProcessor.Process(this);
+            // process validation attributes if any
+            List<IValidator> validators = ValidationAttributeProcessor.Process(this);
+            if (validators.Count > 0)
+            {
+                validators.ForEach(delegate(IValidator v) { this.Validation.Add(v); });
+            }
         }
 
         /// <summary>
@@ -152,50 +157,16 @@ namespace ClearCanvas.Desktop
             EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Gets the collection of <see cref="ValidatorGroup"/> objects
-        /// </summary>
-        protected IDictionary<string, ValidatorGroup> ValidatorGroups
-        {
-            get { return _validators; }
-        }
-
-        /// <summary>
-        /// True if any validator test fails according given the current state of this component
-        /// </summary>
-        protected bool HasValidationErrors
+        public IValidation Validation
         {
             get
             {
-                foreach (IValidator validator in _validators.Values)
+                if (_validation == null)
                 {
-                    if (!validator.Result.IsValid)
-                        return true;
+                    _validation = new ValidationSystem();
                 }
-                return false;
+                return _validation;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets whether the view should display validation errors to the user
-        /// </summary>
-        protected bool ShowValidationErrors
-        {
-            get { return _showValidationErrors; }
-            set
-            {
-                if (value != _showValidationErrors)
-                {
-                    _showValidationErrors = value;
-                    EventsHelper.Fire(_showValidationErrorsChanged, this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public event EventHandler ShowValidationErrorsChanged
-        {
-            add { _showValidationErrorsChanged += value; }
-            remove { _showValidationErrorsChanged -= value; }
         }
 
         #region IApplicationComponent Members
@@ -319,6 +290,26 @@ namespace ClearCanvas.Desktop
             protected set { _exitCode = value; }
         }
 
+        public virtual bool HasValidationErrors
+        {
+            get
+            {
+                return this.Validation.GetResults().FindAll(delegate(ValidationResult r) { return !r.IsValid; }).Count > 0;
+            }
+        }
+
+        public virtual void ShowValidation(bool show)
+        {
+            _showValidationErrors = show;
+            EventsHelper.Fire(_showValidationErrorsChanged, this, EventArgs.Empty);
+        }
+
+        public event EventHandler ShowValidationChanged
+        {
+            add { _showValidationErrorsChanged += value; }
+            remove { _showValidationErrorsChanged -= value; }
+        }
+
         #endregion
 
         #region INotifyPropertyChanged Members
@@ -331,6 +322,7 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+
         #region IDataErrorInfo Members
 
         string IDataErrorInfo.Error
@@ -342,10 +334,12 @@ namespace ClearCanvas.Desktop
         {
             get
             {
-                if (_showValidationErrors && _validators.ContainsKey(propertyName))
+                if (_showValidationErrors)
                 {
-                    ValidationResult result = _validators[propertyName].Result;
-                    return result.IsValid ? null : result.GetMessageString("\n");
+                    ValidationResult result = _validation.GetResults(propertyName).Find(
+                        delegate(ValidationResult r) { return !r.IsValid; });
+
+                    return result == null ? null : result.GetMessageString("\n");
                 }
                 else
                 {

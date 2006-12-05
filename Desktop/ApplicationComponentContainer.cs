@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -11,5 +12,23 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public abstract class ApplicationComponentContainer : ApplicationComponent
     {
+        protected abstract IEnumerable<IApplicationComponent> ContainedComponents { get; }
+
+        public override bool HasValidationErrors
+        {
+            get
+            {
+                // true if any contained component has validation errors
+                return CollectionUtils.Contains<IApplicationComponent>(this.ContainedComponents,
+                    delegate(IApplicationComponent c) { return c.HasValidationErrors; });
+            }
+        }
+
+        public override void ShowValidation(bool show)
+        {
+            // propagate to each contained component
+            foreach (IApplicationComponent c in this.ContainedComponents)
+                c.ShowValidation(show);
+        }
     }
 }

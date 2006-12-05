@@ -28,7 +28,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this._searchButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._keepOpen = new System.Windows.Forms.CheckBox();
@@ -38,7 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sex = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._healthcard = new ClearCanvas.Controls.WinForms.TextField();
             this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this._errorProvider = new ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
@@ -139,6 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._sex.DataSource = null;
+            this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._sex.LabelText = "Sex";
             this._sex.Location = new System.Drawing.Point(3, 218);
             this._sex.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -169,13 +169,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._dateOfBirth.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._dateOfBirth.Name = "_dateOfBirth";
             this._dateOfBirth.Nullable = true;
+            this._dateOfBirth.ShowTime = false;
             this._dateOfBirth.Size = new System.Drawing.Size(127, 48);
             this._dateOfBirth.TabIndex = 5;
             this._dateOfBirth.Value = null;
             // 
             // _errorProvider
             // 
-            this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this._errorProvider.ContainerControl = this;
             // 
             // PatientSearchComponentControl
@@ -204,7 +204,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.DateTimeField _dateOfBirth;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
-        private System.Windows.Forms.ErrorProvider _errorProvider;
         private System.Windows.Forms.CheckBox _keepOpen;
+        private ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider _errorProvider;
     }
 }

@@ -34,9 +34,9 @@ namespace ClearCanvas.Desktop.Validation
             get { return _failureMessage; }
         }
 
-        public override IValidator CreateValidator(TestValueCallbackDelegate testValueCallback)
+        public override IValidator CreateValidator(string propertyName, TestValueCallbackDelegate testValueCallback)
         {
-            return new RegexValidator(testValueCallback, _pattern, _options, _failureMessage);
+            return new RegexValidator(propertyName, testValueCallback, _pattern, _options, _failureMessage);
         }
     }
 }

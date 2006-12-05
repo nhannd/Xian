@@ -19,7 +19,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component = component;
 
             _errorProvider.DataSource = _component;
-            _component.ShowValidationErrorsChanged += new EventHandler(_component_ShowValidationErrorsChanged);
 
             _mrn.DataBindings.Add("Value", _component, "Mrn", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcard.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -33,11 +32,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");
             _keepOpen.DataBindings.Add("Checked", _component, "KeepOpen", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
-
-        void _component_ShowValidationErrorsChanged(object sender, EventArgs e)
-        {
-            _errorProvider.UpdateBinding();
         }
 
         private void _searchButton_Click(object sender, EventArgs e)

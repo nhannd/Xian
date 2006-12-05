@@ -91,6 +91,23 @@ namespace ClearCanvas.Desktop
         /// </summary>
         event EventHandler AllPropertiesChanged;
 
+        /// <summary>
+        /// Returns true if there are any validation errors based on the current state of the component.
+        /// </summary>
+        bool HasValidationErrors { get; }
+
+        /// <summary>
+        /// Shows or hides validation errors.
+        /// </summary>
+        /// <param name="show">True to show errors, false to hide them</param>
+        void ShowValidation(bool show);
+
+        /// <summary>
+        /// Notifies the view that validation errors should be shown or hidden.
+        /// </summary>
+        event EventHandler ShowValidationChanged;
+
+
 
         /// <summary>
         /// Called by the framework to determine if this component in a state

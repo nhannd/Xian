@@ -183,5 +183,10 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
+
+        protected override IEnumerable<IApplicationComponent> ContainedComponents
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
     }
 }

@@ -185,11 +185,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
 
                 // always turn the validation errors off after a successful search
-                this.ShowValidationErrors = false;
+                this.ShowValidation(false);
             }
             else
             {
-                this.ShowValidationErrors = true;
+                this.ShowValidation(true);
             }
         }
 

@@ -99,6 +99,33 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
+        protected override IEnumerable<IApplicationComponent> ContainedComponents
+        {
+            get
+            {
+                return CollectionUtils.Map<TabPage, IApplicationComponent>(_pages,
+                    delegate(TabPage p) { return p.Component; });
+            }
+        }
+
+        public override void ShowValidation(bool show)
+        {
+            // propagate to each page
+            base.ShowValidation(show);
+
+            if (show)
+            {
+                // if there are no errors on the current page, find the first page with errors and switch to it
+                if (!this.CurrentPage.Component.HasValidationErrors)
+                {
+                    TabPage firstPageWithErrors = CollectionUtils.SelectFirst<TabPage>(_pages,
+                        delegate(TabPage p) { return p.Component.HasValidationErrors; });
+                    if (firstPageWithErrors != null)
+                        this.CurrentPage = firstPageWithErrors;
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets the current page.
         /// </summary>
@@ -168,5 +195,6 @@ namespace ClearCanvas.Desktop
                 }
             }
         }
+
     }
 }

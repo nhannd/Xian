@@ -10,20 +10,20 @@ namespace ClearCanvas.Desktop.Validation
         private Regex _regex;
         private string _failureMessage;
 
-        public RegexValidator(TestValueCallbackDelegate testValueCallback, Regex regex, string failureMessage)
-            :base(testValueCallback)
+        public RegexValidator(string propertyName, TestValueCallbackDelegate testValueCallback, Regex regex, string failureMessage)
+            :base(propertyName, testValueCallback)
         {
             _regex = regex;
             _failureMessage = failureMessage;
         }
 
-        public RegexValidator(TestValueCallbackDelegate testValueCallback, string pattern, string failureMessage)
-            :this(testValueCallback, pattern, RegexOptions.None, failureMessage)
+        public RegexValidator(string propertyName, TestValueCallbackDelegate testValueCallback, string pattern, string failureMessage)
+            : this(propertyName, testValueCallback, pattern, RegexOptions.None, failureMessage)
         {
         }
 
-        public RegexValidator(TestValueCallbackDelegate testValueCallback, string pattern, RegexOptions options, string failureMessage)
-            : this(testValueCallback, new Regex(pattern, options), failureMessage)
+        public RegexValidator(string propertyName, TestValueCallbackDelegate testValueCallback, string pattern, RegexOptions options, string failureMessage)
+            : this(propertyName, testValueCallback, new Regex(pattern, options), failureMessage)
         {
         }
 

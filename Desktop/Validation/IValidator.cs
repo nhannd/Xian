@@ -6,6 +6,7 @@ namespace ClearCanvas.Desktop.Validation
 {
     public interface IValidator
     {
+        string PropertyName { get; }
         ValidationResult Result { get; }
     }
 }
