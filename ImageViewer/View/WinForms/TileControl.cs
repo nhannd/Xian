@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
 
 			_inputTranslator = new InputTranslator(this.GetModifiers);
-			_tileController = new TileController(_tile);
+			_tileController = new TileController(_tile, (_tile.ImageViewer as ImageViewerComponent).ShortcutManager);
 			
 			InitializeComponent();
 
