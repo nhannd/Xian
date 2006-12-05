@@ -37,6 +37,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _healthcardProvince.DataSource = _component.HealthcardProvinceChoices;
             _healthcardProvince.DataBindings.Add("Value", _component, "HealthcardProvince", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
+            _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void PatientEditorControl_Load(object sender, EventArgs e)

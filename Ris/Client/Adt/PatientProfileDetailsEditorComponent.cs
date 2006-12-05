@@ -171,5 +171,25 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _dummyProvinceChoices;  }
         }
 
+        public string HealthcardVersionCode
+        {
+            get { return _patient.Healthcard.VersionCode; }
+            set
+            {
+                _patient.Healthcard.VersionCode= value;
+                this.Modified = true;
+            }
+        }
+
+        public DateTime? HealthcardExpiryDate
+        {
+            get { return _patient.Healthcard.ExpiryDate; }
+            set
+            {
+                _patient.Healthcard.ExpiryDate = value;
+                this.Modified = true;
+            }
+        }
+
     }
 }

@@ -19,16 +19,14 @@
     </set>
     -->
     <component name="Mrn" class="CompositeIdentifier">
-      <property name ="Id" column="MrnId_" type="String" length="30" not-null="true"/>
+      <property name="Id" column="MrnId_" type="String" length="30" not-null="true"/>
       <property name="AssigningAuthority" column="MrnAssigningAuthority_" type="String" length="100" not-null="true"/>
     </component>
-    <component name="Healthcard" class="CompositeIdentifier">
-      <property name ="Id" column="HealthcardId_" type="String" length="30" not-null="true"/>
+    <component name="Healthcard" class="HealthcardNumber">
+      <property name="Id" column="HealthcardId_" type="String" length="30" not-null="true"/>
       <property name="AssigningAuthority" column="HealthcardAssigningAuthority_" type="String" length="100" not-null="true"/>
-      <!--
-      <property name="VersionControl" column="VersionControl_" type="String" length="20" not-null="false"/>
-      <property name="ExpiryDate" column="ExpiryDate_" type="DateTime" not-null="false"/> 
-      -->
+      <property name="VersionCode" column="HealthcardVersionCode_" type="String" length="20" not-null="false"/>
+      <property name="ExpiryDate" column="HealthcardExpiryDate_" type="DateTime" not-null="false"/> 
     </component>
     <component name="Name" class="PersonName">
       <property name="FamilyName" column="FamilyName_" type="String" length="40" not-null="true"/>

@@ -340,7 +340,7 @@ namespace ClearCanvas.Ris.Services.Tests
         {
 
             this.Mrn = new CompositeIdentifier(Mrn, site);
-            this.Healthcard = new CompositeIdentifier(HC, "Ontario");
+            this.Healthcard = new HealthcardNumber(HC, "Ontario");
 
             this.Name.FamilyName = LastName;
             this.Name.GivenName = GivenName;

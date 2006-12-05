@@ -239,7 +239,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Healthcard
         {
-            get { return _patientProfile.Healthcard.Id; }
+            get { return _patientProfile.Healthcard.Format(); }
         }
 
         public string Sex

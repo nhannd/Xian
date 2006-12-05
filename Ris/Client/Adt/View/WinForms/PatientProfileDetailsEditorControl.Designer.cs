@@ -42,6 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcard = new ClearCanvas.Controls.WinForms.TextField();
             this._mrnSite = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._healthcardProvince = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._healthcardExpiry = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._healthcardVersionCode = new ClearCanvas.Controls.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -84,6 +86,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._sex.DataSource = null;
             this._sex.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._sex.LabelText = "Sex";
             this._sex.Location = new System.Drawing.Point(2, 44);
             this._sex.Margin = new System.Windows.Forms.Padding(2);
@@ -100,6 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
             this._dateOfBirth.Name = "_dateOfBirth";
             this._dateOfBirth.Nullable = false;
+            this._dateOfBirth.ShowTime = false;
             this._dateOfBirth.Size = new System.Drawing.Size(92, 54);
             this._dateOfBirth.TabIndex = 4;
             this._dateOfBirth.Value = null;
@@ -112,6 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._dateOfDeath.Margin = new System.Windows.Forms.Padding(2);
             this._dateOfDeath.Name = "_dateOfDeath";
             this._dateOfDeath.Nullable = true;
+            this._dateOfDeath.ShowTime = false;
             this._dateOfDeath.Size = new System.Drawing.Size(93, 54);
             this._dateOfDeath.TabIndex = 5;
             this._dateOfDeath.Value = null;
@@ -132,7 +137,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(295, 424);
-            this.tableLayoutPanel1.TabIndex = 38;
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
             // 
@@ -153,7 +158,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(289, 100);
-            this.tableLayoutPanel2.TabIndex = 2;
+            this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label1
             // 
@@ -162,7 +167,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.label1.Location = new System.Drawing.Point(3, 106);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(289, 13);
-            this.label1.TabIndex = 3;
+            this.label1.TabIndex = 1;
             this.label1.Text = "Patient Identifiers";
             // 
             // tableLayoutPanel3
@@ -176,33 +181,38 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel3.Controls.Add(this._healthcard, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this._mrnSite, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this._healthcardProvince, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this._healthcardExpiry, 1, 2);
+            this.tableLayoutPanel3.Controls.Add(this._healthcardVersionCode, 0, 2);
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 122);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(289, 100);
-            this.tableLayoutPanel3.TabIndex = 4;
+            this.tableLayoutPanel3.RowCount = 3;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(289, 140);
+            this.tableLayoutPanel3.TabIndex = 2;
             // 
             // _mrn
             // 
             this._mrn.AutoSize = true;
+            this._mrn.Dock = System.Windows.Forms.DockStyle.Fill;
             this._mrn.LabelText = "MRN";
             this._mrn.Location = new System.Drawing.Point(2, 2);
             this._mrn.Margin = new System.Windows.Forms.Padding(2);
             this._mrn.Name = "_mrn";
-            this._mrn.Size = new System.Drawing.Size(140, 40);
+            this._mrn.Size = new System.Drawing.Size(140, 41);
             this._mrn.TabIndex = 0;
             this._mrn.Value = null;
             // 
             // _healthcard
             // 
             this._healthcard.AutoSize = true;
+            this._healthcard.Dock = System.Windows.Forms.DockStyle.Fill;
             this._healthcard.LabelText = "Healthcard";
-            this._healthcard.Location = new System.Drawing.Point(2, 52);
+            this._healthcard.Location = new System.Drawing.Point(2, 47);
             this._healthcard.Margin = new System.Windows.Forms.Padding(2);
             this._healthcard.Name = "_healthcard";
-            this._healthcard.Size = new System.Drawing.Size(140, 40);
+            this._healthcard.Size = new System.Drawing.Size(140, 41);
             this._healthcard.TabIndex = 2;
             this._healthcard.Value = null;
             // 
@@ -210,34 +220,64 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._mrnSite.AutoSize = true;
             this._mrnSite.DataSource = null;
+            this._mrnSite.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._mrnSite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._mrnSite.LabelText = "Site";
             this._mrnSite.Location = new System.Drawing.Point(146, 2);
             this._mrnSite.Margin = new System.Windows.Forms.Padding(2);
             this._mrnSite.Name = "_mrnSite";
             this._mrnSite.Size = new System.Drawing.Size(141, 41);
-            this._mrnSite.TabIndex = 3;
+            this._mrnSite.TabIndex = 1;
             this._mrnSite.Value = null;
             // 
             // _healthcardProvince
             // 
             this._healthcardProvince.AutoSize = true;
             this._healthcardProvince.DataSource = null;
+            this._healthcardProvince.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._healthcardProvince.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._healthcardProvince.LabelText = "Province";
-            this._healthcardProvince.Location = new System.Drawing.Point(146, 52);
+            this._healthcardProvince.Location = new System.Drawing.Point(146, 47);
             this._healthcardProvince.Margin = new System.Windows.Forms.Padding(2);
             this._healthcardProvince.Name = "_healthcardProvince";
             this._healthcardProvince.Size = new System.Drawing.Size(141, 41);
-            this._healthcardProvince.TabIndex = 4;
+            this._healthcardProvince.TabIndex = 3;
             this._healthcardProvince.Value = null;
             // 
-            // PatientEditorControl
+            // _healthcardExpiry
+            // 
+            this._healthcardExpiry.AutoSize = true;
+            this._healthcardExpiry.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._healthcardExpiry.LabelText = "Healthcard Expiry Date";
+            this._healthcardExpiry.Location = new System.Drawing.Point(146, 92);
+            this._healthcardExpiry.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcardExpiry.Name = "_healthcardExpiry";
+            this._healthcardExpiry.Nullable = true;
+            this._healthcardExpiry.ShowTime = false;
+            this._healthcardExpiry.Size = new System.Drawing.Size(141, 46);
+            this._healthcardExpiry.TabIndex = 5;
+            this._healthcardExpiry.Value = null;
+            // 
+            // _healthcardVersionCode
+            // 
+            this._healthcardVersionCode.AutoSize = true;
+            this._healthcardVersionCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._healthcardVersionCode.LabelText = "Healthcard Version Code";
+            this._healthcardVersionCode.Location = new System.Drawing.Point(2, 92);
+            this._healthcardVersionCode.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcardVersionCode.Name = "_healthcardVersionCode";
+            this._healthcardVersionCode.Size = new System.Drawing.Size(140, 46);
+            this._healthcardVersionCode.TabIndex = 4;
+            this._healthcardVersionCode.Value = null;
+            // 
+            // PatientProfileDetailsEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "PatientEditorControl";
+            this.Name = "PatientProfileDetailsEditorControl";
             this.Size = new System.Drawing.Size(295, 424);
             this.Load += new System.EventHandler(this.PatientEditorControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -265,5 +305,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
         private ClearCanvas.Controls.WinForms.ComboBoxField _mrnSite;
         private ClearCanvas.Controls.WinForms.ComboBoxField _healthcardProvince;
+        private ClearCanvas.Controls.WinForms.DateTimeField _healthcardExpiry;
+        private ClearCanvas.Controls.WinForms.TextField _healthcardVersionCode;
     }
 }

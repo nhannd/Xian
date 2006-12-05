@@ -50,6 +50,7 @@
     <Compile Include="DateTimeRange.cs" />
     <Compile Include="DiagnosticService.cs" />
     <Compile Include="Facility.cs" />
+    <Compile Include="HealthcardNumber.cs" />
     <Compile Include="HealthcareWorkflowException.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Modality.cs" />
