@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        [ValidateMatchRegex(@"\d\d\d\d\d\d\d+", "MRN must be 7 or more digits")]
+        [ValidateRegex(@"\d\d\d\d\d\d\d+", "MRN must be 7 or more digits")]
         public string Mrn
         {
             get { return _mrn; }
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [ValidateMatchRegex(@"\w\w+", "Must provide at least 2 letters of family name")]
+        [ValidateRegex(@"\w\w+", "Must provide at least 2 letters of family name")]
         public string FamilyName
         {
             get { return _familyName; }

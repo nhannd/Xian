@@ -9,12 +9,12 @@ namespace ClearCanvas.Desktop.Validation
 
     public delegate object TestValueCallbackDelegate();
 
-    public abstract class Validator : IValidator
+    public abstract class ValidationRule : IValidationRule
     {
         private string _propertyName;
         private TestValueCallbackDelegate _testValueCallback;
 
-        public Validator(string propertyName, TestValueCallbackDelegate testValueCallback)
+        public ValidationRule(string propertyName, TestValueCallbackDelegate testValueCallback)
         {
             _propertyName = propertyName;
             _testValueCallback = testValueCallback;

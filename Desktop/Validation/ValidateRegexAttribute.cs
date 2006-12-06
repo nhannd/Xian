@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 namespace ClearCanvas.Desktop.Validation
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class ValidateMatchRegexAttribute : ValidationAttribute
+    public class ValidateRegexAttribute : ValidationAttribute
     {
         private string _pattern;
         private string _failureMessage;
         private RegexOptions _options;
 
-        public ValidateMatchRegexAttribute(string pattern, string failureMessage)
+        public ValidateRegexAttribute(string pattern, string failureMessage)
         {
             _pattern = pattern;
             _failureMessage = failureMessage;
@@ -34,9 +34,9 @@ namespace ClearCanvas.Desktop.Validation
             get { return _failureMessage; }
         }
 
-        public override IValidator CreateValidator(string propertyName, TestValueCallbackDelegate testValueCallback)
+        public override IValidationRule CreateRule(string propertyName, TestValueCallbackDelegate testValueCallback)
         {
-            return new RegexValidator(propertyName, testValueCallback, _pattern, _options, _failureMessage);
+            return new RegexRule(propertyName, testValueCallback, _pattern, _options, _failureMessage);
         }
     }
 }

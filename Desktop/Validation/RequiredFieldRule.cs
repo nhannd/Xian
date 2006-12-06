@@ -4,12 +4,12 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    public class RequiredFieldValidator : Validator
+    public class RequiredFieldRule : ValidationRule
     {
         private string _fieldDisplayName;
         private object _nullValue;
 
-        public RequiredFieldValidator(string propertyName, TestValueCallbackDelegate testValueCallback, string fieldDisplayName, object nullValue)
+        public RequiredFieldRule(string propertyName, TestValueCallbackDelegate testValueCallback, string fieldDisplayName, object nullValue)
             :base(propertyName, testValueCallback)
         {
             _fieldDisplayName = fieldDisplayName;

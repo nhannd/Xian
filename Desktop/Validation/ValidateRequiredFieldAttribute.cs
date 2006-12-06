@@ -19,9 +19,9 @@ namespace ClearCanvas.Desktop.Validation
             get { return _fieldDisplayName; }
         }
 
-        public override IValidator CreateValidator(string propertyName, TestValueCallbackDelegate testValueCallback)
+        public override IValidationRule CreateRule(string propertyName, TestValueCallbackDelegate testValueCallback)
         {
-            return new RequiredFieldValidator(propertyName, testValueCallback, _fieldDisplayName, null);
+            return new RequiredFieldRule(propertyName, testValueCallback, _fieldDisplayName, null);
         }
     }
 }

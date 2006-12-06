@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
@@ -36,7 +37,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _searchButton_Click(object sender, EventArgs e)
         {
-            _component.Search();
+            using (new CursorManager(Cursors.WaitCursor))
+            {
+                _component.Search();
+            }
         }
 
     }

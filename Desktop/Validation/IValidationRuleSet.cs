@@ -4,10 +4,10 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    public interface IValidation
+    public interface IValidationRuleSet
     {
-        void Add(IValidator validator);
-        void Remove(IValidator validator);
+        void Add(IValidationRule rule);
+        void Remove(IValidationRule rule);
         List<ValidationResult> GetResults();
         List<ValidationResult> GetResults(string propertyName);
     }

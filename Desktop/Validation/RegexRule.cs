@@ -5,24 +5,24 @@ using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    public class RegexValidator : Validator
+    public class RegexRule : ValidationRule
     {
         private Regex _regex;
         private string _failureMessage;
 
-        public RegexValidator(string propertyName, TestValueCallbackDelegate testValueCallback, Regex regex, string failureMessage)
+        public RegexRule(string propertyName, TestValueCallbackDelegate testValueCallback, Regex regex, string failureMessage)
             :base(propertyName, testValueCallback)
         {
             _regex = regex;
             _failureMessage = failureMessage;
         }
 
-        public RegexValidator(string propertyName, TestValueCallbackDelegate testValueCallback, string pattern, string failureMessage)
+        public RegexRule(string propertyName, TestValueCallbackDelegate testValueCallback, string pattern, string failureMessage)
             : this(propertyName, testValueCallback, pattern, RegexOptions.None, failureMessage)
         {
         }
 
-        public RegexValidator(string propertyName, TestValueCallbackDelegate testValueCallback, string pattern, RegexOptions options, string failureMessage)
+        public RegexRule(string propertyName, TestValueCallbackDelegate testValueCallback, string pattern, RegexOptions options, string failureMessage)
             : this(propertyName, testValueCallback, new Regex(pattern, options), failureMessage)
         {
         }

@@ -7,9 +7,9 @@ namespace ClearCanvas.Desktop.Validation
 {
     public static class ValidationAttributeProcessor
     {
-        public static List<IValidator> Process(object target)
+        public static List<IValidationRule> Process(object target)
         {
-            List<IValidator> validators = new List<IValidator>();
+            List<IValidationRule> validators = new List<IValidationRule>();
             foreach (PropertyInfo propInfo in target.GetType().GetProperties())
             {
                 object[] validationAttributes = propInfo.GetCustomAttributes(typeof(ValidationAttribute), false);
@@ -22,7 +22,7 @@ namespace ClearCanvas.Desktop.Validation
 
                     foreach (ValidationAttribute attr in validationAttributes)
                     {
-                        validators.Add(attr.CreateValidator(propInfo.Name, getter));
+                        validators.Add(attr.CreateRule(propInfo.Name, getter));
                     }
                 }
             }

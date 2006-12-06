@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    public interface IValidator
+    public interface IValidationRule
     {
         string PropertyName { get; }
         ValidationResult Result { get; }

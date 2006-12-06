@@ -6,6 +6,6 @@ namespace ClearCanvas.Desktop.Validation
 {
     public abstract class ValidationAttribute : Attribute
     {
-        public abstract IValidator CreateValidator(string propertyName, TestValueCallbackDelegate testValueCallback);
+        public abstract IValidationRule CreateRule(string propertyName, TestValueCallbackDelegate testValueCallback);
     }
 }

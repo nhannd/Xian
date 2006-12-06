@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler _allPropertiesChanged;
         private event PropertyChangedEventHandler _propertyChanged;
 
-        private ValidationSystem _validation;
+        private ValidationRuleSet _validation;
         private bool _showValidationErrors;
         private event EventHandler _showValidationErrorsChanged;
 
@@ -110,10 +110,10 @@ namespace ClearCanvas.Desktop
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
 
             // process validation attributes if any
-            List<IValidator> validators = ValidationAttributeProcessor.Process(this);
+            List<IValidationRule> validators = ValidationAttributeProcessor.Process(this);
             if (validators.Count > 0)
             {
-                validators.ForEach(delegate(IValidator v) { this.Validation.Add(v); });
+                validators.ForEach(delegate(IValidationRule v) { this.Validation.Add(v); });
             }
         }
 
@@ -157,13 +157,13 @@ namespace ClearCanvas.Desktop
             EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
         }
 
-        public IValidation Validation
+        public IValidationRuleSet Validation
         {
             get
             {
                 if (_validation == null)
                 {
-                    _validation = new ValidationSystem();
+                    _validation = new ValidationRuleSet();
                 }
                 return _validation;
             }
