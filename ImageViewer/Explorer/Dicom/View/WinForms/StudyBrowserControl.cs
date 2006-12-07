@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
 		{
-			_studyBrowserComponent.SetSelection(_studyTableView.CurrentSelection);
+			_studyBrowserComponent.SetSelection(_studyTableView.Selection);
 		}
 
 		void OnStudyTableViewDoubleClick(object sender, EventArgs e)

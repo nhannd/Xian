@@ -16,32 +16,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	public partial class TableView : UserControl
 	{
-        class Selection : ISelection
-        {
-            private List<object> _items;
-
-            internal Selection(DataGridViewSelectedRowCollection rows)
-            {
-                _items = new List<object>();
-                foreach (DataGridViewRow row in rows)
-                    _items.Add(row.DataBoundItem);
-            }
-
-            #region ISelection Members
-
-            public object[] Items
-            {
-                get { return _items.ToArray(); }
-            }
-
-            public object Item
-            {
-                get { return _items.Count > 0 ? _items[0] : null; }
-            }
-
-            #endregion
-        }
-
         private event EventHandler _itemDoubleClicked;
         private event EventHandler _selectionChanged;
 
@@ -60,7 +34,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             // setting the minimum column width > 100 pixels
             // therefore, turn off the auto-generate and create the columns ourselves
             _dataGridView.AutoGenerateColumns = false;
-		}
+        }
+
+        #region Design Time properties
 
         [DefaultValue(true)]
         public bool ReadOnly
@@ -74,6 +50,48 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _dataGridView.MultiSelect; }
             set { _dataGridView.MultiSelect = value; }
         }
+
+        [DefaultValue(false)]
+        [Description("Enables or disables multi-line rows.  If enabled, text longer than the column width is wrapped and the row is auto-sized. If disabled, a single line of truncated text is followed by an ellipsis")]
+        public bool MultiLine
+        {
+            get { return _multiLine; }
+            set
+            {
+                _multiLine = value;
+                if (_multiLine == true)
+                {
+                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+                }
+                else
+                {
+                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
+                }
+            }
+        }
+
+        public RightToLeft ToolStripRightToLeft
+        {
+            get { return _toolStrip.RightToLeft; }
+            set { _toolStrip.RightToLeft = value; }
+        }
+
+        public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+        {
+            get { return _toolStripItemDisplayStyle; }
+            set { _toolStripItemDisplayStyle = value; }
+        }
+
+        [DefaultValue(true)]
+        public bool ShowToolbar
+        {
+            get { return _toolStrip.Visible; }
+            set { _toolStrip.Visible = value; }
+        }
+
+        #endregion
 
         public ActionModelNode ToolbarModel
         {
@@ -132,52 +150,47 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        [DefaultValue(false)]
-        [Description("Enables or disables multi-line rows.  If enabled, text longer than the column width is wrapped and the row is auto-sized. If disabled, a single line of truncated text is followed by an ellipsis")]
-        public bool MultiLine
-        {
-            get { return _multiLine; }
-            set
-            {
-                _multiLine = value;
-                if (_multiLine == true)
-                {
-                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-                }
-                else
-                {
-                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
-                }
-            }
-        }
-
-        public RightToLeft ToolStripRightToLeft
-        {
-            get { return _toolStrip.RightToLeft; }
-            set { _toolStrip.RightToLeft = value; }
-        }
-
-		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
-		{
-			get { return _toolStripItemDisplayStyle; }
-			set { _toolStripItemDisplayStyle = value; }
-		}
-
-        [DefaultValue(true)]
-        public bool ShowToolbar
-        {
-            get { return _toolStrip.Visible; }
-            set { _toolStrip.Visible = value; }
-        }
 
         /// <summary>
-        /// Returns the current selection
+        /// Gets/sets the current selection
         /// </summary>
-        public ISelection CurrentSelection
+        public ISelection Selection
         {
-            get { return new Selection(_dataGridView.SelectedRows); }
+            get
+            {
+                return GetSelectionHelper();
+            }
+            set
+            {
+                // if someone tries to assign null, just convert it to an empty selection - this makes everything easier
+                ISelection newSelection = (value == null) ? new Selection() : value;
+
+                // get the existing selection
+                ISelection existingSelection = GetSelectionHelper();
+
+                if (!existingSelection.Equals(newSelection))
+                {
+                    // de-select any rows that should not be selected
+                    foreach (DataGridViewRow row in _dataGridView.SelectedRows)
+                    {
+                        if (!CollectionUtils.Contains(newSelection.Items, delegate(object item) { return item == row.DataBoundItem; }))
+                        {
+                            row.Selected = false;
+                        }
+                    }
+
+                    // select any rows that should be selected
+                    foreach (object item in newSelection.Items)
+                    {
+                        DataGridViewRow row = CollectionUtils.SelectFirst<DataGridViewRow>(_dataGridView.Rows,
+                                delegate(DataGridViewRow r) { return r.DataBoundItem == item; });
+                        if (row != null)
+                            row.Selected = true;
+                    }
+
+                    EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+                }
+            }
         }
 
         public event EventHandler SelectionChanged
@@ -190,6 +203,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             add { _itemDoubleClicked += value; }
             remove { _itemDoubleClicked -= value; }
+        }
+
+        private Selection GetSelectionHelper()
+        {
+            return new Selection(
+                CollectionUtils.Map<DataGridViewRow, object>(_dataGridView.SelectedRows,
+                    delegate(DataGridViewRow row) { return row.DataBoundItem; }));
         }
 
         private void InitColumns()

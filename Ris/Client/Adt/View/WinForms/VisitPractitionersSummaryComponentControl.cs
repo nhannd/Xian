@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _visitPractitioners_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelectedVisitPractitioner(_visitPractitioners.CurrentSelection);
+            _component.SetSelectedVisitPractitioner(_visitPractitioners.Selection);
         }
 
         private void VisitPractitionersSummaryComponentControl_Load(object sender, EventArgs e)

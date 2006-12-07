@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _locations_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelectedVisitLocation(_locations.CurrentSelection);
+            _component.SetSelectedVisitLocation(_locations.Selection);
         }
     }
 }

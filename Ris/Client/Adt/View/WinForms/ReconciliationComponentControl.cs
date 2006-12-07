@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             using (new CursorManager(this, Cursors.WaitCursor))
             {
-                _component.SetSelectedReconciliationProfile(_reconciliationTableView.CurrentSelection);
+                _component.SetSelectedReconciliationProfile(_reconciliationTableView.Selection);
             }
         }
 
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             using (new CursorManager(this, Cursors.WaitCursor))
             {
-                _component.SetSelectedTargetProfile(_targetTableView.CurrentSelection);
+                _component.SetSelectedTargetProfile(_targetTableView.Selection);
             }
         }
 

@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _visitTable_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetVisitSelection(_visitTable.CurrentSelection);
+            _component.SetVisitSelection(_visitTable.Selection);
         }
     }
 }

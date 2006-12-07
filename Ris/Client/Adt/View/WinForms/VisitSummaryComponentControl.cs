@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _visits_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelectedVisit(_visits.CurrentSelection);
+            _component.SetSelectedVisit(_visits.Selection);
         }
 
         private void _closeButton_Click(object sender, EventArgs e)

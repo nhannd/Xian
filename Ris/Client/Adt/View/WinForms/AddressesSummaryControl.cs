@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _addressList_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelectedAddress(_addressList.CurrentSelection);
+            _component.SetSelectedAddress(_addressList.Selection);
         }
 
         private void _addressList_ItemDoubleClicked(object sender, EventArgs e)

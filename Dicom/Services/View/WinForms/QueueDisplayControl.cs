@@ -50,7 +50,7 @@ namespace ClearCanvas.Dicom.Services.View.WinForms
 
         void OnParcelTableViewSelectionChanged(object source, EventArgs args)
         {
-            _queueDisplay.SetSelection(_parcelTableView.CurrentSelection);
+            _queueDisplay.SetSelection(_parcelTableView.Selection);
         }
     }
 }

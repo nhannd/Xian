@@ -33,7 +33,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 
         void OnDicomTagTableSelectionChanged(object sender, EventArgs e)
         {
-            _dicomEditorComponent.SetSelection(_dicomTagTable.CurrentSelection);
+            _dicomEditorComponent.SetSelection(_dicomTagTable.Selection);
         }
     }
 }

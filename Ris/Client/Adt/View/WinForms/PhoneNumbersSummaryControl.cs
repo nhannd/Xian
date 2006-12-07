@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _phoneNumbers_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelectedPhoneNumber(_phoneNumbers.CurrentSelection);
+            _component.SetSelectedPhoneNumber(_phoneNumbers.Selection);
         }
     }
 }

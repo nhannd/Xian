@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _patientProfileTable_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelection(_patientProfileTable.CurrentSelection);
+            _component.SetSelection(_patientProfileTable.Selection);
         }
 
         private void _patientProfileTable_ItemDoubleClicked(object sender, EventArgs e)

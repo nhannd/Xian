@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _queue_SelectionChanged(object sender, EventArgs e)
         {
-            _component.SetSelectedItem(_queue.CurrentSelection);
+            _component.SetSelectedItem(_queue.Selection);
         }
 
         private void _showAll_Click(object sender, EventArgs e)

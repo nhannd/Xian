@@ -20,5 +20,10 @@ namespace ClearCanvas.Desktop
         /// it is undefined which item will be returned.
         /// </summary>
         object Item { get; }
+
+        ISelection Union(ISelection other);
+        ISelection Intersect(ISelection other);
+        ISelection Subtract(ISelection other);
+        bool Contains(object item);
     }
 }
