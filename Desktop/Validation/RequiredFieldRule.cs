@@ -6,13 +6,13 @@ namespace ClearCanvas.Desktop.Validation
 {
     public class RequiredFieldRule : ValidationRule
     {
-        private string _fieldDisplayName;
+        private string _failureMessage;
         private object _nullValue;
 
-        public RequiredFieldRule(string propertyName, TestValueCallbackDelegate testValueCallback, string fieldDisplayName, object nullValue)
+        public RequiredFieldRule(string propertyName, TestValueCallbackDelegate testValueCallback, string failureMessage, object nullValue)
             :base(propertyName, testValueCallback)
         {
-            _fieldDisplayName = fieldDisplayName;
+            _failureMessage = failureMessage;
             _nullValue = nullValue;
         }
 
@@ -20,7 +20,7 @@ namespace ClearCanvas.Desktop.Validation
         {
             if (AreEqual(_nullValue, testValue))
             {
-                return new ValidationResult(false, string.Format("{0} is required", _fieldDisplayName));
+                return new ValidationResult(false, _failureMessage);
             }
             else
             {
