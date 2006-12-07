@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 				foreach (string studyInstanceUID in studyInstanceUIDs)
 				{
-					ImageViewerComponent viewer = new ImageViewerComponent(studyInstanceUID);
+					ImageViewerComponent viewer = new DiagnosticImageViewerComponent(studyInstanceUID);
 					ApplicationComponent.LaunchAsWorkspace(
 						desktopWindow,
 						viewer,

@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void LayoutImageBoxes()
 		{
-			IImageViewer viewer = new ImageViewerComponent("test");
+			IImageViewer viewer = new DiagnosticImageViewerComponent("test");
 			viewer.PhysicalWorkspace.SetImageBoxGrid(2, 1);
 
 			IDisplaySet displaySet1 = new DisplaySet();

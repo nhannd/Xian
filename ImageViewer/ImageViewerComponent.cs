@@ -20,17 +20,11 @@ namespace ClearCanvas.ImageViewer
     }
 
     [ExtensionPoint()]
-    public class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
-    {
-    }
-
-    [ExtensionPoint()]
     public class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    [AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
-	public class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
+	public abstract class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
     {
         internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
         {
@@ -71,10 +65,8 @@ namespace ClearCanvas.ImageViewer
 
 		private ILogicalWorkspace _logicalWorkspace;
         private IPhysicalWorkspace _physicalWorkspace;
-        private ILayoutManager _layoutManager;
         private EventBroker _eventBroker;
 		private ViewerShortcutManager _shortcutManager;
-        private string _studyInstanceUID;
         private ToolSet _toolSet;
 		private event EventHandler<ContextMenuEventArgs> _contextMenuBuildingEvent;
 
@@ -82,17 +74,7 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		public ImageViewerComponent(string studyInstanceUID)
-        {
-            Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
-
-            _studyInstanceUID = studyInstanceUID;
-            _logicalWorkspace = new LogicalWorkspace(this);
-            _physicalWorkspace = new PhysicalWorkspace(this);
-            _eventBroker = new EventBroker();
-        }
-        
-        public override void Start()
+		public override void Start()
         {
             base.Start();
 
@@ -100,18 +82,11 @@ namespace ClearCanvas.ImageViewer
 
 			RegisterShortcuts();
 
-			CreateLayoutManager();
-            ApplyLayout();
-
-			_physicalWorkspace.SelectDefaultImageBox();
+			this.PhysicalWorkspace.SelectDefaultImageBox();
         }
 
         public override void Stop()
         {
-            // TODO: What would be better is if the study tree listened for workspaces
-            // being addded/removed then increased/decreased the reference count itself.
-            StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
-
 			EventsHelper.Fire(_closingEvent, this, EventArgs.Empty);
 
             base.Stop();
@@ -129,25 +104,6 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
-        private ActionModelNode ContextMenuModel
-        {
-            get
-            {
-				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
-
-				EventsHelper.Fire(_contextMenuBuildingEvent, this, new ContextMenuEventArgs(model));
-
-				return model;
-            }
-        }
-
-		private ActionModelNode KeyboardModel
-		{
-			get
-			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-keyboard", _toolSet.Actions);
-			}
-		}
 
         /// <summary>
         /// Gets the <see cref="StudyManager"/>
@@ -177,7 +133,13 @@ namespace ClearCanvas.ImageViewer
         /// <value>The <see cref="PhysicalWorkspace"/>.</value>
         public IPhysicalWorkspace PhysicalWorkspace
         {
-            get { return _physicalWorkspace; }
+            get
+			{
+				if (_physicalWorkspace == null)
+					_physicalWorkspace = new PhysicalWorkspace(this);
+
+				return _physicalWorkspace; 
+			}
         }
 
         /// <summary>
@@ -186,12 +148,24 @@ namespace ClearCanvas.ImageViewer
         /// <value>The <see cref="LogicalWorkspace"/>.</value>
         public ILogicalWorkspace LogicalWorkspace
         {
-            get { return _logicalWorkspace; }
+            get 
+			{
+				if (_logicalWorkspace == null)
+					_logicalWorkspace = new LogicalWorkspace(this);
+
+				return _logicalWorkspace; 
+			}
         }
 
         public EventBroker EventBroker
         {
-            get { return _eventBroker; }
+            get
+			{
+				if (_eventBroker == null)
+					_eventBroker = new EventBroker();
+
+				return _eventBroker; 
+			}
         }
 
         /// <summary>
@@ -285,6 +259,40 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region Protected properties
+
+		protected ToolSet ToolSet
+		{
+			get { return _toolSet; }
+		}
+
+		#endregion
+
+
+		#region Private properties
+
+		private ActionModelNode ContextMenuModel
+		{
+			get
+			{
+				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
+
+				EventsHelper.Fire(_contextMenuBuildingEvent, this, new ContextMenuEventArgs(model));
+
+				return model;
+			}
+		}
+
+		private ActionModelNode KeyboardModel
+		{
+			get
+			{
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-keyboard", _toolSet.Actions);
+			}
+		}
+
+		#endregion
+
 		#region Disposal
 
 		#region IDisposable Members
@@ -313,53 +321,20 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
-				if (_physicalWorkspace != null)
-					_physicalWorkspace.Dispose();
+				if (this.PhysicalWorkspace != null)
+					this.PhysicalWorkspace.Dispose();
 
-				if (_logicalWorkspace != null)
-					_logicalWorkspace.Dispose();
+				if (this.LogicalWorkspace != null)
+					this.LogicalWorkspace.Dispose();
 
-				if (_layoutManager != null)
-					_layoutManager.Dispose();
-
-				if (_toolSet != null)
-					_toolSet.Dispose();
+				if (this.ToolSet != null)
+					this.ToolSet.Dispose();
 			}
 		}
 
 		#endregion 
 
 		#region Private methods
-
-		private void CreateLayoutManager()
-        {
-            try
-            {
-                LayoutManagerExtensionPoint xp = new LayoutManagerExtensionPoint();
-                _layoutManager = (ILayoutManager)xp.CreateExtension();
-            }
-            catch (NotSupportedException e)
-            {
-                Platform.Log(e, LogLevel.Warn);
-            }
-        }
-
-        /// <summary>
-        /// Applies a layout to the workspace.
-        /// </summary>
-        /// <remarks>
-        /// This method signature is preliminary and will likely change.
-        /// </remarks>
-        private void ApplyLayout()
-        {
-            if (_layoutManager == null)
-                throw new NotSupportedException(SR.ExceptionLayoutManagerDoesNotExist);
-
-            _layoutManager.ApplyLayout(_logicalWorkspace, _physicalWorkspace, _studyInstanceUID);
-            StudyManager.StudyTree.IncrementStudyReferenceCount(_studyInstanceUID);
-        }
-
-
 
 		private void RegisterShortcuts()
 		{
@@ -371,7 +346,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region IContextMenuProvider Members
 
-		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		public virtual ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
 			return this.ContextMenuModel;
 		}

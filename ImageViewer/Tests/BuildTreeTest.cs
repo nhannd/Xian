@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tests
 	
 		private void CreateObjects()
 		{
-			_viewer = new ImageViewerComponent("test");
+			_viewer = new DiagnosticImageViewerComponent("test");
 			_imageBox = new ImageBox();
 			_tile1 = new Tile();
 			_tile2 = new Tile();

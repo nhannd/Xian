@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
+    <Compile Include="DiagnosticImageViewerComponent.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />

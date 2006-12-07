@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		public TestTree()
 		{
-			_viewer = new ImageViewerComponent("test");
+			_viewer = new DiagnosticImageViewerComponent("test");
 			
 			_imageBox1 = new ImageBox();
 			_imageBox2 = new ImageBox();

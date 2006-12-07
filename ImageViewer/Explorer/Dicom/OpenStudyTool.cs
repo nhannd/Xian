@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 				}
 
-				ImageViewerComponent imageViewer = new ImageViewerComponent(studyInstanceUid);
+				ImageViewerComponent imageViewer = new DiagnosticImageViewerComponent(studyInstanceUid);
 				ApplicationComponent.LaunchAsWorkspace(
 					this.Context.DesktopWindow,
 					imageViewer,
