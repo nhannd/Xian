@@ -57,28 +57,12 @@ namespace ClearCanvas.Enterprise
         }
 
         /// <summary>
-        /// Checks whether this reference refers to the specified entity.  Note that the version is not
-        /// considered in the comparison.
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>True if this reference refers to the specified entity</returns>
-        public bool RefersTo(TEntity entity)
-        {
-            // cannot include the Type in this comparison, because the entity in question may just be a proxy
-            // rather than the real entity, however that shouldn't matter because the parameter is strongly typed
-
-            // also cannot check version here, because if the entity is an NHibernate proxy, the Version property will not
-            // be initialized
-            return entity.OID == this.EntityOID;
-        }
-
-        /// <summary>
         /// Provide a string representatin of the reference
         /// </summary>
         /// <returns>Formatted string containing the type and OID of the referenced object</returns>
         public override string ToString()
         {
-            return String.Format("Type: {0}, OID: {1}", this.EntityClass.ToString(), this.EntityOID.ToString());
+            return String.Format("Class: {0}, OID: {1}", this.EntityClass.ToString(), this.EntityOID.ToString());
         }
     }
 }

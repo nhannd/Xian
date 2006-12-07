@@ -64,7 +64,7 @@ namespace ClearCanvas.Enterprise
 
             // also cannot check version here, because if the entity is a proxy, the Version property will not
             // be initialized
-            return entity.OID == this.EntityOID;
+            return entity != null && entity.OID == this.EntityOID;
         }
         
         /// <summary>
