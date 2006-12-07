@@ -166,6 +166,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         // WorkspaceManager.  Not to be confused with OnCloseWorkspaceTab
         private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
         {
+			_dockingManager.Container.Focus();
 			_workspaceViewManager.RemoveWorkspaceTab(e.Workspace);
         }
 

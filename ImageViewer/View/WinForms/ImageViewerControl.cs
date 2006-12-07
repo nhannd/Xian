@@ -72,10 +72,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		void OnComponentClosing(object sender, EventArgs e)
 		{
-			foreach (Control control in this.Controls)
-				control.Dispose();
-
-			this.Controls.Clear();
+			while (this.Controls.Count > 0)
+				this.Controls[0].Dispose();
 		}
 
 		private void OnLayoutCompleted(object sender, EventArgs e)

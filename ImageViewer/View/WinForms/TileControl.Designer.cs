@@ -1,4 +1,5 @@
 using System;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -15,14 +16,20 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+				if (components != null)
+					components.Dispose();
 
 				if (_tile != null)
 				{
 					_tile.Drawing -= new EventHandler(OnDrawing);
 					_tile.RendererChanged -= new EventHandler(OnRendererChanged);
+					_tile.InformationBoxChanged -= new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
+					_tileController.CursorTokenChanged -= new EventHandler(OnCursorTokenChanged);
+					_tileController.CaptureChanging -= new EventHandler<CaptureChangingEventArgs>(OnCaptureChanging);
+
+					_tile = null;
 				}
             }
             base.Dispose(disposing);

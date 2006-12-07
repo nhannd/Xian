@@ -15,14 +15,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
 
 				if (_physicalWorkspace != null)
 				{
 					_physicalWorkspace.Drawing -= new EventHandler(OnPhysicalWorkspaceDrawing);
 					_physicalWorkspace.LayoutCompleted -= new EventHandler(OnLayoutCompleted);
+					_physicalWorkspace = null;
 				}
 			}
 			base.Dispose(disposing);

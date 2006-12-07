@@ -63,11 +63,11 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (tabPage == null)
                     return;
 
-                tabPages.Remove(tabPage);
-
-                // tabPages.Remove does not seem to call Dispose(), so let's do it explicitly
-                if(!tabPage.IsDisposed)
-                    tabPage.Dispose();
+				tabPages.Remove(tabPage);
+				
+				// tabPages.Remove does not seem to call Dispose(), so let's do it explicitly
+				if(!tabPage.IsDisposed)
+				    tabPage.Dispose();
 
                 GC.Collect();
 				GC.WaitForPendingFinalizers();
@@ -88,14 +88,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public void ActivateWorkspace(IWorkspace workspace)
 		{
-			if (workspace == null || _tabbedGroups.RootSequence == null)
-				return;
-
 			// When the active workspace changes we need to rebuild
 			// the menu and toolbars to reflect the tools in use for the active workspace
 			try
 			{
 				RebuildMenusAndToolbars();
+
+				if (workspace == null || _tabbedGroups.RootSequence == null)
+					return;
 
 				// Find the tab that owns the workspace and activate it
 				TabPageCollection collection;
@@ -159,7 +159,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				e.Cancel = true;
 
                 // Try to remove workspace from the model (this may not succeed)
-                _desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Remove(page.Workspace);
+				_desktopForm.DesktopWindow.WorkspaceManager.Workspaces.Remove(page.Workspace);
 			}
 			catch (Exception ex)
 			{
