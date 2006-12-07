@@ -16,7 +16,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private IDisplaySet _displaySet;
 		private vtkImageData _vtkImageData;
-
+		private short _minimumPixelValue;
+		
 		#endregion
 
 		public VolumePresentationImage(IDisplaySet displaySet)
@@ -49,6 +50,11 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 				return _vtkImageData; 
 			}
+		}
+
+		public short MinimumPixelValue
+		{
+			get { return _minimumPixelValue; }
 		}
 
 		public int Width
@@ -120,32 +126,35 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			imageData.SetDimensions(this.Width, this.Height, this.Depth);
 			imageData.SetSpacing(GetImageSop().PixelSpacing.Column, GetImageSop().PixelSpacing.Row, GetSliceSpacing());
 			imageData.AllocateScalars();
-
-			if (IsDataUnsigned())
-			{
-				imageData.SetScalarTypeToUnsignedShort();
-				imageData.GetPointData().SetScalars(BuildUnsignedVolumeImageData());
-			}
-			else
-			{
-				imageData.SetScalarTypeToShort();
-				imageData.GetPointData().SetScalars(BuildSignedVolumeImageData());
-			}
-
+			imageData.SetScalarTypeToUnsignedShort();
+			imageData.GetPointData().SetScalars(BuildVolumeImageData());
 			
 			return imageData;
 		}
 
-		private vtkUnsignedShortArray BuildUnsignedVolumeImageData()
+		private vtkUnsignedShortArray BuildVolumeImageData()
 		{
 			ushort[] volumeData = new ushort[this.SizeInVoxels];
 
 			int imageIndex = 0;
 
-			foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
+			if (IsDataUnsigned())
 			{
-				AddUnsignedSliceToVolume(volumeData, slice, imageIndex);
-				imageIndex++;
+				foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
+				{
+					AddUnsignedSliceToVolume(volumeData, slice, imageIndex);
+					imageIndex++;
+				}
+			}
+			else
+			{
+				FindMinimumPixelValue();
+
+				foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
+				{
+					AddSignedSliceToVolume(volumeData, slice, imageIndex);
+					imageIndex++;
+				}
 			}
 
 			vtkUnsignedShortArray vtkVolumeData = new vtkUnsignedShortArray();
@@ -154,22 +163,25 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			return vtkVolumeData;
 		}
 
-		private vtkShortArray BuildSignedVolumeImageData()
+		private void FindMinimumPixelValue()
 		{
-			short[] volumeData = new short[this.SizeInVoxels];
-
-			int imageIndex = 0;
+			_minimumPixelValue = short.MaxValue;
 
 			foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
 			{
-				AddSignedSliceToVolume(volumeData, slice, imageIndex);
-				imageIndex++;
+				byte[] sliceData = slice.ImageLayer.GetPixelData();
+				int length = sliceData.Length / 2;
+
+				for (int i = 0; i < length; i+=2)
+				{
+					ushort lowbyte = sliceData[i];
+					ushort highbyte = sliceData[i + 1];
+					short pixelValue = (short)((highbyte << 8) | lowbyte);
+
+					if (pixelValue < _minimumPixelValue)
+						_minimumPixelValue = pixelValue;
+				}
 			}
-
-			vtkShortArray vtkVolumeData = new vtkShortArray();
-			vtkVolumeData.SetArray(volumeData, volumeData.Length, 1);
-
-			return vtkVolumeData;
 		}
 
 		private void AddUnsignedSliceToVolume(ushort[] volumeData, DicomPresentationImage slice, int imageIndex)
@@ -189,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		private void AddSignedSliceToVolume(short[] volumeData, DicomPresentationImage slice, int imageIndex)
+		private void AddSignedSliceToVolume(ushort[] volumeData, DicomPresentationImage slice, int imageIndex)
 		{
 			byte[] sliceData = slice.ImageLayer.GetPixelData();
 			int start = imageIndex * sliceData.Length / 2;
@@ -203,11 +215,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				ushort highbyte = sliceData[j + 1];
 
 				short val = (short)((highbyte << 8) | lowbyte);
-
-//				if (val >= 0)
-					volumeData[i] = val;
-//				else
-//					volumeData[i] = 0;
+				volumeData[i] = (ushort)(val - _minimumPixelValue);
 
 				j += 2;
 			}

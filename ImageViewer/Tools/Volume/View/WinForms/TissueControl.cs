@@ -21,6 +21,18 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			_bindingSource = new BindingSource();
 			_presetComboBox.DataSource = TissueSettings.Presets;
 			_presetComboBox.SelectedValueChanged += new EventHandler(OnPresetChanged);
+			_surfaceRenderingRadio.Click += new EventHandler(OnSurfaceRenderingRadioClick);
+			_volumeRenderingRadio.Click += new EventHandler(OnVolumeRenderingRadioClick);
+		}
+
+		void OnVolumeRenderingRadioClick(object sender, EventArgs e)
+		{
+			_volumeRenderingRadio.Checked = true;
+		}
+
+		void OnSurfaceRenderingRadioClick(object sender, EventArgs e)
+		{
+			_surfaceRenderingRadio.Checked = true;
 		}
 
 		public TissueSettings TissueSettings
@@ -44,6 +56,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			_visibleCheckBox.DataBindings.Clear();
 			_visibleCheckBox.DataBindings.Add("Checked", _bindingSource, "Visible", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_surfaceRenderingRadio.DataBindings.Clear();
+			_surfaceRenderingRadio.DataBindings.Add("Enabled", _bindingSource, "Visible", true, DataSourceUpdateMode.OnPropertyChanged);
+			_surfaceRenderingRadio.DataBindings.Add("Checked", _bindingSource, "SurfaceRenderingSelected", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_volumeRenderingRadio.DataBindings.Clear();
+			_volumeRenderingRadio.DataBindings.Add("Enabled", _bindingSource, "Visible", true, DataSourceUpdateMode.OnPropertyChanged);
+			_volumeRenderingRadio.DataBindings.Add("Checked", _bindingSource, "VolumeRenderingSelected", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_opacityControl.DataBindings.Clear();
 			_opacityControl.DataBindings.Add("Enabled", _bindingSource, "Visible", true, DataSourceUpdateMode.OnPropertyChanged);
 			_opacityControl.DataBindings.Add("Minimum", _bindingSource, "MinimumOpacity", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -51,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			_opacityControl.DataBindings.Add("Value", _bindingSource, "Opacity", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_windowControl.DataBindings.Clear();
-			_windowControl.DataBindings.Add("Enabled", _bindingSource, "Visible", true, DataSourceUpdateMode.OnPropertyChanged);
+			_windowControl.DataBindings.Add("Enabled", _bindingSource, "WindowEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_windowControl.DataBindings.Add("Minimum", _bindingSource, "MinimumWindow", true, DataSourceUpdateMode.OnPropertyChanged);
 			_windowControl.DataBindings.Add("Maximum", _bindingSource, "MaximumWindow", true, DataSourceUpdateMode.OnPropertyChanged);
 			_windowControl.DataBindings.Add("Value", _bindingSource, "Window", true, DataSourceUpdateMode.OnPropertyChanged);

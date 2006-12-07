@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	public class VolumePresentationImageRenderer : IRenderer
 	{
 		private VtkRenderingSurface _surface;
-		private bool _propsCreated = false;
+		private vtkRenderer _vtkRenderer;
 
 		public VolumePresentationImageRenderer()
 		{
@@ -40,27 +40,41 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public void Draw(DrawArgs args)
 		{
-			if (!_propsCreated && _surface != null)
-			{
-				AddLayers(args);
-				_propsCreated = true;
-			}
+			CreateRenderer();
+			AddLayers(args);
 			_surface.Draw();
+		}
+
+		private void CreateRenderer()
+		{
+			if (_vtkRenderer == null)
+			{
+				_vtkRenderer = new vtk.vtkRenderer();
+				_vtkRenderer.SetBackground(0.0f, 0.0f, 0.0f);
+				_surface.RenderWindow.AddRenderer(_vtkRenderer);
+			}
 		}
 
 		private void AddLayers(DrawArgs args)
 		{
-			vtk.vtkRenderer renderer = new vtk.vtkRenderer();
-			renderer.SetBackground(0.0f, 0.0f, 0.0f);
-
 			LayerCollection layers = args.PresentationImage.LayerManager.RootLayerGroup.Layers;
+			vtkPropCollection props = _vtkRenderer.GetViewProps();
 
 			foreach (VolumeLayer volumeLayer in layers)
 			{
-				renderer.AddViewProp(volumeLayer.VtkProp);
-			}
+				if (props.IsItemPresent(volumeLayer.VtkProp) == 0)
+					_vtkRenderer.AddViewProp(volumeLayer.VtkProp);
 
-			_surface.RenderWindow.AddRenderer(renderer);
+				//if (volumeLayer.OldVtkProp != null)
+				//{
+
+				//    if (props.IsItemPresent(volumeLayer.OldVtkProp) != 0)
+				//    {
+				//        props.RemoveItem(volumeLayer.OldVtkProp);
+				//        volumeLayer.OldVtkProp = null;
+				//    }
+				//}
+			}
 		}
 
 		#endregion

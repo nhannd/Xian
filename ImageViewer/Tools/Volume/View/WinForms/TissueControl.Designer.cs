@@ -37,6 +37,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			this._opacityControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
 			this._windowControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
 			this._levelControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._surfaceRenderingRadio = new System.Windows.Forms.RadioButton();
+			this._volumeRenderingRadio = new System.Windows.Forms.RadioButton();
 			this.SuspendLayout();
 			// 
 			// _visibleCheckBox
@@ -52,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// _presetComboBox
 			// 
 			this._presetComboBox.FormattingEnabled = true;
-			this._presetComboBox.Location = new System.Drawing.Point(101, 43);
+			this._presetComboBox.Location = new System.Drawing.Point(99, 104);
 			this._presetComboBox.Name = "_presetComboBox";
 			this._presetComboBox.Size = new System.Drawing.Size(156, 21);
 			this._presetComboBox.TabIndex = 1;
@@ -60,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// _presetLabel
 			// 
 			this._presetLabel.AutoSize = true;
-			this._presetLabel.Location = new System.Drawing.Point(14, 46);
+			this._presetLabel.Location = new System.Drawing.Point(12, 107);
 			this._presetLabel.Name = "_presetLabel";
 			this._presetLabel.Size = new System.Drawing.Size(37, 13);
 			this._presetLabel.TabIndex = 6;
@@ -69,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// _windowLabel
 			// 
 			this._windowLabel.AutoSize = true;
-			this._windowLabel.Location = new System.Drawing.Point(14, 138);
+			this._windowLabel.Location = new System.Drawing.Point(12, 199);
 			this._windowLabel.Name = "_windowLabel";
 			this._windowLabel.Size = new System.Drawing.Size(46, 13);
 			this._windowLabel.TabIndex = 7;
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// _levelLabel
 			// 
 			this._levelLabel.AutoSize = true;
-			this._levelLabel.Location = new System.Drawing.Point(14, 187);
+			this._levelLabel.Location = new System.Drawing.Point(12, 248);
 			this._levelLabel.Name = "_levelLabel";
 			this._levelLabel.Size = new System.Drawing.Size(33, 13);
 			this._levelLabel.TabIndex = 8;
@@ -87,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// _opacityLabel
 			// 
 			this._opacityLabel.AutoSize = true;
-			this._opacityLabel.Location = new System.Drawing.Point(14, 91);
+			this._opacityLabel.Location = new System.Drawing.Point(12, 152);
 			this._opacityLabel.Name = "_opacityLabel";
 			this._opacityLabel.Size = new System.Drawing.Size(43, 13);
 			this._opacityLabel.TabIndex = 9;
@@ -97,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// 
 			this._opacityControl.AutoSize = true;
 			this._opacityControl.DecimalPlaces = 2;
-			this._opacityControl.Location = new System.Drawing.Point(91, 82);
+			this._opacityControl.Location = new System.Drawing.Point(89, 143);
 			this._opacityControl.Maximum = new decimal(new int[] {
             100,
             0,
@@ -122,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// 
 			this._windowControl.AutoSize = true;
 			this._windowControl.DecimalPlaces = 0;
-			this._windowControl.Location = new System.Drawing.Point(91, 130);
+			this._windowControl.Location = new System.Drawing.Point(89, 191);
 			this._windowControl.Maximum = new decimal(new int[] {
             100,
             0,
@@ -147,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			// 
 			this._levelControl.AutoSize = true;
 			this._levelControl.DecimalPlaces = 0;
-			this._levelControl.Location = new System.Drawing.Point(91, 178);
+			this._levelControl.Location = new System.Drawing.Point(89, 239);
 			this._levelControl.Maximum = new decimal(new int[] {
             100,
             0,
@@ -168,10 +170,36 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
             0,
             0});
 			// 
+			// _surfaceRenderingRadio
+			// 
+			this._surfaceRenderingRadio.AutoCheck = false;
+			this._surfaceRenderingRadio.AutoSize = true;
+			this._surfaceRenderingRadio.Location = new System.Drawing.Point(17, 43);
+			this._surfaceRenderingRadio.Name = "_surfaceRenderingRadio";
+			this._surfaceRenderingRadio.Size = new System.Drawing.Size(114, 17);
+			this._surfaceRenderingRadio.TabIndex = 13;
+			this._surfaceRenderingRadio.TabStop = true;
+			this._surfaceRenderingRadio.Text = "Surface Rendering";
+			this._surfaceRenderingRadio.UseVisualStyleBackColor = true;
+			// 
+			// _volumeRenderingRadio
+			// 
+			this._volumeRenderingRadio.AutoCheck = false;
+			this._volumeRenderingRadio.AutoSize = true;
+			this._volumeRenderingRadio.Location = new System.Drawing.Point(17, 66);
+			this._volumeRenderingRadio.Name = "_volumeRenderingRadio";
+			this._volumeRenderingRadio.Size = new System.Drawing.Size(112, 17);
+			this._volumeRenderingRadio.TabIndex = 14;
+			this._volumeRenderingRadio.TabStop = true;
+			this._volumeRenderingRadio.Text = "Volume Rendering";
+			this._volumeRenderingRadio.UseVisualStyleBackColor = true;
+			// 
 			// TissueControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this._volumeRenderingRadio);
+			this.Controls.Add(this._surfaceRenderingRadio);
 			this.Controls.Add(this._visibleCheckBox);
 			this.Controls.Add(this._presetLabel);
 			this.Controls.Add(this._presetComboBox);
@@ -182,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			this.Controls.Add(this._levelLabel);
 			this.Controls.Add(this._levelControl);
 			this.Name = "TissueControl";
-			this.Size = new System.Drawing.Size(363, 235);
+			this.Size = new System.Drawing.Size(371, 300);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -199,6 +227,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 		private ClearCanvas.Controls.WinForms.TrackBarUpDown _opacityControl;
 		private ClearCanvas.Controls.WinForms.TrackBarUpDown _windowControl;
 		private ClearCanvas.Controls.WinForms.TrackBarUpDown _levelControl;
+		private System.Windows.Forms.RadioButton _surfaceRenderingRadio;
+		private System.Windows.Forms.RadioButton _volumeRenderingRadio;
 
 	}
 }

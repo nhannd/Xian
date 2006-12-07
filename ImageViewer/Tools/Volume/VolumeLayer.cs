@@ -7,18 +7,54 @@ using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
+	public enum RenderingMethod
+	{
+		Surface,
+		Volume
+	}
+
 	public class VolumeLayer : Layer
 	{
 		private TissueSettings _tissueSettings;
-		private vtkProp _vtkProp;
-		private vtkPiecewiseFunction _opacityTransferFunction;
-		private vtkColorTransferFunction _colorTransferFunction;
-		
+		private IVtkProp _surfaceProp;
+		private IVtkProp _volumeProp;
+		private RenderingMethod _renderingMethod = RenderingMethod.Surface;
+	
 		public VolumeLayer(TissueSettings tissueSettings) : base(true)
 		{
 			_tissueSettings = tissueSettings;
 			_tissueSettings.VolumeLayer = this;
 			_tissueSettings.PropertyChanged += new PropertyChangedEventHandler(OnTissueSettingsChanged);
+		}
+
+		public RenderingMethod RenderingMethod
+		{
+			get { return _renderingMethod;}
+			set 
+			{
+				if (_renderingMethod != value)
+				{
+					_renderingMethod = value;
+
+					if (_renderingMethod == RenderingMethod.Surface)
+					{
+						this.SurfaceProp.VtkProp.VisibilityOn();
+						this.SurfaceProp.ApplySetting("Opacity");
+						this.SurfaceProp.ApplySetting("Level");
+
+						this.VolumeProp.VtkProp.VisibilityOff();
+					}
+					else
+					{
+						this.VolumeProp.VtkProp.VisibilityOn();
+						this.VolumeProp.ApplySetting("Opacity");
+						this.VolumeProp.ApplySetting("Level");
+						this.VolumeProp.ApplySetting("Window");
+
+						this.SurfaceProp.VtkProp.VisibilityOff();
+					}
+				}
+			}
 		}
 
 		public TissueSettings TissueSettings
@@ -30,11 +66,32 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			get 
 			{
-				if (_vtkProp == null)
-					//_vtkProp = CreateIsocontourVolume(GetImageData());
-					_vtkProp = CreateVolumeRendering(GetImageData());
+				if (this.RenderingMethod == RenderingMethod.Surface)
+					return this.SurfaceProp.VtkProp;
+				else
+					return this.VolumeProp.VtkProp;
+			}
+		}
 
-				return _vtkProp;
+		private IVtkProp SurfaceProp
+		{
+			get
+			{
+				if (_surfaceProp == null)
+					_surfaceProp = new SurfaceProp(this);
+
+				return _surfaceProp;
+			}
+		}
+
+		private IVtkProp VolumeProp
+		{
+			get
+			{
+				if (_volumeProp == null)
+					_volumeProp = new VolumeProp(this);
+
+				return _volumeProp;
 			}
 		}
 
@@ -43,141 +100,49 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			get { return this.ParentPresentationImage as VolumePresentationImage; }
 		}
 
-		private vtkImageData GetImageData()
+		internal vtkImageData GetImageData()
 		{
 			vtkImageData imageData = this.ParentVolumePresentationImage.VtkImageData;
 			return imageData;
 		}
 		
-		private vtkProp CreateIsocontourVolume(vtkImageData imageData)
-		{
-			vtkContourFilter extractor = new vtk.vtkContourFilter();
-			extractor.SetInput(imageData);
-			//extractor.SetValue(0, 100);
-			extractor.SetValue(0, 400);
-			//extractor.GenerateValues(5, 2, 30);
-
-			vtkPolyDataNormals normals = new vtk.vtkPolyDataNormals();
-			normals.SetInputConnection(extractor.GetOutputPort());
-			normals.SetFeatureAngle(60.0);
-
-			vtkStripper stripper = new vtk.vtkStripper();
-			stripper.SetInputConnection(normals.GetOutputPort());
-
-			vtkPolyDataMapper mapper = new vtk.vtkPolyDataMapper();
-			mapper.SetInputConnection(stripper.GetOutputPort());
-			mapper.ScalarVisibilityOff();
-
-			vtkActor actor = new vtk.vtkActor();
-			actor.SetMapper(mapper);
-			actor.GetProperty().SetDiffuseColor(1, 1, .9412);
-			//skin.GetProperty().SetDiffuseColor(1, .49, .25);
-			actor.GetProperty().SetSpecular(.3);
-			actor.GetProperty().SetSpecularPower(20);
-
-			return actor;
-		}
-
-		private vtkProp CreateVolumeRendering(vtkImageData imageData)
-		{
-			_opacityTransferFunction = new vtkPiecewiseFunction();
-			_opacityTransferFunction.ClampingOff();
-
-			_colorTransferFunction = new vtkColorTransferFunction();
-			_colorTransferFunction.SetColorSpaceToRGB();
-			_colorTransferFunction.ClampingOff();
-
-			SetOpacityTransferFunction();
-			SetColorTransferFunction();
-
-			vtkVolumeProperty volumeProperty = new vtkVolumeProperty();
-			volumeProperty.ShadeOn();
-			volumeProperty.SetInterpolationTypeToLinear();
-			volumeProperty.SetColor(_colorTransferFunction);
-			volumeProperty.SetScalarOpacity(_opacityTransferFunction);
-			volumeProperty.SetDiffuse(0.7);
-			volumeProperty.SetAmbient(0.1);
-			volumeProperty.SetSpecular(.3);
-			volumeProperty.SetSpecularPower(20);
-
-			vtkOpenGLVolumeTextureMapper3D volumeMapper = new vtkOpenGLVolumeTextureMapper3D();
-			volumeMapper.SetPreferredMethodToNVidia();
-			volumeMapper.SetInput(imageData);
-			int supported = volumeMapper.IsRenderSupported(volumeProperty);
-
-			//vtkFixedPointVolumeRayCastMapper volumeMapper = new vtkFixedPointVolumeRayCastMapper();
-			//volumeMapper.SetInput(imageData);
-
-			vtkVolume volume = new vtkVolume();
-			volume.SetMapper(volumeMapper);
-			volume.SetProperty(volumeProperty);
-
-			return volume;
-		}
-
-		private void SetOpacityTransferFunction()
-		{
-			_opacityTransferFunction.RemoveAllPoints();
-			_opacityTransferFunction.AddPoint(GetWindowLeft(), 0.0);
-			_opacityTransferFunction.AddPoint(GetRescaledLevel(), (double)_tissueSettings.Opacity);
-			_opacityTransferFunction.AddPoint(GetWindowRight(), 0.0);
-		}
-
-		private void SetColorTransferFunction()
-		{
-			_colorTransferFunction.RemoveAllPoints();
-
-			double R = _tissueSettings.MinimumColor.R / 255.0f;
-			double G = _tissueSettings.MinimumColor.G / 255.0f;
-			double B = _tissueSettings.MinimumColor.B / 255.0f;
-
-			_colorTransferFunction.AddRGBPoint(GetWindowLeft(), R, G, B);
-
-			R = _tissueSettings.MaximumColor.R / 255.0f;
-			G = _tissueSettings.MaximumColor.G / 255.0f;
-			B = _tissueSettings.MaximumColor.B / 255.0f;
-
-			_colorTransferFunction.AddRGBPoint(GetWindowRight(), R, G, B);
-		}
-
-		private double GetWindowLeft()
+		internal double GetWindowLeft()
 		{
 			return GetRescaledLevel() - (double)_tissueSettings.Window / 2;
 		}
 
-		private double GetWindowRight()
+		internal double GetWindowRight()
 		{
 			return GetRescaledLevel() +	(double)_tissueSettings.Window / 2;
 		}
 
-		private double GetRescaledLevel()
+		internal double GetRescaledLevel()
 		{
 			return (double)_tissueSettings.Level -
-				this.ParentVolumePresentationImage.RescaleIntercept;
+				this.ParentVolumePresentationImage.RescaleIntercept -
+				(double)this.ParentVolumePresentationImage.MinimumPixelValue;
 		}
 
 		void OnTissueSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
-			vtkVolume volume = vtkVolume.SafeDownCast(_vtkProp);
-
-			if (e.PropertyName == "Visible")
+			if (e.PropertyName == "SurfaceRenderingSelected")
 			{
-				if (_tissueSettings.Visible)
-					volume.VisibilityOn();
-				else
-					volume.VisibilityOff();
+				if (_tissueSettings.SurfaceRenderingSelected)
+					this.RenderingMethod = RenderingMethod.Surface;
+			}
+			else if (e.PropertyName == "VolumeRenderingSelected")
+			{
+				if (_tissueSettings.VolumeRenderingSelected)
+					this.RenderingMethod = RenderingMethod.Volume;
 			}
 			else
 			{
-				SetOpacityTransferFunction();
-
-				if (e.PropertyName != "OpacityValue")
-					SetColorTransferFunction();
+				if (_tissueSettings.SurfaceRenderingSelected)
+					_surfaceProp.ApplySetting(e.PropertyName);
+				else
+					_volumeProp.ApplySetting(e.PropertyName);
 			}
-
-			volume.Update();
 		}
-
 
 		protected override BaseLayerCollection CreateChildLayers()
 		{

@@ -11,6 +11,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	{
 		private bool _visible = true;
 
+		private bool _surfaceRenderingSelected = true;
+		private bool _volumeRenderingSelected;
+
 		private decimal _minimumOpacity = 0.0M;
 		private decimal _maximumOpacity = 1.0M;
 		private decimal _opacity = 1.0M;
@@ -59,7 +62,49 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				{
 					_visible = value;
 					OnPropertyChanged("Visible");
+					this.WindowEnabled = value;
 					Apply();
+				}
+			}
+		}
+
+		public bool SurfaceRenderingSelected
+		{
+			get { return _surfaceRenderingSelected; }
+			set 
+			{
+				if (_surfaceRenderingSelected != value)
+				{
+					_surfaceRenderingSelected = value;
+					OnPropertyChanged("SurfaceRenderingSelected");
+
+					if (_surfaceRenderingSelected)
+					{
+						this.VolumeRenderingSelected = false;
+						this.WindowEnabled = false;
+						Apply();
+					}
+				}
+			}
+		}
+
+
+		public bool VolumeRenderingSelected
+		{
+			get { return _volumeRenderingSelected; }
+			set 
+			{
+				if (_volumeRenderingSelected != value)
+				{
+					_volumeRenderingSelected = value;
+					OnPropertyChanged("VolumeRenderingSelected");
+
+					if (_volumeRenderingSelected)
+					{
+						this.SurfaceRenderingSelected = false;
+						this.WindowEnabled = true;
+						Apply();
+					}
 				}
 			}
 		}
@@ -114,6 +159,21 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		#endregion
 
 		#region Window properties
+
+		private bool _windowEnabled;
+
+		public bool WindowEnabled
+		{
+			get { return _windowEnabled; }
+			set 
+			{
+				if (_windowEnabled != value)
+				{
+					_windowEnabled = value;
+					OnPropertyChanged("WindowEnabled");
+				}
+			}
+		}
 
 		public decimal MinimumWindow
 		{
@@ -300,7 +360,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				this.Opacity = 0.25M;
 				this.Window = 600;
 				this.Level = -500;
-				this.MinimumColor = Color.FromArgb(254, 142, 126);
+				this.MinimumColor = Color.FromArgb(200, 142, 126);
 				this.MaximumColor = Color.FromArgb(254, 142, 126);
 			}
 

@@ -23,8 +23,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[AssociateView(typeof(VolumeComponentViewExtensionPoint))]
 	public class VolumeComponent : ImageViewerToolComponent
 	{
-		private TissueSettingsCollection _tissueSettingsCollection;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
