@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer
 			base.Stop();
 		}
 
-		protected void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 
