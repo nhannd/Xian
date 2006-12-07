@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    public partial class PatientProfileDetailsEditorControl : UserControl
+    public partial class PatientProfileDetailsEditorControl : CustomUserControl
     {
         private PatientProfileDetailsEditorComponent _component;
 
@@ -40,6 +41,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);
+
+
+            _errorProvider.DataSource = _component;
         }
 
         private void PatientEditorControl_Load(object sender, EventArgs e)

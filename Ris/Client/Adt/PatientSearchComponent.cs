@@ -94,6 +94,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        [ValidateRegex(@"\d\d\d\d\d\d\d\d\d\d", "Healthcard # must be 10 digits")]
         public string Healthcard
         {
             get { return _healthcard; }

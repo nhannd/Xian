@@ -11,6 +11,7 @@ using ClearCanvas.Healthcare;
 
 using Iesi.Collections;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -51,6 +52,30 @@ namespace ClearCanvas.Ris.Client.Adt
             _sexChoices = _patientAdminService.GetSexEnumTable();
         }
 
+        #region Presentation Model
+
+        [ValidateRequiredField("MRN is required")]
+        public string MrnID
+        {
+            get { return _patient.Mrn.Id; }
+            set
+            {
+                _patient.Mrn.Id = value;
+                this.Modified = true;
+            }
+        }
+
+        public string MrnSite
+        {
+            get { return _patient.Mrn.AssigningAuthority; }
+            set
+            {
+                _patient.Mrn.AssigningAuthority = value;
+                this.Modified = true;
+            }
+        }
+
+        [ValidateRequiredField("Family Name is required")]
         public string FamilyName
         {
             get { return _patient.Name.FamilyName; }
@@ -60,6 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        [ValidateRequiredField("Given Name is required")]
         public string GivenName
         {
             get { return _patient.Name.GivenName; }
@@ -120,32 +146,12 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string MrnID
-        {
-            get { return _patient.Mrn.Id; }
-            set
-            {
-                _patient.Mrn.Id = value;
-                this.Modified = true;
-            }
-        }
-
-        public string MrnSite
-        {
-            get { return _patient.Mrn.AssigningAuthority; }
-            set
-            {
-                _patient.Mrn.AssigningAuthority = value;
-                this.Modified = true;
-            }
-        }
-
         public string[] MrnSiteChoices
         {
             get { return _dummySiteChoices;  }
         }
 
-
+        [ValidateRequiredField("Healthcard # is required")]
         public string HealthcardID
         {
             get { return _patient.Healthcard.Id; }
@@ -156,6 +162,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        [ValidateRequiredField("Healthcard Province is required")]
         public string HealthcardProvince
         {
             get { return _patient.Healthcard.AssigningAuthority; }
@@ -171,6 +178,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _dummyProvinceChoices;  }
         }
 
+        [ValidateRequiredField("Healthcard Version Code is required")]
         public string HealthcardVersionCode
         {
             get { return _patient.Healthcard.VersionCode; }
@@ -191,5 +199,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        #endregion
     }
 }

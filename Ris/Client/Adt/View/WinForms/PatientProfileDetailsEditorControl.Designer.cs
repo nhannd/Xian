@@ -44,19 +44,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcardProvince = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._healthcardExpiry = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._healthcardVersionCode = new ClearCanvas.Controls.WinForms.TextField();
+            this._errorProvider = new ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // _middleName
             // 
             this._middleName.Dock = System.Windows.Forms.DockStyle.Fill;
             this._middleName.LabelText = "Middle Name";
-            this._middleName.Location = new System.Drawing.Point(194, 2);
-            this._middleName.Margin = new System.Windows.Forms.Padding(2);
+            this._middleName.Location = new System.Drawing.Point(533, 2);
+            this._middleName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._middleName.Name = "_middleName";
-            this._middleName.Size = new System.Drawing.Size(93, 38);
+            this._middleName.Size = new System.Drawing.Size(260, 47);
             this._middleName.TabIndex = 2;
             this._middleName.Value = null;
             // 
@@ -64,10 +66,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._givenName.Dock = System.Windows.Forms.DockStyle.Fill;
             this._givenName.LabelText = "Given Name";
-            this._givenName.Location = new System.Drawing.Point(98, 2);
-            this._givenName.Margin = new System.Windows.Forms.Padding(2);
+            this._givenName.Location = new System.Drawing.Point(268, 2);
+            this._givenName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._givenName.Name = "_givenName";
-            this._givenName.Size = new System.Drawing.Size(92, 38);
+            this._givenName.Size = new System.Drawing.Size(259, 47);
             this._givenName.TabIndex = 1;
             this._givenName.Value = null;
             // 
@@ -75,10 +77,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._familyName.Dock = System.Windows.Forms.DockStyle.Fill;
             this._familyName.LabelText = "Family Name";
-            this._familyName.Location = new System.Drawing.Point(2, 2);
-            this._familyName.Margin = new System.Windows.Forms.Padding(2);
+            this._familyName.Location = new System.Drawing.Point(3, 2);
+            this._familyName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._familyName.Name = "_familyName";
-            this._familyName.Size = new System.Drawing.Size(92, 38);
+            this._familyName.Size = new System.Drawing.Size(259, 47);
             this._familyName.TabIndex = 0;
             this._familyName.Value = null;
             // 
@@ -88,10 +90,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sex.Dock = System.Windows.Forms.DockStyle.Fill;
             this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._sex.LabelText = "Sex";
-            this._sex.Location = new System.Drawing.Point(2, 44);
-            this._sex.Margin = new System.Windows.Forms.Padding(2);
+            this._sex.Location = new System.Drawing.Point(3, 53);
+            this._sex.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._sex.Name = "_sex";
-            this._sex.Size = new System.Drawing.Size(92, 54);
+            this._sex.Size = new System.Drawing.Size(259, 68);
             this._sex.TabIndex = 3;
             this._sex.Value = null;
             // 
@@ -99,12 +101,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._dateOfBirth.Dock = System.Windows.Forms.DockStyle.Fill;
             this._dateOfBirth.LabelText = "Date of Birth";
-            this._dateOfBirth.Location = new System.Drawing.Point(98, 44);
-            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
+            this._dateOfBirth.Location = new System.Drawing.Point(268, 53);
+            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._dateOfBirth.Name = "_dateOfBirth";
             this._dateOfBirth.Nullable = false;
             this._dateOfBirth.ShowTime = false;
-            this._dateOfBirth.Size = new System.Drawing.Size(92, 54);
+            this._dateOfBirth.Size = new System.Drawing.Size(259, 68);
             this._dateOfBirth.TabIndex = 4;
             this._dateOfBirth.Value = null;
             // 
@@ -112,12 +114,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._dateOfDeath.Dock = System.Windows.Forms.DockStyle.Fill;
             this._dateOfDeath.LabelText = "Date of Death";
-            this._dateOfDeath.Location = new System.Drawing.Point(194, 44);
-            this._dateOfDeath.Margin = new System.Windows.Forms.Padding(2);
+            this._dateOfDeath.Location = new System.Drawing.Point(533, 53);
+            this._dateOfDeath.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._dateOfDeath.Name = "_dateOfDeath";
             this._dateOfDeath.Nullable = true;
             this._dateOfDeath.ShowTime = false;
-            this._dateOfDeath.Size = new System.Drawing.Size(93, 54);
+            this._dateOfDeath.Size = new System.Drawing.Size(260, 68);
             this._dateOfDeath.TabIndex = 5;
             this._dateOfDeath.Value = null;
             // 
@@ -130,13 +132,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(295, 424);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(764, 522);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -152,21 +154,23 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel2.Controls.Add(this._sex, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this._middleName, 2, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(289, 100);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(796, 123);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 106);
+            this.label1.Location = new System.Drawing.Point(4, 131);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(289, 13);
+            this.label1.Size = new System.Drawing.Size(796, 17);
             this.label1.TabIndex = 1;
             this.label1.Text = "Patient Identifiers";
             // 
@@ -174,6 +178,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this.tableLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel3.AutoSize = true;
             this.tableLayoutPanel3.ColumnCount = 2;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -183,24 +188,26 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel3.Controls.Add(this._healthcardProvince, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this._healthcardExpiry, 1, 2);
             this.tableLayoutPanel3.Controls.Add(this._healthcardVersionCode, 0, 2);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 122);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 152);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 3;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(289, 140);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(796, 157);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // _mrn
             // 
+            this._mrn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this._mrn.AutoSize = true;
-            this._mrn.Dock = System.Windows.Forms.DockStyle.Fill;
             this._mrn.LabelText = "MRN";
-            this._mrn.Location = new System.Drawing.Point(2, 2);
-            this._mrn.Margin = new System.Windows.Forms.Padding(2);
+            this._mrn.Location = new System.Drawing.Point(3, 2);
+            this._mrn.Margin = new System.Windows.Forms.Padding(3, 2, 23, 2);
             this._mrn.Name = "_mrn";
-            this._mrn.Size = new System.Drawing.Size(140, 41);
+            this._mrn.Size = new System.Drawing.Size(372, 46);
             this._mrn.TabIndex = 0;
             this._mrn.Value = null;
             // 
@@ -209,10 +216,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcard.AutoSize = true;
             this._healthcard.Dock = System.Windows.Forms.DockStyle.Fill;
             this._healthcard.LabelText = "Healthcard";
-            this._healthcard.Location = new System.Drawing.Point(2, 47);
-            this._healthcard.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcard.Location = new System.Drawing.Point(3, 54);
+            this._healthcard.Margin = new System.Windows.Forms.Padding(3, 2, 23, 2);
             this._healthcard.Name = "_healthcard";
-            this._healthcard.Size = new System.Drawing.Size(140, 41);
+            this._healthcard.Size = new System.Drawing.Size(372, 48);
             this._healthcard.TabIndex = 2;
             this._healthcard.Value = null;
             // 
@@ -223,10 +230,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._mrnSite.Dock = System.Windows.Forms.DockStyle.Fill;
             this._mrnSite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._mrnSite.LabelText = "Site";
-            this._mrnSite.Location = new System.Drawing.Point(146, 2);
-            this._mrnSite.Margin = new System.Windows.Forms.Padding(2);
+            this._mrnSite.Location = new System.Drawing.Point(401, 2);
+            this._mrnSite.Margin = new System.Windows.Forms.Padding(3, 2, 23, 2);
             this._mrnSite.Name = "_mrnSite";
-            this._mrnSite.Size = new System.Drawing.Size(141, 41);
+            this._mrnSite.Size = new System.Drawing.Size(372, 48);
             this._mrnSite.TabIndex = 1;
             this._mrnSite.Value = null;
             // 
@@ -237,10 +244,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcardProvince.Dock = System.Windows.Forms.DockStyle.Fill;
             this._healthcardProvince.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._healthcardProvince.LabelText = "Province";
-            this._healthcardProvince.Location = new System.Drawing.Point(146, 47);
-            this._healthcardProvince.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcardProvince.Location = new System.Drawing.Point(401, 54);
+            this._healthcardProvince.Margin = new System.Windows.Forms.Padding(3, 2, 23, 2);
             this._healthcardProvince.Name = "_healthcardProvince";
-            this._healthcardProvince.Size = new System.Drawing.Size(141, 41);
+            this._healthcardProvince.Size = new System.Drawing.Size(372, 48);
             this._healthcardProvince.TabIndex = 3;
             this._healthcardProvince.Value = null;
             // 
@@ -249,12 +256,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcardExpiry.AutoSize = true;
             this._healthcardExpiry.Dock = System.Windows.Forms.DockStyle.Fill;
             this._healthcardExpiry.LabelText = "Healthcard Expiry Date";
-            this._healthcardExpiry.Location = new System.Drawing.Point(146, 92);
-            this._healthcardExpiry.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcardExpiry.Location = new System.Drawing.Point(401, 106);
+            this._healthcardExpiry.Margin = new System.Windows.Forms.Padding(3, 2, 23, 2);
             this._healthcardExpiry.Name = "_healthcardExpiry";
             this._healthcardExpiry.Nullable = true;
             this._healthcardExpiry.ShowTime = false;
-            this._healthcardExpiry.Size = new System.Drawing.Size(141, 46);
+            this._healthcardExpiry.Size = new System.Drawing.Size(372, 49);
             this._healthcardExpiry.TabIndex = 5;
             this._healthcardExpiry.Value = null;
             // 
@@ -263,28 +270,34 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcardVersionCode.AutoSize = true;
             this._healthcardVersionCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this._healthcardVersionCode.LabelText = "Healthcard Version Code";
-            this._healthcardVersionCode.Location = new System.Drawing.Point(2, 92);
-            this._healthcardVersionCode.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcardVersionCode.Location = new System.Drawing.Point(3, 106);
+            this._healthcardVersionCode.Margin = new System.Windows.Forms.Padding(3, 2, 23, 2);
             this._healthcardVersionCode.Name = "_healthcardVersionCode";
-            this._healthcardVersionCode.Size = new System.Drawing.Size(140, 46);
+            this._healthcardVersionCode.Size = new System.Drawing.Size(372, 49);
             this._healthcardVersionCode.TabIndex = 4;
             this._healthcardVersionCode.Value = null;
             // 
+            // _errorProvider
+            // 
+            this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this._errorProvider.ContainerControl = this;
+            // 
             // PatientProfileDetailsEditorControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "PatientProfileDetailsEditorControl";
-            this.Size = new System.Drawing.Size(295, 424);
+            this.Size = new System.Drawing.Size(764, 522);
             this.Load += new System.EventHandler(this.PatientEditorControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -300,12 +313,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private ClearCanvas.Controls.WinForms.TextField _mrn;
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
         private ClearCanvas.Controls.WinForms.ComboBoxField _mrnSite;
         private ClearCanvas.Controls.WinForms.ComboBoxField _healthcardProvince;
         private ClearCanvas.Controls.WinForms.DateTimeField _healthcardExpiry;
         private ClearCanvas.Controls.WinForms.TextField _healthcardVersionCode;
+        private ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider _errorProvider;
+        public System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
     }
 }

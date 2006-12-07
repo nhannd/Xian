@@ -79,23 +79,30 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Accept()
         {
-            try
+            if (this.HasValidationErrors)
             {
-                SaveChanges();
-                this.ExitCode = ApplicationComponentExitCode.Normal;
+                this.ShowValidation(true);
             }
-            catch (ConcurrencyException)
+            else
             {
-                this.Host.ShowMessageBox("The patient was modified by another user.  Your changes could not be saved.", MessageBoxActions.Ok);
-                this.ExitCode = ApplicationComponentExitCode.Error;
+                try
+                {
+                    SaveChanges();
+                    this.ExitCode = ApplicationComponentExitCode.Normal;
+                }
+                catch (ConcurrencyException)
+                {
+                    this.Host.ShowMessageBox("The patient was modified by another user.  Your changes could not be saved.", MessageBoxActions.Ok);
+                    this.ExitCode = ApplicationComponentExitCode.Error;
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(e);
+                    this.Host.ShowMessageBox("An error occured while attempting to save changes to this item", MessageBoxActions.Ok);
+                    this.ExitCode = ApplicationComponentExitCode.Error;
+                }
+                this.Host.Exit();
             }
-            catch (Exception e)
-            {
-                Platform.Log(e);
-                this.Host.ShowMessageBox("An error occured while attempting to save changes to this item", MessageBoxActions.Ok);
-                this.ExitCode = ApplicationComponentExitCode.Error;
-            }
-            this.Host.Exit();
         }
 
         public override void Cancel()
