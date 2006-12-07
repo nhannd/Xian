@@ -29,11 +29,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _patientProfileTable.Table = _component.SearchResults;
             _patientProfileTable.MenuModel = _component.MenuModel;
             _patientProfileTable.ToolbarModel = _component.ToolbarModel;
-        }
 
-        private void _patientProfileTable_SelectionChanged(object sender, EventArgs e)
-        {
-            _component.SetSelection(_patientProfileTable.Selection);
+            _patientProfileTable.DataBindings.Add("Selection", _component, "Selection", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _patientProfileTable_ItemDoubleClicked(object sender, EventArgs e)

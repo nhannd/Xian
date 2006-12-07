@@ -125,7 +125,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public EntityRef<PatientProfile> SelectedPatientProfile
         {
-            get { return _selectedPatientProfile == null ? null : new EntityRef<PatientProfile>(_selectedPatientProfile); }
+            get
+            {
+                return _selectedPatientProfile == null ? null : new EntityRef<PatientProfile>(_selectedPatientProfile);
+            }
         }
 
         public event EventHandler SelectedPatientProfileChanged
@@ -149,13 +152,21 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public void SetSelection(ISelection selection)
+        public ISelection Selection
         {
-            PatientProfile profile = (PatientProfile)selection.Item;
-            if (profile != _selectedPatientProfile)
+            get
             {
-                _selectedPatientProfile = profile;
-                EventsHelper.Fire(_selectedPatientProfileChanged, this, EventArgs.Empty);
+                // return an empty Selection if null
+                return _selectedPatientProfile == null ? new Selection() : new Selection(_selectedPatientProfile);
+            }
+            set
+            {
+                PatientProfile profile = (PatientProfile)value.Item;
+                if (profile != _selectedPatientProfile)
+                {
+                    _selectedPatientProfile = profile;
+                    EventsHelper.Fire(_selectedPatientProfileChanged, this, EventArgs.Empty);
+                }
             }
         }
 

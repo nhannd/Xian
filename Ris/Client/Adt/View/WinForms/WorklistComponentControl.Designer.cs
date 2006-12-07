@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._patientProfileTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
@@ -40,6 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._patientProfileTable.MultiSelect = false;
             this._patientProfileTable.Name = "_patientProfileTable";
             this._patientProfileTable.ReadOnly = false;
+            this._patientProfileTable.Selection = selection1;
             this._patientProfileTable.Size = new System.Drawing.Size(771, 429);
             this._patientProfileTable.TabIndex = 0;
             this._patientProfileTable.Table = null;
@@ -47,7 +49,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._patientProfileTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             this._patientProfileTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._patientProfileTable.ItemDoubleClicked += new System.EventHandler(this._patientProfileTable_ItemDoubleClicked);
-            this._patientProfileTable.SelectionChanged += new System.EventHandler(this._patientProfileTable_SelectionChanged);
             // 
             // WorklistComponentControl
             // 
