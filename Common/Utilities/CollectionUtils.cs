@@ -356,5 +356,28 @@ namespace ClearCanvas.Common.Utilities
             }
             return true;
         }
+
+        /// <summary>
+        /// Returns the first element in the target collection, or null if the collection is empty
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static object FirstElement(IEnumerable target)
+        {
+            IEnumerator e = target.GetEnumerator();
+            return e.MoveNext() ? e.Current : null;
+        }
+
+        /// <summary>
+        /// Returns the first element in the target collection, or null if the collection is empty
+        /// </summary>
+        /// <typeparam name="TItem"></typeparam>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static TItem FirstElement<TItem>(IEnumerable<TItem> target)
+        {
+            IEnumerator<TItem> e = target.GetEnumerator();
+            return e.MoveNext() ? e.Current : default(TItem);
+        }
     }
 }
