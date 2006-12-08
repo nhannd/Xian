@@ -22,7 +22,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     if (base.DataSource is IApplicationComponent)
                     {
                         IApplicationComponent c = base.DataSource as IApplicationComponent;
-                        c.ShowValidationChanged -= ApplicationComponent_ShowValidationErrorsChanged;
+                        c.ValidationVisibleChanged -= ApplicationComponent_ShowValidationErrorsChanged;
                     }
 
                     base.DataSource = value;
@@ -30,7 +30,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     if (value is IApplicationComponent)
                     {
                         IApplicationComponent c = value as IApplicationComponent;
-                        c.ShowValidationChanged += ApplicationComponent_ShowValidationErrorsChanged;
+                        c.ValidationVisibleChanged += ApplicationComponent_ShowValidationErrorsChanged;
                     }
                 }
             }

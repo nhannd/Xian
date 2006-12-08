@@ -4,32 +4,56 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Validation
 {
+    /// <summary>
+    /// Represents the result of an <see cref="IValidationRule"/> evaluation.
+    /// </summary>
     public class ValidationResult
     {
-        private bool _isValid;
+        private bool _success;
         private string[] _messages;
 
-        public ValidationResult(bool isValid, string message)
-            : this(isValid, new string[] { message })
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="success">Indicates whether the validation succeeded</param>
+        /// <param name="message">When validation fails, a message indicating why the validation failed</param>
+        public ValidationResult(bool success, string message)
+            : this(success, new string[] { message })
         {
         }
 
-        public ValidationResult(bool isValid, string[] messages)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="success">Indicates whether the validation succeeded</param>
+        /// <param name="messages">When validation fails, a set of messages indicating why the validation failed</param>
+        public ValidationResult(bool success, string[] messages)
         {
-            _isValid = isValid;
+            _success = success;
             _messages = messages;
         }
 
-        public bool IsValid
+        /// <summary>
+        /// True if the validation was successful
+        /// </summary>
+        public bool Success
         {
-            get { return _isValid; }
+            get { return _success; }
         }
 
+        /// <summary>
+        /// Messages that describe why validation was not successful.
+        /// </summary>
         public string[] Messages
         {
             get { return _messages; }
         }
 
+        /// <summary>
+        /// Concatenates the elements of the <see cref="Messages"/> property into a single message using the specified separator
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <returns></returns>
         public string GetMessageString(string separator)
         {
             StringBuilder sb = new StringBuilder();

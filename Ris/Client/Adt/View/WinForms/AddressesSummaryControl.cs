@@ -21,6 +21,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _addressList.ToolbarModel = _component.AddressListActionModel;
             _addressList.MenuModel = _component.AddressListActionModel;
 
+            // need to manually subscribe to this event, since the addressList is not a simple-bound control
+            _component.ValidationVisibleChanged += new EventHandler(_component_ShowValidationChanged);
+        }
+
+        private void _component_ShowValidationChanged(object sender, EventArgs e)
+        {
+            // need to manually manage the errorprovider for the addressList, since it is not a simple-bound control
+            string msg = _component.ValidationVisible ? (_component as IDataErrorInfo)["Addresses"] : null;
+            _errorProvider.SetError(_addressList, msg);
         }
 
         private void AddressesSummaryControl_Load(object sender, EventArgs e)
@@ -36,21 +45,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void _addressList_ItemDoubleClicked(object sender, EventArgs e)
         {
             _component.UpdateSelectedAddress();
-        }
-
-        private void _addButton_Click(object sender, EventArgs e)
-        {
-            //_component.AddAddress();
-        }
-
-        private void _updateButton_Click(object sender, EventArgs e)
-        {
-            //_component.UpdateAddress(_addressList.CurrentSelection);
-        }
-
-        private void _deleteButton_Click(object sender, EventArgs e)
-        {
-            //_component.DeleteAddress(_addressList.CurrentSelection);
         }
     }
 }

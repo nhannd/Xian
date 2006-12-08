@@ -54,7 +54,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        [ValidateRequiredField("MRN is required")]
         public string MrnID
         {
             get { return _patient.Mrn.Id; }
@@ -75,7 +74,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [ValidateRequiredField("Family Name is required")]
         public string FamilyName
         {
             get { return _patient.Name.FamilyName; }
@@ -85,7 +83,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [ValidateRequiredField("Given Name is required")]
         public string GivenName
         {
             get { return _patient.Name.GivenName; }
@@ -151,7 +148,6 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _dummySiteChoices;  }
         }
 
-        [ValidateRequiredField("Healthcard # is required")]
         public string HealthcardID
         {
             get { return _patient.Healthcard.Id; }
@@ -162,7 +158,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [ValidateRequiredField("Healthcard Province is required")]
         public string HealthcardProvince
         {
             get { return _patient.Healthcard.AssigningAuthority; }
@@ -178,7 +173,6 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _dummyProvinceChoices;  }
         }
 
-        [ValidateRequiredField("Healthcard Version Code is required")]
         public string HealthcardVersionCode
         {
             get { return _patient.Healthcard.VersionCode; }

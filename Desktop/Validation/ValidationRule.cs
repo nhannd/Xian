@@ -9,16 +9,26 @@ namespace ClearCanvas.Desktop.Validation
 
     public delegate object TestValueCallbackDelegate();
 
+    /// <summary>
+    /// Abstract base class for validation rules.  Subclass this class rather than implement <see cref="IValidationRule"/> directly.
+    /// </summary>
     public abstract class ValidationRule : IValidationRule
     {
         private string _propertyName;
-        private TestValueCallbackDelegate _testValueCallback;
+        private IApplicationComponent _component;
 
-        public ValidationRule(string propertyName, TestValueCallbackDelegate testValueCallback)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="component">The application component which this rule applies</param>
+        /// <param name="propertyName">The property to which this rule applies</param>
+        public ValidationRule(IApplicationComponent component, string propertyName)
         {
             _propertyName = propertyName;
-            _testValueCallback = testValueCallback;
+            _component = component;
         }
+
+        #region IValidationRule members
 
         public string PropertyName
         {
@@ -29,10 +39,18 @@ namespace ClearCanvas.Desktop.Validation
         {
             get
             {
-                return Validate(_testValueCallback());
+                return Validate(_component);
             }
         }
 
-        protected abstract ValidationResult Validate(object testValue);
+        #endregion
+
+        /// <summary>
+        /// Called to validate the specified application component.  Subclasses must implement
+        /// this method to validate the specified component.
+        /// </summary>
+        /// <param name="component">The component to validate</param>
+        /// <returns>A result indicating whether the component satisfies this validation rule</returns>
+        protected abstract ValidationResult Validate(object component);
     }
 }

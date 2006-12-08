@@ -128,15 +128,11 @@
     <Compile Include="Trees\TreeNodeCollection.cs" />
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
-    <Compile Include="Validation\ValidateRegexAttribute.cs" />
-    <Compile Include="Validation\RegexRule.cs" />
-    <Compile Include="Validation\ValidateRequiredFieldAttribute.cs" />
-    <Compile Include="Validation\RequiredFieldRule.cs" />
-    <Compile Include="Validation\ValidationAttribute.cs" />
-    <Compile Include="Validation\ValidationAttributeProcessor.cs" />
+    <Compile Include="Validation\ValidationXmlProcessor.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
+    <Compile Include="Validation\SpecValidationRule.cs" />
     <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />

@@ -110,7 +110,7 @@ namespace ClearCanvas.Desktop
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
 
             // process validation attributes if any
-            List<IValidationRule> validators = ValidationAttributeProcessor.Process(this);
+            List<IValidationRule> validators = ValidationXmlProcessor.ProcessXml(this);
             if (validators.Count > 0)
             {
                 validators.ForEach(delegate(IValidationRule v) { this.Validation.Add(v); });
@@ -294,7 +294,7 @@ namespace ClearCanvas.Desktop
         {
             get
             {
-                return this.Validation.GetResults().FindAll(delegate(ValidationResult r) { return !r.IsValid; }).Count > 0;
+                return this.Validation.GetResults().FindAll(delegate(ValidationResult r) { return !r.Success; }).Count > 0;
             }
         }
 
@@ -304,7 +304,12 @@ namespace ClearCanvas.Desktop
             EventsHelper.Fire(_showValidationErrorsChanged, this, EventArgs.Empty);
         }
 
-        public event EventHandler ShowValidationChanged
+        public bool ValidationVisible
+        {
+            get { return _showValidationErrors; }
+        }
+
+        public event EventHandler ValidationVisibleChanged
         {
             add { _showValidationErrorsChanged += value; }
             remove { _showValidationErrorsChanged -= value; }
@@ -337,7 +342,7 @@ namespace ClearCanvas.Desktop
                 if (_showValidationErrors)
                 {
                     ValidationResult result = _validation.GetResults(propertyName).Find(
-                        delegate(ValidationResult r) { return !r.IsValid; });
+                        delegate(ValidationResult r) { return !r.Success; });
 
                     return result == null ? null : result.GetMessageString("\n");
                 }

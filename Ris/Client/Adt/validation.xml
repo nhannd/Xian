@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+
+  <spec id="FamilyName">
+    <require test="$.FamilyName" failMessage="Family name is required"/>
+  </spec>
+  
+  <spec id="GivenName">
+    <require test="$.GivenName" failMessage="Given name is required"/>
+  </spec>
+  
+  <spec id="HealthcardID">
+    <require test="$.HealthcardID" failMessage="Healthcard # is required"/>
+    <regex test="$.HealthcardID" pattern="\d\d\d\d\d\d\d\d\d\d" failMessage="Healthcard # must be 10 digits"/>
+  </spec>
+  
+  <spec id="TimeOfDeath">
+    <or test="$" failMessage="Time of death cannot be earlier than date of birth">
+      <true test="$.TimeOfDeath == null"/>
+      <true test="$.TimeOfDeath > $.DateOfBirth"/>
+    </or>
+  </spec>
+
+  <spec id="Addresses">
+    <count test="$.Addresses.Items" min="1" failMessage="At least 1 address is required"/>
+  </spec>
+</specifications>

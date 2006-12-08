@@ -103,9 +103,15 @@ namespace ClearCanvas.Desktop
         void ShowValidation(bool show);
 
         /// <summary>
-        /// Notifies the view that validation errors should be shown or hidden.
+        /// Gets whether validation should be showing or hidden.  The view should use this property to determine
+        /// whether it should show or hide validation.
         /// </summary>
-        event EventHandler ShowValidationChanged;
+        bool ValidationVisible { get; }
+
+        /// <summary>
+        /// Notifies the view that the <see cref="ValidationVisible"/> property has changed.
+        /// </summary>
+        event EventHandler ValidationVisibleChanged;
 
 
 
