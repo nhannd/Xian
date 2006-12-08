@@ -21,23 +21,17 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _phoneNumbers.ToolbarModel = _component.PhoneNumberListActionModel;
             _phoneNumbers.MenuModel = _component.PhoneNumberListActionModel;
 
+            // need to manually subscribe to this event, since the addressList is not a simple-bound control
+            _component.ValidationVisibleChanged += new EventHandler(_component_ShowValidationChanged);
         }
 
-        private void _addButton_Click(object sender, EventArgs e)
+        private void _component_ShowValidationChanged(object sender, EventArgs e)
         {
-            _component.AddPhoneNumber();
+            // need to manually manage the errorprovider for the addressList, since it is not a simple-bound control
+            string msg = _component.ValidationVisible ? (_component as IDataErrorInfo)["PhoneNumbers"] : null;
+            _errorProvider.SetError(_phoneNumbers, msg);
         }
-
-        private void _updateButton_Click(object sender, EventArgs e)
-        {
-//            _component.UpdateSelectedPhoneNumber(_phoneNumbers.CurrentSelection);
-        }
-
-        private void _deleteButton_Click(object sender, EventArgs e)
-        {
-            //_component.DeleteSelectedPhoneNumber(_phoneNumbers.CurrentSelection);
-        }
-
+        
         private void PhoneNumbersSummaryControl_Load(object sender, EventArgs e)
         {
             _component.LoadPhoneNumbersTable();

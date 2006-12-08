@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._addressList.AutoSize = true;
             this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._errorProvider.SetIconAlignment(this._addressList, System.Windows.Forms.ErrorIconAlignment.TopRight);
             this._addressList.Location = new System.Drawing.Point(5, 5);
             this._addressList.Margin = new System.Windows.Forms.Padding(5, 5, 25, 5);
             this._addressList.MenuModel = null;
@@ -64,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._addressList, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));

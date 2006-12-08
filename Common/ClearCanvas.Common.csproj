@@ -141,7 +141,7 @@
     <Compile Include="Specifications\OrSpecification.cs" />
     <Compile Include="Specifications\PrimitiveSpecification.cs" />
     <Compile Include="Specifications\RegexSpecification.cs" />
-    <Compile Include="Specifications\RequiredValueSpecification.cs" />
+    <Compile Include="Specifications\NotNullSpecification.cs" />
     <Compile Include="Specifications\Specification.cs" />
     <Compile Include="Specifications\SpecificationException.cs" />
     <Compile Include="Specifications\SpecificationFactory.cs" />

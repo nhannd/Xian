@@ -4,12 +4,12 @@ using System.Text;
 
 namespace ClearCanvas.Common.Specifications
 {
-    public class RequiredValueSpecification : PrimitiveSpecification
+    public class NotNullSpecification : PrimitiveSpecification
     {
 
         private object _nullValue;
 
-        public RequiredValueSpecification(string testExpression, object nullValue, string failureMessage)
+        public NotNullSpecification(string testExpression, object nullValue, string failureMessage)
             :base(testExpression, failureMessage)
         {
             _nullValue = nullValue;

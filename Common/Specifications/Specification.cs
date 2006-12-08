@@ -81,14 +81,7 @@ namespace ClearCanvas.Common.Specifications
 
             StringBuilder script = new StringBuilder();
             script.Append("return ");
-            if (expression.Contains(AUTOMATIC_VARIABLE_TOKEN))
-            {
-                script.Append(expression.Replace(AUTOMATIC_VARIABLE_TOKEN, string.Format("this.{0}", AUTOMATIC_VARIABLE_IMPLEMENTATION)));
-            }
-            else
-            {
-                script.Append(string.Format("this.{0}.{1}", AUTOMATIC_VARIABLE_IMPLEMENTATION, expression));
-            }
+            script.Append(expression.Replace(AUTOMATIC_VARIABLE_TOKEN, string.Format("this.{0}", AUTOMATIC_VARIABLE_IMPLEMENTATION)));
 
             return ScriptEngine.CreateScript(script.ToString());
         }

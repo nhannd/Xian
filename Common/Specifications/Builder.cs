@@ -21,7 +21,7 @@ namespace ClearCanvas.Common.Specifications
             _factoryMethodMap.Add("and", CreateAnd);
             _factoryMethodMap.Add("or", CreateOr);
             _factoryMethodMap.Add("regex", CreateRegex);
-            _factoryMethodMap.Add("require", CreateRequired);
+            _factoryMethodMap.Add("not-null", CreateNotNull);
             _factoryMethodMap.Add("count", CreateCount);
             _factoryMethodMap.Add("each", CreateEach);
             _factoryMethodMap.Add("any", CreateAny);
@@ -65,9 +65,9 @@ namespace ClearCanvas.Common.Specifications
             return new RegexSpecification(testExpr, node.GetAttribute("pattern"), failureMessage);
         }
 
-        private Specification CreateRequired(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateNotNull(XmlElement node, string testExpr, string failureMessage)
         {
-            return new RequiredValueSpecification(testExpr, null, failureMessage);
+            return new NotNullSpecification(testExpr, null, failureMessage);
         }
 
         private Specification CreateCount(XmlElement node, string testExpr, string failureMessage)

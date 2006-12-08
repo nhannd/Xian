@@ -1,19 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <specifications>
 
+  <spec id="MrnID">
+    <not-null test="$.MrnID" failMessage="MRN is required"/>
+    <regex test="$.MrnID" pattern="\d\d\d\d\d\d\d" failMessage="MRN must be 7 digits"/>
+  </spec>
+
+  <spec id="MrnSite">
+    <not-null test="$.MrnSite" failMessage="MRN site is required"/>
+  </spec>
+
   <spec id="FamilyName">
-    <require test="$.FamilyName" failMessage="Family name is required"/>
+    <not-null test="$.FamilyName" failMessage="Family name is required"/>
   </spec>
   
   <spec id="GivenName">
-    <require test="$.GivenName" failMessage="Given name is required"/>
+    <not-null test="$.GivenName" failMessage="Given name is required"/>
   </spec>
   
   <spec id="HealthcardID">
-    <require test="$.HealthcardID" failMessage="Healthcard # is required"/>
+    <not-null test="$.HealthcardID" failMessage="Healthcard # is required"/>
     <regex test="$.HealthcardID" pattern="\d\d\d\d\d\d\d\d\d\d" failMessage="Healthcard # must be 10 digits"/>
   </spec>
-  
+
+  <spec id="HealthcardProvince">
+    <not-null test="$.HealthcardProvince"/>
+  </spec>
+
+  <spec id="HealthcardVersionCode">
+    <or failMessage="Version code required">
+      <true test="$.HealthcardExpiryDate == null"/>
+      <not-null test="$.HealthcardVersionCode"/>
+    </or>
+    <regex test="$.HealthcardVersionCode" pattern="\w\w" failMessage="Version code must be 2 letters"/>
+  </spec>
+
+  <spec id="HealthcardExpiryDate">
+    <or failMessage="Expiry date is required">
+      <true test="$.HealthcardVersionCode == null"/>
+      <true test="$.HealthcardExpiryDate != null"/>
+    </or>
+  </spec>
+
   <spec id="TimeOfDeath">
     <or test="$" failMessage="Time of death cannot be earlier than date of birth">
       <true test="$.TimeOfDeath == null"/>
@@ -24,4 +52,9 @@
   <spec id="Addresses">
     <count test="$.Addresses.Items" min="1" failMessage="At least 1 address is required"/>
   </spec>
+
+  <spec id="PhoneNumbers">
+    <count test="$.PhoneNumbers.Items" min="1" failMessage="At least 1 phone # is required"/>
+  </spec>
+
 </specifications>
