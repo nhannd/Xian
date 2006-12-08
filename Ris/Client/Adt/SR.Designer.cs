@@ -70,6 +70,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mobile.
+        /// </summary>
+        internal static string PhoneNumberMobile {
+            get {
+                return ResourceManager.GetString("PhoneNumberMobile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient Visits - {0} {1}.
         /// </summary>
         internal static string VisitSummaryComponentTitle {

@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
+    <Compile Include="AddressTable.cs" />
     <Compile Include="OrderEntryComponent.cs" />
     <Compile Include="HL7QueueItemTableData.cs" />
     <Compile Include="HL7QueuePatientSearchTool.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />
+    <Compile Include="TelephoneNumberTable.cs" />
     <Compile Include="VisitEditorComponent.cs" />
     <Compile Include="VisitDetailsEditorComponent.cs" />
     <Compile Include="VisitLocationsSummaryComponent.cs" />

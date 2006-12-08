@@ -18,11 +18,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _use.DataSource = _component.UseChoices;
-            _use.DataBindings.Add("Value", _component, "Use", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _equipment.DataSource = _component.EquipmentChoices;
-            _equipment.DataBindings.Add("Value", _component, "Equipment", true, DataSourceUpdateMode.OnPropertyChanged);
+            _phoneType.DataSource = _component.PhoneTypeChoices;
+            _phoneType.DataBindings.Add("Value", _component, "PhoneType", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _countryCode.DataBindings.Add("Value", _component, "CountryCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _areaCode.DataBindings.Add("Value", _component, "AreaCode", true, DataSourceUpdateMode.OnPropertyChanged);

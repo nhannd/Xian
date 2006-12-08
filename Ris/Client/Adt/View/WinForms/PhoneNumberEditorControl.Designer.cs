@@ -37,8 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._number = new ClearCanvas.Controls.WinForms.MaskedTextField();
             this._areaCode = new ClearCanvas.Controls.WinForms.TextField();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._use = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._equipment = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._phoneType = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this._validFrom = new ClearCanvas.Controls.WinForms.DateTimeField();
@@ -150,36 +149,23 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.SetColumnSpan(this.flowLayoutPanel2, 4);
-            this.flowLayoutPanel2.Controls.Add(this._use);
-            this.flowLayoutPanel2.Controls.Add(this._equipment);
+            this.flowLayoutPanel2.Controls.Add(this._phoneType);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(403, 45);
             this.flowLayoutPanel2.TabIndex = 0;
             // 
-            // _use
+            // _phoneType
             // 
-            this._use.DataSource = null;
-            this._use.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._use.LabelText = "Use";
-            this._use.Location = new System.Drawing.Point(2, 2);
-            this._use.Margin = new System.Windows.Forms.Padding(2);
-            this._use.Name = "_use";
-            this._use.Size = new System.Drawing.Size(75, 41);
-            this._use.TabIndex = 0;
-            this._use.Value = null;
-            // 
-            // _equipment
-            // 
-            this._equipment.DataSource = null;
-            this._equipment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._equipment.LabelText = "Equipment";
-            this._equipment.Location = new System.Drawing.Point(81, 2);
-            this._equipment.Margin = new System.Windows.Forms.Padding(2);
-            this._equipment.Name = "_equipment";
-            this._equipment.Size = new System.Drawing.Size(105, 41);
-            this._equipment.TabIndex = 1;
-            this._equipment.Value = null;
+            this._phoneType.DataSource = null;
+            this._phoneType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._phoneType.LabelText = "Type";
+            this._phoneType.Location = new System.Drawing.Point(2, 2);
+            this._phoneType.Margin = new System.Windows.Forms.Padding(2);
+            this._phoneType.Name = "_phoneType";
+            this._phoneType.Size = new System.Drawing.Size(150, 41);
+            this._phoneType.TabIndex = 2;
+            this._phoneType.Value = null;
             // 
             // flowLayoutPanel1
             // 
@@ -255,12 +241,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.ComboBoxField _equipment;
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _use;
         private ClearCanvas.Controls.WinForms.TextField _countryCode;
         private ClearCanvas.Controls.WinForms.TextField _extension;
         private ClearCanvas.Controls.WinForms.TextField _areaCode;
@@ -268,6 +252,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
         private ClearCanvas.Controls.WinForms.DateTimeField _validFrom;
         private ClearCanvas.Controls.WinForms.DateTimeField _validUntil;
+        private ClearCanvas.Controls.WinForms.ComboBoxField _phoneType;
         private System.Windows.Forms.ToolTip toolTip1;
         private ClearCanvas.Controls.WinForms.MaskedTextField _number;
     }

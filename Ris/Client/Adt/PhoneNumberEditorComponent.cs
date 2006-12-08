@@ -94,34 +94,44 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string Use
+        public string PhoneType
         {
-            get { return _phoneUses[_phoneNumber.Use].Value; }
+            // We will display only allow "Home", "Work" and "Mobile" in the dropdown
+            get
+            {
+                if (_phoneNumber.Use == TelephoneUse.PRN && _phoneNumber.Equipment == TelephoneEquipment.CP)
+                    return SR.PhoneNumberMobile;
+                else
+                    return _phoneUses[_phoneNumber.Use].Value;
+            }
             set
             {
-                _phoneNumber.Use = _phoneUses[value].Code;
+                if (value == SR.PhoneNumberMobile)
+                {
+                    _phoneNumber.Use = TelephoneUse.PRN;
+                    _phoneNumber.Equipment = TelephoneEquipment.CP;
+                }
+                else
+                {
+                    _phoneNumber.Equipment = TelephoneEquipment.PH;
+                    if (value == _phoneUses[TelephoneUse.WPN].Value)
+                        _phoneNumber.Use = TelephoneUse.WPN;
+                    else
+                        _phoneNumber.Use = TelephoneUse.PRN;
+                }
+
                 this.Modified = true;
             }
         }
 
-        public string[] UseChoices
+        public string[] PhoneTypeChoices
         {
-            get { return _phoneUses.Values; }
-        }
-
-        public string Equipment
-        {
-            get { return _phoneEquipments[_phoneNumber.Equipment].Value; }
-            set
+            get
             {
-                _phoneNumber.Equipment = _phoneEquipments[value].Code;
-                this.Modified = true;
+                return new string[] { _phoneUses[TelephoneUse.PRN].Value
+                                    , _phoneUses[TelephoneUse.WPN].Value
+                                    , SR.PhoneNumberMobile };
             }
-        }
-
-        public string[] EquipmentChoices
-        {
-            get { return _phoneEquipments.Values; }
         }
 
         public DateTime? ValidFrom

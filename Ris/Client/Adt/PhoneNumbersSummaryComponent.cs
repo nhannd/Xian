@@ -20,39 +20,13 @@ namespace ClearCanvas.Ris.Client.Adt
     public class PhoneNumbersSummaryComponent : ApplicationComponent
     {
         private PatientProfile _patient;
-        private IPatientAdminService _patientAdminService;
-        private Table<TelephoneNumber> _phoneNumbers;
+        private TelephoneNumberTable _phoneNumbers;
         private TelephoneNumber _currentPhoneNumberSelection;
-
         private CrudActionModel _phoneNumberActionHandler;
-
-        private TelephoneEquipmentEnumTable _phoneEquipments;
-        private TelephoneUseEnumTable _phoneUses;
 
         public PhoneNumbersSummaryComponent()
         {
-            _phoneNumbers = new Table<TelephoneNumber>();
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _phoneEquipments = _patientAdminService.GetTelephoneEquipmentEnumTable();
-            _phoneUses = _patientAdminService.GetTelephoneUseEnumTable();
-
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Type",
-                delegate(TelephoneNumber t)
-                {
-                    return string.Format("{0} {1}",
-                        _phoneUses[t.Use].Value,
-                        t.Equipment == TelephoneEquipment.PH ? "" : _phoneEquipments[t.Equipment].Value);
-                }, 
-                1.1f)); 
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", 
-                delegate(TelephoneNumber pn) { return pn.Format(); },
-                2.2f));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", 
-                delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.From); }, 
-                0.9f));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", 
-                delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }, 
-                0.9f));
+            _phoneNumbers = new TelephoneNumberTable();
 
             _phoneNumberActionHandler = new CrudActionModel();
             _phoneNumberActionHandler.Add.Handler = AddPhoneNumber;

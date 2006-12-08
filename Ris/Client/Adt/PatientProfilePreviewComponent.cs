@@ -58,15 +58,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private EntityRef<PatientProfile> _patientProfileRef;
         private PatientProfile _patientProfile;
-        private Table<Address> _addresses;
-        private Table<TelephoneNumber> _phoneNumbers;
         private bool _showHeader;
         private bool _showReconciliationAlert;
 
         private IAdtService _adtService;
-        private AddressTypeEnumTable _addressTypes;
-        private TelephoneEquipmentEnumTable _phoneEquipments;
-        private TelephoneUseEnumTable _phoneUses;
+        private AddressTable _addresses;
+        private TelephoneNumberTable _phoneNumbers;
         private SexEnumTable _sexChoices;
 
         private ToolSet _toolSet;
@@ -104,34 +101,10 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
-
-            _addressTypes = _adtService.GetAddressTypeEnumTable();
-            _phoneEquipments = _adtService.GetTelephoneEquipmentEnumTable();
-            _phoneUses = _adtService.GetTelephoneUseEnumTable();
             _sexChoices = _adtService.GetSexEnumTable();
 
-            _addresses = new Table<Address>();
-            _addresses.Columns.Add(new TableColumn<Address, string>("Type",
-                delegate(Address a) { return _addressTypes[a.Type].Value; }, 1.0f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Address",
-                delegate(Address a) { return a.Format(); }, 3.0f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Expired On",
-                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 1.0f));
-
-
-            _phoneNumbers = new Table<TelephoneNumber>();
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Type",
-                delegate(TelephoneNumber t)
-                {
-                    return string.Format("{0} {1}",
-                        _phoneUses[t.Use].Value,
-                        t.Equipment == TelephoneEquipment.PH ? "" : _phoneEquipments[t.Equipment].Value);
-                }, 1.0f));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Number",
-                delegate(TelephoneNumber t) { return t.Format(); }, 3.0f));
-            _phoneNumbers.Columns.Add(new TableColumn<TelephoneNumber, string>("Expired On",
-                delegate(TelephoneNumber t) { return t.ValidRange == null ? null : Format.Date(t.ValidRange.Until); }, 1.0f));
-
+            _addresses = new AddressTable();
+            _phoneNumbers = new TelephoneNumberTable();
             _toolSet = new ToolSet(new PatientPreviewToolExtensionPoint(), new PatientPreviewToolContext(this));
 
             UpdateDisplay();

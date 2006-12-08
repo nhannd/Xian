@@ -21,32 +21,13 @@ namespace ClearCanvas.Ris.Client.Adt
     public class AddressesSummaryComponent : ApplicationComponent
     {
         private PatientProfile _patient;
-        private IPatientAdminService _patientAdminService;
-        private Table<Address> _addresses;
+        private AddressTable _addresses;
         private Address _currentAddressSelection;
-
         private CrudActionModel _addressActionHandler;
-
-        private AddressTypeEnumTable _addressTypes;
 
         public AddressesSummaryComponent()
         {
-            _addresses = new Table<Address>();
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _addressTypes = _patientAdminService.GetAddressTypeEnumTable();
-
-
-            _addresses.Columns.Add(new TableColumn<Address, string>("Type", 
-                delegate(Address a) { return _addressTypes[a.Type].Value; }, 
-                0.5f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Address", 
-                delegate(Address a) { return a.Format(); }, 
-                2.8f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid From", 
-                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }, 
-                0.9f));
-            _addresses.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
-                0.9f));
+            _addresses = new AddressTable();
 
             _addressActionHandler = new CrudActionModel();
             _addressActionHandler.Add.Handler = AddAddress;
