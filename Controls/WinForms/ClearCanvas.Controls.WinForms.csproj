@@ -96,7 +96,16 @@
     <Compile Include="HeaderStrip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MaskedTextField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MaskedTextField.Designer.cs">
+      <DependentUpon>MaskedTextField.cs</DependentUpon>
+    </Compile>
     <Compile Include="NonEmptyNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="NullableMaskedEdit.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -161,6 +170,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\folder.ico" />
+    <EmbeddedResource Include="MaskedTextField.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MaskedTextField.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TextField.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TextField.cs</DependentUpon>

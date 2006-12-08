@@ -45,6 +45,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component.Cancel();
         }
 
-
+        private void PhoneNumberEditorControl_Load(object sender, EventArgs e)
+        {
+            _number.Mask = _component.PhoneNumberMask;
+        }
     }
 }
