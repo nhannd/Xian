@@ -45,11 +45,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _searchButton
             // 
             this._searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._searchButton.Location = new System.Drawing.Point(187, 272);
-            this._searchButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._searchButton.Location = new System.Drawing.Point(141, 227);
+            this._searchButton.Margin = new System.Windows.Forms.Padding(2);
             this._searchButton.Name = "_searchButton";
-            this._searchButton.Size = new System.Drawing.Size(75, 23);
-            this._searchButton.TabIndex = 6;
+            this._searchButton.Size = new System.Drawing.Size(56, 19);
+            this._searchButton.TabIndex = 7;
             this._searchButton.Text = "Search";
             this._searchButton.UseVisualStyleBackColor = true;
             this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
@@ -69,9 +69,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._dateOfBirth, 1, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
+            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
             this.tableLayoutPanel1.RowCount = 7;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -80,17 +80,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(285, 328);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 16F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(214, 266);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // _keepOpen
             // 
             this._keepOpen.AutoSize = true;
-            this._keepOpen.Location = new System.Drawing.Point(3, 273);
+            this._keepOpen.Location = new System.Drawing.Point(2, 227);
+            this._keepOpen.Margin = new System.Windows.Forms.Padding(2);
             this._keepOpen.Name = "_keepOpen";
-            this._keepOpen.Size = new System.Drawing.Size(102, 21);
-            this._keepOpen.TabIndex = 8;
+            this._keepOpen.Size = new System.Drawing.Size(80, 17);
+            this._keepOpen.TabIndex = 6;
             this._keepOpen.Text = "Keep Open";
             this._keepOpen.UseVisualStyleBackColor = true;
             // 
@@ -100,10 +101,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._familyName, 2);
             this._familyName.LabelText = "Family Name";
-            this._familyName.Location = new System.Drawing.Point(3, 110);
-            this._familyName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._familyName.Location = new System.Drawing.Point(2, 92);
+            this._familyName.Margin = new System.Windows.Forms.Padding(2);
             this._familyName.Name = "_familyName";
-            this._familyName.Size = new System.Drawing.Size(259, 50);
+            this._familyName.Size = new System.Drawing.Size(195, 41);
             this._familyName.TabIndex = 2;
             this._familyName.Value = null;
             // 
@@ -113,10 +114,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._mrn, 2);
             this._mrn.LabelText = "MRN";
-            this._mrn.Location = new System.Drawing.Point(3, 2);
-            this._mrn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._mrn.Location = new System.Drawing.Point(2, 2);
+            this._mrn.Margin = new System.Windows.Forms.Padding(2);
             this._mrn.Name = "_mrn";
-            this._mrn.Size = new System.Drawing.Size(259, 50);
+            this._mrn.Size = new System.Drawing.Size(195, 41);
             this._mrn.TabIndex = 0;
             this._mrn.Value = null;
             // 
@@ -126,10 +127,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._givenName, 2);
             this._givenName.LabelText = "Given Name";
-            this._givenName.Location = new System.Drawing.Point(3, 164);
-            this._givenName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._givenName.Location = new System.Drawing.Point(2, 137);
+            this._givenName.Margin = new System.Windows.Forms.Padding(2);
             this._givenName.Name = "_givenName";
-            this._givenName.Size = new System.Drawing.Size(259, 50);
+            this._givenName.Size = new System.Drawing.Size(195, 41);
             this._givenName.TabIndex = 3;
             this._givenName.Value = null;
             // 
@@ -140,10 +141,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sex.DataSource = null;
             this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._sex.LabelText = "Sex";
-            this._sex.Location = new System.Drawing.Point(3, 218);
-            this._sex.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._sex.Location = new System.Drawing.Point(2, 182);
+            this._sex.Margin = new System.Windows.Forms.Padding(2);
             this._sex.Name = "_sex";
-            this._sex.Size = new System.Drawing.Size(126, 50);
+            this._sex.Size = new System.Drawing.Size(95, 41);
             this._sex.TabIndex = 4;
             this._sex.Value = null;
             // 
@@ -153,11 +154,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._healthcard, 2);
             this._healthcard.LabelText = "Healthcard";
-            this._healthcard.Location = new System.Drawing.Point(3, 56);
-            this._healthcard.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._healthcard.Location = new System.Drawing.Point(2, 47);
+            this._healthcard.Margin = new System.Windows.Forms.Padding(2);
             this._healthcard.Name = "_healthcard";
-            this._healthcard.Size = new System.Drawing.Size(259, 50);
-            this._healthcard.TabIndex = 7;
+            this._healthcard.Size = new System.Drawing.Size(195, 41);
+            this._healthcard.TabIndex = 1;
             this._healthcard.Value = null;
             // 
             // _dateOfBirth
@@ -165,28 +166,29 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._dateOfBirth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._dateOfBirth.LabelText = "Date of Birth";
-            this._dateOfBirth.Location = new System.Drawing.Point(135, 218);
-            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._dateOfBirth.Location = new System.Drawing.Point(101, 182);
+            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
             this._dateOfBirth.Name = "_dateOfBirth";
             this._dateOfBirth.Nullable = true;
             this._dateOfBirth.ShowTime = false;
-            this._dateOfBirth.Size = new System.Drawing.Size(127, 48);
+            this._dateOfBirth.Size = new System.Drawing.Size(96, 39);
             this._dateOfBirth.TabIndex = 5;
             this._dateOfBirth.Value = null;
             // 
             // _errorProvider
             // 
+            this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this._errorProvider.ContainerControl = this;
             // 
             // PatientSearchComponentControl
             // 
             this.AcceptButton = this._searchButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PatientSearchComponentControl";
-            this.Size = new System.Drawing.Size(285, 328);
+            this.Size = new System.Drawing.Size(214, 266);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();

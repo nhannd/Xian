@@ -70,10 +70,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._postalCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this._postalCode.LabelText = "Postal Code";
             this._postalCode.Location = new System.Drawing.Point(280, 92);
-            this._postalCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._postalCode.Margin = new System.Windows.Forms.Padding(2);
             this._postalCode.Name = "_postalCode";
             this._postalCode.Size = new System.Drawing.Size(135, 41);
-            this._postalCode.TabIndex = 6;
+            this._postalCode.TabIndex = 7;
             this._postalCode.Value = null;
             // 
             // _validFrom
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._validFrom.Dock = System.Windows.Forms.DockStyle.Fill;
             this._validFrom.LabelText = "Valid From";
             this._validFrom.Location = new System.Drawing.Point(280, 2);
-            this._validFrom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._validFrom.Margin = new System.Windows.Forms.Padding(2);
             this._validFrom.Name = "_validFrom";
             this._validFrom.Nullable = true;
             this._validFrom.ShowTime = false;
@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._validUntil.Dock = System.Windows.Forms.DockStyle.Fill;
             this._validUntil.LabelText = "Valid Until";
             this._validUntil.Location = new System.Drawing.Point(419, 2);
-            this._validUntil.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._validUntil.Margin = new System.Windows.Forms.Padding(2);
             this._validUntil.Name = "_validUntil";
             this._validUntil.Nullable = true;
             this._validUntil.ShowTime = false;
@@ -106,9 +106,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._type.DataSource = null;
             this._type.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._type.LabelText = "Type";
             this._type.Location = new System.Drawing.Point(2, 2);
-            this._type.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._type.Margin = new System.Windows.Forms.Padding(2);
             this._type.Name = "_type";
             this._type.Size = new System.Drawing.Size(135, 41);
             this._type.TabIndex = 0;
@@ -119,10 +120,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._city.Dock = System.Windows.Forms.DockStyle.Fill;
             this._city.LabelText = "City";
             this._city.Location = new System.Drawing.Point(2, 92);
-            this._city.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._city.Margin = new System.Windows.Forms.Padding(2);
             this._city.Name = "_city";
             this._city.Size = new System.Drawing.Size(135, 41);
-            this._city.TabIndex = 4;
+            this._city.TabIndex = 5;
             this._city.Value = null;
             // 
             // _street
@@ -131,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._street.Dock = System.Windows.Forms.DockStyle.Fill;
             this._street.LabelText = "Street";
             this._street.Location = new System.Drawing.Point(2, 47);
-            this._street.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._street.Margin = new System.Windows.Forms.Padding(2);
             this._street.Name = "_street";
             this._street.Size = new System.Drawing.Size(413, 41);
             this._street.TabIndex = 3;
@@ -141,24 +142,26 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._province.DataSource = null;
             this._province.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._province.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._province.LabelText = "Province";
             this._province.Location = new System.Drawing.Point(141, 92);
-            this._province.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._province.Margin = new System.Windows.Forms.Padding(2);
             this._province.Name = "_province";
             this._province.Size = new System.Drawing.Size(135, 41);
-            this._province.TabIndex = 5;
+            this._province.TabIndex = 6;
             this._province.Value = null;
             // 
             // _country
             // 
             this._country.DataSource = null;
             this._country.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._country.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._country.LabelText = "Country";
             this._country.Location = new System.Drawing.Point(419, 92);
-            this._country.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._country.Margin = new System.Windows.Forms.Padding(2);
             this._country.Name = "_country";
             this._country.Size = new System.Drawing.Size(136, 41);
-            this._country.TabIndex = 7;
+            this._country.TabIndex = 8;
             this._country.Value = null;
             // 
             // tableLayoutPanel1
@@ -202,7 +205,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 138);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(551, 30);
-            this.flowLayoutPanel1.TabIndex = 8;
+            this.flowLayoutPanel1.TabIndex = 9;
             // 
             // _unit
             // 
@@ -211,7 +214,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._unit.Margin = new System.Windows.Forms.Padding(2);
             this._unit.Name = "_unit";
             this._unit.Size = new System.Drawing.Size(136, 41);
-            this._unit.TabIndex = 9;
+            this._unit.TabIndex = 4;
             this._unit.Value = null;
             // 
             // AddressEditorControl
