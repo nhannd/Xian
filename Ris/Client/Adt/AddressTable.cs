@@ -18,14 +18,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
             this.Columns.Add(new TableColumn<Address, string>("Type", 
                 delegate(Address a) { return _addressTypes[a.Type].Value; }, 
-                0.5f));
+                1.1f));
             this.Columns.Add(new TableColumn<Address, string>("Address", 
                 delegate(Address a) { return a.Format(); }, 
-                2.8f));
-            this.Columns.Add(new TableColumn<Address, string>("Valid From", 
-                delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.From); }, 
-                0.9f));
-            this.Columns.Add(new TableColumn<Address, string>("Valid Until", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
+                2.2f));
+            this.Columns.Add(new TableColumn<Address, string>("Expiry Date", delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
                 0.9f));
 
         }

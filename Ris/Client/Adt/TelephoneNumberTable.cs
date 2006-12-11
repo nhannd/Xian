@@ -29,10 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", 
                 delegate(TelephoneNumber pn) { return pn.Format(); },
                 2.2f));
-            this.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid From", 
-                delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.From); }, 
-                0.9f));
-            this.Columns.Add(new TableColumn<TelephoneNumber, string>("Valid Until", 
+            this.Columns.Add(new TableColumn<TelephoneNumber, string>("Expiry Date", 
                 delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }, 
                 0.9f));
         }
