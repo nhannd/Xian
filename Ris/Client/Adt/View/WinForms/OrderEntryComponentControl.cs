@@ -33,6 +33,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
             _component.DiagnosticServiceChanged += new EventHandler(DiagnosticServiceChangedEventHandler);
 
+            _diagnosticServiceBreakdown.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceBreakdownItem", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _priority.DataSource = _component.PriorityChoices;
             _priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
 

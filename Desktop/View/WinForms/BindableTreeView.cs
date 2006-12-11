@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Trees;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -75,6 +76,11 @@ namespace ClearCanvas.Desktop.View.WinForms
                 this.Nodes.Add(new TreeNode("dummy"));
             }
 
+            public object DataBoundItem
+            {
+                get { return _item; }
+            }
+
             public bool IsSubTreeBuilt
             {
                 get { return _subtreeManager != null; } 
@@ -99,6 +105,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private ITree _root;
         private TreeLevelManager _rootLevelManager;
+        private event EventHandler _selectionChanged;
 
         /// <summary>
         /// Constructor
@@ -125,6 +132,47 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         /// <summary>
+        /// Gets or sets the current selection
+        /// </summary>
+        public ISelection Selection
+        {
+            get
+            {
+                return GetSelectionHelper();
+            }
+            set
+            {
+                // if someone tries to assign null, just convert it to an empty selection - this makes everything easier
+                ISelection newSelection = (value == null) ? new Selection() : value;
+
+                // get the existing selection
+                ISelection existingSelection = GetSelectionHelper();
+
+                if (!existingSelection.Equals(newSelection))
+                {
+                    if (newSelection.Item == null)
+                    {
+                        _treeCtrl.SelectedNode = null;
+                    }
+                    else
+                    {
+                        _treeCtrl.SelectedNode = FindNodeRecursive(_treeCtrl.Nodes, delegate(SmartTreeNode node) { return node.DataBoundItem == newSelection.Item; });
+                    }
+                    EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Notifies that the selection has changed
+        /// </summary>
+        public event EventHandler SelectionChanged
+        {
+            add { _selectionChanged += value; }
+            remove { _selectionChanged -= value; }
+        }
+
+        /// <summary>
         /// Expands the entire tree
         /// </summary>
         public void ExpandAll()
@@ -143,6 +191,41 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
+        #region Private methods
+
+        /// <summary>
+        /// Obtains the current selection
+        /// </summary>
+        /// <returns></returns>
+        private ISelection GetSelectionHelper()
+        {
+            SmartTreeNode selNode = (SmartTreeNode)_treeCtrl.SelectedNode;
+            return selNode == null ? new Selection() : new Selection(selNode.DataBoundItem);
+        }
+
+        /// <summary>
+        /// Searches the tree depth-first for a node matching the specified criteria
+        /// </summary>
+        /// <param name="nodeCollection"></param>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        private SmartTreeNode FindNodeRecursive(TreeNodeCollection nodeCollection, Predicate<SmartTreeNode> criteria)
+        {
+            foreach (SmartTreeNode node in nodeCollection)
+            {
+                if (criteria(node))
+                {
+                    return node;
+                }
+                else
+                {
+                    return FindNodeRecursive(node.Nodes, criteria);
+                }
+            }
+            return null;
+        }
+
+
         /// <summary>
         /// When the user is about to expand a node, need to build the level beneath it
         /// </summary>
@@ -156,5 +239,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                 expandingNode.BuildSubTree();
             }
         }
+
+        private void _treeCtrl_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+        }
+
+        #endregion
     }
 }

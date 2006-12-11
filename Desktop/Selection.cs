@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
@@ -19,6 +20,8 @@ namespace ClearCanvas.Desktop
 
         public Selection(object item)
         {
+            Platform.CheckForNullReference(item, "item");
+
             _items.Add(item);
         }
 

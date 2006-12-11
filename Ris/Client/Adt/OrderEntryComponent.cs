@@ -70,6 +70,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private event EventHandler _diagnosticServiceChanged;
         private Tree<RequestedProcedureType> _diagnosticServiceBreakdown;
+        private object _selectedDiagnosticServiceBreakdownItem;
 
         private DateTime _schedulingRequestDateTime;
 
@@ -223,6 +224,15 @@ namespace ClearCanvas.Ris.Client.Adt
         public ITree DiagnosticServiceBreakdown
         {
             get { return _diagnosticServiceBreakdown; }
+        }
+
+        public ISelection SelectedDiagnosticServiceBreakdownItem
+        {
+            get { return _selectedDiagnosticServiceBreakdownItem == null ? new Selection() : new Selection(_selectedDiagnosticServiceBreakdownItem); }
+            set
+            {
+                _selectedDiagnosticServiceBreakdownItem = value.Item;
+            }
         }
 
         public DateTime SchedulingRequestDateTime

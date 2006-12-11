@@ -60,11 +60,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             // _treeCtrl
             // 
             this._treeCtrl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._treeCtrl.HideSelection = false;
             this._treeCtrl.Location = new System.Drawing.Point(3, 28);
             this._treeCtrl.Name = "_treeCtrl";
             this._treeCtrl.Size = new System.Drawing.Size(480, 341);
             this._treeCtrl.TabIndex = 1;
             this._treeCtrl.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeExpand);
+            this._treeCtrl.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterSelect);
             // 
             // BindableTreeView
             // 
