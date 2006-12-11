@@ -27,6 +27,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private IPatientAdminService _patientAdminService;
         private SexEnumTable _sexChoices;
 
+        private string _healthcardMask;
+
         private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
         private string[] _dummySiteChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
 
@@ -50,6 +52,9 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _sexChoices = _patientAdminService.GetSexEnumTable();
+
+            //TODO: replace hardcoded mask with something from validation framework
+            _healthcardMask = "0000 000 000";
         }
 
         #region Presentation Model
@@ -156,6 +161,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 _patient.Healthcard.Id = value;
                 this.Modified = true;
             }
+        }
+
+        public string HealtcardMask
+        {
+            get { return _healthcardMask; }
         }
 
         public string HealthcardProvince
