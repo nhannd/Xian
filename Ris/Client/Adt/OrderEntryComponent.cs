@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private OrderPriority _selectedPriority;
 
         private event EventHandler _diagnosticServiceChanged;
-        private TreeNodeCollection<RequestedProcedureType> _diagnosticServiceBreakdown;
+        private Tree<RequestedProcedureType> _diagnosticServiceBreakdown;
 
         private DateTime _schedulingRequestDateTime;
 
@@ -220,7 +220,7 @@ namespace ClearCanvas.Ris.Client.Adt
             remove { _diagnosticServiceChanged -= value; }
         }
 
-        public ITreeNodeCollection DiagnosticServiceBreakdown
+        public ITree DiagnosticServiceBreakdown
         {
             get { return _diagnosticServiceBreakdown; }
         }
@@ -273,24 +273,16 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _selectedDiagnosticService = _orderEntryService.LoadDiagnosticServiceBreakdown(new EntityRef<DiagnosticService>(_selectedDiagnosticService));
 
-                _diagnosticServiceBreakdown = new TreeNodeCollection<RequestedProcedureType>(
-                    _selectedDiagnosticService.RequestedProcedureTypes,
-                    delegate(RequestedProcedureType rpt)
-                    {
-                        return new TreeNode<RequestedProcedureType>(rpt,
-                            delegate(RequestedProcedureType rpt1) { return rpt1.Format(); },
-                            delegate(RequestedProcedureType rpt1)
-                            {
-                                return new TreeNodeCollection<ScheduledProcedureStepType>(
-                                    rpt1.ScheduledProcedureStepTypes,
-                                    delegate(ScheduledProcedureStepType spt)
-                                    {
-                                        return new TreeNode<ScheduledProcedureStepType>(spt,
-                                            delegate(ScheduledProcedureStepType spt1) { return spt1.Format(); },
-                                            null);
-                                    });
-                            });
-                    });
+                _diagnosticServiceBreakdown = new Tree<RequestedProcedureType>(
+                    new TreeItemBinding<RequestedProcedureType>(
+                        delegate(RequestedProcedureType rpt) { return rpt.Format(); },
+                        delegate(RequestedProcedureType rpt)
+                        {
+                            return new Tree<ScheduledProcedureStepType>(
+                                new TreeItemBinding<ScheduledProcedureStepType>(
+                                    delegate(ScheduledProcedureStepType spt) { return spt.Format(); }),
+                                    rpt.ScheduledProcedureStepTypes);
+                        }), _selectedDiagnosticService.RequestedProcedureTypes);
             }
 
             EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);

@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void DiagnosticServiceChangedEventHandler(object sender, EventArgs e)
         {
-            _diagnosticServiceBreakdown.RootNodes = _component.DiagnosticServiceBreakdown;
+            _diagnosticServiceBreakdown.Tree = _component.DiagnosticServiceBreakdown;
             _diagnosticServiceBreakdown.ExpandAll();
         }
 

@@ -127,8 +127,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(26, 325);
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.RootNode = null;
-            this._diagnosticServiceBreakdown.RootNodes = null;
             this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(259, 197);
             this._diagnosticServiceBreakdown.TabIndex = 8;

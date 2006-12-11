@@ -11,35 +11,85 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class BindableTreeView : UserControl
     {
+        /// <summary>
+        /// Manages a single level of a tree view, listening for changes to the underlying model and updating the tree view
+        /// as required
+        /// </summary>
+        class TreeLevelManager
+        {
+            private ITree _tree;
+            private TreeNodeCollection _nodeCollection;
+
+            public TreeLevelManager(ITree tree, TreeNodeCollection nodeCollection)
+            {
+                _tree = tree;
+                _tree.ItemsChanged += new EventHandler<TreeItemEventArgs>(TreeItemsChangedEventHandler);
+                _nodeCollection = nodeCollection;
+
+                BuildLevel();
+            }
+
+            private void BuildLevel()
+            {
+                _nodeCollection.Clear();
+                foreach (object item in _tree.Items)
+                {
+                    _nodeCollection.Add(new SmartTreeNode(_tree, item));
+                }
+            }
+
+            private void TreeItemsChangedEventHandler(object sender, TreeItemEventArgs e)
+            {
+                switch (e.ChangeType)
+                {
+                    case TreeItemChangeType.ItemAdded:
+                        _nodeCollection.Add(new SmartTreeNode(_tree, _tree.Items[e.ItemIndex]));
+                        break;
+                    case TreeItemChangeType.ItemChanged:
+                        _nodeCollection[e.ItemIndex] = new SmartTreeNode(_tree, _tree.Items[e.ItemIndex]);
+                        break;
+                    case TreeItemChangeType.ItemRemoved:
+                        _nodeCollection.RemoveAt(e.ItemIndex);
+                        break;
+                    case TreeItemChangeType.Reset:
+                        BuildLevel();
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tree node that knows how to build its subtree on demand from the underlying model
+        /// </summary>
         class SmartTreeNode : TreeNode
         {
-            private bool _subtreeBuilt;
-            private ITreeNode _dataNode;
+            private TreeLevelManager _subtreeManager;
+            private object _item;
+            private ITree _parentTree;
 
-            public SmartTreeNode(ITreeNode dataNode)
-                :base(dataNode.NodeText)
+            public SmartTreeNode(ITree parentTree, object item)
+                : base(parentTree.Binding.GetNodeText(item))
             {
-                _dataNode = dataNode;
-                _subtreeBuilt = false;
+                _item = item;
+                _parentTree = parentTree;
                 this.Nodes.Add(new TreeNode("dummy"));
             }
 
-            public bool IsSubTreeBuilt { get { return _subtreeBuilt; } }
+            public bool IsSubTreeBuilt
+            {
+                get { return _subtreeManager != null; } 
+            }
 
             public void BuildSubTree()
             {
-                if (!_subtreeBuilt)
+                if (!IsSubTreeBuilt)
                 {
                     this.Nodes.Clear(); // remove the dummy node
 
-                    if (_dataNode.ChildNodes != null)
+                    ITree subTree = _parentTree.Binding.GetSubTree(_item);
+                    if (subTree != null)
                     {
-                        foreach (ITreeNode dataChild in _dataNode.ChildNodes)
-                        {
-                            SmartTreeNode treeChild = new SmartTreeNode(dataChild);
-                            this.Nodes.Add(treeChild);
-                        }
-                        _subtreeBuilt = true;
+                        _subtreeManager = new TreeLevelManager(subTree, this.Nodes);
                     }
                 }
             }
@@ -47,51 +97,42 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 
 
-        private ITreeNode _rootNode;
-        private ITreeNodeCollection _rootNodes;
+        private ITree _root;
+        private TreeLevelManager _rootLevelManager;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public BindableTreeView()
         {
             InitializeComponent();
         }
 
-        public ITreeNodeCollection RootNodes
+        /// <summary>
+        /// Gets or sets the model that this view looks at
+        /// </summary>
+        public ITree Tree
         {
-            get { return _rootNodes; }
+            get { return _root; }
             set
             {
-                _rootNodes = value;
-                _treeCtrl.Nodes.Clear();
-
-                if (_rootNodes != null)
+                _root = value;
+                if (_root != null)
                 {
-                    foreach (ITreeNode dataNode in _rootNodes)
-                    {
-                        _treeCtrl.Nodes.Add(new SmartTreeNode(dataNode));
-                    }
+                    _rootLevelManager = new TreeLevelManager(_root, _treeCtrl.Nodes);
                 }
             }
         }
 
-        public ITreeNode RootNode
-        {
-            get { return _rootNode; }
-            set
-            {
-                _rootNode = value;
-                _treeCtrl.Nodes.Clear();
-
-                if (_rootNode != null)
-                {
-                    _treeCtrl.Nodes.Add(new SmartTreeNode(_rootNode));
-                }
-            }
-        }
-
+        /// <summary>
+        /// Expands the entire tree
+        /// </summary>
         public void ExpandAll()
         {
             _treeCtrl.ExpandAll();
         }
+
+        #region Design time properties
 
         [DefaultValue(true)]
         public bool ShowToolbar
@@ -100,6 +141,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _toolStrip.Visible = value; }
         }
 
+        #endregion
 
         /// <summary>
         /// When the user is about to expand a node, need to build the level beneath it
