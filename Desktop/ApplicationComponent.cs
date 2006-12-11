@@ -108,13 +108,9 @@ namespace ClearCanvas.Desktop
         public ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
-
-            // process validation attributes if any
-            List<IValidationRule> validators = ValidationXmlProcessor.ProcessXml(this);
-            if (validators.Count > 0)
-            {
-                validators.ForEach(delegate(IValidationRule v) { this.Validation.Add(v); });
-            }
+            
+            // load validation rules
+            ValidationXmlProcessor.ProcessXml(this);
         }
 
         /// <summary>
@@ -339,7 +335,7 @@ namespace ClearCanvas.Desktop
         {
             get
             {
-                if (_showValidationErrors)
+                if (_showValidationErrors && _validation != null)
                 {
                     ValidationResult result = _validation.GetResults(propertyName).Find(
                         delegate(ValidationResult r) { return !r.Success; });

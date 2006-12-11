@@ -40,5 +40,15 @@ namespace ClearCanvas.Common.Specifications
                 return _cache[id] = _builder.BuildSpecification(specNode);
             }
         }
+
+        public IDictionary<string, ISpecification> GetAllSpecifications()
+        {
+            Dictionary<string, ISpecification> specs = new Dictionary<string, ISpecification>();
+            foreach (XmlElement specNode in _xmlDoc.GetElementsByTagName("spec"))
+            {
+                specs.Add(specNode.GetAttribute("id"), _builder.BuildSpecification(specNode));
+            }
+            return specs;
+        }
     }
 }

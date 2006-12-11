@@ -49,12 +49,4 @@
     </or>
   </spec>
 
-  <spec id="Addresses">
-    <count test="$.Addresses.Items" min="1" failMessage="At least 1 address is required"/>
-  </spec>
-
-  <spec id="PhoneNumbers">
-    <count test="$.PhoneNumbers.Items" min="1" failMessage="At least 1 phone # is required"/>
-  </spec>
-
 </specifications>

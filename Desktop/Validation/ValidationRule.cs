@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Desktop.Validation
 {
@@ -10,22 +11,28 @@ namespace ClearCanvas.Desktop.Validation
     public delegate object TestValueCallbackDelegate();
 
     /// <summary>
-    /// Abstract base class for validation rules.  Subclass this class rather than implement <see cref="IValidationRule"/> directly.
+    /// Implementation of <see cref="IValidationRule"/>.
+    /// This class accepts an instance of <see cref="ISpecification"/> which provides the specification which must be satisfied.
+    /// The application component instance will be passed to the <see cref="ISpecification.Test"/> method, so the specification
+    /// must be written to expect the application component as the root object.
     /// </summary>
-    public abstract class ValidationRule : IValidationRule
+    public class ValidationRule : IValidationRule
     {
         private string _propertyName;
         private IApplicationComponent _component;
+        private ISpecification _spec;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="component">The application component which this rule applies</param>
         /// <param name="propertyName">The property to which this rule applies</param>
-        public ValidationRule(IApplicationComponent component, string propertyName)
+        /// <param name="spec">The specification which must be satisfied for this validation rule to succeed</param>
+        public ValidationRule(IApplicationComponent component, string propertyName, ISpecification spec)
         {
             _propertyName = propertyName;
             _component = component;
+            _spec = spec;
         }
 
         #region IValidationRule members
@@ -39,18 +46,19 @@ namespace ClearCanvas.Desktop.Validation
         {
             get
             {
-                return Validate(_component);
+                TestResult result = _spec.Test(_component);
+                return new ValidationResult(result.Success, result.Success ? null : GetTopLevelMessage(result.Reason));
             }
         }
 
         #endregion
 
-        /// <summary>
-        /// Called to validate the specified application component.  Subclasses must implement
-        /// this method to validate the specified component.
-        /// </summary>
-        /// <param name="component">The component to validate</param>
-        /// <returns>A result indicating whether the component satisfies this validation rule</returns>
-        protected abstract ValidationResult Validate(object component);
+        private string GetTopLevelMessage(TestResultReason reason)
+        {
+            if (reason == null)
+                return null;
+            else
+                return (reason.Message != null) ? reason.Message : GetTopLevelMessage(reason.Reason);
+        }
     }
 }

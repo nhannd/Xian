@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="Addresses">
+    <count test="$.Addresses.Items" min="1" failMessage="At least 1 address is required"/>
+  </spec>
+</specifications>
+

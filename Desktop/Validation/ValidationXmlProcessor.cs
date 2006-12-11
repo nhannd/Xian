@@ -34,38 +34,26 @@ namespace ClearCanvas.Desktop.Validation
         }
         */
 
-        public static List<IValidationRule> ProcessXml(IApplicationComponent target)
+        public static void ProcessXml(ApplicationComponent target)
         {
+            ResourceResolver rr = new ResourceResolver(target.GetType().Assembly);
+            string resourceName = string.Format("{0}.cfg.xml", target.GetType().Name);
             try
             {
-                ResourceResolver rr = new ResourceResolver(target.GetType().Assembly);
-                using (Stream s = rr.OpenResource("validation.xml"))
+                using (Stream xmlStream = rr.OpenResource(resourceName))
                 {
-                    SpecificationFactory specFactory = new SpecificationFactory(s);
-                    List<IValidationRule> validators = new List<IValidationRule>();
-                    foreach (PropertyInfo propInfo in target.GetType().GetProperties())
+                    SpecificationFactory specFactory = new SpecificationFactory(xmlStream);
+                    IDictionary<string, ISpecification> specs = specFactory.GetAllSpecifications();
+                    foreach (KeyValuePair<string, ISpecification> kvp in specs)
                     {
-                        try
-                        {
-                            ISpecification spec = specFactory.GetSpecification(propInfo.Name);
-                            validators.Add(new SpecValidationRule(target, propInfo.Name, spec));
-                        }
-                        catch (UndefinedSpecificationException)
-                        {
-                            // ignore
-                        }
+                        target.Validation.Add(new ValidationRule(target, kvp.Key, kvp.Value));
                     }
-                    return validators;
                 }
-
             }
-            catch(Exception)
+            catch (Exception)
             {
-                // ignore this for now, since we haven't set everything up properly yet
-                return new List<IValidationRule>();
+                // no cfg file for this component
             }
         }
-
-
     }
 }

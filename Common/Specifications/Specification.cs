@@ -48,10 +48,17 @@ namespace ClearCanvas.Common.Specifications
         {
             if (this.TestExpressionScript != null)
             {
-                // evaluate the test expression
-                Dictionary<string, object> context = new Dictionary<string, object>();
-                context.Add(AUTOMATIC_VARIABLE_IMPLEMENTATION, obj);
-                obj = this.TestExpressionScript.Run(context);
+                try
+                {
+                    // evaluate the test expression
+                    Dictionary<string, object> context = new Dictionary<string, object>();
+                    context.Add(AUTOMATIC_VARIABLE_IMPLEMENTATION, obj);
+                    obj = this.TestExpressionScript.Run(context);
+                }
+                catch (Exception e)
+                {
+                    throw new SpecificationException(string.Format("JScript evaluation error on: {0}", _testExpr), e);
+                }
             }
 
             return InnerTest(obj);

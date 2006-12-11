@@ -192,7 +192,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
-    <EmbeddedResource Include="validation.xml" />
+    <EmbeddedResource Include="AddressesSummaryComponent.cfg.xml" />
+    <EmbeddedResource Include="PatientProfileDetailsEditorComponent.cfg.xml" />
     <EmbeddedResource Include="PatientProfileDiff.html" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolMedium.png" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolLarge.png" />

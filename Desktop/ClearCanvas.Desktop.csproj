@@ -132,7 +132,6 @@
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
-    <Compile Include="Validation\SpecValidationRule.cs" />
     <Compile Include="WorkspaceActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="ApplicationComponentHostWorkspace.cs" />
