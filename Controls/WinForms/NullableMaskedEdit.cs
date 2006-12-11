@@ -425,7 +425,7 @@ namespace Clifton.Windows.Forms
                 // This is visually more correct, but is done only if the programmer sets the
                 // AutoAdvance property to true (so that delimiters are skipped in the forward
                 // direction as well.
-                if (autoAdvance)
+                if (autoAdvance && editMask.Equals(string.Empty) == false)
                 {
                     while ((SelectionStart - 1 >= 0) && (posToMaskIndex[SelectionStart - 1] < 0))
                     {
