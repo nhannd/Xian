@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._countryCode = new ClearCanvas.Controls.WinForms.TextField();
             this._extension = new ClearCanvas.Controls.WinForms.TextField();
-            this._number = new ClearCanvas.Controls.WinForms.MaskedTextField();
+            this._number = new ClearCanvas.Controls.WinForms.TextField();
             this._areaCode = new ClearCanvas.Controls.WinForms.TextField();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this._phoneType = new ClearCanvas.Controls.WinForms.ComboBoxField();
@@ -254,6 +254,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.DateTimeField _validUntil;
         private ClearCanvas.Controls.WinForms.ComboBoxField _phoneType;
         private System.Windows.Forms.ToolTip toolTip1;
-        private ClearCanvas.Controls.WinForms.MaskedTextField _number;
+        private ClearCanvas.Controls.WinForms.TextField _number;
     }
 }

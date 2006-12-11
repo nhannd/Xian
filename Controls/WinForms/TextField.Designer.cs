@@ -29,7 +29,7 @@ namespace ClearCanvas.Controls.WinForms
         private void InitializeComponent()
         {
             this._label = new System.Windows.Forms.Label();
-            this._textBox = new System.Windows.Forms.TextBox();
+            this._textBox = new Clifton.Windows.Forms.NullableMaskedEdit();
             this.SuspendLayout();
             // 
             // _label
@@ -51,6 +51,17 @@ namespace ClearCanvas.Controls.WinForms
             this._textBox.Name = "_textBox";
             this._textBox.Size = new System.Drawing.Size(145, 20);
             this._textBox.TabIndex = 1;
+            this._textBox.AutoAdvance = true;
+            this._textBox.EditMask = "";
+            this._textBox.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Overwrite;
+            this._textBox.NullTextDisplayValue = null;
+            this._textBox.NullTextReturnValue = null;
+            this._textBox.NullValue = null;
+            this._textBox.SelectGroup = true;
+            this._textBox.SkipLiterals = false;
+            this._textBox.Text = null;
+            this._textBox.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+            this._textBox.Value = null;
             // 
             // TextField
             // 
@@ -69,6 +80,6 @@ namespace ClearCanvas.Controls.WinForms
         #endregion
 
         private System.Windows.Forms.Label _label;
-        private System.Windows.Forms.TextBox _textBox;
+        private Clifton.Windows.Forms.NullableMaskedEdit _textBox;
     }
 }
