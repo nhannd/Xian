@@ -18,9 +18,11 @@ namespace ClearCanvas.Common.Specifications
             _factory = factory;
 
             _factoryMethodMap.Add("true", CreateTrue);
+            _factoryMethodMap.Add("false", CreateFalse);
             _factoryMethodMap.Add("and", CreateAnd);
             _factoryMethodMap.Add("or", CreateOr);
             _factoryMethodMap.Add("regex", CreateRegex);
+            _factoryMethodMap.Add("null", CreateIsNull);
             _factoryMethodMap.Add("not-null", CreateNotNull);
             _factoryMethodMap.Add("count", CreateCount);
             _factoryMethodMap.Add("each", CreateEach);
@@ -67,7 +69,12 @@ namespace ClearCanvas.Common.Specifications
 
         private Specification CreateNotNull(XmlElement node, string testExpr, string failureMessage)
         {
-            return new NotNullSpecification(testExpr, null, failureMessage);
+            return new NotNullSpecification(testExpr, failureMessage);
+        }
+
+        private Specification CreateIsNull(XmlElement node, string testExpr, string failureMessage)
+        {
+            return new IsNullSpecification(testExpr, failureMessage);
         }
 
         private Specification CreateCount(XmlElement node, string testExpr, string failureMessage)
@@ -96,6 +103,11 @@ namespace ClearCanvas.Common.Specifications
         private Specification CreateTrue(XmlElement node, string testExpr, string failureMessage)
         {
             return new TrueSpecification(testExpr, failureMessage);
+        }
+
+        private Specification CreateFalse(XmlElement node, string testExpr, string failureMessage)
+        {
+            return new FalseSpecification(testExpr, failureMessage);
         }
 
         private Specification CreateDefined(XmlElement node, string testExpr, string failureMessage)

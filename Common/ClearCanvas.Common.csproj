@@ -137,6 +137,8 @@
     <Compile Include="Specifications\DefinedSpecification.cs" />
     <Compile Include="Specifications\EachSpecification.cs" />
     <Compile Include="Specifications\EnumerableSpecification.cs" />
+    <Compile Include="Specifications\FalseSpecification.cs" />
+    <Compile Include="Specifications\IsNullSpecification.cs" />
     <Compile Include="Specifications\ISpecification.cs" />
     <Compile Include="Specifications\OrSpecification.cs" />
     <Compile Include="Specifications\PrimitiveSpecification.cs" />
