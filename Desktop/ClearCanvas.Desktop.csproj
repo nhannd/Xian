@@ -126,6 +126,7 @@
     <Compile Include="Trees\ITree.cs" />
     <Compile Include="Trees\ITreeItemBinding.cs" />
     <Compile Include="Trees\ITreeItemCollection.cs" />
+    <Compile Include="Trees\TreeItemBindingBase.cs" />
     <Compile Include="Trees\TreeItemChangeType.cs" />
     <Compile Include="Trees\Tree.cs" />
     <Compile Include="Trees\TreeItemBinding.cs" />

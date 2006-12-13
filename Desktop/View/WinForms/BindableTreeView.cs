@@ -73,6 +73,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _item = item;
                 _parentTree = parentTree;
+                this.ToolTipText = _parentTree.Binding.GetTooltipText(item);
                 this.Nodes.Add(new TreeNode("dummy"));
             }
 

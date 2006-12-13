@@ -18,6 +18,14 @@ namespace ClearCanvas.Desktop.Trees
         string GetNodeText(object item);
 
         /// <summary>
+        /// Gets the tooltip to display for the specified item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        string GetTooltipText(object item);
+        
+
+        /// <summary>
         /// Gets the <see cref="ITree"/> that represents the subtree for the specified item, or null the item does not have a subtree.
         /// </summary>
         /// <param name="item"></param>
