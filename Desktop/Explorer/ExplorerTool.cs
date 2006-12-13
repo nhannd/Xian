@@ -23,6 +23,7 @@ namespace ClearCanvas.Desktop.Explorer
 	{
 		TabComponentContainer _tabComponentContainer;
 		List<IHealthcareArtifactExplorer> _healthcareArtifactExplorers;
+		IWorkspace _workspace;
 
 		public ExplorerTool()
 		{
@@ -58,17 +59,22 @@ namespace ClearCanvas.Desktop.Explorer
 					_tabComponentContainer.Pages.Add(tabPage);
 				}
 
-				ApplicationComponent.LaunchAsWorkspace(
-					this.Context.DesktopWindow, 
-					_tabComponentContainer, 
-					"Explorer", 
-					delegate 
-					{ 
+				_workspace = ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow,
+					_tabComponentContainer,
+					"Explorer",
+					delegate
+					{
+						_workspace = null;
 						_tabComponentContainer = null;
 						_healthcareArtifactExplorers.Clear();
 						_healthcareArtifactExplorers = null;
 					});
 
+			}
+			else
+			{
+				_workspace.Activate();
 			}
 		}
 
