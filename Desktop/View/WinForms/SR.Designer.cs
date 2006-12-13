@@ -95,5 +95,12 @@ namespace ClearCanvas.Desktop.View.WinForms {
                 return ResourceManager.GetString("MenuWindowTileVertical", resourceCulture);
             }
         }
+        
+        internal static System.Drawing.Bitmap Stop {
+            get {
+                object obj = ResourceManager.GetObject("Stop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

@@ -69,6 +69,7 @@
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
     <Compile Include="Enumerations.cs" />
+    <Compile Include="ExceptionHandlerComponent.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="StackComponentContainer.cs" />

@@ -11,6 +11,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class DialogBoxForm : DotNetMagicForm
     {
+        private Control _content;
+
         public DialogBoxForm(string title, IView view)
         {
             InitializeComponent();
@@ -18,15 +20,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			this.Style = WinFormsView.VisualStyle;
 
-            Control content = (Control)view.GuiElement;
+            _content = (Control)view.GuiElement;
 
             // important - if we do not set a minimum size, the full content may not be displayed
-            content.MinimumSize = content.Size;
-            content.Dock = DockStyle.Fill;
+            _content.MinimumSize = _content.Size;
+            _content.Dock = DockStyle.Fill;
 
             // force the dialog client size to the size of the content
-            this.ClientSize = content.Size;
-            _contentPanel.Controls.Add(content);
+            this.ClientSize = _content.Size;
+            _contentPanel.Controls.Add(_content);
+
+            // Resize the dialog if size of the underlying content changed
+            _content.SizeChanged += new EventHandler(OnContentSizeChanged);
+        }
+
+        private void OnContentSizeChanged(object sender, EventArgs e)
+        {
+            this.ClientSize = _content.Size;
         }
     }
 }
