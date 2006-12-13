@@ -36,10 +36,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudies == null)
 				return;
 
+			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+			string label = "";
+
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
 				string studyInstanceUid = item.StudyInstanceUID;
-				string label = String.Format("{0}, {1} | {2}",
+				label = String.Format("{0}, {1} | {2}",
 					item.LastName,
 					item.FirstName,
 					item.PatientId);
@@ -66,16 +69,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 				}
 
-				ImageViewerComponent imageViewer = new DiagnosticImageViewerComponent(studyInstanceUid);
-				ApplicationComponent.LaunchAsWorkspace(
-					this.Context.DesktopWindow,
-					imageViewer,
-					label,
-					delegate
-					{
-						imageViewer.Dispose();
-					});
+				imageViewer.AddStudy(studyInstanceUid);
 			}
+
+			ApplicationComponent.LaunchAsWorkspace(
+				this.Context.DesktopWindow,
+				imageViewer,
+				label,
+				delegate
+				{
+					imageViewer.Dispose();
+				});
+
+			imageViewer.Layout();
+
 		}
 
 		private void SetDoubleClickHandler()

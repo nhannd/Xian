@@ -1,22 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="9.75" />
-  <Class Name="ClearCanvas.ImageViewer.LogicalWorkspace" Collapsed="true">
-    <Position X="5.75" Y="5.25" Width="1.75" />
+  <Interface Name="ClearCanvas.ImageViewer.IImageViewer" Collapsed="true">
+    <Position X="1" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <FileName>LogicalWorkspace.cs</FileName>
-      <HashCode>AAAAAAAAAQAAAiAAgAAEAAACAgAAAAAQAAAAABEAAAA=</HashCode>
+      <FileName>IImageViewer.cs</FileName>
+      <HashCode>AAAAIAAAEABgAAAAAAAAAAAEAAAAAAAAAAACAAAAAAQ=</HashCode>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="DisplaySets" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.PhysicalWorkspace" Collapsed="true">
-    <Position X="5.75" Y="3.75" Width="1.75" />
+    <ShowAsAssociation>
+      <Property Name="PhysicalWorkspace" />
+      <Property Name="LogicalWorkspace" />
+    </ShowAsAssociation>
+    <AssociationLine Name="PhysicalWorkspace" Type="ClearCanvas.ImageViewer.IPhysicalWorkspace" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="1.687" />
+        <Point X="2.875" Y="1.687" />
+        <Point X="2.875" Y="1.188" />
+        <Point X="4.5" Y="1.188" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="LogicalWorkspace" Type="ClearCanvas.ImageViewer.ILogicalWorkspace" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="2.062" />
+        <Point X="2.875" Y="2.062" />
+        <Point X="2.875" Y="2.812" />
+        <Point X="4.5" Y="2.812" />
+      </Path>
+    </AssociationLine>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.IPhysicalWorkspace" Collapsed="true">
+    <Position X="4.5" Y="0.75" Width="2" />
     <TypeIdentifier>
-      <FileName>PhysicalWorkspace.cs</FileName>
-      <HashCode>gAEAAUAgAADKAkCCAIACAQAAAhIAAIRBIkAGBAkCABA=</HashCode>
+      <FileName>IPhysicalWorkspace.cs</FileName>
+      <HashCode>AAAAAAAAAABAAkAAAAAAAAAAAAAAAgBAAAACAAkAAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="LogicalWorkspace" />
@@ -24,21 +40,12 @@
     <ShowAsCollectionAssociation>
       <Property Name="ImageBoxes" />
     </ShowAsCollectionAssociation>
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <AssociationLine Name="LogicalWorkspace" Type="ClearCanvas.ImageViewer.LogicalWorkspace">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.069" Y="0.497" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.ImageBox" Collapsed="true">
-    <Position X="8.75" Y="3.75" Width="1.5" />
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.IImageBox" Collapsed="true">
+    <Position X="8.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <FileName>ImageBox.cs</FileName>
-      <HashCode>oAAQAQAgAADAAkCAqICEAQBEClIAAAMBsAQARA0iAAI=</HashCode>
+      <FileName>IImageBox.cs</FileName>
+      <HashCode>IAAQAAAAAAAAAkAACAAAAAAECAAAAgIAAAAAQAkgAAI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="DisplaySet" />
@@ -46,91 +53,42 @@
     <ShowAsCollectionAssociation>
       <Property Name="Tiles" />
     </ShowAsCollectionAssociation>
-    <AssociationLine Name="DisplaySet" Type="ClearCanvas.ImageViewer.DisplaySet" FixedFromPoint="true">
-      <Path>
-        <Point X="9.875" Y="4.306" />
-        <Point X="9.875" Y="5.25" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.048" Y="0.539" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.DisplaySet" Collapsed="true">
-    <Position X="8.75" Y="5.25" Width="1.5" />
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.ITile" Collapsed="true">
+    <Position X="12" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <FileName>DisplaySet.cs</FileName>
-      <HashCode>QEAAIBAgAEgAAgAACAACAAQAAgIhAIEMAAAAAAAEAAI=</HashCode>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="PresentationImages" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.Tile" Collapsed="true">
-    <Position X="12" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>Tile.cs</FileName>
-      <HashCode>gAAAAAAgAECAAgCAJKAMAQAAChIAAAEBIAAARAgSAAI=</HashCode>
+      <FileName>ITile.cs</FileName>
+      <HashCode>AAAAAAAgAAAAAgAAACAIAAAACAIAAgAAAAAAQAAAAAI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PresentationImage" />
     </ShowAsAssociation>
-    <AssociationLine Name="PresentationImage" Type="ClearCanvas.ImageViewer.PresentationImage" FixedFromPoint="true">
-      <Path>
-        <Point X="13.125" Y="4.306" />
-        <Point X="13.125" Y="5.25" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.006" Y="0.55" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.PresentationImage" Collapsed="true">
-    <Position X="12" Y="5.25" Width="1.5" />
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.ILogicalWorkspace" Collapsed="true">
+    <Position X="4.5" Y="2.5" Width="1.75" />
     <TypeIdentifier>
-      <FileName>PresentationImage.cs</FileName>
-      <HashCode>QAEAABBAAACAAgCAAIACAAAAAhIAiIEIIAAABCgCAAI=</HashCode>
+      <FileName>ILogicalWorkspace.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAACAAAAAgAQAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.ImageViewerComponent" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="2.25" Y="4.25" Width="2.25" />
+    <ShowAsCollectionAssociation>
+      <Property Name="DisplaySets" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.IDisplaySet" Collapsed="true">
+    <Position X="8.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <FileName>ImageViewerComponent.cs</FileName>
-      <HashCode>AQAAICAAUCBwIAAAABBAAAAEAAAoABBAIoAiAEQAIAQ=</HashCode>
+      <FileName>IDisplaySet.cs</FileName>
+      <HashCode>AAAIAAAAAAAAAgAAAAACAAQAAAIgAgAIAAAAAAAEAAI=</HashCode>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="PhysicalWorkspace" />
-      <Property Name="LogicalWorkspace" />
-    </ShowAsAssociation>
-    <NestedTypes>
-      <Class Name="ClearCanvas.ImageViewer.ImageViewerComponent.ImageViewerToolContext" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>ImageViewerComponent.cs</NewMemberFileName>
-        </TypeIdentifier>
-        <Lollipop Position="0.2" />
-      </Class>
-    </NestedTypes>
-    <AssociationLine Name="PhysicalWorkspace" Type="ClearCanvas.ImageViewer.PhysicalWorkspace" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.625" Y="4.25" />
-        <Point X="3.625" Y="4.062" />
-        <Point X="5.75" Y="4.062" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="LogicalWorkspace" Type="ClearCanvas.ImageViewer.LogicalWorkspace" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.625" Y="4.945" />
-        <Point X="3.625" Y="5.438" />
-        <Point X="5.75" Y="5.438" />
-      </Path>
-    </AssociationLine>
-    <Lollipop Position="0.2" />
-  </Class>
+    <ShowAsCollectionAssociation>
+      <Property Name="PresentationImages" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.IPresentationImage" Collapsed="true">
+    <Position X="11.75" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>IPresentationImage.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAgAAAAACAAAAAAAACgAIAAAAACAAAQI=</HashCode>
+    </TypeIdentifier>
+  </Interface>
 </ClassDiagram>

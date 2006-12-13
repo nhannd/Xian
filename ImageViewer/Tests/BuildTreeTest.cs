@@ -16,17 +16,19 @@ namespace ClearCanvas.ImageViewer.Tests
 		IImageBox _imageBox;
 		ITile _tile1;
 		ITile _tile2;
+		IImageSet _imageSet;
 		IDisplaySet _displaySet;
 		IPresentationImage _image1;
 		IPresentationImage _image2;
 	
 		private void CreateObjects()
 		{
-			_viewer = new DiagnosticImageViewerComponent("test");
+			_viewer = new MockImageViewerComponent();
 			_imageBox = new ImageBox();
 			_tile1 = new Tile();
 			_tile2 = new Tile();
 
+			_imageSet = new ImageSet();
 			_displaySet = new DisplaySet();
 			_image1 = new TestPresentationImage();
 			_image2 = new TestPresentationImage();
@@ -70,11 +72,17 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.AreEqual(_viewer, _tile2.ImageViewer);
 			Assert.AreEqual(_imageBox, _tile2.ParentImageBox);
 
-			// Add display set to logical workspace
+			// Add image set to logical workspace
+			Assert.IsNull(_imageSet.ImageViewer);
+			_viewer.LogicalWorkspace.ImageSets.Add(_imageSet);
+			Assert.AreEqual(_viewer, _imageSet.ImageViewer);
+			Assert.AreEqual(_viewer.LogicalWorkspace, _imageSet.ParentLogicalWorkspace);
+
+			// Add display set to image set
 			Assert.IsNull(_displaySet.ImageViewer);
-			_viewer.LogicalWorkspace.DisplaySets.Add(_displaySet);
+			_imageSet.DisplaySets.Add(_displaySet);
 			Assert.AreEqual(_viewer, _displaySet.ImageViewer);
-			Assert.AreEqual(_viewer.LogicalWorkspace, _displaySet.ParentLogicalWorkspace);
+			Assert.AreEqual(_imageSet, _displaySet.ParentImageSet);
 
 			// Add presentation images to display set;
 			Assert.IsNull(_image1.ImageViewer);

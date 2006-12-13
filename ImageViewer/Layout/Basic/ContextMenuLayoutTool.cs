@@ -79,9 +79,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			List<IAction> actions = new List<IAction>();
 			int i = 0;
 
-			foreach (IDisplaySet displaySet in this.ImageViewer.LogicalWorkspace.DisplaySets)
+			foreach (IImageSet imageSet in this.ImageViewer.LogicalWorkspace.ImageSets)
 			{
-				actions.Add(CreateDisplaySetAction(displaySet, ++i));
+				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+				{
+					actions.Add(CreateDisplaySetAction(displaySet, ++i));
+				}
 			}
 
 			return actions.ToArray();

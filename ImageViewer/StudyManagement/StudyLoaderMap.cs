@@ -15,10 +15,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
         Dictionary<string, IStudyLoader> _studyLoaderMap = new Dictionary<string, IStudyLoader>();
 
-        public StudyLoaderMap(StudyTree studyTree)
+        public StudyLoaderMap()
         {
-            Platform.CheckForNullReference(studyTree, "studyTree");
-            CreateStudyLoaders(studyTree);
+			CreateStudyLoaders();
         }
 
         public IStudyLoader this[string studyLoaderName]
@@ -30,7 +29,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             }
         }
 
-        private void CreateStudyLoaders(StudyTree studyTree)
+        private void CreateStudyLoaders()
         {
             StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
             object[] studyLoaders = xp.CreateExtensions();

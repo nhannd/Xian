@@ -11,44 +11,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class LocalImageLoader
 	{
-		private List<string> _studyInstanceUIDs;
-		private bool _atLeastOneImageFailedToLoad;
-		private bool _studyCouldNotBeLoaded;
-
-		private Exception _innerException;
+		private int _totalImages;
+		private int _failedImages;
+		private List<LocalImageSop> _images = new List<LocalImageSop>();
 
 		public LocalImageLoader()
 		{
-			_studyInstanceUIDs = new List<string>();
 		}
 
-		public IEnumerable<string> Load(IEnumerable<string> paths)
+		public List<LocalImageSop> Load(string path, out int totalImages, out int failedImages)
 		{
-			_atLeastOneImageFailedToLoad = false;
-			_studyCouldNotBeLoaded = false;
+			_totalImages = 0;
+			_failedImages = 0;
+			_images.Clear();
 
-			_studyInstanceUIDs.Clear();
+			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(LoadImage);
+			FileProcessor.Process(path, "*.dcm", process, true);
 
-			foreach (string path in paths)
-			{
-				FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(AddImage);
-				FileProcessor.Process(path, "*.dcm", process, true);
+			failedImages = _failedImages;
+			totalImages = _totalImages;
 
-				if (_atLeastOneImageFailedToLoad)
-				{
-					OpenStudyException e = new OpenStudyException("An error occurred while opening the study(s)", _innerException);
-
-					e.AtLeastOneImageFailedToLoad = _atLeastOneImageFailedToLoad;
-					e.StudyCouldNotBeLoaded = _studyCouldNotBeLoaded;
-
-					throw e;
-				}
-			}
-
-			return _studyInstanceUIDs.AsReadOnly();
+			return _images;
 		}
 
-		private void AddImage(string file)
+		private void LoadImage(string file)
 		{
 			LocalImageSop image = null;
 
@@ -56,8 +42,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				image = new LocalImageSop(file);
 
-				ImageValidator.ValidateStudyInstanceUID(image.StudyInstanceUID);
+				ImageValidator.ValidateSOPInstanceUID(image.SopInstanceUID);
 				ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
+				_images.Add(image);
 			}
 			catch (Exception e)
 			{
@@ -66,17 +53,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				// 2) file is a valid DICOM image, but its image parameters are invalid
 				// 3) file is a valid DICOM image, but we can't handle this type of DICOM image
 
-				_innerException = e;
-
-				_atLeastOneImageFailedToLoad = true;
-				_studyCouldNotBeLoaded = (image.StudyInstanceUID == "");
-
+				_failedImages++;
 				Platform.Log(e, LogLevel.Error);
-				return;
 			}
 
-			if (!_studyInstanceUIDs.Contains(image.StudyInstanceUID))
-				_studyInstanceUIDs.Add(image.StudyInstanceUID);
+			_totalImages++;
 		}
 	}
 }

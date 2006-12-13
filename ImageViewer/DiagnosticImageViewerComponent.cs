@@ -7,22 +7,53 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer
 {
 	[ExtensionPoint()]
-	public class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
+	public class DiagnosticLayoutManagerExtensionPoint : ExtensionPoint<IDiagnosticLayoutManager>
 	{
 	}
 
 	[AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
-	public class DiagnosticImageViewerComponent : ImageViewerComponent
+	public class DiagnosticImageViewerComponent : LayoutCapableImageViewerComponent
 	{
-		private ILayoutManager _layoutManager;
-		private string _studyInstanceUID;
 
-		public DiagnosticImageViewerComponent(string studyInstanceUID)
+		public DiagnosticImageViewerComponent()
 		{
-			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
-
-			_studyInstanceUID = studyInstanceUID;
 		}
+
+		public DiagnosticImageViewerComponent(IDiagnosticLayoutManager layoutManager)
+			: base(layoutManager)
+		{
+		}
+
+		private IDiagnosticLayoutManager DiagnosticLayoutManager
+		{
+			get { return this.LayoutManager as IDiagnosticLayoutManager; }
+		}
+
+		#region Public methods
+
+		public void AddStudy(string studyInstanceUID)
+		{
+			this.DiagnosticLayoutManager.AddStudy(studyInstanceUID);
+		}
+
+		public void AddSeries(string seriesInstanceUID)
+		{
+			this.DiagnosticLayoutManager.AddSeries(seriesInstanceUID);
+		}
+
+		public void AddImage(string sopInstanceUID)
+		{
+			this.DiagnosticLayoutManager.AddImage(sopInstanceUID);
+		}
+
+		public void Layout()
+		{
+			this.DiagnosticLayoutManager.Layout();
+		}
+
+		#endregion
+
+		#region IApplicationComponent methods
 
 		public override void Start()
 		{
@@ -32,56 +63,35 @@ namespace ClearCanvas.ImageViewer
 			// this.ToolSet.AddTool().  We would need to define a 
 			// DiagnosticImageViewerToolContext first.
 
-			CreateLayoutManager();
-			ApplyLayout();
 		}
 
 		public override void Stop()
 		{
 			// TODO: What would be better is if the study tree listened for workspaces
 			// being addded/removed then increased/decreased the reference count itself.
-			StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
+			//StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
 
 			base.Stop();
 		}
 
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
+		#endregion
 
-			if (disposing)
-			{
-				if (_layoutManager != null)
-					_layoutManager.Dispose();
-			}
-		}
+		#region Private methods
 
-		private void CreateLayoutManager()
+		protected override void CreateLayoutManager()
 		{
 			try
 			{
-				LayoutManagerExtensionPoint xp = new LayoutManagerExtensionPoint();
-				_layoutManager = (ILayoutManager)xp.CreateExtension();
+				DiagnosticLayoutManagerExtensionPoint xp = new DiagnosticLayoutManagerExtensionPoint();
+				this.LayoutManager = (ILayoutManager)xp.CreateExtension();
 			}
 			catch (NotSupportedException e)
 			{
 				Platform.Log(e, LogLevel.Warn);
+				throw e;
 			}
 		}
 
-		/// <summary>
-		/// Applies a layout to the workspace.
-		/// </summary>
-		/// <remarks>
-		/// This method signature is preliminary and will likely change.
-		/// </remarks>
-		private void ApplyLayout()
-		{
-			if (_layoutManager == null)
-				throw new NotSupportedException(SR.ExceptionLayoutManagerDoesNotExist);
-
-			_layoutManager.ApplyLayout(this.LogicalWorkspace, this.PhysicalWorkspace, _studyInstanceUID);
-			StudyManager.StudyTree.IncrementStudyReferenceCount(_studyInstanceUID);
-		}
+		#endregion
 	}
 }

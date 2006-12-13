@@ -8,30 +8,95 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.LayoutManagerExtensionPoint))]
-	public class LayoutManager : ILayoutManager
+    [ExtensionOf(typeof(DiagnosticLayoutManagerExtensionPoint))]
+	public class LayoutManager : IDiagnosticLayoutManager
 	{
-		// Private attributes
+		private IPhysicalWorkspace _physicalWorkspace;
+		private ILogicalWorkspace _logicalWorkspace;
+		private bool _physicalWorkspaceCreated = false;
 
 		// Constructor
 		public LayoutManager()
 		{	
 		}
 
-		#region ILayoutManager methods
+		#region IDiagnosticLayoutManager Members
 
-		public void ApplyLayout(
-			ILogicalWorkspace logicalWorkspace, 
-			IPhysicalWorkspace physicalWorkspace,
-			string studyInstanceUID)
+		public void SetImageViewer(IImageViewer imageViewer)
 		{
-			CreateLogicalWorkspaceTree(logicalWorkspace, studyInstanceUID);
-			CreatePhysicalWorkspaceTree(physicalWorkspace);
-			FillPhysicalWorkspace(physicalWorkspace, logicalWorkspace);
-			physicalWorkspace.Draw();
+			_physicalWorkspace = imageViewer.PhysicalWorkspace;
+			_logicalWorkspace = imageViewer.LogicalWorkspace;
+		}
+
+		public void AddStudy(string studyInstanceUID)
+		{
+			Study study = ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID);
+
+			// Abort if study hasn't been loaded
+			if (study == null)
+				throw new ApplicationException("Study not loaded.");
+
+			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
+
+			// Abort if image set has already been added
+			if (imageSet != null)
+				return;
+
+			imageSet = AddImageSet(_logicalWorkspace, study);
+
+			AddDisplaySets(imageSet, study);
+		}
+
+		public void AddSeries(string seriesInstanceUID)
+		{
+			Series series = ImageViewerComponent.StudyManager.StudyTree.GetSeries(seriesInstanceUID);
+
+			if (series == null)
+				throw new ApplicationException("Series not loaded.");
+
+			string studyInstanceUID = series.ParentStudy.StudyInstanceUID;
+			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
+
+			// If image set hasn't been added, add it
+			if (imageSet == null)
+				imageSet = AddImageSet(_logicalWorkspace, series.ParentStudy);
+
+			IDisplaySet displaySet = AddDisplaySet(imageSet, series);
+			AddImages(displaySet, series);
+		}
+
+		public void AddImage(string sopInstanceUID)
+		{
+			ImageSop image = ImageViewerComponent.StudyManager.StudyTree.GetSop(sopInstanceUID) as ImageSop;
+
+			if (image == null)
+				throw new ApplicationException("Image not loaded.");
+
+			string studyInstanceUID = image.ParentSeries.ParentStudy.StudyInstanceUID;
+			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
+
+			if (imageSet == null)
+				imageSet = AddImageSet(_logicalWorkspace, image.ParentSeries.ParentStudy);
+
+			string seriesInstanceUID = image.ParentSeries.SeriesInstanceUID;
+			IDisplaySet displaySet = GetDisplaySet(imageSet, seriesInstanceUID);
+
+			if (displaySet == null)
+				displaySet = AddDisplaySet(imageSet, image.ParentSeries);
+
+			AddImage(displaySet, image);
+		}
+
+		public void Layout()
+		{
+			CreatePhysicalWorkspaceTree(_physicalWorkspace);
+			FillPhysicalWorkspace(_physicalWorkspace, _logicalWorkspace);
+			_physicalWorkspace.Draw();
 		}
 
 		#endregion
+
+		#region Disposal
 
 		#region IDisposable Members
 
@@ -62,49 +127,85 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+		#endregion
 
-		// Private methods
-		private void CreateLogicalWorkspaceTree(
-			ILogicalWorkspace logicalWorkspace,
-			string studyInstanceUID)
+		private IImageSet AddImageSet(ILogicalWorkspace logicalWorkspace, Study study)
 		{
-            Study study = ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID);
-			AddDisplaySets(logicalWorkspace, study);
+			IImageSet imageSet = new ImageSet();
+			imageSet.Tag = study.StudyInstanceUID;
+
+			//imageSet.Name = study.StudyDate;
+			logicalWorkspace.ImageSets.Add(imageSet);
+
+			return imageSet;
 		}
 
-		private void AddDisplaySets(ILogicalWorkspace logicalWorkspace, Study study)
+		private void AddDisplaySets(IImageSet imageSet, Study study)
 		{
-			if (study == null)
-				return;
-
 			foreach (Series series in study.Series.Values)
 			{
-				//DisplaySet displaySet = new DisplaySet(series.SeriesDescription);
-				DisplaySet displaySet = new DisplaySet();
-				displaySet.Name = series.SeriesDescription;
+				IDisplaySet displaySet = AddDisplaySet(imageSet, series);
 				AddImages(displaySet, series);
-				logicalWorkspace.DisplaySets.Add(displaySet);
 			}
+		}
+
+		private IDisplaySet AddDisplaySet(IImageSet imageSet, Series series)
+		{
+			DisplaySet displaySet = new DisplaySet();
+			displaySet.Name = series.SeriesDescription;
+			displaySet.Tag = series.SeriesInstanceUID;
+
+			imageSet.DisplaySets.Add(displaySet);
+
+			return displaySet;
 		}
 
 		private void AddImages(IDisplaySet displaySet, Series series)
 		{
-			if (series == null)
-				return;
-
 			foreach (ImageSop image in series.Sops.Values)
-			{
-				DicomPresentationImage presentationImage = new DicomPresentationImage(image);
-				displaySet.PresentationImages.Add(presentationImage);
-			}
+				AddImage(displaySet, image);
+		}
+
+		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
+		{
+			DicomPresentationImage presentationImage = new DicomPresentationImage(image);
+			presentationImage.Tag = image.SopInstanceUID;
+			displaySet.PresentationImages.Add(presentationImage);
 
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
 			displaySet.PresentationImages.Sort((IComparer<IPresentationImage>)new DicomPresentationImageSortByInstanceNumber());
+
+			return presentationImage;
+		}
+
+		private IImageSet GetImageSet(ILogicalWorkspace logicalWorkspace, string studyInstanceUID)
+		{
+			foreach (IImageSet imageSet in logicalWorkspace.ImageSets)
+			{
+				if (imageSet.Tag.ToString() == studyInstanceUID)
+					return imageSet;
+			}
+
+			return null;
+		}
+
+		private IDisplaySet GetDisplaySet(IImageSet imageSet, string seriesInstanceUID)
+		{
+			foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+			{
+				if (displaySet.Tag.ToString() == seriesInstanceUID)
+					return displaySet;
+			}
+
+			return null;
 		}
 
 		private void CreatePhysicalWorkspaceTree(IPhysicalWorkspace physicalWorkspace)
 		{
+			if (_physicalWorkspaceCreated)
+				return;
+
 			//physicalWorkspace.SetImageBoxGrid(1, 1);
 			physicalWorkspace.SetImageBoxGrid(1, 2);
 
@@ -117,19 +218,28 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			physicalWorkspace.ImageBoxes[0].SetTileGrid(1,1);
 			physicalWorkspace.ImageBoxes[1].SetTileGrid(1,1);
 			//physicalWorkspace[2].SetTileGrid(3,4);
+			
+			_physicalWorkspaceCreated = true;
 		}
 
 
 		static public void FillPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace, ILogicalWorkspace logicalWorkspace)
 		{
+			int imageSetIndex = 0;
 			int displaySetIndex = 0;
 
-			foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
+			foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
 			{
-				if (displaySetIndex == logicalWorkspace.DisplaySets.Count)
-					break;
+				if (displaySetIndex == logicalWorkspace.ImageSets[imageSetIndex].DisplaySets.Count)
+				{
+					imageSetIndex++;
+					displaySetIndex = 0;
 
-				imageBox.DisplaySet = logicalWorkspace.DisplaySets[displaySetIndex];
+					if (imageSetIndex == logicalWorkspace.ImageSets.Count)
+						break;
+				}
+
+				imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
 				displaySetIndex++;
 			}
 		}

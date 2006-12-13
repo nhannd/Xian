@@ -93,11 +93,16 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
+    <Compile Include="ImageSet.cs" />
+    <Compile Include="ImageSetEventArgs.cs" />
     <Compile Include="DiagnosticImageViewerComponent.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
     <Compile Include="DynamicOverlays\SelectedGraphicState.cs" />
+    <Compile Include="IDiagnosticLayoutManager.cs" />
+    <Compile Include="IImageSet.cs" />
+    <Compile Include="ImageSetCollection.cs" />
     <Compile Include="ImageViewerDesktopTool.cs" />
     <Compile Include="ImageViewerToolComponent.cs" />
     <Compile Include="InputManagement\IContextMenuProvider.cs" />
@@ -129,6 +134,7 @@
     <Compile Include="Layers\GraphicFocusedEventArgs.cs" />
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
+    <Compile Include="LayoutCapableImageViewerComponent.cs" />
     <Compile Include="Rendering\ImageInterpolator.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererMiscTests.cs" />
@@ -137,6 +143,9 @@
     <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
     <Compile Include="Rendering\Tests\RectangleIntersectionTests.cs" />
+    <Compile Include="StudyManagement\LocalImageLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
     <Compile Include="ClientArea.cs" />
     <Compile Include="IDisplaySet.cs" />
@@ -152,6 +161,7 @@
     <Compile Include="Rendering\IRenderingSurface.cs" />
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />
+    <Compile Include="Tests\MockImageViewerComponent.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
@@ -301,7 +311,6 @@
     <Compile Include="StudyManagement\IStudyFinder.cs" />
     <Compile Include="StudyManagement\IStudyLoader.cs" />
     <Compile Include="StudyManagement\LocalImageSop.cs" />
-    <Compile Include="StudyManagement\LocalImageLoader.cs" />
     <Compile Include="StudyManagement\SopCollection.cs" />
     <Compile Include="StudyManagement\SopEventArgs.cs" />
     <Compile Include="StudyManagement\Series.cs" />

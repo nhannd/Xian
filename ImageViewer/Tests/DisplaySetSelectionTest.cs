@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			IDisplaySet displaySet2 = new DisplaySet();
 			displaySet2.PresentationImages.Add(new TestPresentationImage());
 
-			IImageViewer viewer = new DiagnosticImageViewerComponent("test");
+			IImageViewer viewer = new MockImageViewerComponent();
 			IImageBox imageBox = new ImageBox();
 			viewer.PhysicalWorkspace.ImageBoxes.Add(imageBox);
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			IPresentationImage image2 = new TestPresentationImage();
 			displaySet2.PresentationImages.Add(image2);
 
-			IImageViewer viewer = new DiagnosticImageViewerComponent("test");
+			IImageViewer viewer = new DiagnosticImageViewerComponent();
 
 			IImageBox imageBox1 = new ImageBox();
 			viewer.PhysicalWorkspace.ImageBoxes.Add(imageBox1);

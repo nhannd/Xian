@@ -5,9 +5,7 @@ namespace ClearCanvas.ImageViewer
 {
 	public interface ILayoutManager : IDisposable
 	{
-		void ApplyLayout(
-			ILogicalWorkspace logicalWorkspace, 
-			IPhysicalWorkspace physicalWorkspace, 
-			string studyInstanceUID);
+		void SetImageViewer(IImageViewer imageViewer);
+		void Layout();
 	}
 }

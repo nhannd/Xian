@@ -13,15 +13,14 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class LogicalWorkspace : ILogicalWorkspace
 	{
-		private DisplaySetCollection _displaySets = new DisplaySetCollection();
-		private List<IDisplaySet> _linkedDisplaySets = new List<IDisplaySet>();
+		private ImageSetCollection _imageSets = new ImageSetCollection();
         private IImageViewer _imageViewer;
 
         internal LogicalWorkspace(IImageViewer imageViewer)
 		{
             _imageViewer = imageViewer;
-			_displaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
-			_displaySets.ItemRemoved += new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
+			_imageSets.ItemAdded += new EventHandler<ImageSetEventArgs>(OnImageSetAdded);
+			_imageSets.ItemRemoved += new EventHandler<ImageSetEventArgs>(OnImageSetRemoved);
 		}
 
 		/// <summary>
@@ -33,20 +32,11 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets a collection of display sets.
+		/// Gets a collection of image sets.
 		/// </summary>
-		public DisplaySetCollection DisplaySets
+		public ImageSetCollection ImageSets
 		{
-			get { return _displaySets; }
-		}
-
-		/// <summary>
-		/// Gets a collection of linked <see cref="DisplaySets"/>
-		/// </summary>
-		/// <value>A collection of linked <see cref="DisplaySets"/></value>
-		public ReadOnlyCollection<IDisplaySet> LinkedDisplaySets
-		{
-			get { return _linkedDisplaySets.AsReadOnly(); }
+			get { return _imageSets; }
 		}
 
 		#region IDisposable Members
@@ -75,54 +65,39 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
-				DisposeDisplaySets();
+				DisposeImageSets();
 			}
 		}
 
-		private void DisposeDisplaySets()
+		private void DisposeImageSets()
 		{
-			if (this.DisplaySets == null)
+			if (this.ImageSets == null)
 				return;
 
-			foreach (DisplaySet displaySet in this.DisplaySets)
-				displaySet.Dispose();
+			foreach (ImageSet imageSet in this.ImageSets)
+				imageSet.Dispose();
 
-			_displaySets.ItemAdded -= new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
-			_displaySets.ItemRemoved -= new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
-			_displaySets = null;
+			_imageSets.ItemAdded -= new EventHandler<ImageSetEventArgs>(OnImageSetAdded);
+			_imageSets.ItemRemoved -= new EventHandler<ImageSetEventArgs>(OnImageSetRemoved);
+			_imageSets = null;
 		}
 
 		public void Draw()
 		{
-			foreach (DisplaySet displaySet in this.DisplaySets)
-				displaySet.Draw();
+			foreach (ImageSet imageSet in this.ImageSets)
+				imageSet.Draw();
 		}
 
-		internal void LinkDisplaySet(DisplaySet displaySet)
+		private void OnImageSetAdded(object sender, ImageSetEventArgs e)
 		{
-			_linkedDisplaySets.Add(displaySet);
+			ImageSet imageSet = e.ImageSet as ImageSet;
+
+			imageSet.ParentLogicalWorkspace = this;
+			imageSet.ImageViewer = this.ImageViewer;
 		}
 
-		internal void UnlinkDisplaySet(DisplaySet displaySet)
+		private void OnImageSetRemoved(object sender, ImageSetEventArgs e)
 		{
-			_linkedDisplaySets.Remove(displaySet);
-		}
-
-		private void OnDisplaySetAdded(object sender, DisplaySetEventArgs e)
-		{
-			DisplaySet displaySet = e.DisplaySet as DisplaySet;
-
-			displaySet.ParentLogicalWorkspace = this;
-			displaySet.ImageViewer = this.ImageViewer;
-
-			if (e.DisplaySet.Linked)
-				_linkedDisplaySets.Add(e.DisplaySet);
-		}
-
-		private void OnDisplaySetRemoved(object sender, DisplaySetEventArgs e)
-		{
-			if (e.DisplaySet.Linked)
-				_linkedDisplaySets.Remove(e.DisplaySet);
 		}
 	}
 }

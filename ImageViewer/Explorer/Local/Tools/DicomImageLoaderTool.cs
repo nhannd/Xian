@@ -8,6 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 {
@@ -22,8 +23,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
-
-		private LocalImageWorkspaceLoader _workspaceLoader;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -70,10 +69,50 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 
 		public void Open()
 		{
-			if (_workspaceLoader == null)
-				_workspaceLoader = new LocalImageWorkspaceLoader();
+			LocalImageLoader imageLoader = new LocalImageLoader();
+			DiagnosticImageViewerComponent viewer = new DiagnosticImageViewerComponent();
+			int totalImages = 0;
+			int totalFailedImages = 0;
 
-			_workspaceLoader.Load(this.Context.SelectedPaths, this.Context.DesktopWindow);
+			foreach (string path in this.Context.SelectedPaths)
+			{
+				int failedImages;
+				int numImages;
+
+				List<LocalImageSop> images = imageLoader.Load(path, out numImages, out failedImages);
+
+				foreach (LocalImageSop image in images)
+				{
+					ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
+					viewer.AddImage(image.SopInstanceUID);
+				}
+
+				totalImages += numImages;
+				totalFailedImages += failedImages;
+			}
+
+			if (totalFailedImages > 0)
+			{
+				string str = String.Format("{0} images failed to load", totalFailedImages);
+				Platform.ShowMessageBox(str);
+			}
+
+			// If the number of images that failed to load equals the total number
+			// of images that should have loaded, then don't even bother
+			// opening the workspace; just return.
+			if (totalFailedImages == totalImages)
+				return;
+
+			ApplicationComponent.LaunchAsWorkspace(
+				this.Context.DesktopWindow,
+				viewer,
+				"Image",
+				delegate
+				{
+					viewer.Dispose();
+				});
+
+			viewer.Layout();
 		}
 	}
 }

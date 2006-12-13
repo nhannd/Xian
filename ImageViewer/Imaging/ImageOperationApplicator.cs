@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private IList<ImageAndOriginator> GetImagesAndOriginatorsFromLinkedImages()
 		{
 			IDisplaySet displaySet = _presentationImage.ParentDisplaySet;
-			ILogicalWorkspace logicalWorkspace = displaySet.ParentLogicalWorkspace;
+			IImageSet imageSet = displaySet.ParentImageSet;
 
 			List<ImageAndOriginator> imagesAndOrginators = new List<ImageAndOriginator>();
 
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// from the other linked display sets
 			if (displaySet.Linked)
 			{
-				foreach (IDisplaySet currentDisplaySet in logicalWorkspace.LinkedDisplaySets)
+				foreach (IDisplaySet currentDisplaySet in imageSet.LinkedDisplaySets)
 				{
 					foreach (IPresentationImage image in currentDisplaySet.LinkedPresentationImages)
 					{

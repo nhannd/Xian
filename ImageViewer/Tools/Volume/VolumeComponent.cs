@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			IDisplaySet displaySet = new DisplaySet();
 			displaySet.Name = String.Format("{0} (3D)", selectedDisplaySet.Name);
 			displaySet.PresentationImages.Add(image);
-			this.ImageViewer.LogicalWorkspace.DisplaySets.Add(displaySet);
+			this.ImageViewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(displaySet);
 
 			IImageBox imageBox = this.ImageViewer.SelectedImageBox;
 			imageBox.DisplaySet = displaySet;

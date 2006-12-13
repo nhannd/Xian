@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer
 	public interface IDisplaySet : IDisposable
 	{
 		IImageViewer ImageViewer { get; }
-		ILogicalWorkspace ParentLogicalWorkspace { get; }
+		IImageSet ParentImageSet { get; }
 		PresentationImageCollection PresentationImages { get; }
 		ReadOnlyCollection<IPresentationImage> LinkedPresentationImages { get; }
 		IImageBox ImageBox { get; }
@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageViewer
 		string Name { get; set; }
 		bool Selected { get; }
 		bool Visible { get; }
+		object Tag { get; set; }
 
 		IDisplaySet Clone();
 		void Draw();

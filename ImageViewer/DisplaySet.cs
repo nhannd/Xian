@@ -12,13 +12,14 @@ namespace ClearCanvas.ImageViewer
 
 		private PresentationImageCollection _presentationImages;
 		private IImageViewer _imageViewer;
-		private LogicalWorkspace _parentLogicalWorkspace;
+		private ImageSet _parentImageSet;
 		private ImageBox _imageBox;
 		private List<IPresentationImage> _linkedPresentationImages = new List<IPresentationImage>();
 
 		private bool _selected = false;
 		private bool _linked = false;
 		private string _name;
+		private object _tag;
 
 		#endregion
 
@@ -78,10 +79,10 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
 		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
-		public ILogicalWorkspace ParentLogicalWorkspace
+		public IImageSet ParentImageSet
 		{
-			get { return _parentLogicalWorkspace as ILogicalWorkspace; }
-			internal set { _parentLogicalWorkspace = value as LogicalWorkspace; }
+			get { return _parentImageSet as IImageSet; }
+			internal set { _parentImageSet = value as ImageSet; }
 		}
 
 		public IImageBox ImageBox
@@ -153,11 +154,17 @@ namespace ClearCanvas.ImageViewer
 					_linked = value;
 
 					if (_linked)
-						_parentLogicalWorkspace.LinkDisplaySet(this);
+						_parentImageSet.LinkDisplaySet(this);
 					else
-						_parentLogicalWorkspace.UnlinkDisplaySet(this);
+						_parentImageSet.UnlinkDisplaySet(this);
 				}
 			}
+		}
+
+		public object Tag
+		{
+			get { return _tag; }
+			set { _tag = value; }
 		}
 
 		#endregion
@@ -210,7 +217,7 @@ namespace ClearCanvas.ImageViewer
 			DisplaySet displaySet = new DisplaySet();
 
 			displaySet.Name = this.Name;
-			displaySet.ParentLogicalWorkspace = this.ParentLogicalWorkspace;
+			displaySet.ParentImageSet = this.ParentImageSet;
 
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.Clone());

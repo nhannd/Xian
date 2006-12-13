@@ -12,25 +12,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public StudyManager()
 		{
-		    _studyTree = new StudyTree();
-		    _studyFinders = new StudyFinderMap();
-            _studyLoaders = new StudyLoaderMap(_studyTree);
 		}
 
 		public StudyTree StudyTree
 		{
-			get { return _studyTree; }
+			get 
+			{
+				if (_studyTree == null)
+					_studyTree = new StudyTree();
+
+				return _studyTree; 
+			}
 		}
 
 		public StudyFinderMap StudyFinders
 		{
-			get { return _studyFinders; }
+			get 
+			{
+				if (_studyFinders == null)
+					_studyFinders = new StudyFinderMap();
+
+				return _studyFinders; 
+			}
 		}
 	
 		public StudyLoaderMap StudyLoaders
 		{
-			get { return _studyLoaders; }
-		}
+			get 
+			{
+				if (_studyLoaders == null)
+					_studyLoaders = new StudyLoaderMap();
 
+				return _studyLoaders; 
+			}
+		}
     }
 }

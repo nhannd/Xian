@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		ITile _tile2;
 		ITile _tile3;
 		ITile _tile4;
+		IImageSet _imageSet1;
 		IDisplaySet _displaySet1;
 		IDisplaySet _displaySet2;
 		IPresentationImage _image1;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		public TestTree()
 		{
-			_viewer = new DiagnosticImageViewerComponent("test");
+			_viewer = new MockImageViewerComponent();
 			
 			_imageBox1 = new ImageBox();
 			_imageBox2 = new ImageBox();
@@ -48,6 +49,8 @@ namespace ClearCanvas.ImageViewer.Tests
 			_tile2 = new Tile();
 			_tile3 = new Tile();
 			_tile4 = new Tile();
+
+			_imageSet1 = new ImageSet();
 
 			_displaySet1 = new DisplaySet();
 			_displaySet2 = new DisplaySet();
@@ -64,9 +67,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			_imageBox1.Tiles.Add(_tile2);
 			_imageBox2.Tiles.Add(_tile3);
 			_imageBox2.Tiles.Add(_tile4);
-			
-			_viewer.LogicalWorkspace.DisplaySets.Add(_displaySet1);
-			_viewer.LogicalWorkspace.DisplaySets.Add(_displaySet2);
+
+			_viewer.LogicalWorkspace.ImageSets.Add(_imageSet1);
+
+			_imageSet1.DisplaySets.Add(_displaySet1);
+			_imageSet1.DisplaySets.Add(_displaySet2);
 			
 			_displaySet1.PresentationImages.Add(_image1);
 			_displaySet1.PresentationImages.Add(_image2);
@@ -84,6 +89,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		public ITile Tile2 { get { return _tile2; } }
 		public ITile Tile3 { get { return _tile3; } }
 		public ITile Tile4 { get { return _tile4; } }
+		public IImageSet ImageSet1 { get { return _imageSet1; } }
 		public IDisplaySet DisplaySet1 { get { return _displaySet1; } }
 		public IDisplaySet DisplaySet2 { get { return _displaySet2; } }
 		public IPresentationImage Image1 { get { return _image1; } }

@@ -20,6 +20,8 @@ namespace ClearCanvas.ImageViewer
 		private bool _selected = false;
 		private bool _linked = true;
 
+		private object _tag;
+		
 		protected IRenderer _imageRenderer;
 
 		// TODO: Perhaps each layer should have its own ILayerRenderer?  
@@ -160,6 +162,12 @@ namespace ClearCanvas.ImageViewer
 						_parentDisplaySet.UnlinkPresentation(this);
 				}
 			}
+		}
+
+		public object Tag
+		{
+			get { return _tag; }
+			set { _tag = value; }
 		}
 
 		public abstract IRenderer ImageRenderer { get; }
