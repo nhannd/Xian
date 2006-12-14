@@ -117,19 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionCloseContext" xml:space="preserve">
-    <value>Error closing context</value>
+  <data name="ExceptionConcurrency" xml:space="preserve">
+    <value>The version does not match the version in the database</value>
   </data>
-  <data name="ExceptionCommitFailure" xml:space="preserve">
-    <value>Commit failed - transaction aborted</value>
+  <data name="ExceptionEntityNotFound" xml:space="preserve">
+    <value>The entity was not found</value>
   </data>
-  <data name="ExceptionEntityNotInContext" xml:space="preserve">
-    <value>The entity is not in the persistence context</value>
-  </data>
-  <data name="ExceptionNoCurrentTransaction" xml:space="preserve">
-    <value>No current transaction</value>
-  </data>
-  <data name="ExceptionResumeContext" xml:space="preserve">
-    <value>Error resuming context</value>
+  <data name="ExceptionIncompatiblePersistenceContext" xml:space="preserve">
+    <value>Cannot inherit read-context as an update-context</value>
   </data>
 </root>

@@ -70,7 +70,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             catch (Exception e)
             {
                 // wrap NHibernate exception
-                WrapAndRethrow(e, SR.ErrorCommitFailure);
+                WrapAndRethrow(e, SR.ExceptionCommitFailure);
             }
         }
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             catch (Exception e)
             {
                 // wrap NHibernate exception
-                WrapAndRethrow(e, SR.ErrorResumeContext);
+                WrapAndRethrow(e, SR.ExceptionResumeContext);
             }
         }
 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Enterprise.Hibernate {
+namespace ClearCanvas.Enterprise {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Enterprise.Hibernate {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Enterprise.Hibernate.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Enterprise.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,29 @@ namespace ClearCanvas.Enterprise.Hibernate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error closing context.
+        ///   Looks up a localized string similar to The version does not match the version in the database.
         /// </summary>
-        internal static string ExceptionCloseContext {
+        internal static string ExceptionConcurrency {
             get {
-                return ResourceManager.GetString("ExceptionCloseContext", resourceCulture);
+                return ResourceManager.GetString("ExceptionConcurrency", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Commit failed - transaction aborted.
+        ///   Looks up a localized string similar to The entity was not found.
         /// </summary>
-        internal static string ExceptionCommitFailure {
+        internal static string ExceptionEntityNotFound {
             get {
-                return ResourceManager.GetString("ExceptionCommitFailure", resourceCulture);
+                return ResourceManager.GetString("ExceptionEntityNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The entity is not in the persistence context.
+        ///   Looks up a localized string similar to Cannot inherit read-context as an update-context.
         /// </summary>
-        internal static string ExceptionEntityNotInContext {
+        internal static string ExceptionIncompatiblePersistenceContext {
             get {
-                return ResourceManager.GetString("ExceptionEntityNotInContext", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No current transaction.
-        /// </summary>
-        internal static string ExceptionNoCurrentTransaction {
-            get {
-                return ResourceManager.GetString("ExceptionNoCurrentTransaction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error resuming context.
-        /// </summary>
-        internal static string ExceptionResumeContext {
-            get {
-                return ResourceManager.GetString("ExceptionResumeContext", resourceCulture);
+                return ResourceManager.GetString("ExceptionIncompatiblePersistenceContext", resourceCulture);
             }
         }
     }

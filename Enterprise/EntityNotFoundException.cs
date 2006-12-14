@@ -10,7 +10,7 @@ namespace ClearCanvas.Enterprise
     public class EntityNotFoundException : PersistenceException
     {
         public EntityNotFoundException(Exception inner)
-            : base("The requested entity was not found", inner)
+            : base(SR.ExceptionEntityNotFound, inner)
         {
         }
     }

@@ -173,7 +173,7 @@ namespace ClearCanvas.Enterprise
                         return PersistenceScope.Current;
 
                     // can't ask for an update context when current context is a read context
-                    throw new InvalidOperationException("Cannot inherit read-context as an update-context");
+                    throw new InvalidOperationException(SR.ExceptionIncompatiblePersistenceContext);
                 }
                 else
                 {

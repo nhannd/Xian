@@ -25,7 +25,7 @@ namespace ClearCanvas.Enterprise
         }
 
 
-        #region ITransactionMonitor Members
+        #region ITransactionNotifier Members
 
         public void Subscribe(Type entityType, EventHandler<EntityChangeEventArgs> eventHandler)
         {

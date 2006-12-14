@@ -10,7 +10,7 @@ namespace ClearCanvas.Enterprise
     public class ConcurrencyException : PersistenceException
     {
         public ConcurrencyException(Exception inner)
-            : base("The version does not match the version in the database", inner)
+            : base(SR.ExceptionConcurrency, inner)
         {
         }
     }

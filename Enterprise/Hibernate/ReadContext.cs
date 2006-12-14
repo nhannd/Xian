@@ -37,7 +37,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                 }
                 catch (Exception e)
                 {
-                    WrapAndRethrow(e, SR.ErrorCloseContext);
+                    WrapAndRethrow(e, SR.ExceptionCloseContext);
                 }
             }
 

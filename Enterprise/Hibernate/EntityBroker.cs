@@ -74,7 +74,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         protected void LoadAssociation(TEntity entity, object association)
         {
             if(!this.Context.Session.Contains(entity))
-                throw new PersistenceException("The specified entity does not exist in the context", null);
+                throw new PersistenceException(SR.ExceptionEntityNotInContext, null);
 
             if (!NHibernateUtil.IsInitialized(association))
                 NHibernateUtil.Initialize(association);

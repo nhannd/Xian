@@ -54,7 +54,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             try
             {
                 if (!this.InTransaction)
-                    throw new InvalidOperationException(SR.ErrorNoCurrentTransaction);
+                    throw new InvalidOperationException(SR.ExceptionNoCurrentTransaction);
 
                 CommitTransaction();
   
@@ -65,7 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
             catch (Exception e)
             {
-                WrapAndRethrow(e, SR.ErrorCommitFailure);
+                WrapAndRethrow(e, SR.ExceptionCommitFailure);
             }
         }
 
@@ -100,7 +100,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                     }
                     catch (Exception e)
                     {
-                        WrapAndRethrow(e, SR.ErrorCloseContext);
+                        WrapAndRethrow(e, SR.ExceptionCloseContext);
                     }
                 }
             }

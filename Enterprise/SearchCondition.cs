@@ -33,9 +33,6 @@ namespace ClearCanvas.Enterprise
 
         public void StartsWith(T val)
         {
-            if(!typeof(T).Equals(typeof(string)))
-                throw new InvalidOperationException("Method can be applied only to String arguments");
-
             SetCondition(SearchConditionTest.Like, val + "%");
         }
 
