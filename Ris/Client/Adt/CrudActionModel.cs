@@ -96,15 +96,15 @@ namespace ClearCanvas.Ris.Client.Adt
             IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
             if (add)
             {
-                this.InsertAction(_add = new CrudAction("Add", "Icons.Add.png", resolver));
+                this.InsertAction(_add = new CrudAction(SR.TitleAdd, "Icons.Add.png", resolver));
             }
             if (edit)
             {
-                this.InsertAction(_edit = new CrudAction("Edit", "Icons.Edit.png", resolver));
+                this.InsertAction(_edit = new CrudAction(SR.TitleEdit, "Icons.Edit.png", resolver));
             }
             if (delete)
             {
-                this.InsertAction(_delete = new CrudAction("Delete", "Icons.Delete.png", resolver));
+                this.InsertAction(_delete = new CrudAction(SR.TitleDelete, "Icons.Delete.png", resolver));
             }
         }
 

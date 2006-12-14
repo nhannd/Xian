@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
             ApplicationComponent.LaunchAsWorkspace(
                 this.Context.DesktopWindow,
                 component,
-                "Orders",
+                SR.TitleOrders,
                 null);
         }
     }
@@ -62,23 +62,23 @@ namespace ClearCanvas.Ris.Client.Adt
             IList<WorklistItem> worklistItems = orderEntryService.GetOrdersWorklist();
 
             _orderList = new Table<WorklistItem>();
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("MRN",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnMRN,
                 delegate(WorklistItem item) { return item.Mrn.Format(); }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Name",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnName,
                 delegate(WorklistItem item) { return item.PatientName.Format(); }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Visit #",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnVisitNumber,
                 delegate(WorklistItem item) { return item.VisitNumber.Format(); }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Accession #",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnAccessionNumber,
                 delegate(WorklistItem item) { return item.AccessionNumber; }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Diagnostic Service",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnDiagnosticService,
                 delegate(WorklistItem item) { return item.DiagnosticService; }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Procedure",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnProcedure,
                 delegate(WorklistItem item) { return item.Procedure; }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Scheduled Step",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnScheduledStep,
                 delegate(WorklistItem item) { return item.ScheduledStep; }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Modality",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnModality,
                 delegate(WorklistItem item) { return item.Modality; }));
-            _orderList.Columns.Add(new TableColumn<WorklistItem, string>("Priority",
+            _orderList.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnPriority,
                 delegate(WorklistItem item) { return orderPriorities[item.Priority].Value; }));
 
             _orderList.Items.AddRange(worklistItems);

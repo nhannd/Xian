@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -14,9 +15,10 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileTable _searchResults;
         private PatientProfileSearchCriteria _searchCriteria;
         private IAdtService _adtService;
+        private PatientSearchComponent _searchComponent;
 
         public PatientSearchResultsFolder()
-            :base("Search Results")
+            :base(SR.TitleFolderSearchResults)
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
             _searchResults = new PatientProfileTable();
@@ -31,6 +33,12 @@ namespace ClearCanvas.Ris.Client.Adt
                 DoSearch();
                 NotifyItemsChanged();
             }
+        }
+
+        public PatientSearchComponent SearchComponent
+        {
+            get { return _searchComponent; }
+            set { _searchComponent = value; }
         }
 
         public override ITable Items
@@ -53,8 +61,15 @@ namespace ClearCanvas.Ris.Client.Adt
                 catch (Exception e)
                 {
                     //TODO we need a more formalized means of handling query service layer exceptions
-                    Platform.Log(e);
-                    Platform.ShowMessageBox("An error occured while trying to execute the query");
+                    if (_searchComponent != null)
+                    {
+                        ExceptionHandler.Report(e, SR.ExceptionFailedToExecuteQuery, _searchComponent.DesktopWindow);
+                    }
+                    else
+                    {
+                        Platform.Log(e);
+                        Platform.ShowMessageBox(SR.ExceptionFailedToExecuteQuery);
+                    }
                 }
             }
         }

@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _component = new JscriptComponent();
                 ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow,
                     _component,
-                    "JScript Window",
+                    SR.TitleJScriptWindow,
                     ShelfDisplayHint.DockFloat,
                     delegate(IApplicationComponent c) { _component = null; });
             }

@@ -69,6 +69,12 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
+
+        public IDesktopWindow DesktopWindow
+        {
+            get { return this.Host.DesktopWindow; }
+        }
+
         public PatientProfileSearchCriteria SearchCriteria
         {
             get { return BuildCriteria(); }

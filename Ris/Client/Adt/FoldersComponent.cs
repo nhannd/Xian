@@ -93,10 +93,10 @@ namespace ClearCanvas.Ris.Client.Adt
                 e.Item.ItemsChanged -= new EventHandler(FolderItemsChangedEventHandler);
             };
 
-            _folders.Add(new Folder("Scheduled Today"));
-            _folders.Add(new Folder("Recently Arrived"));
-            _folders.Add(new Folder("Cancelled Today"));
-            _folders.Add(new Folder("Recent Items"));
+            _folders.Add(new Folder(SR.TitleFolderScheduledToday));
+            _folders.Add(new Folder(SR.TitleFolderRecentlyArrived));
+            _folders.Add(new Folder(SR.TitleFolderCancelledToday));
+            _folders.Add(new Folder(SR.TitleFolderRecentItems));
 
             _toolSet = new ToolSet(new FolderToolExtensionPoint(), new FolderToolContext(this));
 

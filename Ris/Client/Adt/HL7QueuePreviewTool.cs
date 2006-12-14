@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     _component,
-                    "HL7 Queue",
+                    SR.TitleHL7Queue,
                     delegate(IApplicationComponent component) { _component = null; });
             }
         }

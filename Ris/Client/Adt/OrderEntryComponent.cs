@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
             ApplicationComponent.LaunchAsWorkspace(
                 this.Context.DesktopWindow,
                 component,
-                "New Order",
+                SR.TitleNewOrder,
                 null);
         }
     }

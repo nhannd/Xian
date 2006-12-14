@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt
             ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
                 this.Context.DesktopWindow,
                 editor,
-                "New Patient");
+                SR.TitleNewPatient);
 
             if (result == ApplicationComponentExitCode.Normal)
             {

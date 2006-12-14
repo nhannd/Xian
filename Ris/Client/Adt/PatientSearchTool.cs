@@ -45,10 +45,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 _searchComponent = new PatientSearchComponent();
                 _searchComponent.SearchRequested += SearchRequestedEventHandler;
 
+                // _folder need the searchComponent's Desktop Window to show exception
+                _folder.SearchComponent = _searchComponent;
+
                 ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
                     _searchComponent,
-                    "Search",
+                    SR.TitleSearch,
                     ShelfDisplayHint.DockFloat,
                     delegate(IApplicationComponent c)
                     {

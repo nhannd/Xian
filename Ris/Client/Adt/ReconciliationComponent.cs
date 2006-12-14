@@ -153,8 +153,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             catch (PatientReconciliationException e)
             {
-                Platform.Log(e);
-                this.Host.ShowMessageBox("An error occured while attempting to reconcile the patient profiles", MessageBoxActions.Ok);
+                ExceptionHandler.Report(e, SR.ExceptionFailedToReconcile, this.Host.DesktopWindow);
                 this.ExitCode = ApplicationComponentExitCode.Error;
             }
 
@@ -199,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // confirmation
             ReconciliationConfirmComponent confirmComponent = new ReconciliationConfirmComponent(_selectedTargetProfile.Patient, checkedPatients);
             ApplicationComponentExitCode confirmExitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, confirmComponent, "Confirm Reconciliation");
+                this.Host.DesktopWindow, confirmComponent, SR.TitleConfirmReconciliation);
 
             if (confirmExitCode == ApplicationComponentExitCode.Normal)
             {

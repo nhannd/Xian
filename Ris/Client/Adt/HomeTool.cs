@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     BuildComponent(),
-                    "Home",
+                    SR.TitleHome,
                     delegate(IApplicationComponent c) { _workspace = null; });
             }
             else
@@ -59,13 +59,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 };
 
             SplitComponentContainer container = new SplitComponentContainer(
-                new SplitPane("Results", resultComponent, 0.45f),
-                new SplitPane("Preview", previewComponent, 0.55f),
+                new SplitPane(SR.TitleResults, resultComponent, 0.45f),
+                new SplitPane(SR.TitlePreview, previewComponent, 0.55f),
                 SplitOrientation.Vertical);
 
             return new SplitComponentContainer(
-                new SplitPane("Search", foldersComponent, 0.15f),
-                new SplitPane("Results", container, 0.85f),
+                new SplitPane(SR.TitleSearch, foldersComponent, 0.15f),
+                new SplitPane(SR.TitleResults, container, 0.85f),
                 SplitOrientation.Vertical);
         }
     }

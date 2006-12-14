@@ -84,8 +84,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _adtService.PatientProfileChanged += PatientProfileChangedEventHandler;
 
 
-            this.Pane1 = new SplitPane("Preview", _preview = new PatientProfilePreviewComponent(), 1);
-            this.Pane2 = new SplitPane("Detail", _detail = new PatientProfilePreviewComponent(), 1);
+            this.Pane1 = new SplitPane(SR.TitlePreview, _preview = new PatientProfilePreviewComponent(), 1);
+            this.Pane2 = new SplitPane(SR.TitleDetail, _detail = new PatientProfilePreviewComponent(), 1);
 
             _toolSet = new ToolSet(new PatientOverviewToolExtensionPoint(), new PatientOverviewToolContext(this));
 
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private void Refresh()
         {
             _patientProfile = _adtService.LoadPatientProfile(_patientProfileRef, false);
-            this.Host.SetTitle(string.Format(SR.PatientComponentTitle, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
+            this.Host.SetTitle(string.Format(SR.TitlePatientComponent, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
 
             _preview.PatientProfileRef = _patientProfileRef;
         }

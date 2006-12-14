@@ -48,28 +48,28 @@ namespace ClearCanvas.Ris.Client.Adt
             _locationsTable = new Table<VisitLocation>();
 
             _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                "Role",
+                SR.ColumnRole,
                 delegate(VisitLocation vl)
                 {
                     return _visitLocationRole[vl.Role].Value;
                 },
                 0.8f));
             _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                "Location",
+                SR.ColumnLocation,
                 delegate(VisitLocation vl)
                 {
                     return vl.Location.ToString();
                 },
                 2.5f));
             _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                "Start Time",
+                SR.ColumnStartTime,
                 delegate(VisitLocation vl)
                 {
                     return Format.DateTime(vl.StartTime);
                 },
                 0.8f));
             _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                "End Time",
+                SR.ColumnEndTime,
                 delegate(VisitLocation vl)
                 {
                     return Format.DateTime(vl.EndTime);

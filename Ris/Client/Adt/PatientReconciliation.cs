@@ -34,11 +34,11 @@ namespace ClearCanvas.Ris.Client.Adt
                     ApplicationComponent.LaunchAsDialog(
                         window,
                         component,
-                        "Patient Reconciliation");
+                        SR.TitlePatientReconciliation);
                 }
                 else
                 {
-                    Platform.ShowMessageBox("There are no reconciliation candidates for this patient.");
+                    Platform.ShowMessageBox(SR.MessageNoReconciliationCandidate);
                 }
             }
         }

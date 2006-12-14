@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
             ApplicationComponent.LaunchAsWorkspace(
                 iDesktopWindow,
                 component,
-                "Patient Visits",
+                SR.TitlePatientVisits,
                 null);
         }
     }

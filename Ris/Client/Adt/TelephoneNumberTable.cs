@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Adt
             TelephoneEquipmentEnumTable _phoneEquipments = _adtService.GetTelephoneEquipmentEnumTable();
             TelephoneUseEnumTable _phoneUses = _adtService.GetTelephoneUseEnumTable();
 
-            this.Columns.Add(new TableColumn<TelephoneNumber, string>("Type",
+            this.Columns.Add(new TableColumn<TelephoneNumber, string>(SR.ColumnType,
                 delegate(TelephoneNumber t)
                 {
                     if (t.Use == TelephoneUse.PRN && t.Equipment == TelephoneEquipment.CP)
@@ -26,10 +26,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         return string.Format("{0}", _phoneUses[t.Use].Value);
                 }, 
                 1.1f)); 
-            this.Columns.Add(new TableColumn<TelephoneNumber, string>("Number", 
+            this.Columns.Add(new TableColumn<TelephoneNumber, string>(SR.ColumnNumber, 
                 delegate(TelephoneNumber pn) { return pn.Format(); },
                 2.2f));
-            this.Columns.Add(new TableColumn<TelephoneNumber, string>("Expiry Date", 
+            this.Columns.Add(new TableColumn<TelephoneNumber, string>(SR.ColumnExpiryDate, 
                 delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }, 
                 0.9f));
         }

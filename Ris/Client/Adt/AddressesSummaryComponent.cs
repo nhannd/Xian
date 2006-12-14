@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Adt
             address.Country = "Canada";
 
             AddressEditorComponent editor = new AddressEditorComponent(address);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Address...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _addresses.Items.Add(address);
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Adt
             Address address = (Address)_currentAddressSelection.Clone();
 
             AddressEditorComponent editor = new AddressEditorComponent(address);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Address...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 // delete and re-insert to ensure that TableView updates correctly
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void DeleteSelectedAddress()
         {
-            if (this.Host.ShowMessageBox("Are you sure you want to delete this address?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (this.Host.ShowMessageBox( SR.MessageDeleteSelectedAddress, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong Address being removed from the PatientProfile

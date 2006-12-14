@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _visitActionHandler.Add.Enabled = true;
 
-            this.Host.SetTitle(string.Format(SR.VisitSummaryComponentTitle, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
+            this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
 
             base.Start();
         }
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public void AddVisit()
         {
             VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Visit...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 LoadVisitsTable();
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (_currentVisitSelection == null) return;
 
             VisitEditorComponent editor = new VisitEditorComponent(_patientRef, new EntityRef<Visit>(_currentVisitSelection));
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Visit...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 LoadVisitsTable();
@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void DeleteSelectedVisit()
         {
-            if (this.Host.ShowMessageBox("Are you sure you want to delete this visit?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedVisit, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //delete the visit
                 LoadVisitsTable();

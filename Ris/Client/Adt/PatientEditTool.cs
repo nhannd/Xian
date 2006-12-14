@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Adt
             ApplicationComponent.LaunchAsDialog(
                 desktopWindow,
                 new PatientProfileEditorComponent(profileRef),
-                "Edit Patient");
+                SR.TitleEditPatient);
         }
     }
 }

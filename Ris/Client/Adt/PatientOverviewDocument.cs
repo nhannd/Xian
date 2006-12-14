@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override string GetTitle()
         {
-            return "Patient Profile";   // doesn't matter, cause the component will set the title when it starts
+            return SR.TitlePatientProfile;   // doesn't matter, cause the component will set the title when it starts
         }
 
         protected override IApplicationComponent GetComponent()

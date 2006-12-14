@@ -52,28 +52,28 @@ namespace ClearCanvas.Ris.Client.Adt
             _practitionersTable = new Table<VisitPractitioner>();
 
             _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                "Role",
+                SR.ColumnRole,
                 delegate(VisitPractitioner vp)
                 {
                     return _visitPractitionerRoleTable[vp.Role].Value;
                 },
                 0.8f));
             _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                "Practitioner",
+                SR.ColumnPractitioner,
                 delegate(VisitPractitioner vp)
                 {
                     return vp.Practitioner.Format();
                 },
                 2.5f));
             _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                "Start Time",
+                SR.ColumnStartTime,
                 delegate(VisitPractitioner vp)
                 {
                     return Format.DateTime(vp.StartTime);
                 },
                 0.8f));
             _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                "End Time",
+                SR.ColumnEndTime,
                 delegate(VisitPractitioner vp)
                 {
                     return Format.DateTime(vp.EndTime);

@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
             TelephoneNumber phoneNumber = new TelephoneNumber();
 
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Add Phone Number...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _phoneNumbers.Items.Add(phoneNumber);
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Adt
             TelephoneNumber phoneNumber = (TelephoneNumber)_currentPhoneNumberSelection.Clone();
             
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Update Phone Number...");
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdatePhoneNumber);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 // delete and re-insert to ensure that TableView updates correctly
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void DeleteSelectedPhoneNumber()
         {
-            if (this.Host.ShowMessageBox("Are you sure you want to delete this phone number?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedPhoneNumber, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary TelephoneNumber otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong TelephoneNumber being removed from the PatientProfile

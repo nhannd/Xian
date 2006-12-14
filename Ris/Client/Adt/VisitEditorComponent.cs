@@ -92,15 +92,14 @@ namespace ClearCanvas.Ris.Client.Adt
                 SaveChanges();
                 this.ExitCode = ApplicationComponentExitCode.Normal;
             }
-            catch (ConcurrencyException)
+            catch (ConcurrencyException e)
             {
-                this.Host.ShowMessageBox("The visit was modified by another user.  Your changes could not be saved.", MessageBoxActions.Ok);
+                ExceptionHandler.Report(e, SR.ExceptionConcurrencyVisitNotSaved, this.Host.DesktopWindow);
                 this.ExitCode = ApplicationComponentExitCode.Error;
             }
             catch (Exception e)
             {
-                Platform.Log(e);
-                this.Host.ShowMessageBox("An error occured while attempting to save changes to this item", MessageBoxActions.Ok);
+                ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow);
                 this.ExitCode = ApplicationComponentExitCode.Error;
             }
             this.Host.Exit();

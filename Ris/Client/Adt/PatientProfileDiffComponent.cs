@@ -124,20 +124,20 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 _profileAuthorities = CollectionUtils.Map<PatientProfile, string, List<string>>(diffData.Profiles, delegate(PatientProfile p) { return p.Mrn.AssigningAuthority; });
 
-                AddField("Healthcard #", PatientProfileDiscrepancy.Healthcard, diffData, delegate(PatientProfile p) { return p.Healthcard.Format(); });
-                AddField("Family Name", PatientProfileDiscrepancy.FamilyName, diffData, delegate(PatientProfile p) { return p.Name.GivenName; });
-                AddField("Given Name", PatientProfileDiscrepancy.GivenName, diffData, delegate(PatientProfile p) { return p.Name.FamilyName; });
-                AddField("Middle Name", PatientProfileDiscrepancy.MiddleName, diffData, delegate(PatientProfile p) { return p.Name.MiddleName; });
-                AddField("Date Of Birth", PatientProfileDiscrepancy.DateOfBirth, diffData, delegate(PatientProfile p) { return Format.Date(p.DateOfBirth); });
-                AddField("Sex", PatientProfileDiscrepancy.Sex, diffData, delegate(PatientProfile p) { return _sexEnumTable[p.Sex].Value; });
+                AddField(SR.ColumnHealthcardNumber, PatientProfileDiscrepancy.Healthcard, diffData, delegate(PatientProfile p) { return p.Healthcard.Format(); });
+                AddField(SR.ColumnFamilyName, PatientProfileDiscrepancy.FamilyName, diffData, delegate(PatientProfile p) { return p.Name.GivenName; });
+                AddField(SR.ColumnGivenName, PatientProfileDiscrepancy.GivenName, diffData, delegate(PatientProfile p) { return p.Name.FamilyName; });
+                AddField(SR.ColumnMiddleName, PatientProfileDiscrepancy.MiddleName, diffData, delegate(PatientProfile p) { return p.Name.MiddleName; });
+                AddField(SR.ColumnDateOfBirth, PatientProfileDiscrepancy.DateOfBirth, diffData, delegate(PatientProfile p) { return Format.Date(p.DateOfBirth); });
+                AddField(SR.ColumnSex, PatientProfileDiscrepancy.Sex, diffData, delegate(PatientProfile p) { return _sexEnumTable[p.Sex].Value; });
 
-                AddField("Home Phone", PatientProfileDiscrepancy.HomePhone, diffData,
+                AddField(SR.ColumnHomePhone, PatientProfileDiscrepancy.HomePhone, diffData,
                     delegate(PatientProfile p) { return p.CurrentHomePhone == null ? "Unknown" : p.CurrentHomePhone.Format(); });
-                AddField("Work Phone", PatientProfileDiscrepancy.WorkPhone, diffData,
+                AddField(SR.ColumnWorkPhone, PatientProfileDiscrepancy.WorkPhone, diffData,
                     delegate(PatientProfile p) { return p.CurrentWorkPhone == null ? "Unknown" : p.CurrentWorkPhone.Format(); });
-                AddField("Home Address", PatientProfileDiscrepancy.HomeAddress, diffData,
+                AddField(SR.ColumnHomeAddress, PatientProfileDiscrepancy.HomeAddress, diffData,
                     delegate(PatientProfile p) { return p.CurrentHomeAddress == null ? "Unknown" : p.CurrentHomeAddress.Format(); });
-                AddField("Work Address", PatientProfileDiscrepancy.WorkAddress, diffData,
+                AddField(SR.ColumnWorkAddress, PatientProfileDiscrepancy.WorkAddress, diffData,
                     delegate(PatientProfile p) { return p.CurrentWorkAddress == null ? "Unknown" : p.CurrentWorkAddress.Format(); });
             }
 

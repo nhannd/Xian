@@ -18,22 +18,22 @@ namespace ClearCanvas.Ris.Client.Adt
             SexEnumTable sexChoices = service.GetSexEnumTable();
 
             this.Columns.Add(
-                new TableColumn<PatientProfile, string>("Site",
+                new TableColumn<PatientProfile, string>(SR.ColumnSite,
                     delegate(PatientProfile profile) { return profile.Mrn.AssigningAuthority; }, 0.5f));
             this.Columns.Add(
-               new TableColumn<PatientProfile, string>("MRN",
+               new TableColumn<PatientProfile, string>(SR.ColumnMRN,
                    delegate(PatientProfile profile) { return profile.Mrn.Id; }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>("Name",
+              new TableColumn<PatientProfile, string>(SR.ColumnName,
                   delegate(PatientProfile profile) { return profile.Name.Format(); }, 2.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>("Healthcard",
+              new TableColumn<PatientProfile, string>(SR.ColumnHealthcardNumber,
                   delegate(PatientProfile profile) { return profile.Healthcard.Id; }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>("DOB",
+              new TableColumn<PatientProfile, string>(SR.ColumnDateOfBirth,
                   delegate(PatientProfile profile) { return Format.Date(profile.DateOfBirth); }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>("Sex",
+              new TableColumn<PatientProfile, string>(SR.ColumnSex,
                   delegate(PatientProfile profile) { return sexChoices[profile.Sex].Value; }, 0.5f));
         }
     }

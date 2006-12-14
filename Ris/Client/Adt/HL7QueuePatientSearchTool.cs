@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else
             {
-                Platform.ShowMessageBox("Patient not found");
+                Platform.ShowMessageBox(SR.MessagePatientNotFound);
             }
         }
     }
