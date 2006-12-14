@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Actions
 			ActionPath path = new ActionPath(a.Path, _resolver);
 			_action = new ButtonAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
-			_action.SetDefaultLabel(path.LastSegment.LocalizedText);
+			_action.Label = path.LastSegment.LocalizedText;
 		}
 
         public void Apply(MenuActionAttribute a)
@@ -52,7 +52,7 @@ namespace ClearCanvas.Desktop.Actions
             ActionPath path = new ActionPath(a.Path, _resolver);
             _action = new MenuAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
-			_action.SetDefaultLabel(path.LastSegment.LocalizedText);
+            _action.Label = path.LastSegment.LocalizedText;
         }
 
 		public void Apply(KeyboardActionAttribute a)
@@ -61,8 +61,8 @@ namespace ClearCanvas.Desktop.Actions
 			ActionPath path = new ActionPath(a.Path, _resolver);
 			_action = new KeyboardAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
-			_action.SetDefaultLabel(path.LastSegment.LocalizedText);
-		}
+            _action.Label = path.LastSegment.LocalizedText;
+        }
 
 		public void Apply(ClickHandlerAttribute a)
         {
@@ -102,7 +102,7 @@ namespace ClearCanvas.Desktop.Actions
         public void Apply(TooltipAttribute a)
         {
             // assert _action != null
-            _action.SetDefaultTooltip(_resolver.LocalizeString(a.TooltipText));
+            _action.Tooltip = _resolver.LocalizeString(a.TooltipText);
         }
 
 		public void Apply(LabelValueObserverAttribute a)
@@ -111,7 +111,10 @@ namespace ClearCanvas.Desktop.Actions
 			ValidateProperty(a.PropertyName, typeof(string));
 			ValidateEvent(a.ChangeEventName);
 
-			_action.SetLabelObservable(new DynamicObservablePropertyBinding<string>(_actionTarget, a.PropertyName, a.ChangeEventName));
+            IObservablePropertyBinding<string> toolBinding = new DynamicObservablePropertyBinding<string>(_actionTarget, a.PropertyName, a.ChangeEventName);
+            IObservablePropertyBinding<string> actionBinding = new DynamicObservablePropertyBinding<string>(_action, "Label", "LabelChanged");
+
+            ObservablePropertyCoupler<string>.Couple(toolBinding, actionBinding);
 		}
 		
 		public void Apply(TooltipValueObserverAttribute a)
@@ -120,8 +123,11 @@ namespace ClearCanvas.Desktop.Actions
 			ValidateProperty(a.PropertyName, typeof(string));
 			ValidateEvent(a.ChangeEventName);
 
-			_action.SetTooltipObservable(new DynamicObservablePropertyBinding<string>(_actionTarget, a.PropertyName, a.ChangeEventName));
-		}
+            IObservablePropertyBinding<string> toolBinding = new DynamicObservablePropertyBinding<string>(_actionTarget, a.PropertyName, a.ChangeEventName);
+            IObservablePropertyBinding<string> actionBinding = new DynamicObservablePropertyBinding<string>(_action, "Tooltip", "TooltipChanged");
+
+            ObservablePropertyCoupler<string>.Couple(toolBinding, actionBinding);
+        }
 
 		public void Apply(VisibleStateObserverAttribute a)
 		{
@@ -129,8 +135,11 @@ namespace ClearCanvas.Desktop.Actions
 			ValidateProperty(a.PropertyName, typeof(bool));
 			ValidateEvent(a.ChangeEventName);
 
-			_action.SetVisibleObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
-		}
+            IObservablePropertyBinding<bool> toolBinding = new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName);
+            IObservablePropertyBinding<bool> actionBinding = new DynamicObservablePropertyBinding<bool>(_action, "Visible", "VisibleChanged");
+
+            ObservablePropertyCoupler<bool>.Couple(toolBinding, actionBinding);
+        }
 
 		public void Apply(CheckedStateObserverAttribute a)
         {
@@ -140,8 +149,11 @@ namespace ClearCanvas.Desktop.Actions
             // check that property, event exist, etc.
 			ValidateProperty(a.PropertyName, typeof(bool));
             ValidateEvent(a.ChangeEventName);
-            
-            clickAction.SetCheckedObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
+
+            IObservablePropertyBinding<bool> toolBinding = new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName);
+            IObservablePropertyBinding<bool> actionBinding = new DynamicObservablePropertyBinding<bool>(_action, "Checked", "CheckedChanged");
+
+            ObservablePropertyCoupler<bool>.Couple(toolBinding, actionBinding);
         }
 
         public void Apply(EnabledStateObserverAttribute a)
@@ -151,8 +163,11 @@ namespace ClearCanvas.Desktop.Actions
             // check that property, event exist, etc.
 			ValidateProperty(a.PropertyName, typeof(bool));
             ValidateEvent(a.ChangeEventName);
-            
-            _action.SetEnabledObservable(new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName));
+
+            IObservablePropertyBinding<bool> toolBinding = new DynamicObservablePropertyBinding<bool>(_actionTarget, a.PropertyName, a.ChangeEventName);
+            IObservablePropertyBinding<bool> actionBinding = new DynamicObservablePropertyBinding<bool>(_action, "Enabled", "EnabledChanged");
+
+            ObservablePropertyCoupler<bool>.Couple(toolBinding, actionBinding);
         }
 
         private void ValidateClickHandler(string methodName)

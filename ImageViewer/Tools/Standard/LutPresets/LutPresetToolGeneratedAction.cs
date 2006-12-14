@@ -39,9 +39,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			_action.SetClickHandler(this.ClickHandler);
 
-			_action.SetVisibleObservable(new DynamicObservablePropertyBinding<bool>(this, "Visible", "VisibleChanged"));
-			_action.SetLabelObservable(new DynamicObservablePropertyBinding<string>(this, "Label", "LabelChanged"));
-			_action.SetTooltipObservable(new DynamicObservablePropertyBinding<string>(this, "Tooltip", "TooltipChanged"));
+			//_action.SetVisibleObservable(new DynamicObservablePropertyBinding<bool>(this, "Visible", "VisibleChanged"));
+			//_action.SetLabelObservable(new DynamicObservablePropertyBinding<string>(this, "Label", "LabelChanged"));
+			//_action.SetTooltipObservable(new DynamicObservablePropertyBinding<string>(this, "Tooltip", "TooltipChanged"));
 
 			_imageViewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
 

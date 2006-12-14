@@ -81,9 +81,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 0.8f));
 
             _visitPractitionerActionHandler = new CrudActionModel();
-            _visitPractitionerActionHandler.Add.Handler = AddVisitPractitioner;
-            _visitPractitionerActionHandler.Edit.Handler = UpdateSelectedVisitPractitioner;
-            _visitPractitionerActionHandler.Delete.Handler = DeleteSelectedVisitPractitioner;
+            _visitPractitionerActionHandler.Add.SetClickHandler(AddVisitPractitioner);
+            _visitPractitionerActionHandler.Edit.SetClickHandler(UpdateSelectedVisitPractitioner);
+            _visitPractitionerActionHandler.Delete.SetClickHandler(DeleteSelectedVisitPractitioner);
 
             _visitPractitionerActionHandler.Add.Enabled = true;
         }

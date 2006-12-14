@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/{0}", displaySet.Name), null);
 			MenuAction action = new MenuAction(string.Format("display{0}", index), path, ClickActionFlags.None, null);
-			action.SetDefaultLabel(displaySet.Name);
+			action.Label = displaySet.Name;
 			action.SetClickHandler(
 				delegate()
 				{
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			);
 
 			BooleanPropertyBinding binding = new BooleanPropertyBinding();
-			action.SetCheckedObservable(binding);
+			//action.SetCheckedObservable(binding);
 
 			if (this.ImageViewer.SelectedImageBox.DisplaySet.Name == displaySet.Name)
 				binding.PropertyValue = true;

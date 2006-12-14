@@ -16,7 +16,8 @@ namespace ClearCanvas.Desktop.Actions
         private ClickHandlerDelegate _clickHandler;
 		private XKeys _keyStroke;
 
-        private IObservablePropertyBinding<bool> _checkedPropertyBinding;
+        private bool _checked;
+        private event EventHandler _checkedChanged;
 
         /// <summary>
         /// Constructor
@@ -29,15 +30,7 @@ namespace ClearCanvas.Desktop.Actions
             : base(actionID, path, resourceResolver)
         {
             _flags = flags;
-        }
-
-        /// <summary>
-        /// Sets the observable property that this action monitors for its checked state
-        /// </summary>
-        /// <param name="checkedPropertyBinding">The property to monitor</param>
-        public void SetCheckedObservable(IObservablePropertyBinding<bool> checkedPropertyBinding)
-        {
-            _checkedPropertyBinding = checkedPropertyBinding;
+            _checked = false;
         }
 
         /// <summary>
@@ -64,25 +57,21 @@ namespace ClearCanvas.Desktop.Actions
 
         public bool Checked
         {
-            get
+            get { return _checked; }
+            set
             {
-                return _checkedPropertyBinding == null ? false // smart default
-                    : _checkedPropertyBinding.PropertyValue;
+                if (value != _checked)
+                {
+                    _checked = value;
+                    EventsHelper.Fire(_checkedChanged, this, EventArgs.Empty);
+                }
             }
         }
 
         public event EventHandler CheckedChanged
         {
-            add
-            {
-                if (_checkedPropertyBinding != null)
-                    _checkedPropertyBinding.PropertyChanged += value;
-            }
-            remove
-            {
-                if (_checkedPropertyBinding != null)
-                    _checkedPropertyBinding.PropertyChanged -= value;
-            }
+            add { _checkedChanged += value; }
+            remove { _checkedChanged -= value; }
         }
 
         public void Click()

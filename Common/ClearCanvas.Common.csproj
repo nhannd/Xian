@@ -185,6 +185,7 @@
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
+    <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
     <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />

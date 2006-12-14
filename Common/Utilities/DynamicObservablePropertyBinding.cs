@@ -83,7 +83,7 @@ namespace ClearCanvas.Common.Utilities
             PropertyInfo propertyInfo = target.GetType().GetProperty(propertyName);
             MethodInfo propertyGetter = propertyInfo.GetGetMethod();
 
-            return (PropertyGetDelegate<T>)Delegate.CreateDelegate(typeof(PropertyGetDelegate<T>), target, propertyGetter.Name);
+            return (PropertyGetDelegate<T>)Delegate.CreateDelegate(typeof(PropertyGetDelegate<T>), target, propertyGetter);
         }
 
         /// <summary>

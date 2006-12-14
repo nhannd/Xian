@@ -30,9 +30,9 @@ namespace ClearCanvas.Ris.Client.Adt
             _addresses = new AddressTable();
 
             _addressActionHandler = new CrudActionModel();
-            _addressActionHandler.Add.Handler = AddAddress;
-            _addressActionHandler.Edit.Handler = UpdateSelectedAddress;
-            _addressActionHandler.Delete.Handler = DeleteSelectedAddress;
+            _addressActionHandler.Add.SetClickHandler(AddAddress);
+            _addressActionHandler.Edit.SetClickHandler(UpdateSelectedAddress);
+            _addressActionHandler.Delete.SetClickHandler(DeleteSelectedAddress);
 
             _addressActionHandler.Add.Enabled = true;
         }

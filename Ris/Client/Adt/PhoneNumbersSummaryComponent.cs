@@ -29,9 +29,9 @@ namespace ClearCanvas.Ris.Client.Adt
             _phoneNumbers = new TelephoneNumberTable();
 
             _phoneNumberActionHandler = new CrudActionModel();
-            _phoneNumberActionHandler.Add.Handler = AddPhoneNumber;
-            _phoneNumberActionHandler.Edit.Handler = UpdateSelectedPhoneNumber;
-            _phoneNumberActionHandler.Delete.Handler = DeleteSelectedPhoneNumber;
+            _phoneNumberActionHandler.Add.SetClickHandler(AddPhoneNumber);
+            _phoneNumberActionHandler.Edit.SetClickHandler(UpdateSelectedPhoneNumber);
+            _phoneNumberActionHandler.Delete.SetClickHandler(DeleteSelectedPhoneNumber);
 
             _phoneNumberActionHandler.Add.Enabled = true;
         }

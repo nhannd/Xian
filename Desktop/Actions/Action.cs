@@ -17,15 +17,21 @@ namespace ClearCanvas.Desktop.Actions
         private ActionPath _path;
         private IResourceResolver _resourceResolver;
 
-        private string _tooltip;
         private IconSet _iconSet;
+
+        private bool _enabled;
+        private event EventHandler _enabledChanged;
+
+        private bool _visible;
+        private event EventHandler _visibleChanged;
+
+        private string _tooltip;
+        private event EventHandler _tooltipChanged;
+
         private string _label;
+        private event EventHandler _labelChanged;
 
-        private IObservablePropertyBinding<bool> _enabledPropertyBinding;
-		private IObservablePropertyBinding<bool> _visiblePropertyBinding;
 
-		private IObservablePropertyBinding<string> _labelPropertyBinding;
-		private IObservablePropertyBinding<string> _tooltipPropertyBinding;
 
         /// <summary>
         /// Constructor
@@ -38,49 +44,11 @@ namespace ClearCanvas.Desktop.Actions
             _actionID = actionID;
             _path = path;
             _resourceResolver = resourceResolver;
+
+            // smart defaults
+            _enabled = true;
+            _visible = true;
         }
-
-        /// <summary>
-        /// Sets the observable property that this action monitors for its enablement state
-        /// </summary>
-        /// <param name="enabledPropertyBinding">The property to monitor</param>
-        public void SetEnabledObservable(IObservablePropertyBinding<bool> enabledPropertyBinding)
-        {
-            _enabledPropertyBinding = enabledPropertyBinding;
-        }
-
-		public void SetVisibleObservable(IObservablePropertyBinding<bool> visiblePropertyBinding)
-		{
-			_visiblePropertyBinding = visiblePropertyBinding;
-		}
-
-		public void SetLabelObservable(IObservablePropertyBinding<string> labelPropertyBinding)
-		{
-			_labelPropertyBinding = labelPropertyBinding;
-			_label = _labelPropertyBinding.PropertyValue;
-		}
-
-		public void SetTooltipObservable(IObservablePropertyBinding<string> tooltipPropertyBinding)
-		{
-			_tooltipPropertyBinding = tooltipPropertyBinding;
-			_tooltip = _tooltipPropertyBinding.PropertyValue;
-		}
-
-		public void SetDefaultLabel(string label)
-		{
-			if (_labelPropertyBinding != null)
-				return;
-
-			_label = label;
-		}
-
-		public void SetDefaultTooltip(string tooltip)
-		{
-			if (_tooltipPropertyBinding != null)
-				return;
-
-			_tooltip = tooltip;
-		}
 
         #region IAction members
 
@@ -100,101 +68,87 @@ namespace ClearCanvas.Desktop.Actions
             set { _path = value; }
         }
 
-        public string Label
-        {
-            get 
-			{
-				return _labelPropertyBinding == null ? _label : _labelPropertyBinding.PropertyValue;
-			}
-        }
-
-        public string Tooltip
-        {
-			get
-			{
-				return _tooltipPropertyBinding == null ? _tooltip : _tooltipPropertyBinding.PropertyValue;
-			}
-		}
-
         public IconSet IconSet
         {
             get { return _iconSet; }
             set { _iconSet = value; }
         }
-        
+
+        public string Label
+        {
+            get { return _label; }
+            set
+            {
+                if (value != _label)
+                {
+                    _label = value;
+                    EventsHelper.Fire(_labelChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public string Tooltip
+        {
+            get { return _tooltip; }
+            set
+            {
+                if (value != _tooltip)
+                {
+                    _tooltip = value;
+                    EventsHelper.Fire(_tooltipChanged, this, EventArgs.Empty);
+                }
+            }
+		}
+
         public bool Enabled
         {
-            get
+            get { return _enabled; }
+            set
             {
-                return _enabledPropertyBinding == null ? true // smart default
-                    : _enabledPropertyBinding.PropertyValue;
+                if (value != _enabled)
+                {
+                    _enabled = value;
+                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+                }
             }
         }
 
 		public bool Visible
 		{
-			get
-			{
-				return _visiblePropertyBinding == null ? true // smart default
-					:  _visiblePropertyBinding.PropertyValue;
-			}
-		}
+            get { return _visible; }
+            set
+            {
+                if (value != _visible)
+                {
+                    _visible = value;
+                    EventsHelper.Fire(_visibleChanged, this, EventArgs.Empty);
+                }
+            }
+        }
 		
 		public event EventHandler EnabledChanged
         {
-            add
-            {
-                if (_enabledPropertyBinding != null)
-                    _enabledPropertyBinding.PropertyChanged += value;
-            }
-            remove
-            {
-                if (_enabledPropertyBinding != null)
-                    _enabledPropertyBinding.PropertyChanged -= value;
-            }
+            add { _enabledChanged += value; }
+            remove { _enabledChanged -= value; }
         }
 
 		public event EventHandler VisibleChanged
 		{
-			add
-			{
-				if (_visiblePropertyBinding != null)
-					_visiblePropertyBinding.PropertyChanged += value;
-			}
-			remove
-			{
-				if (_visiblePropertyBinding != null)
-					_visiblePropertyBinding.PropertyChanged -= value;
-			}
-		}
+            add { _visibleChanged += value; }
+            remove { _visibleChanged -= value; }
+        }
 
 		public event EventHandler LabelChanged
 		{
-			add
-			{
-				if (_labelPropertyBinding != null)
-					_labelPropertyBinding.PropertyChanged += value;
-			}
-			remove
-			{
-				if (_labelPropertyBinding != null)
-					_labelPropertyBinding.PropertyChanged -= value;
-			}
-		}
+            add { _labelChanged += value; }
+            remove { _labelChanged -= value; }
+        }
 
 		public event EventHandler TooltipChanged
 		{
-			add
-			{
-				if (_tooltipPropertyBinding != null)
-					_tooltipPropertyBinding.PropertyChanged += value;
-			}
-			remove
-			{
-				if (_tooltipPropertyBinding != null)
-					_tooltipPropertyBinding.PropertyChanged -= value;
-			}
-		}
+            add { _tooltipChanged += value; }
+            remove { _tooltipChanged -= value; }
+        }
 
 		
 		#endregion

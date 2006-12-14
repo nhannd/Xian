@@ -11,73 +11,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public class CrudAction : ClickAction
         {
-            class EnabledObserver : IObservablePropertyBinding<bool>
-            {
-                private CrudAction _subject;
-
-                public EnabledObserver(CrudAction subject)
-                {
-                    _subject = subject;
-                }
-
-                #region IObservablePropertyBinding<bool> Members
-
-                public event EventHandler PropertyChanged
-                {
-                    add { _subject.EnabledChanged += value; }
-                    remove { _subject.EnabledChanged -= value; }
-                }
-
-                public bool PropertyValue
-                {
-                    get { return _subject.Enabled; }
-                    set { _subject.Enabled = value; }
-                }
-
-                #endregion
-            }
-
-
-            private ClickHandlerDelegate _handler;
-            private bool _enabled;
-            private event EventHandler _enabledChanged;
-
             internal CrudAction(string name, string icon, IResourceResolver resolver)
                 : base(name, new ActionPath(string.Format("root/{0}", name), resolver), ClickActionFlags.None, resolver)
             {
-                this.SetClickHandler(delegate()
-                {
-                    if (_handler != null) _handler();
-                });
-                this.SetEnabledObservable(new EnabledObserver(this));
-                this.SetDefaultTooltip(name);
-                this.SetDefaultLabel(name);
+                this.Tooltip = name;
+                this.Label = name;
                 this.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
-            }
-
-            public ClickHandlerDelegate Handler
-            {
-                get { return _handler; }
-                set { _handler = value; }
-            }
-	
-            public new bool Enabled
-            {
-                get { return _enabled; }
-                set
-                {
-                    if (!_enabled.Equals(value))
-                    {
-                        _enabled = value;
-                        EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-                    }
-                }
-            }
-
-            public new event EventHandler EnabledChanged
-            {
-                add { _enabledChanged += value; }
-                remove { _enabledChanged -= value; }
             }
         }
 

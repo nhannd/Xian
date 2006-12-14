@@ -77,9 +77,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 0.8f));
 
             _visitLocationActionHandler = new CrudActionModel();
-            _visitLocationActionHandler.Add.Handler = AddVisitLocation;
-            _visitLocationActionHandler.Edit.Handler = UpdateSelectedVisitLocation;
-            _visitLocationActionHandler.Delete.Handler = DeleteSelectedVisitLocation;
+            _visitLocationActionHandler.Add.SetClickHandler(AddVisitLocation);
+            _visitLocationActionHandler.Edit.SetClickHandler(UpdateSelectedVisitLocation);
+            _visitLocationActionHandler.Delete.SetClickHandler(DeleteSelectedVisitLocation);
 
             _visitLocationActionHandler.Add.Enabled = true;
         }

@@ -53,9 +53,9 @@ namespace ClearCanvas.Ris.Client.Adt
             _visitTable = new VisitTable();
 
             _visitActionHandler = new CrudActionModel();
-            _visitActionHandler.Add.Handler = AddVisit;
-            _visitActionHandler.Edit.Handler = UpdateSelectedVisit;
-            _visitActionHandler.Delete.Handler = DeleteSelectedVisit;
+            _visitActionHandler.Add.SetClickHandler(AddVisit);
+            _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
+            _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
 
             _visitActionHandler.Add.Enabled = true;
 
