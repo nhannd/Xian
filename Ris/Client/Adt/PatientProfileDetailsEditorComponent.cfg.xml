@@ -3,7 +3,7 @@
 
   <spec id="MrnID">
     <not-null test="$.MrnID" failMessage="MRN is required"/>
-    <regex test="$.MrnID" pattern="\d\d\d\d\d\d\d" failMessage="MRN must be 7 digits"/>
+    <regex test="$.MrnID" pattern="^\d{7}$" failMessage="MRN must be 7 digits"/>
   </spec>
 
   <spec id="MrnSite">
@@ -20,7 +20,7 @@
   
   <spec id="HealthcardID">
     <not-null test="$.HealthcardID" failMessage="Healthcard # is required"/>
-    <regex test="$.HealthcardID" pattern="\d\d\d\d\d\d\d\d\d\d" failMessage="Healthcard # must be 10 digits"/>
+    <regex test="$.HealthcardID" pattern="^\d{10}$" failMessage="Healthcard # must be 10 digits"/>
   </spec>
 
   <spec id="HealthcardProvince">
