@@ -25,12 +25,12 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.PluginView
 
         public override string DisplayName
         {
-            get { return string.Format("Extension Points ({0})", ChildNodes.Count); }
+            get { return string.Format(SR.TreePluginViewExtensionPointsNode, ChildNodes.Count); }
         }
 
         public override string Details
         {
-            get { return string.Format("Extension Points declared in plugin {0}", GetDefaultDisplayName(_plugin)); }
+            get { return string.Format(SR.TreePluginViewExtensionPointsNodeDetails, GetDefaultDisplayName(_plugin)); }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView
 
         public override string DisplayName
         {
-            get { return string.Format("Extensions ({0})", ChildNodes.Count); }
+            get { return string.Format(SR.TreeExtensionPointViewExtensionsNode, ChildNodes.Count); }
         }
 
         public override string Details

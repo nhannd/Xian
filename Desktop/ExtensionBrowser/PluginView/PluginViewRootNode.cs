@@ -19,7 +19,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.PluginView
 
         public override string DisplayName
         {
-            get { return string.Format("Plugins ({0})", ChildNodes.Count); }
+            get { return string.Format(SR.TreePluginViewRootNode, ChildNodes.Count); }
         }
 
         public override string Details

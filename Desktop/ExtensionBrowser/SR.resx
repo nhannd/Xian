@@ -123,4 +123,25 @@
   <data name="TitleExtensionBrowser" xml:space="preserve">
     <value>Extension Browser</value>
   </data>
+  <data name="TreeExtensionPointViewExtensionsNode" xml:space="preserve">
+    <value>Extensions ({0})</value>
+  </data>
+  <data name="TreeExtensionPointViewRootNode" xml:space="preserve">
+    <value>Extension Points ({0})</value>
+  </data>
+  <data name="TreePluginViewExtensionPointsNode" xml:space="preserve">
+    <value>Extension Points ({0})</value>
+  </data>
+  <data name="TreePluginViewExtensionPointsNodeDetails" xml:space="preserve">
+    <value>Extension Points declared in plugin {0}</value>
+  </data>
+  <data name="TreePluginViewExtensionsNode" xml:space="preserve">
+    <value>Extensions ({0})</value>
+  </data>
+  <data name="TreePluginViewExtensionsNodeDetails" xml:space="preserve">
+    <value>Extensions declared in plugin {0}</value>
+  </data>
+  <data name="TreePluginViewRootNode" xml:space="preserve">
+    <value>Plugins ({0})</value>
+  </data>
 </root>

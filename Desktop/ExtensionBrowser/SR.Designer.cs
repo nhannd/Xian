@@ -77,5 +77,68 @@ namespace ClearCanvas.Desktop.ExtensionBrowser {
                 return ResourceManager.GetString("TitleExtensionBrowser", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensions ({0}).
+        /// </summary>
+        public static string TreeExtensionPointViewExtensionsNode {
+            get {
+                return ResourceManager.GetString("TreeExtensionPointViewExtensionsNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension Points ({0}).
+        /// </summary>
+        public static string TreeExtensionPointViewRootNode {
+            get {
+                return ResourceManager.GetString("TreeExtensionPointViewRootNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension Points ({0}).
+        /// </summary>
+        public static string TreePluginViewExtensionPointsNode {
+            get {
+                return ResourceManager.GetString("TreePluginViewExtensionPointsNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension Points declared in plugin {0}.
+        /// </summary>
+        public static string TreePluginViewExtensionPointsNodeDetails {
+            get {
+                return ResourceManager.GetString("TreePluginViewExtensionPointsNodeDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensions ({0}).
+        /// </summary>
+        public static string TreePluginViewExtensionsNode {
+            get {
+                return ResourceManager.GetString("TreePluginViewExtensionsNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensions declared in plugin {0}.
+        /// </summary>
+        public static string TreePluginViewExtensionsNodeDetails {
+            get {
+                return ResourceManager.GetString("TreePluginViewExtensionsNodeDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plugins ({0}).
+        /// </summary>
+        public static string TreePluginViewRootNode {
+            get {
+                return ResourceManager.GetString("TreePluginViewRootNode", resourceCulture);
+            }
+        }
     }
 }
