@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExceptionHandlerComponent(Exception e, string message)
+        internal ExceptionHandlerComponent(Exception e, string message)
         {
             _exception = e;
             _message = message;
@@ -61,23 +61,5 @@ namespace ClearCanvas.Desktop
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
         }
-
-        public static void Handle(IDesktopWindow desktopWindow, Exception e, string title, string message)
-        {
-            // Use desktop window name as the default title
-            if (title == "")
-                title = desktopWindow.ToString();
-
-            // use exception message as the default message
-            if (message == "")
-                message = e.Message;
-
-            Platform.Log(e, LogLevel.Error);
-            LaunchAsDialog(
-                desktopWindow,
-                new ExceptionHandlerComponent(e, message),
-                title);
-        }
-
     }
 }
