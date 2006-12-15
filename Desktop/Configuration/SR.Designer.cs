@@ -61,15 +61,6 @@ namespace ClearCanvas.Desktop.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Date Format.
-        /// </summary>
-        internal static string DateFormat {
-            get {
-                return ResourceManager.GetString("DateFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
         internal static string MenuOptions {
@@ -81,18 +72,27 @@ namespace ClearCanvas.Desktop.Configuration {
         /// <summary>
         ///   Looks up a localized string similar to No configuration pages exist..
         /// </summary>
-        internal static string NoConfigurationPagesExist {
+        internal static string MessageNoConfigurationPagesExist {
             get {
-                return ResourceManager.GetString("NoConfigurationPagesExist", resourceCulture);
+                return ResourceManager.GetString("MessageNoConfigurationPagesExist", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Application and User Options.
+        ///   Looks up a localized string similar to Date Format.
         /// </summary>
-        internal static string TooltipMenuOptions {
+        internal static string TitleDateFormat {
             get {
-                return ResourceManager.GetString("TooltipMenuOptions", resourceCulture);
+                return ResourceManager.GetString("TitleDateFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        internal static string TitleMenuOptions {
+            get {
+                return ResourceManager.GetString("TitleMenuOptions", resourceCulture);
             }
         }
     }

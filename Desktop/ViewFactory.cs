@@ -50,7 +50,7 @@ namespace ClearCanvas.Desktop
         {
             object[] attrs = modelType.GetCustomAttributes(typeof(AssociateViewAttribute), true);
             if (attrs.Length == 0)
-                throw new Exception("AssociateViewAttribute not specified");    //TODO elaborate
+				throw new ArgumentException(SR.ExceptionAssociateViewAttributeNotSpecified, "modelType");
 
             AssociateViewAttribute viewAttribute = (AssociateViewAttribute)attrs[0];
             IExtensionPoint viewExtPoint = (IExtensionPoint)Activator.CreateInstance(viewAttribute.ViewExtensionPointType);

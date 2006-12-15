@@ -63,6 +63,15 @@ namespace ClearCanvas.Desktop.Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Explorer.
         /// </summary>
+        public static string TitleExplorer {
+            get {
+                return ResourceManager.GetString("TitleExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Explorer.
+        /// </summary>
         public static string ToolbarToolsStandardExplorer {
             get {
                 return ResourceManager.GetString("ToolbarToolsStandardExplorer", resourceCulture);

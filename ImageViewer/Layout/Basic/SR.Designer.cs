@@ -79,11 +79,38 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified image is not currently loaded (SopInstanceUID={0})..
+        /// </summary>
+        public static string ExceptionImageNotLoaded {
+            get {
+                return ResourceManager.GetString("ExceptionImageNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified series is not currently loaded (SeriesInstanceUID={0})..
+        /// </summary>
+        public static string ExceptionSeriesNotLoaded {
+            get {
+                return ResourceManager.GetString("ExceptionSeriesNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified study is not currently loaded (StudyInstanceUID={0})..
+        /// </summary>
+        public static string ExceptionStudyNotLoaded {
+            get {
+                return ResourceManager.GetString("ExceptionStudyNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
-        public static string MenuLayoutLayoutManager {
+        public static string TitleLayoutManager {
             get {
-                return ResourceManager.GetString("MenuLayoutLayoutManager", resourceCulture);
+                return ResourceManager.GetString("TitleLayoutManager", resourceCulture);
             }
         }
     }

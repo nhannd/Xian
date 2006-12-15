@@ -57,7 +57,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         private void Replicate()
         {
-            if (Platform.ShowMessageBox("The selected tag(s) and their values will be replicated in ALL loaded files.  Continue?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (Platform.ShowMessageBox(SR.MessageConfirmReplicateTagsInAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 foreach (DicomEditorTag tag in this.Context.SelectedTags)
                 {

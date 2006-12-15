@@ -59,5 +59,14 @@ namespace ClearCanvas.Desktop.Help {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version {0}.
+        /// </summary>
+        public static string FormatVersion {
+            get {
+                return ResourceManager.GetString("FormatVersion", resourceCulture);
+            }
+        }
     }
 }

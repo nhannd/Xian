@@ -61,15 +61,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Additional mouse tool shortcuts must be modified ({0})..
-        /// </summary>
-        public static string AdditionalMouseToolAssignmentsMustBeModified {
-            get {
-                return ResourceManager.GetString("AdditionalMouseToolAssignmentsMustBeModified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ClearCanvas Workstation.
         /// </summary>
         public static string ApplicationName {
@@ -133,43 +124,25 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At least one image failed to load.  Check log for details..
+        ///   Looks up a localized string similar to Additional mouse tool assignments must be modified ({0})..
         /// </summary>
-        public static string ErrorAtLeastOneImageFailedToLoad {
+        public static string ExceptionAdditionalMouseToolAssignmentsMustBeModified {
             get {
-                return ResourceManager.GetString("ErrorAtLeastOneImageFailedToLoad", resourceCulture);
+                return ResourceManager.GetString("ExceptionAdditionalMouseToolAssignmentsMustBeModified", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to load any images in the study.  Check log for details..
+        ///   Looks up a localized string similar to ImageBufferWin32 is not supported on non-Win32 platforms..
         /// </summary>
-        public static string ErrorUnableToLoadStudy {
+        public static string ExceptionImageBufferWin32NotSupported {
             get {
-                return ResourceManager.GetString("ErrorUnableToLoadStudy", resourceCulture);
+                return ResourceManager.GetString("ExceptionImageBufferWin32NotSupported", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot add the same node more than once.
-        /// </summary>
-        public static string ExceptionDuplicateNodeFound {
-            get {
-                return ResourceManager.GetString("ExceptionDuplicateNodeFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No ImageProcessors have been added..
-        /// </summary>
-        public static string ExceptionImageProcessorsNotAdded {
-            get {
-                return ResourceManager.GetString("ExceptionImageProcessorsNotAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to BitsAllocated must be either 8 or 16 (bitsAllocated = {0}).
+        ///   Looks up a localized string similar to BitsAllocated must be either 8 or 16 (bitsAllocated = {0})..
         /// </summary>
         public static string ExceptionInvalidBitsAllocated {
             get {
@@ -178,7 +151,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to BitsStored must be greater than zero (bitsStored = {0}).
+        ///   Looks up a localized string similar to BitsStored must be greater than zero (bitsStored = {0})..
         /// </summary>
         public static string ExceptionInvalidBitsStored {
             get {
@@ -187,7 +160,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to BitsStored must be &lt;= BitsAllocated (bitsStored = {0}, bitsAllocated = {1}).
+        ///   Looks up a localized string similar to BitsStored must be &lt;= BitsAllocated (bitsStored = {0}, bitsAllocated = {1})..
         /// </summary>
         public static string ExceptionInvalidBitsStoredBitsAllocated {
             get {
@@ -196,7 +169,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Columns must be greater than zero (columns = {0}).
+        ///   Looks up a localized string similar to Columns must be greater than zero (columns = {0})..
         /// </summary>
         public static string ExceptionInvalidColumns {
             get {
@@ -205,7 +178,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Highbit must be greater than zero (highBit = {0}).
+        ///   Looks up a localized string similar to HighBit must be greater than zero (highBit = {0})..
         /// </summary>
         public static string ExceptionInvalidHighBit {
             get {
@@ -214,7 +187,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HighBit must be &lt;= BitsAllocated - 1 (highBit = {0}, bitsAllocated = {1}).
+        ///   Looks up a localized string similar to HighBit must be &lt;= BitsAllocated - 1 (highBit = {0}, bitsAllocated = {1})..
         /// </summary>
         public static string ExceptionInvalidHighBitBitsAllocated {
             get {
@@ -232,7 +205,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid normalized rectangle.  Normalized rectangle coordinates must be between 0.0 and 1.0 with Right &gt; Left, Bottom &gt; Top.
+        ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid normalized rectangle.  Normalized rectangle coordinates must be between 0.0 and 1.0 with Right &gt; Left, Bottom &gt; Top..
         /// </summary>
         public static string ExceptionInvalidNormalizedRectangle {
             get {
@@ -241,16 +214,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is an invalid ordinal.  Ordinals must be &gt;= 0.
-        /// </summary>
-        public static string ExceptionInvalidOrdinal {
-            get {
-                return ResourceManager.GetString("ExceptionInvalidOrdinal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid parent rectangle.  Parent rectangle must be such that all coordinates are positive with Right &gt; Left, Bottom &gt; Top.
+        ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid parent rectangle.  Parent rectangle must be such that all coordinates are positive with Right &gt; Left, Bottom &gt; Top..
         /// </summary>
         public static string ExceptionInvalidParentRectangle {
             get {
@@ -259,7 +223,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient ID must not be empty.
+        ///   Looks up a localized string similar to Patient ID must not be empty..
         /// </summary>
         public static string ExceptionInvalidPatientID {
             get {
@@ -268,7 +232,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PhotometricInterpretation must be one of the enumerated values specified in DICOM PS 3.3 (photometricInterpretation = {0}).
+        ///   Looks up a localized string similar to PhotometricInterpretation must be one of the enumerated values specified in DICOM PS 3.3 (photometricInterpretation = {0})..
         /// </summary>
         public static string ExceptionInvalidPhotometricInterpretation {
             get {
@@ -277,7 +241,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PhotometricInterpretation must be consistent with the the number of SamplesPerPixel (photometricInterpretation = {0}, samplesPerPixel = {1}).
+        ///   Looks up a localized string similar to PhotometricInterpretation must be consistent with the the number of SamplesPerPixel (photometricInterpretation = {0}, samplesPerPixel = {1})..
         /// </summary>
         public static string ExceptionInvalidPhotometricInterpretationSamplesPerPixel {
             get {
@@ -286,7 +250,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PixelData length must be equal to SizeInBytes (pixelDataLength = {0}, sizeInBytes = {1}).
+        ///   Looks up a localized string similar to PixelData length must be equal to SizeInBytes (pixelDataLength = {0}, sizeInBytes = {1})..
         /// </summary>
         public static string ExceptionInvalidPixelData {
             get {
@@ -295,7 +259,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PixelRepresentation must be 0 or 1 (pixelRepresentation = {0}).
+        ///   Looks up a localized string similar to PixelRepresentation must be 0 or 1 (pixelRepresentation = {0})..
         /// </summary>
         public static string ExceptionInvalidPixelRepresentation {
             get {
@@ -304,7 +268,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pixel spacing must be positive (pixelSpacing = {0}).
+        ///   Looks up a localized string similar to Pixel spacing must be positive (pixelSpacing = {0})..
         /// </summary>
         public static string ExceptionInvalidPixelSpacing {
             get {
@@ -313,7 +277,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PlanarConfiguration must be 0 or 1 (planarConfiguration = {0}).
+        ///   Looks up a localized string similar to PlanarConfiguration must be 0 or 1 (planarConfiguration = {0})..
         /// </summary>
         public static string ExceptionInvalidPlanarConfiguration {
             get {
@@ -322,7 +286,16 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rows must be greater than zero (rows = {0}).
+        ///   Looks up a localized string similar to Rotation value must be 0, 90, 180 or 270..
+        /// </summary>
+        public static string ExceptionInvalidRotationValue {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidRotationValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rows must be greater than zero (rows = {0})..
         /// </summary>
         public static string ExceptionInvalidRows {
             get {
@@ -331,7 +304,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SamplesPerPixel must be 1, 3 or 4 (samplesPerPixel = {0}).
+        ///   Looks up a localized string similar to SamplesPerPixel must be 1, 3 or 4 (samplesPerPixel = {0})..
         /// </summary>
         public static string ExceptionInvalidSamplesPerPixel {
             get {
@@ -340,7 +313,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Series instance UID must not be empty.
+        ///   Looks up a localized string similar to Series instance UID must not be empty..
         /// </summary>
         public static string ExceptionInvalidSeriesInstanceUID {
             get {
@@ -349,7 +322,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SizeInBytes improperly calculated (correct size = {0}, calculated size {1}).
+        ///   Looks up a localized string similar to SizeInBytes improperly calculated (correct size = {0}, calculated size {1})..
         /// </summary>
         public static string ExceptionInvalidSizeInBytes {
             get {
@@ -358,7 +331,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SOP instance UID must not be empty.
+        ///   Looks up a localized string similar to SOP instance UID must not be empty..
         /// </summary>
         public static string ExceptionInvalidSOPInstanceUID {
             get {
@@ -367,7 +340,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is an invalid standard path item.
+        ///   Looks up a localized string similar to {0} is an invalid standard path item..
         /// </summary>
         public static string ExceptionInvalidStandardPathItem {
             get {
@@ -376,7 +349,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stride improperly calculated (correct stride = {0}, calculated stride = {1}).
+        ///   Looks up a localized string similar to Stride improperly calculated (correct stride = {0}, calculated stride = {1})..
         /// </summary>
         public static string ExceptionInvalidStride {
             get {
@@ -385,7 +358,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Study instance UID must not be empty.
+        ///   Looks up a localized string similar to Study instance UID must not be empty..
         /// </summary>
         public static string ExceptionInvalidStudyInstanceUID {
             get {
@@ -394,7 +367,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1 or 1.2.840.10008.1.2.2.
+        ///   Looks up a localized string similar to Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1 or 1.2.840.10008.1.2.2..
         /// </summary>
         public static string ExceptionInvalidTransferSyntaxUID {
             get {
@@ -403,16 +376,16 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Layout Manager extension does not exist.
+        ///   Looks up a localized string similar to The specified keystroke is already in use.  The assignment has been ignored..
         /// </summary>
-        public static string ExceptionLayoutManagerDoesNotExist {
+        public static string ExceptionKeyStrokeAssignmentInUse {
             get {
-                return ResourceManager.GetString("ExceptionLayoutManagerDoesNotExist", resourceCulture);
+                return ResourceManager.GetString("ExceptionKeyStrokeAssignmentInUse", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LUT index out of range (index = {0}).
+        ///   Looks up a localized string similar to LUT index out of range (index = {0})..
         /// </summary>
         public static string ExceptionLUTIndexOutOfRange {
             get {
@@ -421,7 +394,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output range of previous LUT does not match input range of current LUT.
+        ///   Looks up a localized string similar to Output range of previous LUT does not match input range of current LUT..
         /// </summary>
         public static string ExceptionLUTInputOutputRange {
             get {
@@ -430,7 +403,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output range of last LUT is not 8 bits.
+        ///   Looks up a localized string similar to Output range of last LUT is not 8 bits..
         /// </summary>
         public static string ExceptionLUTLastOutputRange {
             get {
@@ -439,7 +412,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum input value greater than or equal to maximum input value.
+        ///   Looks up a localized string similar to Minimum input value greater than or equal to maximum input value..
         /// </summary>
         public static string ExceptionLUTMinGreaterThanEqualToMax {
             get {
@@ -448,11 +421,47 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot generate composite LUT because no LUTs have been added yet.
+        ///   Looks up a localized string similar to Cannot generate composite LUT because no LUTs have been added yet..
         /// </summary>
         public static string ExceptionLUTNotAdded {
             get {
                 return ResourceManager.GetString("ExceptionLUTNotAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored..
+        /// </summary>
+        public static string ExceptionMouseToolAssignmentInUse {
+            get {
+                return ResourceManager.GetString("ExceptionMouseToolAssignmentInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated..
+        /// </summary>
+        public static string ExceptionMouseToolHasNoAssignment {
+            get {
+                return ResourceManager.GetString("ExceptionMouseToolHasNoAssignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A mouse tool should have a default button assignment ({0}).  The tool may have no effect..
+        /// </summary>
+        public static string ExceptionMouseToolShouldHaveDefault {
+            get {
+                return ResourceManager.GetString("ExceptionMouseToolShouldHaveDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified mouse wheel assignment is in use ({0})..
+        /// </summary>
+        public static string ExceptionMouseWheelAssignmentInUse {
+            get {
+                return ResourceManager.GetString("ExceptionMouseWheelAssignmentInUse", resourceCulture);
             }
         }
         
@@ -475,488 +484,47 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested PresentationImage cannot be found in this DisplaySet.
+        ///   Looks up a localized string similar to No SOPs exist in this series.  SeriesDescription cannot be determined..
         /// </summary>
-        public static string ExceptionPresentationImageNotFound {
+        public static string ExceptionNoSopsExistInSeries {
             get {
-                return ResourceManager.GetString("ExceptionPresentationImageNotFound", resourceCulture);
+                return ResourceManager.GetString("ExceptionNoSopsExistInSeries", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An ImageProcessor that implements the {0} interface could not be found..
+        ///   Looks up a localized string similar to Object must be of Type Single..
         /// </summary>
-        public static string ExceptionProcessorDoesNotExist {
+        public static string ExceptionObjectMustBeSingleType {
             get {
-                return ResourceManager.GetString("ExceptionProcessorDoesNotExist", resourceCulture);
+                return ResourceManager.GetString("ExceptionObjectMustBeSingleType", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SizeInBytes cannot be calculated; one or more of Rows, Columns or BitsAllocated have not been set yet (rows = {0}, columns = {1}, bitsAllocated = {2}).
+        ///   Looks up a localized string similar to For undo support, your StatefulGraphic subclass must implement IMemorable..
         /// </summary>
-        public static string ExceptionSizeInBytesCannotBeCalculated {
+        public static string ExceptionStatefulGraphicMustBeIMemorable {
             get {
-                return ResourceManager.GetString("ExceptionSizeInBytesCannotBeCalculated", resourceCulture);
+                return ResourceManager.GetString("ExceptionStatefulGraphicMustBeIMemorable", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Has the layer been added to layer tree yet?.
+        ///   Looks up a localized string similar to At least one image failed to load.  Please see the log for details..
         /// </summary>
-        public static string ExceptionSpatialTransformNotSet {
+        public static string MessageAtLeastOneImageFailedToLoad {
             get {
-                return ResourceManager.GetString("ExceptionSpatialTransformNotSet", resourceCulture);
+                return ResourceManager.GetString("MessageAtLeastOneImageFailedToLoad", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stride cannot be calculated; Columns has not been set yet (columns = {0}).
+        ///   Looks up a localized string similar to Unable to load any images in the study.  Please see the log for details..
         /// </summary>
-        public static string ExceptionStrideCannotBeCalculated {
+        public static string MessageUnableToLoadStudy {
             get {
-                return ResourceManager.GetString("ExceptionStrideCannotBeCalculated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} already exists in ToolBag.
-        /// </summary>
-        public static string ExceptionToolExists {
-            get {
-                return ResourceManager.GetString("ExceptionToolExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to WorkbenchTools have not yet been created.  Has Model plugin has been started?.
-        /// </summary>
-        public static string ExceptionWorkbenchToolsNotCreated {
-            get {
-                return ResourceManager.GetString("ExceptionWorkbenchToolsNotCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to WorkspaceManager has not yet been created.  Has the Model plugin has been started?.
-        /// </summary>
-        public static string ExceptionWorkspaceManagerNotCreated {
-            get {
-                return ResourceManager.GetString("ExceptionWorkspaceManagerNotCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The main workstation view has not been created..
-        /// </summary>
-        public static string ExceptionWorkstationViewNotCreated {
-            get {
-                return ResourceManager.GetString("ExceptionWorkstationViewNotCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified keystroke is already in use.  The assignment has been ignored..
-        /// </summary>
-        public static string KeyStrokeAssignmentInUse {
-            get {
-                return ResourceManager.GetString("KeyStrokeAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Clipboard .
-        /// </summary>
-        public static string MenuClipboard {
-            get {
-                return ResourceManager.GetString("MenuClipboard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Burn CD.
-        /// </summary>
-        public static string MenuClipboardBurnCD {
-            get {
-                return ResourceManager.GetString("MenuClipboardBurnCD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Key Images.
-        /// </summary>
-        public static string MenuClipboardKeyImages {
-            get {
-                return ResourceManager.GetString("MenuClipboardKeyImages", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Print.
-        /// </summary>
-        public static string MenuClipboardPrint {
-            get {
-                return ResourceManager.GetString("MenuClipboardPrint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Copy to Clipboard.
-        /// </summary>
-        public static string MenuEditCopyToClipboard {
-            get {
-                return ResourceManager.GetString("MenuEditCopyToClipboard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Layout.
-        /// </summary>
-        public static string MenuLayout {
-            get {
-                return ResourceManager.GetString("MenuLayout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Navigation.
-        /// </summary>
-        public static string MenuNavigation {
-            get {
-                return ResourceManager.GetString("MenuNavigation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Next Display Set.
-        /// </summary>
-        public static string MenuNavigationNextDisplaySet {
-            get {
-                return ResourceManager.GetString("MenuNavigationNextDisplaySet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Next Image.
-        /// </summary>
-        public static string MenuNavigationNextImage {
-            get {
-                return ResourceManager.GetString("MenuNavigationNextImage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Next Study.
-        /// </summary>
-        public static string MenuNavigationNextStudy {
-            get {
-                return ResourceManager.GetString("MenuNavigationNextStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Previous Display Set.
-        /// </summary>
-        public static string MenuNavigationPreviousDisplaySet {
-            get {
-                return ResourceManager.GetString("MenuNavigationPreviousDisplaySet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Previous Image.
-        /// </summary>
-        public static string MenuNavigationPreviousImage {
-            get {
-                return ResourceManager.GetString("MenuNavigationPreviousImage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Previous Study.
-        /// </summary>
-        public static string MenuNavigationPreviousStudy {
-            get {
-                return ResourceManager.GetString("MenuNavigationPreviousStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 3D.
-        /// </summary>
-        public static string MenuTools3D {
-            get {
-                return ResourceManager.GetString("MenuTools3D", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cross Reference.
-        /// </summary>
-        public static string MenuToolsCrossReference {
-            get {
-                return ResourceManager.GetString("MenuToolsCrossReference", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image Processing.
-        /// </summary>
-        public static string MenuToolsImageProcessing {
-            get {
-                return ResourceManager.GetString("MenuToolsImageProcessing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lookup Table.
-        /// </summary>
-        public static string MenuToolsLUT {
-            get {
-                return ResourceManager.GetString("MenuToolsLUT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Measurement.
-        /// </summary>
-        public static string MenuToolsMeasurement {
-            get {
-                return ResourceManager.GetString("MenuToolsMeasurement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Tools.
-        /// </summary>
-        public static string MenuToolsMyTools {
-            get {
-                return ResourceManager.GetString("MenuToolsMyTools", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Tool.
-        /// </summary>
-        public static string MenuToolsMyToolsMyTool {
-            get {
-                return ResourceManager.GetString("MenuToolsMyToolsMyTool", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Orientation.
-        /// </summary>
-        public static string MenuToolsOrientation {
-            get {
-                return ResourceManager.GetString("MenuToolsOrientation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Standard.
-        /// </summary>
-        public static string MenuToolsStandard {
-            get {
-                return ResourceManager.GetString("MenuToolsStandard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Synchronization.
-        /// </summary>
-        public static string MenuToolsSynchronization {
-            get {
-                return ResourceManager.GetString("MenuToolsSynchronization", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;View.
-        /// </summary>
-        public static string MenuView {
-            get {
-                return ResourceManager.GetString("MenuView", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toolbars.
-        /// </summary>
-        public static string MenuViewToolbars {
-            get {
-                return ResourceManager.GetString("MenuViewToolbars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Window.
-        /// </summary>
-        public static string MenuWindow {
-            get {
-                return ResourceManager.GetString("MenuWindow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored..
-        /// </summary>
-        public static string MouseToolAssignmentInUse {
-            get {
-                return ResourceManager.GetString("MouseToolAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated..
-        /// </summary>
-        public static string MouseToolHasNoAssignment {
-            get {
-                return ResourceManager.GetString("MouseToolHasNoAssignment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A mouse tool should have a default button assignment ({0}).  The tool may have no effect..
-        /// </summary>
-        public static string MouseToolShouldHaveDefault {
-            get {
-                return ResourceManager.GetString("MouseToolShouldHaveDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified mouse wheel assignment is in use ({0})..
-        /// </summary>
-        public static string MouseWheelAssignmentInUse {
-            get {
-                return ResourceManager.GetString("MouseWheelAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 3D.
-        /// </summary>
-        public static string Toolbar3D {
-            get {
-                return ResourceManager.GetString("Toolbar3D", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clipboard.
-        /// </summary>
-        public static string ToolbarClipboard {
-            get {
-                return ResourceManager.GetString("ToolbarClipboard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cross Reference.
-        /// </summary>
-        public static string ToolbarCrossReference {
-            get {
-                return ResourceManager.GetString("ToolbarCrossReference", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image Processing.
-        /// </summary>
-        public static string ToolbarImageProcessing {
-            get {
-                return ResourceManager.GetString("ToolbarImageProcessing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lookup Table.
-        /// </summary>
-        public static string ToolbarLUT {
-            get {
-                return ResourceManager.GetString("ToolbarLUT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Measurement.
-        /// </summary>
-        public static string ToolbarMeasurement {
-            get {
-                return ResourceManager.GetString("ToolbarMeasurement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Tools.
-        /// </summary>
-        public static string ToolbarMyTools {
-            get {
-                return ResourceManager.GetString("ToolbarMyTools", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Tool.
-        /// </summary>
-        public static string ToolbarMyToolsMyTool {
-            get {
-                return ResourceManager.GetString("ToolbarMyToolsMyTool", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Navigation.
-        /// </summary>
-        public static string ToolbarNavigation {
-            get {
-                return ResourceManager.GetString("ToolbarNavigation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Orientation.
-        /// </summary>
-        public static string ToolbarOrientation {
-            get {
-                return ResourceManager.GetString("ToolbarOrientation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Standard.
-        /// </summary>
-        public static string ToolbarStandard {
-            get {
-                return ResourceManager.GetString("ToolbarStandard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo.
-        /// </summary>
-        public static string ToolbarStandardRedo {
-            get {
-                return ResourceManager.GetString("ToolbarStandardRedo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo.
-        /// </summary>
-        public static string ToolbarStandardUndo {
-            get {
-                return ResourceManager.GetString("ToolbarStandardUndo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Synchronization.
-        /// </summary>
-        public static string ToolbarSynchronization {
-            get {
-                return ResourceManager.GetString("ToolbarSynchronization", resourceCulture);
+                return ResourceManager.GetString("MessageUnableToLoadStudy", resourceCulture);
             }
         }
     }

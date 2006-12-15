@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop
             public override void Exit()
             {
                 if (this.Component != _container._hostStack.Peek().Component)
-                    throw new InvalidOperationException("Component cannot exit because it is not at the top of the component stack.");
+					throw new InvalidOperationException(SR.ExceptionStackComponentCannotExit);
 
                 _exitRequestedByComponent = true;
                 _container.Pop();
@@ -89,7 +89,7 @@ namespace ClearCanvas.Desktop
         public IApplicationComponent Pop()
         {
             if(_hostStack.Count == 0)
-                throw new InvalidOperationException("Component stack is empty");
+				throw new InvalidOperationException(SR.ExceptionStackComponentCannotPop);
 
             if (this.IsStarted)
             {

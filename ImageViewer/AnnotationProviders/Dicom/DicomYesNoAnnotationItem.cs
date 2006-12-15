@@ -21,18 +21,18 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 #if MONO
 			if (Convert.ToByte(dicomString) == 0)
-				return "No";
+				return SR.BoolNo;
 			else
-				return "Yes";
+				return SR.BoolYes;
 #else
 			byte value;
 			if (!byte.TryParse(dicomString, out value))
 				return dicomString;
 			
 			if (value == 0)
-				return "No";
+				return SR.BoolNo;
 			else
-				return "Yes";
+				return SR.BoolYes;
 #endif
 		}
 	}

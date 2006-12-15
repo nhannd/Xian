@@ -59,5 +59,131 @@ namespace ClearCanvas.Utilities.DicomEditor {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group-Element.
+        /// </summary>
+        internal static string ColumnHeadingGroupElement {
+            get {
+                return ResourceManager.GetString("ColumnHeadingGroupElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length.
+        /// </summary>
+        internal static string ColumnHeadingLength {
+            get {
+                return ResourceManager.GetString("ColumnHeadingLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag Name.
+        /// </summary>
+        internal static string ColumnHeadingTagName {
+            get {
+                return ResourceManager.GetString("ColumnHeadingTagName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        internal static string ColumnHeadingValue {
+            get {
+                return ResourceManager.GetString("ColumnHeadingValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VR.
+        /// </summary>
+        internal static string ColumnHeadingVR {
+            get {
+                return ResourceManager.GetString("ColumnHeadingVR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected tag(s) will be deleted.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmDeleteSelectedTags {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteSelectedTags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to delete the selected tags from *all* the other loaded files in addition to the one selected?.
+        /// </summary>
+        internal static string MessageConfirmDeleteSelectedTagsFromAllFiles {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteSelectedTagsFromAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected tag(s) and their values will be replicated in *all* loaded files.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmReplicateTagsInAllFiles {
+            get {
+                return ResourceManager.GetString("MessageConfirmReplicateTagsInAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The edits will be reverted to the last saved state.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmRevert {
+            get {
+                return ResourceManager.GetString("MessageConfirmRevert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Would you like to revert *all* loaded files in addition to this one?.
+        /// </summary>
+        internal static string MessageConfirmRevertAllFiles {
+            get {
+                return ResourceManager.GetString("MessageConfirmRevertAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmSaveAllFiles {
+            get {
+                return ResourceManager.GetString("MessageConfirmSaveAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select an image..
+        /// </summary>
+        internal static string MessagePleaseSelectAnImage {
+            get {
+                return ResourceManager.GetString("MessagePleaseSelectAnImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Tag.
+        /// </summary>
+        internal static string TitleCreateTag {
+            get {
+                return ResourceManager.GetString("TitleCreateTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DICOM Editor.
+        /// </summary>
+        internal static string TitleDicomEditor {
+            get {
+                return ResourceManager.GetString("TitleDicomEditor", resourceCulture);
+            }
+        }
     }
 }

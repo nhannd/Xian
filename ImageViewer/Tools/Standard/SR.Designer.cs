@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LUT index out of range (index = {0}).
+        ///   Looks up a localized string similar to LUT index out of range (index = {0})..
         /// </summary>
         public static string ExceptionLUTIndexOutOfRange {
             get {
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output range of previous LUT does not match input range of current LUT.
+        ///   Looks up a localized string similar to Output range of previous LUT does not match input range of current LUT..
         /// </summary>
         public static string ExceptionLUTInputOutputRange {
             get {
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output range of last LUT is not 8 bits.
+        ///   Looks up a localized string similar to Output range of last LUT is not 8 bits..
         /// </summary>
         public static string ExceptionLUTLastOutputRange {
             get {
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum input value greater than or equal to maximum input value.
+        ///   Looks up a localized string similar to Minimum input value greater than or equal to maximum input value..
         /// </summary>
         public static string ExceptionLUTMinGreaterThanEqualToMax {
             get {
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot generate composite LUT because no LUTs have been added yet.
+        ///   Looks up a localized string similar to Cannot generate composite LUT because no LUTs have been added yet..
         /// </summary>
         public static string ExceptionLUTNotAdded {
             get {
@@ -198,9 +198,45 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         /// <summary>
         ///   Looks up a localized string similar to HU.
         /// </summary>
-        public static string HounsfieldUnitsAbbreviation {
+        public static string LabelHounsfieldUnitsAbbreviation {
             get {
-                return ResourceManager.GetString("HounsfieldUnitsAbbreviation", resourceCulture);
+                return ResourceManager.GetString("LabelHounsfieldUnitsAbbreviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modality.
+        /// </summary>
+        public static string LabelModalityLut {
+            get {
+                return ResourceManager.GetString("LabelModalityLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to n/a.
+        /// </summary>
+        public static string LabelNotApplicable {
+            get {
+                return ResourceManager.GetString("LabelNotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pixel Value.
+        /// </summary>
+        public static string LabelPixelValue {
+            get {
+                return ResourceManager.GetString("LabelPixelValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voi.
+        /// </summary>
+        public static string LabelVOILut {
+            get {
+                return ResourceManager.GetString("LabelVOILut", resourceCulture);
             }
         }
         
@@ -331,33 +367,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Modality.
-        /// </summary>
-        public static string ModalityLut {
-            get {
-                return ResourceManager.GetString("ModalityLut", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to N/A.
-        /// </summary>
-        public static string NotApplicable {
-            get {
-                return ResourceManager.GetString("NotApplicable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pixel Value.
-        /// </summary>
-        public static string PixelValue {
-            get {
-                return ResourceManager.GetString("PixelValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         public static string ToolbarToolsStandardFlipHorizontal {
@@ -480,15 +489,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         public static string ToolsStandardLutPresets {
             get {
                 return ResourceManager.GetString("ToolsStandardLutPresets", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Voi.
-        /// </summary>
-        public static string VOILut {
-            get {
-                return ResourceManager.GetString("VOILut", resourceCulture);
             }
         }
     }

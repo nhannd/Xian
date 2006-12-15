@@ -88,7 +88,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <returns>Formatted string containing number of seconds elapsed.</returns>
 		public override string ToString()
 		{
-			return String.Format("{0} seconds", Seconds);
+			return String.Format(SR.FormatSeconds, Seconds);
 		}
 	}
 }

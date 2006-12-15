@@ -198,7 +198,7 @@ namespace ClearCanvas.Common
                     catch (NotSupportedException)
                     {
                         // can't find time provider, default to local time
-                        Log("Time provider not found - defaulting to local machine time", LogLevel.Warn);
+						Log(SR.LogTimeProviderNotFound, LogLevel.Warn);
 
                         _timeProvider = new LocalTimeProvider();
                     }

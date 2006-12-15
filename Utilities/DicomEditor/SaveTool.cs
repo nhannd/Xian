@@ -70,7 +70,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         /// </summary>
         public void Save()
         {
-            if (Platform.ShowMessageBox("The changes will be saved to ALL loaded files.  Original files will be overwritten.  Continue?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (Platform.ShowMessageBox(SR.MessageConfirmSaveAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 this.Context.DumpManagement.SaveAll();
                 this.Context.UpdateDisplay();

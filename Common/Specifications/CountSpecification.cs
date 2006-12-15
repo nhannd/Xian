@@ -38,7 +38,7 @@ namespace ClearCanvas.Common.Specifications
                 return DefaultTestResult(InRange(count));
             }
 
-            throw new SpecificationException("Expression must evaluate to Array, ICollection, or IEnumerable type");
+			throw new SpecificationException(SR.ExceptionCastExpressionArrayCollectionEnumerable);
         }
 
         protected bool InRange(int n)

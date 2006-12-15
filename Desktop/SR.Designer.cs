@@ -79,11 +79,137 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The event {0} does not exist for class {1}..
+        /// </summary>
+        public static string ExceptionActionBuilderEventDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionActionBuilderEventDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The method {0} does not exist for class {1}, or it does not have the correct signature..
+        /// </summary>
+        public static string ExceptionActionBuilderMethodDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionActionBuilderMethodDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property {0} does not exist for class {1}, or it does not have the correct return type..
+        /// </summary>
+        public static string ExceptionActionBuilderPropertyDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionActionBuilderPropertyDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property {0} on class {1} does not have a public get method..
+        /// </summary>
+        public static string ExceptionActionBuilderPropertyDoesNotHavePublicGetMethod {
+            get {
+                return ResourceManager.GetString("ExceptionActionBuilderPropertyDoesNotHavePublicGetMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot set the active workspace to null..
+        /// </summary>
+        public static string ExceptionActiveWorkspaceCannotBeNull {
+            get {
+                return ResourceManager.GetString("ExceptionActiveWorkspaceCannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An AssociateViewAttribute must be specified for the input Type in order to create the Associated View..
+        /// </summary>
+        public static string ExceptionAssociateViewAttributeNotSpecified {
+            get {
+                return ResourceManager.GetString("ExceptionAssociateViewAttributeNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot set pane after container has been started..
+        /// </summary>
+        public static string ExceptionCannotSetPaneAfterContainerStarted {
+            get {
+                return ResourceManager.GetString("ExceptionCannotSetPaneAfterContainerStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Component has already been started..
+        /// </summary>
+        public static string ExceptionComponentAlreadyStarted {
+            get {
+                return ResourceManager.GetString("ExceptionComponentAlreadyStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Component was never started, or has already been stopped..
+        /// </summary>
+        public static string ExceptionComponentNeverStarted {
+            get {
+                return ResourceManager.GetString("ExceptionComponentNeverStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The main desktop view has not been created..
         /// </summary>
         public static string ExceptionDesktopViewNotCreated {
             get {
                 return ResourceManager.GetString("ExceptionDesktopViewNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid action path.  Path must have 2 or more segments..
+        /// </summary>
+        public static string ExceptionInvalidActionPath {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidActionPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Component cannot exit because it is not at the top of the component stack..
+        /// </summary>
+        public static string ExceptionStackComponentCannotExit {
+            get {
+                return ResourceManager.GetString("ExceptionStackComponentCannotExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot pop - component stack is empty..
+        /// </summary>
+        public static string ExceptionStackComponentCannotPop {
+            get {
+                return ResourceManager.GetString("ExceptionStackComponentCannotPop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This column must be added to a table to determine its percentage width..
+        /// </summary>
+        public static string ExceptionTableColumnMustBeAddedToDetermineWidth {
+            get {
+                return ResourceManager.GetString("ExceptionTableColumnMustBeAddedToDetermineWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Table item not found in collection..
+        /// </summary>
+        public static string ExceptionTableItemNotFoundInCollection {
+            get {
+                return ResourceManager.GetString("ExceptionTableItemNotFoundInCollection", resourceCulture);
             }
         }
         
@@ -174,6 +300,15 @@ namespace ClearCanvas.Desktop {
         public static string MenuTools {
             get {
                 return ResourceManager.GetString("MenuTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save changes before closing?.
+        /// </summary>
+        public static string MessageConfirmSaveChangesBeforeClosing {
+            get {
+                return ResourceManager.GetString("MessageConfirmSaveChangesBeforeClosing", resourceCulture);
             }
         }
     }

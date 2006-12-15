@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 
 			if (totalFailedImages > 0)
 			{
-				string str = String.Format("{0} images failed to load", totalFailedImages);
+				string str = String.Format(SR.MessageFormatImagesFailedToLoad, totalFailedImages);
 				Platform.ShowMessageBox(str);
 			}
 
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 			ApplicationComponent.LaunchAsWorkspace(
 				this.Context.DesktopWindow,
 				viewer,
-				"Image",
+				SR.TitleImageViewer,
 				delegate
 				{
 					viewer.Dispose();

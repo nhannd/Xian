@@ -58,11 +58,11 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         private void Delete()
         {
-            if (Platform.ShowMessageBox("The selected tag(s) will be deleted.  Continue?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (Platform.ShowMessageBox(SR.MessageConfirmDeleteSelectedTags, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 if (_promptForAll)
                 {
-                    if (Platform.ShowMessageBox("Delete from ALL the other loaded files in addition to this one?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+					if (Platform.ShowMessageBox(SR.MessageConfirmDeleteSelectedTagsFromAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                     {
                         foreach (DicomEditorTag tag in this.Context.SelectedTags)
                         {

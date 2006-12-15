@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop.Configuration.User
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new DateFormatConfigurationPage("DateFormat"));
+			listPages.Add(new DateFormatConfigurationPage("TitleDateFormat"));
 		
 			return listPages.ToArray();
 		}

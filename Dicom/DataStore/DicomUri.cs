@@ -31,10 +31,10 @@ namespace ClearCanvas.Dicom.DataStore
         {
             // validate the input
             if (null == uri)
-                throw new System.ArgumentNullException("url", "---");
+				throw new System.ArgumentNullException("uri", SR.ExceptionUriCannotBeNullOrEmpty);
 
             if (0 == uri.Length)
-                throw new System.ArgumentOutOfRangeException("url", "---");
+				throw new System.ArgumentOutOfRangeException("uri", SR.ExceptionUriCannotBeNullOrEmpty);
 
             this.InternalUriObject = new Uri(uri);
         }

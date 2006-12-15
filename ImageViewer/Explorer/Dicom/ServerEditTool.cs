@@ -28,12 +28,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_dicomServerTree.CurrentServer.IsServer)
             {
                 DicomServerEditComponent editor = new DicomServerEditComponent(_dicomServerTree);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Server");
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServer);
             }
             else
             {
                 DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree, ServerUpdateType.Edit);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Group");
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServerGroup);
             }
             return;
         }

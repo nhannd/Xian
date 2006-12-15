@@ -88,6 +88,42 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expression must evaluate to Array, ICollection, or IEnumerable type..
+        /// </summary>
+        public static string ExceptionCastExpressionArrayCollectionEnumerable {
+            get {
+                return ResourceManager.GetString("ExceptionCastExpressionArrayCollectionEnumerable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression must evaluate to Boolean type..
+        /// </summary>
+        public static string ExceptionCastExpressionBoolean {
+            get {
+                return ResourceManager.GetString("ExceptionCastExpressionBoolean", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression must evaluate to IEnumerable type..
+        /// </summary>
+        public static string ExceptionCastExpressionEnumerable {
+            get {
+                return ResourceManager.GetString("ExceptionCastExpressionEnumerable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression must evaluate to String type..
+        /// </summary>
+        public static string ExceptionCastExpressionString {
+            get {
+                return ResourceManager.GetString("ExceptionCastExpressionString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate plugin {0} found..
         /// </summary>
         public static string ExceptionDuplicatePluginFound {
@@ -160,6 +196,24 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is not a valid specification id..
+        /// </summary>
+        public static string ExceptionInvalidSpecificationId {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidSpecificationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JScript evaluation error on: {0}.
+        /// </summary>
+        public static string ExceptionJScriptEvaluation {
+            get {
+                return ResourceManager.GetString("ExceptionJScriptEvaluation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} has not been set.  Object state is invalid..
         /// </summary>
         public static string ExceptionMemberNotSet {
@@ -187,7 +241,7 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No extensions found for extension point {0}, or the extensions could not be instantiated.  See log file..
+        ///   Looks up a localized string similar to No extensions found for extension point {0}, or the extensions could not be instantiated.  Please see the log for more information..
         /// </summary>
         public static string ExceptionNoExtensionsCreated {
             get {
@@ -250,11 +304,38 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There was a problem loading one or more plugins. Please check log..
+        ///   Looks up a localized string similar to There was a problem loading one or more plugins. Please see the log for more information..
         /// </summary>
         public static string ExceptionPluginWarning {
             get {
                 return ResourceManager.GetString("ExceptionPluginWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resource not found..
+        /// </summary>
+        public static string ExceptionResourceNotFound {
+            get {
+                return ResourceManager.GetString("ExceptionResourceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No script engine available for language {0}..
+        /// </summary>
+        public static string ExceptionScriptEngineLanguage {
+            get {
+                return ResourceManager.GetString("ExceptionScriptEngineLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Template evaluation generated an exception..
+        /// </summary>
+        public static string ExceptionTemplateEvaluation {
+            get {
+                return ResourceManager.GetString("ExceptionTemplateEvaluation", resourceCulture);
             }
         }
         
@@ -268,7 +349,7 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to load any plugins.  Please check log..
+        ///   Looks up a localized string similar to Unable to load any plugins.  Please see the log for more information..
         /// </summary>
         public static string ExceptionUnableToLoadPlugins {
             get {
@@ -279,9 +360,27 @@ namespace ClearCanvas.Common {
         /// <summary>
         ///   Looks up a localized string similar to Loading plugin: {0}.
         /// </summary>
-        public static string LoadingPlugin {
+        public static string FormatLoadingPlugin {
             get {
-                return ResourceManager.GetString("LoadingPlugin", resourceCulture);
+                return ResourceManager.GetString("FormatLoadingPlugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds.
+        /// </summary>
+        public static string FormatSeconds {
+            get {
+                return ResourceManager.GetString("FormatSeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to process plugin assembly {0} with the following exception:.
+        /// </summary>
+        public static string LogFailedToProcessPluginAssembly {
+            get {
+                return ResourceManager.GetString("LogFailedToProcessPluginAssembly", resourceCulture);
             }
         }
         
@@ -300,6 +399,24 @@ namespace ClearCanvas.Common {
         public static string LogPluginLoaded {
             get {
                 return ResourceManager.GetString("LogPluginLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time provider not found - defaulting to local machine time..
+        /// </summary>
+        public static string LogTimeProviderNotFound {
+            get {
+                return ResourceManager.GetString("LogTimeProviderNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finding plugins....
+        /// </summary>
+        public static string MessageFindingPlugins {
+            get {
+                return ResourceManager.GetString("MessageFindingPlugins", resourceCulture);
             }
         }
     }

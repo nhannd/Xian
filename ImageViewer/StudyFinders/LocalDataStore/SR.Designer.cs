@@ -59,5 +59,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to connect to datastore: {0}.
+        /// </summary>
+        public static string MessageUnableToConnectToDataStore {
+            get {
+                return ResourceManager.GetString("MessageUnableToConnectToDataStore", resourceCulture);
+            }
+        }
     }
 }

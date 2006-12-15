@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				// If we're going to support undo, StatefulGraphic
 				// must implement IMemorable
 				if (value && !(this.StatefulGraphic is IMemorable))
-					throw new InvalidOperationException("For undo support, your StatefulGraphic subclass must implement IMemorable");
+					throw new InvalidOperationException(SR.ExceptionStatefulGraphicMustBeIMemorable);
 
 				_supportUndo = value; 
 			}

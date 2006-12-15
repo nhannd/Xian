@@ -171,9 +171,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool showModalityValue = true;
 			bool showVoiValue = true;
 
-			string pixelValueString = String.Format("{0}: {1}", SR.PixelValue, SR.NotApplicable);
-			string modalityLutString = String.Format("{0}: {1}", SR.ModalityLut, SR.NotApplicable);
-			string voiLutString = String.Format("{0}: {1}", SR.VOILut, SR.NotApplicable);
+			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);
+			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
+			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
 
 			if (_selectedImageLayer.SpatialTransform.SourceRectangle.Contains(sourcePointRounded))
 			{
@@ -199,24 +199,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 						if (pipeline.ModalityLUT != null)
 						{
 							modalityLutValue = pipeline.ModalityLUT[pixelValue];
-							modalityLutString = String.Format(formatString, SR.ModalityLut, modalityLutValue);
+							modalityLutString = String.Format(formatString, SR.LabelModalityLut, modalityLutValue);
 
 							if (_selectedTile.PresentationImage is DicomPresentationImage)
 							{ 
 								DicomPresentationImage image = _selectedTile.PresentationImage as DicomPresentationImage;
 								if (String.Compare(image.ImageSop.Modality, "CT", true) == 0)
-									modalityLutString += String.Format(" ({0})", SR.HounsfieldUnitsAbbreviation);
+									modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
 							}
 						}
 
 						if (pipeline.VoiLUT != null)
 						{
 							voiLutValue = pipeline.VoiLUT[modalityLutValue];
-							voiLutString = String.Format(formatString, SR.VOILut, voiLutValue);
+							voiLutString = String.Format(formatString, SR.LabelVOILut, voiLutValue);
 						}
 					}
 
-					pixelValueString = String.Format(formatString, SR.PixelValue, pixelValue);
+					pixelValueString = String.Format(formatString, SR.LabelPixelValue, pixelValue);
 				}
 				else
 				{
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 					Color color = _wrapper.GetPixelRGB(sourcePointRounded.X, sourcePointRounded.Y);
 					string rgbFormatted = String.Format("RGB({0}, {1}, {2})", color.R, color.G, color.B);
-					pixelValueString = String.Format("{0}: {1}", SR.PixelValue, rgbFormatted);
+					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}
 			}
 

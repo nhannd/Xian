@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 		private bool ApplyDataLut(DicomPresentationImage image)
 		{
-			throw new NotImplementedException("Not yet implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 
 			//FileDicomImage dicomFile = image.ImageSop.NativeDicomObject as FileDicomImage;
 			//DcmDataset dataset = dicomFile.Dataset;
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 		private bool ApplyLinearLut(DicomPresentationImage image)
 		{
-			throw new NotImplementedException("Not yet implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 
 			//Window[] windowCenterAndWidth = image.ImageSop.WindowCenterAndWidth;
 			//if (windowCenterAndWidth == null || windowCenterAndWidth.Length == 0)

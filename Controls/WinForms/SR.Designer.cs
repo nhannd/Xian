@@ -61,11 +61,47 @@ namespace ClearCanvas.Controls.WinForms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The delegate must accept two arguments: an object and an instance of type compatible with the System.EventArgs type..
         /// </summary>
-        public static string String1 {
+        public static string ExceptionDelayedEventDelegateArgument {
             get {
-                return ResourceManager.GetString("String1", resourceCulture);
+                return ResourceManager.GetString("ExceptionDelayedEventDelegateArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum must be greater than minimum..
+        /// </summary>
+        public static string ExceptionMaximumTooSmall {
+            get {
+                return ResourceManager.GetString("ExceptionMaximumTooSmall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum must be less than maximum..
+        /// </summary>
+        public static string ExceptionMinimumTooLarge {
+            get {
+                return ResourceManager.GetString("ExceptionMinimumTooLarge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value must not be negative..
+        /// </summary>
+        public static string ExceptionValueMustNotBeNegative {
+            get {
+                return ResourceManager.GetString("ExceptionValueMustNotBeNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version {0}.
+        /// </summary>
+        public static string FormatVersion {
+            get {
+                return ResourceManager.GetString("FormatVersion", resourceCulture);
             }
         }
     }

@@ -66,7 +66,7 @@ namespace ClearCanvas.Desktop
                 if (value != _activeWorkspace)
                 {
                     if (value == null)
-                        throw new ArgumentNullException("Cannot set the active workspace to null");
+						throw new ArgumentNullException(SR.ExceptionActiveWorkspaceCannotBeNull);
 
                     InternalSetActiveWorkspace(value);
                 }

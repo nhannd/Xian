@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			DialogBoxAction action = Platform.ShowMessageBox("Are you sure?", MessageBoxActions.YesNo);
+			DialogBoxAction action = Platform.ShowMessageBox(SR.MessageConfirmDeleteStudy, MessageBoxActions.YesNo);
 
 			if (action == DialogBoxAction.No)
 				return;
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				catch (Exception e)
 				{
 					Platform.Log(e, LogLevel.Error);
-					Platform.ShowMessageBox("Unable to delete study");
+					Platform.ShowMessageBox(SR.MessageUnableToDeleteStudy);
 				}
 			}
 

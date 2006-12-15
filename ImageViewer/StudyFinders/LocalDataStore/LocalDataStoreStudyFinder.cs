@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             catch (System.Data.SqlClient.SqlException e)
             {
                 // TODO
-                Platform.ShowMessageBox("Can't connect to data store" + e.ToString());
+                Platform.ShowMessageBox(String.Format(SR.MessageUnableToConnectToDataStore, e.ToString()));
                 return null;
             }
         }       

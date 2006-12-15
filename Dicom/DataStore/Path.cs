@@ -29,7 +29,7 @@ namespace ClearCanvas.Dicom.DataStore
         {
             // validate the input
             if (null == path)
-                throw new System.ArgumentNullException("path", "---");
+				throw new System.ArgumentNullException("path", SR.ExceptionPathCannotBeNull);
 
             _path = path;
         }

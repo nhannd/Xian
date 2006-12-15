@@ -18,10 +18,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			if (x == null)
 				if (y is float) return -1;
-				else throw new ArgumentException("Object must be of type Single.", "y");
+				else throw new ArgumentException(SR.ExceptionObjectMustBeSingleType, "y");
 			if (y == null)
 				if (x is float) return +1;
-				else throw new ArgumentException("Object must be of type Single.", "x");
+				else throw new ArgumentException(SR.ExceptionObjectMustBeSingleType, "x");
 
 			// Compare the floats' distance in units of least-precise bits.
 			const int tolerance = 5; // a pretty robust default

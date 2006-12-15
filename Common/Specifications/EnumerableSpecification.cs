@@ -24,7 +24,7 @@ namespace ClearCanvas.Common.Specifications
         {
             IEnumerable enumerable = obj as IEnumerable;
             if (enumerable == null)
-                throw new SpecificationException("Expression must evaluate to IEnumerable type");
+				throw new SpecificationException(SR.ExceptionCastExpressionEnumerable);
 
             return enumerable;
         }

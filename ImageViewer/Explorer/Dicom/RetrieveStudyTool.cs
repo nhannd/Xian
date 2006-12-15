@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             if (this.IsRetrieveActive)
             {
-                Platform.ShowMessageBox("Sorry, but you cannot start two different retrieval sessions at the same time", MessageBoxActions.Ok);
+				Platform.ShowMessageBox(SR.MessageCannotStartMultipleRetrievalSessions, MessageBoxActions.Ok);
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             catch
             {
-                Platform.ShowMessageBox("Unable to create storage directory; cannot retrieve study");
+				Platform.ShowMessageBox(SR.MessageUnableToCreateStorageDirectory);
                 return;
             }
 
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
                     this.RetrieveProgressComponent,
-                    "Retrieve Progress",
+					SR.TitleRetrieveProgressComponent,
                     ShelfDisplayHint.DockRight,
                     delegate(IApplicationComponent component)
                     {

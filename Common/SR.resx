@@ -136,10 +136,10 @@
     <value>No plugins could be found.</value>
   </data>
   <data name="ExceptionPluginWarning" xml:space="preserve">
-    <value>There was a problem loading one or more plugins. Please check log.</value>
+    <value>There was a problem loading one or more plugins. Please see the log for more information.</value>
   </data>
   <data name="ExceptionUnableToLoadPlugins" xml:space="preserve">
-    <value>Unable to load any plugins.  Please check log.</value>
+    <value>Unable to load any plugins.  Please see the log for more information.</value>
   </data>
   <data name="ExceptionPluginCouldNotBeFound" xml:space="preserve">
     <value>Plugin {0} could not be found.  Unable to start plugin.</value>
@@ -174,7 +174,7 @@
   <data name="LogPluginLoaded" xml:space="preserve">
     <value>Loaded plugin: {0}</value>
   </data>
-  <data name="LoadingPlugin" xml:space="preserve">
+  <data name="FormatLoadingPlugin" xml:space="preserve">
     <value>Loading plugin: {0}</value>
   </data>
   <data name="ExceptionEmptyString" xml:space="preserve">
@@ -193,9 +193,48 @@
     <value>Extension class {0} must be a concrete class.</value>
   </data>
   <data name="ExceptionNoExtensionsCreated" xml:space="preserve">
-    <value>No extensions found for extension point {0}, or the extensions could not be instantiated.  See log file.</value>
+    <value>No extensions found for extension point {0}, or the extensions could not be instantiated.  Please see the log for more information.</value>
   </data>
   <data name="ExceptionFatalApplicationError" xml:space="preserve">
     <value>We're sorry, but an error has occurred that ClearCanvas Workstation cannot recover from.  Please check the log and restart.</value>
+  </data>
+  <data name="ExceptionCastExpressionArrayCollectionEnumerable" xml:space="preserve">
+    <value>Expression must evaluate to Array, ICollection, or IEnumerable type.</value>
+  </data>
+  <data name="ExceptionCastExpressionBoolean" xml:space="preserve">
+    <value>Expression must evaluate to Boolean type.</value>
+  </data>
+  <data name="ExceptionCastExpressionEnumerable" xml:space="preserve">
+    <value>Expression must evaluate to IEnumerable type.</value>
+  </data>
+  <data name="ExceptionCastExpressionString" xml:space="preserve">
+    <value>Expression must evaluate to String type.</value>
+  </data>
+  <data name="LogFailedToProcessPluginAssembly" xml:space="preserve">
+    <value>Failed to process plugin assembly {0} with the following exception:</value>
+  </data>
+  <data name="FormatSeconds" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="ExceptionInvalidSpecificationId" xml:space="preserve">
+    <value>{0} is not a valid specification id.</value>
+  </data>
+  <data name="ExceptionJScriptEvaluation" xml:space="preserve">
+    <value>JScript evaluation error on: {0}</value>
+  </data>
+  <data name="ExceptionResourceNotFound" xml:space="preserve">
+    <value>Resource not found.</value>
+  </data>
+  <data name="ExceptionScriptEngineLanguage" xml:space="preserve">
+    <value>No script engine available for language {0}.</value>
+  </data>
+  <data name="ExceptionTemplateEvaluation" xml:space="preserve">
+    <value>Template evaluation generated an exception.</value>
+  </data>
+  <data name="LogTimeProviderNotFound" xml:space="preserve">
+    <value>Time provider not found - defaulting to local machine time.</value>
+  </data>
+  <data name="MessageFindingPlugins" xml:space="preserve">
+    <value>Finding plugins...</value>
   </data>
 </root>

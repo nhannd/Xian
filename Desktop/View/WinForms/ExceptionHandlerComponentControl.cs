@@ -65,7 +65,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Copy exception details to clipboard
-            string clipboardMessage = "Message: " + _description.Text + "\r\n\r\n";
+			string clipboardMessage = SR.ExceptionHandlerMessagePrefix + _description.Text + "\r\n\r\n";
             clipboardMessage += BuildMessageFromException(_component.Exception);
             Clipboard.SetText(clipboardMessage);
         }
@@ -138,7 +138,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (e.InnerException != null)
             {
                 message += "\r\n";
-                message += "************** InnerException Text **************\r\n";
+				message += SR.ExceptionHandlerInnerExceptionText + "\r\n";
                 message += BuildMessageFromException(e.InnerException);
             }
 

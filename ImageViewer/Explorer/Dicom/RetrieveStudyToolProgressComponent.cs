@@ -96,14 +96,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             this.StudyDate = DicomHelper.GetDateStringFromDicomDA(item.StudyDate);
 
             // set up the overall progress counter display
-            this.ProgressGroupBox = "Retrieving Study #" + 
-                Convert.ToString(this.CurrentStudyCount++) + 
-                " of " + Convert.ToString(this.TotalStudyCount);
+			this.ProgressGroupBox = String.Format(SR.StatusRetrievingStudyNumber, Convert.ToString(this.CurrentStudyCount++), Convert.ToString(this.TotalStudyCount));
 
             // titles for the group boxes are set appropriately here,
             // but reset when the all the retrieval tasks are completed
-            this.StudyDescriptionGroupBox = "Current study being retrieved";
-            this.RetrieveSourceGroupBox = "Current retrieval server";
+			this.StudyDescriptionGroupBox = SR.StatusRetrievingStudyDescription;
+			this.RetrieveSourceGroupBox = SR.StatusRetrievingServer;
 
             SignalDetailsChanged();
 
@@ -162,9 +160,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 // there are no more study items to retrieve
-                this.ProgressGroupBox = "Retrievals completed";
-                this.RetrieveSourceGroupBox = "Last retrieval server used";
-                this.StudyDescriptionGroupBox = "Last study retrieved";
+				this.ProgressGroupBox = SR.StatusRetrievalsComplete;
+				this.RetrieveSourceGroupBox = SR.StatusLastRetrievalServerUsed;
+				this.StudyDescriptionGroupBox = SR.StatusLastStudyRetrieved;
                 SignalDetailsChanged();
                 SignalRetrievalComplete();
             }
@@ -196,8 +194,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             this.ProgressBarMinimum = 1;
             this.ProgressBarMaximum = args.CompletedSuboperations + args.FailedSuboperations + args.RemainingSuboperations;
             this.ProgressBar = args.CompletedSuboperations + args.FailedSuboperations;
-            this.ProgressDetails = "[" + e.ProgressPercentage + "%]" + " Remaining: " + args.RemainingSuboperations +
-                " Completed: " + args.CompletedSuboperations + " Failed: " + args.FailedSuboperations;
+            this.ProgressDetails = String.Format(SR.StatusRetrievalProgress, e.ProgressPercentage, args.RemainingSuboperations, args.CompletedSuboperations, args.FailedSuboperations);
 
             // signal that databinding properties have changed, 
             // so that the control may then update itself

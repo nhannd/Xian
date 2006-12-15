@@ -117,22 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ToolsMeasurementEllipticalROI" xml:space="preserve">
-    <value>Elliptcal ROI</value>
-  </data>
   <data name="ToolsMeasurementRectangularROI" xml:space="preserve">
     <value>Rectangular ROI</value>
   </data>
   <data name="ToolsMeasurementRuler" xml:space="preserve">
     <value>Ruler</value>
   </data>
-  <data name="ToolsMeasurementProtractor" xml:space="preserve">
-    <value>Protractor</value>
-  </data>
   <data name="CloseMenu" xml:space="preserve">
     <value>Close Menu</value>
   </data>
   <data name="DeleteGraphicTool" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>n/a</value>
+  </data>
+  <data name="ToolsMeasurementArea" xml:space="preserve">
+    <value>Area:</value>
+  </data>
+  <data name="ToolsMeasurementFormatAreaPixels" xml:space="preserve">
+    <value>Area: {0:F2} pixels</value>
+  </data>
+  <data name="ToolsMeasurementFormatAreaSquareCm" xml:space="preserve">
+    <value>Area: {0:F2} sq cm</value>
+  </data>
+  <data name="ToolsMeasurementFormatLengthCm" xml:space="preserve">
+    <value>Length: {0:F2} cm</value>
+  </data>
+  <data name="ToolsMeasurementFormatLengthPixels" xml:space="preserve">
+    <value>Length: {0:F2} pixels</value>
+  </data>
+  <data name="ToolsMeasurementLineROI" xml:space="preserve">
+    <value>Line ROI</value>
   </data>
 </root>

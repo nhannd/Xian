@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					// TileControl should *always* have an associated Tile
 					if (this.Tile == null)
-						throw new Exception("TileControl not associated with a Tile");
+						throw new Exception(SR.ExceptionTileControlNoAssociatedTile);
 
 					// Legitimate case; Tile maybe empty
 					if (this.Tile.PresentationImage == null)
@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 					// PresntationImage should *always* have a renderer
 					if (renderer == null)
-						throw new Exception("PresentationImage not associated with an IRenderer");
+						throw new Exception(SR.ExceptionPresentationImageNotAssociatedWithARenderer);
 
 					_surface = renderer.GetRenderingSurface(this.Handle, this.Width, this.Height);
 				}

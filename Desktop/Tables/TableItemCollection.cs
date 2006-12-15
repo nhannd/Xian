@@ -88,7 +88,7 @@ namespace ClearCanvas.Desktop.Tables
             }
             else
             {
-                throw new ArgumentException("Item not found in collection");
+				throw new ArgumentException(SR.ExceptionTableItemNotFoundInCollection);
             }
         }
 

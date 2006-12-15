@@ -59,5 +59,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My Computer.
+        /// </summary>
+        public static string MyComputer {
+            get {
+                return ResourceManager.GetString("MyComputer", resourceCulture);
+            }
+        }
     }
 }

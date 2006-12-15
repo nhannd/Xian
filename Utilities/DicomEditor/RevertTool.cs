@@ -58,11 +58,11 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         private void Revert()
         {
-            if (Platform.ShowMessageBox("The edits will be reverted to the last saved state.  Continue?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (Platform.ShowMessageBox(SR.MessageConfirmRevert, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 if (_promptForAll)
                 {
-                    if (Platform.ShowMessageBox("Revert ALL the other loaded files in addition to this one?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+					if (Platform.ShowMessageBox(SR.MessageConfirmRevertAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                     {
                         this.Context.DumpManagement.RevertAllEdits();
                         this.Context.UpdateDisplay();

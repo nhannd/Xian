@@ -19,7 +19,7 @@ namespace ClearCanvas.Common.Specifications
             }
             else
             {
-                throw new SpecificationException("Expression must evaluate to Boolean type");
+				throw new SpecificationException(SR.ExceptionCastExpressionBoolean);
             }
         }
     }

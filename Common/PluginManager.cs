@@ -150,7 +150,7 @@ namespace ClearCanvas.Common
                 catch (Exception e)
                 {
                     // there was a problem processing this assembly
-                    Platform.Log(string.Format("Failed to process plugin assembly {0} with the following exception:", assemblies[i].FullName));
+					Platform.Log(string.Format(SR.LogFailedToProcessPluginAssembly, assemblies[i].FullName));
                     Platform.Log(e);
                 }
             }
@@ -172,7 +172,7 @@ namespace ClearCanvas.Common
 
 			try
 			{
-				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs("Finding plugins..."));
+				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(SR.MessageFindingPlugins));
 
 				// Create a secondary AppDomain where we can load all the DLLs in the plugin directory
 #if MONO
@@ -233,7 +233,7 @@ namespace ClearCanvas.Common
 			{
 				loader.LoadPlugin(pluginFile);
 				string pluginName = Path.GetFileName(pluginFile);
-				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(String.Format(SR.LoadingPlugin, pluginName)));
+				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(String.Format(SR.FormatLoadingPlugin, pluginName)));
 			}
 
 			return loader.PluginAssemblies;

@@ -89,7 +89,7 @@ namespace ClearCanvas.Desktop
             set
             {
                 if(_pane1 != null && _pane1.ComponentHost != null && _pane1.ComponentHost.IsStarted)
-                    throw new InvalidOperationException("Cannot set pane after container has been started");
+					throw new InvalidOperationException(SR.ExceptionCannotSetPaneAfterContainerStarted);
 
                 _pane1 = value;
                 _pane1.ComponentHost = new SplitPaneHost(this, _pane1);
@@ -102,7 +102,7 @@ namespace ClearCanvas.Desktop
             set
             {
                 if (_pane2 != null && _pane2.ComponentHost != null && _pane2.ComponentHost.IsStarted)
-                    throw new InvalidOperationException("Cannot set pane after container has been started");
+					throw new InvalidOperationException(SR.ExceptionCannotSetPaneAfterContainerStarted);
 
                 _pane2 = value;
                 _pane2.ComponentHost = new SplitPaneHost(this, _pane2);

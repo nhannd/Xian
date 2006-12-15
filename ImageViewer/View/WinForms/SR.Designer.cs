@@ -59,5 +59,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PresentationImage not associated with an IRenderer..
+        /// </summary>
+        public static string ExceptionPresentationImageNotAssociatedWithARenderer {
+            get {
+                return ResourceManager.GetString("ExceptionPresentationImageNotAssociatedWithARenderer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TileControl is not associated with a tile..
+        /// </summary>
+        public static string ExceptionTileControlNoAssociatedTile {
+            get {
+                return ResourceManager.GetString("ExceptionTileControlNoAssociatedTile", resourceCulture);
+            }
+        }
     }
 }

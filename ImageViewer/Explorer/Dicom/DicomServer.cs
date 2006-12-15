@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get
             {
                 StringBuilder aeDescText = new StringBuilder();
-                aeDescText.AppendFormat("Server Name: {0}\r\nAE Title: {1}\r\nHost: {2}\r\nListening Port: {3}\r\nLocation: {4}", base.ServerName, _dicomAE.AE, _dicomAE.Host, _dicomAE.Port, ServerLocation);
+				aeDescText.AppendFormat(SR.FormatTooltipServerDetails, base.ServerName, _dicomAE.AE, _dicomAE.Host, _dicomAE.Port, ServerLocation);
                 return aeDescText.ToString();
             }
         }

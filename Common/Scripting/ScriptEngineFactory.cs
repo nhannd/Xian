@@ -33,7 +33,7 @@ namespace ClearCanvas.Common.Scripting
             }
             catch (NotSupportedException e)
             {
-                throw new NotSupportedException(string.Format("No script engine available for language {0}", language), e);
+				throw new NotSupportedException(string.Format(SR.ExceptionScriptEngineLanguage, language), e);
             }
         }
     }

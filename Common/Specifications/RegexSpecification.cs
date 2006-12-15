@@ -27,7 +27,7 @@ namespace ClearCanvas.Common.Specifications
             }
             else
             {
-                throw new SpecificationException("Expression must evaluate to a String type");
+				throw new SpecificationException(SR.ExceptionCastExpressionString);
             }
         }
     }

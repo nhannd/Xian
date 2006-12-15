@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 		public string Name
 		{
-			get { return "My Computer"; }
+			get { return SR.MyComputer; }
 		}
 
 		public IApplicationComponent Component

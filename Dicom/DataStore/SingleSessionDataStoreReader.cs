@@ -187,7 +187,7 @@ namespace ClearCanvas.Dicom.DataStore
         {
             // TODO
             if (null == queryKey)
-                throw new System.ArgumentNullException("Bad null arguments");
+				throw new System.ArgumentNullException(SR.ExceptionStudyQueryNullKey);
 
             //
             // prepare the HQL query string

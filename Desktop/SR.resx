@@ -123,8 +123,50 @@
   <data name="ApplicationVersion" xml:space="preserve">
     <value>0.9</value>
   </data>
+  <data name="ExceptionActionBuilderEventDoesNotExist" xml:space="preserve">
+    <value>The event {0} does not exist for class {1}.</value>
+  </data>
+  <data name="ExceptionActionBuilderMethodDoesNotExist" xml:space="preserve">
+    <value>The method {0} does not exist for class {1}, or it does not have the correct signature.</value>
+  </data>
+  <data name="ExceptionActionBuilderPropertyDoesNotExist" xml:space="preserve">
+    <value>The property {0} does not exist for class {1}, or it does not have the correct return type.</value>
+  </data>
+  <data name="ExceptionActionBuilderPropertyDoesNotHavePublicGetMethod" xml:space="preserve">
+    <value>The property {0} on class {1} does not have a public get method.</value>
+  </data>
+  <data name="ExceptionActiveWorkspaceCannotBeNull" xml:space="preserve">
+    <value>Cannot set the active workspace to null.</value>
+  </data>
+  <data name="ExceptionAssociateViewAttributeNotSpecified" xml:space="preserve">
+    <value>An AssociateViewAttribute must be specified for the input Type in order to create the Associated View.</value>
+  </data>
+  <data name="ExceptionCannotSetPaneAfterContainerStarted" xml:space="preserve">
+    <value>Cannot set pane after container has been started.</value>
+  </data>
+  <data name="ExceptionComponentAlreadyStarted" xml:space="preserve">
+    <value>Component has already been started.</value>
+  </data>
+  <data name="ExceptionComponentNeverStarted" xml:space="preserve">
+    <value>Component was never started, or has already been stopped.</value>
+  </data>
   <data name="ExceptionDesktopViewNotCreated" xml:space="preserve">
     <value>The main desktop view has not been created.</value>
+  </data>
+  <data name="ExceptionInvalidActionPath" xml:space="preserve">
+    <value>Invalid action path.  Path must have 2 or more segments.</value>
+  </data>
+  <data name="ExceptionStackComponentCannotExit" xml:space="preserve">
+    <value>Component cannot exit because it is not at the top of the component stack.</value>
+  </data>
+  <data name="ExceptionStackComponentCannotPop" xml:space="preserve">
+    <value>Cannot pop - component stack is empty.</value>
+  </data>
+  <data name="ExceptionTableColumnMustBeAddedToDetermineWidth" xml:space="preserve">
+    <value>This column must be added to a table to determine its percentage width.</value>
+  </data>
+  <data name="ExceptionTableItemNotFoundInCollection" xml:space="preserve">
+    <value>Table item not found in collection.</value>
   </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>&amp;Edit</value>
@@ -155,5 +197,8 @@
   </data>
   <data name="MenuTools" xml:space="preserve">
     <value>&amp;Tools</value>
+  </data>
+  <data name="MessageConfirmSaveChangesBeforeClosing" xml:space="preserve">
+    <value>Save changes before closing?</value>
   </data>
 </root>

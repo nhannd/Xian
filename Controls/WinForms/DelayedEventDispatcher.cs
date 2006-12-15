@@ -85,10 +85,10 @@ namespace ClearCanvas.Controls.WinForms
       
       ParameterInfo[] parameters = processEventDelegate.Method.GetParameters();
       if (parameters == null || parameters.Length != 2 || !typeof(EventArgs).IsAssignableFrom(parameters[1].ParameterType))
-        throw new ArgumentException("The delegate must accept two arguments: an object and an instance of type compatible with the System.EventArgs type.", "processEventDelegate");
+		  throw new ArgumentException(SR.ExceptionDelayedEventDelegateArgument, "processEventDelegate");
 
       if (delayMilliseconds < 0)
-        throw new ArgumentException("The value mustn't be negative.", "delayMilliseconds");
+		  throw new ArgumentException(SR.ExceptionValueMustNotBeNegative, "delayMilliseconds");
 
       this._processEventDelegate = processEventDelegate;
       this._delay = TimeSpan.FromMilliseconds(delayMilliseconds);

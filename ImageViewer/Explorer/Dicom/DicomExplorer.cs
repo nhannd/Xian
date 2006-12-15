@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public string Name
 		{
-			get { return "DICOM"; }
+			get { return SR.TitleDicomExplorer; }
 		}
 
 		public IApplicationComponent Component
@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
 
-			SplitPane leftPane = new SplitPane("AE Navigator", _aeNavigator, 0.25f);
-			SplitPane rightPane = new SplitPane("Study Browser", _studyBrowser, 0.75f);
+			SplitPane leftPane = new SplitPane(SR.TitleNavigatorPane, _aeNavigator, 0.25f);
+			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, _studyBrowser, 0.75f);
 
 			SplitComponentContainer bottomContainer = 
 				new SplitComponentContainer(
@@ -66,8 +66,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				rightPane, 
 				SplitOrientation.Vertical);
 
-			SplitPane topPane = new SplitPane("Search Panel", _searchPanel, true);
-			SplitPane bottomPane = new SplitPane("Study Navigator", bottomContainer, false);
+			SplitPane topPane = new SplitPane(SR.TitleSearchPanelPane, _searchPanel, true);
+			SplitPane bottomPane = new SplitPane(SR.TitleStudyNavigatorPane, bottomContainer, false);
 
 			_splitComponentContainer = 
 				new SplitComponentContainer(

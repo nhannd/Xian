@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     [ButtonAction("show", "global-toolbars/ToolbarStandard/LayoutManager")]
     [ClickHandler("show", "Show")]
     [IconSet("show", IconScheme.Colour, "", "Icons.LayoutMedium.png", "Icons.LayoutLarge.png")]
-    [Tooltip("show", "MenuLayoutLayoutManager")]
+    [Tooltip("show", "Layout Manager")]
 
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
 					this.ImageViewerToolComponent,
-                    SR.MenuLayoutLayoutManager,
+                    SR.TitleLayoutManager,
                     ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
 					delegate(IApplicationComponent component) { this.ImageViewerToolComponent = null; });
             }

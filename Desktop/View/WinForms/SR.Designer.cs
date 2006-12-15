@@ -61,6 +61,24 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ************** InnerException Text **************.
+        /// </summary>
+        internal static string ExceptionHandlerInnerExceptionText {
+            get {
+                return ResourceManager.GetString("ExceptionHandlerInnerExceptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message: .
+        /// </summary>
+        internal static string ExceptionHandlerMessagePrefix {
+            get {
+                return ResourceManager.GetString("ExceptionHandlerMessagePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main Menu.
         /// </summary>
         internal static string MenuBar {

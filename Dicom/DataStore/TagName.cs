@@ -22,10 +22,10 @@ namespace ClearCanvas.Dicom.DataStore
         {
             // validate the input
             if (null == tagName)
-                throw new System.ArgumentNullException("tagName", "---");
+				throw new System.ArgumentNullException("tagName", SR.ExceptionTagNameCannotBeNullOrEmpty);
 
             if (0 == tagName.Length)
-                throw new System.ArgumentOutOfRangeException("tagName", "---");
+				throw new System.ArgumentOutOfRangeException("tagName", SR.ExceptionTagNameCannotBeNullOrEmpty);
 
             _tagName = tagName;
         }

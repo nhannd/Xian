@@ -79,20 +79,65 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Elliptcal ROI.
+        ///   Looks up a localized string similar to n/a.
         /// </summary>
-        public static string ToolsMeasurementEllipticalROI {
+        public static string NotApplicable {
             get {
-                return ResourceManager.GetString("ToolsMeasurementEllipticalROI", resourceCulture);
+                return ResourceManager.GetString("NotApplicable", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Protractor.
+        ///   Looks up a localized string similar to Area:.
         /// </summary>
-        public static string ToolsMeasurementProtractor {
+        public static string ToolsMeasurementArea {
             get {
-                return ResourceManager.GetString("ToolsMeasurementProtractor", resourceCulture);
+                return ResourceManager.GetString("ToolsMeasurementArea", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Area: {0:F2} pixels.
+        /// </summary>
+        public static string ToolsMeasurementFormatAreaPixels {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatAreaPixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Area: {0:F2} sq cm.
+        /// </summary>
+        public static string ToolsMeasurementFormatAreaSquareCm {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatAreaSquareCm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length: {0:F2} cm.
+        /// </summary>
+        public static string ToolsMeasurementFormatLengthCm {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatLengthCm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length: {0:F2} pixels.
+        /// </summary>
+        public static string ToolsMeasurementFormatLengthPixels {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatLengthPixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line ROI.
+        /// </summary>
+        public static string ToolsMeasurementLineROI {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementLineROI", resourceCulture);
             }
         }
         

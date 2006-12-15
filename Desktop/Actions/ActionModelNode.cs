@@ -101,7 +101,7 @@ namespace ClearCanvas.Desktop.Actions
         {
             int segmentCount = action.Path.Segments.Length;
             if (segmentCount < 2)
-                throw new ArgumentException("Invalid action path.  Path must have 2 or more segments.");
+				throw new ArgumentException(SR.ExceptionInvalidActionPath);
 
             PathSegment segment = action.Path.Segments[pathDepth];
             if (pathDepth + 1 == segmentCount)

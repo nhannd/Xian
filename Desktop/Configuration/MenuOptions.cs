@@ -11,7 +11,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop.Configuration
 {
 	[MenuAction("show", "global-menus/MenuTools/MenuOptions", KeyStroke = XKeys.Control | XKeys.O)]
-	[Tooltip("show", "TooltipMenuOptions")]
+	[Tooltip("show", "MenuOptions")]
 	[IconSet("show", IconScheme.Colour, "Icons.MenuOptionsSmall.png", "Icons.MenuOptionsMedium.png", "Icons.MenuOptionsLarge.png")]
 	[ClickHandler("show", "Show")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
@@ -87,7 +87,7 @@ namespace ClearCanvas.Desktop.Configuration
 					try
 					{
 						container.CurrentPage = container.Pages[0];
-						if (ApplicationComponentExitCode.Normal == ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, container, SR.MenuOptions))
+						if (ApplicationComponentExitCode.Normal == ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, container, SR.TitleMenuOptions))
 						{
 							foreach (IConfigurationPage configurationPage in pages)
 							{
@@ -107,7 +107,7 @@ namespace ClearCanvas.Desktop.Configuration
 				}
 				else
 				{
-					Platform.ShowMessageBox(SR.NoConfigurationPagesExist);
+					Platform.ShowMessageBox(SR.MessageNoConfigurationPagesExist);
 				}
 			}
 			catch (Exception e)

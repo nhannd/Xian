@@ -90,7 +90,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         {
             // TODO
             if (RebuilderState.Stopped != _state)
-                throw new System.InvalidOperationException("Cannot start a rebuild while the rebuilder object is not in the stopped state");
+				throw new System.InvalidOperationException(SR.ExceptionCannotStartRebuilderUnlessStopped);
 
             State = RebuilderState.Rebuilding;
             Thread t = new Thread(new ThreadStart(DoRebuild));
@@ -102,7 +102,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         {
             // TODO
             if (RebuilderState.Rebuilding != _state)
-                throw new System.InvalidOperationException("Cannot stop a rebuild while the rebuilder object is not in the rebuilding state");
+				throw new System.InvalidOperationException(SR.ExceptionCannotStopRebuildUnlessStarted);
 
             StopRequested = true;
         }

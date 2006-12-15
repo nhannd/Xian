@@ -123,7 +123,16 @@
   <data name="CommandLayoutTiles" xml:space="preserve">
     <value>Layout tiles</value>
   </data>
-  <data name="MenuLayoutLayoutManager" xml:space="preserve">
+  <data name="ExceptionImageNotLoaded" xml:space="preserve">
+    <value>The specified image is not currently loaded (SopInstanceUID={0}).</value>
+  </data>
+  <data name="ExceptionSeriesNotLoaded" xml:space="preserve">
+    <value>The specified series is not currently loaded (SeriesInstanceUID={0}).</value>
+  </data>
+  <data name="ExceptionStudyNotLoaded" xml:space="preserve">
+    <value>The specified study is not currently loaded (StudyInstanceUID={0}).</value>
+  </data>
+  <data name="TitleLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
   </data>
 </root>

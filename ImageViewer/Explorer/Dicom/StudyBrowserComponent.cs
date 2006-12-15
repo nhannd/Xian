@@ -318,24 +318,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
-					"Patient ID",
+					SR.ColumnHeadingPatientId,
 					delegate(StudyItem item) { return item.PatientId; },
                     1.5f
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
-					"Last Name",
+					SR.ColumnHeadingLastName,
 					delegate(StudyItem item) { return item.LastName; },
                     1.5f
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
-					"First Name",
+					SR.ColumnHeadingFirstName,
 					delegate(StudyItem item) { return item.FirstName; }
 					));
             studyList.Columns.Add(
                 new TableColumn<StudyItem, string>(
-                    "DOB",
+					SR.ColumnHeadingDateOfBirth,
                     delegate(StudyItem item) { return DicomHelper.GetDateStringFromDicomDA(item.PatientsBirthDate); },
                     null,
                     1.0f,
@@ -343,12 +343,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     ));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
-					"Accession Number",
+					SR.ColumnHeadingAccessionNumber,
 					delegate(StudyItem item) { return item.AccessionNumber; }
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
-					"Study Date",
+					SR.ColumnHeadingStudyDate,
 					delegate(StudyItem item) { return DicomHelper.GetDateStringFromDicomDA(item.StudyDate); },
                     null,
                     1.0f,
@@ -356,13 +356,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
-					"Description",
+					SR.ColumnHeadingStudyDescription,
 					delegate(StudyItem item) { return item.StudyDescription; },
                     2.5f
 					));
             studyList.Columns.Add(
                 new TableColumn<StudyItem, string>(
-                    "Modality",
+					SR.ColumnHeadingModality,
                     delegate(StudyItem item) { return item.ModalitiesInStudy; },
                     0.5f
                     ));

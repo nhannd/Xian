@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			// Abort if study hasn't been loaded
 			if (study == null)
-				throw new ApplicationException("Study not loaded.");
+				throw new ApplicationException(String.Format(SR.ExceptionStudyNotLoaded, studyInstanceUID));
 
 			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
 
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Series series = ImageViewerComponent.StudyManager.StudyTree.GetSeries(seriesInstanceUID);
 
 			if (series == null)
-				throw new ApplicationException("Series not loaded.");
+				throw new ApplicationException(String.Format(SR.ExceptionSeriesNotLoaded, seriesInstanceUID));
 
 			string studyInstanceUID = series.ParentStudy.StudyInstanceUID;
 			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			ImageSop image = ImageViewerComponent.StudyManager.StudyTree.GetSop(sopInstanceUID) as ImageSop;
 
 			if (image == null)
-				throw new ApplicationException("Image not loaded.");
+				throw new ApplicationException(String.Format(SR.ExceptionImageNotLoaded, sopInstanceUID));
 
 			string studyInstanceUID = image.ParentSeries.ParentStudy.StudyInstanceUID;
 			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);

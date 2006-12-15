@@ -57,7 +57,7 @@ namespace ClearCanvas.Common.Specifications
                 }
                 catch (Exception e)
                 {
-                    throw new SpecificationException(string.Format("JScript evaluation error on: {0}", _testExpr), e);
+					throw new SpecificationException(string.Format(SR.ExceptionJScriptEvaluation, _testExpr), e);
                 }
             }
 

@@ -74,7 +74,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                 DicomPresentationImage image = context.Viewer.SelectedPresentationImage as DicomPresentationImage;
                 if (image == null)
                 {
-                    Platform.ShowMessageBox("Please first select an image.");
+                    Platform.ShowMessageBox(SR.MessagePleaseSelectAnImage);
                     return;
                 }
 
@@ -87,7 +87,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
-                                "DICOM Editor",
+								SR.TitleDicomEditor,
                                 ShelfDisplayHint.DockRight,
                                 delegate(IApplicationComponent component) { _component = null; });
 
@@ -116,7 +116,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
-                                "DICOM Editor",
+								SR.TitleDicomEditor,
                                 ShelfDisplayHint.DockRight,
                                 delegate(IApplicationComponent component) { _component = null; });
 

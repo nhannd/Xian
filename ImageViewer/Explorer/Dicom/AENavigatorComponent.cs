@@ -87,8 +87,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private ActionModelRoot _toolbarModel;
         private ActionModelRoot _contextMenuModel;
 
-        private static String _myServersTitle = "My Servers";
-        private static String _myDatastoreTitle = "My Studies";
+		private static String _myServersTitle = SR.TitleMyServers;
+		private static String _myDatastoreTitle = SR.TitleMyDataStore;
         private static String _myServersRoot = "MyServersRoot";
         private static String _myServersXmlFile = "DicomAEServers.xml";
 

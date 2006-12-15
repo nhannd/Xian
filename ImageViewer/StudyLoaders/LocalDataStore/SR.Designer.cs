@@ -59,5 +59,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while opening the study..
+        /// </summary>
+        public static string ExceptionErrorOpeningStudy {
+            get {
+                return ResourceManager.GetString("ExceptionErrorOpeningStudy", resourceCulture);
+            }
+        }
     }
 }

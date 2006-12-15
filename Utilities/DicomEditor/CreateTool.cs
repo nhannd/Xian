@@ -58,7 +58,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         private void Create()
         {
             DicomEditorCreateToolComponent creator = new DicomEditorCreateToolComponent();
-            ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creator, "Create Tag");
+			ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creator, SR.TitleCreateTag);
             if (result == ApplicationComponentExitCode.Normal)
             {
                 if (this.Context.DisplayedDump.TagExists(creator.Tag.Key))

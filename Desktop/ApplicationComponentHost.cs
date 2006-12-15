@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop
         public virtual void StartComponent()
         {
             if (_component.IsStarted)
-                throw new InvalidOperationException("Component has already been started");
+				throw new InvalidOperationException(SR.ExceptionComponentAlreadyStarted);
 
             _component.Start();
         }
@@ -35,7 +35,7 @@ namespace ClearCanvas.Desktop
         public virtual void StopComponent()
         {
             if (!_component.IsStarted)
-                throw new InvalidOperationException("Component was never started, or has already been stopped");
+				throw new InvalidOperationException(SR.ExceptionComponentNeverStarted);
 
             _component.Stop();
             if (_exitCallback != null)

@@ -62,7 +62,7 @@ namespace ClearCanvas.Desktop.Explorer
 				_workspace = ApplicationComponent.LaunchAsWorkspace(
 					this.Context.DesktopWindow,
 					_tabComponentContainer,
-					"Explorer",
+					SR.TitleExplorer,
 					delegate
 					{
 						_workspace = null;

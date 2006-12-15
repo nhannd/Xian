@@ -113,8 +113,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 		private void Disable()
 		{
 			this.Visible = false;
-			this.Label = "N/A";
-			this.Tooltip = "N/A";
+			this.Label = SR.LabelNotApplicable;
+			this.Tooltip = SR.LabelNotApplicable;
 		}
 
 		private void DetermineState(IPresentationImage image)

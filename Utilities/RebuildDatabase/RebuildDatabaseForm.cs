@@ -32,7 +32,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         private void BrowseClick(object sender, EventArgs e)
         {
             FolderBrowserDialog folderDialog = new FolderBrowserDialog();
-            folderDialog.Description = "Choose the folder where images are stored";
+			folderDialog.Description = SR.ChooseImageFolder;
             folderDialog.RootFolder = Environment.SpecialFolder.MyComputer;
           
             if (folderDialog.ShowDialog() == DialogResult.OK)
@@ -55,7 +55,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
         private void StartButtonClick(object sender, EventArgs e)
         {
-            _statusGroupBox.Text = "Initializing...";
+			_statusGroupBox.Text = SR.StatusInitializing;
             this.Refresh();
             using (new CursorManager(this, Cursors.WaitCursor))
             {
@@ -82,7 +82,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             _exitButton.Enabled = false;
             _startTime = DateTime.Now;
 
-            _statusGroupBox.Text = "Rebuilding...";
+			_statusGroupBox.Text = SR.StatusRebuilding;
             _rebuilder.StartRebuild();
         }
 
@@ -113,11 +113,11 @@ namespace ClearCanvas.Utilities.RebuildDatabase
             {
                 _stopTime = DateTime.Now;
                 TimeSpan duration = _stopTime - _startTime;
-                _statusGroupBox.Text = "Processed " + _rebuilder.NumberOfFiles.ToString() + " files in " + duration.ToString();
+                _statusGroupBox.Text = String.Format(SR.StatusPerformanceReport, _rebuilder.NumberOfFiles.ToString(), duration.ToString());
             }
             else
             {
-                _statusGroupBox.Text = "Rebuild was aborted";
+				_statusGroupBox.Text = SR.StatusRebuildAborted;
             }
 
             _browseForFolderButton.Enabled = true;

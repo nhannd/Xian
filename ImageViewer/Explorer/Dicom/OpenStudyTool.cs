@@ -56,13 +56,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					if (e.StudyCouldNotBeLoaded)
 					{
-						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorUnableToLoadStudy);
+						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.MessageUnableToLoadStudy);
 						return;
 					}
 
 					if (e.AtLeastOneImageFailedToLoad)
 					{
-						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.ErrorAtLeastOneImageFailedToLoad);
+						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.MessageAtLeastOneImageFailedToLoad);
 						return;
 					}
 

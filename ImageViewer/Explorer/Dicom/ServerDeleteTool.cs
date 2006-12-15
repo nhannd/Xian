@@ -26,9 +26,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
             string msg = "";
             if (_dicomServerTree.CurrentServer.IsServer)
-                msg = "Are you sure you want to delete this server?";
+				msg = SR.MessageConfirmDeleteServer;
             else
-                msg = "Are you sure you want to delete this server group?";
+				msg = SR.MessageConfirmDeleteServerGroup;
             if (Platform.ShowMessageBox(msg, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
                 return;
 

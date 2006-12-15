@@ -45,7 +45,7 @@ namespace ClearCanvas.Controls.WinForms
 			set 
 			{
 				if (value > this.Maximum)
-					throw new ArgumentException("Minimum must be less than maximum");
+					throw new ArgumentException(SR.ExceptionMinimumTooLarge);
 
 				if (_numericUpDown.Minimum != value)
 				{
@@ -61,7 +61,7 @@ namespace ClearCanvas.Controls.WinForms
 			set
 			{
 				if (value < this.Minimum)
-					throw new ArgumentException("Maximum must be greater than minimum");
+					throw new ArgumentException(SR.ExceptionMaximumTooSmall);
 
 				if (_numericUpDown.Maximum != value)
 				{

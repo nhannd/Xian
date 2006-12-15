@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="String1" xml:space="preserve">
-    <value />
+  <data name="ExceptionDelayedEventDelegateArgument" xml:space="preserve">
+    <value>The delegate must accept two arguments: an object and an instance of type compatible with the System.EventArgs type.</value>
+  </data>
+  <data name="ExceptionMaximumTooSmall" xml:space="preserve">
+    <value>Maximum must be greater than minimum.</value>
+  </data>
+  <data name="ExceptionMinimumTooLarge" xml:space="preserve">
+    <value>Minimum must be less than maximum.</value>
+  </data>
+  <data name="ExceptionValueMustNotBeNegative" xml:space="preserve">
+    <value>The value must not be negative.</value>
+  </data>
+  <data name="FormatVersion" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
 </root>

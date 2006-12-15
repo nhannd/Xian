@@ -42,7 +42,7 @@ namespace ClearCanvas.Controls.WinForms
 		private void SetVersion()
 		{
 			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			this._versionLabel.Text = String.Format("Version {0}", version);
+			this._versionLabel.Text = String.Format(SR.FormatVersion, version);
 		}
 
 		// ************* Static Methods *************** //

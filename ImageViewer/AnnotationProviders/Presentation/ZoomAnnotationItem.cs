@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			{
 				SpatialTransform transform = presentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
 				strAnnotationText = transform.Scale.ToString("F2");
-				strAnnotationText += "x";
+				strAnnotationText += SR.Presentation_Zoom_Indicator;
 			}
 			catch
 			{

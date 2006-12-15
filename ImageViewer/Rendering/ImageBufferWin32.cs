@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Rendering
         {
 			if(!Platform.IsWin32Platform)
 			{
-				throw new NotSupportedException("ImageBufferWin32 is not supported on non-Win32 platforms");
+				throw new NotSupportedException(SR.ExceptionImageBufferWin32NotSupported);
 			}
 
             _bitmap = new Bitmap(width, height);

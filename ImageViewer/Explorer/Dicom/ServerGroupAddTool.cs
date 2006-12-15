@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
             this.Context.UpdateType = (int)ServerUpdateType.Add;
             DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree, ServerUpdateType.Add);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Add New Server");
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddServerGroup);
             return;
         }
 

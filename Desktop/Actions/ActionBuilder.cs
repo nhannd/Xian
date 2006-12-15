@@ -181,8 +181,7 @@ namespace ClearCanvas.Desktop.Actions
 			if (info == null)
             {
                 throw new ActionBuilderException(
-                    string.Format("The method {0} does not exist for class {1}, or it does not have the correct signature",
-                    methodName, _actionTarget.GetType().FullName));
+					string.Format(SR.ExceptionActionBuilderMethodDoesNotExist, methodName, _actionTarget.GetType().FullName));
             }
         }
 
@@ -192,8 +191,7 @@ namespace ClearCanvas.Desktop.Actions
             if (info == null)
             {
                 throw new ActionBuilderException(
-                    string.Format("The event {0} does not exist for class {1}",
-                    eventName, _actionTarget.GetType().FullName));
+					string.Format(SR.ExceptionActionBuilderEventDoesNotExist, eventName, _actionTarget.GetType().FullName));
             }
         }
 
@@ -203,16 +201,14 @@ namespace ClearCanvas.Desktop.Actions
             if (info == null)
             {
                 throw new ActionBuilderException(
-                    string.Format("The property {0} does not exist for class {1}, or it does not have the correct return type",
-                    propertyName, _actionTarget.GetType().FullName));
+					string.Format(SR.ExceptionActionBuilderPropertyDoesNotExist, propertyName, _actionTarget.GetType().FullName));
             }
 
             MethodInfo getter = info.GetGetMethod();
             if (getter == null)
             {
                 throw new ActionBuilderException(
-                    string.Format("The property {0} does not on class {1} does not have a public get method",
-                    propertyName, _actionTarget.GetType().FullName));
+					string.Format(SR.ExceptionActionBuilderPropertyDoesNotHavePublicGetMethod, propertyName, _actionTarget.GetType().FullName));
             }
         }
     }

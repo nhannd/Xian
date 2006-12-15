@@ -116,7 +116,7 @@ namespace ClearCanvas.Desktop.Tables
             get
             {
                 if (_table == null)
-                    throw new InvalidOperationException("This column must be added to a table to determine its percentage width");
+					throw new InvalidOperationException(SR.ExceptionTableColumnMustBeAddedToDetermineWidth);
                 
                 return _table.GetColumnWidthPercent(this);
             }

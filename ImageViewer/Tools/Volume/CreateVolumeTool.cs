@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
 					this.ImageViewerToolComponent,
-					"Volume Controller",
+					SR.TitleVolumeController,
 					ShelfDisplayHint.DockLeft,
 					delegate(IApplicationComponent component) { this.ImageViewerToolComponent = null; });
 			}

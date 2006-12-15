@@ -47,7 +47,7 @@ namespace ClearCanvas.Dicom.DataStore
 
             if (null == containers || containers.Count < 1)
             {
-                throw new Exception("DicomDictionary could not be loaded");
+				throw new Exception(SR.ExceptionDicomDictionaryFailedToLoad);
             }
 
             DicomDictionaryContainer dictionaryContainer = containers[0] as DicomDictionaryContainer;

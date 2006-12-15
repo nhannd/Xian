@@ -49,7 +49,7 @@ namespace ClearCanvas.Common.Scripting
             }
             catch (Exception e)
             {
-                throw new ActiveTemplateException("Template evaluation generated an exception.", e);
+				throw new ActiveTemplateException(SR.ExceptionTemplateEvaluation, e);
             }
         }
 

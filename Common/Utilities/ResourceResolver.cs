@@ -86,7 +86,7 @@ namespace ClearCanvas.Common.Utilities
                 }
             }
 
-            throw new MissingManifestResourceException("Resource not found") ;
+			throw new MissingManifestResourceException(SR.ExceptionResourceNotFound);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace ClearCanvas.Common.Utilities
                 }
             }
 
-            throw new MissingManifestResourceException("Resource not found");
+			throw new MissingManifestResourceException(SR.ExceptionResourceNotFound);
         }
 
         /// <summary>

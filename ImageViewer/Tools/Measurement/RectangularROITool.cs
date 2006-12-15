@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			rectangleGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 			_createGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 
-			_createGraphic.Callout.Text = "Area:";
+			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
 			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
 			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
@@ -144,12 +144,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (pixelSpacingInvalid)
 			{
 				double area = Math.Abs(widthInPixels * heightInPixels);
-				text = String.Format("Area: {0:F2} pixels", area);
+				text = String.Format(SR.ToolsMeasurementFormatAreaPixels, area);
 			}
 			else
 			{
 				double area = Math.Abs(widthInCm * heightInCm);
-				text = String.Format("Area: {0:F2} sq cm", area);
+				text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, area);
 			}
 
 			roiGraphic.Callout.Text = text;

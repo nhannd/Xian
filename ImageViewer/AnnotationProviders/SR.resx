@@ -141,6 +141,12 @@
   <data name="AnnotationItemProviders_Presentation_DisplayName" xml:space="preserve">
     <value>Presentation</value>
   </data>
+  <data name="BoolNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="BoolYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
   <data name="Dicom_GeneralEquipment_DateOfLastCalibration_DisplayName" xml:space="preserve">
     <value>Date Of Last Calibration</value>
   </data>
@@ -515,6 +521,9 @@
   </data>
   <data name="Presentation_Zoom_DisplayName" xml:space="preserve">
     <value>Zoom</value>
+  </data>
+  <data name="Presentation_Zoom_Indicator" xml:space="preserve">
+    <value>x</value>
   </data>
   <data name="Presentation_Zoom_Label" xml:space="preserve">
     <value>Zoom</value>

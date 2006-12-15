@@ -133,6 +133,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string BoolNo {
+            get {
+                return ResourceManager.GetString("BoolNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string BoolYes {
+            get {
+                return ResourceManager.GetString("BoolYes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date Of Last Calibration.
         /// </summary>
         internal static string Dicom_GeneralEquipment_DateOfLastCalibration_DisplayName {
@@ -1254,6 +1272,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Presentation_Zoom_DisplayName {
             get {
                 return ResourceManager.GetString("Presentation_Zoom_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to x.
+        /// </summary>
+        internal static string Presentation_Zoom_Indicator {
+            get {
+                return ResourceManager.GetString("Presentation_Zoom_Indicator", resourceCulture);
             }
         }
         

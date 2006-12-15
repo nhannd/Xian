@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ApplicationComponent.LaunchAsDialog(
                     this.Context.DesktopWindow,
                     dialogContainer,
-                    "Send Study");
+					SR.TitleSendStudy);
 
             if (code == ApplicationComponentExitCode.Cancelled)
                 return;
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             if (destinationAE == null)
             {
-                Platform.ShowMessageBox("Destination has not been selected");
+				Platform.ShowMessageBox(SR.MessageSelectDestination);
                 return;
             }
 

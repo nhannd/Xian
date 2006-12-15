@@ -29,30 +29,30 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
             if (!_dicomServerTree.CurrentServer.IsServer && _dicomServerTree.ChildServers.Count == 0)
             {
-                throw new DicomServerException("There are no servers selected. Please select servers and try again.");
+				throw new DicomServerException(SR.ExceptionNoServersSelected);
             }
             LocalAESettings myAESettings = new LocalAESettings();
             ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
             StringBuilder msgText = new StringBuilder();
-            msgText.AppendFormat("C-ECHO Verification:\r\n\r\n");
+			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
             using (DicomClient client = new DicomClient(myAE))
             {
                 if (_dicomServerTree.CurrentServer.IsServer)
                 {
                     DicomServer ae = (DicomServer)_dicomServerTree.CurrentServer;
                     if (client.Verify(ae.DicomAE))
-                        msgText.AppendFormat("    {0}: successful    \r\n", ae.ServerPath + "/" + ae.ServerName);
+						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", ae.ServerPath + "/" + ae.ServerName);
                     else
-                        msgText.AppendFormat("    {0}: fail    \r\n", ae.ServerPath + "/" + ae.ServerName);
+						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", ae.ServerPath + "/" + ae.ServerName);
                 }
                 else
                 {
                     foreach (DicomServer ae in _dicomServerTree.ChildServers)
                     {
                         if (client.Verify(ae.DicomAE))
-                            msgText.AppendFormat("    {0}: successful    \r\n", ae.ServerPath + "/" + ae.ServerName);
+							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", ae.ServerPath + "/" + ae.ServerName);
                         else
-                            msgText.AppendFormat("    {0}: fail    \r\n", ae.ServerPath + "/" + ae.ServerName);
+							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", ae.ServerPath + "/" + ae.ServerName);
                     }
                 }
             }

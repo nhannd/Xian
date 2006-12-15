@@ -37,9 +37,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				SplashScreen.SplashForm.Owner = this;
 			
 			InitializeComponent();
-			this.Text = String.Format("{0} {1}",
-                Application.ApplicationName,
-                GetVersion());
+			this.Text = String.Format("{0} {1}", Application.ApplicationName, GetVersion());
 
 			this.Style = WinFormsView.VisualStyle;
 			_tabbedGroups.Style = WinFormsView.VisualStyle;

@@ -223,7 +223,7 @@ namespace ClearCanvas.Desktop
         {
             if (this.Modified)
             {
-                DialogBoxAction result = this.Host.ShowMessageBox("Save changes before closing?", MessageBoxActions.YesNoCancel);
+				DialogBoxAction result = this.Host.ShowMessageBox(SR.MessageConfirmSaveChangesBeforeClosing, MessageBoxActions.YesNoCancel);
                 switch (result)
                 {
                     case DialogBoxAction.Yes:

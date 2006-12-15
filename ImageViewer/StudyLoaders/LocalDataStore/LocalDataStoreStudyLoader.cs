@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 				if (atLeastOneImageFailedToLoad || studyCouldNotBeLoaded)
 				{
-					OpenStudyException e = new OpenStudyException("An error occurred while opening the study");
+					OpenStudyException e = new OpenStudyException(SR.ExceptionErrorOpeningStudy);
 					e.AtLeastOneImageFailedToLoad = atLeastOneImageFailedToLoad;
 					e.StudyCouldNotBeLoaded = studyCouldNotBeLoaded;
 					throw e;
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             catch (Exception e)
             {
 				// We probably have a database error.  Make note of the exception as an inner exception.
-				OpenStudyException ex = new OpenStudyException("An error occurred while opening the study", e);
+				OpenStudyException ex = new OpenStudyException(SR.ExceptionErrorOpeningStudy, e);
 				ex.StudyCouldNotBeLoaded = true;
 				ex.AtLeastOneImageFailedToLoad = true;
 

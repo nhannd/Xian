@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				IEnumerator<KeyValuePair<string, Sop>> pair = this.Sops.GetEnumerator();
 				
 				if (!pair.MoveNext())
-					throw new ApplicationException("No SOPs in this series");
+					throw new ApplicationException(SR.ExceptionNoSopsExistInSeries);
 
 				ImageSop imageSop = pair.Current.Value as ImageSop;
 

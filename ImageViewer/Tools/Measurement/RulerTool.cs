@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			multilineGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 			_createGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 
-			_createGraphic.Callout.Text = "Line ROI";
+			_createGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
 			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
 			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
@@ -145,12 +145,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (pixelSpacingInvalid)
 			{
 				double length = Math.Sqrt(widthInPixels * widthInPixels + heightInPixels * heightInPixels);
-				text = String.Format("Length: {0:F2} pixels", length);
+				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
 			}
 			else
 			{
 				double length = Math.Sqrt(widthInCm * widthInCm + heightInCm * heightInCm);
-				text = String.Format("Length: {0:F2} cm", length);
+				text = String.Format(SR.ToolsMeasurementFormatLengthCm, length);
 			}
 
 			roiGraphic.Callout.Text = text;

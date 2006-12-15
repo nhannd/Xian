@@ -218,11 +218,12 @@ namespace ClearCanvas.Utilities.DicomEditor
         public DicomEditorComponent()
         {
             _dicomTagData = new Table<DicomEditorTag>();
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>("Group-Element", delegate(DicomEditorTag d) { return d.Key.DisplayKey; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return one.Key.SortKey.CompareTo(two.Key.SortKey); })); 
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>("Tag Name", delegate(DicomEditorTag d) { return d.TagName; }));
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>("VR", delegate(DicomEditorTag d) { return d.Vr; }));
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>("Length", delegate(DicomEditorTag d) { return d.Length.ToString(); }));
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>("Value", delegate(DicomEditorTag d) { return d.Value; }, delegate(DicomEditorTag d, string value) {
+			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingGroupElement, delegate(DicomEditorTag d) { return d.Key.DisplayKey; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return one.Key.SortKey.CompareTo(two.Key.SortKey); }));
+			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingTagName, delegate(DicomEditorTag d) { return d.TagName; }));
+			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingVR, delegate(DicomEditorTag d) { return d.Vr; }));
+			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingLength, delegate(DicomEditorTag d) { return d.Length.ToString(); }));
+			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingValue, delegate(DicomEditorTag d) { return d.Value; }, delegate(DicomEditorTag d, string value)
+			{
                                                                                                                                                                 if (!d.Key.DisplayKey.Contains(",0000)") && d.Vr != "SQ")
                                                                                                                                                                 {
                                                                                                                                                                     d.Value = value;

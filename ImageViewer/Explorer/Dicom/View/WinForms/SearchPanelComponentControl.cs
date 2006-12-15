@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 				}
 				catch
 				{
-					Platform.ShowMessageBox("Unable to query server");
+					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
 				}
 			}
 		}
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 }
                 catch
                 {
-                    Platform.ShowMessageBox("Unable to query server");
+					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
                 }
             }
         }

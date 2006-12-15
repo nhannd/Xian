@@ -59,5 +59,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volume Controller.
+        /// </summary>
+        internal static string TitleVolumeController {
+            get {
+                return ResourceManager.GetString("TitleVolumeController", resourceCulture);
+            }
+        }
     }
 }

@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			{
 				object[] buttonAssignment = mouseTool.GetType().GetCustomAttributes(typeof(MouseToolButtonAttribute), true);
 				if (buttonAssignment == null || buttonAssignment.Length == 0)
-					throw new InvalidOperationException(String.Format(SR.MouseToolShouldHaveDefault, mouseTool.GetType().FullName));
+					throw new InvalidOperationException(String.Format(SR.ExceptionMouseToolShouldHaveDefault, mouseTool.GetType().FullName));
 
 				MouseToolButtonAttribute attribute = buttonAssignment[0] as MouseToolButtonAttribute;
 				_mouseToolButtonMap.Add(mouseTool, attribute.MouseButton);
@@ -62,10 +62,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				ModifiedMouseToolButtonAttribute attribute = modifiedButtonAssignments[0] as ModifiedMouseToolButtonAttribute;
 
 				if (attribute.Shortcut.Modifiers.ModifierFlags == ModifierFlags.None)
-					throw new InvalidOperationException(String.Format(SR.AdditionalMouseToolAssignmentsMustBeModified, mouseTool.GetType().FullName));
+					throw new InvalidOperationException(String.Format(SR.ExceptionAdditionalMouseToolAssignmentsMustBeModified, mouseTool.GetType().FullName));
 
 				if (_activeMouseButtonShortcutMap.ContainsKey(attribute.Shortcut))
-					throw new InvalidOperationException(String.Format(SR.MouseToolAssignmentInUse, mouseTool.GetType().FullName));
+					throw new InvalidOperationException(String.Format(SR.ExceptionMouseToolAssignmentInUse, mouseTool.GetType().FullName));
 
 				_activeMouseButtonShortcutMap.Add(attribute.Shortcut, mouseTool);
 			}
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				try
 				{
 					if (_activeMouseWheelShortcutMap.ContainsKey(attribute.Shortcut))
-						throw new InvalidOperationException(String.Format(SR.MouseWheelAssignmentInUse, mouseTool));
+						throw new InvalidOperationException(String.Format(SR.ExceptionMouseWheelAssignmentInUse, mouseTool));
 
 					IMouseWheelHandler handler = new MouseWheelHandler(mouseTool, attribute.WheelIncrementDelegateName, attribute.WheelDecrementDelegateName);
 					_activeMouseWheelShortcutMap.Add(attribute.Shortcut, handler);
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				KeyboardButtonShortcut shortcut = new KeyboardButtonShortcut(clickAction.KeyStroke);
 
 				if (_keyStrokeShortcutMap.ContainsKey(shortcut))
-					throw new InvalidOperationException(String.Format(SR.KeyStrokeAssignmentInUse, clickAction.Path.ToString()));
+					throw new InvalidOperationException(String.Format(SR.ExceptionKeyStrokeAssignmentInUse, clickAction.Path.ToString()));
 
 				_keyStrokeShortcutMap.Add(shortcut, clickAction);
 			}
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			try
 			{
 				if (!_mouseToolButtonMap.ContainsKey(activateMouseTool))
-					throw new InvalidOperationException(String.Format(SR.MouseToolHasNoAssignment, activateMouseTool.GetType().FullName));
+					throw new InvalidOperationException(String.Format(SR.ExceptionMouseToolHasNoAssignment, activateMouseTool.GetType().FullName));
 
 				MouseButtonShortcut shortcut = new MouseButtonShortcut(_mouseToolButtonMap[activateMouseTool]);
 
