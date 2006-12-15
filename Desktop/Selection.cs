@@ -8,10 +8,14 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Default implementation of <see cref="ISelection"/>.
+    /// Default implementation of <see cref="ISelection"/>.  
+    /// Note: It is important that this class retain immutable semantics.  Do not add mutator methods/properties to this class.
     /// </summary>
     public class Selection : ISelection, IEquatable<ISelection>
     {
+        public static readonly Selection Empty = new Selection();
+
+
         private List<object> _items = new List<object>();
 
         public Selection()
