@@ -35,6 +35,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _addressActionHandler.Delete.SetClickHandler(DeleteSelectedAddress);
 
             _addressActionHandler.Add.Enabled = true;
+            _addressActionHandler.Edit.Enabled = false;
+            _addressActionHandler.Delete.Enabled = false;
         }
 
         public PatientProfile Subject
@@ -42,7 +44,21 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _patient; }
             set { _patient = value; }
         }
-        
+
+        public override void Start()
+        {
+            if (_patient != null)
+            {
+                foreach (Address address in _patient.Addresses)
+                {
+                    _addresses.Items.Add(address);
+                }
+            }
+            base.Start();
+        }
+
+        #region Presentation Model
+
         public ITable Addresses
         {
             get { return _addresses; }
@@ -53,32 +69,13 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _addressActionHandler; }
         }
 
-        public Address CurrentAddressSelection
+        public ISelection SelectedAddress
         {
-            get { return _currentAddressSelection; }
+            get { return _currentAddressSelection == null ? Selection.Empty : new Selection(_currentAddressSelection); }
             set
             {
-                _currentAddressSelection = value;
+                _currentAddressSelection = (Address)value.Item;
                 AddressSelectionChanged();
-            }
-        }
-
-        public void SetSelectedAddress(ISelection selection)
-        {
-            this.CurrentAddressSelection = (Address)selection.Item;
-        }
-
-        private void AddressSelectionChanged()
-        {
-            if (_currentAddressSelection != null)
-            {
-                _addressActionHandler.Edit.Enabled = true;
-                _addressActionHandler.Delete.Enabled = true;
-            }
-            else
-            {
-                _addressActionHandler.Edit.Enabled = false;
-                _addressActionHandler.Delete.Enabled = false;
             }
         }
 
@@ -136,15 +133,12 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public void LoadAddressesTable()
+        #endregion
+
+        private void AddressSelectionChanged()
         {
-            if (_patient != null)
-            {
-                foreach (Address address in _patient.Addresses)
-                {
-                    _addresses.Items.Add(address);
-                }
-            }
+            _addressActionHandler.Edit.Enabled =
+                _addressActionHandler.Delete.Enabled = (_currentAddressSelection != null);
         }
     }
 }

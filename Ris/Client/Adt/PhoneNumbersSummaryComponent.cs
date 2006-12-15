@@ -34,6 +34,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _phoneNumberActionHandler.Delete.SetClickHandler(DeleteSelectedPhoneNumber);
 
             _phoneNumberActionHandler.Add.Enabled = true;
+            _phoneNumberActionHandler.Edit.Enabled = false;
+            _phoneNumberActionHandler.Delete.Enabled = false;
         }
 
         public PatientProfile Subject
@@ -41,6 +43,21 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _patient; }
             set { _patient = value; }
         }
+
+        public override void Start()
+        {
+            if (_patient != null)
+            {
+                foreach (TelephoneNumber phoneNumber in _patient.TelephoneNumbers)
+                {
+                    _phoneNumbers.Items.Add(phoneNumber);
+                }
+            }
+
+            base.Start();
+        }
+
+        #region Presentation Model
 
         public ITable PhoneNumbers
         {
@@ -52,36 +69,15 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _phoneNumberActionHandler; }
         }
 
-        public TelephoneNumber CurrentPhoneNumberSelection
+        public ISelection SelectedPhoneNumber
         {
-            get { return _currentPhoneNumberSelection; }
+            get { return _currentPhoneNumberSelection == null ? Selection.Empty : new Selection(_currentPhoneNumberSelection); }
             set
             {
-                _currentPhoneNumberSelection = value;
+                _currentPhoneNumberSelection = (TelephoneNumber)value.Item;
                 PhoneNumberSelectionChanged();
             }
         }
-
-        public void SetSelectedPhoneNumber(ISelection selection)
-        {
-            this.CurrentPhoneNumberSelection = (TelephoneNumber)selection.Item;
-        }
-
-        private void PhoneNumberSelectionChanged()
-        {
-            if (_currentPhoneNumberSelection != null)
-            {
-                _phoneNumberActionHandler.Edit.Enabled = true;
-                _phoneNumberActionHandler.Delete.Enabled = true;
-            }
-            else
-            {
-                _phoneNumberActionHandler.Edit.Enabled = false;
-                _phoneNumberActionHandler.Delete.Enabled = false;
-            }
-        }
-
-
 
         public void AddPhoneNumber()
         {
@@ -133,17 +129,21 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public void LoadPhoneNumbersTable()
+        #endregion
+
+        private void PhoneNumberSelectionChanged()
         {
-            if (_patient != null)
+            if (_currentPhoneNumberSelection != null)
             {
-                foreach (TelephoneNumber phoneNumber in _patient.TelephoneNumbers)
-                {
-                    _phoneNumbers.Items.Add(phoneNumber);
-                }
+                _phoneNumberActionHandler.Edit.Enabled = true;
+                _phoneNumberActionHandler.Delete.Enabled = true;
+            }
+            else
+            {
+                _phoneNumberActionHandler.Edit.Enabled = false;
+                _phoneNumberActionHandler.Delete.Enabled = false;
             }
         }
-
 
     }
 }

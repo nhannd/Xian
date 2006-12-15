@@ -56,7 +56,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._addressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._addressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
-            this._addressList.SelectionChanged += new System.EventHandler(this._addressList_SelectionChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -87,7 +86,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "AddressesSummaryControl";
             this.Size = new System.Drawing.Size(172, 145);
-            this.Load += new System.EventHandler(this.AddressesSummaryControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();

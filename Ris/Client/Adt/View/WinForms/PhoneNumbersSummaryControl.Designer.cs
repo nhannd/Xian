@@ -69,7 +69,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._phoneNumbers.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._phoneNumbers.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._phoneNumbers.ItemDoubleClicked += new System.EventHandler(this._phoneNumbers_ItemDoubleClicked);
-            this._phoneNumbers.SelectionChanged += new System.EventHandler(this._phoneNumbers_SelectionChanged);
             // 
             // _errorProvider
             // 
@@ -85,7 +84,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "PhoneNumbersSummaryControl";
             this.Size = new System.Drawing.Size(199, 140);
-            this.Load += new System.EventHandler(this.PhoneNumbersSummaryControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
             this.ResumeLayout(false);
