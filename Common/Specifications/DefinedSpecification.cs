@@ -14,6 +14,11 @@ namespace ClearCanvas.Common.Specifications
             _lambda = lambda;
         }
 
+        public DefinedSpecification(ISpecification lambda)
+        {
+            _lambda = lambda;
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             TestResult r = _lambda.Test(exp);

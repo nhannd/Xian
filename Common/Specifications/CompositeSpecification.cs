@@ -14,6 +14,11 @@ namespace ClearCanvas.Common.Specifications
 
         }
 
+        public CompositeSpecification()
+        {
+
+        }
+
         public void Add(ISpecification spec)
         {
             _childSpecs.Add(spec);

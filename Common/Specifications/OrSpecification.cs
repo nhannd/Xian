@@ -12,6 +12,11 @@ namespace ClearCanvas.Common.Specifications
         {
         }
 
+        public OrSpecification()
+        {
+
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             TestResult r;

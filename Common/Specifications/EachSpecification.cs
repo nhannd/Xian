@@ -12,6 +12,11 @@ namespace ClearCanvas.Common.Specifications
         {
         }
 
+        public EachSpecification(ISpecification elementSpecification)
+            :base(elementSpecification)
+        {
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             foreach (object element in AsEnumerable(exp))

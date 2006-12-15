@@ -8,7 +8,7 @@ namespace ClearCanvas.Common.Specifications
 {
     internal class Builder
     {
-        delegate Specification CreationDelegate(XmlElement xmlNode, string testExp, string failureMessage);
+        delegate Specification CreationDelegate(XmlElement xmlNode);
 
         private Dictionary<string, CreationDelegate> _factoryMethodMap = new Dictionary<string, CreationDelegate>();
         private SpecificationFactory _factory;
@@ -37,14 +37,16 @@ namespace ClearCanvas.Common.Specifications
 
         private Specification BuildNode(XmlElement node)
         {
-            string test = node.GetAttribute("test");
-            string failMessage = node.GetAttribute("failMessage");
-            return _factoryMethodMap[node.LocalName](node, test == "" ? null : test, failMessage == "" ? null : failMessage);
+            Specification spec = _factoryMethodMap[node.LocalName](node);
+            spec.TestExpression = GetAttributeOrNull(node, "test");
+            spec.IfExpression = GetAttributeOrNull(node, "if");
+            spec.FailureMessage = GetAttributeOrNull(node, "failMessage");
+            return spec;
         }
 
-        private Specification CreateAnd(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateAnd(XmlElement node)
         {
-            AndSpecification spec = new AndSpecification(testExpr, failureMessage);
+            AndSpecification spec = new AndSpecification();
             foreach (XmlElement child in GetChildElements(node))
             {
                 spec.Add(BuildNode(child));
@@ -52,9 +54,9 @@ namespace ClearCanvas.Common.Specifications
             return spec;
         }
 
-        private Specification CreateOr(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateOr(XmlElement node)
         {
-            OrSpecification spec = new OrSpecification(testExpr, failureMessage);
+            OrSpecification spec = new OrSpecification();
             foreach (XmlElement child in GetChildElements(node))
             {
                 spec.Add(BuildNode(child));
@@ -62,22 +64,22 @@ namespace ClearCanvas.Common.Specifications
             return spec;
         }
 
-        private Specification CreateRegex(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateRegex(XmlElement node)
         {
-            return new RegexSpecification(testExpr, node.GetAttribute("pattern"), failureMessage);
+            return new RegexSpecification(node.GetAttribute("pattern"));
         }
 
-        private Specification CreateNotNull(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateNotNull(XmlElement node)
         {
-            return new NotNullSpecification(testExpr, failureMessage);
+            return new NotNullSpecification();
         }
 
-        private Specification CreateIsNull(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateIsNull(XmlElement node)
         {
-            return new IsNullSpecification(testExpr, failureMessage);
+            return new IsNullSpecification();
         }
 
-        private Specification CreateCount(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateCount(XmlElement node)
         {
             string minString = node.GetAttribute("min");
             string maxString = node.GetAttribute("max");
@@ -85,34 +87,34 @@ namespace ClearCanvas.Common.Specifications
             int min = (minString == "") ? 0 : Int32.Parse(minString);
             int max = (maxString == "") ? Int32.MaxValue : Int32.Parse(maxString);
 
-            return new CountSpecification(testExpr, min, max, failureMessage);
+            return new CountSpecification(min, max);
         }
 
-        private Specification CreateEach(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateEach(XmlElement node)
         {
             Specification elementSpec = CreateImplicitAnd(GetChildElements(node));
-            return new EachSpecification(testExpr, elementSpec, failureMessage);
+            return new EachSpecification(elementSpec);
         }
 
-        private Specification CreateAny(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateAny(XmlElement node)
         {
             Specification elementSpec = CreateImplicitAnd(GetChildElements(node));
-            return new AnySpecification(testExpr, elementSpec, failureMessage);
+            return new AnySpecification(elementSpec);
         }
 
-        private Specification CreateTrue(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateTrue(XmlElement node)
         {
-            return new TrueSpecification(testExpr, failureMessage);
+            return new TrueSpecification();
         }
 
-        private Specification CreateFalse(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateFalse(XmlElement node)
         {
-            return new FalseSpecification(testExpr, failureMessage);
+            return new FalseSpecification();
         }
 
-        private Specification CreateDefined(XmlElement node, string testExpr, string failureMessage)
+        private Specification CreateDefined(XmlElement node)
         {
-            return new DefinedSpecification(testExpr, _factory.GetSpecification(node.GetAttribute("spec")), failureMessage);
+            return new DefinedSpecification(_factory.GetSpecification(node.GetAttribute("spec")));
         }
 
         private Specification CreateImplicitAnd(ICollection<XmlNode> nodes)
@@ -137,6 +139,12 @@ namespace ClearCanvas.Common.Specifications
         private ICollection<XmlNode> GetChildElements(XmlElement node)
         {
             return CollectionUtils.Select<XmlNode>(node.ChildNodes, delegate(XmlNode child) { return child is XmlElement; });
+        }
+
+        private string GetAttributeOrNull(XmlElement node, string attr)
+        {
+            string val = node.GetAttribute(attr);
+            return val == "" ? null : val;
         }
     }
 }

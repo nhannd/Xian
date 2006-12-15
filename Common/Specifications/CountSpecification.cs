@@ -16,6 +16,12 @@ namespace ClearCanvas.Common.Specifications
             _min = min;
         }
 
+        public CountSpecification(int min, int max)
+        {
+            _max = max;
+            _min = min;
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             if (exp is Array)

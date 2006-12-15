@@ -11,6 +11,11 @@ namespace ClearCanvas.Common.Specifications
         {
         }
 
+        public IsNullSpecification()
+        {
+
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             // treat string "" as null, in the case where exp is a string

@@ -15,6 +15,11 @@ namespace ClearCanvas.Common.Specifications
             _pattern = pattern;
         }
 
+        public RegexSpecification(string pattern)
+        {
+            _pattern = pattern;
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             // assume that null matches anything

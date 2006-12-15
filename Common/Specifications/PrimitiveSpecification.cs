@@ -11,6 +11,11 @@ namespace ClearCanvas.Common.Specifications
         {
         }
 
+        public PrimitiveSpecification()
+        {
+
+        }
+
         public override IEnumerable<ISpecification> SubSpecs
         {
             get { return new ISpecification[] { }; }

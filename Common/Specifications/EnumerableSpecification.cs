@@ -15,6 +15,11 @@ namespace ClearCanvas.Common.Specifications
             _elementSpecification = elementSpecification;
         }
 
+        public EnumerableSpecification(ISpecification elementSpecification)
+        {
+            _elementSpecification = elementSpecification;
+        }
+
         protected ISpecification ElementSpec
         {
             get { return _elementSpecification; }

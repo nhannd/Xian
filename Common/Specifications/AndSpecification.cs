@@ -12,6 +12,10 @@ namespace ClearCanvas.Common.Specifications
         {
         }
 
+        public AndSpecification()
+        {
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             foreach (ISpecification subSpec in this.SubSpecs)

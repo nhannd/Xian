@@ -3,7 +3,8 @@
 
   <spec id="MrnID">
     <not-null test="$.MrnID" failMessage="MRN is required"/>
-    <regex test="$.MrnID" pattern="^\d{7}$" failMessage="MRN must be 7 digits"/>
+    <regex test="$.MrnID" pattern="^\d{7}$" if="$.MrnSite == 'UHN'" failMessage="MRN must be 7 digits"/>
+    <regex test="$.MrnID" pattern="^\d{9}$" if="$.MrnSite == 'MSH'" failMessage="MRN must be 9 digits"/>
   </spec>
 
   <spec id="MrnSite">

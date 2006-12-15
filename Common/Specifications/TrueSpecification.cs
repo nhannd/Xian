@@ -11,6 +11,11 @@ namespace ClearCanvas.Common.Specifications
         {
         }
 
+        public TrueSpecification()
+        {
+
+        }
+
         protected override TestResult InnerTest(object exp)
         {
             if (exp is bool)
