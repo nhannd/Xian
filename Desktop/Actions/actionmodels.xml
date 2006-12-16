@@ -40,7 +40,7 @@
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RectangularROITool:activate" path="global-toolbars/ToolbarMeasurement/ToolsMeasurementRectangularROI" />
     <action id="ClearCanvas.ImageViewer.Tools.Measurement.RulerTool:activate" path="global-toolbars/ToolbarMeasurement/ToolsMeasurementRuler" />
   </action-model>
-  <action-model id="ClearCanvas.ImageViewer.ImageViewerComponent:imageviewer-contextmenu">
+  <action-model id="ClearCanvas.ImageViewer.DiagnosticImageViewerComponent:imageviewer-contextmenu">
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="imageviewer-contextmenu/MenuToolsStandardStack" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="imageviewer-contextmenu/MenuToolsStandardWindowLevel" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:auto" path="imageviewer-contextmenu/MenuToolsStandardLutPresets/auto" />

@@ -56,7 +56,5 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
         /// <value>The <see cref="CommandHistory"/>.</value>
         CommandHistory CommandHistory { get; }
-
-		event EventHandler<ContextMenuEventArgs> ContextMenuBuilding;
     }
 }

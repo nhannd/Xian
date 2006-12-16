@@ -59,9 +59,25 @@ namespace ClearCanvas.Desktop.Actions
         public ActionModelRoot BuildAndSynchronize(string namespaze, string site, IActionSet actions)
         {
             string id = string.Format("{0}:{1}", namespaze, site);
-            XmlElement xmlActionModel = FindXmlActionModel(id) ?? CreateXmlActionModel(id);
-            return BuildAndSynchronize(site, xmlActionModel, actions);
-        }
+
+			XmlElement xmlActionModel = FindXmlActionModel(id);
+			bool modelExists = (xmlActionModel != null);
+			if (!modelExists)
+				xmlActionModel = CreateXmlActionModel(id);
+
+			int numberModelActions = xmlActionModel.ChildNodes.Count;
+			ActionModelRoot modelRoot = BuildAndSynchronize(site, xmlActionModel, actions);
+
+			//Some actions are generated, and so are not persistent.  We don't need to save those to the store.
+			if (!modelExists && xmlActionModel.ChildNodes.Count > 0)
+				_xmlActionModelsNode.AppendChild(xmlActionModel);
+
+			// Save the file if anything was added.
+			if (numberModelActions != xmlActionModel.ChildNodes.Count)
+				_xmlDoc.Save(_filename);
+
+			return modelRoot;
+		}
 
         /// <summary>
         /// Builds an in-memory action model from the specified XML model and the specified set of actions.
@@ -111,34 +127,25 @@ namespace ClearCanvas.Desktop.Actions
 
                     AppendActionToXmlModel(xmlActionModel, action);
                 }
-
-                // be sure to save the model since we added stuff
-                _xmlDoc.Save(_filename);
             }
 
             return model;
         }
 
-        /// <summary>
-        /// Finds a stored model in the XML doc with the specified model ID.
-        /// </summary>
-        /// <param name="id">The model ID</param>
-        /// <returns>An "action-model" element, or null if not found</returns>
-        private XmlElement FindXmlActionModel(string id)
-        {
-            XmlNodeList xmlActionModels = _xmlActionModelsNode.GetElementsByTagName("action-model");
-            foreach (XmlElement xmlActionModel in xmlActionModels)
-            {
-                if (xmlActionModel.GetAttribute("id") == id)
-                {
-                    return xmlActionModel;
-                }
-            }
-            return null;
-        }
+		///// <summary>
+		///// Finds a stored model in the XML doc with the specified model ID.
+		///// </summary>
+		///// <param name="id">The model ID</param>
+		///// <returns>An "action-model" element, or null if not found</returns>
+		private XmlElement FindXmlActionModel(string id)
+		{
+			return (XmlElement)_xmlActionModelsNode.SelectSingleNode(String.Format("/action-models/action-model[@id='{0}']", id));
+		}
 
         /// <summary>
-        /// Creates the specified action model in the XML doc.
+        /// Creates the specified action model, but *does not* immediately append it to the xmlDoc.
+		/// Since not all actions are persistent (e.g. some could be generated), we need to figure
+		/// out how many actions (if any) belonging to the node will be persisted in the store.
         /// </summary>
         /// <param name="id"></param>
         /// <returns>An "action-model" element</returns>
@@ -146,7 +153,6 @@ namespace ClearCanvas.Desktop.Actions
         {
             XmlElement xmlActionModel = _xmlDoc.CreateElement("action-model");
             xmlActionModel.SetAttribute("id", id);
-            _xmlActionModelsNode.AppendChild(xmlActionModel);
             return xmlActionModel;
         }
 
@@ -157,7 +163,10 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="action"></param>
         private void AppendActionToXmlModel(XmlElement xmlActionModel, IAction action)
         {
-            XmlElement xmlAction = _xmlDoc.CreateElement("action");
+			if (!action.Persistent)
+				return;
+
+			XmlElement xmlAction = _xmlDoc.CreateElement("action");
             xmlAction.SetAttribute("id", action.ActionID);
             xmlAction.SetAttribute("path", action.Path.ToString());
             xmlActionModel.AppendChild(xmlAction);

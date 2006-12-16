@@ -59,6 +59,13 @@ namespace ClearCanvas.Desktop.Actions
 		/// </summary>
 		bool Visible { get; }
 
+		/// <summary>
+		/// Indicates whether or not the action is 'persistent'.  Actions created via the
+		/// Action Attributes are considered persistent and are committed to the actionmodels.xml,
+		/// otherwise they are considered generated and they are not committed.
+		/// </summary>
+		bool Persistent { get; }
+
         /// <summary>
         /// Gets the resource resolver associated with this action, that will be used to resolve
         /// action path and icon resources when required.

@@ -68,7 +68,6 @@ namespace ClearCanvas.ImageViewer
         private EventBroker _eventBroker;
 		private ViewerShortcutManager _shortcutManager;
         private ToolSet _toolSet;
-		private event EventHandler<ContextMenuEventArgs> _contextMenuBuildingEvent;
 
 		private event EventHandler _closingEvent;
 
@@ -251,12 +250,6 @@ namespace ClearCanvas.ImageViewer
 			remove { _closingEvent -= value; }
 		}
 
-		public event EventHandler<ContextMenuEventArgs> ContextMenuBuilding
-		{
-			add { _contextMenuBuildingEvent += value; }
-			remove { _contextMenuBuildingEvent -= value; }
-		}
-
 		#endregion
 
 		#region Protected properties
@@ -275,11 +268,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
-
-				EventsHelper.Fire(_contextMenuBuildingEvent, this, new ContextMenuEventArgs(model));
-
-				return model;
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 			}
 		}
 

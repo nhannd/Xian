@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action == null
 			ActionPath path = new ActionPath(a.Path, _resolver);
 			_action = new ButtonAction(_actionID, path, a.Flags, _resolver);
+			_action.Persistent = true;
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
 			_action.Label = path.LastSegment.LocalizedText;
 		}
@@ -52,6 +53,7 @@ namespace ClearCanvas.Desktop.Actions
             ActionPath path = new ActionPath(a.Path, _resolver);
             _action = new MenuAction(_actionID, path, a.Flags, _resolver);
 			((ClickAction)_action).SetKeyStroke(a.KeyStroke);
+			_action.Persistent = true;
             _action.Label = path.LastSegment.LocalizedText;
         }
 

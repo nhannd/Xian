@@ -31,7 +31,7 @@ namespace ClearCanvas.Desktop.Actions
         private string _label;
         private event EventHandler _labelChanged;
 
-
+		private bool _persistent;
 
         /// <summary>
         /// Constructor
@@ -48,6 +48,8 @@ namespace ClearCanvas.Desktop.Actions
             // smart defaults
             _enabled = true;
             _visible = true;
+
+			_persistent = false;
         }
 
         #region IAction members
@@ -125,6 +127,12 @@ namespace ClearCanvas.Desktop.Actions
                 }
             }
         }
+
+		public bool Persistent
+		{
+			get { return _persistent; }
+			set { _persistent = value; }
+		}
 		
 		public event EventHandler EnabledChanged
         {

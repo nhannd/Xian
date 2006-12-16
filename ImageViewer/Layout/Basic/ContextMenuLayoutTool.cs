@@ -16,32 +16,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ContextMenuLayoutTool : Tool<IImageViewerToolContext>
 	{
-		public class BooleanPropertyBinding : IObservablePropertyBinding<bool>
-		{
-			private bool _property;
-			private event EventHandler _propertyChangedEvent;
-
-			#region IObservablePropertyBinding<bool> Members
-
-			public event EventHandler PropertyChanged
-			{
-				add { _propertyChangedEvent += value; }
-				remove { _propertyChangedEvent -= value; }
-			}
-        
-			public bool PropertyValue
-			{
-				get { return _property; }
-				set
-				{
-					_property = value;
-					EventsHelper.Fire(_propertyChangedEvent, this, EventArgs.Empty);
-				}
-			}
-
-			#endregion
-		}
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -55,26 +29,26 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
-
-			this.Context.Viewer.ContextMenuBuilding += new EventHandler<ContextMenuEventArgs>(OnImageViewerContextMenuBuilding);
         }
-
-		void OnImageViewerContextMenuBuilding(object sender, ContextMenuEventArgs e)
-		{
-			e.ContextMenuModel.InsertActions(GetDisplaySetActions());
-		}
 
 		private IImageViewer ImageViewer
 		{
 			get { return this.Context.Viewer; }
 		}
 
+		public override IActionSet Actions
+		{
+			get
+			{
+				return GetDisplaySetActions();
+			}
+		}
 		/// <summary>
 		/// Gets an array of <see cref="IAction"/> objects that allow selection of specific display
 		/// sets for display in the currently selected image box.
 		/// </summary>
 		/// <returns></returns>
-		private IAction[] GetDisplaySetActions()
+		private IActionSet GetDisplaySetActions()
 		{
 			List<IAction> actions = new List<IAction>();
 			int i = 0;
@@ -87,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				}
 			}
 
-			return actions.ToArray();
+			return new ActionSet(actions);
 		}
 
 		/// <summary>
@@ -99,8 +73,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <returns></returns>
 		private IClickAction CreateDisplaySetAction(IDisplaySet displaySet, int index)
 		{
-			ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/{0}", displaySet.Name), null);
-			MenuAction action = new MenuAction(string.Format("display{0}", index), path, ClickActionFlags.None, null);
+			ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/display{0}", index), null);
+			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, index), path, ClickActionFlags.None, null);
 			action.Label = displaySet.Name;
 			action.SetClickHandler(
 				delegate()
@@ -109,13 +83,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				}
 			);
 
-			BooleanPropertyBinding binding = new BooleanPropertyBinding();
-			//action.SetCheckedObservable(binding);
-
-			if (this.ImageViewer.SelectedImageBox.DisplaySet.Name == displaySet.Name)
-				binding.PropertyValue = true;
-			else
-				binding.PropertyValue = false;
+			action.Checked = this.ImageViewer.SelectedImageBox != null &&
+				this.ImageViewer.SelectedImageBox.DisplaySet != null && 
+				this.ImageViewer.SelectedImageBox.DisplaySet.Name == displaySet.Name;
 
 			return action;
 		}
