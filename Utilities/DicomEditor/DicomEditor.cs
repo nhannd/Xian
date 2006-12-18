@@ -77,7 +77,6 @@ namespace ClearCanvas.Utilities.DicomEditor
                     Platform.ShowMessageBox(SR.MessagePleaseSelectAnImage);
                     return;
                 }
-
                 FileDicomImage file = image.ImageSop.NativeDicomObject as FileDicomImage;
 
                 if (_component == null)
@@ -87,7 +86,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
-								SR.TitleDicomEditor,
+                                "DICOM Editor",
                                 ShelfDisplayHint.DockRight,
                                 delegate(IApplicationComponent component) { _component = null; });
 
@@ -116,7 +115,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
-								SR.TitleDicomEditor,
+                                "DICOM Editor",
                                 ShelfDisplayHint.DockRight,
                                 delegate(IApplicationComponent component) { _component = null; });
 
