@@ -198,17 +198,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             {
                 for (int i = 0; i < _loadedDicomDumps.Count; i++)
                 {
-                    if (_loadedDicomDumps[i].TagExists(Tag.Key))
-                    {
-                        _loadedDicomDumps[i].AddEditItem(new EditItem(Tag, Type == EditType.Create ? EditType.Update : Type));
-                    }
-                    else
-                    {
-                        if (Type != EditType.Delete)
-                        {
-                            _loadedDicomDumps[i].AddEditItem(new EditItem(Tag, Type == EditType.Update ? EditType.Create : Type));
-                        }
-                    }
+                    _loadedDicomDumps[i].AddEditItem(new EditItem(Tag, Type));
                 }
             }
         }

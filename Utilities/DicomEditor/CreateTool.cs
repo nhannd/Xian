@@ -61,14 +61,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creator, SR.TitleCreateTag);
             if (result == ApplicationComponentExitCode.Normal)
             {
-                if (this.Context.DisplayedDump.TagExists(creator.Tag.Key))
-                {
-                    this.Context.DumpManagement.ApplyEdit(creator.Tag, EditType.Update, false);
-                }
-                else
-                {
-                    this.Context.DumpManagement.ApplyEdit(creator.Tag, EditType.Create, false);
-                }
+                this.Context.DumpManagement.ApplyEdit(creator.Tag, EditType.Create, false);
                 this.Context.UpdateDisplay();
             }
         }

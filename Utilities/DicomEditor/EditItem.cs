@@ -32,6 +32,15 @@ namespace ClearCanvas.Utilities.DicomEditor
             _editItemList.Clear();
         }
 
+        public void ClearEditsForKey(DicomEditorTagKey Key)
+        {
+            EditItem item = _editItemList.Find(delegate(EditItem e) { return e.Key.Equals(Key); });
+            if (item != null)
+            {
+                _editItemList.Remove(item);
+            }
+        }
+
         public int Count
         {
             get { return _editItemList.Count; }

@@ -54,6 +54,24 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         public void AddEditItem(EditItem item)
         {
+            _changeset.ClearEditsForKey(item.Key);
+           if (TagExistsInRaw(item.Key))
+            {
+                if (item.Type == EditType.Create)
+                {
+                    item.Type = EditType.Update;
+                }
+            }
+            else
+            {
+                if (item.Type != EditType.Delete)
+                {
+                    if (item.Type == EditType.Update)
+                    {
+                        item.Type = EditType.Create;
+                    }
+                }
+            }
             _changeset.InsertEditItem(item);
             ProcessTagEdits();
         }
@@ -129,11 +147,15 @@ namespace ClearCanvas.Utilities.DicomEditor
                             break;
                         case EditType.Delete:
                             tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.Key.Equals(i.Key); });
-                            //if ((_rawtaglist.Find(delegate(DicomTag d) { return d.Key.Equals(i.Key); }) != null) || tag.Key != null)
-                            //{
+                            while (tag != null)
+                            {
+                                //if ((_rawtaglist.Find(delegate(DicomTag d) { return d.Key.Equals(i.Key); }) != null) || tag.Key != null)
+                                //{
                                 _processedtaglist.Remove(tag);
                                 AdjustGroupLengths(tag.Group, i.Key, -8 - tag.Length);
-                            //}
+                                //}
+                                tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.Key.Equals(i.Key); });
+                            }
                             break;
                     }
                 }
@@ -151,6 +173,11 @@ namespace ClearCanvas.Utilities.DicomEditor
                 int groupLength = int.Parse(tag.Value) + LengthChange;
                 tag.Value = groupLength.ToString();
             }
+        }
+
+        private bool TagExistsInRaw(DicomEditorTagKey Key)
+        {
+            return _rawtaglist.Find(delegate(DicomEditorTag d) { return Key.Equals(d.Key); }) == null ? false : true;
         }
         
         private List<DicomEditorTag> _rawtaglist;
