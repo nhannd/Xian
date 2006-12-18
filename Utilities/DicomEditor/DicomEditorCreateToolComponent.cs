@@ -26,6 +26,7 @@ namespace ClearCanvas.Utilities.DicomEditor
     public class DicomEditorCreateToolComponent : ApplicationComponent
     {
         private bool _vrEnabled;
+        private bool _acceptEnabled;
         private string[] _vrList;
         private ushort _group;
         private ushort _element;
@@ -37,6 +38,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         public DicomEditorCreateToolComponent()
         {
             _vrEnabled = false;
+            _acceptEnabled = false;
 
             DcmVR tempVr;
             List<string> list = new List<string>();
@@ -137,6 +139,12 @@ namespace ClearCanvas.Utilities.DicomEditor
             this.Host.Exit();
         }
 
+        public bool AcceptEnabled
+        {
+            get { return _acceptEnabled; }
+            set { _acceptEnabled = value; }
+        }
+
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
@@ -147,7 +155,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         {       
             DcmDataDictionary dictionary = new DcmDataDictionary(true, false);
             DcmDictEntry entry = dictionary.findEntry(new DcmTagKey(_group, _element), null);
-            
+
             if (entry != null)
             {
                 this.TagName = entry.getTagName();
@@ -160,6 +168,16 @@ namespace ClearCanvas.Utilities.DicomEditor
                 this.Vr = "";
                 this.VrEnabled = true;
             }
+
+            if (this.Group == "0000" || this.TagName.StartsWith("Illegal") || this.Element == "0000" )
+            {
+                this.AcceptEnabled = false;
+            }
+            else
+            {
+                this.AcceptEnabled = true;
+            }
+            
         }
     }
 }
