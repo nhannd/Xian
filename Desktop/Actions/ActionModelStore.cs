@@ -117,20 +117,27 @@ namespace ClearCanvas.Desktop.Actions
                 }
             }
 
-            // insert any actions that were not listed in the xml,
-            // and add them to the xml model
-            if (actionMap.Values.Count > 0)
-            {
-                foreach (IAction action in actionMap.Values)
-                {
-                    model.InsertAction(action);
+			// insert any *persistent* actions that were not listed in the xml, and add them to the xml model
+			foreach (IAction action in actionMap.Values)
+			{
+				if (!action.Persistent)
+					continue;
 
-                    AppendActionToXmlModel(xmlActionModel, action);
-                }
-            }
+				model.InsertAction(action);
+				AppendActionToXmlModel(xmlActionModel, action);
+			}
 
-            return model;
-        }
+			// by default, non-persistent actions with no placeholders in the xml model are pushed to the end
+			foreach (IAction action in actionMap.Values)
+			{
+				if (action.Persistent)
+					continue;
+
+				model.InsertAction(action);
+			}
+
+			return model;
+		}
 
 		///// <summary>
 		///// Finds a stored model in the XML doc with the specified model ID.
@@ -163,9 +170,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="action"></param>
         private void AppendActionToXmlModel(XmlElement xmlActionModel, IAction action)
         {
-			if (!action.Persistent)
-				return;
-
 			XmlElement xmlAction = _xmlDoc.CreateElement("action");
             xmlAction.SetAttribute("id", action.ActionID);
             xmlAction.SetAttribute("path", action.Path.ToString());
