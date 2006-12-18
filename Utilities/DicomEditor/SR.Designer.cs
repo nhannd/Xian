@@ -160,7 +160,7 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select an image..
+        ///   Looks up a localized string similar to This tool is only valid when a DICOM Image is selected..
         /// </summary>
         internal static string MessagePleaseSelectAnImage {
             get {

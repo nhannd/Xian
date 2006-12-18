@@ -151,7 +151,7 @@
     <value>The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?</value>
   </data>
   <data name="MessagePleaseSelectAnImage" xml:space="preserve">
-    <value>Please select an image.</value>
+    <value>This tool is only valid when a DICOM Image is selected.</value>
   </data>
   <data name="TitleCreateTag" xml:space="preserve">
     <value>Create Tag</value>
