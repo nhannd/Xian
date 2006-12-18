@@ -37,12 +37,12 @@ namespace ClearCanvas.Common.Specifications
             if (_text == AUTOMATIC_VARIABLE_TOKEN)
                 return arg;
 
-            // create the script if not yet created
-            if (_script == null)
-                _script = CreateScript(_text);
-
             try
             {
+                // create the script if not yet created
+                if (_script == null)
+                    _script = CreateScript(_text);
+
                 // evaluate the test expression
                 Dictionary<string, object> context = new Dictionary<string, object>();
                 context.Add(AUTOMATIC_VARIABLE_IMPLEMENTATION, arg);

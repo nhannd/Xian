@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="OrderEntryComponent"/>
     /// </summary>
-    public partial class OrderEntryComponentControl : CustomUserControl
+    public partial class OrderEntryComponentControl : ApplicationComponentUserControl
     {
         private OrderEntryComponent _component;
 
@@ -22,12 +22,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// Constructor
         /// </summary>
         public OrderEntryComponentControl(OrderEntryComponent component)
+            :base(component)
         {
             InitializeComponent();
 
             _component = component;
 
             _visitTable.Table = _component.VisitChoices;
+            _visitTable.DataBindings.Add("Selection", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
+            this.ErrorProvider.SetIconAlignment(_visitTable, ErrorIconAlignment.TopRight);
 
             _diagnosticService.DataSource = _component.DiagnosticServiceChoices;
             _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -64,11 +67,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
-        }
-
-        private void _visitTable_SelectionChanged(object sender, EventArgs e)
-        {
-            _component.SetVisitSelection(_visitTable.Selection);
         }
     }
 }

@@ -31,16 +31,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._addressList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._errorProvider = new ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // _addressList
             // 
             this._addressList.AutoSize = true;
             this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._errorProvider.SetIconAlignment(this._addressList, System.Windows.Forms.ErrorIconAlignment.TopRight);
             this._addressList.Location = new System.Drawing.Point(5, 5);
             this._addressList.Margin = new System.Windows.Forms.Padding(5, 5, 25, 5);
             this._addressList.MenuModel = null;
@@ -72,11 +69,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Size = new System.Drawing.Size(172, 145);
             this.tableLayoutPanel1.TabIndex = 6;
             // 
-            // _errorProvider
-            // 
-            this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this._errorProvider.ContainerControl = this;
-            // 
             // AddressesSummaryControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -88,7 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Size = new System.Drawing.Size(172, 145);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -97,6 +88,5 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.TableView _addressList;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider _errorProvider;
     }
 }

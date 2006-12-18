@@ -117,9 +117,10 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _visitChoices; }
         }
 
-        public void SetVisitSelection(ISelection sel)
+        public ISelection SelectedVisit
         {
-            _selectedVisit = (Visit)sel.Item;
+            get { return _selectedVisit == null ? Selection.Empty : new Selection(_selectedVisit); }
+            set { _selectedVisit = (Visit)value.Item; }
         }
 
         public IList DiagnosticServiceChoices
@@ -228,7 +229,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public ISelection SelectedDiagnosticServiceBreakdownItem
         {
-            get { return _selectedDiagnosticServiceBreakdownItem == null ? new Selection() : new Selection(_selectedDiagnosticServiceBreakdownItem); }
+            get { return _selectedDiagnosticServiceBreakdownItem == null ? Selection.Empty : new Selection(_selectedDiagnosticServiceBreakdownItem); }
             set
             {
                 _selectedDiagnosticServiceBreakdownItem = value.Item;
@@ -243,6 +244,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void PlaceOrder()
         {
+            if (this.HasValidationErrors)
+            {
+                this.ShowValidation(true);
+                return;
+            }
+
             try
             {
                 _orderEntryService.PlaceOrder(

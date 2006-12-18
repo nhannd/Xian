@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <specifications>
   <spec id="SelectedAddress">
-    <count test="$.Addresses.Items" min="1" failMessage="At least 1 address is required"/>
+    <any test="$.Addresses.Items" failMessage="A residential address is required">
+      <true test="$.Type.ToString() == 'R'"/>
+    </any>
   </spec>
 </specifications>
 

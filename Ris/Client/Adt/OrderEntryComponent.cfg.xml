@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="SelectedVisit">
+    <count test="$.SelectedVisit.Items" min="1" max="1" failMessage="Visit required"/>
+  </spec>
+  
+  <spec id="SelectedDiagnosticService">
+    <not-null test="$.SelectedDiagnosticService" failMessage="Diagnostic Service required"/>
+  </spec>
+  
+  <spec id="SelectedPriority">
+    <not-null test="$.SelectedPriority" failMessage="Priority required"/>
+  </spec>
+
+  <spec id="SelectedFacility">
+    <not-null test="$.SelectedFacility" failMessage="Facility required"/>
+  </spec>
+  
+  <spec id="SelectedOrderingPhysician">
+    <not-null test="$.SelectedOrderingPhysician" failMessage="Ordering physician required"/>
+  </spec>
+  
+</specifications>

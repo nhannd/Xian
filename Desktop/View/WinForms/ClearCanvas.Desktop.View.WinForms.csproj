@@ -48,6 +48,12 @@
     </Compile>
     <Compile Include="ApplicationComponentHostShelfView.cs" />
     <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="ApplicationComponentUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ApplicationComponentUserControl.Designer.cs">
+      <DependentUpon>ApplicationComponentUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="BindableTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -154,6 +160,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ApplicationComponentUserControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ApplicationComponentUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BindableTreeView.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BindableTreeView.cs</DependentUpon>

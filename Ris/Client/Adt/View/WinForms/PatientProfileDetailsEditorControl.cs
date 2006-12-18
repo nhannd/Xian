@@ -9,11 +9,12 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    public partial class PatientProfileDetailsEditorControl : CustomUserControl
+    public partial class PatientProfileDetailsEditorControl : ApplicationComponentUserControl
     {
         private PatientProfileDetailsEditorComponent _component;
 
         public PatientProfileDetailsEditorControl(PatientProfileDetailsEditorComponent component)
+            :base(component)
         {
             InitializeComponent();
             _component = component;
@@ -41,8 +42,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _errorProvider.DataSource = _component;
         }
 
         private void PatientEditorControl_Load(object sender, EventArgs e)

@@ -28,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this._visitTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.label1 = new System.Windows.Forms.Label();
             this._diagnosticService = new ClearCanvas.Controls.WinForms.ComboBoxField();
@@ -46,16 +48,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitTable.Location = new System.Drawing.Point(26, 27);
             this._visitTable.Margin = new System.Windows.Forms.Padding(4);
             this._visitTable.MenuModel = null;
-            this._visitTable.MultiSelect = true;
+            this._visitTable.MultiSelect = false;
             this._visitTable.Name = "_visitTable";
             this._visitTable.ReadOnly = false;
+            this._visitTable.Selection = selection1;
             this._visitTable.Size = new System.Drawing.Size(826, 156);
             this._visitTable.TabIndex = 0;
             this._visitTable.Table = null;
             this._visitTable.ToolbarModel = null;
             this._visitTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._visitTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._visitTable.SelectionChanged += new System.EventHandler(this._visitTable_SelectionChanged);
             // 
             // label1
             // 
@@ -127,9 +129,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(26, 325);
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
+            this._diagnosticServiceBreakdown.Selection = selection2;
             this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(259, 197);
             this._diagnosticServiceBreakdown.TabIndex = 8;
+            this._diagnosticServiceBreakdown.Tree = null;
             // 
             // _placeOrderButton
             // 
