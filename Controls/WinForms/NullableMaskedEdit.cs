@@ -542,9 +542,16 @@ namespace Clifton.Windows.Forms
             // Clear the selected non-delimiter fields.
             for (int i = SelectionStart; i < SelectionStart + SelectionLength; i++)
             {
-                if (posToMaskIndex[i] >= 0)
+                if (posToMaskIndex.Length > 0)
                 {
-                    newText[i] = PromptChar;
+                    if (posToMaskIndex[i] >= 0)
+                    {
+                        newText[i] = PromptChar;
+                    }
+                }
+                else
+                {
+                    newText[i] = ' ';
                 }
             }
 
