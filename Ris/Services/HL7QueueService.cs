@@ -93,7 +93,11 @@ namespace ClearCanvas.Ris.Services
         {
             IList<Patient> referencedPatients = null;
 
-            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItem.Message);
+            IHL7PreProcessor preProcessor = new HL7PreProcessor(hl7QueueItem);
+            HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll();
+
+            //IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItem.Message);
+            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
 
             processor.Patients = LoadOrCreatePatientsFromMrn(
                 processor.ListReferencedPatientIdentifiers(), 

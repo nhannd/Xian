@@ -255,7 +255,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get 
             {
                 if (_selectedHL7QueueItem != null)
-                    return _selectedHL7QueueItem.Message.Text;
+                    return _selectedHL7QueueItem.Message.Format == HL7MessageFormat.Er7 ? _selectedHL7QueueItem.Message.Text.Replace("\r", "\r\n") : _selectedHL7QueueItem.Message.Text;
                 else
                     return string.Empty;
             }
