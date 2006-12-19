@@ -6,6 +6,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -64,6 +65,8 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent()));
             this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent()));
             this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
+
+            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
             _patientEditor.Subject = _profile;
             _addressesSummary.Subject = _profile;
