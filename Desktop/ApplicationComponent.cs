@@ -118,7 +118,12 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected IApplicationComponentHost Host
         {
-            get { return _host; }
+            get
+            {
+                AssertStarted();
+
+                return _host;
+            }
         }
 
         /// <summary>
@@ -196,6 +201,8 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public virtual void Start()
         {
+            AssertNotStarted();
+
             _started = true;
         }
 
@@ -205,6 +212,8 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public virtual void Stop()
         {
+            AssertStarted();
+
             _started = false;
         }
 
@@ -221,6 +230,8 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public virtual bool CanExit()
         {
+            AssertStarted();
+
             if (this.Modified)
             {
 				DialogBoxAction result = this.Host.ShowMessageBox(SR.MessageConfirmSaveChangesBeforeClosing, MessageBoxActions.YesNoCancel);
@@ -290,12 +301,16 @@ namespace ClearCanvas.Desktop
         {
             get
             {
+                AssertStarted();
+
                 return this.Validation.GetResults().FindAll(delegate(ValidationResult r) { return !r.Success; }).Count > 0;
             }
         }
 
         public virtual void ShowValidation(bool show)
         {
+            AssertStarted();
+
             _showValidationErrors = show;
             EventsHelper.Fire(_showValidationErrorsChanged, this, EventArgs.Empty);
         }
@@ -322,7 +337,6 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
-
 
         #region IDataErrorInfo Members
 
@@ -351,5 +365,20 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+        #region Helper methods
+
+        private void AssertStarted()
+        {
+            if (!_started)
+                throw new InvalidOperationException(SR.ExceptionComponentNeverStarted);
+        }
+
+        private void AssertNotStarted()
+        {
+            if (_started)
+                throw new InvalidOperationException(SR.ExceptionComponentAlreadyStarted);
+        }
+
+        #endregion
     }
 }

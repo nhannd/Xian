@@ -8,25 +8,41 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// Base class for user controls that are created by an Application Component View.
+    /// </summary>
     public partial class ApplicationComponentUserControl : CustomUserControl
     {
+        /// <summary>
+        /// Constructor required for Designer support.  Do not use this constructor in application code.
+        /// </summary>
         public ApplicationComponentUserControl()
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="component"></param>
         public ApplicationComponentUserControl(IApplicationComponent component)
         {
             InitializeComponent();
 
             _errorProvider.DataSource = component;
+            component.ValidationVisibleChanged += ValidationVisibleChangedEventHandler;
         }
 
         /// <summary>
-        /// Gets the default <see cref="ErrorProvider"/> for this user control
+        /// Gets the default <see cref="System.Windows.Forms.ErrorProvider"/> for this user control
         /// </summary>
-        protected ValidationErrorProvider ErrorProvider
+        public ErrorProvider ErrorProvider
         {
             get { return _errorProvider; }
+        }
+
+        private void ValidationVisibleChangedEventHandler(object sender, EventArgs e)
+        {
+            _errorProvider.UpdateBinding();
         }
     }
 }

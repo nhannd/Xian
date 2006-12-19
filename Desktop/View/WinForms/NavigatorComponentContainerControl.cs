@@ -14,12 +14,14 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         private NavigatorComponentContainer _component;
         private Dictionary<NavigatorPage, TreeNode> _nodeMap;
+        private List<Control> _createdControls;
 
         public NavigatorComponentContainerControl(NavigatorComponentContainer component)
         {
             InitializeComponent();
 
             _nodeMap = new Dictionary<NavigatorPage, TreeNode>();
+            _createdControls = new List<Control>();
 
             _headerStrip.HeaderStyle = AreaHeaderStyle.Small;
 
@@ -30,13 +32,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _backButton.DataBindings.Add("Enabled", _component, "BackEnabled");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
 
+            // add a node to the tree for each page
             foreach (NavigatorPage page in _component.Pages)
             {
-                Control c = (Control)page.ComponentHost.ComponentView.GuiElement;
-                c.Visible = false;
-                c.Dock = DockStyle.Fill;
-                _contentPanel.Controls.Add(c);
-
                 AddTreeNode(page, _treeView.Nodes, 0);
             }
 
@@ -46,12 +44,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                 treeNode.Expand();
             }
 
-            SelectNode(_component.CurrentPage);
+            ShowPage(_component.CurrentPage);
         }
 
         private void _component_CurrentNodeChanged(object sender, EventArgs e)
         {
-            SelectNode(_component.CurrentPage);
+            ShowPage(_component.CurrentPage);
         }
 
         private void _cancelButton_Click(object sender, EventArgs e)
@@ -98,20 +96,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private void SelectNode(NavigatorPage page)
+        private void ShowPage(NavigatorPage page)
         {
-            // set all pages to hidden except the selected page
-            foreach (NavigatorPage p in _component.Pages)
+            // get the control to show
+            Control toShow = (Control)_component.GetPageView(page).GuiElement;
+
+            // hide all others
+            foreach (Control c in _contentPanel.Controls)
             {
-                if (p != page)
-                {
-                    Control c = (Control)p.ComponentHost.ComponentView.GuiElement;
+                if (c != toShow)
                     c.Visible = false;
-                }
             }
 
-            Control toShow = (Control)page.ComponentHost.ComponentView.GuiElement;
+            // if the control has not been added to the content panel, add it now
+            if (!_contentPanel.Controls.Contains(toShow))
+            {
+                toShow.Dock = DockStyle.Fill;
+                _contentPanel.Controls.Add(toShow);
+            }
+
             toShow.Visible = true;
+
+            // HACK: for some reason the error provider symbols don't show up the first time the control is shown
+            // therefore we need to force it
+            if (toShow is ApplicationComponentUserControl)
+            {
+                (toShow as ApplicationComponentUserControl).ErrorProvider.UpdateBinding();
+            }
+
+            // set the title and selected tree node
             _title.Text = page.Path.LastSegment.LocalizedText;
             _treeView.SelectedNode = _nodeMap[page];
         }

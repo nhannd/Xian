@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -29,9 +30,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			foreach (TabPage page in _component.Pages)
 			{
-				Control control = page.ComponentHost.ComponentView.GuiElement as Control;
-
-				Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name, control);
+				Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name);
 				tabPageUI.Tag = page;
 
 				_tabControl.TabPages.Add(tabPageUI);
@@ -39,28 +38,36 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			_tabControl.SelectionChanged += new Crownwood.DotNetMagic.Controls.SelectTabHandler(OnControlSelectionChanged);
 			_component.CurrentPageChanged += new EventHandler(OnComponentCurrentPageChanged);
+
+            ShowPage(_component.CurrentPage);
 		}
 
-		void OnComponentCurrentPageChanged(object sender, EventArgs e)
+		private void OnComponentCurrentPageChanged(object sender, EventArgs e)
 		{
-			TabPage currentTabPage = _tabControl.SelectedTab.Tag as TabPage;
-
-			if (currentTabPage != _component.CurrentPage)
-			{
-				foreach (Crownwood.DotNetMagic.Controls.TabPage tabPageUI in _tabControl.TabPages)
-				{
-					TabPage tabPage = tabPageUI.Tag as TabPage;
-
-					if (currentTabPage == tabPage)
-						tabPageUI.Select();
-				}
-			}
+            ShowPage(_component.CurrentPage);
 		}
 
-		void OnControlSelectionChanged(Crownwood.DotNetMagic.Controls.TabControl sender, Crownwood.DotNetMagic.Controls.TabPage oldPage, Crownwood.DotNetMagic.Controls.TabPage newPage)
+        private void OnControlSelectionChanged(Crownwood.DotNetMagic.Controls.TabControl sender, Crownwood.DotNetMagic.Controls.TabPage oldPage, Crownwood.DotNetMagic.Controls.TabPage newPage)
 		{
 			TabPage tabPage = newPage.Tag as TabPage;
 			_component.CurrentPage = tabPage;
 		}
-	}
+
+        private void ShowPage(TabPage page)
+        {
+            // find the tab corresponding to the current page
+            Crownwood.DotNetMagic.Controls.TabPage tab = CollectionUtils.SelectFirst<Crownwood.DotNetMagic.Controls.TabPage>(_tabControl.TabPages,
+                delegate(Crownwood.DotNetMagic.Controls.TabPage tp) { return tp.Tag == page; });
+
+            // if the tab's control was not yet created, create it now
+            if (tab.Control == null)
+            {
+                tab.Control = (Control)_component.GetPageView(page).GuiElement;
+            }
+
+            // ensure the correct tab is selected (in case the current page was changed programatically)
+            tab.Select();
+        }
+
+    }
 }

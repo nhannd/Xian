@@ -1,3 +1,5 @@
+using System.Windows.Forms;
+
 namespace ClearCanvas.Desktop.View.WinForms
 {
     partial class ApplicationComponentUserControl
@@ -28,7 +30,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._errorProvider = new ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider();
+            this._errorProvider = new System.Windows.Forms.ErrorProvider();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -49,6 +51,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-        private ValidationErrorProvider _errorProvider;
+        private ErrorProvider _errorProvider;
     }
 }

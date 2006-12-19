@@ -77,7 +77,9 @@ namespace ClearCanvas.Desktop
             get { return _contentHost; }
         }
 
-		public override void Start()
+        #region ApplicationComponent overrides
+
+        public override void Start()
         {
 			base.Start();
 
@@ -91,12 +93,41 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
-        protected override IEnumerable<IApplicationComponent> ContainedComponents
+        #endregion
+
+        #region ApplicationComponentContainer overrides
+
+        public override IEnumerable<IApplicationComponent> ContainedComponents
         {
             get { return new IApplicationComponent[] { _contentHost.Component }; }
         }
 
-		public void OK()
+        public override IEnumerable<IApplicationComponent> VisibleComponents
+        {
+            get { return this.ContainedComponents; }
+        }
+
+        public override void EnsureStarted(IApplicationComponent component)
+        {
+            if (!this.IsStarted)
+                throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
+
+            // nothing to do, since the hosted component is started by default
+        }
+
+        public override void EnsureVisible(IApplicationComponent component)
+        {
+            if (!this.IsStarted)
+                throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
+
+            // nothing to do, since the hosted component is visible by default
+        }
+
+        #endregion
+
+        #region Presentation Model
+
+        public void OK()
 		{
 			this.ExitCode = ApplicationComponentExitCode.Normal;
 			this.Host.Exit();
@@ -106,7 +137,8 @@ namespace ClearCanvas.Desktop
 		{
 			this.ExitCode = ApplicationComponentExitCode.Cancelled;
             this.Host.Exit();
-		}
+        }
 
+        #endregion
     }
 }

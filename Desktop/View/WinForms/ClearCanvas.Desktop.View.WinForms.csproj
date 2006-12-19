@@ -92,13 +92,6 @@
       <DependentUpon>SplitComponentContainerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SplitComponentContainerView.cs" />
-    <Compile Include="StackComponentContainerControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StackComponentContainerControl.Designer.cs">
-      <DependentUpon>StackComponentContainerControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="StackComponentContainerView.cs" />
     <Compile Include="TabComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -140,9 +133,6 @@
       <DependentUpon>TableView.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripBuilder.cs" />
-    <Compile Include="ValidationErrorProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WinFormsView.cs" />
     <Compile Include="DesktopForm.cs">
       <SubType>Form</SubType>
@@ -200,10 +190,6 @@
     <EmbeddedResource Include="DesktopForm.resx">
       <DependentUpon>DesktopForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StackComponentContainerControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>StackComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TabComponentContainerControl.resx">
       <SubType>Designer</SubType>

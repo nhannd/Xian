@@ -150,6 +150,12 @@
   <data name="ExceptionComponentNeverStarted" xml:space="preserve">
     <value>Component was never started, or has already been stopped.</value>
   </data>
+  <data name="ExceptionContainerAlreadyStarted" xml:space="preserve">
+    <value>Container has already been started</value>
+  </data>
+  <data name="ExceptionContainerNeverStarted" xml:space="preserve">
+    <value>Container was never started, or has already been stopped.</value>
+  </data>
   <data name="ExceptionDesktopViewNotCreated" xml:space="preserve">
     <value>The main desktop view has not been created.</value>
   </data>

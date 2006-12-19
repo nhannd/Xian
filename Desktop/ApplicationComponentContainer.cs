@@ -2,33 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Base class for application components that act as containers for other application components.
-    /// Currently this class has no content, but exists as a placeholder.  Components that intend to act
-    /// primarily as containers for other component should inherit this class for future compatability.
     /// </summary>
-    public abstract class ApplicationComponentContainer : ApplicationComponent
+    public abstract class ApplicationComponentContainer : ApplicationComponent, IApplicationComponentContainer
     {
-        protected abstract IEnumerable<IApplicationComponent> ContainedComponents { get; }
+        private IApplicationComponentContainerValidationStrategy _validationStrategy;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ApplicationComponentContainer()
+        {
+            _validationStrategy = new NoNodesContainerValidationStrategy();
+        }
+
+        /// <summary>
+        /// Gets or sets the validation strategy that determines how this container responds
+        /// to validation requests.
+        /// </summary>
+        public IApplicationComponentContainerValidationStrategy ValidationStrategy
+        {
+            get { return _validationStrategy; }
+            set { _validationStrategy = value; }
+        }
+
+        /// <summary>
+        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property
+        /// </summary>
         public override bool HasValidationErrors
         {
             get
             {
-                // true if any contained component has validation errors
-                return CollectionUtils.Contains<IApplicationComponent>(this.ContainedComponents,
-                    delegate(IApplicationComponent c) { return c.HasValidationErrors; });
+                return _validationStrategy.HasValidationErrors(this);
             }
         }
 
+        /// <summary>
+        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property
+        /// </summary>
+        /// <param name="show"></param>
         public override void ShowValidation(bool show)
         {
-            // propagate to each contained component
-            foreach (IApplicationComponent c in this.ContainedComponents)
-                c.ShowValidation(show);
+            _validationStrategy.ShowValidation(this, show);
         }
+
+        #region IApplicationComponentContainer Members
+
+        public abstract IEnumerable<IApplicationComponent> ContainedComponents { get; }
+
+        public abstract IEnumerable<IApplicationComponent> VisibleComponents { get; }
+
+        public abstract void EnsureVisible(IApplicationComponent component);
+
+        public abstract void EnsureStarted(IApplicationComponent component);
+
+        #endregion
     }
 }

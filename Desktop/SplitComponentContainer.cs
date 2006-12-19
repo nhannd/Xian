@@ -112,9 +112,11 @@ namespace ClearCanvas.Desktop
 		public SplitOrientation SplitOrientation
 		{
 			get { return _splitOrientation; }
-		}
+        }
 
-		public override void Start()
+        #region ApplicationComponent overrides
+
+        public override void Start()
         {
 			base.Start();
 
@@ -139,9 +141,36 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected override IEnumerable<IApplicationComponent> ContainedComponents
+        #endregion
+
+        #region ApplicationComponentContainer overrides
+
+        public override IEnumerable<IApplicationComponent> ContainedComponents
         {
             get { return new IApplicationComponent[] { _pane1.Component, _pane2.Component }; }
         }
+
+        public override IEnumerable<IApplicationComponent> VisibleComponents
+        {
+            get { return this.ContainedComponents; }
+        }
+
+        public override void EnsureVisible(IApplicationComponent component)
+        {
+            if (!this.IsStarted)
+                throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
+
+            // nothing to do, since the hosted components are started by default
+        }
+
+        public override void EnsureStarted(IApplicationComponent component)
+        {
+            if (!this.IsStarted)
+                throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
+
+            // nothing to do, since the hosted components are visible by default
+        }
+
+        #endregion
     }
 }

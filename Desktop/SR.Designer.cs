@@ -160,6 +160,24 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Container has already been started.
+        /// </summary>
+        public static string ExceptionContainerAlreadyStarted {
+            get {
+                return ResourceManager.GetString("ExceptionContainerAlreadyStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Container was never started, or has already been stopped..
+        /// </summary>
+        public static string ExceptionContainerNeverStarted {
+            get {
+                return ResourceManager.GetString("ExceptionContainerNeverStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The main desktop view has not been created..
         /// </summary>
         public static string ExceptionDesktopViewNotCreated {
