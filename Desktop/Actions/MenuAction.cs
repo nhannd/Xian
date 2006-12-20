@@ -6,9 +6,16 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
+    [ExtensionPoint]
+    public class MenuActionViewExtensionPoint : ExtensionPoint<IActionView>
+    {
+    }
+
+
     /// <summary>
     /// Models a menu item action.
     /// </summary>
+    [AssociateView(typeof(MenuActionViewExtensionPoint))]
     public class MenuAction : ClickAction
     {
         /// <summary>

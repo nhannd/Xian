@@ -53,6 +53,7 @@
     <Compile Include="Actions\ActionModelStore.cs" />
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="Actions\IActionView.cs" />
     <Compile Include="Actions\KeyboardAction.cs" />
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />

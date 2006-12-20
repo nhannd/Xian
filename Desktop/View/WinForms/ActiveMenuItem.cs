@@ -53,6 +53,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                     Platform.Log(e);
                 }
             }
+
+            try
+            {
+                this.ShortcutKeys = (Keys)_action.KeyStroke;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(e);
+            }
         }
 
         private void OnActionCheckedChanged(object sender, EventArgs e)

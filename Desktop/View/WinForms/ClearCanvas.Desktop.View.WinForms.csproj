@@ -60,6 +60,7 @@
     <Compile Include="BindableTreeView.Designer.cs">
       <DependentUpon>BindableTreeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="ButtonActionView.cs" />
     <Compile Include="CursorFactory.cs" />
     <Compile Include="DialogComponentContainerControl.cs">
       <SubType>UserControl</SubType>
@@ -85,6 +86,7 @@
       <DependentUpon>HtmlComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="HtmlComponentView.cs" />
+    <Compile Include="MenuActionView.cs" />
     <Compile Include="SplitComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

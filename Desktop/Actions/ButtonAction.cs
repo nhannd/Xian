@@ -6,9 +6,15 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
+    [ExtensionPoint]
+    public class ButtonActionViewExtensionPoint : ExtensionPoint<IActionView>
+    {
+    }
+
     /// <summary>
     /// Models a toolbar button action.
     /// </summary>
+    [AssociateView(typeof(ButtonActionViewExtensionPoint))]
     public class ButtonAction : ClickAction
     {
         /// <summary>

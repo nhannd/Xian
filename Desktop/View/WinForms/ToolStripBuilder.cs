@@ -16,10 +16,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 if (node.IsLeaf)
                 {
-                    // this is a leaf node (terminal menu item)
-                    ToolStripButton button = new ActiveToolbarButton((IClickAction)node.Action);
+                    IAction action = (IAction)node.Action;
+                    ToolStripItem button = GetToolStripItemForAction(action);
                     button.Tag = node;
-					// By default, only display the image on the button
+
+                    // By default, only display the image on the button
                     button.DisplayStyle = displayStyle;
                     parentItemCollection.Add(button);
                 }
@@ -38,18 +39,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 if (node.IsLeaf)
                 {
-                    IClickAction clickAction = (IClickAction)node.Action;
-					// this is a leaf node (terminal menu item)
-                    menuItem = new ActiveMenuItem(clickAction);
+                    // this is a leaf node (terminal menu item)
+                    IAction action = (IAction)node.Action;
+                    menuItem = (ToolStripMenuItem)GetToolStripItemForAction(action);
 
-					try
-					{
-						menuItem.ShortcutKeys = (Keys)clickAction.KeyStroke;
-					}
-					catch (Exception e)
-					{
-						Platform.Log(e);
-					}
                 }
                 else
                 {
@@ -86,5 +79,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
             }
         }
+
+        private static ToolStripItem GetToolStripItemForAction(IAction action)
+        {
+            IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
+            view.SetAction(action);
+            return (ToolStripItem)view.GuiElement;
+        }
+
     }
 }
