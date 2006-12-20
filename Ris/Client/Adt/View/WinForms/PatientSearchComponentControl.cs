@@ -19,8 +19,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _errorProvider.DataSource = _component;
-
             _mrn.DataBindings.Add("Value", _component, "Mrn", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcard.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);
             _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);

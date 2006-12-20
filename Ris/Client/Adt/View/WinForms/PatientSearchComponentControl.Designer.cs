@@ -37,9 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sex = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._healthcard = new ClearCanvas.Controls.WinForms.TextField();
             this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._errorProvider = new ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // _searchButton
@@ -175,11 +173,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._dateOfBirth.TabIndex = 5;
             this._dateOfBirth.Value = null;
             // 
-            // _errorProvider
-            // 
-            this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this._errorProvider.ContainerControl = this;
-            // 
             // PatientSearchComponentControl
             // 
             this.AcceptButton = this._searchButton;
@@ -191,7 +184,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Size = new System.Drawing.Size(214, 266);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -207,6 +199,5 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
         private System.Windows.Forms.CheckBox _keepOpen;
-        private ClearCanvas.Desktop.View.WinForms.ValidationErrorProvider _errorProvider;
     }
 }
