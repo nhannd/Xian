@@ -1068,5 +1068,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			_dicomImage.GetTagArray(tag, out arrayValues, out tagExists);
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			_dicomImage.Dispose();
+
+			base.Dispose(disposing);
+		}
 	}
 }

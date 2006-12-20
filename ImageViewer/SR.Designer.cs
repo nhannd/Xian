@@ -385,6 +385,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images in the study you requested.  Please contact your PACS administrator, or check the log..
+        /// </summary>
+        public static string ExceptionLoadCompleteFailure {
+            get {
+                return ResourceManager.GetString("ExceptionLoadCompleteFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images in the study you requested.  Please contact your PACS administrator, or check the log..
+        /// </summary>
+        public static string ExceptionLoadPartialFailure {
+            get {
+                return ResourceManager.GetString("ExceptionLoadPartialFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LUT index out of range (index = {0})..
         /// </summary>
         public static string ExceptionLUTIndexOutOfRange {
@@ -507,24 +525,6 @@ namespace ClearCanvas.ImageViewer {
         public static string ExceptionStatefulGraphicMustBeIMemorable {
             get {
                 return ResourceManager.GetString("ExceptionStatefulGraphicMustBeIMemorable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to At least one image failed to load.  Please see the log for details..
-        /// </summary>
-        public static string MessageAtLeastOneImageFailedToLoad {
-            get {
-                return ResourceManager.GetString("MessageAtLeastOneImageFailedToLoad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to load any images in the study.  Please see the log for details..
-        /// </summary>
-        public static string MessageUnableToLoadStudy {
-            get {
-                return ResourceManager.GetString("MessageUnableToLoadStudy", resourceCulture);
             }
         }
     }

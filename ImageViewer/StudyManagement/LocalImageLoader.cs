@@ -9,29 +9,36 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	public class LocalImageLoader
+	internal class LocalImageLoader
 	{
+		private IImageViewer _viewer;
+
 		private int _totalImages;
 		private int _failedImages;
-		private List<LocalImageSop> _images = new List<LocalImageSop>();
 
-		public LocalImageLoader()
+
+		public LocalImageLoader(IImageViewer viewer)
 		{
+			_viewer = viewer;
 		}
 
-		public List<LocalImageSop> Load(string path, out int totalImages, out int failedImages)
+		public int TotalImages
+		{
+			get { return _totalImages; }
+		}
+		
+		public int FailedImages
+		{
+			get { return _failedImages; }
+		}
+
+		public void Load(string path)
 		{
 			_totalImages = 0;
 			_failedImages = 0;
-			_images.Clear();
 
 			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(LoadImage);
 			FileProcessor.Process(path, "*.dcm", process, true);
-
-			failedImages = _failedImages;
-			totalImages = _totalImages;
-
-			return _images;
 		}
 
 		private void LoadImage(string file)
@@ -43,8 +50,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				image = new LocalImageSop(file);
 
 				ImageValidator.ValidateSOPInstanceUID(image.SopInstanceUID);
-				ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
-				_images.Add(image);
+				_viewer.StudyTree.AddImage(image);
+				_viewer.EventBroker.OnImageLoaded(
+					new SopEventArgs(_viewer.StudyTree.GetSop(image.SopInstanceUID)));
 			}
 			catch (Exception e)
 			{

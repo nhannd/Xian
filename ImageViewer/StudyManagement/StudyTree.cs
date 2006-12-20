@@ -7,9 +7,9 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	public class StudyTree
+	public sealed class StudyTree
 	{
-		private PatientCollection _patients = new PatientCollection();
+		private PatientCollection _patients;
 
 		// We add these master dictionaries so we can have rapid
 		// look up of study, series and sop objects without having to traverse
@@ -18,13 +18,63 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private SeriesCollection _seriesCollection = new SeriesCollection();
 		private SopCollection _sops = new SopCollection();
 
-		public StudyTree()
+		private static SopCache _sopCache = new SopCache();
+
+		internal StudyTree()
 		{
 		}
 
+#if UNIT_TESTS
+
+		internal SopCache SopCache
+		{
+			get { return _sopCache; }
+		}
+
+#endif
+
 		public PatientCollection Patients
 		{
-			get { return _patients; }
+			get 
+			{ 
+				if (_patients == null)
+					_patients = new PatientCollection();
+
+				return _patients; 
+			}
+		}
+
+		private StudyCollection Studies
+		{
+			get
+			{
+				if (_studies == null)
+					_studies = new StudyCollection();
+
+				return _studies;
+			}
+		}
+
+		private SeriesCollection SeriesCollection
+		{
+			get
+			{
+				if (_seriesCollection == null)
+					_seriesCollection = new SeriesCollection();
+
+				return _seriesCollection;
+			}
+		}
+
+		private SopCollection Sops
+		{
+			get
+			{
+				if (_sops == null)
+					_sops = new SopCollection();
+
+				return _sops;
+			}
 		}
 
 		public Patient GetPatient(string patientId)
@@ -41,146 +91,183 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
 
-			if (!_studies.ContainsKey(studyInstanceUID))
+			if (!this.Studies.ContainsKey(studyInstanceUID))
 				return null;
 
-			return _studies[studyInstanceUID];
+			return this.Studies[studyInstanceUID];
 		}
 
 		public Series GetSeries(string seriesInstanceUID)
 		{
 			Platform.CheckForEmptyString(seriesInstanceUID, "seriesInstanceUID");
 
-			if (!_seriesCollection.ContainsKey(seriesInstanceUID))
+			if (!this.SeriesCollection.ContainsKey(seriesInstanceUID))
 				return null;
 
-			return _seriesCollection[seriesInstanceUID];
+			return this.SeriesCollection[seriesInstanceUID];
 		}
 
 		public Sop GetSop(string sopInstanceUID)
 		{
 			Platform.CheckForEmptyString(sopInstanceUID, "sopInstanceUID");
 
-			if (!_sops.ContainsKey(sopInstanceUID))
+			if (!this.Sops.ContainsKey(sopInstanceUID))
 				return null;
 
-			return _sops[sopInstanceUID];
+			return this.Sops[sopInstanceUID];
 		}
 
-		public void AddImage(ImageSop image)
+		internal void AddImage(ImageSop image)
 		{
 			Platform.CheckForNullReference(image, "image");
 
 			ImageValidator.ValidateImage(image);
 
-			Patient patient;
-			Study study;
-			Series series;
+			Patient patient = AddPatient(image.PatientId);
+			Study study = AddStudy(image.StudyInstanceUID, patient);
+			Series series = AddSeries(image.SeriesInstanceUID, study);
 
-			if (!_patients.ContainsKey(image.PatientId))
+			AddImage(image, series);
+		}
+
+		#region Private methods
+
+		private Patient AddPatient(string patientID)
+		{
+			Patient patient;
+			if (!this.Patients.ContainsKey(patientID))
 			{
-				patient = new Patient(image.PatientId);
-				_patients.Add(image.PatientId, patient);
+				patient = new Patient();
+				this.Patients.Add(patientID, patient);
 			}
 			else
 			{
-				patient = _patients[image.PatientId];
+				patient = _patients[patientID];
 			}
+			return patient;
+		}
 
+		private Study AddStudy(string studyInstanceUID, Patient patient)
+		{
+			Study study;
 			StudyCollection studies = patient.Studies;
 
-			if (!studies.ContainsKey(image.StudyInstanceUID))
+			if (!studies.ContainsKey(studyInstanceUID))
 			{
-				study = new Study(image.StudyInstanceUID, patient);
-				studies.Add(image.StudyInstanceUID, study);
-				_studies.Add(image.StudyInstanceUID, study);
+				// If this ever happens, it means that the study
+				// belongs to more than one patient, which means
+				// something has gone terribly wrong on the modality
+				if (this.Studies.ContainsKey(studyInstanceUID))
+					throw new Exception("Study belongs to more than one patient.");
+
+				study = new Study(patient);
+				studies.Add(studyInstanceUID, study);
+				this.Studies.Add(studyInstanceUID, study);
 			}
 			else
 			{
-				study = studies[image.StudyInstanceUID];
+				study = studies[studyInstanceUID];
 			}
+			return study;
+		}
 
+		private Series AddSeries(string seriesInstanceUID, Study study)
+		{
+			Series series;
 			SeriesCollection seriesCollection = study.Series;
 
-			if (!seriesCollection.ContainsKey(image.SeriesInstanceUID))
+			if (!seriesCollection.ContainsKey(seriesInstanceUID))
 			{
-				series = new Series(image.SeriesInstanceUID, study);
-				seriesCollection.Add(image.SeriesInstanceUID, series);
-				_seriesCollection.Add(image.SeriesInstanceUID, series);
+				// If this ever happens, it means that the series
+				// belongs to more than one study, which means
+				// something has gone terribly wrong on the modality
+				if (this.SeriesCollection.ContainsKey(seriesInstanceUID))
+					throw new Exception("Series belongs to more than one study.");
+
+				series = new Series(study);
+				seriesCollection.Add(seriesInstanceUID, series);
+				this.SeriesCollection.Add(seriesInstanceUID, series);
 			}
 			else
 			{
-				series = seriesCollection[image.SeriesInstanceUID];
+				series = seriesCollection[seriesInstanceUID];
 			}
 
+			return series;
+		}
+
+		private void AddImage(ImageSop image, Series series)
+		{
 			SopCollection sops = series.Sops;
 
 			if (!sops.ContainsKey(image.SopInstanceUID))
 			{
-				image.ParentSeries = series;
-				sops.Add(image.SopInstanceUID, image);
-				_sops.Add(image.SopInstanceUID, image);
+				// If this ever happens, it means that the SOP
+				// belongs to more than one series, which means
+				// something has gone terribly wrong on the modality
+				if (this.Sops.ContainsKey(image.SopInstanceUID))
+					throw new Exception("SOP belongs to more than one series.");
+
+				// Try and add the image to the cache.  If it already exists
+				// it won't be added
+				_sopCache.Add(image as ICacheableSop);
+
+				// Get the image from the cache
+				ImageSop cachedSop = _sopCache[image.SopInstanceUID] as ImageSop;
+
+				// Create a proxy for actual image in the cache.  This allows
+				// for the sharing of images so we never have to keep copies
+				// of the image.  Clients use the proxy instead of the real image.
+				ImageSopProxy imageSopProxy = new ImageSopProxy(cachedSop);
+				imageSopProxy.ParentSeries = series;
+
+				// Propagate the image proxy up the tree so the parent nodes
+				// can access the tags in the image
+				series.SetSop(imageSopProxy);
+
+				// Add the proxy the SOP collection
+				sops.Add(imageSopProxy.SopInstanceUID, imageSopProxy);
+				this.Sops.Add(imageSopProxy.SopInstanceUID, imageSopProxy);
 			}
 		}
 
-		internal void IncrementStudyReferenceCount(string studyInstanceUID)
+		#endregion
+
+		#region Disposal
+
+		#region IDisposable Members
+
+		public void Dispose()
 		{
-			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
-
-			Study study = GetStudy(studyInstanceUID);
-
-			if (study == null)
-				return;
-
-			study.ReferenceCount++;
-		}
-
-		internal void DecrementStudyReferenceCount(string studyInstanceUID)
-		{
-			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
-
-			Study study = GetStudy(studyInstanceUID);
-
-			if (study == null)
-				return;
-			
-			study.ReferenceCount--;
-
-			if (study.ReferenceCount == 0)
-				RemoveStudy(study);
-
-			// A lot of memory can be freed here since image pixel data
-			// is held by the ImageSop objects.
-			GC.Collect();
-		}
-
-		private void RemoveStudy(Study study)
-		{
-			RemoveStudyFromMasterDictionaries(study);
-			RemoveStudyFromTree(study);
-		}
-
-		private void RemoveStudyFromMasterDictionaries(Study study)
-		{
-			_studies.Remove(study.StudyInstanceUID);
-
-			foreach (Series series in study.Series.Values)
+			try
 			{
-				_seriesCollection.Remove(series.SeriesInstanceUID);
-
-				foreach (Sop sop in series.Sops.Values)
-					_sops.Remove(sop.SopInstanceUID);
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
 			}
 		}
 
-		private void RemoveStudyFromTree(Study study)
-		{
-			Patient parentPatient = study.ParentPatient;
-			parentPatient.Studies.Remove(study.StudyInstanceUID);
+		#endregion
 
-			// If the parent patient has no studies left, remove it too.
-			if (parentPatient.Studies.Count == 0)
-				this.Patients.Remove(parentPatient.PatientId);
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		private void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				foreach (Sop sop in _sops.Values)
+					_sopCache.Remove(sop.SopInstanceUID);
+
+				_sops.Clear();
+			}
 		}
+
+		#endregion
 	}
 }

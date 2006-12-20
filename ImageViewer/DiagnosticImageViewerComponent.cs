@@ -7,7 +7,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer
 {
 	[ExtensionPoint()]
-	public class DiagnosticLayoutManagerExtensionPoint : ExtensionPoint<IDiagnosticLayoutManager>
+	public class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
 	{
 	}
 
@@ -19,36 +19,16 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		public DiagnosticImageViewerComponent(IDiagnosticLayoutManager layoutManager)
+		public DiagnosticImageViewerComponent(ILayoutManager layoutManager)
 			: base(layoutManager)
 		{
 		}
 
-		private IDiagnosticLayoutManager DiagnosticLayoutManager
-		{
-			get { return this.LayoutManager as IDiagnosticLayoutManager; }
-		}
-
 		#region Public methods
-
-		public void AddStudy(string studyInstanceUID)
-		{
-			this.DiagnosticLayoutManager.AddStudy(studyInstanceUID);
-		}
-
-		public void AddSeries(string seriesInstanceUID)
-		{
-			this.DiagnosticLayoutManager.AddSeries(seriesInstanceUID);
-		}
-
-		public void AddImage(string sopInstanceUID)
-		{
-			this.DiagnosticLayoutManager.AddImage(sopInstanceUID);
-		}
 
 		public void Layout()
 		{
-			this.DiagnosticLayoutManager.Layout();
+			this.LayoutManager.Layout();
 		}
 
 		#endregion
@@ -67,10 +47,6 @@ namespace ClearCanvas.ImageViewer
 
 		public override void Stop()
 		{
-			// TODO: What would be better is if the study tree listened for workspaces
-			// being addded/removed then increased/decreased the reference count itself.
-			//StudyManager.StudyTree.DecrementStudyReferenceCount(_studyInstanceUID);
-
 			base.Stop();
 		}
 
@@ -82,7 +58,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			try
 			{
-				DiagnosticLayoutManagerExtensionPoint xp = new DiagnosticLayoutManagerExtensionPoint();
+				LayoutManagerExtensionPoint xp = new LayoutManagerExtensionPoint();
 				this.LayoutManager = (ILayoutManager)xp.CreateExtension();
 			}
 			catch (NotSupportedException e)

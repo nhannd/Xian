@@ -8,11 +8,10 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [ExtensionOf(typeof(DiagnosticLayoutManagerExtensionPoint))]
-	public class LayoutManager : IDiagnosticLayoutManager
+    [ExtensionOf(typeof(LayoutManagerExtensionPoint))]
+	public class LayoutManager : ILayoutManager
 	{
-		private IPhysicalWorkspace _physicalWorkspace;
-		private ILogicalWorkspace _logicalWorkspace;
+		private IImageViewer _imageViewer;
 		private bool _physicalWorkspaceCreated = false;
 
 		// Constructor
@@ -24,74 +23,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public void SetImageViewer(IImageViewer imageViewer)
 		{
-			_physicalWorkspace = imageViewer.PhysicalWorkspace;
-			_logicalWorkspace = imageViewer.LogicalWorkspace;
-		}
-
-		public void AddStudy(string studyInstanceUID)
-		{
-			Study study = ImageViewerComponent.StudyManager.StudyTree.GetStudy(studyInstanceUID);
-
-			// Abort if study hasn't been loaded
-			if (study == null)
-				throw new ApplicationException(String.Format(SR.ExceptionStudyNotLoaded, studyInstanceUID));
-
-			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
-
-			// Abort if image set has already been added
-			if (imageSet != null)
-				return;
-
-			imageSet = AddImageSet(_logicalWorkspace, study);
-
-			AddDisplaySets(imageSet, study);
-		}
-
-		public void AddSeries(string seriesInstanceUID)
-		{
-			Series series = ImageViewerComponent.StudyManager.StudyTree.GetSeries(seriesInstanceUID);
-
-			if (series == null)
-				throw new ApplicationException(String.Format(SR.ExceptionSeriesNotLoaded, seriesInstanceUID));
-
-			string studyInstanceUID = series.ParentStudy.StudyInstanceUID;
-			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
-
-			// If image set hasn't been added, add it
-			if (imageSet == null)
-				imageSet = AddImageSet(_logicalWorkspace, series.ParentStudy);
-
-			IDisplaySet displaySet = AddDisplaySet(imageSet, series);
-			AddImages(displaySet, series);
-		}
-
-		public void AddImage(string sopInstanceUID)
-		{
-			ImageSop image = ImageViewerComponent.StudyManager.StudyTree.GetSop(sopInstanceUID) as ImageSop;
-
-			if (image == null)
-				throw new ApplicationException(String.Format(SR.ExceptionImageNotLoaded, sopInstanceUID));
-
-			string studyInstanceUID = image.ParentSeries.ParentStudy.StudyInstanceUID;
-			IImageSet imageSet = GetImageSet(_logicalWorkspace, studyInstanceUID);
-
-			if (imageSet == null)
-				imageSet = AddImageSet(_logicalWorkspace, image.ParentSeries.ParentStudy);
-
-			string seriesInstanceUID = image.ParentSeries.SeriesInstanceUID;
-			IDisplaySet displaySet = GetDisplaySet(imageSet, seriesInstanceUID);
-
-			if (displaySet == null)
-				displaySet = AddDisplaySet(imageSet, image.ParentSeries);
-
-			AddImage(displaySet, image);
+			_imageViewer = imageViewer;
+			_imageViewer.EventBroker.StudyLoaded += new EventHandler<StudyEventArgs>(OnStudyLoaded);
+			_imageViewer.EventBroker.ImageLoaded += new EventHandler<SopEventArgs>(OnImageLoaded);
 		}
 
 		public void Layout()
 		{
-			CreatePhysicalWorkspaceTree(_physicalWorkspace);
-			FillPhysicalWorkspace(_physicalWorkspace, _logicalWorkspace);
-			_physicalWorkspace.Draw();
+			CreatePhysicalWorkspaceTree(_imageViewer.PhysicalWorkspace);
+			FillPhysicalWorkspace(_imageViewer.PhysicalWorkspace, _imageViewer.LogicalWorkspace);
+			_imageViewer.PhysicalWorkspace.Draw();
 		}
 
 		#endregion
@@ -128,6 +69,75 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 
 		#endregion
+
+		private void OnStudyLoaded(object sender, StudyEventArgs e)
+		{
+			AddStudy(e.Study.StudyInstanceUID);
+		}
+
+		void OnImageLoaded(object sender, SopEventArgs e)
+		{
+			AddImage(e.Sop.SopInstanceUID);
+		}
+
+		private void AddStudy(string studyInstanceUID)
+		{
+			Study study = _imageViewer.StudyTree.GetStudy(studyInstanceUID);
+
+			// Abort if study hasn't been loaded
+			if (study == null)
+				throw new ApplicationException(String.Format(SR.ExceptionStudyNotLoaded, studyInstanceUID));
+
+			IImageSet imageSet = GetImageSet(_imageViewer.LogicalWorkspace, studyInstanceUID);
+
+			// Abort if image set has already been added
+			if (imageSet != null)
+				return;
+
+			imageSet = AddImageSet(_imageViewer.LogicalWorkspace, study);
+
+			AddDisplaySets(imageSet, study);
+		}
+
+		private void AddSeries(string seriesInstanceUID)
+		{
+			Series series = _imageViewer.StudyTree.GetSeries(seriesInstanceUID);
+
+			if (series == null)
+				throw new ApplicationException(String.Format(SR.ExceptionSeriesNotLoaded, seriesInstanceUID));
+
+			string studyInstanceUID = series.ParentStudy.StudyInstanceUID;
+			IImageSet imageSet = GetImageSet(_imageViewer.LogicalWorkspace, studyInstanceUID);
+
+			// If image set hasn't been added, add it
+			if (imageSet == null)
+				imageSet = AddImageSet(_imageViewer.LogicalWorkspace, series.ParentStudy);
+
+			IDisplaySet displaySet = AddDisplaySet(imageSet, series);
+			AddImages(displaySet, series);
+		}
+
+		private void AddImage(string sopInstanceUID)
+		{
+			ImageSop image = _imageViewer.StudyTree.GetSop(sopInstanceUID) as ImageSop;
+
+			if (image == null)
+				throw new ApplicationException(String.Format(SR.ExceptionImageNotLoaded, sopInstanceUID));
+
+			string studyInstanceUID = image.ParentSeries.ParentStudy.StudyInstanceUID;
+			IImageSet imageSet = GetImageSet(_imageViewer.LogicalWorkspace, studyInstanceUID);
+
+			if (imageSet == null)
+				imageSet = AddImageSet(_imageViewer.LogicalWorkspace, image.ParentSeries.ParentStudy);
+
+			string seriesInstanceUID = image.ParentSeries.SeriesInstanceUID;
+			IDisplaySet displaySet = GetDisplaySet(imageSet, seriesInstanceUID);
+
+			if (displaySet == null)
+				displaySet = AddDisplaySet(imageSet, image.ParentSeries);
+
+			AddImage(displaySet, image);
+		}
 
 		private IImageSet AddImageSet(ILogicalWorkspace logicalWorkspace, Study study)
 		{

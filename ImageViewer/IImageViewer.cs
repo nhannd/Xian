@@ -9,6 +9,11 @@ namespace ClearCanvas.ImageViewer
 {
     public interface IImageViewer : IDisposable
     {
+		/// <summary>
+		/// 
+		/// </summary>
+		StudyTree StudyTree { get; }
+		
         /// <summary>
         /// Gets the <see cref="PhysicalWorkspace"/>.
         /// </summary>
@@ -56,5 +61,8 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
         /// <value>The <see cref="CommandHistory"/>.</value>
         CommandHistory CommandHistory { get; }
+
+		void LoadStudy(string studyInstanceUID, string source);
+		void LoadImage(string path);
     }
 }

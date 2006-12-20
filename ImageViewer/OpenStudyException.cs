@@ -6,8 +6,8 @@ namespace ClearCanvas.ImageViewer
 {
 	public class OpenStudyException : Exception
 	{
-		private bool _atLeastOneImageFailedToLoad;
-		private bool _studyCouldNotBeLoaded;
+		private int _totalImages;
+		private int _failedImages;
 
 		public OpenStudyException() { }
 		
@@ -15,16 +15,21 @@ namespace ClearCanvas.ImageViewer
 		
 		public OpenStudyException(string message, Exception inner) : base(message, inner) { }
 
-		public bool AtLeastOneImageFailedToLoad
+		public int TotalImages
 		{
-			get { return _atLeastOneImageFailedToLoad; }
-			set { _atLeastOneImageFailedToLoad = value; }
+			get { return _totalImages; }
+			set { _totalImages = value; }
 		}
 
-		public bool StudyCouldNotBeLoaded
+		public int FailedImages
 		{
-			get { return _studyCouldNotBeLoaded; }
-			set { _studyCouldNotBeLoaded = value; }
+			get { return _failedImages; }
+			set { _failedImages = value; }
+		}
+
+		public int SuccessfulImages
+		{
+			get { return this.TotalImages - this.FailedImages; }
 		}
 	}
 }

@@ -38,39 +38,37 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
 			string label = "";
+			int completelySuccessfulStudies = 0;
+			int successfulImagesInLoadFailure = 0;
 
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
 				string studyInstanceUid = item.StudyInstanceUID;
-				label = String.Format("{0}, {1} | {2}",
+				label = String.Format("{0}, {1}, {2}",
 					item.LastName,
 					item.FirstName,
 					item.PatientId);
 
 				try
 				{
-					IStudyLoader studyLoader = ImageViewerComponent.StudyManager.StudyLoaders["DICOM_LOCAL"];
-					studyLoader.LoadStudy(studyInstanceUid);
+					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+					completelySuccessfulStudies++;
 				}
 				catch (OpenStudyException e)
 				{
-					if (e.StudyCouldNotBeLoaded)
-					{
-						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.MessageUnableToLoadStudy);
-						return;
-					}
+					// Study failed to load completely; keep track of how many
+					// images in the study actually did load
+					successfulImagesInLoadFailure += e.SuccessfulImages;
 
-					if (e.AtLeastOneImageFailedToLoad)
-					{
-						Platform.ShowMessageBox(ClearCanvas.ImageViewer.SR.MessageAtLeastOneImageFailedToLoad);
-						return;
-					}
-
-					return;
+					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
+						ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				}
-
-				imageViewer.AddStudy(studyInstanceUid);
 			}
+			
+			// If nothing at all was able to load, then don't bother trying to
+			// even open a workspace; just return
+			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
+				return;
 
 			ApplicationComponent.LaunchAsWorkspace(
 				this.Context.DesktopWindow,
@@ -82,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				});
 
 			imageViewer.Layout();
-
+			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
 		}
 
 		private void SetDoubleClickHandler()

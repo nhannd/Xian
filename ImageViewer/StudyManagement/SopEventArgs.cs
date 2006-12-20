@@ -8,6 +8,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class SopEventArgs : CollectionEventArgs<Sop>
 	{
+		public SopEventArgs()
+		{
 
+		}
+
+		public SopEventArgs(Sop sop)
+		{
+			base.Item  = sop;
+		}
+
+		public Sop Sop { get { return base.Item; } }
 	}
 }

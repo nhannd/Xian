@@ -225,6 +225,12 @@
   <data name="ExceptionKeyStrokeAssignmentInUse" xml:space="preserve">
     <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
   </data>
+  <data name="ExceptionLoadCompleteFailure" xml:space="preserve">
+    <value>ClearCanvas was unable to load any of the images in the study you requested.  Please contact your PACS administrator, or check the log.</value>
+  </data>
+  <data name="ExceptionLoadPartialFailure" xml:space="preserve">
+    <value>ClearCanvas was only able to load {0} of the {1} images in the study you requested.  Please contact your PACS administrator, or check the log.</value>
+  </data>
   <data name="ExceptionLUTIndexOutOfRange" xml:space="preserve">
     <value>LUT index out of range (index = {0}).</value>
   </data>
@@ -266,11 +272,5 @@
   </data>
   <data name="ExceptionStatefulGraphicMustBeIMemorable" xml:space="preserve">
     <value>For undo support, your StatefulGraphic subclass must implement IMemorable.</value>
-  </data>
-  <data name="MessageAtLeastOneImageFailedToLoad" xml:space="preserve">
-    <value>At least one image failed to load.  Please see the log for details.</value>
-  </data>
-  <data name="MessageUnableToLoadStudy" xml:space="preserve">
-    <value>Unable to load any images in the study.  Please see the log for details.</value>
   </data>
 </root>

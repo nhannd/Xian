@@ -7,28 +7,60 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class Patient
 	{
-		private string _patientID;
+		private ImageSop _imageSop;
+		private StudyCollection _studies;
 
-		private StudyCollection _studies = new StudyCollection();
-
-		internal Patient(string patientID)
+		internal Patient()
 		{
-			_patientID = patientID;
-		}
-
-		public string PatientId
-		{
-			get { return _patientID; }
 		}
 
 		public StudyCollection Studies
 		{
-			get { return _studies; }
+			get
+			{
+				if (_studies == null)
+					_studies = new StudyCollection();
+
+				return _studies;
+			}
 		}
+
+		#region Patient Module
+
+		public string PatientId
+		{
+			get { return _imageSop.PatientId; }
+		}
+
+		public string PatientsName
+		{
+			get { return _imageSop.PatientsName; }
+		}
+
+		public string PatientsBirthDate
+		{
+			get { return _imageSop.PatientsBirthDate; }
+		}
+
+		public string PatientsSex
+		{
+			get { return _imageSop.PatientsSex; }
+		}
+
+		#endregion
 
 		public override string ToString()
 		{
-			return this.PatientId;
+			string str = String.Format("{0} | {1}", this.PatientsName, this.PatientId);
+			return str;
+		}
+
+		internal void SetSop(ImageSop imageSop)
+		{
+			if (_imageSop == null)
+			{
+				_imageSop = imageSop;
+			}
 		}
 	}
 }

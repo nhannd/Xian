@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	}
 	
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
-	public class StudyBrowserComponent : ApplicationComponent, INotifyPropertyChanged
+	public class StudyBrowserComponent : ApplicationComponent
 	{
 		public class StudyBrowserToolContext : ToolContext, IStudyBrowserToolContext
 		{
@@ -180,12 +180,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_searchResults = new Dictionary<string, SearchResult>();
 		}
 
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		#endregion
-
 		internal SearchPanelComponent SearchPanelComponent
 		{
 			get { return _searchPanelComponent; }
@@ -214,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_resultsTitle = value;
-				OnPropertyChanged("ResultsTitle");
+				NotifyPropertyChanged("ResultsTitle");
 			}
 		}
 
@@ -262,9 +256,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_selectedServerGroup = selectedServerGroup;
 
 			if (selectedServerGroup.IsLocalDatastore)
-				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_LOCAL"];
+				_studyFinder = ImageViewerComponent.StudyFinders["DICOM_LOCAL"];
 			else
-				_studyFinder = ImageViewerComponent.StudyManager.StudyFinders["DICOM_REMOTE"];
+				_studyFinder = ImageViewerComponent.StudyFinders["DICOM_REMOTE"];
 
 			if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
 			{
@@ -367,16 +361,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     0.5f
                     ));
 
-		}
-
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (this.PropertyChanged != null)
-			{
-				this.PropertyChanged(
-				  this,
-				  new PropertyChangedEventArgs(propertyName));
-			}
 		}
 
         internal void SearchToday()

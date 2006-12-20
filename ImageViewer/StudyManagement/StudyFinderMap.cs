@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
     }
     
-    public class StudyFinderMap : IEnumerable
+    public sealed class StudyFinderMap : IEnumerable
 	{
         Dictionary<string, IStudyFinder> _studyFinderMap = new Dictionary<string, IStudyFinder>();
 		

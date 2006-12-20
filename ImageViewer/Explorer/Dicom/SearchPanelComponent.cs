@@ -42,19 +42,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyBrowserComponent.SearchPanelComponent = this;
 		}
 
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		#endregion
-		
 		public string Title
 		{
 			get { return _title; }
 			set
 			{
 				_title = value;
-				OnPropertyChanged("Title");
+				NotifyPropertyChanged("Title");
 			}
 		}
 
@@ -64,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_accessionNumber = value;
-				OnPropertyChanged("AccessionNumber");
+				NotifyPropertyChanged("AccessionNumber");
 			}
 		}
 
@@ -74,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_patientID = value;
-				OnPropertyChanged("PatientID");
+				NotifyPropertyChanged("PatientID");
 			}
 		}
 
@@ -84,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_firstName = value;
-				OnPropertyChanged("FirstName");
+				NotifyPropertyChanged("FirstName");
 			}
 		}
 
@@ -94,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_lastName = value;
-				OnPropertyChanged("LastName");
+				NotifyPropertyChanged("LastName");
 			}
 		}
 
@@ -104,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_studyDescription = value;
-				OnPropertyChanged("StudyDescription");
+				NotifyPropertyChanged("StudyDescription");
 			}
 		}
 
@@ -134,16 +128,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.LastName = "";
 			this.AccessionNumber = "";
 			this.StudyDescription = "";
-		}
-
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (this.PropertyChanged != null)
-			{
-				this.PropertyChanged(
-				  this,
-				  new PropertyChangedEventArgs(propertyName));
-			}
 		}
 
         public void SearchToday()

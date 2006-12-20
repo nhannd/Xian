@@ -100,7 +100,6 @@
     <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
     <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
     <Compile Include="DynamicOverlays\SelectedGraphicState.cs" />
-    <Compile Include="IDiagnosticLayoutManager.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
     <Compile Include="ImageViewerDesktopTool.cs" />
@@ -143,9 +142,12 @@
     <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
     <Compile Include="Rendering\Tests\RectangleIntersectionTests.cs" />
+    <Compile Include="StudyManagement\ICacheableSop.cs" />
+    <Compile Include="StudyManagement\ImageSopProxy.cs" />
     <Compile Include="StudyManagement\LocalImageLoader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="StudyManagement\SopCache.cs" />
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
     <Compile Include="ClientArea.cs" />
     <Compile Include="IDisplaySet.cs" />
@@ -160,7 +162,9 @@
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IRenderingSurface.cs" />
     <Compile Include="Tests\BuildTreeTest.cs" />
+    <Compile Include="Tests\AddImageTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />
+    <Compile Include="Tests\TestImageSop.cs" />
     <Compile Include="Tests\MockImageViewerComponent.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
@@ -326,11 +330,7 @@
     <Compile Include="StudyManagement\PatientEventArgs.cs" />
     <Compile Include="StudyManagement\StudyFinderMap.cs" />
     <Compile Include="StudyManagement\StudyLoaderMap.cs" />
-    <Compile Include="StudyManagement\StudyManager.cs" />
     <Compile Include="StudyManagement\StudyTree.cs" />
-    <Compile Include="StudyManagement\StudyLoader.cs" />
-    <Compile Include="StudyManagement\Tests\StudyTreeTest.cs" />
-    <Compile Include="StudyManagement\Tests\StudyLoaderTest.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileCollection.cs" />
     <Compile Include="TileEventArgs.cs" />

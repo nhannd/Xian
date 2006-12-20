@@ -10,15 +10,17 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyLoaderExtensionPoint))]
-    public class LocalDataStoreStudyLoader : StudyLoader
+    [ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyLoaderExtensionPoint))]
+    public class LocalDataStoreStudyLoader : IStudyLoader
     {
+		private IEnumerator<ISopInstance> _sops;
+
         public LocalDataStoreStudyLoader()
         {
 
         }
 
-        public override string Name
+        public string Name
         {
             get
             {
@@ -26,65 +28,45 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
         }
 
-        public override void LoadStudy(string studyUID)
+		public void Start(string studyInstanceUID)
+		{
+			IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyInstanceUID));
+			_sops = study.GetSopInstances().GetEnumerator();
+			_sops.Reset();
+		}
+
+		public ImageSop LoadNextImage()
         {
-			bool atLeastOneImageFailedToLoad = false;
+			bool moreImages;
 
-			try
-            {
+			ImageSopInstance imageObject;
 
-                IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyUID));
-                IEnumerable<ISopInstance> listOfSops = study.GetSopInstances();
-				int imagesLoaded = 0;
+			while (true)
+			{
+				moreImages = _sops.MoveNext();
 
-                foreach (ISopInstance sop in listOfSops)
-                {
-                    // TODO: don't just skip non-image sop instances
-                    ImageSopInstance imageObject = sop as ImageSopInstance;
-                    if (null == imageObject)
-                        continue;
+				if (!moreImages)
+					return null;
 
-                    // skip non local objects
-                    if (!imageObject.LocationUri.IsFile)
-                        continue;
-
-                    LocalDataStoreImageSop localImage = new LocalDataStoreImageSop(imageObject);                  
-
-                    try
-                    {
-						ImageViewerComponent.StudyManager.StudyTree.AddImage(localImage);
-						imagesLoaded++;
-                    }
-                    catch (ImageValidationException e)
-                    {
-						atLeastOneImageFailedToLoad = true;
-
-                        Platform.Log(e, LogLevel.Warn);
-                    }
-                }
-
-				bool studyCouldNotBeLoaded = (imagesLoaded == 0);
-
-				if (atLeastOneImageFailedToLoad || studyCouldNotBeLoaded)
+				imageObject = _sops.Current as ImageSopInstance;
+				
+				// TODO: don't just skip non-image sop instances
+				if (imageObject != null)
 				{
-					OpenStudyException e = new OpenStudyException(SR.ExceptionErrorOpeningStudy);
-					e.AtLeastOneImageFailedToLoad = atLeastOneImageFailedToLoad;
-					e.StudyCouldNotBeLoaded = studyCouldNotBeLoaded;
-					throw e;
+					// Skip non-local images
+					if (imageObject.LocationUri.IsFile)
+						break;
 				}
-            }
-            catch (Exception e)
-            {
-				// We probably have a database error.  Make note of the exception as an inner exception.
-				OpenStudyException ex = new OpenStudyException(SR.ExceptionErrorOpeningStudy, e);
-				ex.StudyCouldNotBeLoaded = true;
-				ex.AtLeastOneImageFailedToLoad = true;
+			}
 
-				throw ex;
-            }
+			LocalDataStoreImageSop localImage = new LocalDataStoreImageSop(imageObject);
 
-            base.LoadStudy(studyUID);
+			return localImage;
         }
+
+		public void Stop()
+		{
+		}
 
         //private void MapImageObjectToLocalImageObject(ImageSopInstance imageObject, IDicomPropertySettable localImage)
         //{

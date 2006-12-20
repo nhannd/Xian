@@ -69,50 +69,39 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 
 		public void Open()
 		{
-			LocalImageLoader imageLoader = new LocalImageLoader();
 			DiagnosticImageViewerComponent viewer = new DiagnosticImageViewerComponent();
-			int totalImages = 0;
-			int totalFailedImages = 0;
+
+			int successfulLoadAttempts = 0;
+			int successfulImagesInLoadFailure = 0;
 
 			foreach (string path in this.Context.SelectedPaths)
 			{
-				int failedImages;
-				int numImages;
-
-				List<LocalImageSop> images = imageLoader.Load(path, out numImages, out failedImages);
-
-				foreach (LocalImageSop image in images)
+				try
 				{
-					ImageViewerComponent.StudyManager.StudyTree.AddImage(image);
-					viewer.AddImage(image.SopInstanceUID);
+					viewer.LoadImage(path);
+					successfulLoadAttempts++;
 				}
-
-				totalImages += numImages;
-				totalFailedImages += failedImages;
+				catch (OpenStudyException e)
+				{
+					successfulImagesInLoadFailure += e.SuccessfulImages;
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
 			}
 
-			if (totalFailedImages > 0)
-			{
-				string str = String.Format(SR.MessageFormatImagesFailedToLoad, totalFailedImages);
-				Platform.ShowMessageBox(str);
-			}
-
-			// If the number of images that failed to load equals the total number
-			// of images that should have loaded, then don't even bother
-			// opening the workspace; just return.
-			if (totalFailedImages == totalImages)
+			if (successfulLoadAttempts == 0 && successfulImagesInLoadFailure == 0)
 				return;
 
 			ApplicationComponent.LaunchAsWorkspace(
 				this.Context.DesktopWindow,
 				viewer,
-				SR.TitleImageViewer,
+				"Image",
 				delegate
 				{
 					viewer.Dispose();
 				});
 
 			viewer.Layout();
+			viewer.PhysicalWorkspace.SelectDefaultImageBox();
 		}
 	}
 }

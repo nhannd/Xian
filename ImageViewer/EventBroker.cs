@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -21,6 +22,9 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<GraphicLayerSelectedEventArgs> _graphicLayerSelectedEvent;
 		private event EventHandler<GraphicSelectedEventArgs> _graphicSelectedEvent;
 		private event EventHandler<GraphicFocusedEventArgs> _graphicFocusedEvent;
+
+		private event EventHandler<StudyEventArgs> _studyLoadedEvent;
+		private event EventHandler<SopEventArgs> _imageLoadedEvent;
 
 		public EventBroker()
 		{
@@ -135,6 +139,28 @@ namespace ClearCanvas.ImageViewer
 		internal void OnGraphicFocused(GraphicFocusedEventArgs graphicFocusedEventArgs)
 		{
 			EventsHelper.Fire(_graphicFocusedEvent, this, graphicFocusedEventArgs);
+		}
+
+		public event EventHandler<StudyEventArgs> StudyLoaded
+		{
+			add { _studyLoadedEvent += value; }
+			remove { _studyLoadedEvent -= value; }
+		}
+
+		internal void OnStudyLoaded(StudyEventArgs studyEventArgs)
+		{
+			EventsHelper.Fire(_studyLoadedEvent, this, studyEventArgs);
+		}
+
+		public event EventHandler<SopEventArgs> ImageLoaded
+		{
+			add { _imageLoadedEvent += value; }
+			remove { _imageLoadedEvent -= value; }
+		}
+
+		internal void OnImageLoaded(SopEventArgs sopEventArgs)
+		{
+			EventsHelper.Fire(_imageLoadedEvent, this, sopEventArgs);
 		}
 	}
 }

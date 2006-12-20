@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// </summary>
         public bool ImageBoxSectionEnabled
         {
-            get { return this.ImageViewer != null; }
+            get { return this.ImageViewer != null && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
         }
 
         /// <summary>

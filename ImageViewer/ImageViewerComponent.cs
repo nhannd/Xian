@@ -11,6 +11,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -37,11 +38,6 @@ namespace ClearCanvas.ImageViewer
 
             #region IImageViewerToolContext Members
 
-            public StudyManager StudyManager
-            {
-                get { return ImageViewerComponent.StudyManager; }
-            }
-
             public IImageViewer Viewer
             {
                 get { return _component; }
@@ -57,17 +53,16 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private fields
 
-		// study manager is shared amongst all image workspaces
-		private static StudyManager _studyManager;
-
-		// annotation manager is shared amongst all image workspaces
-		private static AnnotationManager _annotationManager;
-
+		private StudyTree _studyTree;
 		private ILogicalWorkspace _logicalWorkspace;
         private IPhysicalWorkspace _physicalWorkspace;
         private EventBroker _eventBroker;
 		private ViewerShortcutManager _shortcutManager;
         private ToolSet _toolSet;
+
+		private static StudyFinderMap _studyFinders;
+		private static StudyLoaderMap _studyLoaders;
+		private static AnnotationManager _annotationManager;
 
 		private event EventHandler _closingEvent;
 
@@ -80,8 +75,6 @@ namespace ClearCanvas.ImageViewer
             _toolSet = new ToolSet(new ImageViewerToolExtensionPoint(), new ImageViewerToolContext(this));
 
 			RegisterShortcuts();
-
-			this.PhysicalWorkspace.SelectDefaultImageBox();
         }
 
         public override void Stop()
@@ -100,21 +93,6 @@ namespace ClearCanvas.ImageViewer
                 // we should technically only export the actions that target the global menus
                 // or toolbars, but it doesn't matter - the desktop will sort it out
                 return _toolSet.Actions;
-            }
-        }
-
-
-        /// <summary>
-        /// Gets the <see cref="StudyManager"/>
-        /// </summary>
-        public static StudyManager StudyManager
-        {
-            get
-            {
-                if (_studyManager == null)
-                    _studyManager = new StudyManager();
-
-                return _studyManager;
             }
         }
 
@@ -229,14 +207,25 @@ namespace ClearCanvas.ImageViewer
 			}
         }
 
- 		public static AnnotationManager AnnotationManager
+		public StudyTree StudyTree
 		{
 			get
 			{
-				if (_annotationManager == null)
-					_annotationManager = new AnnotationManager();
+				if (_studyTree == null)
+					_studyTree = new StudyTree();
 
-				return _annotationManager;
+				return _studyTree;
+			}
+		}
+
+		public static StudyFinderMap StudyFinders
+		{
+			get
+			{
+				if (_studyFinders == null)
+					_studyFinders = new StudyFinderMap();
+
+				return _studyFinders;
 			}
 		}
 
@@ -261,8 +250,18 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region Private/internal properties
 
-		#region Private properties
+		private StudyLoaderMap StudyLoaders
+		{
+			get
+			{
+				if (_studyLoaders == null)
+					_studyLoaders = new StudyLoaderMap();
+
+				return _studyLoaders;
+			}
+		}
 
 		private ActionModelNode ContextMenuModel
 		{
@@ -278,6 +277,80 @@ namespace ClearCanvas.ImageViewer
 			{
 				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-keyboard", _toolSet.Actions);
 			}
+		}
+
+		internal static AnnotationManager AnnotationManager
+		{
+			get
+			{
+				if (_annotationManager == null)
+					_annotationManager = new AnnotationManager();
+
+				return _annotationManager;
+			}
+		}
+
+		#endregion
+
+		#region Public methods
+
+		public void LoadStudy(string studyInstanceUID, string source)
+		{
+			IStudyLoader studyLoader = this.StudyLoaders[source];
+
+			try
+			{
+				studyLoader.Start(studyInstanceUID);
+			}
+			catch (Exception e)
+			{
+				OpenStudyException ex = new OpenStudyException(SR.ExceptionLoadCompleteFailure, e);
+				throw ex;
+			}
+
+			int totalImages = 0;
+			int failedImages = 0;
+
+			while (true)
+			{
+				ImageSop image = studyLoader.LoadNextImage();
+
+				if (image == null)
+					break;
+
+				try
+				{
+					this.StudyTree.AddImage(image);
+				}
+				catch (Exception e)
+				{
+					failedImages++;
+					Platform.Log(e);
+				}
+
+				totalImages++;
+			}
+
+			studyLoader.Stop();
+
+			int successfulImages = totalImages - failedImages;
+
+			// Only bother to tell someone if at least one image loaded
+			if (successfulImages > 0)
+			{
+				this.EventBroker.OnStudyLoaded(
+					new StudyEventArgs(this.StudyTree.GetStudy(studyInstanceUID)));
+			}
+
+			VerifyLoad(totalImages, failedImages);
+		}
+
+		public void LoadImage(string path)
+		{
+			LocalImageLoader loader = new LocalImageLoader(this);
+			loader.Load(path);
+
+			VerifyLoad(loader.TotalImages, loader.FailedImages);
 		}
 
 		#endregion
@@ -318,6 +391,9 @@ namespace ClearCanvas.ImageViewer
 
 				if (this.ToolSet != null)
 					this.ToolSet.Dispose();
+
+				if (this.StudyTree != null)
+					this.StudyTree.Dispose();
 			}
 		}
 
@@ -329,6 +405,25 @@ namespace ClearCanvas.ImageViewer
 		{
 			(ShortcutManager as ViewerShortcutManager).RegisterKeyboardShortcuts(this.KeyboardModel.ChildNodes);
 			(ShortcutManager as ViewerShortcutManager).RegisterMouseShortcuts(_toolSet.Tools);
+		}
+
+		private void VerifyLoad(int totalImages, int failedImages)
+		{
+			if (failedImages == totalImages)
+			{
+				OpenStudyException ex = new OpenStudyException(SR.ExceptionLoadCompleteFailure);
+				ex.TotalImages = totalImages;
+				ex.FailedImages = failedImages;
+				throw ex;
+			}
+			else if (failedImages > 0 || totalImages == 0)
+			{
+				string msg = String.Format(SR.ExceptionLoadPartialFailure, failedImages, totalImages);
+				OpenStudyException ex = new OpenStudyException(msg);
+				ex.TotalImages = totalImages;
+				ex.FailedImages = failedImages;
+				throw ex;
+			}
 		}
 
 		#endregion

@@ -7,6 +7,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     public interface IStudyLoader
     {
 		string Name { get; }
-        void LoadStudy(string studyUID);
+		void Start(string studyInstanceUID);
+		ImageSop LoadNextImage();
+		void Stop();
     }
 }

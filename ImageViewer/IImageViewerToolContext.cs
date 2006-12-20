@@ -11,11 +11,6 @@ namespace ClearCanvas.ImageViewer
     public interface IImageViewerToolContext : IToolContext
     {
 		/// <summary>
-		/// Gets the <see cref="StudyManager"/>
-		/// </summary>
-        StudyManager StudyManager { get; }
-
-		/// <summary>
 		/// Gets the <see cref="IImageViewer"/>
 		/// </summary>
         IImageViewer Viewer { get; }
