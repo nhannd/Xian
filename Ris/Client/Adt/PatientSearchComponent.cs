@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private string _mrn;
         private string _healthcard;
+        private string _healthcardMask;
         private string _familyName;
         private string _givenName;
         private Sex? _sex;
@@ -62,6 +63,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _sexChoices = _patientAdminService.GetSexEnumTable();
+
+            _healthcardMask = "0000 000 000";
         }
 
         public override void Stop()
@@ -108,6 +111,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 UpdateDisplay();
             }
+        }
+
+        public string HealthcardMask
+        {
+            get { return _healthcardMask; }
         }
 
         public string FamilyName

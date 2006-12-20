@@ -101,6 +101,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._familyName.LabelText = "Family Name";
             this._familyName.Location = new System.Drawing.Point(2, 92);
             this._familyName.Margin = new System.Windows.Forms.Padding(2);
+            this._familyName.Mask = "";
             this._familyName.Name = "_familyName";
             this._familyName.Size = new System.Drawing.Size(195, 41);
             this._familyName.TabIndex = 2;
@@ -114,6 +115,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._mrn.LabelText = "MRN";
             this._mrn.Location = new System.Drawing.Point(2, 2);
             this._mrn.Margin = new System.Windows.Forms.Padding(2);
+            this._mrn.Mask = "";
             this._mrn.Name = "_mrn";
             this._mrn.Size = new System.Drawing.Size(195, 41);
             this._mrn.TabIndex = 0;
@@ -127,6 +129,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._givenName.LabelText = "Given Name";
             this._givenName.Location = new System.Drawing.Point(2, 137);
             this._givenName.Margin = new System.Windows.Forms.Padding(2);
+            this._givenName.Mask = "";
             this._givenName.Name = "_givenName";
             this._givenName.Size = new System.Drawing.Size(195, 41);
             this._givenName.TabIndex = 3;
@@ -154,6 +157,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._healthcard.LabelText = "Healthcard";
             this._healthcard.Location = new System.Drawing.Point(2, 47);
             this._healthcard.Margin = new System.Windows.Forms.Padding(2);
+            this._healthcard.Mask = "";
             this._healthcard.Name = "_healthcard";
             this._healthcard.Size = new System.Drawing.Size(195, 41);
             this._healthcard.TabIndex = 1;
@@ -182,6 +186,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PatientSearchComponentControl";
             this.Size = new System.Drawing.Size(214, 266);
+            this.Load += new System.EventHandler(this.PatientSearchComponentControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

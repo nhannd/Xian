@@ -41,5 +41,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             }
         }
 
+        private void PatientSearchComponentControl_Load(object sender, EventArgs e)
+        {
+            _healthcard.Mask = _component.HealthcardMask;
+        }
+
     }
 }
