@@ -183,13 +183,15 @@ namespace ClearCanvas.Ris.Client.Adt
             if (!this.HasValidationErrors)
             {
                 EventsHelper.Fire(_searchRequested, this, new PatientSearchRequestedEventArgs(BuildCriteria()));
+
+                // always turn the validation errors off after a successful search
+                this.ShowValidation(false);
+
                 if (!_keepOpen)
                 {
                     this.Host.Exit();
                 }
 
-                // always turn the validation errors off after a successful search
-                this.ShowValidation(false);
             }
             else
             {

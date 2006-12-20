@@ -120,8 +120,6 @@ namespace ClearCanvas.Desktop
         {
             get
             {
-                AssertStarted();
-
                 return _host;
             }
         }
