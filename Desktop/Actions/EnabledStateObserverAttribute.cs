@@ -27,9 +27,10 @@ namespace ClearCanvas.Desktop.Actions
         {
         }
 
-        internal override void Apply(IActionBuilder builder)
+        internal override void Apply(IActionBuildingContext builder)
         {
-            builder.Apply(this);
+            Bind<bool>(builder, "Enabled", "EnabledChanged");
         }
+
     }
 }

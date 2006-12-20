@@ -42,9 +42,11 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public IconSet IconSet { get { return _iconSet; } }
 
-        internal override void Apply(IActionBuilder builder)
+        internal override void Apply(IActionBuildingContext builder)
         {
-            builder.Apply(this);
+            // note that only one IconSet is currently supported, although it may be desirable to 
+            // allow the IconSetAttribute to appear more than once to provide multiple icon schemes
+            builder.Action.IconSet = this.IconSet;
         }
     }
 }

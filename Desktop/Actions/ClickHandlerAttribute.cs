@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -24,9 +25,29 @@ namespace ClearCanvas.Desktop.Actions
 
         public string HandlerMethodName { get { return _handlerMethod; } }
 
-        internal override void Apply(IActionBuilder builder)
+        internal override void Apply(IActionBuildingContext builder)
         {
-            builder.Apply(this);
+            // check that the method exists, etc
+            ValidateClickHandler(builder.ActionTarget, this.HandlerMethodName);
+
+            ClickHandlerDelegate clickHandler =
+                (ClickHandlerDelegate)Delegate.CreateDelegate(typeof(ClickHandlerDelegate), builder.ActionTarget, this.HandlerMethodName);
+            ((ClickAction)builder.Action).SetClickHandler(clickHandler);
+        }
+
+        private void ValidateClickHandler(object target, string methodName)
+        {
+            MethodInfo info = target.GetType().GetMethod(
+                methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                Type.EmptyTypes,
+                null);
+
+            if (info == null)
+            {
+                throw new ActionBuilderException(
+                    string.Format(SR.ExceptionActionBuilderMethodDoesNotExist, methodName, target.GetType().FullName));
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop.Actions
 	/// changes.
 	/// </remarks>
 
-	public class TooltipValueObserverAttribute : ValueObserverAttribute
+	public class TooltipValueObserverAttribute : StateObserverAttribute
 	{
 		/// <summary>
 		/// Attribute constructor
@@ -28,10 +28,10 @@ namespace ClearCanvas.Desktop.Actions
 		{
 		}
 
-		internal override void Apply(IActionBuilder builder)
+		internal override void Apply(IActionBuildingContext builder)
 		{
-			builder.Apply(this);
-		}
+            Bind<string>(builder, "Tooltip", "TooltipChanged");
+        }
 	}
 
 }

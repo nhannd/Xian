@@ -21,12 +21,12 @@ namespace ClearCanvas.Desktop.Actions
             object[] attributes = actionTarget.GetType().GetCustomAttributes(typeof(ActionAttribute), true);
 
             // first pass - create an ActionBuilder for each initiator of the specified type
-            List<ActionBuilder> actionBuilders = new List<ActionBuilder>();
+            List<ActionBuildingContext> actionBuilders = new List<ActionBuildingContext>();
             foreach (ActionAttribute a in attributes)
             {
                 if (a is ActionInitiatorAttribute)
                 {
-                    ActionBuilder actionBuilder = new ActionBuilder(a.QualifiedActionID(actionTarget), actionTarget);
+                    ActionBuildingContext actionBuilder = new ActionBuildingContext(a.QualifiedActionID(actionTarget), actionTarget);
                     a.Apply(actionBuilder);
                     actionBuilders.Add(actionBuilder);
                 }
@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop.Actions
             {
                 if (a is ActionDecoratorAttribute)
                 {
-                    foreach (ActionBuilder actionBuilder in actionBuilders)
+                    foreach (ActionBuildingContext actionBuilder in actionBuilders)
                     {
                         if (a.QualifiedActionID(actionTarget) == actionBuilder.ActionID)
                         {
@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop.Actions
             }
 
             List<IAction> actions = new List<IAction>();
-            foreach (ActionBuilder actionBuilder in actionBuilders)
+            foreach (ActionBuildingContext actionBuilder in actionBuilders)
             {
                 actions.Add(actionBuilder.Action);
             }

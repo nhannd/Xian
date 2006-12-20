@@ -28,5 +28,6 @@ namespace ClearCanvas.Desktop.Actions
 		/// The name of the property change notification event to bind to.
 		/// </summary>
 		public string ChangeEventName { get { return _observedChangeEvent; } }
-	}
+
+    }
 }

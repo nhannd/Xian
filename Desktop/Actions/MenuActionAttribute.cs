@@ -19,9 +19,13 @@ namespace ClearCanvas.Desktop.Actions
         {
         }
 
-        internal override void Apply(IActionBuilder builder)
+        internal override void Apply(IActionBuildingContext builder)
         {
-            builder.Apply(this);
+            ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
+            builder.Action = new MenuAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
+            ((ClickAction)builder.Action).SetKeyStroke(this.KeyStroke);
+            builder.Action.Persistent = true;
+            builder.Action.Label = path.LastSegment.LocalizedText;
         }
     }
 }

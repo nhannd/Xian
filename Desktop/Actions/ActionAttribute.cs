@@ -36,6 +36,6 @@ namespace ClearCanvas.Desktop.Actions
         /// Applies this attribute to the specified <see cref="IActionBuilder"/>.
         /// </summary>
         /// <param name="builder">The builder to which this attribute should be applied</param>
-        internal abstract void Apply(IActionBuilder builder);
+        internal abstract void Apply(IActionBuildingContext builder);
     }
 }

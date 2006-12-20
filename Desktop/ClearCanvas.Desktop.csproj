@@ -43,7 +43,7 @@
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\ActionAttribute.cs" />
     <Compile Include="Actions\ActionAttributeProcessor.cs" />
-    <Compile Include="Actions\ActionBuilder.cs" />
+    <Compile Include="Actions\ActionBuildingContext.cs" />
     <Compile Include="Actions\ActionBuilderException.cs" />
     <Compile Include="Actions\ActionDecoratorAttribute.cs" />
     <Compile Include="Actions\ActionInitiatorAttribute.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Actions\delegates.cs" />
     <Compile Include="Actions\EnabledStateObserverAttribute.cs" />
     <Compile Include="Actions\IAction.cs" />
-    <Compile Include="Actions\IActionBuilder.cs" />
+    <Compile Include="Actions\IActionBuildingContext.cs" />
     <Compile Include="Actions\IClickAction.cs" />
     <Compile Include="Actions\IconScheme.cs" />
     <Compile Include="Actions\IconSet.cs" />
