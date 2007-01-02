@@ -10,6 +10,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public static class ToolStripBuilder
     {
+        enum ToolStripKind
+        {
+            Menu,
+            Toolbar
+        }
+        
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle displayStyle)
         {
             foreach (ActionModelNode node in nodes)
@@ -17,7 +23,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (node.IsLeaf)
                 {
                     IAction action = (IAction)node.Action;
-                    ToolStripItem button = GetToolStripItemForAction(action);
+                    ToolStripItem button = GetToolStripItemForAction(action, ToolStripKind.Toolbar);
                     button.Tag = node;
 
                     // By default, only display the image on the button
@@ -41,7 +47,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     // this is a leaf node (terminal menu item)
                     IAction action = (IAction)node.Action;
-                    menuItem = (ToolStripMenuItem)GetToolStripItemForAction(action);
+                    menuItem = (ToolStripMenuItem)GetToolStripItemForAction(action, ToolStripKind.Menu);
 
                 }
                 else
@@ -80,11 +86,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private static ToolStripItem GetToolStripItemForAction(IAction action)
+        private static ToolStripItem GetToolStripItemForAction(IAction action, ToolStripKind kind)
         {
-            IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
-            view.SetAction(action);
-            return (ToolStripItem)view.GuiElement;
+            // optimization: since most actions will be IClickAction, we can just create the controls
+            // directly rather than use the associated view, which is slower
+            // however, an AssociateViewAttribute should always take precedence
+            if (action is IClickAction && action.GetType().GetCustomAttributes(typeof(AssociateViewAttribute), true).Length == 0)
+            {
+                if (kind == ToolStripKind.Menu)
+                    return new ActiveMenuItem((IClickAction)action);
+                else
+                    return new ActiveToolbarButton((IClickAction)action);
+            }
+            else
+            {
+                IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
+                view.SetAction(action);
+                return (ToolStripItem)view.GuiElement;
+            }
         }
 
     }
