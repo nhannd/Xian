@@ -14,7 +14,6 @@ namespace ClearCanvas.Desktop.Actions
     /// <summary>
     /// Models a toolbar button action.
     /// </summary>
-    [AssociateView(typeof(ButtonActionViewExtensionPoint))]
     public class ButtonAction : ClickAction
     {
         /// <summary>

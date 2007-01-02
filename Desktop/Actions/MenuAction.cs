@@ -15,7 +15,6 @@ namespace ClearCanvas.Desktop.Actions
     /// <summary>
     /// Models a menu item action.
     /// </summary>
-    [AssociateView(typeof(MenuActionViewExtensionPoint))]
     public class MenuAction : ClickAction
     {
         /// <summary>
