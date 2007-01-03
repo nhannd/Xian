@@ -26,6 +26,17 @@ namespace <%= model.namespace %> {
 			:base(key)
 		{
 		}
+
+		<% if( kind == :entity ) %>
+		/// <summary>
+		/// Constructor to search by EntityRef
+		/// </summary>
+		public <%= searchCriteriaClassName %>(EntityRef<<%= className %>> entityRef)
+		{
+			this.SubCriteria["OID"] = new SearchCondition<long>("OID");
+			((ISearchCondition<long>)this.SubCriteria["OID"]).EqualTo(EntityUtils.GetOID(entityRef));
+		}
+		<% end %>
 	
 		<% searchableFields.each do |f| %>
 	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>

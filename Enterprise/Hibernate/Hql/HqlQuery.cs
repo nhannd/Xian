@@ -7,110 +7,86 @@ using NHibernate;
 namespace ClearCanvas.Enterprise.Hibernate.Hql
 {
     /// <summary>
-    /// Provides support for building HQL queries dynamically from <see cref="SearchCriteria"/> objects.
+    /// Provides support for building HQL queries dynamically.
     /// </summary>
-    public class HqlQuery
+    public class HqlQuery : HqlElement
     {
-        /// <summary>
-        /// Creates an <see cref="HqlQuery"/> from the specified <see cref="SearchCriteria"/>.
-        /// </summary>
-        /// <param name="baseHql">The base HQL query, without any criteria</param>
-        /// <param name="alias">The alias used in the base criteria that must be prepended to the criteria</param>
-        /// <param name="criteria">The search criteria</param>
-        /// <returns>a new instance of <see cref="HqlQuery"/></returns>
-        /// <example>
-        /// Given an entity class Person, and a corresponding PersonSearchCriteria class with a LastName field,
-        /// a query might be constructed like so
-        /// <code>
-        ///     HqlQuery query = HqlQuery.FromSearchCriteria("from Person p", "p", criteria);
-        /// </code>
-        /// This would produce the following HQL:
-        ///     "from Person p where p.LastName = ?"
-        /// </example>
-        public static HqlQuery FromSearchCriteria(string baseHql, string alias, SearchCriteria criteria, SearchResultPage page)
-        {
-            return FromSearchCriteria(baseHql, new string[] { alias }, new SearchCriteria[] { criteria }, page);
-        }
-
-        /// <summary>
-        /// Creates an <see cref="HqlQuery"/> from multiple <see cref="SearchCriteria"/> classes.  Note that since multiple
-        /// <see cref="SearchCriteria"/> objects are passed, the <see cref="SearchCriteria.FirstRow"/> and <see cref="SearchCriteria.MaxRows"/>
-        /// members of any given criteria object are ignored.  Instead, these values must be passed explicitly.
-        /// </summary>
-        /// <param name="baseHql">The base HQL query, without any criteria</param>
-        /// <param name="alias">The aliases used in the base criteria that must be prepended to the criteria</param>
-        /// <param name="criteria">The search criteria</param>
-        /// <returns>a new instance of <see cref="HqlQuery"/></returns>
-        public static HqlQuery FromSearchCriteria(string baseHql, string[] aliases, SearchCriteria[] criteria, SearchResultPage page)
-        {
-            if (aliases.Length != criteria.Length)
-            {
-                throw new ArgumentException();  // TODO elaborate
-            }
-
-            HqlQuery q = new HqlQuery(baseHql, page);
-            for (int i = 0; i < criteria.Length; i++)
-            {
-                q.AddConditions(HqlCondition.FromSearchCriteria(aliases[i], criteria[i]));
-                q.AddSorts(HqlSort.FromSearchCriteria(aliases[i], criteria[i]));
-            }
-            return q;
-        }
-
         private string _baseQuery;
         private List<HqlCondition> _conditions;
         private List<HqlSort> _sorts;
         private SearchResultPage _page;
 
         /// <summary>
-        /// Constructor.
+        /// Constructor
         /// </summary>
         /// <param name="baseHql">The base HQL statement, without the "where" or "order by" clauses</param>
-        /// <param name="firstRow">First record to retrieve</param>
-        /// <param name="maxRows">Maximum number of records to retrieve</param>
-        public HqlQuery(string baseHql, SearchResultPage page)
+        public HqlQuery(string baseHql)
+            : this(baseHql, new HqlCondition[] { }, new HqlSort[] { }, null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="baseHql"></param>
+        /// <param name="conditions"></param>
+        /// <param name="sorts"></param>
+        /// <param name="page"></param>
+        public HqlQuery(string baseHql, HqlCondition[] conditions, HqlSort[] sorts, SearchResultPage page)
         {
             _baseQuery = baseHql;
             _page = page;
 
-            _conditions = new List<HqlCondition>();
-            _sorts = new List<HqlSort>();
+            _conditions = new List<HqlCondition>(conditions);
+            _sorts = new List<HqlSort>(sorts);
         }
 
         /// <summary>
-        /// Constructor creates a query that has no limits.
+        /// Constructs an empty query
         /// </summary>
-        /// <param name="baseHql">The base HQL statement, without the "where" or "order by" clauses</param>
-        public HqlQuery(string baseQuery)
-            :this(baseQuery, null)
+        protected HqlQuery()
+            : this(null, new HqlCondition[] { }, new HqlSort[] { }, null)
         {
         }
 
         /// <summary>
-        /// Adds the specified list of <see cref="HqlCondition"/> objects to this query
+        /// Exposes the collection of conditions, which will form the "where" clause
         /// </summary>
-        /// <param name="conditions"></param>
-        public void AddConditions(IList<HqlCondition> conditions)
+        public List<HqlCondition> Conditions
         {
-            _conditions.AddRange(conditions);
+            get { return _conditions; }
         }
 
         /// <summary>
-        /// Adds the specified list of <see cref="HqlSort"/> objects to this query
+        /// Exposes the collection of sorts, which will form the "order by" clause
         /// </summary>
-        /// <param name="sorts"></param>
-        public void AddSorts(IList<HqlSort> sorts)
+        public List<HqlSort> Sorts
         {
-            _sorts.AddRange(sorts);
+            get { return _sorts; }
+        }
 
-            // keep the sorts in the correct order
-            _sorts.Sort();
+        /// <summary>
+        /// Gets or sets the result page
+        /// </summary>
+        public SearchResultPage Page
+        {
+            get { return _page; }
+            set { _page = value; }
+        }
+
+        /// <summary>
+        /// Gets the base query.  Allows subclasses to set the base query.
+        /// </summary>
+        public string BaseQuery
+        {
+            get { return _baseQuery; }
+            protected set { _baseQuery = value; }
         }
 
         /// <summary>
         /// Returns the HQL text of this query.
         /// </summary>
-        public string Hql
+        public override string Hql
         {
             get
             {
@@ -126,6 +102,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 
                 // build the order by clause
                 StringBuilder orderBy = new StringBuilder();
+
+                // order the sorts first, so that they are injected into the hql string in the right order
+                _sorts.Sort();
                 foreach (HqlSort s in _sorts)
                 {
                     if (orderBy.Length != 0)

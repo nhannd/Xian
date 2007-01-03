@@ -9,7 +9,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
     /// Provides support for building HQL queries dynamically from <see cref="SearchCriteria"/> objects.
     /// </summary>
     /// <seealso cref="HqlQuery"/>
-    public class HqlSort : IComparable<HqlSort>
+    public class HqlSort : HqlElement, IComparable<HqlSort>
     {
         /// <summary>
         /// Extracts a list of <see cref="HqlSort"/> objects from the specified <see cref="SearchCriteria"/>
@@ -17,7 +17,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="alias">The HQL alias to prepend to the sort variables</param>
         /// <param name="criteria">The search criteria object</param>
         /// <returns>A list of HQL sort object that are equivalent to the specified criteria</returns>
-        public static IList<HqlSort> FromSearchCriteria(string alias, SearchCriteria criteria)
+        public static HqlSort[] FromSearchCriteria(string alias, SearchCriteria criteria)
         {
             List<HqlSort> hqlSorts = new List<HqlSort>();
             foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
@@ -37,7 +37,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                     hqlSorts.AddRange(FromSearchCriteria(subAlias, subCriteria));
                 }
             }
-            return hqlSorts;
+            return hqlSorts.ToArray();
         }
 
         private string _hql;
@@ -59,7 +59,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <summary>
         /// The HQL for this sort.
         /// </summary>
-        public string Hql
+        public override string Hql
         {
             get { return _hql; }
         }

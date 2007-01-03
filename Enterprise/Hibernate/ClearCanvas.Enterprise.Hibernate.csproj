@@ -52,7 +52,12 @@
     <Compile Include="EnumBroker.cs" />
     <Compile Include="DefaultInterceptor.cs" />
     <Compile Include="Hql\HqlCondition.cs" />
+    <Compile Include="Hql\HqlElement.cs" />
+    <Compile Include="Hql\HqlFrom.cs" />
+    <Compile Include="Hql\HqlJoin.cs" />
     <Compile Include="Hql\HqlQuery.cs" />
+    <Compile Include="Hql\HqlReportQuery.cs" />
+    <Compile Include="Hql\HqlSelector.cs" />
     <Compile Include="Hql\HqlSort.cs" />
     <Compile Include="Ddl\IDdlScriptGenerator.cs" />
     <Compile Include="PersistenceContext.cs" />

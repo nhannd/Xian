@@ -9,7 +9,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
     /// Provides support for building HQL queries dynamically from <see cref="SearchCriteria"/> objects.
     /// </summary>
     /// <seealso cref="HqlQuery"/>
-    public class HqlCondition
+    public class HqlCondition : HqlElement
     {
         /// <summary>
         /// Extracts a list of <see cref="HqlCondition"/> objects from the specified <see cref="SearchCriteria"/>
@@ -17,7 +17,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="alias">The HQL alias to prepend to the criteria variables</param>
         /// <param name="criteria">The search criteria object</param>
         /// <returns>A list of HQL conditions that are equivalent to the search criteria</returns>
-        public static IList<HqlCondition> FromSearchCriteria(string alias, SearchCriteria criteria)
+        public static HqlCondition[] FromSearchCriteria(string alias, SearchCriteria criteria)
         {
             List<HqlCondition> hqlConditions = new List<HqlCondition>();
             foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
@@ -27,7 +27,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                     SearchConditionBase sc = (SearchConditionBase)subCriteria;
                     if (sc.Test != SearchConditionTest.None)
                     {
-                        hqlConditions.Add(FromSearchCondition(alias, sc.GetKey(), sc));
+                        hqlConditions.Add(new HqlCondition(alias, sc.GetKey(), sc));
                     }
                 }
                 else
@@ -37,28 +37,40 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                     hqlConditions.AddRange(FromSearchCriteria(subAlias, subCriteria));
                 }
             }
-            return hqlConditions;
+            return hqlConditions.ToArray();
         }
 
+        private string _hql;
+        private object[] _parameters;
+
         /// <summary>
-        /// Translates a <see cref="SearchCondition"/> object to an <see cref="HqlCondition"/>
+        /// Constructs an <see cref="HqlCondition"/> from the specified HQL string and parameters.
         /// </summary>
-        /// <param name="alias">The HQL alias to prepend to the condition variable</param>
-        /// <param name="fieldName">The HQL field name that serves as the condition variable</param>
-        /// <param name="sc">the search condition</param>
-        /// <returns>The HQL condition object equivalent to the specified search condition</returns>
-        public static HqlCondition FromSearchCondition(string alias, string fieldName, SearchConditionBase sc)
+        /// <param name="hql">The HQL string containing conditional parameter placeholders</param>
+        /// <param name="parameters">Set of parameters to substitute</param>
+        public HqlCondition(string alias, string fieldName, SearchConditionBase sc)
         {
-            return FromSearchCondition(string.Format("{0}.{1}", alias, fieldName), sc);
+            _hql = GetHqlText(alias, fieldName, sc);
+            _parameters = sc.Values;
         }
 
         /// <summary>
-        /// Translates a <see cref="SearchCondition"/> object to an <see cref="HqlCondition"/>
+        /// The HQL for this condition.
         /// </summary>
-        /// <param name="variable">The HQL variable</param>
-        /// <param name="sc">the search condition</param>
-        /// <returns>The HQL condition object equivalent to the specified search condition</returns>
-        public static HqlCondition FromSearchCondition(string variable, SearchConditionBase sc)
+        public override string Hql
+        {
+            get { return _hql; }
+        }
+
+        /// <summary>
+        /// The set of parameters to be substituted into this condition.
+        /// </summary>
+        public object[] Parameters
+        {
+            get { return _parameters; }
+        }
+
+        private static string GetHqlText(string alias, string field, SearchConditionBase sc)
         {
             string a;
             switch (sc.Test)
@@ -79,7 +91,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                     a = "between ? and ?";
                     break;
                 case SearchConditionTest.In:
-                    throw new NotImplementedException();
+                    StringBuilder sb = new StringBuilder("in (?");  // assume at least one param
+                    for (int i = 1; i < sc.Values.Length; i++) { sb.Append(", ?"); }
+                    sb.Append(")");
+                    a = sb.ToString();
+                    break;
                 case SearchConditionTest.LessThan:
                     a = "< ?";
                     break;
@@ -103,57 +119,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                     throw new Exception();  // invalid
             }
 
-            return new HqlCondition(string.Format("{0} {1}", variable, a), sc.Values);
+            return string.Format("{0}.{1} {2}", alias, field, a);
         }
 
-
-        private string _hql;
-        private object[] _parameters;
-
-        /// <summary>
-        /// Constructs an <see cref="HqlCondition"/> from the specified HQL string and parameters.
-        /// </summary>
-        /// <param name="hql">The HQL string containing conditional parameter placeholders</param>
-        /// <param name="parameters">Set of parameters to substitute</param>
-        public HqlCondition(string hql, object[] parameters)
-        {
-            _parameters = parameters;
-            _hql = hql;
-        }
-
-        /// <summary>
-        /// Constructs an <see cref="HqlCondition"/> from the specified HQL string and parameters.
-        /// </summary>
-        /// <param name="hql">The HQL string containing conditional parameter placeholders</param>
-        /// <param name="parameters">Set of parameters to substitute</param>
-        public HqlCondition(string hql, object parameter)
-            : this(hql, new object[] { parameter })
-        {
-        }
-
-        /// <summary>
-        /// Constructs an <see cref="HqlCondition"/> from the specified HQL string.
-        /// </summary>
-        /// <param name="hql">The HQL string</param>
-        public HqlCondition(string hql)
-            : this(hql, new object[0])
-        {
-        }
-
-        /// <summary>
-        /// The HQL for this condition.
-        /// </summary>
-        public string Hql
-        {
-            get { return _hql; }
-        }
-
-        /// <summary>
-        /// The set of parameters to be substituted into this condition.
-        /// </summary>
-        public object[] Parameters
-        {
-            get { return _parameters; }
-        }
     }
 }
