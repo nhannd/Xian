@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
             _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
+            _locationAdminService = ApplicationContext.GetService<ILocationAdminService>();
 
             _visitLocationRole = _adtService.GetVisitLocationRoleEnumTable();
 
