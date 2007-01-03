@@ -30,7 +30,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private VisitLocation _currentVisitLocationSelection;
 
         private IAdtService _adtService;
-        private IAdtReferenceDataService _adtReferenceService;
+        private IFacilityAdminService _facilityAdminService;
+        private ILocationAdminService _locationAdminService;
         private VisitLocationRoleEnumTable _visitLocationRole;
 
         private CrudActionModel _visitLocationActionHandler;
@@ -41,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public VisitLocationsSummaryComponent()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
-            _adtReferenceService = ApplicationContext.GetService<IAdtReferenceDataService>();
+            _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
 
             _visitLocationRole = _adtService.GetVisitLocationRoleEnumTable();
 
@@ -152,14 +153,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void StubAddVisitLocation()
         {
-            IList<Facility> facilities = _adtReferenceService.GetAllFacilities();
+            IList<Facility> facilities = _facilityAdminService.GetAllFacilities();
             if (facilities.Count == 0)
             {
-                _adtReferenceService.AddFacility("Test Facility");
-                facilities = _adtReferenceService.GetAllFacilities();
+                _facilityAdminService.AddFacility("Test Facility");
+                facilities = _facilityAdminService.GetAllFacilities();
             }
 
-            IList<Location> locations = _adtReferenceService.GetAllLocations();
+            IList<Location> locations = _locationAdminService.GetAllLocations();
             if (locations.Count == 0)
             {
                 Location location = new Location();
@@ -173,9 +174,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 location.PointOfCare = "Point of Care";
                 location.Room = "Room";
 
-                _adtReferenceService.AddLocation(location);
+                _locationAdminService.AddLocation(location);
 
-                locations = _adtReferenceService.GetAllLocations();
+                locations = _locationAdminService.GetAllLocations();
             }
 
             VisitLocation vl = new VisitLocation();

@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private Visit _visit;
 
         private IAdtService _adtService;
-        private IAdtReferenceDataService _adtReferenceDataService;
+        private IFacilityAdminService _facilityAdminService;
 
         private VisitDetailsEditorComponent _visitEditor;
         private VisitPractitionersSummaryComponent _visitPractionersSummary;
@@ -45,18 +45,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
-            _adtReferenceDataService = ApplicationContext.GetService<IAdtReferenceDataService>();
+            _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
 
             if (_isNew)
             {
                 _visit = new Visit();
 
                 ///TODO: expose facility in the UI
-                IList<Facility> facilities = _adtReferenceDataService.GetAllFacilities();
+                IList<Facility> facilities = _facilityAdminService.GetAllFacilities();
                 if (facilities.Count == 0)
                 {
-                    _adtReferenceDataService.AddFacility("Test Facility");
-                    facilities = _adtReferenceDataService.GetAllFacilities();
+                    _facilityAdminService.AddFacility("Test Facility");
+                    facilities = _facilityAdminService.GetAllFacilities();
                 }
 
                 _visit.Facility = facilities[0];

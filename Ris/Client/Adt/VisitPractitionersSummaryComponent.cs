@@ -31,7 +31,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private Table<VisitPractitioner> _practitionersTable;
 
         private IAdtService _adtService;
-        private IAdtReferenceDataService _adtReferenceService;
         private IPractitionerService _practitionerService;
 
         private VisitPractitionerRoleEnumTable _visitPractitionerRoleTable;
@@ -44,7 +43,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public VisitPractitionersSummaryComponent()
         {
             _adtService = ApplicationContext.GetService<IAdtService>();
-            _adtReferenceService = ApplicationContext.GetService<IAdtReferenceDataService>();
             _practitionerService = ApplicationContext.GetService<IPractitionerService>();
 
             _visitPractitionerRoleTable = _adtService.GetVisitPractitionerRoleEnumTable();

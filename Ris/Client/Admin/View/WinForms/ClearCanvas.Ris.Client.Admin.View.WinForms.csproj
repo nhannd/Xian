@@ -35,55 +35,48 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressEditorControl.cs">
+    <Compile Include="FacilitySummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AddressEditorControl.Designer.cs">
-      <DependentUpon>AddressEditorControl.cs</DependentUpon>
+    <Compile Include="FacilitySummaryComponentControl.Designer.cs">
+      <DependentUpon>FacilitySummaryComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddressesSummaryComponentView.cs" />
-    <Compile Include="AddressesSummaryControl.cs">
+    <Compile Include="FacilitySummaryComponentView.cs" />
+    <Compile Include="FacilityEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AddressesSummaryControl.Designer.cs">
-      <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
+    <Compile Include="FacilityEditorComponentControl.Designer.cs">
+      <DependentUpon>FacilityEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddressEditorComponentView.cs" />
-    <Compile Include="PatientAdminComponentView.cs" />
-    <Compile Include="PatientAdminControl.cs">
+    <Compile Include="FacilityEditorComponentView.cs" />
+    <Compile Include="LocationSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientAdminControl.Designer.cs">
-      <DependentUpon>PatientAdminControl.cs</DependentUpon>
+    <Compile Include="LocationSummaryComponentControl.Designer.cs">
+      <DependentUpon>LocationSummaryComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientEditorComponentView.cs" />
-    <Compile Include="PatientEditorControl.cs">
+    <Compile Include="LocationSummaryComponentView.cs" />
+    <Compile Include="LocationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientEditorControl.Designer.cs">
-      <DependentUpon>PatientEditorControl.cs</DependentUpon>
+    <Compile Include="LocationEditorComponentControl.Designer.cs">
+      <DependentUpon>LocationEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientSearchControl.cs">
+    <Compile Include="LocationEditorComponentView.cs" />
+    <Compile Include="ModalitySummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PatientSearchControl.Designer.cs">
-      <DependentUpon>PatientSearchControl.cs</DependentUpon>
+    <Compile Include="ModalitySummaryComponentControl.Designer.cs">
+      <DependentUpon>ModalitySummaryComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientSearchComponentView.cs" />
-    <Compile Include="PhoneNumberEditorComponentView.cs" />
-    <Compile Include="PhoneNumberEditorControl.cs">
+    <Compile Include="ModalitySummaryComponentView.cs" />
+    <Compile Include="ModalityEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PhoneNumberEditorControl.Designer.cs">
-      <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
+    <Compile Include="ModalityEditorComponentControl.Designer.cs">
+      <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PhoneNumbersSummaryComponentView.cs" />
-    <Compile Include="PhoneNumbersSummaryControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PhoneNumbersSummaryControl.Designer.cs">
-      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
-    </Compile>
+    <Compile Include="ModalityEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -103,38 +96,38 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.Ris.Client.Admin.csproj">
+      <Project>{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}</Project>
+      <Name>ClearCanvas.Ris.Client.Admin</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AddressEditorControl.resx">
+    <EmbeddedResource Include="FacilitySummaryComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>AddressEditorControl.cs</DependentUpon>
+      <DependentUpon>FacilitySummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddressesSummaryControl.resx">
+    <EmbeddedResource Include="FacilityEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
+      <DependentUpon>FacilityEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientAdminControl.resx">
+    <EmbeddedResource Include="LocationSummaryComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientAdminControl.cs</DependentUpon>
+      <DependentUpon>LocationSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientEditorControl.resx">
+    <EmbeddedResource Include="LocationEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientEditorControl.cs</DependentUpon>
+      <DependentUpon>LocationEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientSearchControl.resx">
+    <EmbeddedResource Include="ModalitySummaryComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PatientSearchControl.cs</DependentUpon>
+      <DependentUpon>ModalitySummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PhoneNumberEditorControl.resx">
+    <EmbeddedResource Include="ModalityEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PhoneNumbersSummaryControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
+      <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

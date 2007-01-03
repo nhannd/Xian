@@ -45,16 +45,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdtReferenceDataService.cs" />
     <Compile Include="AdtService.cs" />
     <Compile Include="DefaultPatientReconciliationStrategy.cs" />
+    <Compile Include="FacilityAdminService.cs" />
     <Compile Include="HL7QueueService.cs" />
-    <Compile Include="IAdtReferenceDataService.cs" />
     <Compile Include="IAdtService.cs" />
+    <Compile Include="IFacilityAdminService.cs" />
     <Compile Include="IHL7QueueService.cs" />
+    <Compile Include="ILocationAdminService.cs" />
+    <Compile Include="IModalityAdminService.cs" />
     <Compile Include="IOrderEntryService.cs" />
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="IPatientReconciliationStrategy.cs" />
+    <Compile Include="LocationAdminService.cs" />
+    <Compile Include="ModalityAdminService.cs" />
     <Compile Include="OrderEntryService.cs" />
     <Compile Include="IPractitionerService.cs" />
     <Compile Include="PatientAdminService.cs" />
