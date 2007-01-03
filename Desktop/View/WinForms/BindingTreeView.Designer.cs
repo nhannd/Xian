@@ -1,6 +1,6 @@
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    partial class BindableTreeView
+    partial class BindingTreeView
     {
         /// <summary> 
         /// Required designer variable.

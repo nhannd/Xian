@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// Tree-view that binds to an instance of an <see cref="ITree"/>, which acts as data-source.
     /// Also has built-in drag & drop support, delegating drop decisions to the underlying <see cref="ITree"/>.
     /// </summary>
-    public partial class BindableTreeView : UserControl
+    public partial class BindingTreeView : UserControl
     {
         private ITree _root;
         private BindingTreeLevelManager _rootLevelManager;
@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Constructor
         /// </summary>
-        public BindableTreeView()
+        public BindingTreeView()
         {
             InitializeComponent();
         }

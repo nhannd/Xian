@@ -54,11 +54,11 @@
     <Compile Include="ApplicationComponentUserControl.Designer.cs">
       <DependentUpon>ApplicationComponentUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="BindableTreeView.cs">
+    <Compile Include="BindingTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="BindableTreeView.Designer.cs">
-      <DependentUpon>BindableTreeView.cs</DependentUpon>
+    <Compile Include="BindingTreeView.Designer.cs">
+      <DependentUpon>BindingTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="CursorFactory.cs" />
     <Compile Include="DataGridViewWithDragSupport.cs">
@@ -159,9 +159,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>ApplicationComponentUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BindableTreeView.resx">
+    <EmbeddedResource Include="BindingTreeView.resx">
+      <DependentUpon>BindingTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
-      <DependentUpon>BindableTreeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DialogBoxForm.resx">
       <SubType>Designer</SubType>
