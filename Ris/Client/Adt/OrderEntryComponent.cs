@@ -300,7 +300,6 @@ namespace ClearCanvas.Ris.Client.Adt
                                     delegate(ScheduledProcedureStepType spt) { return spt.Format(); }),
                                     rpt.ScheduledProcedureStepTypes);
                         }), _selectedDiagnosticService.RequestedProcedureTypes);
-                _diagnosticServiceBreakdown.Binding.TooltipTextProvider = delegate(RequestedProcedureType rpt) { return rpt.Format() + " tip"; };
             }
 
             EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);

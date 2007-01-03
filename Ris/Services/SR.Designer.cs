@@ -59,5 +59,14 @@ namespace ClearCanvas.Ris.Services {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempt to import entities with the same Id but different names.
+        /// </summary>
+        internal static string ExceptionImportEntityNameIdMismatch {
+            get {
+                return ResourceManager.GetString("ExceptionImportEntityNameIdMismatch", resourceCulture);
+            }
+        }
     }
 }

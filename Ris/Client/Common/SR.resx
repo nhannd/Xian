@@ -117,7 +117,148 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionImportEntityNameIdMismatch" xml:space="preserve">
-    <value>Attempt to import entities with the same Id but different names</value>
+  <data name="ColumnAbbreviationReconciliation" xml:space="preserve">
+    <value>Rec.</value>
+  </data>
+  <data name="ColumnAccessionNumber" xml:space="preserve">
+    <value>Accession #</value>
+  </data>
+  <data name="ColumnAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="ColumnAdmissionType" xml:space="preserve">
+    <value>Admission Type</value>
+  </data>
+  <data name="ColumnAdmitDateTime" xml:space="preserve">
+    <value>Admit Date/Time</value>
+  </data>
+  <data name="ColumnAmbulatoryStatus" xml:space="preserve">
+    <value>Ambulatory Status</value>
+  </data>
+  <data name="ColumnCreatedOn" xml:space="preserve">
+    <value>Created On</value>
+  </data>
+  <data name="ColumnCurrentLocation" xml:space="preserve">
+    <value>Current Location</value>
+  </data>
+  <data name="ColumnDateOfBirth" xml:space="preserve">
+    <value>Date Of Birth</value>
+  </data>
+  <data name="ColumnDiagnosticService" xml:space="preserve">
+    <value>Diagnostic Service</value>
+  </data>
+  <data name="ColumnDirection" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="ColumnDischargeDateTime" xml:space="preserve">
+    <value>Discharge Date/Time</value>
+  </data>
+  <data name="ColumnDischargeDisposition" xml:space="preserve">
+    <value>Discharge Disposition</value>
+  </data>
+  <data name="ColumnEndTime" xml:space="preserve">
+    <value>End Time</value>
+  </data>
+  <data name="ColumnExpiryDate" xml:space="preserve">
+    <value>Expiry Date</value>
+  </data>
+  <data name="ColumnFacility" xml:space="preserve">
+    <value>Facility</value>
+  </data>
+  <data name="ColumnFamilyName" xml:space="preserve">
+    <value>Family Name</value>
+  </data>
+  <data name="ColumnGivenName" xml:space="preserve">
+    <value>Given Name</value>
+  </data>
+  <data name="ColumnHealthcardNumber" xml:space="preserve">
+    <value>Healthcard #</value>
+  </data>
+  <data name="ColumnHomeAddress" xml:space="preserve">
+    <value>Home Address</value>
+  </data>
+  <data name="ColumnHomePhone" xml:space="preserve">
+    <value>Home Phone</value>
+  </data>
+  <data name="ColumnLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="ColumnMiddleName" xml:space="preserve">
+    <value>Middle Name</value>
+  </data>
+  <data name="ColumnModality" xml:space="preserve">
+    <value>Modality</value>
+  </data>
+  <data name="ColumnMRN" xml:space="preserve">
+    <value>MRN</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ColumnNumber" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="ColumnPatientClass" xml:space="preserve">
+    <value>Patient Class</value>
+  </data>
+  <data name="ColumnPatientType" xml:space="preserve">
+    <value>Patient Type</value>
+  </data>
+  <data name="ColumnPeer" xml:space="preserve">
+    <value>Peer</value>
+  </data>
+  <data name="ColumnPractitioner" xml:space="preserve">
+    <value>Practitioner</value>
+  </data>
+  <data name="ColumnPreAdmitNumber" xml:space="preserve">
+    <value>Pre-Admit Number</value>
+  </data>
+  <data name="ColumnPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ColumnProcedure" xml:space="preserve">
+    <value>Procedure</value>
+  </data>
+  <data name="ColumnRole" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="ColumnScheduledStep" xml:space="preserve">
+    <value>Scheduled Step</value>
+  </data>
+  <data name="ColumnScore" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="ColumnSex" xml:space="preserve">
+    <value>Sex</value>
+  </data>
+  <data name="ColumnSite" xml:space="preserve">
+    <value>Site</value>
+  </data>
+  <data name="ColumnStartTime" xml:space="preserve">
+    <value>Start Time</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnStatusDescription" xml:space="preserve">
+    <value>Status Description</value>
+  </data>
+  <data name="ColumnType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ColumnUpdatedOn" xml:space="preserve">
+    <value>Updated On</value>
+  </data>
+  <data name="ColumnVisitNumber" xml:space="preserve">
+    <value>Visit #</value>
+  </data>
+  <data name="ColumnVisitType" xml:space="preserve">
+    <value>Visit Type</value>
+  </data>
+  <data name="ColumnWorkAddress" xml:space="preserve">
+    <value>Work Address</value>
+  </data>
+  <data name="ColumnWorkPhone" xml:space="preserve">
+    <value>Work Phone</value>
   </data>
 </root>

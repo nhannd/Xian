@@ -25,6 +25,6 @@ namespace ClearCanvas.Ris.Services
             Facility orderingFacility,
             DateTime schedulingRequestTime);
 
-        IList<WorklistItem> GetOrdersWorklist();
+        IList<AcquisitionWorklistItem> GetOrdersWorklist(ScheduledProcedureStepSearchCriteria criteria);
     }
 }

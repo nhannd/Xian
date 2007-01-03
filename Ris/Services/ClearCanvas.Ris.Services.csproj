@@ -45,13 +45,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcquisitionWorkflowService.cs" />
     <Compile Include="AdtService.cs" />
     <Compile Include="DefaultPatientReconciliationStrategy.cs" />
+    <Compile Include="DiagnosticServiceAdminService.cs" />
+    <Compile Include="DiagnosticServiceBatchImporter.cs" />
     <Compile Include="FacilityAdminService.cs" />
     <Compile Include="HL7QueueService.cs" />
+    <Compile Include="IAcquisitionWorkflowService.cs" />
     <Compile Include="IAdtService.cs" />
+    <Compile Include="IDiagnosticServiceAdminService.cs" />
     <Compile Include="IFacilityAdminService.cs" />
     <Compile Include="IHL7QueueService.cs" />
+    <Compile Include="ImportException.cs" />
     <Compile Include="ILocationAdminService.cs" />
     <Compile Include="IModalityAdminService.cs" />
     <Compile Include="IOrderEntryService.cs" />

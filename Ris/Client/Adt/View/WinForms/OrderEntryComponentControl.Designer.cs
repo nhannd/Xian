@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingPhysician = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._orderingFacility = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._priority = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindableTreeView();
+            this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
             this._placeOrderButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._schedulingRequestDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.ComboBoxField _orderingPhysician;
         private ClearCanvas.Controls.WinForms.ComboBoxField _orderingFacility;
         private ClearCanvas.Controls.WinForms.ComboBoxField _priority;
-        private ClearCanvas.Desktop.View.WinForms.BindableTreeView _diagnosticServiceBreakdown;
+        private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
         private System.Windows.Forms.Button _placeOrderButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Controls.WinForms.DateTimeField _schedulingRequestDateTime;

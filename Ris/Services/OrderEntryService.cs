@@ -71,10 +71,10 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<WorklistItem> GetOrdersWorklist()
+        public IList<AcquisitionWorklistItem> GetOrdersWorklist(ScheduledProcedureStepSearchCriteria criteria)
         {
-            IWorklistBroker broker = this.CurrentContext.GetBroker<IWorklistBroker>();
-            return broker.GetWorklist();
+            IAcquisitionWorklistBroker broker = this.CurrentContext.GetBroker<IAcquisitionWorklistBroker>();
+            return broker.GetWorklist(criteria);
         }
 
 /*
