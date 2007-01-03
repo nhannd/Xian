@@ -8,8 +8,9 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client.Common
 {
+    [ExtensionPoint()]
     public class PhoneNumbersEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }

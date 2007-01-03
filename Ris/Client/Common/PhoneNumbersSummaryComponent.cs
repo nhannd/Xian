@@ -10,7 +10,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Desktop.Tables;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client.Common
 {
     public class PhoneNumbersSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {

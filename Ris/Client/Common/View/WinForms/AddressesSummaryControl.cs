@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.Common.View.WinForms
 {
     public partial class AddressesSummaryControl : ApplicationComponentUserControl
     {

@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Tables;
 
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Client.Admin

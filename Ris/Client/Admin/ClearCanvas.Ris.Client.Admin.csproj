@@ -37,7 +37,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrudActionModel.cs" />
     <Compile Include="FacilitySummaryComponent.cs" />
     <Compile Include="FacilityEditorComponent.cs" />
     <Compile Include="FacilityTable.cs" />
@@ -78,10 +77,10 @@
       <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>
       <Name>ClearCanvas.Ris.Services</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Delete.png" />
-    <EmbeddedResource Include="Icons\Edit.png" />
+    <ProjectReference Include="..\Common\ClearCanvas.Ris.Client.Common.csproj">
+      <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
+      <Name>ClearCanvas.Ris.Client.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\AddPatientMedium.png" />
@@ -89,7 +88,6 @@
     <EmbeddedResource Include="Icons\FindPatientMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Add.png" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

@@ -37,9 +37,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressEditorComponent.cs" />
-    <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="AddressTable.cs" />
     <Compile Include="OrderEntryComponent.cs" />
     <Compile Include="HL7QueueItemTableData.cs" />
     <Compile Include="HL7QueuePatientSearchTool.cs" />
@@ -51,7 +48,6 @@
     <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconciliation.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
-    <Compile Include="CrudActionModel.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FoldersComponent.cs" />
@@ -71,9 +67,6 @@
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
-    <Compile Include="PhoneNumberEditorComponent.cs" />
-    <Compile Include="PhoneNumbersSummaryComponent.cs" />
-    <Compile Include="TelephoneNumberTable.cs" />
     <Compile Include="VisitEditorComponent.cs" />
     <Compile Include="VisitDetailsEditorComponent.cs" />
     <Compile Include="VisitLocationsSummaryComponent.cs" />
@@ -128,6 +121,10 @@
       <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>
       <Name>ClearCanvas.Ris.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\ClearCanvas.Ris.Client.Common.csproj">
+      <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
+      <Name>ClearCanvas.Ris.Client.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PatientReconciliationToolLarge.png" />
@@ -166,15 +163,6 @@
     <EmbeddedResource Include="PatientPreview.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Edit.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\PatientAddToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
@@ -193,7 +181,6 @@
   <ItemGroup>
     <Content Include="actionmodels.xml" />
     <EmbeddedResource Include="OrderEntryComponent.cfg.xml" />
-    <EmbeddedResource Include="AddressesSummaryComponent.cfg.xml" />
     <EmbeddedResource Include="PatientProfileDetailsEditorComponent.cfg.xml" />
     <EmbeddedResource Include="PatientProfileDiff.html" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolMedium.png" />

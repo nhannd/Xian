@@ -9,7 +9,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Services;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client.Common
 {
     [ExtensionPoint()]
     public class AddressesEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>

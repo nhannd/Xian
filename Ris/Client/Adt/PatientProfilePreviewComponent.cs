@@ -14,6 +14,7 @@ using ClearCanvas.Common.Scripting;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

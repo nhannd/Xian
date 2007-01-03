@@ -6,20 +6,19 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.Common.View.WinForms
 {
-    [ExtensionOf(typeof(AddressesSummaryComponentViewExtensionPoint))]
-    public class AddressesSummaryComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
+    public class PhoneNumbersSummaryComponentView : WinFormsView, IApplicationComponentView
     {
-        private AddressesSummaryComponent _component;
-        private AddressesSummaryControl _control;
-
+        private PhoneNumbersSummaryComponent _component;
+        private PhoneNumbersSummaryControl _control;
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (AddressesSummaryComponent)component;
+            _component = (PhoneNumbersSummaryComponent)component;
         }
 
         #endregion
@@ -30,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new AddressesSummaryControl(_component);
+                    _control = new PhoneNumbersSummaryControl(_component);
                 }
                 return _control;
             }

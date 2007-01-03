@@ -223,15 +223,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add.
-        /// </summary>
-        internal static string TitleAdd {
-            get {
-                return ResourceManager.GetString("TitleAdd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Facility ....
         /// </summary>
         internal static string TitleAddFacility {
@@ -259,15 +250,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        internal static string TitleDelete {
-            get {
-                return ResourceManager.GetString("TitleDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete Facility ....
         /// </summary>
         internal static string TitleDeleteFacility {
@@ -291,15 +273,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleDeleteModality {
             get {
                 return ResourceManager.GetString("TitleDeleteModality", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit.
-        /// </summary>
-        internal static string TitleEdit {
-            get {
-                return ResourceManager.GetString("TitleEdit", resourceCulture);
             }
         }
         

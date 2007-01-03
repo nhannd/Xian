@@ -171,9 +171,6 @@
   <data name="MessageDuplicateModalityID" xml:space="preserve">
     <value>This modality ID already exist.  Your changes could not be saved.</value>
   </data>
-  <data name="TitleAdd" xml:space="preserve">
-    <value>Add</value>
-  </data>
   <data name="TitleAddFacility" xml:space="preserve">
     <value>Add Facility ...</value>
   </data>
@@ -183,9 +180,6 @@
   <data name="TitleAddModality" xml:space="preserve">
     <value>Add Modality ...</value>
   </data>
-  <data name="TitleDelete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="TitleDeleteFacility" xml:space="preserve">
     <value>Delete Facility ...</value>
   </data>
@@ -194,9 +188,6 @@
   </data>
   <data name="TitleDeleteModality" xml:space="preserve">
     <value>Delete Modality ...</value>
-  </data>
-  <data name="TitleEdit" xml:space="preserve">
-    <value>Edit</value>
   </data>
   <data name="TitleFacilities" xml:space="preserve">
     <value>Facilities</value>

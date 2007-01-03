@@ -8,6 +8,7 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop.Actions;
 using System.Collections.Generic;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

@@ -7,6 +7,7 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

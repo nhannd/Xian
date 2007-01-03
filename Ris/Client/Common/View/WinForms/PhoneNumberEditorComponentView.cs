@@ -6,21 +6,21 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.Common.View.WinForms
 {
-    [ExtensionOf(typeof(AddressesEditorComponentViewExtensionPoint))]
-    class AddressEditorComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
+    class PhoneNumberEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        AddressEditorComponent _component;
-        AddressEditorControl _control;
+        PhoneNumberEditorComponent _component;
+        PhoneNumberEditorControl _control;
 
-        protected AddressEditorControl Control
+        protected PhoneNumberEditorControl Control
         {
             get
             {
                 if (_control == null)
                 {
-                    _control = new AddressEditorControl(_component);
+                    _control = new PhoneNumberEditorControl(_component);
                 }
                 return _control;
             }
@@ -35,10 +35,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (AddressEditorComponent)component;
+            _component = (PhoneNumberEditorComponent)component;
         }
 
         #endregion
-
     }
 }

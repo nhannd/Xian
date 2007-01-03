@@ -538,24 +538,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this address?.
-        /// </summary>
-        internal static string MessageDeleteSelectedAddress {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this phone number?.
-        /// </summary>
-        internal static string MessageDeleteSelectedPhoneNumber {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedPhoneNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this visit?.
         /// </summary>
         internal static string MessageDeleteSelectedVisit {
@@ -583,42 +565,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mobile.
-        /// </summary>
-        internal static string PhoneNumberMobile {
-            get {
-                return ResourceManager.GetString("PhoneNumberMobile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add.
-        /// </summary>
-        internal static string TitleAdd {
-            get {
-                return ResourceManager.GetString("TitleAdd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Address....
-        /// </summary>
-        internal static string TitleAddAddress {
-            get {
-                return ResourceManager.GetString("TitleAddAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Phone Number....
-        /// </summary>
-        internal static string TitleAddPhoneNumber {
-            get {
-                return ResourceManager.GetString("TitleAddPhoneNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Visit....
         /// </summary>
         internal static string TitleAddVisit {
@@ -637,29 +583,11 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        internal static string TitleDelete {
-            get {
-                return ResourceManager.GetString("TitleDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Detail.
         /// </summary>
         internal static string TitleDetail {
             get {
                 return ResourceManager.GetString("TitleDetail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit.
-        /// </summary>
-        internal static string TitleEdit {
-            get {
-                return ResourceManager.GetString("TitleEdit", resourceCulture);
             }
         }
         
@@ -831,24 +759,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitleSearch {
             get {
                 return ResourceManager.GetString("TitleSearch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Address....
-        /// </summary>
-        internal static string TitleUpdateAddress {
-            get {
-                return ResourceManager.GetString("TitleUpdateAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Phone Number....
-        /// </summary>
-        internal static string TitleUpdatePhoneNumber {
-            get {
-                return ResourceManager.GetString("TitleUpdatePhoneNumber", resourceCulture);
             }
         }
         
