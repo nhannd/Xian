@@ -1,11 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Healthcare
 {
-    public class WorklistItem
+    public class AcquisitionWorklistItem
     {
+        private EntityRef<Patient> _patient;
+        private EntityRef<PatientProfile> _patientProfile;
+        private EntityRef<Order> _order;
+        private EntityRef<RequestedProcedure> _requestedProcedure;
+        private EntityRef<ScheduledProcedureStep> _workflowStep;
+
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private CompositeIdentifier _visitNumber;
@@ -15,8 +22,14 @@ namespace ClearCanvas.Healthcare
         private string _scheduledStep;
         private string _modality;
         private OrderPriority _priority;
+        private ScheduledProcedureStepStatus _status;
 
-        public WorklistItem(
+        public AcquisitionWorklistItem(
+            Patient patient,
+            PatientProfile profile,
+            Order order,
+            RequestedProcedure requestedProcedure,
+            ScheduledProcedureStep workflowStep,
             CompositeIdentifier mrn,
             PersonName patientName,
             CompositeIdentifier visitNumber,
@@ -25,8 +38,15 @@ namespace ClearCanvas.Healthcare
             string procedure,
             string scheduledStep,
             string modality,
-            OrderPriority priority)
+            OrderPriority priority,
+            ScheduledProcedureStepStatus status)
         {
+            _patient = new EntityRef<Patient>(patient);
+            _patientProfile = new EntityRef<PatientProfile>(profile);
+            _order = new EntityRef<Order>(order);
+            _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
+            _workflowStep = new EntityRef<ScheduledProcedureStep>(workflowStep);
+
             _mrn = mrn;
             _patientName = patientName;
             _visitNumber = visitNumber;
@@ -36,6 +56,32 @@ namespace ClearCanvas.Healthcare
             _scheduledStep = scheduledStep;
             _modality = modality;
             _priority = priority;
+            _status = status;
+        }
+
+        public EntityRef<ScheduledProcedureStep> WorkflowStep
+        {
+            get { return _workflowStep; }
+        }
+
+        public EntityRef<Patient> Patient
+        {
+            get { return _patient; }
+        }
+
+        public EntityRef<PatientProfile> PatientProfile
+        {
+            get { return _patientProfile; }
+        }
+
+        public EntityRef<Order> Order
+        {
+            get { return _order; }
+        }
+
+        public EntityRef<RequestedProcedure> RequestedProcedure
+        {
+            get { return _requestedProcedure; }
         }
 
         public CompositeIdentifier Mrn
@@ -78,5 +124,9 @@ namespace ClearCanvas.Healthcare
             get { return _priority; }
         }
 
+        public ScheduledProcedureStepStatus Status
+        {
+            get { return _status; }
+        }
     }
 }

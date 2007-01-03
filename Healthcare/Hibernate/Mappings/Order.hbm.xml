@@ -8,14 +8,14 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true"/>
+    <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true" fetch="join"/>
     <many-to-one name="Visit" class="Visit" column="VisitOID_" not-null="true"/>
 
     <!-- Placer may need to be more than simple string (eg may need a namespace or assigning authority ) -->
     <property name="PlacerNumber" column="PlacerNumber_" type="String" length="30"/>
     <property name="AccessionNumber" column="AccessionNumber_" type="String" length="30" not-null="true"/>
  
-    <many-to-one name="DiagnosticService" class="DiagnosticService" column="DiagnosticServiceOID_" not-null="true"/>
+    <many-to-one name="DiagnosticService" class="DiagnosticService" column="DiagnosticServiceOID_" not-null="true" fetch="join"/>
 
     <!-- Time that the order was entered -->
     <property name="EnteredDateTime" column="EnteredDateTime_" type="DateTime" not-null="true"/>

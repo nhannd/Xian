@@ -4,6 +4,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Healthcare {
@@ -26,6 +27,18 @@ namespace ClearCanvas.Healthcare {
         public virtual string Format()
         {
             return string.Format("{0} ({1})", _name, _id);
+        }
+
+        public virtual void AddRequestedProcedureType(RequestedProcedureType rpt)
+        {
+            if (this.RequestedProcedureTypes.Contains(rpt))
+            {
+                throw new HealthcareWorkflowException(
+                    string.Format("Diagnostic Service {0} already contains Requested Procedure Type {1}",
+                    this.Id, rpt.Id));
+            }
+
+            this.RequestedProcedureTypes.Add(rpt);
         }
 		
 		

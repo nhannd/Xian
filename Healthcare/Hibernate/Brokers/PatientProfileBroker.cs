@@ -19,10 +19,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <returns></returns>
         public override IList<PatientProfile> Find(PatientProfileSearchCriteria criteria, SearchResultPage page)
         {
-            HqlQuery query = HqlQuery.FromSearchCriteria(
+            HqlQuery query = new HqlQuery(
                 "from PatientProfile p join fetch p.Patient",
-                new string[] { "p"},
-                new SearchCriteria[] { criteria },
+                HqlCondition.FromSearchCriteria("p", criteria),
+                HqlSort.FromSearchCriteria("p", criteria),
                 page);
 
             return MakeTypeSafe<PatientProfile>(ExecuteHql(query));

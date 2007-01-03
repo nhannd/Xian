@@ -15,10 +15,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </summary>
         public override IList<Location> Find(LocationSearchCriteria criteria, SearchResultPage page)
         {
-            HqlQuery query = HqlQuery.FromSearchCriteria(
+            HqlQuery query = new HqlQuery(
                 "from Location l join fetch l.Facility",
-                new string[] { "l" },
-                new SearchCriteria[] { criteria },
+                HqlCondition.FromSearchCriteria("l", criteria),
+                HqlSort.FromSearchCriteria("l", criteria),
                 page);
 
             return MakeTypeSafe<Location>(ExecuteHql(query));
