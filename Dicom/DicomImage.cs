@@ -11,7 +11,7 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Representation of a DicomImage object.
     /// </summary>
-	public abstract class DicomImage
+	public abstract class DicomImage : IDisposable
 	{
 		private ushort _rows;
 		private ushort _columns;
@@ -434,7 +434,6 @@ namespace ClearCanvas.Dicom
 
 		public abstract void Load();
         public abstract void WriteToMedia(E_TransferSyntax TransferSyntax);
-		protected abstract void Unload();
 
         /// <summary>
         /// Loads the minmum set of image parameter tags that is
@@ -496,5 +495,34 @@ namespace ClearCanvas.Dicom
 			if (_imageCodecMap == null)
 				_imageCodecMap = new ImageCodecMap();
 		}
+
+		#region Disposal
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected abstract void Dispose(bool disposing);
+
+		#endregion 
+
 	}
 }

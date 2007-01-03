@@ -27,7 +27,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			string actionId = String.Format("{0}:{1}", actionRoot, lutPresetGroup.ActionId);
 			ActionPath actionPath = new ActionPath(pathRoot + lutPresetGroup.ActionId, resolver);
-			_action = new ClickAction(actionId, actionPath, ClickActionFlags.None, resolver);
+			_action = new MenuAction(actionId, actionPath, ClickActionFlags.None, resolver);
+			//_action = new ClickAction(actionId, actionPath, ClickActionFlags.None, resolver);
 
 			_action.SetClickHandler(this.ClickHandler);
 

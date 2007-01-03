@@ -11,7 +11,7 @@ namespace ClearCanvas.Dicom
 	public class FileDicomImage : DicomImage
 	{
 		// Private attributes
-		private DcmFileFormat _fileFormat = new DcmFileFormat();
+		private DcmFileFormat _fileFormat;
 		private string _filename;
 
 		// Properties
@@ -37,6 +37,9 @@ namespace ClearCanvas.Dicom
         /// </summary>
 		public override void Load()
 		{
+			if (_fileFormat == null)
+				_fileFormat = new DcmFileFormat();
+
 			if (!base.IsDatasetLoaded)
 			{
 				OFCondition status = _fileFormat.loadFile(_filename, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, 64, E_FileReadMode.ERM_autoDetect);
@@ -53,14 +56,16 @@ namespace ClearCanvas.Dicom
             _fileFormat.saveFile(_filename, transferSyntax);
         }
 
-        // Protected methods
-        /// <summary>
-        /// Unload the dataset from memory, and release system resources.
-        /// </summary>
-		protected override void Unload()
+		protected override void Dispose(bool disposing)
 		{
-			_fileFormat.Dispose();
-		}
-	}
+			if (disposing)
+			{
+				if (_fileFormat != null)
+					_fileFormat.Dispose();
 
+				_fileFormat = null;
+				this.IsDatasetLoaded = false;
+			}
+		}
+ 	}
 }
