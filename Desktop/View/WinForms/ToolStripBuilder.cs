@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             Menu,
             Toolbar
         }
-        
+
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle displayStyle)
         {
             foreach (ActionModelNode node in nodes)

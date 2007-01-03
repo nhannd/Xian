@@ -18,9 +18,24 @@ namespace ClearCanvas.Desktop.Trees
             return null;
         }
 
+        public virtual bool CanHaveSubTree(object item)
+        {
+            return true;
+        }
+
         public virtual ITree GetSubTree(object item)
         {
             return null;
+        }
+
+        public virtual DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind)
+        {
+            return DragDropKind.None;
+        }
+
+        public virtual DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind)
+        {
+            return DragDropKind.None;
         }
 
         #endregion

@@ -28,9 +28,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._treeCtrl = new System.Windows.Forms.TreeView();
+            this._iconImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,16 +63,26 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this._treeCtrl.Dock = System.Windows.Forms.DockStyle.Fill;
             this._treeCtrl.HideSelection = false;
+            this._treeCtrl.ImageIndex = 0;
+            this._treeCtrl.ImageList = this._iconImageList;
             this._treeCtrl.Location = new System.Drawing.Point(3, 28);
             this._treeCtrl.Name = "_treeCtrl";
+            this._treeCtrl.SelectedImageIndex = 0;
             this._treeCtrl.ShowNodeToolTips = true;
             this._treeCtrl.Size = new System.Drawing.Size(480, 341);
             this._treeCtrl.TabIndex = 1;
             this._treeCtrl.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeExpand);
             this._treeCtrl.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterSelect);
             // 
+            // _iconImageList
+            // 
+            this._iconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this._iconImageList.ImageSize = new System.Drawing.Size(16, 16);
+            this._iconImageList.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // BindableTreeView
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
@@ -87,5 +99,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStrip _toolStrip;
         private System.Windows.Forms.TreeView _treeCtrl;
+        private System.Windows.Forms.ImageList _iconImageList;
     }
 }

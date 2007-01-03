@@ -18,12 +18,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
         private event EventHandler _itemDoubleClicked;
         private event EventHandler _selectionChanged;
+        private event EventHandler<ItemDragEventArgs> _itemDrag;
 
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
 		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
         private ITable _table;
         private bool _multiLine;
+
 
 
 		public TableView()
@@ -45,6 +47,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _dataGridView.ReadOnly = value; }
         }
 
+        [DefaultValue(true)]
         public bool MultiSelect
         {
             get { return _dataGridView.MultiSelect; }
@@ -140,13 +143,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _table = value;
 
-                if (_table != null)
-                {
-                    _bindingSource.DataSource = new TableAdapter(_table);
-                    _dataGridView.DataSource = _bindingSource;
-                }
+                // by setting the datasource to null here, we eliminate the SelectionChanged events that
+                // would get fired during the call to InitColumns()
+                _dataGridView.DataSource = null;
 
                 InitColumns();
+
+                if (_table != null)
+                {
+                    //_bindingSource.DataSource = new TableAdapter(_table);
+                    //_dataGridView.DataSource = _bindingSource;
+                    _dataGridView.DataSource = new TableAdapter(_table);
+                }
             }
         }
 
@@ -203,6 +211,12 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             add { _itemDoubleClicked += value; }
             remove { _itemDoubleClicked -= value; }
+        }
+
+        public event EventHandler<ItemDragEventArgs> ItemDrag
+        {
+            add { _itemDrag += value; }
+            remove { _itemDrag -= value; }
         }
 
         private Selection GetSelectionHelper()
@@ -319,6 +333,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _dataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
+        }
+
+        /// <summary>
+        /// Handle the ItemDrag event of the internal control, so that this control can fire its own 
+        /// event, using the current selection as the "item" that is being dragged.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _dataGridView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
+            EventsHelper.Fire(_itemDrag, this, args);
         }
 	}
 }

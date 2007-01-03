@@ -1,43 +1,40 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.ComponentModel;
-
-using ClearCanvas.Common;
+using System.Collections;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Desktop.Tables
+namespace ClearCanvas.Desktop
 {
+   
     /// <summary>
-    /// Implementation of <see cref="ITableItemCollection"/> for use with the <see cref="Table"/> class.
+    /// Implementation of <see cref="IItemCollection"/>.
     /// </summary>
     /// <typeparam name="TItem">The type of item that the table holds</typeparam>
-    public class TableItemCollection<TItem> : IList<TItem>, ITableItemCollection
+    public class ItemCollection<TItem> : IList<TItem>, IItemCollection
     {
 
         private List<TItem> _list;
-        private Table<TItem> _owner;
+        private event EventHandler<ItemEventArgs> _itemsChanged;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public TableItemCollection(Table<TItem> owner)
+        public ItemCollection()
         {
-            _owner = owner;
             _list = new List<TItem>();
         }
 
         /// <summary>
-        /// Searches the collection for an item that satisfies the specified predicate and returns
+        /// Searches the collection for an item that satisfies the specified constraint and returns
         /// the index of the first such item.
         /// </summary>
         /// <returns>The index of the first matching item, or -1 if no matching items are found</returns>
-        public int FindIndex(Predicate<TItem> findDelegate)
+        public int FindIndex(Predicate<TItem> constraint)
         {
             for (int i = 0; i < this.Count; i++)
             {
-                if (findDelegate(_list[i]))
+                if (constraint(_list[i]))
                     return i;
             }
             return -1;
@@ -51,7 +48,7 @@ namespace ClearCanvas.Desktop.Tables
         public void AddRange(IEnumerable<TItem> enumerable)
         {
             _list.AddRange(enumerable);
-            _owner.NotifyDataChanged(TableItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1);
         }
 
         /// <summary>
@@ -61,7 +58,7 @@ namespace ClearCanvas.Desktop.Tables
         public void AddRange(IEnumerable enumerable)
         {
             _list.AddRange(new TypeSafeEnumerableWrapper<TItem>(enumerable));
-            _owner.NotifyDataChanged(TableItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1);
         }
 
         /// <summary>
@@ -71,7 +68,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="index"></param>
         public void NotifyItemUpdated(int index)
         {
-            _owner.NotifyDataChanged(TableItemChangeType.ItemChanged, index);
+            NotifyItemsChanged(ItemChangeType.ItemChanged, index);
         }
 
         /// <summary>
@@ -88,19 +85,23 @@ namespace ClearCanvas.Desktop.Tables
             }
             else
             {
-				throw new ArgumentException(SR.ExceptionTableItemNotFoundInCollection);
+                throw new ArgumentException(SR.ExceptionTableItemNotFoundInCollection);
             }
         }
 
-        #region ITableData members
+        #region IItemCollection members
 
+        public event EventHandler<ItemEventArgs> ItemsChanged
+        {
+            add { _itemsChanged += value; }
+            remove { _itemsChanged -= value; }
+        }
 
-        object ITableItemCollection.this[int index]
+        object IItemCollection.this[int index]
         {
             get { return _list[index]; }
         }
 
-	
         #endregion
 
         #region IList<TItem> Members
@@ -113,13 +114,13 @@ namespace ClearCanvas.Desktop.Tables
         public void Insert(int index, TItem item)
         {
             _list.Insert(index, item);
-            _owner.NotifyDataChanged(TableItemChangeType.ItemAdded, index);
+            NotifyItemsChanged(ItemChangeType.ItemAdded, index);
         }
 
         public void RemoveAt(int index)
         {
             _list.RemoveAt(index);
-            _owner.NotifyDataChanged(TableItemChangeType.ItemRemoved, index);
+            NotifyItemsChanged(ItemChangeType.ItemRemoved, index);
         }
 
         public TItem this[int index]
@@ -127,8 +128,8 @@ namespace ClearCanvas.Desktop.Tables
             get { return _list[index]; }
             set
             {
-               _list[index] = value;
-               _owner.NotifyDataChanged(TableItemChangeType.ItemChanged, index);
+                _list[index] = value;
+                NotifyItemsChanged(ItemChangeType.ItemChanged, index);
             }
         }
 
@@ -139,13 +140,13 @@ namespace ClearCanvas.Desktop.Tables
         public void Add(TItem item)
         {
             _list.Add(item);
-            _owner.NotifyDataChanged(TableItemChangeType.ItemAdded, this.Count - 1);
+            NotifyItemsChanged(ItemChangeType.ItemAdded, this.Count - 1);
         }
 
         public void Clear()
         {
             _list.Clear();
-            _owner.NotifyDataChanged(TableItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1);
         }
 
         public bool Contains(TItem item)
@@ -163,9 +164,9 @@ namespace ClearCanvas.Desktop.Tables
             get { return _list.Count; }
         }
 
-        public bool IsReadOnly
+        bool ICollection<TItem>.IsReadOnly
         {
-            get { return false; }
+            get { return (_list as ICollection<TItem>).IsReadOnly; }
         }
 
         public bool Remove(TItem item)
@@ -174,7 +175,7 @@ namespace ClearCanvas.Desktop.Tables
             bool removed = _list.Remove(item);
             if (removed)
             {
-                _owner.NotifyDataChanged(TableItemChangeType.ItemRemoved, index);
+                NotifyItemsChanged(ItemChangeType.ItemRemoved, index);
             }
             return removed;
         }
@@ -202,6 +203,14 @@ namespace ClearCanvas.Desktop.Tables
         internal void Sort(IComparer<TItem> comparer)
         {
             _list.Sort(comparer);
+
+            // notify that the list has been sorted
+            NotifyItemsChanged(ItemChangeType.Reset, -1);
+        }
+
+        private void NotifyItemsChanged(ItemChangeType itemChangeType, int index)
+        {
+            EventsHelper.Fire(_itemsChanged, this, new ItemEventArgs(itemChangeType, index, index > -1 ? this[index] : default(TItem)));
         }
     }
 }

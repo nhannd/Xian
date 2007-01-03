@@ -13,13 +13,10 @@ namespace ClearCanvas.Desktop.Tables
     public class Table<TItem> : ITable
     {
         private TableColumnCollection<TItem> _columns;
-        private TableItemCollection<TItem> _data;
+        private ItemCollection<TItem> _data;
         private float _baseColumnWidth;
 
         private TableSortParams _sortParams;
-
-        private event EventHandler<TableItemEventArgs> _dataChanged;
-        private event EventHandler<TableColumnEventArgs> _structureChanged;
 
         /// <summary>
         /// Constructor
@@ -28,18 +25,20 @@ namespace ClearCanvas.Desktop.Tables
         {
             _baseColumnWidth = 10;
             _columns = new TableColumnCollection<TItem>();
-            _columns.ItemAdded += delegate(object sender, CollectionEventArgs<TableColumnBase<TItem>> args)
+            _columns.ItemsChanged += delegate(object sender, ItemEventArgs args)
+            {
+                switch (args.ChangeType)
                 {
-                    args.Item.Table = this;
-                    NotifyColumnChanged(TableColumnChangeType.ColumnAdded, args.Item);
-                };
-            _columns.ItemRemoved += delegate(object sender, CollectionEventArgs<TableColumnBase<TItem>> args)
-                {
-                    args.Item.Table = null;
-                    NotifyColumnChanged(TableColumnChangeType.ColumnRemoved, args.Item);
-                };
+                    case ItemChangeType.ItemAdded:
+                        _columns[args.ItemIndex].Table = this;
+                        break;
+                    case ItemChangeType.ItemRemoved:
+                        _columns[args.ItemIndex].Table = null;
+                        break;
+                }
+            };
 
-            _data = new TableItemCollection<TItem>(this);
+            _data = new ItemCollection<TItem>();
         }
 
         /// <summary>
@@ -53,24 +52,12 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Gets the collection of items in the table.
         /// </summary>
-        public TableItemCollection<TItem> Items
+        public ItemCollection<TItem> Items
         {
             get { return _data; }
         }
 
         #region ITable members
-
-        public event EventHandler<TableItemEventArgs> ItemsChanged
-        {
-            add { _dataChanged += value; }
-            remove { _dataChanged -= value; }
-        }
-
-        public event EventHandler<TableColumnEventArgs> ColumnsChanged
-        {
-            add { _structureChanged += value; }
-            remove { _structureChanged -= value; }
-        }
 
         public Type ItemType
         {
@@ -92,9 +79,6 @@ namespace ClearCanvas.Desktop.Tables
             if (_sortParams != null)
             {
                 _data.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
-
-                // notify that the list has been sorted
-                NotifyDataChanged(TableItemChangeType.Reset, -1);
             }
         }
 
@@ -110,7 +94,7 @@ namespace ClearCanvas.Desktop.Tables
             set { _baseColumnWidth = value; }
         }
 
-        ITableItemCollection ITable.Items
+        IItemCollection ITable.Items
         {
             get { return _data; }
         }
@@ -129,17 +113,11 @@ namespace ClearCanvas.Desktop.Tables
             return (int)(100 * column.WidthFactor / sum);
         }
 
-        internal void NotifyDataChanged(TableItemChangeType changeType, int index)
+        internal void NotifyColumnChanged(TableColumnBase<TItem> column)
         {
-            EventsHelper.Fire(_dataChanged, this, new TableItemEventArgs(changeType, index));
-        }
-
-        internal void NotifyColumnChanged(TableColumnChangeType changeType, TableColumnBase<TItem> column)
-        {
-            EventsHelper.Fire(_structureChanged, this, new TableColumnEventArgs(changeType, column));
+            _columns.NotifyItemUpdated(column);
         }
 
         #endregion
-
     }
 }

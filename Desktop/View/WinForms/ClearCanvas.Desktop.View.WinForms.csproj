@@ -61,6 +61,9 @@
       <DependentUpon>BindableTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="CursorFactory.cs" />
+    <Compile Include="DataGridViewWithDragSupport.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DialogComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -85,6 +88,7 @@
       <DependentUpon>HtmlComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="HtmlComponentView.cs" />
+    <Compile Include="BindingTreeNode.cs" />
     <Compile Include="SplitComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -133,6 +137,7 @@
       <DependentUpon>TableView.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripBuilder.cs" />
+    <Compile Include="BindingTreeLevelManager.cs" />
     <Compile Include="WinFormsView.cs" />
     <Compile Include="DesktopForm.cs">
       <SubType>Form</SubType>

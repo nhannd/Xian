@@ -69,8 +69,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         public TableAdapter(ITable table)
         {
             _table = table;
-            _table.ItemsChanged += new EventHandler<TableItemEventArgs>(TableDataChangedEventHandler);
-            _table.ColumnsChanged += new EventHandler<TableColumnEventArgs>(TableStructureChangedEventHandler);
+            _table.Items.ItemsChanged += TableDataChangedEventHandler;
+            _table.Columns.ItemsChanged += TableStructureChangedEventHandler;
 
             // init map of columns to property descriptors
             _columnToPropertyMap = new Dictionary<ITableColumn, TableDataPropertyDescriptor>();
@@ -298,20 +298,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Private Methods
 
-        private void TableDataChangedEventHandler(object sender, TableItemEventArgs e)
+        private void TableDataChangedEventHandler(object sender, ItemEventArgs e)
         {
             switch (e.ChangeType)
             {
-                case TableItemChangeType.ItemAdded:
+                case ItemChangeType.ItemAdded:
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, e.ItemIndex));
                     break;
-                case TableItemChangeType.ItemChanged:
+                case ItemChangeType.ItemChanged:
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, e.ItemIndex));
                     break;
-                case TableItemChangeType.ItemRemoved:
+                case ItemChangeType.ItemRemoved:
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, e.ItemIndex));
                     break;
-                case TableItemChangeType.Reset:
+                case ItemChangeType.Reset:
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
                     break;
                 default:
@@ -319,20 +319,21 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private void TableStructureChangedEventHandler(object sender, TableColumnEventArgs e)
+        private void TableStructureChangedEventHandler(object sender, ItemEventArgs e)
         {
+            ITableColumn column = (ITableColumn)_table.Columns[e.ItemIndex];
             switch (e.ChangeType)
             {
-                case TableColumnChangeType.ColumnAdded:
-                    _columnToPropertyMap[e.Column] = new TableDataPropertyDescriptor(this, e.Column);
+                case ItemChangeType.ItemAdded:
+                    _columnToPropertyMap[column] = new TableDataPropertyDescriptor(this, column);
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.PropertyDescriptorAdded, -1));
                     break;
-                case TableColumnChangeType.ColumnChanged:
-                    _columnToPropertyMap[e.Column] = new TableDataPropertyDescriptor(this, e.Column);
+                case ItemChangeType.ItemChanged:
+                    _columnToPropertyMap[column] = new TableDataPropertyDescriptor(this, column);
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.PropertyDescriptorChanged, -1));
                     break;
-                case TableColumnChangeType.ColumnRemoved:
-                    _columnToPropertyMap.Remove(e.Column);
+                case ItemChangeType.ItemRemoved:
+                    _columnToPropertyMap.Remove(column);
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, -1));
                     break;
             }

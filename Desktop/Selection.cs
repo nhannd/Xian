@@ -86,8 +86,14 @@ namespace ClearCanvas.Desktop
             if (other == null)
                 return false;
 
-            // true if every item in this selection is contained in the other selection
-            return _items.TrueForAll(delegate(object x) { return other.Contains(x); });
+            // false if not same number of elements
+            if (other.Items.Length != _items.Count)
+                return false;
+
+            // because we now know that they contain the same number of elements,
+            // they are equal if every item in this selection is contained in the other selection
+            return _items.TrueForAll(
+                delegate(object x) { return other.Contains(x); });
         }
 
         #endregion

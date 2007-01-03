@@ -10,16 +10,6 @@ namespace ClearCanvas.Desktop.Tables
     public interface ITable
     {
         /// <summary>
-        /// Indicates that one or more items in the <see cref="ITable.Items"/> collection has changed.
-        /// </summary>
-        event EventHandler<TableItemEventArgs> ItemsChanged;
-
-        /// <summary>
-        /// Indicates that one or more columns in the <see cref="ITable.Columns"/> collection has changed.
-        /// </summary>
-        event EventHandler<TableColumnEventArgs> ColumnsChanged;
-
-        /// <summary>
         /// Returns the <see cref="Type"/> of the items in this table.
         /// </summary>
         Type ItemType { get; }
@@ -27,7 +17,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Gets the collection of items
         /// </summary>
-        ITableItemCollection Items { get; }
+        IItemCollection Items { get; }
 
         /// <summary>
         /// Get the collection of columns

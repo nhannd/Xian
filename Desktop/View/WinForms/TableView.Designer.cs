@@ -31,7 +31,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this._dataGridView = new System.Windows.Forms.DataGridView();
+            this._dataGridView = new ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport();
             this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -76,6 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._dataGridView.Size = new System.Drawing.Size(720, 256);
             this._dataGridView.TabIndex = 0;
             this._dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellDoubleClick);
+            this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
             this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
             this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);
             // 
@@ -133,7 +134,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView _dataGridView;
+        private ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport _dataGridView;
 		private System.Windows.Forms.ToolStrip _toolStrip;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
         private System.Windows.Forms.BindingSource _bindingSource;

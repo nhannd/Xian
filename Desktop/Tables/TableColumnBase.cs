@@ -106,7 +106,7 @@ namespace ClearCanvas.Desktop.Tables
                 _widthFactor = value;
                 if (_table != null)
                 {
-                    _table.NotifyColumnChanged(TableColumnChangeType.ColumnChanged, this);
+                    _table.NotifyColumnChanged(this);
                 }
             }
         }

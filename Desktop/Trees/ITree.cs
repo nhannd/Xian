@@ -10,11 +10,6 @@ namespace ClearCanvas.Desktop.Trees
     public interface ITree
     {
         /// <summary>
-        /// Indicates that one or more items in the <see cref="ITree.Items"/> collection has changed
-        /// </summary>
-        event EventHandler<TreeItemEventArgs> ItemsChanged;
-
-        /// <summary>
         /// Obtains the <see cref="ITreeItemBinding"/> that defines how items in this tree are mapped to the view.
         /// </summary>
         ITreeItemBinding Binding { get; }
@@ -24,6 +19,6 @@ namespace ClearCanvas.Desktop.Trees
         /// only the immediate items.  Each item may provide a sub-tree, which can be obtained via the
         /// <see cref="ITreeItemBinding.GetSubTree"/> method.
         /// </summary>
-        ITreeItemCollection Items { get; }
+        IItemCollection Items { get; }
     }
 }

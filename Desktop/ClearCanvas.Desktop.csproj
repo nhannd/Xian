@@ -69,12 +69,15 @@
     <Compile Include="ClosingEventArgs.cs" />
     <Compile Include="DialogContent.cs" />
     <Compile Include="DialogComponentContainer.cs" />
+    <Compile Include="DragDropKind.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="ExceptionHandlerComponent.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="IApplicationComponentContainer.cs" />
     <Compile Include="IApplicationComponentContainerValidationStrategy.cs" />
+    <Compile Include="IItemCollection.cs" />
+    <Compile Include="ItemCollection.cs" />
     <Compile Include="PagedComponentContainer.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="Tables\ITable.cs" />
@@ -90,9 +93,6 @@
     <Compile Include="Tables\TableColumn.cs" />
     <Compile Include="Tables\TableColumnBase.cs" />
     <Compile Include="Tables\TableColumnCollection.cs" />
-    <Compile Include="Tables\TableItemCollection.cs" />
-    <Compile Include="Tables\TableItemChangeType.cs" />
-    <Compile Include="Tables\TableItemEventArgs.cs" />
     <Compile Include="Tables\TableSortParams.cs" />
     <Compile Include="Tables\TableColumnChangeType.cs" />
     <Compile Include="Tables\TableColumnEventArgs.cs" />
@@ -131,11 +131,8 @@
     <Compile Include="Trees\ITreeItemBinding.cs" />
     <Compile Include="Trees\ITreeItemCollection.cs" />
     <Compile Include="Trees\TreeItemBindingBase.cs" />
-    <Compile Include="Trees\TreeItemChangeType.cs" />
     <Compile Include="Trees\Tree.cs" />
     <Compile Include="Trees\TreeItemBinding.cs" />
-    <Compile Include="Trees\TreeItemCollection.cs" />
-    <Compile Include="Trees\TreeItemEventArgs.cs" />
     <Compile Include="Validation\AllNodesContainerValidationStrategy.cs" />
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />

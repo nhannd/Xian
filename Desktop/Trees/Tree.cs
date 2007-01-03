@@ -12,16 +12,14 @@ namespace ClearCanvas.Desktop.Trees
     /// <typeparam name="TItem"></typeparam>
     public class Tree<TItem> : ITree
     {
-        private TreeItemBinding<TItem> _binding;
-        private TreeItemCollection<TItem> _items;
-
-        private event EventHandler<TreeItemEventArgs> _itemsChanged;
+        private ITreeItemBinding _binding;
+        private ItemCollection<TItem> _items;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="binding"></param>
-        public Tree(TreeItemBinding<TItem> binding)
+        public Tree(ITreeItemBinding binding)
             :this(binding, null)
         {
         }
@@ -31,51 +29,40 @@ namespace ClearCanvas.Desktop.Trees
         /// </summary>
         /// <param name="binding"></param>
         /// <param name="items">The set of items that are initially contained in this tree</param>
-        public Tree(TreeItemBinding<TItem> binding, IEnumerable items)
+        public Tree(ITreeItemBinding binding, IEnumerable items)
         {
             _binding = binding;
-            _items = new TreeItemCollection<TItem>(this, items);
+            _items = new ItemCollection<TItem>();
+            if (items != null)
+            {
+                _items.AddRange(items);
+            }
         }
 
         /// <summary>
         /// Gets the item collection associated with this tree
         /// </summary>
-        public TreeItemCollection<TItem> Items
+        public ItemCollection<TItem> Items
         {
             get { return _items; }
         }
 
         /// <summary>
-        /// Gets the item binding associated with this tree
+        /// Gets or sets the item binding associated with this tree
         /// </summary>
-        public TreeItemBinding<TItem> Binding
+        public ITreeItemBinding Binding
         {
             get { return _binding; }
+            set { _binding = value; }
         }
 
         #region ITree Members
 
-        public event EventHandler<TreeItemEventArgs> ItemsChanged
-        {
-            add { _itemsChanged += value; }
-            remove { _itemsChanged -= value; }
-        }
-
-        ITreeItemBinding ITree.Binding
-        {
-            get { return _binding; }
-        }
-
-        ITreeItemCollection ITree.Items
+        IItemCollection ITree.Items
         {
             get { return _items; }
         }
 
         #endregion
-
-        internal void NotifyItemsChanged(TreeItemChangeType changeType, int index)
-        {
-            EventsHelper.Fire(_itemsChanged, this, new TreeItemEventArgs(changeType, index));
-        }
     }
 }
