@@ -8,16 +8,16 @@ copy "..\..\..\..\Ris\Client\Adt\actionmodels.xml "."
 
 :: Copy Enterprise	
 copy "..\..\..\..\Enterprise\bin\%1\ClearCanvas.Enterprise.dll" .\plugins
-copy "..\..\..\..\Enterprise\refs\Iesi.Collections.dll" .\plugins
-copy "..\..\..\..\Enterprise\refs\Spring.Core.dll" .\plugins
-copy "..\..\..\..\Enterprise\refs\Spring.Aop.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\Spring.Core.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\Spring.Aop.dll" .\plugins
 
 copy "..\..\..\..\Enterprise\Hibernate\bin\%1\ClearCanvas.Enterprise.Hibernate.dll" .\plugins
 copy "..\..\..\..\Enterprise\Hibernate\DdlWriter\bin\%1\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" .\plugins
-copy "..\..\..\..\Enterprise\Hibernate\refs\Castle.DynamicProxy.dll" .\plugins
-copy "..\..\..\..\Enterprise\Hibernate\refs\HashCodeProvider.dll" .\plugins
-copy "..\..\..\..\Enterprise\Hibernate\refs\NHibernate.dll" .\plugins
-copy "..\..\..\..\Enterprise\Hibernate\refs\NHibernate.Caches.SysCache.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\HashCodeProvider.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\NHibernate.dll" .\plugins
+copy "..\..\..\..\ReferencedAssemblies\NHibernate.Caches.SysCache.dll" .\plugins
 copy "..\..\..\..\Enterprise\Hibernate\hibernate.cfg.xml" .
 
 

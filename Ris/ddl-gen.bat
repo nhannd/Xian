@@ -1,0 +1,1 @@
+..\Desktop\Executable\bin\Debug\ClearCanvas.Desktop.Executable.exe ClearCanvas.Enterprise.Hibernate.DdlWriter.DdlWriterApplication
