@@ -19,7 +19,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
-        public static TResultCollection Select<TItem, TResultCollection>(IEnumerable<TItem> target, Predicate<TItem> predicate)
+        public static TResultCollection Select<TItem, TResultCollection>(IEnumerable target, Predicate<TItem> predicate)
             where TResultCollection : ICollection<TItem>, new()
         {
             TResultCollection result = new TResultCollection();
@@ -82,7 +82,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
-        public static TResultCollection Reject<TItem, TResultCollection>(IEnumerable<TItem> target, Predicate<TItem> predicate)
+        public static TResultCollection Reject<TItem, TResultCollection>(IEnumerable target, Predicate<TItem> predicate)
             where TResultCollection : ICollection<TItem>, new()
         {
             return Select<TItem, TResultCollection>(target, delegate(TItem item) { return !predicate(item); });
@@ -112,27 +112,6 @@ namespace ClearCanvas.Common.Utilities
         public static ICollection Reject(IEnumerable target, Predicate<object> predicate)
         {
             return Select(target, delegate(object item) { return !predicate(item); });
-        }
-
-
-        /// <summary>
-        /// Returns the first item in the target collection that matches the specified predicate, or
-        /// the default of TItem if no match is found.
-        /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>The first matching item, or default(TItem) if no matches are found</returns>
-        public static TItem SelectFirst<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
-        {
-            foreach (TItem item in target)
-            {
-                if (predicate(item))
-                {
-                    return item;
-                }
-            }
-            return default(TItem);
         }
 
         /// <summary>
@@ -184,7 +163,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="mapFunction">A delegate that performs the mapping</param>
         /// <returns>A new collection of the specified type, containing a mapped entry for each entry in the target collection</returns>
-        public static TResultCollection Map<TItem, TResultItem, TResultCollection>(IEnumerable<TItem> target, Converter<TItem, TResultItem> mapFunction)
+        public static TResultCollection Map<TItem, TResultItem, TResultCollection>(IEnumerable target, Converter<TItem, TResultItem> mapFunction)
             where TResultCollection : ICollection<TResultItem>, new()
         {
             TResultCollection result = new TResultCollection();
@@ -265,23 +244,6 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public static bool Contains<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
-        {
-            foreach (TItem item in target)
-            {
-                if (predicate(item))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns true if any item in the target collection satisfies the specified predicate.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool Contains<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             foreach (TItem item in target)
@@ -307,22 +269,6 @@ namespace ClearCanvas.Common.Utilities
                     return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// Returns true if all items in the target collection satisfy the specified predicate.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public static bool TrueForAll<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
-        {
-            foreach (TItem item in target)
-            {
-                if (!predicate(item))
-                    return false;
-            }
-            return true;
         }
 
         /// <summary>
@@ -374,10 +320,52 @@ namespace ClearCanvas.Common.Utilities
         /// <typeparam name="TItem"></typeparam>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static TItem FirstElement<TItem>(IEnumerable<TItem> target)
+        public static TItem FirstElement<TItem>(IEnumerable target)
         {
-            IEnumerator<TItem> e = target.GetEnumerator();
-            return e.MoveNext() ? e.Current : default(TItem);
+            IEnumerator e = target.GetEnumerator();
+            return e.MoveNext() ? (TItem)e.Current : default(TItem);
         }
+
+
+        /// <summary>
+        /// Removes all items in the target collection that match the specified predicate.  Unlike
+        /// <see cref="Reject"/>, this method modifies the target collection itself.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="predicate"></param>
+        public static void Remove<TItem>(ICollection<TItem> target, Predicate<TItem> predicate)
+        {
+            List<TItem> removes = new List<TItem>();
+            foreach (TItem item in target)
+            {
+                if (predicate(item))
+                    removes.Add(item);
+            }
+            foreach (TItem item in removes)
+            {
+                target.Remove(item);
+            }
+        }
+
+        /// <summary>
+        /// Removes all items in the target collection that match the specified predicate.  Unlike
+        /// <see cref="Reject"/>, this method modifies the target collection itself.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="predicate"></param>
+        public static void Remove(IList target, Predicate<object> predicate)
+        {
+            List<object> removes = new List<object>();
+            foreach (object item in target)
+            {
+                if (predicate(item))
+                    removes.Add(item);
+            }
+            foreach (object item in removes)
+            {
+                target.Remove(item);
+            }
+        }
+
     }
 }
