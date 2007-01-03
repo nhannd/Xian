@@ -15,6 +15,7 @@ namespace ClearCanvas.Desktop.Edit
     [EnabledStateObserver("undo", "UndoEnabled", "UndoEnabledChanged")]
     [IconSet("undo", IconScheme.Colour, "", "Icons.UndoMedium.png", "Icons.UndoLarge.png")]
     [Tooltip("undo", "ToolbarStandardUndo")]
+	[GroupHint("undo", "Application.Edit.Undo")]
 
 	[MenuAction("redo", "global-menus/MenuEdit/MenuEditRedo", KeyStroke = XKeys.Control | XKeys.Y)]
     [ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarStandardRedo")]
@@ -22,6 +23,7 @@ namespace ClearCanvas.Desktop.Edit
     [EnabledStateObserver("redo", "RedoEnabled", "RedoEnabledChanged")]
     [IconSet("redo", IconScheme.Colour, "", "Icons.RedoMedium.png", "Icons.RedoLarge.png")]
     [Tooltip("redo", "ToolbarStandardRedo")]
+	[GroupHint("redo", "Application.Edit.Redo")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class EditHistoryTool : Tool<IDesktopToolContext>

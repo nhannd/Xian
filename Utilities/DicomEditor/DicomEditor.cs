@@ -22,6 +22,7 @@ namespace ClearCanvas.Utilities.DicomEditor
     [Tooltip("activate", "OpenDicomFilesVerbose")]
     [IconSet("activate", IconScheme.Colour, "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[GroupHint("activate", "Tools.Dicom.Editor")]
 
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]

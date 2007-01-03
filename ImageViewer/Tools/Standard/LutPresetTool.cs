@@ -17,16 +17,20 @@ using ClearCanvas.Dicom;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	//[MenuAction("auto", LutPresetTool._globalMenuRoot + "Auto", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("auto", LutPresetTool._viewerKeyboardRoot + "Auto", KeyStroke = XKeys.F2)]
-	[MenuAction("auto", LutPresetTool._viewerContextMenuRoot + "Auto", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("auto", LutPresetTool.ViewerKeyboardRoot + "Auto", KeyStroke = XKeys.F2)]
+	[MenuAction("auto", LutPresetTool.ViewerContextMenuRoot + "Auto", Flags = ClickActionFlags.CheckAction)]
 	[ClickHandler("auto", "AutoApplyLut")]
 	[EnabledStateObserver("auto", "Enabled", "EnabledChanged")]
+	[GroupHint("auto", LutPresetTool.GroupHint)]
+
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class LutPresetTool : Tool<IImageViewerToolContext>
 	{
-		public const string _globalMenuRoot = "global-menus/MenuTools/Standard/MenuToolsStandardLutPresets/";
-		public const string _viewerKeyboardRoot = "imageviewer-keyboard/ToolsStandardLutPresets/";
-		public const string _viewerContextMenuRoot = "imageviewer-contextmenu/MenuToolsStandardLutPresets/";
+		public const string GroupHint = "Tools.Image.Manipulation.Lut.Presets";
+
+		public const string GlobalMenuRoot = "global-menus/MenuTools/Standard/MenuToolsStandardLutPresets/";
+		public const string ViewerKeyboardRoot = "imageviewer-keyboard/ToolsStandardLutPresets/";
+		public const string ViewerContextMenuRoot = "imageviewer-contextmenu/MenuToolsStandardLutPresets/";
 
 		private LutPresetSettings _settings;
 		private IActionSet _actionSet;
@@ -137,9 +141,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			List<IAction> generatedActions = new List<IAction>();
 			foreach (LutPresetGroup group in _settings.LutPresetGroups)
 			{
-				//generatedActions.Add(new LutPresetToolGeneratedAction(this.Context.Viewer, group, _globalMenuRoot, this.GetType().FullName).Action);
-				generatedActions.Add(new LutPresetToolGeneratedAction(this.Context.Viewer, group, _viewerContextMenuRoot, this.GetType().FullName).Action);
-				generatedActions.Add(new LutPresetToolGeneratedAction(this.Context.Viewer, group, _viewerKeyboardRoot, this.GetType().FullName).Action);
+				//generatedActions.Add(new LutPresetToolGeneratedAction(this.Context.Viewer, group, _globalMenuRoot, this.GetType().FullName, LutPresetTool.GroupHint).Action);
+				generatedActions.Add(new LutPresetToolGeneratedAction(this.Context.Viewer, group, ViewerContextMenuRoot, this.GetType().FullName, LutPresetTool.GroupHint).Action);
+				generatedActions.Add(new LutPresetToolGeneratedAction(this.Context.Viewer, group, ViewerKeyboardRoot, this.GetType().FullName, LutPresetTool.GroupHint).Action);
 			}
 
 			return generatedActions;

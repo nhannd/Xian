@@ -34,6 +34,13 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         ActionPath Path { get; set; }
 
+		/// <summary>
+		/// The group hint for this action.  The GroupHint for an
+		/// action must not be null.  If an action has no groupHint,
+		/// the GroupHint should be "" (default).
+		/// </summary>
+		GroupHint GroupHint { get; set; }
+
         /// <summary>
         /// The label that the action should present in the UI.
         /// </summary>

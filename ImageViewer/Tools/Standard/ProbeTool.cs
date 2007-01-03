@@ -26,6 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
 	[ClickHandler("activate", "Select")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
+	[GroupHint("activate", "Tools.Image.Interrogation.Probe")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 

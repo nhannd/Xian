@@ -19,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolsMeasurementRuler")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RulerMedium.png", "Icons.RulerLarge.png")]
+	[GroupHint("activate", "Tools.Image.Measurement.ROI.Linear")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

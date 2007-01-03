@@ -17,6 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolsMeasurementRectangularROI")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RectangularROIMedium.png", "Icons.RectangularROILarge.png")]
+	[GroupHint("activate", "Tools.Image.Measurement.ROI.Rectangular")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

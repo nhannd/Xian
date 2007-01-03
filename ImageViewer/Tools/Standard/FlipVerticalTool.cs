@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardFlipVertical")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipVerticalMedium.png", "Icons.FlipVerticalLarge.png")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Vertical")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class FlipVerticalTool : Tool<IImageViewerToolContext>

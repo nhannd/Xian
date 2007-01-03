@@ -53,10 +53,13 @@
     <Compile Include="Actions\ActionModelStore.cs" />
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="Actions\GroupHint.cs" />
+    <Compile Include="Actions\GroupHintAttribute.cs" />
     <Compile Include="Actions\IActionView.cs" />
     <Compile Include="Actions\KeyboardAction.cs" />
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
+    <Compile Include="Actions\Tests\ActionModelStoreTests.cs" />
     <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
@@ -212,7 +215,8 @@
     <None Include="Tools\Tools.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Actions\actionmodels.xml" />
+    <Content Include="Actions\actionmodels.xml">
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

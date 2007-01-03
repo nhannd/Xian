@@ -8,6 +8,8 @@ namespace ClearCanvas.Desktop.Help
 {
     [MenuAction("activate", "global-menus/MenuHelp/MenuHelpAbout")]
     [ClickHandler("activate", "Activate")]
+	[GroupHint("activate", "Application.Help.About")]
+
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class HelpTool : Tool<IDesktopToolContext>
 	{

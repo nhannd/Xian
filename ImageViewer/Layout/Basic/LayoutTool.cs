@@ -11,6 +11,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     [ClickHandler("show", "Show")]
     [IconSet("show", IconScheme.Colour, "", "Icons.LayoutMedium.png", "Icons.LayoutLarge.png")]
     [Tooltip("show", "Layout Manager")]
+	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates

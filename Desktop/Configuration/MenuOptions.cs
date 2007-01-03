@@ -15,6 +15,7 @@ namespace ClearCanvas.Desktop.Configuration
 	[IconSet("show", IconScheme.Colour, "Icons.MenuOptionsSmall.png", "Icons.MenuOptionsMedium.png", "Icons.MenuOptionsLarge.png")]
 	[ClickHandler("show", "Show")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+	[GroupHint("show", "Application.Options")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 	public class MenuOptions : Tool<ClearCanvas.Desktop.IDesktopToolContext>

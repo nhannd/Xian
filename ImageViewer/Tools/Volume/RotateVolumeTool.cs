@@ -12,7 +12,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
-    [MenuAction("activate", "imageviewer-contextmenu/Rotate Volume", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/Rotate Volume", Flags = ClickActionFlags.CheckAction)]
     //[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
 	[MouseToolButton(XMouseButtons.Left, true)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/RotateVolume", Flags = ClickActionFlags.CheckAction)]
@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "Rotate Volume")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolLarge.png", "Icons.CreateVolumeToolLarge.png")]
+	[GroupHint("activate", "Tools.VolumeImage.Manipulation.Rotate")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class RotateVolumeTool : MouseTool

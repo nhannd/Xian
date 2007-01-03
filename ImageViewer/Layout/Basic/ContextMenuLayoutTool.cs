@@ -13,10 +13,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ContextMenuLayoutTool : Tool<IImageViewerToolContext>
 	{
-        /// <summary>
+		/// <summary>
         /// Constructor
         /// </summary>
 		public ContextMenuLayoutTool()
@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/display{0}", index), null);
 			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, index), path, ClickActionFlags.None, null);
+			action.GroupHint = new GroupHint("DisplaySets");
 			action.Label = displaySet.Name;
 			action.SetClickHandler(
 				delegate()

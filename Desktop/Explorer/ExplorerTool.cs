@@ -17,6 +17,7 @@ namespace ClearCanvas.Desktop.Explorer
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarToolsStandardExplorer")]
 	[ClickHandler("show", "Show")]
 	[IconSet("show", IconScheme.Colour, "", "Icons.DashboardMedium.png", "Icons.DashboardLarge.png")]
+	[GroupHint("show", "Application.Browsing.Explorer")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExplorerTool : Tool<IDesktopToolContext>

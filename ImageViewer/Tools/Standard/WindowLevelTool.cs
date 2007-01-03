@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardWindowLevel")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.WindowLevelMedium.png", "Icons.WindowLevelLarge.png")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Lut.WindowLevel")]
 
 	[KeyboardAction("incrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowWidth", KeyStroke = XKeys.Right)]
 	[ClickHandler("incrementwindowwidth", "IncrementWindowWidth")]

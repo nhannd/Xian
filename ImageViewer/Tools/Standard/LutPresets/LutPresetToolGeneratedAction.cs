@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 		private IImageViewer _imageViewer;
 		private LutPresetGroup _lutPresetGroup;
 
-		public LutPresetToolGeneratedAction(IImageViewer imageViewer, LutPresetGroup lutPresetGroup, string pathRoot, string actionRoot)
+		public LutPresetToolGeneratedAction(IImageViewer imageViewer, LutPresetGroup lutPresetGroup, string pathRoot, string actionRoot, string groupHint)
 		{
 			_imageViewer = imageViewer;
 			_lutPresetGroup = lutPresetGroup;
@@ -27,8 +27,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			string actionId = String.Format("{0}:{1}", actionRoot, lutPresetGroup.ActionId);
 			ActionPath actionPath = new ActionPath(pathRoot + lutPresetGroup.ActionId, resolver);
-			_action = new MenuAction(actionId, actionPath, ClickActionFlags.None, resolver);
-			//_action = new ClickAction(actionId, actionPath, ClickActionFlags.None, resolver);
+			_action = new ClickAction(actionId, actionPath, ClickActionFlags.None, resolver);
+			_action.GroupHint = new GroupHint(groupHint);
 
 			_action.SetClickHandler(this.ClickHandler);
 

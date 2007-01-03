@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[Tooltip("show", "Create Volume")]
 	[IconSet("show", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolMedium.png", "Icons.CreateVolumeToolLarge.png")]
 	[ClickHandler("show", "Show")]
+	[GroupHint("show", "Tools.VolumeImage.Create")]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class CreateVolumeTool : ImageViewerDesktopTool

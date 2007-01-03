@@ -14,8 +14,11 @@ namespace ClearCanvas.Desktop.Actions
     public abstract class Action : IAction
     {
         private string _actionID;
-        private ActionPath _path;
+		
+		private ActionPath _path;
         private IResourceResolver _resourceResolver;
+
+		private GroupHint _groupHint;
 
         private IconSet _iconSet;
 
@@ -33,7 +36,7 @@ namespace ClearCanvas.Desktop.Actions
 
 		private bool _persistent;
 
-        /// <summary>
+		/// <summary>
         /// Constructor
         /// </summary>
         /// <param name="actionID">The logical action ID</param>
@@ -69,6 +72,24 @@ namespace ClearCanvas.Desktop.Actions
             get { return _path; }
             set { _path = value; }
         }
+
+		public GroupHint GroupHint
+		{
+			get
+			{
+				if (_groupHint == null)
+					_groupHint = new GroupHint("");
+
+				return _groupHint;
+			}
+			set 
+			{
+				_groupHint = value;
+
+				if (_groupHint == null)
+					_groupHint = new GroupHint("");
+			}
+		}
 
         public IconSet IconSet
         {

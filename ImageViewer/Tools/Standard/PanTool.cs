@@ -11,7 +11,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardPan/Activate", KeyStroke = XKeys.P)]
@@ -19,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "ToolbarToolsStandardPan")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.PanMedium.png", "Icons.PanLarge.png")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Pan")]
 
 	[KeyboardAction("panleft", "imageviewer-keyboard/ToolsStandardPan/PanLeft", KeyStroke = XKeys.Control | XKeys.Left)]
 	[ClickHandler("panleft", "PanLeft")]

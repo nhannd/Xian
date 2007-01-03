@@ -12,7 +12,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
-    [MenuAction("activate", "imageviewer-contextmenu/Zoom Volume", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/Zoom Volume", Flags = ClickActionFlags.CheckAction)]
     //[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
 	[MouseToolButton(XMouseButtons.Right, true)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ZoomVolume", Flags = ClickActionFlags.CheckAction)]
@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "Zoom Volume")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolLarge.png", "Icons.CreateVolumeToolLarge.png")]
+	[GroupHint("activate", "Tools.VolumeImage.Manipulation.Zoom")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomVolumeTool : MouseTool
