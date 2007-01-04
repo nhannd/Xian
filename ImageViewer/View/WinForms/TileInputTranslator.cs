@@ -6,12 +6,13 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.InputManagement;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
-	public sealed class InputTranslator
+	internal sealed class TileInputTranslator
 	{
-		private PropertyGetDelegate<Keys> _getModifiersDelegate;
+		private TileControl _tileControl;
 
 		private Keys[] _consumeKeyStrokes = 
 						{	Keys.ControlKey,
@@ -22,26 +23,44 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 							Keys.RShiftKey,
 						};
 
-		public InputTranslator(PropertyGetDelegate<Keys> getModifiersDelegate)
+		public TileInputTranslator(TileControl tileControl)
 		{
-			Platform.CheckForNullReference(getModifiersDelegate, "getModifiersDelegate");
+			_tileControl = tileControl;
+		}
 
-			_getModifiersDelegate = getModifiersDelegate;
+		private Keys Modifiers
+		{
+			get { return System.Windows.Forms.Control.ModifierKeys; }
+		}
+
+		private Point MousePositionScreen
+		{
+			get { return System.Windows.Forms.Control.MousePosition; }
+		}
+
+		private Point MousePositionClient
+		{
+			get { return _tileControl.PointToClient(this.MousePositionScreen); }
+		}
+
+		private MouseButtons MouseButtons
+		{
+			get { return System.Windows.Forms.Control.MouseButtons; }
 		}
 
 		private bool Control
 		{
-			get { return (_getModifiersDelegate() & Keys.Control) == Keys.Control; }
+			get { return (this.Modifiers & Keys.Control) == Keys.Control; }
 		}
 
 		private bool Alt
 		{
-			get { return (_getModifiersDelegate() & Keys.Alt) == Keys.Alt; }
+			get { return (this.Modifiers & Keys.Alt) == Keys.Alt; }
 		}
 
 		private bool Shift
 		{
-			get { return (_getModifiersDelegate() & Keys.Shift) == Keys.Shift; }
+			get { return (this.Modifiers & Keys.Shift) == Keys.Shift; }
 		}
 
 		private bool ConsumeKeyStroke(Keys keyCode)
@@ -53,6 +72,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 
 			return false;
+		}
+
+		public IInputMessage OnMouseLeave()
+		{
+			return new MouseLeaveMessage();
 		}
 
 		public IInputMessage OnMouseMove(MouseEventArgs e)

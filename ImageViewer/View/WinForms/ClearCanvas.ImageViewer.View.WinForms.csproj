@@ -148,7 +148,7 @@
     <Compile Include="ImageViewerControl.Designer.cs">
       <DependentUpon>ImageViewerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="InputTranslator.cs" />
+    <Compile Include="TileInputTranslator.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

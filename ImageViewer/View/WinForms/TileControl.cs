@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		#region Private fields
 
 		private Tile _tile;
-		private InputTranslator _inputTranslator;
+		private TileInputTranslator _inputTranslator;
 		private TileController _tileController;
 
 		private InformationBox _currentInformationBox;
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile = tile;
 			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
 
-			_inputTranslator = new InputTranslator(this.GetModifiers);
+			_inputTranslator = new TileInputTranslator(this);
 			_tileController = new TileController(_tile, (_tile.ImageViewer as ImageViewerComponent).ShortcutManager);
 			
 			InitializeComponent();
@@ -92,11 +92,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				return _surface; 
 			}
-		}
-
-		private Keys GetModifiers()
-		{
-			return Control.ModifierKeys;
 		}
 
 		public void SetParentImageBoxRectangle(
@@ -186,6 +181,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// will be created.
 			_surface = null;
 			Draw();
+		}
+
+		protected override void OnMouseLeave(EventArgs e)
+		{
+			base.OnMouseLeave(e);
+
+			IInputMessage message = _inputTranslator.OnMouseLeave();
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -301,7 +307,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.Capture = (_currentMouseButtonHandler != null);
 		}
 
-		void OnCursorTokenChanged(object sender, EventArgs e)
+		private void OnCursorTokenChanged(object sender, EventArgs e)
 		{
 			if (_tileController.CursorToken == null)
 			{
@@ -333,7 +339,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-		void OnContextMenuStripOpening(object sender, CancelEventArgs e)
+		private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
 			if (_tileController.ContextMenuProvider == null)
 			{
@@ -352,7 +358,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				e.Cancel = true;
 		}
 
-		void OnInformationBoxChanged(object sender, InformationBoxChangedEventArgs e)
+		private void OnInformationBoxChanged(object sender, InformationBoxChangedEventArgs e)
 		{
 			if (_currentInformationBox != null)
 				_currentInformationBox.Updated -= new EventHandler(OnUpdateInformationBox);
@@ -366,7 +372,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_currentInformationBox.Updated += new EventHandler(OnUpdateInformationBox);
 		}
 
-		void OnUpdateInformationBox(object sender, EventArgs e)
+		private void OnUpdateInformationBox(object sender, EventArgs e)
 		{
 			if (!_currentInformationBox.Visible)
 			{

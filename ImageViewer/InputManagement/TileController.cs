@@ -399,6 +399,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					TrackCurrentPosition();
 					return true;
 				}
+
+				if (message is MouseLeaveMessage)
+				{
+					if (_tile.PresentationImage != null)
+						_tile.PresentationImage.LayerManager.FocusGraphic = null;
+				}
 			}
 
 			return false;
