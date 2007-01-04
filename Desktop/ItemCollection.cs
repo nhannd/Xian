@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop
         public void AddRange(IEnumerable<TItem> enumerable)
         {
             _list.AddRange(enumerable);
-            NotifyItemsChanged(ItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace ClearCanvas.Desktop
         public void AddRange(IEnumerable enumerable)
         {
             _list.AddRange(new TypeSafeEnumerableWrapper<TItem>(enumerable));
-            NotifyItemsChanged(ItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace ClearCanvas.Desktop
         /// <param name="index"></param>
         public void NotifyItemUpdated(int index)
         {
-            NotifyItemsChanged(ItemChangeType.ItemChanged, index);
+            NotifyItemsChanged(ItemChangeType.ItemChanged, index, this[index]);
         }
 
         /// <summary>
@@ -114,13 +114,14 @@ namespace ClearCanvas.Desktop
         public void Insert(int index, TItem item)
         {
             _list.Insert(index, item);
-            NotifyItemsChanged(ItemChangeType.ItemAdded, index);
+            NotifyItemsChanged(ItemChangeType.ItemAdded, index, item);
         }
 
         public void RemoveAt(int index)
         {
+            TItem item = _list[index];
             _list.RemoveAt(index);
-            NotifyItemsChanged(ItemChangeType.ItemRemoved, index);
+            NotifyItemsChanged(ItemChangeType.ItemRemoved, index, item);
         }
 
         public TItem this[int index]
@@ -129,7 +130,7 @@ namespace ClearCanvas.Desktop
             set
             {
                 _list[index] = value;
-                NotifyItemsChanged(ItemChangeType.ItemChanged, index);
+                NotifyItemsChanged(ItemChangeType.ItemChanged, index, value);
             }
         }
 
@@ -140,13 +141,13 @@ namespace ClearCanvas.Desktop
         public void Add(TItem item)
         {
             _list.Add(item);
-            NotifyItemsChanged(ItemChangeType.ItemAdded, this.Count - 1);
+            NotifyItemsChanged(ItemChangeType.ItemAdded, this.Count - 1, item);
         }
 
         public void Clear()
         {
             _list.Clear();
-            NotifyItemsChanged(ItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
         public bool Contains(TItem item)
@@ -175,7 +176,7 @@ namespace ClearCanvas.Desktop
             bool removed = _list.Remove(item);
             if (removed)
             {
-                NotifyItemsChanged(ItemChangeType.ItemRemoved, index);
+                NotifyItemsChanged(ItemChangeType.ItemRemoved, index, item);
             }
             return removed;
         }
@@ -205,12 +206,12 @@ namespace ClearCanvas.Desktop
             _list.Sort(comparer);
 
             // notify that the list has been sorted
-            NotifyItemsChanged(ItemChangeType.Reset, -1);
+            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
-        private void NotifyItemsChanged(ItemChangeType itemChangeType, int index)
+        private void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
         {
-            EventsHelper.Fire(_itemsChanged, this, new ItemEventArgs(itemChangeType, index, index > -1 ? this[index] : default(TItem)));
+            EventsHelper.Fire(_itemsChanged, this, new ItemEventArgs(itemChangeType, index, item));
         }
     }
 }
