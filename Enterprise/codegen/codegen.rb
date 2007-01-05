@@ -62,7 +62,10 @@ class CodeGen
       if File.fnmatch?("*.hbm.xml", file, File::FNM_DOTMATCH)
       
         #add the hbm file to the model
-        model.add(File.expand_path(file, srcDir))
+	filePath = File.expand_path(file, srcDir)
+	if(!shouldIgnoreFile(filePath))
+		model.add(filePath)
+	end
       end
     end
     
@@ -79,6 +82,7 @@ class CodeGen
   # applies the specified array of templates to the specified array of elementDefs, placing output into destDir
   def CodeGen.applyTemplates(templates, elementDefs, destDir)
     elementDefs.each do |elementDef|
+      puts "Processing " + elementDef.elementName
       templates.each do |template|
         outputFile = template.run(elementDef, "./templates", destDir)
         if (outputFile) 
@@ -93,6 +97,14 @@ class CodeGen
   def CodeGen.exitWithMessage(msg)
     puts msg
     exit
+  end
+  
+  def CodeGen.shouldIgnoreFile(filename)
+	  ignore = nil
+	  open(filename) do |file|
+		  ignore = file.readlines.detect { |line| line.include?("<!--") && line.include?("@codegen") && line.include?("ignore") }
+	  end
+	  return ignore != nil
   end
 end
 

@@ -52,6 +52,7 @@
     <Compile Include="EntityChangeEventArgs.cs" />
     <Compile Include="EntityRef.cs" />
     <Compile Include="EntityRefBase.cs" />
+    <Compile Include="EntitySearchCriteria.cs" />
     <Compile Include="EntityUtils.cs" />
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="IServiceManager.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="UpdateContextSyncMode.cs" />
     <Compile Include="UpdateOperationAttribute.cs" />
     <Compile Include="ValueObject.cs" />
+    <Compile Include="ValueObjectSearchCriteria.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">

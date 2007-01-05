@@ -8,6 +8,9 @@ class ElementDef
   def namespace
   end
   
+  def elementName
+  end
+  
   # Used by the Template class to determine the binding context for all code
   # contained within the template.  The symbols in the template code are
   # resolved with respect to the binding.

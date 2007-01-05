@@ -14,6 +14,10 @@ class Model < ElementDef
     @symbolSpace = []
   end
   
+  def elementName
+    @namespace + " Model"
+  end
+  
   # add the specified hbm file to the model  
   def add(hbmFile)
     # read the hbm xml file
@@ -48,8 +52,12 @@ class Model < ElementDef
   # processes componentNode to create instances of ComponentDef
   # this method is public because it must be called from the ClassDef class - it should not be called otherwise
   def processComponent(componentNode)
-    componentDef = ComponentDef.new(self, componentNode)
-    @componentDefs << componentDef if(!@symbolSpace.include?(componentDef.className))
+    # only create a ComponentDef if the component is in the same namespace as this model
+    # (otherwise the component is defined in another namespace, and is simply being referenced by this model)
+    if(extractNamespace(componentNode.attributes['class']) == @namespace)
+	    componentDef = ComponentDef.new(self, componentNode)
+	    @componentDefs << componentDef if(!@symbolSpace.include?(componentDef.className))
+    end
   end
   
 protected
@@ -61,7 +69,7 @@ protected
     entityDefs << entityDef
     @symbolSpace << entityDef.className
     
-    #process subclassses recursively
+    #process any contained subclassses recursively
     classNode.each_element do |subclassNode|
       processEntity(subclassNode, entityDef.className, entityDefs ) if(NHIBERNATE_CLASS_TYPES.include?(subclassNode.name))
     end
@@ -74,6 +82,14 @@ protected
     @symbolSpace << enumDef.className
   end
   
+  def extractNamespace(name)
+	  #find the last .
+	  p =name.rindex('.')
+	  
+	  # if no dot was found, then assume the default namespace (the namespace of this model)
+	  return p ? name[0..p] : @namespace
+  end
+ 
   def Model.fixDataType(name)
     # remove the assembly name if present
     name = Model.removeAssemblyQualifier(name)

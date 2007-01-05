@@ -10,7 +10,7 @@ namespace <%= model.namespace %> {
     /// Search criteria for <see cref="<%= className %>"/> entity
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public partial class <%= searchCriteriaClassName %> : <%= isSubClass  ? superClass.searchCriteriaClassName : "SearchCriteria" %>
+	public partial class <%= searchCriteriaClassName %> : <%= superClass  ? superClass.searchCriteriaClassName : superClassName + "SearchCriteria" %>
 	{
 		/// <summary>
 		/// Constructor for top-level search criteria (no key required)

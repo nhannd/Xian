@@ -14,6 +14,10 @@ class ComponentDef < ClassDef
     :component
   end
   
+  def superClassName
+    "ValueObject"
+  end
+  
   def supportClassName
     className + "Support"
   end

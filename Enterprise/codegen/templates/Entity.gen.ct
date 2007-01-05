@@ -38,7 +38,7 @@ namespace <%= model.namespace %> {
 		  	CustomInitialize();
 	  	}
                 
-        <% if((inheritedMandatoryFields + mandatoryFields).length > 0) %>
+        <% if((superClass || superClassName == "Entity") && (inheritedMandatoryFields + mandatoryFields).length > 0) %>
 	  	/// <summary>
 	  	/// Mandatory fields constructor
 	  	/// </summary>

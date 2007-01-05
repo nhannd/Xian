@@ -1,5 +1,5 @@
 # NHibernate elements that result in C# classes
-NHIBERNATE_CLASS_TYPES = ['class', 'joined-subclass']
+NHIBERNATE_CLASS_TYPES = ['class', 'joined-subclass', 'subclass']
 
 # NHibernate elements that result in C# fields
 NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','component','map','set','idbag', 'bag', 'list']

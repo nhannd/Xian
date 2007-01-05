@@ -15,6 +15,10 @@ class ClassDef < ElementDef
     @fields = []
   end
   
+  def elementName
+    @className
+  end
+  
   def namespace
     @model.namespace
   end
@@ -47,12 +51,12 @@ class ClassDef < ElementDef
   
   # returns the set of inherited fields as an array of FieldDef
   def inheritedFields
-    isSubClass ? (superClass.fields + superClass.inheritedFields) : []
+    superClass ? (superClass.fields + superClass.inheritedFields) : []
   end
   
   # returns the set of inherited fields that are mandatory (non-nullable) as an array of FieldDef
   def inheritedMandatoryFields
-    isSubClass ? (superClass.mandatoryFields + superClass.inheritedMandatoryFields) : []
+    superClass ? (superClass.mandatoryFields + superClass.inheritedMandatoryFields) : []
   end
   
   # returns the set of fields that require initialization
