@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34} = {AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}
+		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2} = {84E99D28-8C46-49C7-BBD9-41037EFCCBE2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleShred1", "..\SampleShred1\SampleShred1.csproj", "{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleShred2", "..\SampleShred2\SampleShred2.csproj", "{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeClient", "..\PrimeClient\PrimeClient.csproj", "{EB5196C6-30D4-484D-954F-EF820DA815C2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34} = {AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}
+		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2} = {84E99D28-8C46-49C7-BBD9-41037EFCCBE2}
+		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4C001C-4CC6-4F00-A02A-C7D8A3160C34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
