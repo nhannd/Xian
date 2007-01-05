@@ -72,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _staffAdminService = ApplicationContext.GetService<IStaffAdminService>();
             _staffAdminService.StaffChanged += StaffChangedEventHandler;
+            _staffAdminService.PractitionerChanged += PractitionerChangedEventHandler;
 
             _staffTable = new StaffTable();
             LoadStaffTable();
@@ -88,11 +89,54 @@ namespace ClearCanvas.Ris.Client.Admin
         public override void Stop()
         {
             _staffAdminService.StaffChanged -= StaffChangedEventHandler;
+            _staffAdminService.PractitionerChanged -= PractitionerChangedEventHandler;
 
             base.Stop();
         }
 
         #region Event Handler
+
+        private void PractitionerChangedEventHandler(object sender, EntityChangeEventArgs e)
+        {
+            // check if the staff with this oid is in the list
+            int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
+            IPractitionerAdminService practitionerAdminService = ApplicationContext.GetService<IPractitionerAdminService>();
+            if (index > -1)
+            {
+                if (e.ChangeType == EntityChangeType.Update)
+                {
+                    try
+                    {
+                        Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
+                        _staffTable.Items[index] = p;
+                    }
+                    catch (Exception exception)
+                    {
+                        ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+                    }
+                }
+                else if (e.ChangeType == EntityChangeType.Delete)
+                {
+                    _staffTable.Items.RemoveAt(index);
+                }
+            }
+            else
+            {
+                if (e.ChangeType == EntityChangeType.Create)
+                {
+                    try
+                    {
+                        Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
+                        if (p != null)
+                            _staffTable.Items.Add(p);
+                    }
+                    catch (Exception exception)
+                    {
+                        ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+                    }
+                }
+            }
+        }
 
         private void StaffChangedEventHandler(object sender, EntityChangeEventArgs e)
         {
