@@ -7,7 +7,7 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Services
 {
-    public interface IPractitionerService
+    public interface IPractitionerAdminService : IHealthcareServiceLayer
     {
         /// <summary>
         /// Search for a practitioner by name
@@ -16,18 +16,32 @@ namespace ClearCanvas.Ris.Services
         /// <param name="givenName">The practitioner givenname to search for.  May be null</param>
         /// <returns>A list of matching practitioners</returns>
         IList<Practitioner> FindPractitioners(string surname, string givenName);
-        
+
         /// <summary>
-        /// Load a practitioner from an entity ref
+        /// Return all practitioner
         /// </summary>
-        /// <param name="practitionerRef"></param>
-        /// <returns></returns>
-        Practitioner LoadPractitioner(EntityRef<Practitioner> practitionerRef);
+        /// <returns>A list of all practitioners</returns>
+        IList<Practitioner> GetAllPractitioners();
 
         /// <summary>
         /// Add a practitioner
         /// </summary>
         /// <param name="practitioner"></param>
         void AddPractitioner(Practitioner practitioner);
+
+        /// <summary>
+        /// Update a practitioner
+        /// </summary>
+        /// <param name="practitioner"></param>
+        /// <returns></returns>
+        void UpdatePractitioner(Practitioner practitioner);
+        
+        /// <summary>
+        /// Load a practitioner from an entity ref
+        /// </summary>
+        /// <param name="practitionerRef"></param>
+        /// <param name="withDetails">If true, will also load the related detail collections</param>
+        /// <returns></returns>
+        Practitioner LoadPractitioner(EntityRef<Practitioner> practitionerRef, bool withDetails);
     }
 }

@@ -10,9 +10,9 @@ using ClearCanvas.Healthcare.Brokers;
 namespace ClearCanvas.Ris.Services
 {
     [ExtensionOf(typeof(ServiceLayerExtensionPoint))]
-    public class PractitionerService : HealthcareServiceLayer, IPractitionerService
+    public class PractitionerAdminService : HealthcareServiceLayer, IPractitionerAdminService
     {
-        #region IPractitionerService Members
+        #region IPractitionerAdminService Members
 
         [ReadOperation]
         public IList<Practitioner> FindPractitioners(string surname, string givenName)
@@ -43,10 +43,36 @@ namespace ClearCanvas.Ris.Services
             return broker.Load(practitionerRef);
         }
 
+        [ReadOperation]
+        public IList<Practitioner> GetAllPractitioners()
+        {
+            return this.CurrentContext.GetBroker<IPractitionerBroker>().FindAll();
+        }
+
         [UpdateOperation]
         public void AddPractitioner(Practitioner practitioner)
         {
             this.CurrentContext.Lock(practitioner, DirtyState.New);
+        }
+
+        [UpdateOperation]
+        public void UpdatePractitioner(Practitioner practitioner)
+        {
+            this.CurrentContext.Lock(practitioner, DirtyState.Dirty);
+        }
+
+        [ReadOperation]
+        public Practitioner LoadPractitioner(EntityRef<Practitioner> practitionerRef, bool withDetails)
+        {
+            IPractitionerBroker practitionerBroker = CurrentContext.GetBroker<IPractitionerBroker>();
+            Practitioner practitioner = practitionerBroker.Load(practitionerRef);
+            if (withDetails)
+            {
+                IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
+                staffBroker.LoadAddressesForStaff(practitioner);
+                staffBroker.LoadTelephoneNumbersForStaff(practitioner);
+            }
+            return practitioner;
         }
 
         #endregion

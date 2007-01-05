@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 using ClearCanvas.Common;
@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Common
     [AssociateView(typeof(AddressesSummaryComponentViewExtensionPoint))]
     public class AddressesSummaryComponent : ApplicationComponent
     {
-        private PatientProfile _patient;
+        private IList _addressList;
         private AddressTable _addresses;
         private Address _currentAddressSelection;
         private CrudActionModel _addressActionHandler;
@@ -39,17 +39,17 @@ namespace ClearCanvas.Ris.Client.Common
             _addressActionHandler.Delete.Enabled = false;
         }
 
-        public PatientProfile Subject
+        public IList Subject
         {
-            get { return _patient; }
-            set { _patient = value; }
+            get { return _addressList; }
+            set { _addressList = value; }
         }
 
         public override void Start()
         {
-            if (_patient != null)
+            if (_addressList != null)
             {
-                foreach (Address address in _patient.Addresses)
+                foreach (Address address in _addressList)
                 {
                     _addresses.Items.Add(address);
                 }
@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Common
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _addresses.Items.Add(address);
-                _patient.Addresses.Add(address);
+                _addressList.Add(address);
                 this.Modified = true;
             }
         }
@@ -111,10 +111,10 @@ namespace ClearCanvas.Ris.Client.Common
                 // delete and re-insert to ensure that TableView updates correctly
                 Address toBeRemoved = _currentAddressSelection;
                 _addresses.Items.Remove(toBeRemoved);
-                _patient.Addresses.Remove(toBeRemoved);
+                _addressList.Remove(toBeRemoved);
 
                 _addresses.Items.Add(address);
-                _patient.Addresses.Add(address);
+                _addressList.Add(address);
 
                 this.Modified = true;
             }
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Common
                 //  resulting in the wrong Address being removed from the PatientProfile
                 Address toBeRemoved  = _currentAddressSelection;
                 _addresses.Items.Remove(toBeRemoved);
-                _patient.Addresses.Remove(toBeRemoved);
+                _addressList.Remove(toBeRemoved);
                 this.Modified = true;
             }
         }

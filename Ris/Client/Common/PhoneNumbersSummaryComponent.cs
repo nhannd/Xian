@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 using ClearCanvas.Common;
@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Common
     [AssociateView(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
     public class PhoneNumbersSummaryComponent : ApplicationComponent
     {
-        private PatientProfile _patient;
+        private IList _phoneNumberList;
         private TelephoneNumberTable _phoneNumbers;
         private TelephoneNumber _currentPhoneNumberSelection;
         private CrudActionModel _phoneNumberActionHandler;
@@ -38,17 +38,17 @@ namespace ClearCanvas.Ris.Client.Common
             _phoneNumberActionHandler.Delete.Enabled = false;
         }
 
-        public PatientProfile Subject
+        public IList Subject
         {
-            get { return _patient; }
-            set { _patient = value; }
+            get { return _phoneNumberList; }
+            set { _phoneNumberList = value; }
         }
 
         public override void Start()
         {
-            if (_patient != null)
+            if (_phoneNumberList != null)
             {
-                foreach (TelephoneNumber phoneNumber in _patient.TelephoneNumbers)
+                foreach (TelephoneNumber phoneNumber in _phoneNumberList)
                 {
                     _phoneNumbers.Items.Add(phoneNumber);
                 }
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Common
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 _phoneNumbers.Items.Add(phoneNumber);
-                _patient.TelephoneNumbers.Add(phoneNumber);
+                _phoneNumberList.Add(phoneNumber);
                 this.Modified = true;
             }
         }
@@ -107,10 +107,10 @@ namespace ClearCanvas.Ris.Client.Common
                 // delete and re-insert to ensure that TableView updates correctly
                 TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
                 _phoneNumbers.Items.Remove(toBeRemoved);
-                _patient.TelephoneNumbers.Remove(toBeRemoved);
+                _phoneNumberList.Remove(toBeRemoved);
 
                 _phoneNumbers.Items.Add(phoneNumber);
-                _patient.TelephoneNumbers.Add(phoneNumber);
+                _phoneNumberList.Add(phoneNumber);
 
                 this.Modified = true;
             }
@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Common
                 //  resulting in the wrong TelephoneNumber being removed from the PatientProfile
                 TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
                 _phoneNumbers.Items.Remove(toBeRemoved);
-                _patient.TelephoneNumbers.Remove(toBeRemoved);
+                _phoneNumberList.Remove(toBeRemoved);
                 this.Modified = true;
             }
         }

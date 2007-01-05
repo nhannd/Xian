@@ -88,6 +88,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Degree.
+        /// </summary>
+        internal static string ColumnDegree {
+            get {
+                return ResourceManager.GetString("ColumnDegree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Facility.
         /// </summary>
         internal static string ColumnFacility {
@@ -97,11 +106,29 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Family Name.
+        /// </summary>
+        internal static string ColumnFamilyName {
+            get {
+                return ResourceManager.GetString("ColumnFamilyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Floor.
         /// </summary>
         internal static string ColumnFloor {
             get {
                 return ResourceManager.GetString("ColumnFloor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Given Name.
+        /// </summary>
+        internal static string ColumnGivenName {
+            get {
+                return ResourceManager.GetString("ColumnGivenName", resourceCulture);
             }
         }
         
@@ -124,6 +151,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LicenseNumber.
+        /// </summary>
+        internal static string ColumnLicenseNumber {
+            get {
+                return ResourceManager.GetString("ColumnLicenseNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Middle Name.
+        /// </summary>
+        internal static string ColumnMiddleName {
+            get {
+                return ResourceManager.GetString("ColumnMiddleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         internal static string ColumnName {
@@ -142,11 +187,29 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prefix.
+        /// </summary>
+        internal static string ColumnPrefix {
+            get {
+                return ResourceManager.GetString("ColumnPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Room.
         /// </summary>
         internal static string ColumnRoom {
             get {
                 return ResourceManager.GetString("ColumnRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suffix.
+        /// </summary>
+        internal static string ColumnSuffix {
+            get {
+                return ResourceManager.GetString("ColumnSuffix", resourceCulture);
             }
         }
         
@@ -174,6 +237,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string ExceptionConcurrencyModalityNotSaved {
             get {
                 return ResourceManager.GetString("ExceptionConcurrencyModalityNotSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The practitioner was modified by another user.  Your changes could not be saved..
+        /// </summary>
+        internal static string ExceptionConcurrencyPractitionerNotSaved {
+            get {
+                return ResourceManager.GetString("ExceptionConcurrencyPractitionerNotSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The staff was modified by another user.  Your changes could not be saved..
+        /// </summary>
+        internal static string ExceptionConcurrencyStaffNotSaved {
+            get {
+                return ResourceManager.GetString("ExceptionConcurrencyStaffNotSaved", resourceCulture);
             }
         }
         
@@ -214,6 +295,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this staff?.
+        /// </summary>
+        internal static string MessageDeleteSelectedStaff {
+            get {
+                return ResourceManager.GetString("MessageDeleteSelectedStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This modality ID already exist.  Your changes could not be saved..
         /// </summary>
         internal static string MessageDuplicateModalityID {
@@ -250,6 +340,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Practitioner ....
+        /// </summary>
+        internal static string TitleAddPractitioner {
+            get {
+                return ResourceManager.GetString("TitleAddPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Staff ....
+        /// </summary>
+        internal static string TitleAddStaff {
+            get {
+                return ResourceManager.GetString("TitleAddStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Facility ....
         /// </summary>
         internal static string TitleDeleteFacility {
@@ -273,6 +381,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleDeleteModality {
             get {
                 return ResourceManager.GetString("TitleDeleteModality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Practitioner ....
+        /// </summary>
+        internal static string TitleDeletePractitioner {
+            get {
+                return ResourceManager.GetString("TitleDeletePractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Staff ....
+        /// </summary>
+        internal static string TitleDeleteStaff {
+            get {
+                return ResourceManager.GetString("TitleDeleteStaff", resourceCulture);
             }
         }
         
@@ -304,6 +430,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Practitioner.
+        /// </summary>
+        internal static string TitlePractitioner {
+            get {
+                return ResourceManager.GetString("TitlePractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Staff.
+        /// </summary>
+        internal static string TitleStaff {
+            get {
+                return ResourceManager.GetString("TitleStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Facility ....
         /// </summary>
         internal static string TitleUpdateFacility {
@@ -327,6 +471,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUpdateModality {
             get {
                 return ResourceManager.GetString("TitleUpdateModality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Practitioner ....
+        /// </summary>
+        internal static string TitleUpdatePractitioner {
+            get {
+                return ResourceManager.GetString("TitleUpdatePractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Staff ....
+        /// </summary>
+        internal static string TitleUpdateStaff {
+            get {
+                return ResourceManager.GetString("TitleUpdateStaff", resourceCulture);
             }
         }
     }

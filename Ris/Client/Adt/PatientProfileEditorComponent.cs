@@ -70,8 +70,8 @@ namespace ClearCanvas.Ris.Client.Adt
             this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
             _patientEditor.Subject = _profile;
-            _addressesSummary.Subject = _profile;
-            _phoneNumbersSummary.Subject = _profile;
+            _addressesSummary.Subject = _profile.Addresses;
+            _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
 
             base.Start();
         }

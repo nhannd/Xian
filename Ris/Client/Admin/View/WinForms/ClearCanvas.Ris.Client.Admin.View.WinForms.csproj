@@ -77,7 +77,28 @@
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ModalityEditorComponentView.cs" />
+    <Compile Include="PractitionerStaffDetailsEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PractitionerStaffDetailsEditorComponentControl.designer.cs">
+      <DependentUpon>PractitionerStaffDetailsEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PractitionerStaffDetailsEditorComponentView.cs" />
+    <Compile Include="PractitionerSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PractitionerSummaryComponentControl.designer.cs">
+      <DependentUpon>PractitionerSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PractitionerSummaryComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaffSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffSummaryComponentControl.Designer.cs">
+      <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffSummaryComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -128,6 +149,18 @@
     <EmbeddedResource Include="ModalityEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PractitionerStaffDetailsEditorComponentControl.resx">
+      <DependentUpon>PractitionerStaffDetailsEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PractitionerSummaryComponentControl.resx">
+      <DependentUpon>PractitionerSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
