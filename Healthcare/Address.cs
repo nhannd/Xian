@@ -40,12 +40,12 @@ namespace ClearCanvas.Healthcare {
         public bool IsEquivalentTo(Address that)
         {
             return (that != null) &&
-                ((this._unit == default(string)) ? (that._unit == default(string)) : this._unit.Equals(that._unit)) &&
-                ((this._street == default(string)) ? (that._street == default(string)) : this._street.Equals(that._street)) &&
-                ((this._city == default(string)) ? (that._city == default(string)) : this._city.Equals(that._city)) &&
-                ((this._province == default(string)) ? (that._province == default(string)) : this._province.Equals(that._province)) &&
-                ((this._postalCode == default(string)) ? (that._postalCode == default(string)) : this._postalCode.Equals(that._postalCode)) &&
-                ((this._country == default(string)) ? (that._country == default(string)) : this._country.Equals(that._country)) &&
+                ((this._unit == default(string)) ? (that._unit == default(string)) : this._unit.Equals(that._unit, StringComparison.CurrentCultureIgnoreCase)) &&
+                ((this._street == default(string)) ? (that._street == default(string)) : this._street.Equals(that._street, StringComparison.CurrentCultureIgnoreCase)) &&
+                ((this._city == default(string)) ? (that._city == default(string)) : this._city.Equals(that._city, StringComparison.CurrentCultureIgnoreCase)) &&
+                ((this._province == default(string)) ? (that._province == default(string)) : this._province.Equals(that._province, StringComparison.CurrentCultureIgnoreCase)) &&
+                ((this._postalCode == default(string)) ? (that._postalCode == default(string)) : this._postalCode.Replace(" ", "").Equals(that._postalCode.Replace(" ", ""), StringComparison.CurrentCultureIgnoreCase)) &&
+                ((this._country == default(string)) ? (that._country == default(string)) : this._country.Equals(that._country, StringComparison.CurrentCultureIgnoreCase)) &&
                 ((this._type == default(AddressType)) ? (that._type == default(AddressType)) : this._type.Equals(that._type))  &&
                 true;
         }

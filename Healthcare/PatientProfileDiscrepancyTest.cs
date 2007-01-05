@@ -26,19 +26,19 @@ namespace ClearCanvas.Healthcare
 
             // Healthcard
             result |= tester.TestEqual(PatientProfileDiscrepancy.Healthcard,
-                delegate(PatientProfile x, PatientProfile y) { return x.Healthcard.Equals(y.Healthcard); });
+                delegate(PatientProfile x, PatientProfile y) { return x.Healthcard.IsEquivalentTo(y.Healthcard); });
 
             // FamilyName
             result |= tester.TestEqual(PatientProfileDiscrepancy.FamilyName,
-                delegate(PatientProfile x, PatientProfile y) { return x.Name.FamilyName == y.Name.FamilyName; });
+                delegate(PatientProfile x, PatientProfile y) { return x.Name.FamilyName.Equals(y.Name.FamilyName, StringComparison.CurrentCultureIgnoreCase); });
 
             // GivenName
             result |= tester.TestEqual(PatientProfileDiscrepancy.GivenName,
-                delegate(PatientProfile x, PatientProfile y) { return x.Name.GivenName == y.Name.GivenName; });
+                delegate(PatientProfile x, PatientProfile y) { return x.Name.GivenName.Equals(y.Name.GivenName, StringComparison.CurrentCultureIgnoreCase); });
 
             // MiddleName
             result |= tester.TestEqual(PatientProfileDiscrepancy.MiddleName,
-                delegate(PatientProfile x, PatientProfile y) { return x.Name.MiddleName == y.Name.MiddleName; });
+                delegate(PatientProfile x, PatientProfile y) { return x.Name.MiddleName.Equals(y.Name.MiddleName, StringComparison.CurrentCultureIgnoreCase); });
 
             // DateOfBirth
             result |= tester.TestEqual(PatientProfileDiscrepancy.DateOfBirth,
