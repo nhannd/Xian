@@ -24,8 +24,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             view.SetWorkspace(_workspace);
 
 			this.Control = _control = view.GuiElement as Control;
-            this.Title = _workspace.Title;
 
+			SetTitle();
+			
 			_workspace.TitleChanged += new EventHandler(_workspace_TitleChanged);
 		}
 
@@ -34,10 +35,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _workspace; }
         }
 
-        private void _workspace_TitleChanged(object sender, EventArgs e)
+		private void _workspace_TitleChanged(object sender, EventArgs e)
         {
-            this.Title = _workspace.Title;
-        }
+			SetTitle();
+		}
+
+		private void SetTitle()
+		{
+			this.Title = _workspace.Title;
+			this.ToolTip = this.Title;
+		}
 
         protected override void Dispose(bool disposing)
         {

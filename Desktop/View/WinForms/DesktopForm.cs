@@ -40,7 +40,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Text = String.Format("{0} {1}", Application.ApplicationName, GetVersion());
 
 			this.Style = WinFormsView.VisualStyle;
-			_tabbedGroups.Style = WinFormsView.VisualStyle;
 
             // Subscribe to WorkspaceManager events so we know when workspaces are being
             // added, removed and activated
@@ -51,8 +50,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             _dockingManager = new DockingManager(this._toolStripContainer.ContentPanel, VisualStyle.Office2003);
             _dockingManager.ActiveColor = SystemColors.Control;
             _dockingManager.InnerControl = _tabbedGroups;
-			_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
+			_dockingManager.TabControlCreated += new DockingManager.TabControlCreatedHandler(OnDockingManagerTabControlCreated);
 
+			_tabbedGroups.Style = WinFormsView.VisualStyle; 
+			_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
+			_tabbedGroups.TabControlCreated += new TabbedGroups.TabControlCreatedHandler(OnTabbedGroupsTabControlCreated);
+
+			if (_tabbedGroups.ActiveLeaf != null)
+			{
+				InitializeTabControl(_tabbedGroups.ActiveLeaf.TabControl);
+			}
+			
 			_workspaceViewManager = new WorkspaceViewManager(this, _tabbedGroups);
 			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);
 
@@ -152,7 +160,28 @@ namespace ClearCanvas.Desktop.View.WinForms
 #endif
 		}
 
-        private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
+
+		private void InitializeTabControl(Crownwood.DotNetMagic.Controls.TabControl tabControl)
+		{
+			if (tabControl == null)
+				return;
+
+			tabControl.TextTips = true;
+			tabControl.ToolTips = false;
+			tabControl.MaximumHeaderWidth = 256;
+		}
+
+		void OnTabbedGroupsTabControlCreated(TabbedGroups tabbedGroups, Crownwood.DotNetMagic.Controls.TabControl tabControl)
+		{
+			InitializeTabControl(tabControl);
+		}
+
+		void OnDockingManagerTabControlCreated(Crownwood.DotNetMagic.Controls.TabControl tabControl)
+		{
+			InitializeTabControl(tabControl);
+		}
+		
+		private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
         {
 			_workspaceViewManager.AddWorkpaceTab(e.Workspace);
 
