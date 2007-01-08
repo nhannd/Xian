@@ -14,7 +14,7 @@ namespace <%= model.namespace %> {
     /// <%= @className %> component
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public sealed partial class <%= className %> : ValueObject, IEquatable<<%= @className %>>
+	public sealed partial class <%= className %> : <%= superClassName %>, IEquatable<<%= @className %>>
 	{
        	#region Private fields
        	
