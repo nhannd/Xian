@@ -10,7 +10,7 @@ using ClearCanvas.Server.ShredHost;
 namespace SampleShred1
 {
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class SampleShredExtension : ShredBase
+    public class SampleShredExtension : WcfShred
     {
         private readonly string _className;
         private readonly string _serviceEndPointName;

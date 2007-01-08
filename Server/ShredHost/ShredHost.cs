@@ -17,7 +17,7 @@ namespace ClearCanvas.Server.ShredHost
     {
         public static void Start()
         {
-            Platform.Log("AppDomain[" + AppDomain.CurrentDomain.FriendlyName + "]");
+            Platform.Log("Starting up in AppDomain [" + AppDomain.CurrentDomain.FriendlyName + "]");
 
 #if DEBUG
             PrintAllAssembliesInAppDomain(AppDomain.CurrentDomain);
@@ -25,9 +25,9 @@ namespace ClearCanvas.Server.ShredHost
 
             // the ShredList and shreds objects are proxy objects that actually exist
             // in the secondary AppDomain
-            AppDomain newAppDomain = AppDomain.CreateDomain("StagingDomain");
-            ExtensionLoader loader = (ExtensionLoader)newAppDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, "ClearCanvas.Server.ShredHost.ExtensionLoader");
-            ShredList shreds = loader.LoadExtensions();
+            AppDomain stagingDomain = AppDomain.CreateDomain("StagingDomain");
+            ExtensionScanner loader = (ExtensionScanner)stagingDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, "ClearCanvas.Server.ShredHost.ExtensionScanner");
+            ShredStartupInfoList shredInfoList = loader.ScanExtensions();
 
 #if DEBUG
             PrintAllAssembliesInAppDomain(AppDomain.CurrentDomain);
@@ -51,37 +51,55 @@ namespace ClearCanvas.Server.ShredHost
 #endif
 
             // create the individual threads for all the shreds
-            List<Thread> threads = new List<Thread>();
-            foreach (IShred shred in shreds)
+            foreach (ShredStartupInfo shredStartupInfo in shredInfoList)
             {
-                if (null != shred)
+                if (null != shredStartupInfo)
                 {
+                    // create the shred's own AppDomain for it to run in
+                    AppDomain newShredDomain = AppDomain.CreateDomain(shredStartupInfo.ShredName);
+                    IShred shred = (IShred)newShredDomain.CreateInstanceFromAndUnwrap(shredStartupInfo.AssemblyPath.LocalPath, shredStartupInfo.ShredTypeName);
+
+                    // start up the thread that will actually run the shred
                     Thread t = new Thread(new ParameterizedThreadStart(StartupShred));
-                    threads.Add(t);
-                    t.Start(shred);
+                    ShredInfo newShredInfo = new ShredInfo(t, shred);
+                    _shredInfoList.Add(newShredInfo);
+                    t.Start(newShredInfo);
                 }
 
             }
+
+            // all the shreds have been started, so we can dismantle the secondary domain that was used 
+            // for scanning for all Extensions that are shreds
+            AppDomain.Unload(stagingDomain);
 
             Console.WriteLine("Press <Enter> to terminate the ShredHost.");
             Console.WriteLine();
             Console.ReadLine();
 
-            foreach (IShred shred in shreds)
+            Platform.Log("Shred Host stop request received");
+
+            foreach (ShredInfo shredInfo in _shredInfoList)
             {
-                if (null != shred)
-                    shred.Stop();
+                if (null != shredInfo)
+                {
+                    Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Signally stop");
+                    shredInfo.Shred.Stop();
+                }
             }
 
-            foreach (Thread t in threads)
+            foreach (ShredInfo shredInfo in _shredInfoList)
             {
-                t.Join();
+                Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Waiting to join thread");
+                shredInfo.ShredThreadObject.Join();
+                Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Thread joined");
             }
+
+            Platform.Log("All threads joined; completing Shred Host stop");
         }
 
         static void StartupShred(object threadData)
         {
-            IShred shred = threadData as IShred;
+            ShredInfo shredInfo = threadData as ShredInfo;
             int servicePort;
 
             lock (_lockObject)
@@ -90,8 +108,8 @@ namespace ClearCanvas.Server.ShredHost
                 _servicePort++;
             }
 
-            Platform.Log(shred.GetFriendlyName() + " shred started on port " + servicePort.ToString());
-            shred.Start(servicePort);
+            Platform.Log(shredInfo.Shred.GetFriendlyName() + " shred about to be started on port " + servicePort.ToString());
+            shredInfo.Shred.Start(servicePort);
         }
 
         #region print asms in AD helper f(x)
@@ -111,6 +129,18 @@ namespace ClearCanvas.Server.ShredHost
         #region Private Members
         private static int _servicePort = 21000;
         private static object _lockObject = new object();
+        private static ShredInfoList _shredInfoList = new ShredInfoList();
+
+        class ShredDescription
+        {
+            public ShredDescription(string friendlyName)
+            {
+            }
+
+        }
+
+        static private Dictionary<string, ShredDescription> _shredDescriptions;
+
         #endregion
 
     }    

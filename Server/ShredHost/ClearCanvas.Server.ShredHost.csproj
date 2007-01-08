@@ -32,6 +32,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -42,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ShredHost.cs" />
-    <Compile Include="ExtensionLoader.cs" />
+    <Compile Include="ExtensionScanner.cs" />
     <Compile Include="IShred.cs" />
     <Compile Include="IShredCommunicationProxy.cs" />
     <Compile Include="MarshallableList.cs" />
@@ -50,7 +54,11 @@
     <Compile Include="ProxyList.cs" />
     <Compile Include="ShredBase.cs" />
     <Compile Include="ShredCommunicationServiceType.cs" />
-    <Compile Include="ShredList.cs" />
+    <Compile Include="ShredInfo.cs" />
+    <Compile Include="ShredInfoList.cs" />
+    <Compile Include="ShredStartupInfo.cs" />
+    <Compile Include="ShredStartupInfoList.cs" />
+    <Compile Include="WcfShred.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

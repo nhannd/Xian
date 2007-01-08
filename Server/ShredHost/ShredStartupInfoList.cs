@@ -5,14 +5,14 @@ using System.Text;
 
 namespace ClearCanvas.Server.ShredHost
 {
-    public class ShredList : MarshallableList<IShred>
+    internal class ShredStartupInfoList : MarshallableList<ShredStartupInfo>
     {
-        public ShredList()
+        public ShredStartupInfoList()
         {
 
         }
 
-        public ReadOnlyCollection<IShred> Shreds
+        public ReadOnlyCollection<ShredStartupInfo> AllShredStartupInfo
         {
             get { return this.ContainedObjects; }
         }
