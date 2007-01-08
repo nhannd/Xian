@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Workflow" namespace="ClearCanvas.Workflow">
   <class name="ActivityStatusEnum" table="ActivityStatusEnum_">
-    <id name="Code" column="Code_" type="ClearCanvas.Workflow.Hibernate.ActivityStatusEnum, ClearCanvas.Workflow.Hibernate">
+    <id name="Code" column="Code_" type="ClearCanvas.Workflow.Hibernate.ActivityStatusEnumHbm, ClearCanvas.Workflow.Hibernate">
       <generator class="assigned"/>
     </id>
     <property name="Value" column="Value_" type="String" length="50"/>

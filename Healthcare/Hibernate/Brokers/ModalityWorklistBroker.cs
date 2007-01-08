@@ -9,9 +9,9 @@ using ClearCanvas.Enterprise.Hibernate.Hql;
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class AcquisitionWorklistBroker : Broker, IAcquisitionWorklistBroker
+    public class ModalityWorklistBroker : Broker, IModalityWorklistBroker
     {
-        public IList<AcquisitionWorklistItem> GetWorklist(ScheduledProcedureStepSearchCriteria criteria)
+        public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
 /*            
             HqlQuery query = new HqlQuery(
@@ -29,7 +29,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             );
 */            
 
-            HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ScheduledProcedureStep"));
+            HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ModalityProcedureStep"));
             query.Joins.Add(new HqlJoin("spst", "sps.Type"));
             query.Joins.Add(new HqlJoin("m", "sps.Modality"));
             query.Joins.Add(new HqlJoin("rp", "sps.RequestedProcedure"));
@@ -60,10 +60,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             
 
 
-            List<AcquisitionWorklistItem> items = new List<AcquisitionWorklistItem>();
+            List<ModalityWorklistQueryResult> items = new List<ModalityWorklistQueryResult>();
             foreach (object[] tuple in ExecuteHql(query))
             {
-                items.Add( (AcquisitionWorklistItem)Activator.CreateInstance(typeof(AcquisitionWorklistItem), tuple) );
+                items.Add( (ModalityWorklistQueryResult)Activator.CreateInstance(typeof(ModalityWorklistQueryResult), tuple) );
             }
             return items;
         }

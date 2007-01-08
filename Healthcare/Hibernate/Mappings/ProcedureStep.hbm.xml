@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- @codegen: ignore -->
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="ProcedureStep" proxy="ProcedureStep" table="ProcedureStep_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <discriminator column="Discriminator_"  type="String" length="20"/>
+    <version name="Version" column="Version_"/>
+
+    <many-to-one name="RequestedProcedure" class="RequestedProcedure" column="RequestedProcedureOID_" not-null="true" fetch="join"/>
+    
+    <component name="Scheduling" class="ClearCanvas.Workflow.ActivityScheduling, ClearCanvas.Workflow">
+      <property name="StartTime" column="ScheduledStartTime_" type="DateTime" not-null="false"/>
+      <property name="EndTime" column="ScheduledEndTime_" type="DateTime" not-null="false"/>
+      <component name="Performer" class="ProcedureStepPerformer">
+        <many-to-one name="Staff" class="Staff" column="PerformingStaffOID_" not-null="false"/>
+      </component>
+    </component>
+    <property name="Status" column="Status_" type="ClearCanvas.Workflow.Hibernate.ActivityStatusEnumHbm, ClearCanvas.Workflow.Hibernate" not-null="true"/>
+
+  </class>
+</hibernate-mapping>

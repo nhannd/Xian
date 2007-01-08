@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Services
             DiagnosticService diagnosticService = dsBroker.Load(diagnosticServiceRef);
             foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
             {
-                rptBroker.LoadScheduledProcedureStepTypesForRequestedProcedureType(rpt);
+                rptBroker.LoadModalityProcedureStepTypesForRequestedProcedureType(rpt);
             }
             return diagnosticService;
         }
@@ -71,9 +71,9 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<AcquisitionWorklistItem> GetOrdersWorklist(ScheduledProcedureStepSearchCriteria criteria)
+        public IList<ModalityWorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
-            IAcquisitionWorklistBroker broker = this.CurrentContext.GetBroker<IAcquisitionWorklistBroker>();
+            IModalityWorklistBroker broker = this.CurrentContext.GetBroker<IModalityWorklistBroker>();
             return broker.GetWorklist(criteria);
         }
 

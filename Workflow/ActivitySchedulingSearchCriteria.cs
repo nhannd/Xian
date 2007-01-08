@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Enterprise;
 
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Workflow {
 
     /// <summary>
     /// Search criteria for <see cref="ActivityScheduling"/> entity
@@ -26,9 +26,6 @@ namespace ClearCanvas.Healthcare {
 			:base(key)
 		{
 		}
-
-		
-	
 		
 	  	public ISearchCondition<DateTime?> StartTime
 	  	{

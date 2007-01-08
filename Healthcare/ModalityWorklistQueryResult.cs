@@ -2,34 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare
 {
-    public class AcquisitionWorklistItem
+    public class ModalityWorklistQueryResult
     {
         private EntityRef<Patient> _patient;
         private EntityRef<PatientProfile> _patientProfile;
         private EntityRef<Order> _order;
         private EntityRef<RequestedProcedure> _requestedProcedure;
-        private EntityRef<ScheduledProcedureStep> _workflowStep;
+        private EntityRef<ModalityProcedureStep> _workflowStep;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private CompositeIdentifier _visitNumber;
         private string _accessionNumber;
         private string _diagnosticService;
-        private string _procedure;
-        private string _scheduledStep;
-        private string _modality;
+        private string _requestedProcedureName;
+        private string _modalityProcedureStepName;
+        private string _modalityName;
         private OrderPriority _priority;
-        private ScheduledProcedureStepStatus _status;
+        private ActivityStatus _status;
 
-        public AcquisitionWorklistItem(
+        public ModalityWorklistQueryResult(
             Patient patient,
             PatientProfile profile,
             Order order,
             RequestedProcedure requestedProcedure,
-            ScheduledProcedureStep workflowStep,
+            ModalityProcedureStep workflowStep,
             CompositeIdentifier mrn,
             PersonName patientName,
             CompositeIdentifier visitNumber,
@@ -39,27 +40,27 @@ namespace ClearCanvas.Healthcare
             string scheduledStep,
             string modality,
             OrderPriority priority,
-            ScheduledProcedureStepStatus status)
+            ActivityStatus status)
         {
             _patient = new EntityRef<Patient>(patient);
             _patientProfile = new EntityRef<PatientProfile>(profile);
             _order = new EntityRef<Order>(order);
             _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
-            _workflowStep = new EntityRef<ScheduledProcedureStep>(workflowStep);
+            _workflowStep = new EntityRef<ModalityProcedureStep>(workflowStep);
 
             _mrn = mrn;
             _patientName = patientName;
             _visitNumber = visitNumber;
             _accessionNumber = accessionNumber;
             _diagnosticService = diagnosticService;
-            _procedure = procedure;
-            _scheduledStep = scheduledStep;
-            _modality = modality;
+            _requestedProcedureName = procedure;
+            _modalityProcedureStepName = scheduledStep;
+            _modalityName = modality;
             _priority = priority;
             _status = status;
         }
 
-        public EntityRef<ScheduledProcedureStep> WorkflowStep
+        public EntityRef<ModalityProcedureStep> WorkflowStep
         {
             get { return _workflowStep; }
         }
@@ -106,17 +107,17 @@ namespace ClearCanvas.Healthcare
         {
             get { return _diagnosticService; }
         }
-        public string Procedure
+        public string RequestedProcedureName
         {
-            get { return _procedure; }
+            get { return _requestedProcedureName; }
         }
-        public string ScheduledStep
+        public string ModalityProcedureStepName
         {
-            get { return _scheduledStep; }
+            get { return _modalityProcedureStepName; }
         }
-        public string Modality
+        public string ModalityName
         {
-            get { return _modality; }
+            get { return _modalityName; }
         }
 
         public OrderPriority Priority
@@ -124,7 +125,7 @@ namespace ClearCanvas.Healthcare
             get { return _priority; }
         }
 
-        public ScheduledProcedureStepStatus Status
+        public ActivityStatus Status
         {
             get { return _status; }
         }

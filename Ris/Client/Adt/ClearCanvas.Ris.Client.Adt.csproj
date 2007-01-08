@@ -117,6 +117,10 @@
       <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
       <Name>ClearCanvas.HL7</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Workflow\ClearCanvas.Workflow.csproj">
+      <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
+      <Name>ClearCanvas.Workflow</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Services\ClearCanvas.Ris.Services.csproj">
       <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>
       <Name>ClearCanvas.Ris.Services</Name>

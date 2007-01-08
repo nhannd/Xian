@@ -25,8 +25,8 @@ namespace ClearCanvas.Ris.Client.Common
     [AssociateView(typeof(AcquisitionWorkflowPreviewComponentViewExtensionPoint))]
     public class AcquisitionWorkflowPreviewComponent : ApplicationComponent
     {
-        private AcquisitionWorklistItem _worklistItem;
-        private ScheduledProcedureStep _scheduledProcStep;
+        private ModalityWorklistQueryResult _worklistItem;
+        private ModalityProcedureStep _scheduledProcStep;
         private PatientProfile _patientProfile;
 
         private IAcquisitionWorkflowService _workflowService;
@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Common
         {
         }
 
-        public AcquisitionWorklistItem WorklistItem
+        public ModalityWorklistQueryResult WorklistItem
         {
             get { return _worklistItem; }
             set
@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Common
         public string DiagnosticServiceName
         {
             get { return _scheduledProcStep.RequestedProcedure.Order.DiagnosticService.Name; }
-       }
+        }
 
         public string OrderingFacility
         {

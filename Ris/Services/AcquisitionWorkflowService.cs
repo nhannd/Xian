@@ -6,6 +6,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using Iesi.Collections;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -13,30 +14,30 @@ namespace ClearCanvas.Ris.Services
     public class AcquisitionWorkflowService : HealthcareServiceLayer, IAcquisitionWorkflowService
     {
         [ReadOperation]
-        public IList<AcquisitionWorklistItem> GetWorklist(ScheduledProcedureStepSearchCriteria criteria)
+        public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
-            IAcquisitionWorklistBroker broker = this.CurrentContext.GetBroker<IAcquisitionWorklistBroker>();
+            IModalityWorklistBroker broker = this.CurrentContext.GetBroker<IModalityWorklistBroker>();
             return broker.GetWorklist(criteria);
         }
 
         [ReadOperation]
-        public ScheduledProcedureStep LoadWorklistItemPreview(AcquisitionWorklistItem item)
+        public ModalityProcedureStep LoadWorklistItemPreview(ModalityWorklistQueryResult item)
         {
-            IScheduledProcedureStepBroker spsBroker = this.CurrentContext.GetBroker<IScheduledProcedureStepBroker>();
+            IModalityProcedureStepBroker spsBroker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
             IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();
             IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
             IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
 
-            ScheduledProcedureStep sps = spsBroker.Load(item.WorkflowStep);
+            ModalityProcedureStep sps = spsBroker.Load(item.WorkflowStep);
 
             // force a whole bunch of relationships to load... this could be optimized by using fetch joins
-            spsBroker.LoadRequestedProcedureForScheduledProcedureStep(sps);
+            //spsBroker.LoadRequestedProcedureForModalityProcedureStep(sps);
             //rpBroker.LoadOrderForRequestedProcedure(sps.RequestedProcedure);
             orderBroker.LoadOrderingFacilityForOrder(sps.RequestedProcedure.Order);
 
-            // these calls should not be necessary, but seems there is a bug with NH 1.0.2 and 2nd-level cache?
+            // ensure that these associations are loaded
             orderBroker.LoadDiagnosticServiceForOrder(sps.RequestedProcedure.Order);
-            spsBroker.LoadTypeForScheduledProcedureStep(sps);
+            spsBroker.LoadTypeForModalityProcedureStep(sps);
             rpBroker.LoadTypeForRequestedProcedure(sps.RequestedProcedure);
 
             
@@ -45,29 +46,48 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void StartProcedureStep(EntityRef<ScheduledProcedureStep> stepRef)
+        public void StartProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            ScheduledProcedureStep step = LoadStep(stepRef);
+            ModalityProcedureStep step = LoadStep(stepRef);
             step.Start();
+
+            step.AddPerformedStep(
+                new ModalityPerformedProcedureStep());
         }
 
         [UpdateOperation]
-        public void CompleteProcedureStep(EntityRef<ScheduledProcedureStep> stepRef)
+        public void CompleteProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            ScheduledProcedureStep step = LoadStep(stepRef);
-            step.Complete();
+            ModalityProcedureStep mps = LoadStep(stepRef);
+            mps.Complete();
+
+            ModalityPerformedProcedureStep mpps =
+                CollectionUtils.FirstElement<ModalityPerformedProcedureStep>(mps.PerformedSteps);
+
+            if (mpps != null)
+            {
+                mpps.Complete();
+            }
         }
 
         [UpdateOperation]
-        public void CancelProcedureStep(EntityRef<ScheduledProcedureStep> stepRef)
+        public void CancelProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            ScheduledProcedureStep step = LoadStep(stepRef);
+            ModalityProcedureStep step = LoadStep(stepRef);
             step.Discontinue();
+
+            ModalityPerformedProcedureStep mpps =
+               CollectionUtils.FirstElement<ModalityPerformedProcedureStep>(step.PerformedSteps);
+
+            if (mpps != null)
+            {
+                mpps.Discontinue();
+            }
         }
 
-        private ScheduledProcedureStep LoadStep(EntityRef<ScheduledProcedureStep> stepRef)
+        private ModalityProcedureStep LoadStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            IScheduledProcedureStepBroker broker = this.CurrentContext.GetBroker<IScheduledProcedureStepBroker>();
+            IModalityProcedureStepBroker broker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
             return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
         }
     }

@@ -44,8 +44,9 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
-    <Compile Include="Brokers\AcquisitionWorklistBroker.cs" />
+    <Compile Include="Brokers\ModalityWorklistBroker.cs" />
     <Compile Include="Brokers\LocationBroker.cs" />
+    <Compile Include="Brokers\ModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\PatientProfileBroker.cs" />
     <Compile Include="DateTimeRangeHbm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\..\Enterprise\Hibernate\ClearCanvas.Enterprise.Hibernate.csproj">
       <Project>{4CED35C2-4659-492D-8F85-F560E469BE11}</Project>
       <Name>ClearCanvas.Enterprise.Hibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Workflow\ClearCanvas.Workflow.csproj">
+      <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
+      <Name>ClearCanvas.Workflow</Name>
     </ProjectReference>
     <ProjectReference Include="..\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
@@ -109,9 +114,28 @@
     <EmbeddedResource Include="Mappings\OrderPriorityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\RequestedProcedure.hbm.xml" />
     <EmbeddedResource Include="Mappings\RequestedProcedureType.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ScheduledProcedureStep.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ScheduledProcedureStepStatusEnum.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ScheduledProcedureStepType.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ModalityProcedureStepType.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ProcedureStep.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ModalityProcedureStep.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\PerformedProcedureStep.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ModalityPerformedProcedureStep.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ReportingProcedureStep.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ReportingPerformedProcedureStep.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\InterpretationStep.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

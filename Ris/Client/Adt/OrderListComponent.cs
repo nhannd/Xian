@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(OrderListComponentViewExtensionPoint))]
     public class OrderListComponent : ApplicationComponent
     {
-        private Table<AcquisitionWorklistItem> _orderList;
+        private Table<ModalityWorklistQueryResult> _orderList;
 
 
         /// <summary>
@@ -59,27 +59,27 @@ namespace ClearCanvas.Ris.Client.Adt
             IOrderEntryService orderEntryService = ApplicationContext.GetService<IOrderEntryService>();
             OrderPriorityEnumTable orderPriorities = orderEntryService.GetOrderPriorityEnumTable();
 
-            IList<AcquisitionWorklistItem> worklistItems = orderEntryService.GetOrdersWorklist(new ScheduledProcedureStepSearchCriteria());
+            IList<ModalityWorklistQueryResult> worklistItems = orderEntryService.GetOrdersWorklist(new ModalityProcedureStepSearchCriteria());
 
-            _orderList = new Table<AcquisitionWorklistItem>();
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnMRN,
-                delegate(AcquisitionWorklistItem item) { return item.Mrn.Format(); }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnName,
-                delegate(AcquisitionWorklistItem item) { return item.PatientName.Format(); }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnVisitNumber,
-                delegate(AcquisitionWorklistItem item) { return item.VisitNumber.Format(); }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(AcquisitionWorklistItem item) { return item.AccessionNumber; }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnDiagnosticService,
-                delegate(AcquisitionWorklistItem item) { return item.DiagnosticService; }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnProcedure,
-                delegate(AcquisitionWorklistItem item) { return item.Procedure; }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnScheduledStep,
-                delegate(AcquisitionWorklistItem item) { return item.ScheduledStep; }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnModality,
-                delegate(AcquisitionWorklistItem item) { return item.Modality; }));
-            _orderList.Columns.Add(new TableColumn<AcquisitionWorklistItem, string>(SR.ColumnPriority,
-                delegate(AcquisitionWorklistItem item) { return orderPriorities[item.Priority].Value; }));
+            _orderList = new Table<ModalityWorklistQueryResult>();
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnMRN,
+                delegate(ModalityWorklistQueryResult item) { return item.Mrn.Format(); }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnName,
+                delegate(ModalityWorklistQueryResult item) { return item.PatientName.Format(); }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnVisitNumber,
+                delegate(ModalityWorklistQueryResult item) { return item.VisitNumber.Format(); }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnAccessionNumber,
+                delegate(ModalityWorklistQueryResult item) { return item.AccessionNumber; }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnDiagnosticService,
+                delegate(ModalityWorklistQueryResult item) { return item.DiagnosticService; }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnProcedure,
+                delegate(ModalityWorklistQueryResult item) { return item.RequestedProcedureName; }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnScheduledStep,
+                delegate(ModalityWorklistQueryResult item) { return item.ModalityProcedureStepName; }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnModality,
+                delegate(ModalityWorklistQueryResult item) { return item.ModalityName; }));
+            _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnPriority,
+                delegate(ModalityWorklistQueryResult item) { return orderPriorities[item.Priority].Value; }));
 
             _orderList.Items.AddRange(worklistItems);
 

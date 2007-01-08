@@ -44,7 +44,8 @@
     <Compile Include="AdmissionType.cs" />
     <Compile Include="AmbulatoryStatus.cs" />
     <Compile Include="Brokers\IAccessionNumberBroker.cs" />
-    <Compile Include="Brokers\IAcquisitionWorklistBroker.cs" />
+    <Compile Include="Brokers\IModalityWorklistBroker.cs" />
+    <Compile Include="Brokers\IModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
     <Compile Include="CompositeIdentifier.cs" />
     <Compile Include="DateTimeRange.cs" />
@@ -52,8 +53,12 @@
     <Compile Include="Facility.cs" />
     <Compile Include="HealthcardNumber.cs" />
     <Compile Include="HealthcareWorkflowException.cs" />
+    <Compile Include="InterpretationStep.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Modality.cs" />
+    <Compile Include="ModalityPerformedProcedureStep.cs" />
+    <Compile Include="ModalityProcedureStep.cs" />
+    <Compile Include="ModalityProcedureStepSearchCriteria.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderPriority.cs" />
     <Compile Include="Patient.cs" />
@@ -65,14 +70,21 @@
     <Compile Include="PatientProfileMatch.cs" />
     <Compile Include="PatientReconciliationException.cs" />
     <Compile Include="PatientType.cs" />
+    <Compile Include="PerformedProcedureStep.cs" />
+    <Compile Include="PerformedProcedureStepSearchCriteria.cs" />
     <Compile Include="PersonName.cs" />
     <Compile Include="Practitioner.cs" />
+    <Compile Include="ProcedureStep.cs" />
+    <Compile Include="ProcedureStepPerformer.cs" />
+    <Compile Include="ProcedureStepPerformerSearchCriteria.cs" />
+    <Compile Include="ProcedureStepSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportingPerformedProcedureStep.cs" />
+    <Compile Include="ReportingProcedureStep.cs" />
+    <Compile Include="ReportingProcedureStepSearchCriteria.cs" />
     <Compile Include="RequestedProcedure.cs" />
     <Compile Include="RequestedProcedureType.cs" />
-    <Compile Include="ScheduledProcedureStep.cs" />
-    <Compile Include="ScheduledProcedureStepStatus.cs" />
-    <Compile Include="ScheduledProcedureStepType.cs" />
+    <Compile Include="ModalityProcedureStepType.cs" />
     <Compile Include="Sex.cs" />
     <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />
@@ -84,7 +96,7 @@
     <Compile Include="VisitPractitioner.cs" />
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
-    <Compile Include="AcquisitionWorklistItem.cs" />
+    <Compile Include="ModalityWorklistQueryResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -97,6 +109,10 @@
     <ProjectReference Include="..\Enterprise\ClearCanvas.Enterprise.csproj">
       <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
       <Name>ClearCanvas.Enterprise</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workflow\ClearCanvas.Workflow.csproj">
+      <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
+      <Name>ClearCanvas.Workflow</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

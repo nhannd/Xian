@@ -6,6 +6,7 @@ using Iesi.Collections;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Workflow;
 
 
 namespace ClearCanvas.Healthcare {
@@ -46,10 +47,10 @@ namespace ClearCanvas.Healthcare {
                 order.RequestedProcedures.Add(rp);
 
                 // add scheduled procedure steps according to the diagnostic service breakdown
-                foreach (ScheduledProcedureStepType spt in rpt.ScheduledProcedureStepTypes)
+                foreach (ModalityProcedureStepType spt in rpt.ModalityProcedureStepTypes)
                 {
-                    ScheduledProcedureStep sps = new ScheduledProcedureStep(rp, spt, spt.DefaultModality, ScheduledProcedureStepStatus.SCHEDULED);
-                    rp.ScheduledProcedureSteps.Add(sps);
+                    ModalityProcedureStep sps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
+                    rp.ModalityProcedureSteps.Add(sps);
                 }
             }
 

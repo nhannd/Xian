@@ -7,11 +7,11 @@ namespace ClearCanvas.Ris.Services
 {
     public interface IAcquisitionWorkflowService : IHealthcareServiceLayer
     {
-        IList<AcquisitionWorklistItem> GetWorklist(ScheduledProcedureStepSearchCriteria criteria);
-        ScheduledProcedureStep LoadWorklistItemPreview(AcquisitionWorklistItem item);
+        IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria);
+        ModalityProcedureStep LoadWorklistItemPreview(ModalityWorklistQueryResult item);
 
-        void StartProcedureStep(EntityRef<ScheduledProcedureStep> stepRef);
-        void CompleteProcedureStep(EntityRef<ScheduledProcedureStep> stepRef);
-        void CancelProcedureStep(EntityRef<ScheduledProcedureStep> stepRef);
+        void StartProcedureStep(EntityRef<ModalityProcedureStep> stepRef);
+        void CompleteProcedureStep(EntityRef<ModalityProcedureStep> stepRef);
+        void CancelProcedureStep(EntityRef<ModalityProcedureStep> stepRef);
     }
 }

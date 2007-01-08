@@ -10,9 +10,9 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// ScheduledProcedureStepType entity
+    /// ModalityProcedureStepType entity
     /// </summary>
-	public partial class ScheduledProcedureStepType : Entity
+	public partial class ModalityProcedureStepType : Entity
 	{
 	
 		/// <summary>
@@ -32,7 +32,7 @@ namespace ClearCanvas.Healthcare {
 
         public override bool Equals(object that)
         {
-            ScheduledProcedureStepType other = that as ScheduledProcedureStepType;
+            ModalityProcedureStepType other = that as ModalityProcedureStepType;
             return other != null && other.Id == this.Id;
         }
 

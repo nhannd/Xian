@@ -23,16 +23,16 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public virtual void AddScheduledProcedureStepType(ScheduledProcedureStepType spt)
+        public virtual void AddModalityProcedureStepType(ModalityProcedureStepType spt)
         {
-            if (this.ScheduledProcedureStepTypes.Contains(spt))
+            if (this.ModalityProcedureStepTypes.Contains(spt))
             {
                 throw new HealthcareWorkflowException(
                     string.Format("Requested Procedure Type {0} already contains Scheduled Procedure Step Type {1}",
                     this.Id, spt.Id));
             }
 
-            this.ScheduledProcedureStepTypes.Add(spt);
+            this.ModalityProcedureStepTypes.Add(spt);
         }
 
         public virtual string Format()

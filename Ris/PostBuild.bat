@@ -21,7 +21,11 @@ copy "..\..\..\..\ReferencedAssemblies\NHibernate.Caches.SysCache.dll" .\plugins
 copy "..\..\..\..\Enterprise\Hibernate\hibernate.cfg.xml" .
 
 
-:: copy Healthcare
+
+:: copy models
+copy "..\..\..\..\Workflow\bin\%1\ClearCanvas.Workflow.dll" .\plugins
+copy "..\..\..\..\Workflow\Hibernate\bin\%1\ClearCanvas.Workflow.Hibernate.dll" .\plugins
+
 copy "..\..\..\..\Healthcare\bin\%1\ClearCanvas.Healthcare.dll" .\plugins
 copy "..\..\..\..\Healthcare\Hibernate\bin\%1\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
 

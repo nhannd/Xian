@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <class name="ScheduledProcedureStepType" proxy="ScheduledProcedureStepType" table="ScheduledProcedureStepType_">
+  <class name="ModalityProcedureStepType" proxy="ModalityProcedureStepType" table="ModalityProcedureStepType_">
     <id name="OID" column="OID_" type="Int64">
       <generator class="hilo">
         <param name="max_lo">100</param>

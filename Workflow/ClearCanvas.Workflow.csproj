@@ -38,7 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
+    <Compile Include="ActivityPerformedStepSearchCriteria.cs" />
     <Compile Include="ActivitySchedulingSearchCriteria.cs" />
+    <Compile Include="ActivitySearchCriteria.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Activity.cs" />
     <Compile Include="ActivityPerformedStep.cs" />

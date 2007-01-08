@@ -20,12 +20,12 @@ namespace ClearCanvas.Ris.Services
         private IUpdateContext _updateContext;
         private IDiagnosticServiceBroker _dsBroker;
         private IRequestedProcedureTypeBroker _rptBroker;
-        private IScheduledProcedureStepTypeBroker _sptBroker;
+        private IModalityProcedureStepTypeBroker _sptBroker;
         private IModalityBroker _modalityBroker;
 
         private List<DiagnosticService> _diagnosticServices = new List<DiagnosticService>();
         private List<RequestedProcedureType> _rpTypes = new List<RequestedProcedureType>();
-        private List<ScheduledProcedureStepType> _spTypes = new List<ScheduledProcedureStepType>();
+        private List<ModalityProcedureStepType> _spTypes = new List<ModalityProcedureStepType>();
         private List<Modality> _modalities = new List<Modality>();
 
         private DiagnosticServiceBatchImporter(IUpdateContext updateContext)
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Services
             _updateContext = updateContext;
             _dsBroker = _updateContext.GetBroker<IDiagnosticServiceBroker>();
             _rptBroker = _updateContext.GetBroker<IRequestedProcedureTypeBroker>();
-            _sptBroker = _updateContext.GetBroker<IScheduledProcedureStepTypeBroker>();
+            _sptBroker = _updateContext.GetBroker<IModalityProcedureStepTypeBroker>();
             _modalityBroker = _updateContext.GetBroker<IModalityBroker>();
         }
 
@@ -53,16 +53,16 @@ namespace ClearCanvas.Ris.Services
                 Modality modality = GetModality(modId, modName);
                 DiagnosticService ds = GetDiagnosticService(dsId, dsName);
                 RequestedProcedureType rpt = GetRequestedProcedureType(rptId, rptName);
-                ScheduledProcedureStepType spt = GetScheduledProcedureStepType(sptId, sptName, modality);
+                ModalityProcedureStepType spt = GetModalityProcedureStepType(sptId, sptName, modality);
 
                 if (!ds.RequestedProcedureTypes.Contains(rpt))
                 {
                     ds.AddRequestedProcedureType(rpt);
                 }
 
-                if (!rpt.ScheduledProcedureStepTypes.Contains(spt))
+                if (!rpt.ModalityProcedureStepTypes.Contains(spt))
                 {
-                    rpt.AddScheduledProcedureStepType(spt);
+                    rpt.AddModalityProcedureStepType(spt);
                 }
             }
         }
@@ -129,24 +129,24 @@ namespace ClearCanvas.Ris.Services
             return rpType;
         }
 
-        private ScheduledProcedureStepType GetScheduledProcedureStepType(string id, string name, Modality modality)
+        private ModalityProcedureStepType GetModalityProcedureStepType(string id, string name, Modality modality)
         {
             // first check if we have it in memory
-            ScheduledProcedureStepType spType = CollectionUtils.SelectFirst<ScheduledProcedureStepType>(_spTypes,
-                delegate(ScheduledProcedureStepType sp) { return sp.Id == id; });
+            ModalityProcedureStepType spType = CollectionUtils.SelectFirst<ModalityProcedureStepType>(_spTypes,
+                delegate(ModalityProcedureStepType sp) { return sp.Id == id; });
 
             // if not, check the database
             if (spType == null)
             {
-                ScheduledProcedureStepTypeSearchCriteria criteria = new ScheduledProcedureStepTypeSearchCriteria();
+                ModalityProcedureStepTypeSearchCriteria criteria = new ModalityProcedureStepTypeSearchCriteria();
                 criteria.Id.EqualTo(id);
 
-                spType = CollectionUtils.FirstElement<ScheduledProcedureStepType>(_sptBroker.Find(criteria));
+                spType = CollectionUtils.FirstElement<ModalityProcedureStepType>(_sptBroker.Find(criteria));
 
                 // if not, create a transient instance
                 if (spType == null)
                 {
-                    spType = new ScheduledProcedureStepType(id, name, modality);
+                    spType = new ModalityProcedureStepType(id, name, modality);
                     _updateContext.Lock(spType, DirtyState.New);
                 }
 

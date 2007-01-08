@@ -15,8 +15,8 @@ namespace ClearCanvas.Ris.Services
         ///     1 - Diagnostic Service Name
         ///     2 - Requested Procedure Type ID
         ///     3 - Requested Procedure Type Name
-        ///     4 - Scheduled Procedure Step Type ID
-        ///     5 - Scheduled Procedure Step Type Name
+        ///     4 - Modality Procedure Step Type ID
+        ///     5 - Modality Procedure Step Type Name
         ///     6 - Default Modality ID
         ///     7 - Default Modality Name
         /// </param>

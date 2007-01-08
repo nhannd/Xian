@@ -295,10 +295,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         delegate(RequestedProcedureType rpt) { return rpt.Format(); },
                         delegate(RequestedProcedureType rpt)
                         {
-                            return new Tree<ScheduledProcedureStepType>(
-                                new TreeItemBinding<ScheduledProcedureStepType>(
-                                    delegate(ScheduledProcedureStepType spt) { return spt.Format(); }),
-                                    rpt.ScheduledProcedureStepTypes);
+                            return new Tree<ModalityProcedureStepType>(
+                                new TreeItemBinding<ModalityProcedureStepType>(
+                                    delegate(ModalityProcedureStepType spt) { return spt.Format(); }),
+                                    rpt.ModalityProcedureStepTypes);
                         }), _selectedDiagnosticService.RequestedProcedureTypes);
             }
 

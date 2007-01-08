@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Iesi.Collections;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Workflow
 {
-    public abstract class ActivityPerformedStep
+    public abstract class ActivityPerformedStep : Entity
     {
         private ISet _activities;
         private ActivityPerformer _performer;
-        private DateTime? _startTime;
+        private DateTime _startTime;
         private DateTime? _endTime;
         private ActivityPerformedStepStatus _status;
 
@@ -17,8 +19,8 @@ namespace ClearCanvas.Workflow
         {
             _activities = new HybridSet();
             _status = ActivityPerformedStepStatus.IP;
+            _startTime = Platform.Time;
         }
-
 
         /// <summary>
         /// Gets the set of associated activities.  Do not add or remove elements directly from this collection.
@@ -35,7 +37,7 @@ namespace ClearCanvas.Workflow
             set { _performer = value; }
         }
 
-        public virtual DateTime? StartTime
+        public virtual DateTime StartTime
         {
             get { return _startTime; }
             set { _startTime = value; }
@@ -52,6 +54,5 @@ namespace ClearCanvas.Workflow
             get { return _status; }
             set { _status = value; }
         }
-
     }
 }
