@@ -201,22 +201,22 @@ namespace ClearCanvas.Ris.Client.Adt
         }
         #endregion
 
-        #region AmbulatoryStatus
-        public string AmbulatoryStatus
-        {
-            get { return _ambulatoryStatuses[_visit.AmbulatoryStatus].Value; }
-            set
-            {
-                _visit.AmbulatoryStatus = _ambulatoryStatuses[value].Code;
-                this.Modified = true;
-            }
-        }
+        //#region AmbulatoryStatus
+        //public string AmbulatoryStatus
+        //{
+        //    get { return _ambulatoryStatuses[_visit.AmbulatoryStatus].Value; }
+        //    set
+        //    {
+        //        _visit.AmbulatoryStatus = _ambulatoryStatuses[value].Code;
+        //        this.Modified = true;
+        //    }
+        //}
 
-        public string[] AmbulatoryStatusChoices
-        {
-            get { return _ambulatoryStatuses.Values; }
-        }
-        #endregion
+        //public string[] AmbulatoryStatusChoices
+        //{
+        //    get { return _ambulatoryStatuses.Values; }
+        //}
+        //#endregion
 
         #region VisitStatus
         public String VisitStatus

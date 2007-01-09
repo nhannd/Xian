@@ -48,8 +48,12 @@
     <Compile Include="Brokers\IModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
     <Compile Include="CompositeIdentifier.cs" />
+    <Compile Include="ContactPerson.cs" />
+    <Compile Include="ContactPersonRelationship.cs" />
+    <Compile Include="ContactPersonType.cs" />
     <Compile Include="DateTimeRange.cs" />
     <Compile Include="DiagnosticService.cs" />
+    <Compile Include="EmailAddress.cs" />
     <Compile Include="Facility.cs" />
     <Compile Include="HealthcardNumber.cs" />
     <Compile Include="HealthcareWorkflowException.cs" />
@@ -79,6 +83,7 @@
     <Compile Include="ProcedureStepPerformerSearchCriteria.cs" />
     <Compile Include="ProcedureStepSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Religion.cs" />
     <Compile Include="ReportingPerformedProcedureStep.cs" />
     <Compile Include="ReportingProcedureStep.cs" />
     <Compile Include="ReportingProcedureStepSearchCriteria.cs" />
@@ -86,6 +91,7 @@
     <Compile Include="RequestedProcedureType.cs" />
     <Compile Include="ModalityProcedureStepType.cs" />
     <Compile Include="Sex.cs" />
+    <Compile Include="SpokenLanguage.cs" />
     <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />
     <Compile Include="TelephoneNumber.cs" />

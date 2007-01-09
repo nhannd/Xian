@@ -31,8 +31,13 @@ namespace ClearCanvas.Healthcare {
             this.DischargeDateTime = v.DischargeDateTime;
             this.DischargeDisposition = v.DischargeDisposition;
             this.VipIndicator = v.VipIndicator;
-            this.AmbulatoryStatus = v.AmbulatoryStatus;
+            //this.AmbulatoryStatus = v.AmbulatoryStatus;
             this.PreadmitNumber = v.PreadmitNumber;
+
+            foreach (AmbulatoryStatus a in v.AmbulatoryStatuses)
+            {
+                this.AmbulatoryStatuses.Add(a);
+            }
 
             foreach (VisitPractitioner vp in v.Practitioners)
             {

@@ -49,8 +49,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _visitStatus.DataSource = _component.VisitStatusChoices;
             _visitStatus.DataBindings.Add("Value", _component, "VisitStatus", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _ambulatoryStatus.DataSource = _component.AmbulatoryStatusChoices;
-            _ambulatoryStatus.DataBindings.Add("Value", _component, "AmbulatoryStatus", true, DataSourceUpdateMode.OnPropertyChanged);
+            //_ambulatoryStatus.DataSource = _component.AmbulatoryStatusChoices;
+            //_ambulatoryStatus.DataBindings.Add("Value", _component, "AmbulatoryStatus", true, DataSourceUpdateMode.OnPropertyChanged);
 
             // TODO add .NET databindings to _component
         }
