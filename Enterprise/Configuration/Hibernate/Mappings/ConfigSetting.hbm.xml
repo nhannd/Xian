@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Enterprise.Configuration" namespace="ClearCanvas.Enterprise.Configuration">
+  <class name="ConfigSetting" proxy="ConfigSetting" table="ConfigSetting_">
+    <id name="OID" column="OID_" type="Int64">
+      <generator class="hilo">
+        <param name="max_lo">100</param>
+      </generator>
+    </id>
+    <version name="Version" column="Version_"/>
+    <property name="ApplicationName" column="ApplicationName_" type="String" length="200" not-null="true"/>
+    <property name="ApplicationVersion" column="ApplicationVersion_" type="String" length="20" not-null="true"/>
+    <property name="SettingsGroup" column="SettingsGroup_" type="String" length="1000" not-null="true"/>
+    <property name="SettingsKey" column="SettingsKey_" type="String" length="1000" not-null="false"/>
+    <property name="SettingName" column="SettingName_" type="String" length="200" not-null="true"/>
+    <property name="SettingValue" column="SettingValue_" type="StringClob" length="65000" not-null="false"/>
+  </class>
+</hibernate-mapping>

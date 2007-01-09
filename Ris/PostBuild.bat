@@ -23,6 +23,9 @@ copy "..\..\..\..\Enterprise\Hibernate\hibernate.cfg.xml" .
 
 
 :: copy models
+copy "..\..\..\..\Enterprise\Configuration\bin\%1\ClearCanvas.Enterprise.Configuration.dll" .\plugins
+copy "..\..\..\..\Enterprise\Configuration\Hibernate\bin\%1\ClearCanvas.Enterprise.Configuration.Hibernate.dll" .\plugins
+
 copy "..\..\..\..\Workflow\bin\%1\ClearCanvas.Workflow.dll" .\plugins
 copy "..\..\..\..\Workflow\Hibernate\bin\%1\ClearCanvas.Workflow.Hibernate.dll" .\plugins
 

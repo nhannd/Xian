@@ -21,7 +21,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     public class PersistentStore : IPersistentStore
     {
         private ISessionFactory _sessionFactory;
-        private Configuration _cfg;
+        private NHibernate.Cfg.Configuration _cfg;
 
         private ITransactionNotifier _transactionNotifier;
 
@@ -34,7 +34,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         public void Initialize()
         {
             // create the hibernate configuration
-            _cfg = new Configuration();
+            _cfg = new NHibernate.Cfg.Configuration();
 
             // this will automatically read from the hibernate.xml.cfg file
             _cfg.Configure();
@@ -86,7 +86,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         #endregion
 
 
-        public Configuration Configuration
+        public NHibernate.Cfg.Configuration Configuration
         {
             get { return _cfg; }
         }
