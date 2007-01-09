@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    partial class PractitionerStaffDetailsEditorComponentControl
+    partial class StaffDetailsEditorComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -148,12 +148,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._licenseNumber.TabIndex = 6;
             this._licenseNumber.Value = null;
             // 
-            // PractitionerStaffDetailsEditorComponentControl
+            // StaffDetailsEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "PractitionerStaffDetailsEditorComponentControl";
+            this.Name = "StaffDetailsEditorComponentControl";
             this.Size = new System.Drawing.Size(471, 143);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

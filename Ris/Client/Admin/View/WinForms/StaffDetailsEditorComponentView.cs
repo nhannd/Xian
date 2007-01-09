@@ -11,18 +11,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="PractitionerDetailsEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(PractitionerStaffDetailsEditorComponentViewExtensionPoint))]
+    [ExtensionOf(typeof(StaffDetailsEditorComponentViewExtensionPoint))]
     public class PractitionerDetailssEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private PractitionerStaffDetailsEditorComponent _component;
-        private PractitionerStaffDetailsEditorComponentControl _control;
+        private StaffDetailsEditorComponent _component;
+        private StaffDetailsEditorComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PractitionerStaffDetailsEditorComponent)component;
+            _component = (StaffDetailsEditorComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PractitionerStaffDetailsEditorComponentControl(_component);
+                    _control = new StaffDetailsEditorComponentControl(_component);
                 }
                 return _control;
             }

@@ -46,10 +46,8 @@
     <Compile Include="ModalitySummaryComponent.cs" />
     <Compile Include="ModalityEditorComponent.cs" />
     <Compile Include="ModalityTable.cs" />
-    <Compile Include="PractitionerStaffDetailsEditorComponent.cs" />
-    <Compile Include="PractitionerStaffEditorComponent.cs" />
-    <Compile Include="PractitionerSummaryComponent.cs" />
-    <Compile Include="PractitionerTable.cs" />
+    <Compile Include="StaffDetailsEditorComponent.cs" />
+    <Compile Include="StaffEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -99,6 +97,15 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Delete.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

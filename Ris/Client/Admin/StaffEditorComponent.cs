@@ -12,26 +12,25 @@ using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    public class PractitionerStaffEditorComponent : NavigatorComponentContainer
+    public class StaffEditorComponent : NavigatorComponentContainer
     {
         private bool _isStaffMode;
         private EntityRef<Staff> _staffRef;
-        private Staff _staff;
         private EntityRef<Practitioner> _practitionerRef;
-        private Practitioner _practitioner;
+        private Staff _staff;
 
         private bool _isNew;
         private IStaffAdminService _staffAdminService;
         private IPractitionerAdminService _practitionerAdminService;
 
-        private PractitionerStaffDetailsEditorComponent _detailsEditor;
+        private StaffDetailsEditorComponent _detailsEditor;
         private AddressesSummaryComponent _addressesSummary;
         private PhoneNumbersSummaryComponent _phoneNumbersSummary;
 
         /// <summary>
         /// Constructs an editor to edit a new staff
         /// </summary>
-        public PractitionerStaffEditorComponent(bool staffMode)
+        public StaffEditorComponent(bool staffMode)
         {
             _isNew = true;
             _isStaffMode = staffMode;
@@ -41,21 +40,21 @@ namespace ClearCanvas.Ris.Client.Admin
         /// Constructs an editor to edit an existing staff profile
         /// </summary>
         /// <param name="staffRef"></param>
-        public PractitionerStaffEditorComponent(EntityRef<Staff> staffRef)
+        public StaffEditorComponent(EntityRef<Staff> staffRef)
         {
-            _staffRef = staffRef;
             _isNew = false;
+            _staffRef = staffRef;
             _isStaffMode = true;
         }
 
         /// <summary>
         /// Constructs an editor to edit an existing practitioner profile
         /// </summary>
-        /// <param name="practitionerRef"></param>
-        public PractitionerStaffEditorComponent(EntityRef<Practitioner> practitionerRef)
+        /// <param name="staffRef"></param>
+        public StaffEditorComponent(EntityRef<Practitioner> staffRef)
         {
-            _practitionerRef = practitionerRef;
             _isNew = false;
+            _practitionerRef = staffRef;
             _isStaffMode = false;
         }
 
@@ -70,10 +69,38 @@ namespace ClearCanvas.Ris.Client.Admin
             _staffAdminService = ApplicationContext.GetService<IStaffAdminService>();
             _practitionerAdminService = ApplicationContext.GetService<IPractitionerAdminService>();
 
-            if (_isStaffMode)
-                InitializeStaffEditor();
+            if (_isNew)
+            {
+                if (_isStaffMode)
+                    _staff = new Staff();
+                else
+                    _staff = new Practitioner();
+            }
             else
-                InitializePractitionerEditor();
+            {
+                try
+                {
+                    if (_isStaffMode)
+                        _staff = _staffAdminService.LoadStaff(_staffRef, true);
+                    else
+                        _staff = _practitionerAdminService.LoadPractitioner(_practitionerRef, true);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
+            }
+
+            string rootPath = _isStaffMode ? SR.TitleStaff : SR.TitlePractitioner;
+            this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isStaffMode)));
+            this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent()));
+            this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
+
+            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+
+            _detailsEditor.Staff = _staff;
+            _addressesSummary.Subject = _staff.Addresses;
+            _phoneNumbersSummary.Subject = _staff.TelephoneNumbers;
 
             base.Start();
         }
@@ -123,35 +150,6 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Cancel();
         }
 
-        #region Staff helper functions
-
-        private void InitializeStaffEditor()
-        {
-            if (_isNew)
-                _staff = new Staff();
-            else
-            {
-                try
-                {
-                    _staff = _staffAdminService.LoadStaff(_staffRef, true);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
-            }
-
-            this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new PractitionerStaffDetailsEditorComponent()));
-            this.Pages.Add(new NavigatorPage("Staff/Addresses", _addressesSummary = new AddressesSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Staff/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
-
-            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
-
-            _detailsEditor.Staff = _staff;
-            _addressesSummary.Subject = _staff.Addresses;
-            _phoneNumbersSummary.Subject = _staff.TelephoneNumbers;
-        }
-
         private void SaveStaffChanges()
         {
             if (_isNew)
@@ -165,41 +163,17 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        #endregion
-
-        #region Practitioner helper functions
-
-        private void InitializePractitionerEditor()
-        {
-            if (_isNew)
-                _practitioner = new Practitioner();
-            else
-                _practitioner = _practitionerAdminService.LoadPractitioner(_practitionerRef, true);
-
-            this.Pages.Add(new NavigatorPage("Practitioner", _detailsEditor = new PractitionerStaffDetailsEditorComponent()));
-            this.Pages.Add(new NavigatorPage("Practitioner/Addresses", _addressesSummary = new AddressesSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Practitioner/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
-
-            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
-
-            _detailsEditor.Practitioner = _practitioner;
-            _addressesSummary.Subject = _practitioner.Addresses;
-            _phoneNumbersSummary.Subject = _practitioner.TelephoneNumbers;
-        }
-
         private void SavePractitionerChanges()
         {
             if (_isNew)
             {
-                _practitionerAdminService.AddPractitioner(_practitioner);
-                _practitionerRef = new EntityRef<Practitioner>(_practitioner);
+                _practitionerAdminService.AddPractitioner(_staff as Practitioner);
+                _staffRef = new EntityRef<Staff>(_staff);
             }
             else
             {
-                _practitionerAdminService.UpdatePractitioner(_practitioner);
+                _practitionerAdminService.UpdatePractitioner(_staff as Practitioner);
             }
         }
-
-        #endregion
     }
 }

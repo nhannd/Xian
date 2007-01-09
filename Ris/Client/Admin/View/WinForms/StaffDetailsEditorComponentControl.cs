@@ -14,14 +14,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="PractitionerDetailsEditorComponent"/>
     /// </summary>
-    public partial class PractitionerStaffDetailsEditorComponentControl : ApplicationComponentUserControl
+    public partial class StaffDetailsEditorComponentControl : ApplicationComponentUserControl
     {
-        private PractitionerStaffDetailsEditorComponent _component;
+        private StaffDetailsEditorComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PractitionerStaffDetailsEditorComponentControl(PractitionerStaffDetailsEditorComponent component)
+        public StaffDetailsEditorComponentControl(StaffDetailsEditorComponent component)
             : base(component)
         {
             InitializeComponent();

@@ -74,8 +74,6 @@ namespace ClearCanvas.Ris.Client.Admin
             _facilityAdminService.FacilityChanged += FacilityChangedEventHandler;
 
             _facilityTable = new FacilityTable();
-            LoadFacilityTable();
-
             _facilityActionHandler = new CrudActionModel();
             _facilityActionHandler.Add.SetClickHandler(AddFacility);
             _facilityActionHandler.Edit.SetClickHandler(UpdateSelectedFacility);

@@ -74,8 +74,6 @@ namespace ClearCanvas.Ris.Client.Admin
             _locationAdminService.LocationChanged += LocationChangedEventHandler;
 
             _locationTable = new LocationTable();
-            LoadLocationTable();
-
             _locationActionHandler = new CrudActionModel();
             _locationActionHandler.Add.SetClickHandler(AddLocation);
             _locationActionHandler.Edit.SetClickHandler(UpdateSelectedLocation);

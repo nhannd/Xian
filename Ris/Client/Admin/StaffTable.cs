@@ -11,6 +11,10 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         public StaffTable()
         {
+            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnLicenseNumber,
+                delegate(Staff staff) { return (staff is Practitioner ? (staff as Practitioner).LicenseNumber : ""); },
+                1.0f));
+
             this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnPrefix,
                 delegate(Staff staff) { return staff.Name.Prefix; },
                 0.2f));

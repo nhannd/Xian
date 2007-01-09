@@ -77,20 +77,13 @@
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ModalityEditorComponentView.cs" />
-    <Compile Include="PractitionerStaffDetailsEditorComponentControl.cs">
+    <Compile Include="StaffDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PractitionerStaffDetailsEditorComponentControl.designer.cs">
-      <DependentUpon>PractitionerStaffDetailsEditorComponentControl.cs</DependentUpon>
+    <Compile Include="StaffDetailsEditorComponentControl.designer.cs">
+      <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PractitionerStaffDetailsEditorComponentView.cs" />
-    <Compile Include="PractitionerSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PractitionerSummaryComponentControl.designer.cs">
-      <DependentUpon>PractitionerSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PractitionerSummaryComponentView.cs" />
+    <Compile Include="StaffDetailsEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaffSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -150,12 +143,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PractitionerStaffDetailsEditorComponentControl.resx">
-      <DependentUpon>PractitionerStaffDetailsEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PractitionerSummaryComponentControl.resx">
-      <DependentUpon>PractitionerSummaryComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="StaffDetailsEditorComponentControl.resx">
+      <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="StaffSummaryComponentControl.resx">

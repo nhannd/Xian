@@ -74,8 +74,6 @@ namespace ClearCanvas.Ris.Client.Admin
             _modalityAdminService.ModalityChanged += ModalityChangedEventHandler;
 
             _modalityTable = new ModalityTable();
-            LoadModalityTable();
-
             _modalityActionHandler = new CrudActionModel();
             _modalityActionHandler.Add.SetClickHandler(AddModality);
             _modalityActionHandler.Edit.SetClickHandler(UpdateSelectedModality);

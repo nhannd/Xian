@@ -214,6 +214,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The diagnostic service was modified by another user.  Your changes could not be saved..
+        /// </summary>
+        internal static string ExceptionConcurrencyDiagnosticServiceNotSaved {
+            get {
+                return ResourceManager.GetString("ExceptionConcurrencyDiagnosticServiceNotSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The facility was modified by another user.  Your changes could not be saved..
         /// </summary>
         internal static string ExceptionConcurrencyFacilityNotSaved {
@@ -268,6 +277,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this diagnostic service?.
+        /// </summary>
+        internal static string MessageDeleteSelectedDiagnosticService {
+            get {
+                return ResourceManager.GetString("MessageDeleteSelectedDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this facility?.
         /// </summary>
         internal static string MessageDeleteSelectedFacility {
@@ -304,6 +322,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This diagnostic ID already exist.  Your changes could not be saved..
+        /// </summary>
+        internal static string MessageDuplicateDiagnosticServiceID {
+            get {
+                return ResourceManager.GetString("MessageDuplicateDiagnosticServiceID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This modality ID already exist.  Your changes could not be saved..
         /// </summary>
         internal static string MessageDuplicateModalityID {
@@ -313,7 +340,16 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Facility ....
+        ///   Looks up a localized string similar to Add Diagnostic Service ....
+        /// </summary>
+        internal static string TitleAddDiagnosticService {
+            get {
+                return ResourceManager.GetString("TitleAddDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Facility.
         /// </summary>
         internal static string TitleAddFacility {
             get {
@@ -322,7 +358,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Location ....
+        ///   Looks up a localized string similar to Add Location.
         /// </summary>
         internal static string TitleAddLocation {
             get {
@@ -331,7 +367,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Modality ....
+        ///   Looks up a localized string similar to Add Modality.
         /// </summary>
         internal static string TitleAddModality {
             get {
@@ -340,7 +376,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Practitioner ....
+        ///   Looks up a localized string similar to Add Practitioner.
         /// </summary>
         internal static string TitleAddPractitioner {
             get {
@@ -349,7 +385,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Staff ....
+        ///   Looks up a localized string similar to Add Staff.
         /// </summary>
         internal static string TitleAddStaff {
             get {
@@ -358,7 +394,16 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Facility ....
+        ///   Looks up a localized string similar to Delete Diagnostic Service.
+        /// </summary>
+        internal static string TitleDeleteDiagnosticService {
+            get {
+                return ResourceManager.GetString("TitleDeleteDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Facility.
         /// </summary>
         internal static string TitleDeleteFacility {
             get {
@@ -367,7 +412,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Location ....
+        ///   Looks up a localized string similar to Delete Location.
         /// </summary>
         internal static string TitleDeleteLocation {
             get {
@@ -376,7 +421,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Modality ....
+        ///   Looks up a localized string similar to Delete Modality.
         /// </summary>
         internal static string TitleDeleteModality {
             get {
@@ -385,7 +430,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Practitioner ....
+        ///   Looks up a localized string similar to Delete Practitioner.
         /// </summary>
         internal static string TitleDeletePractitioner {
             get {
@@ -394,11 +439,20 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Staff ....
+        ///   Looks up a localized string similar to Delete Staff.
         /// </summary>
         internal static string TitleDeleteStaff {
             get {
                 return ResourceManager.GetString("TitleDeleteStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diagnostic Services.
+        /// </summary>
+        internal static string TitleDiagnosticServices {
+            get {
+                return ResourceManager.GetString("TitleDiagnosticServices", resourceCulture);
             }
         }
         
@@ -448,7 +502,16 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Facility ....
+        ///   Looks up a localized string similar to Update Diagnostic Service ....
+        /// </summary>
+        internal static string TitleUpdateDiagnosticService {
+            get {
+                return ResourceManager.GetString("TitleUpdateDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Facility.
         /// </summary>
         internal static string TitleUpdateFacility {
             get {
@@ -457,7 +520,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Location ....
+        ///   Looks up a localized string similar to Update Location.
         /// </summary>
         internal static string TitleUpdateLocation {
             get {
@@ -466,7 +529,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Modality ....
+        ///   Looks up a localized string similar to Update Modality.
         /// </summary>
         internal static string TitleUpdateModality {
             get {
@@ -475,7 +538,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Practitioner ....
+        ///   Looks up a localized string similar to Update Practitioner.
         /// </summary>
         internal static string TitleUpdatePractitioner {
             get {
@@ -484,7 +547,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Staff ....
+        ///   Looks up a localized string similar to Update Staff.
         /// </summary>
         internal static string TitleUpdateStaff {
             get {

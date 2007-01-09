@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -59,7 +60,10 @@ namespace ClearCanvas.Ris.Client.Admin
         private StaffTable _staffTable;
 
         private IStaffAdminService _staffAdminService;
-        private CrudActionModel _staffActionHandler;
+        private ActionModelRoot _staffActionHandler;
+        private ClickAction _addStaffAction;
+        private ClickAction _addPractitionerAction;
+        private ClickAction _editAction;
 
         /// <summary>
         /// Constructor
@@ -75,14 +79,14 @@ namespace ClearCanvas.Ris.Client.Admin
             _staffAdminService.PractitionerChanged += PractitionerChangedEventHandler;
 
             _staffTable = new StaffTable();
-            LoadStaffTable();
-
-            _staffActionHandler = new CrudActionModel();
-            _staffActionHandler.Add.SetClickHandler(AddStaff);
-            _staffActionHandler.Edit.SetClickHandler(UpdateSelectedStaff);
-            _staffActionHandler.Add.Enabled = true;
-            _staffActionHandler.Delete.Enabled = false;
-
+            _staffActionHandler = new ActionModelRoot();
+            _addPractitionerAction = CreateAction(SR.TitleAddPractitioner, "Icons.Add.png", AddPractitioner);
+            _addStaffAction = CreateAction(SR.TitleAddStaff, "Icons.Add.png", AddStaff);
+            _editAction = CreateAction(SR.TitleUpdateStaff, "Icons.Edit.png", UpdateSelectedStaff);
+            _staffActionHandler.InsertAction(_addPractitionerAction);
+            _staffActionHandler.InsertAction(_addStaffAction);
+            _staffActionHandler.InsertAction(_editAction);
+            
             base.Start();
         }
 
@@ -205,9 +209,16 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void AddStaff()
         {
-            PractitionerStaffEditorComponent editor = new PractitionerStaffEditorComponent(true);
+            StaffEditorComponent editor = new StaffEditorComponent(true);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddStaff);
+        }
+
+        public void AddPractitioner()
+        {
+            StaffEditorComponent editor = new StaffEditorComponent(false);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                this.Host.DesktopWindow, editor, SR.TitleAddPractitioner);
         }
 
         public void UpdateSelectedStaff()
@@ -215,9 +226,19 @@ namespace ClearCanvas.Ris.Client.Admin
             // can occur if user double clicks while holding control
             if (_selectedStaff == null) return;
 
-            PractitionerStaffEditorComponent editor = new PractitionerStaffEditorComponent(new EntityRef<Staff>(_selectedStaff));
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+            StaffEditorComponent editor;
+            if (_selectedStaff is Practitioner)
+            {
+                editor = new StaffEditorComponent(new EntityRef<Practitioner>(_selectedStaff as Practitioner));
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
+            }
+            else
+            {
+                editor = new StaffEditorComponent(new EntityRef<Staff>(_selectedStaff));
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+            }
         }
 
         public void LoadStaffTable()
@@ -242,9 +263,22 @@ namespace ClearCanvas.Ris.Client.Admin
         private void StaffSelectionChanged()
         {
             if (_selectedStaff != null)
-                _staffActionHandler.Edit.Enabled = true;
+                _editAction.Enabled = true;
             else
-                _staffActionHandler.Edit.Enabled = false;
+                _editAction.Enabled = false;
+        }
+
+        private ClickAction CreateAction(string name, string icon, ClickHandlerDelegate handler)
+        {
+            IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+            ClickAction action = new ClickAction(name, new ActionPath(string.Format("root/{0}", name), resolver), ClickActionFlags.None, resolver);
+            action.Tooltip = name;
+            action.Label = name;
+            action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
+            action.Enabled = true;
+            action.SetClickHandler(handler);
+
+            return action;
         }
     }
 }

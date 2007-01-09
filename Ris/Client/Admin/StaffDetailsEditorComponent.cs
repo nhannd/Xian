@@ -11,30 +11,32 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Ris.Client.Admin
 {
     /// <summary>
-    /// Extension point for views onto <see cref="PractitionerStaffDetailsEditorComponent"/>
+    /// Extension point for views onto <see cref="StaffDetailsEditorComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class PractitionerStaffDetailsEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class StaffDetailsEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
     /// <summary>
-    /// PractitionerStaffDetailsEditorComponent class
+    /// StaffDetailsEditorComponent class
     /// </summary>
-    [AssociateView(typeof(PractitionerStaffDetailsEditorComponentViewExtensionPoint))]
-    public class PractitionerStaffDetailsEditorComponent : ApplicationComponent
+    [AssociateView(typeof(StaffDetailsEditorComponentViewExtensionPoint))]
+    public class StaffDetailsEditorComponent : ApplicationComponent
     {
-        private Practitioner _practitioner;
         private Staff _staff;
         private bool _isStaffMode;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PractitionerStaffDetailsEditorComponent()
+        public StaffDetailsEditorComponent(bool staffMode)
         {
-            _practitioner = new Practitioner();
-            _staff = new Staff();
+            _isStaffMode = staffMode;
+            if (_isStaffMode)
+                _staff = new Staff();
+            else
+                _staff = new Practitioner();
         }
 
         public override void Start()
@@ -52,22 +54,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public Staff Staff
         {
             get { return _staff; }
-            set 
-            {
-                _staff = value;
-                _isStaffMode = true;
-            }
-        }
-
-        public Practitioner Practitioner
-        {
-            get { return _practitioner; }
-            set 
-            {
-                _practitioner = value;
-                _staff = _practitioner as Staff;
-                _isStaffMode = false;
-            }
+            set { _staff = value; }
         }
 
         public bool StaffMode
@@ -148,14 +135,14 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (_isStaffMode)
                     return null;
                 else
-                    return _practitioner.LicenseNumber;
+                    return (_staff as Practitioner).LicenseNumber;
             }
 
             set
             {
                 if (_isStaffMode == false)
                 {
-                    _practitioner.LicenseNumber = value;
+                    (_staff as Practitioner).LicenseNumber = value;
                     this.Modified = true;
                 }
             }

@@ -168,6 +168,9 @@
   <data name="ColumnSuffix" xml:space="preserve">
     <value>Suffix</value>
   </data>
+  <data name="ExceptionConcurrencyDiagnosticServiceNotSaved" xml:space="preserve">
+    <value>The diagnostic service was modified by another user.  Your changes could not be saved.</value>
+  </data>
   <data name="ExceptionConcurrencyFacilityNotSaved" xml:space="preserve">
     <value>The facility was modified by another user.  Your changes could not be saved.</value>
   </data>
@@ -186,6 +189,9 @@
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
+  <data name="MessageDeleteSelectedDiagnosticService" xml:space="preserve">
+    <value>Are you sure you want to delete this diagnostic service?</value>
+  </data>
   <data name="MessageDeleteSelectedFacility" xml:space="preserve">
     <value>Are you sure you want to delete this facility?</value>
   </data>
@@ -198,38 +204,50 @@
   <data name="MessageDeleteSelectedStaff" xml:space="preserve">
     <value>Are you sure you want to delete this staff?</value>
   </data>
+  <data name="MessageDuplicateDiagnosticServiceID" xml:space="preserve">
+    <value>This diagnostic ID already exist.  Your changes could not be saved.</value>
+  </data>
   <data name="MessageDuplicateModalityID" xml:space="preserve">
     <value>This modality ID already exist.  Your changes could not be saved.</value>
   </data>
+  <data name="TitleAddDiagnosticService" xml:space="preserve">
+    <value>Add Diagnostic Service ...</value>
+  </data>
   <data name="TitleAddFacility" xml:space="preserve">
-    <value>Add Facility ...</value>
+    <value>Add Facility</value>
   </data>
   <data name="TitleAddLocation" xml:space="preserve">
-    <value>Add Location ...</value>
+    <value>Add Location</value>
   </data>
   <data name="TitleAddModality" xml:space="preserve">
-    <value>Add Modality ...</value>
+    <value>Add Modality</value>
   </data>
   <data name="TitleAddPractitioner" xml:space="preserve">
-    <value>Add Practitioner ...</value>
+    <value>Add Practitioner</value>
   </data>
   <data name="TitleAddStaff" xml:space="preserve">
-    <value>Add Staff ...</value>
+    <value>Add Staff</value>
+  </data>
+  <data name="TitleDeleteDiagnosticService" xml:space="preserve">
+    <value>Delete Diagnostic Service</value>
   </data>
   <data name="TitleDeleteFacility" xml:space="preserve">
-    <value>Delete Facility ...</value>
+    <value>Delete Facility</value>
   </data>
   <data name="TitleDeleteLocation" xml:space="preserve">
-    <value>Delete Location ...</value>
+    <value>Delete Location</value>
   </data>
   <data name="TitleDeleteModality" xml:space="preserve">
-    <value>Delete Modality ...</value>
+    <value>Delete Modality</value>
   </data>
   <data name="TitleDeletePractitioner" xml:space="preserve">
-    <value>Delete Practitioner ...</value>
+    <value>Delete Practitioner</value>
   </data>
   <data name="TitleDeleteStaff" xml:space="preserve">
-    <value>Delete Staff ...</value>
+    <value>Delete Staff</value>
+  </data>
+  <data name="TitleDiagnosticServices" xml:space="preserve">
+    <value>Diagnostic Services</value>
   </data>
   <data name="TitleFacilities" xml:space="preserve">
     <value>Facilities</value>
@@ -246,19 +264,22 @@
   <data name="TitleStaff" xml:space="preserve">
     <value>Staff</value>
   </data>
+  <data name="TitleUpdateDiagnosticService" xml:space="preserve">
+    <value>Update Diagnostic Service ...</value>
+  </data>
   <data name="TitleUpdateFacility" xml:space="preserve">
-    <value>Update Facility ...</value>
+    <value>Update Facility</value>
   </data>
   <data name="TitleUpdateLocation" xml:space="preserve">
-    <value>Update Location ...</value>
+    <value>Update Location</value>
   </data>
   <data name="TitleUpdateModality" xml:space="preserve">
-    <value>Update Modality ...</value>
+    <value>Update Modality</value>
   </data>
   <data name="TitleUpdatePractitioner" xml:space="preserve">
-    <value>Update Practitioner ...</value>
+    <value>Update Practitioner</value>
   </data>
   <data name="TitleUpdateStaff" xml:space="preserve">
-    <value>Update Staff ...</value>
+    <value>Update Staff</value>
   </data>
 </root>
