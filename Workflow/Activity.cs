@@ -40,6 +40,11 @@ namespace ClearCanvas.Workflow
             set { _status = value; }
         }
 
+        public virtual bool IsTerminated
+        {
+            get { return _status == ActivityStatus.CM || _status == ActivityStatus.DC; }
+        }
+
         public virtual void AddPerformedStep(ActivityPerformedStep step)
         {
             // because we are dealing with ISet, no need to worry about duplicate entries, since the set doesn't allow it

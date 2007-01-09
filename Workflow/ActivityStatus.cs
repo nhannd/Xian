@@ -11,30 +11,30 @@ namespace ClearCanvas.Workflow
         /// Scheduled
         /// </summary>
         [EnumValue("Scheduled")]
-        SC,
+        SC = 0,
 
         /// <summary>
         /// In Progress
         /// </summary>
         [EnumValue("In Progress")]
-        IP,
+        IP = 1,
 
         /// <summary>
         /// Suspended
         /// </summary>
         [EnumValue("Suspended")]
-        SU,
+        SU = 2,
 
         /// <summary>
         /// Completed
         /// </summary>
         [EnumValue("Completed")]
-        CM,
+        CM = 3,
 
         /// <summary>
         /// Discontinued
         /// </summary>
         [EnumValue("Discontinued")]
-        DC
+        DC = 4
     }
 }

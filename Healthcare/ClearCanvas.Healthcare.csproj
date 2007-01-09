@@ -90,6 +90,8 @@
     <Compile Include="TelephoneEquipment.cs" />
     <Compile Include="TelephoneNumber.cs" />
     <Compile Include="TelephoneUse.cs" />
+    <Compile Include="TranscriptionStep.cs" />
+    <Compile Include="VerificationStep.cs" />
     <Compile Include="Visit.cs" />
     <Compile Include="VisitLocation.cs" />
     <Compile Include="VisitLocationRole.cs" />
