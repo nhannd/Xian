@@ -10,6 +10,7 @@
 <% 
 var component = this.Component;
 %>
+
 <table border="0">
     <tr>
         <td></td>
@@ -21,9 +22,23 @@ var component = this.Component;
 <% for(var field in component.Fields) { %>
     <tr>
         <td class="propertyname"><%= field.Heading %></td>
-        <% for(var value in field.Values) { %>
-        <td class="<%= field.IsDiscrepancy ? "discrepancy" : "" %>"><%= value %></td>
-        <% } %>
+            <% for(var value in field.Values) {
+                    var i=0;
+                    var tdcell = "";
+                    for(var segment in value.Segments) {
+                        if (i%2 == 1) {
+                            tdcell += "<span class='discrepancy'>" + segment.replace(" ", "&nbsp") + "</span>"
+                        }
+                        else {
+                            tdcell += "<span class=''>" + segment.replace(" ", "&nbsp") + "</span>"
+                        }
+                        i += 1;
+                    }
+            %>
+        <td ><%= tdcell %></td>
+            <%      
+                }
+            %>
     </tr>
 <% } %>
 
