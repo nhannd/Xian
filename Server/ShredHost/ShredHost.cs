@@ -82,16 +82,16 @@ namespace ClearCanvas.Server.ShredHost
             {
                 if (null != shredInfo)
                 {
-                    Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Signally stop");
+                    Platform.Log(shredInfo.Shred.GetDisplayName() + ": Signally stop");
                     shredInfo.Shred.Stop();
                 }
             }
 
             foreach (ShredInfo shredInfo in _shredInfoList)
             {
-                Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Waiting to join thread");
+                Platform.Log(shredInfo.Shred.GetDisplayName() + ": Waiting to join thread");
                 shredInfo.ShredThreadObject.Join();
-                Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Thread joined");
+                Platform.Log(shredInfo.Shred.GetDisplayName() + ": Thread joined");
                 AppDomain.Unload(shredInfo.ShredDomain);
             }
 
@@ -109,7 +109,7 @@ namespace ClearCanvas.Server.ShredHost
                 _servicePort++;
             }
 
-            Platform.Log(shredInfo.Shred.GetFriendlyName() + " shred about to be started on port " + servicePort.ToString());
+            Platform.Log(shredInfo.Shred.GetDisplayName() + " shred about to be started on port " + servicePort.ToString());
             shredInfo.Shred.Start(servicePort);
         }
 

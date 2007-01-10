@@ -25,6 +25,6 @@ namespace ClearCanvas.Server.ShredHost
         /// display lists and other human-readable user-interfaces.
         /// </summary>
         /// <returns></returns>
-        string GetFriendlyName();
+        string GetDisplayName();
     }
 }

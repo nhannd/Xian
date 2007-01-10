@@ -14,7 +14,7 @@ namespace ClearCanvas.Server.ShredHost
 
         #region IShred Members
         public abstract void Start(int port);
-        public abstract string GetFriendlyName();
+        public abstract string GetDisplayName();
         public abstract void Stop();
         #endregion       
     }

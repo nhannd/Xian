@@ -19,7 +19,7 @@ namespace ClearCanvas.Server.ShredHost
                 if (shredObject is IShred)
                 {
                     Uri assemblyPath = new Uri(shredObject.GetType().Assembly.CodeBase);
-                    shredInfoList.Add(new ShredStartupInfo(assemblyPath, (shredObject as IShred).GetFriendlyName(), shredObject.GetType().FullName));
+                    shredInfoList.Add(new ShredStartupInfo(assemblyPath, (shredObject as IShred).GetDisplayName(), shredObject.GetType().FullName));
                 }
             }
             return shredInfoList;

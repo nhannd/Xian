@@ -40,7 +40,7 @@ namespace SampleShredCrash
             t.Join();
         }
 
-        public override string GetFriendlyName()
+        public override string GetDisplayName()
         {
             return "SampleShredCrash";
         }

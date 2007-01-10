@@ -47,7 +47,7 @@ namespace SampleShred2
             StopHost(_serviceEndPointName);
         }
 
-        public override string GetFriendlyName()
+        public override string GetDisplayName()
         {
             return _serviceEndPointName;
         }
