@@ -3,6 +3,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
   </PropertyGroup>
   <Target Name="BuildSolution" >
+    <Exec Command="..\Enterprise\Configuration\codegen-clean.bat" WorkingDirectory="..\Enterprise\Configuration" ContinueOnError="true" />
+    <Exec Command="..\Enterprise\Configuration\codegen-gen.bat" WorkingDirectory="..\Enterprise\Configuration" />
     <Exec Command="..\Workflow\codegen-clean.bat" WorkingDirectory="..\Workflow" ContinueOnError="true" />
     <Exec Command="..\Workflow\codegen-gen.bat" WorkingDirectory="..\Workflow" />
     <Exec Command="..\Healthcare\codegen-clean.bat" WorkingDirectory="..\Healthcare" ContinueOnError="true" />
