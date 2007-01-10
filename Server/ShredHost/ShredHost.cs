@@ -61,7 +61,7 @@ namespace ClearCanvas.Server.ShredHost
 
                     // start up the thread that will actually run the shred
                     Thread t = new Thread(new ParameterizedThreadStart(StartupShred));
-                    ShredInfo newShredInfo = new ShredInfo(t, shred);
+                    ShredInfo newShredInfo = new ShredInfo(t, newShredDomain, shred);
                     _shredInfoList.Add(newShredInfo);
                     t.Start(newShredInfo);
                 }
@@ -72,10 +72,10 @@ namespace ClearCanvas.Server.ShredHost
             // for scanning for all Extensions that are shreds
             AppDomain.Unload(stagingDomain);
 
-            Console.WriteLine("Press <Enter> to terminate the ShredHost.");
-            Console.WriteLine();
-            Console.ReadLine();
+        }
 
+        public static void Stop()
+        {
             Platform.Log("Shred Host stop request received");
 
             foreach (ShredInfo shredInfo in _shredInfoList)
@@ -92,6 +92,7 @@ namespace ClearCanvas.Server.ShredHost
                 Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Waiting to join thread");
                 shredInfo.ShredThreadObject.Join();
                 Platform.Log(shredInfo.Shred.GetFriendlyName() + ": Thread joined");
+                AppDomain.Unload(shredInfo.ShredDomain);
             }
 
             Platform.Log("All threads joined; completing Shred Host stop");
