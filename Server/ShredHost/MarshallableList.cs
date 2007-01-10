@@ -30,6 +30,19 @@ namespace ClearCanvas.Server.ShredHost
             return null;
         }
 
+        public void Clear()
+        {
+            _internalList.Clear();
+        }
+
+        #region Properties
+        public int Count
+        {
+            get { return _internalList.Count; }
+        }
+	
+        #endregion
+
         #region Private Members
         List<TContainedType> _internalList;
         #endregion

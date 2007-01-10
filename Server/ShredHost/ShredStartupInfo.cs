@@ -22,7 +22,6 @@ namespace ClearCanvas.Server.ShredHost
 
         #region Properties
         private Uri _assemblyPath;
-        private IShred _shred;
         private string _shredName;
         private string _shredTypeName;
 
@@ -35,12 +34,6 @@ namespace ClearCanvas.Server.ShredHost
         public string ShredName
         {
             get { return _shredName; }
-        }
-	
-
-        public IShred Shred
-        {
-            get { return _shred; }
         }
 	
         public Uri AssemblyPath
