@@ -237,4 +237,7 @@
   <data name="MessageFindingPlugins" xml:space="preserve">
     <value>Finding plugins...</value>
   </data>
+  <data name="LogEnterpriseConfigurationStoreNotFound" xml:space="preserve">
+    <value>Enterprise configuration store not found - using local file settings</value>
+  </data>
 </root>

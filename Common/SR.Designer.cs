@@ -376,6 +376,15 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enterprise configuration store not found - using local file settings.
+        /// </summary>
+        public static string LogEnterpriseConfigurationStoreNotFound {
+            get {
+                return ResourceManager.GetString("LogEnterpriseConfigurationStoreNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to process plugin assembly {0} with the following exception:.
         /// </summary>
         public static string LogFailedToProcessPluginAssembly {

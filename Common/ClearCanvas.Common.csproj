@@ -81,6 +81,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -95,6 +96,7 @@
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\IEnterpriseConfigurationStore.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="ExtensionSettings.cs">
       <SubType>Code</SubType>
@@ -186,6 +188,7 @@
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
+    <Compile Include="Configuration\StandardSettingsProvider.cs" />
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
