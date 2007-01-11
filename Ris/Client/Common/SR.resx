@@ -276,6 +276,12 @@
   <data name="TitleAddAddress" xml:space="preserve">
     <value>Add Address...</value>
   </data>
+  <data name="TitleAddContactPerson" xml:space="preserve">
+    <value>Add Contact Person...</value>
+  </data>
+  <data name="TitleAddEmailAddress" xml:space="preserve">
+    <value>Add Email Address...</value>
+  </data>
   <data name="TitleAddPhoneNumber" xml:space="preserve">
     <value>Add Phone Number...</value>
   </data>
@@ -287,6 +293,12 @@
   </data>
   <data name="TitleUpdateAddress" xml:space="preserve">
     <value>Update Address...</value>
+  </data>
+  <data name="TitleUpdateContactPerson" xml:space="preserve">
+    <value>Update Contact Person...</value>
+  </data>
+  <data name="TitleUpdateEmailAddress" xml:space="preserve">
+    <value>Update Email Address...</value>
   </data>
   <data name="TitleUpdatePhoneNumber" xml:space="preserve">
     <value>Update Phone Number...</value>

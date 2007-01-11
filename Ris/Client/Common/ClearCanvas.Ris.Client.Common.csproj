@@ -42,7 +42,13 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="AddressTable.cs" />
+    <Compile Include="ContactPersonEditorComponent.cs" />
+    <Compile Include="ContactPersonsSummaryComponent.cs" />
+    <Compile Include="ContactPersonTable.cs" />
     <Compile Include="CrudActionModel.cs" />
+    <Compile Include="EmailAddressEditorComponent.cs" />
+    <Compile Include="EmailAddressesSummaryComponent.cs" />
+    <Compile Include="EmailAddressTable.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="ImportDiagnosticServicesApplication.cs" />
@@ -108,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AddressesSummaryComponent.cfg.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="EmailAddressEditorComponent.cfg.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

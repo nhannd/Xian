@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="Address">
+    <regex test="$.Address" pattern="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" failMessage="Email address is invalid"/>
+  </spec>
+</specifications>
+

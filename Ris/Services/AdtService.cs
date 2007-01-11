@@ -65,6 +65,8 @@ namespace ClearCanvas.Ris.Services
             {
                 broker.LoadAddressesForPatientProfile(profile);
                 broker.LoadTelephoneNumbersForPatientProfile(profile);
+                broker.LoadEmailAddressesForPatientProfile(profile);
+                broker.LoadContactPersonsForPatientProfile(profile);
             }
             return profile;
         }

@@ -61,6 +61,13 @@
       <DependentUpon>OrderListComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderListComponentView.cs" />
+    <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.Designer.cs">
+      <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
     <Compile Include="PatientProfileDiffComponentView.cs" />
     <Compile Include="ReconciliationConfirmComponentControl.cs">
       <SubType>UserControl</SubType>

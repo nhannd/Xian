@@ -12,5 +12,16 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public enum ContactPersonType
 	{
+        /// <summary>
+        /// 
+        /// </summary>
+        [EnumValue("Next of Kin", Description = "Next of Kin")]
+        NK,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [EnumValue("Emergency Contact", Description = "Emergency Contact")]
+        EC
 	}
 }

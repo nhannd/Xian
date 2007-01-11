@@ -538,6 +538,24 @@ namespace ClearCanvas.Ris.Client.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Contact Person....
+        /// </summary>
+        internal static string TitleAddContactPerson {
+            get {
+                return ResourceManager.GetString("TitleAddContactPerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Email Address....
+        /// </summary>
+        internal static string TitleAddEmailAddress {
+            get {
+                return ResourceManager.GetString("TitleAddEmailAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Phone Number....
         /// </summary>
         internal static string TitleAddPhoneNumber {
@@ -570,6 +588,24 @@ namespace ClearCanvas.Ris.Client.Common {
         internal static string TitleUpdateAddress {
             get {
                 return ResourceManager.GetString("TitleUpdateAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Contact Person....
+        /// </summary>
+        internal static string TitleUpdateContactPerson {
+            get {
+                return ResourceManager.GetString("TitleUpdateContactPerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Email Address....
+        /// </summary>
+        internal static string TitleUpdateEmailAddress {
+            get {
+                return ResourceManager.GetString("TitleUpdateEmailAddress", resourceCulture);
             }
         }
         

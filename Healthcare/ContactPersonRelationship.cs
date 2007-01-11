@@ -12,5 +12,10 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public enum ContactPersonRelationship
 	{
-	}
+        /// <summary>
+        /// Mother
+        /// </summary>
+        [EnumValue("Mother", Description = "Mother")]
+        rel1
+    }
 }

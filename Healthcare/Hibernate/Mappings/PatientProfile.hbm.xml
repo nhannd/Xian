@@ -53,7 +53,7 @@
       <composite-element class="ContactPerson">
         <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
         <property name="Name" column="Name_" type="String" length="50" not-null="true"/>
-        <property name="Address" column="Number_" type="String" length="50" not-null="true"/>
+        <property name="Address" column="Address_" type="String" length="255" not-null="true"/>
         <property name="HomePhone" column="HomePhone_" type="String" length="25" not-null="true"/>
         <property name="BusinessPhone" column="BusinessPhone_" type="String" length="25" not-null="true"/>
         <property name="Relationship" column="Relationship_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonRelationshipEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
@@ -68,7 +68,7 @@
       </collection-id>
       <key column="PatientProfileOID_"/>
       <composite-element class="EmailAddress">
-        <property name="Address" column="Number_" type="String" length="10" not-null="true"/>
+        <property name="Address" column="Address_" type="String" length="255" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>

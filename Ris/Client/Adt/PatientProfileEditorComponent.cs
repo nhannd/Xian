@@ -21,6 +21,10 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileDetailsEditorComponent _patientEditor;
         private AddressesSummaryComponent _addressesSummary;
         private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+        private EmailAddressesSummaryComponent _emailAddressesSummary;
+        private ContactPersonsSummaryComponent _contactPersonsSummary;
+        private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
+
 
         /// <summary>
         /// Constructs an editor to edit the specified profile
@@ -66,12 +70,18 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent()));
             this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent()));
             this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
+            this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
+            this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent()));
+            this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent()));
 
             this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
             _patientEditor.Subject = _profile;
             _addressesSummary.Subject = _profile.Addresses;
             _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
+            _emailAddressesSummary.Subject = _profile.EmailAddresses;
+            _contactPersonsSummary.Subject = _profile.ContactPersons;
+            //_additionalPatientInfoSummary.Subject = _profile;
 
             base.Start();
         }

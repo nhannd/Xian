@@ -56,6 +56,34 @@
     <Compile Include="AddressesSummaryControl.designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="ContactPersonEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ContactPersonEditorComponentControl.Designer.cs">
+      <DependentUpon>ContactPersonEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ContactPersonEditorComponentView.cs" />
+    <Compile Include="ContactPersonsSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ContactPersonsSummaryComponentControl.Designer.cs">
+      <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ContactPersonsSummaryComponentView.cs" />
+    <Compile Include="EmailAddressEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EmailAddressEditorComponentControl.Designer.cs">
+      <DependentUpon>EmailAddressEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EmailAddressEditorComponentView.cs" />
+    <Compile Include="EmailAddressesSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EmailAddressesSummaryComponentControl.Designer.cs">
+      <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EmailAddressesSummaryComponentView.cs" />
     <Compile Include="PhoneNumberEditorComponentView.cs" />
     <Compile Include="PhoneNumberEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -110,6 +138,22 @@
     <EmbeddedResource Include="AddressesSummaryControl.resx">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ContactPersonEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ContactPersonEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ContactPersonsSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmailAddressEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EmailAddressEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmailAddressesSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FolderExplorerComponentControl.resx">
       <SubType>Designer</SubType>
