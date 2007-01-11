@@ -29,6 +29,8 @@ namespace ClearCanvas.Ris.Client.Common
         private ContactPersonTypeEnumTable _typeTypes;
         private IAdtService _service;
 
+        private string _phoneNumberMask;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -46,6 +48,8 @@ namespace ClearCanvas.Ris.Client.Common
 
             _relationshipTypes = _service.GetContactPersonRelationshipEnumTable();
             _typeTypes = _service.GetContactPersonTypeEnumTable();
+
+            _phoneNumberMask = "(000) 000-0000";
         }
 
         public override void Stop()
@@ -101,6 +105,11 @@ namespace ClearCanvas.Ris.Client.Common
                 _contactPerson.BusinessPhone = value;
                 this.Modified = true;
             }
+        }
+
+        public string PhoneNumberMask
+        {
+            get { return _phoneNumberMask; }
         }
 
         public string Type

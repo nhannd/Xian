@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
             _emailAddressesSummary.Subject = _profile.EmailAddresses;
             _contactPersonsSummary.Subject = _profile.ContactPersons;
-            //_additionalPatientInfoSummary.Subject = _profile;
+            _additionalPatientInfoSummary.Subject = _profile;
 
             base.Start();
         }

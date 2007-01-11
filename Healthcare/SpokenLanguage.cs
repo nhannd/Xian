@@ -13,6 +13,12 @@ namespace ClearCanvas.Healthcare {
 	public enum SpokenLanguage
 	{
         /// <summary> 
+        /// English
+        /// </summary>
+        [EnumValue("English")]
+        en,
+
+        /// <summary> 
         /// Afar
         /// </summary>
         [EnumValue("Afar")]
@@ -155,12 +161,6 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         [EnumValue("Greek")]
         el,
-
-        /// <summary> 
-        /// English
-        /// </summary>
-        [EnumValue("English")]
-        en,
 
         /// <summary> 
         /// Esperanto

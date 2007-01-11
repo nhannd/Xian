@@ -115,6 +115,15 @@ namespace ClearCanvas.Ris.Client.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contact Type.
+        /// </summary>
+        internal static string ColumnContactType {
+            get {
+                return ResourceManager.GetString("ColumnContactType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Created On.
         /// </summary>
         internal static string ColumnCreatedOn {

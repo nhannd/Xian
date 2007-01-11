@@ -135,6 +135,9 @@
   <data name="ColumnAmbulatoryStatus" xml:space="preserve">
     <value>Ambulatory Status</value>
   </data>
+  <data name="ColumnContactType" xml:space="preserve">
+    <value>Contact Type</value>
+  </data>
   <data name="ColumnCreatedOn" xml:space="preserve">
     <value>Created On</value>
   </data>

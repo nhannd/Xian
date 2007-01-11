@@ -14,6 +14,12 @@ namespace ClearCanvas.Healthcare
     public enum Religion
     {
         /// <summary> 
+        /// Unknown
+        /// </summary>
+        [EnumValue("Unknown")]
+        VAR,
+
+        /// <summary> 
         /// Agnostic
         /// </summary>
         [EnumValue("Agnostic")]
@@ -503,12 +509,6 @@ namespace ClearCanvas.Healthcare
         /// Spiritist
         /// </summary>
         [EnumValue("Spiritist")]
-        SPI,
-
-        /// <summary> 
-        /// Unknown
-        /// </summary>
-        [EnumValue("Unknown")]
-        VAR
+        SPI
     }
 }

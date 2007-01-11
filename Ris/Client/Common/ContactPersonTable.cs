@@ -15,12 +15,12 @@ namespace ClearCanvas.Ris.Client.Common
             IAdtService _adtService = ApplicationContext.GetService<IAdtService>();
             ContactPersonTypeEnumTable _contactTypes = _adtService.GetContactPersonTypeEnumTable();
 
+            this.Columns.Add(new TableColumn<ContactPerson, string>(SR.ColumnContactType,
+                delegate(ContactPerson c) { return _contactTypes[c.Type].Value; },
+                1.0f));
             this.Columns.Add(new TableColumn<ContactPerson, string>(SR.ColumnName,
                 delegate(ContactPerson c) { return c.Name; },
-                2.2f));
-            this.Columns.Add(new TableColumn<ContactPerson, string>(SR.ColumnName,
-                delegate(ContactPerson c) { return _contactTypes[c.Type].Value; },
-                2.2f));
+                3.0f));
         }
     }
 }

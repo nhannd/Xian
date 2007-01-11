@@ -48,5 +48,11 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
         {
             _component.Cancel();
         }
+
+        private void ContactPersonEditorComponentControl_Load(object sender, EventArgs e)
+        {
+            _homePhone.Mask = _component.PhoneNumberMask;
+            _businessPhone.Mask = _component.PhoneNumberMask;
+        }
     }
 }

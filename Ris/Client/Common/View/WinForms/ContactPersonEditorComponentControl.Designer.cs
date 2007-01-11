@@ -185,6 +185,7 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ContactPersonEditorComponentControl";
             this.Size = new System.Drawing.Size(450, 329);
+            this.Load += new System.EventHandler(this.ContactPersonEditorComponentControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);

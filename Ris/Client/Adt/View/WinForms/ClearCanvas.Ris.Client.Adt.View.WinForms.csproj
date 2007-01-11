@@ -186,6 +186,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>OrderListComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
