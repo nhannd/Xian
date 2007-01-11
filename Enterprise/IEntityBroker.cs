@@ -80,6 +80,14 @@ namespace ClearCanvas.Enterprise
         /// <returns></returns>
         IList<TEntity> FindAll();
 
+        /// <summary>
+        /// Retrieves the first entity matching the specified criteria, or throws a <see cref="EntityNotFoundException"/>
+        /// if no matching entity is found.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        TEntity FindOne(TSearchCriteria criteria);
+
 
         /// <summary>
         /// Returns the number of entities matching the specified criteria.

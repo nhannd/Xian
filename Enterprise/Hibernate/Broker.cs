@@ -37,8 +37,18 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns>the result set</returns>
         public IList ExecuteHql(HqlQuery query)
         {
-            IQuery hibQuery = query.BuildHibernateQueryObject(_ctx);
-            return hibQuery.List();
+            return ExecuteHql(query.BuildHibernateQueryObject(_ctx));
+        }
+
+        /// <summary>
+        /// Executes the specified <see cref="NHibernate.IQuery"/> against the database, returning the results
+        /// as an untyped <see cref="IList"/>.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public IList ExecuteHql(NHibernate.IQuery query)
+        {
+            return query.List();
         }
 
         protected IList<T> MakeTypeSafe<T>(IList list)

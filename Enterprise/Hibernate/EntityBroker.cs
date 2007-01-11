@@ -43,6 +43,17 @@ namespace ClearCanvas.Enterprise.Hibernate
             return Find(new TSearchCriteria(), null);
         }
 
+        public TEntity FindOne(TSearchCriteria criteria)
+        {
+            IList<TEntity> results = Find(criteria, new SearchResultPage(0, 1));
+
+            if (results.Count == 0)
+                throw new EntityNotFoundException(null);
+
+            return results[0];
+        }
+
+
         public TEntity Load(EntityRef<TEntity> entityRef)
         {
             return (TEntity)this.Context.Load(entityRef);

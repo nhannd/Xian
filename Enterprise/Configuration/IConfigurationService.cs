@@ -6,6 +6,9 @@ namespace ClearCanvas.Enterprise.Configuration
 {
     public interface IConfigurationService
     {
-        IList<ConfigSetting> LoadConfigSettings(string appName, string appVersion, string settingsGroup, string settingsKey);
+        ConfigSettingsInstance LoadConfigSettings(string group, string version, string user, string instanceKey);
+        void SaveConfigSettings(ConfigSettingsInstance settings);
+
+        ConfigSettingsGroup ImportConfigSettingsClass(Type settingsClass);
     }
 }

@@ -119,6 +119,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             return cmd;
         }
 
+        public NHibernate.IQuery CreateHibernateQuery(string hql)
+        {
+            return this.Session.CreateQuery(hql);
+        }
+
         
         /// <summary>
         /// Default <see cref="EntityLoadFlags"/> to be used by this context
