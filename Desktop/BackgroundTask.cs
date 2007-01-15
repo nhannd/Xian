@@ -28,10 +28,10 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to report progress to the foreground thread.  The progress object
-        /// may be a percentage, a string message, or any object that encapsulates the current state of the task.
+        /// may be an instance of <see cref="BackgroundTaskProgress"/> or a derived class.
         /// </summary>
         /// <param name="progress"></param>
-        void ReportProgress(object progress);
+        void ReportProgress(BackgroundTaskProgress progress);
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it has completed successfully, and return the result object
@@ -66,14 +66,52 @@ namespace ClearCanvas.Desktop
     public delegate void BackgroundTaskMethod(IBackgroundTaskContext context);
 
     /// <summary>
+    /// Encapsulates information about the progress of the task.  This class may be subclassed in order
+    /// to add additional information, or override the existing methods.
+    /// </summary>
+    public class BackgroundTaskProgress
+    {
+        private int _percent;
+        private string _message;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public BackgroundTaskProgress()
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="percent"></param>
+        /// <param name="message"></param>
+        public BackgroundTaskProgress(int percent, string message)
+        {
+            _percent = percent;
+            _message = message;
+        }
+
+        /// <summary>
+        /// Gets the percent completion, as an integer between 0..100
+        /// </summary>
+        public virtual int Percent { get { return _percent; } }
+
+        /// <summary>
+        /// Gets a status message describing the current state of the task
+        /// </summary>
+        public virtual string Message { get { return _message; } }
+    }
+
+    /// <summary>
     /// Conveys progress information about a <see cref="BackgroundTask"/>
     /// </summary>
     public class BackgroundTaskProgressEventArgs : EventArgs
     {
         private object _userState;
-        private object _progress;
+        private BackgroundTaskProgress _progress;
 
-        public BackgroundTaskProgressEventArgs(object userState, object progress)
+        public BackgroundTaskProgressEventArgs(object userState, BackgroundTaskProgress progress)
         {
             _userState = userState;
             _progress = progress;
@@ -82,7 +120,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the progress object passed from the background thread.
         /// </summary>
-        public object Progress { get { return _progress; } }
+        public BackgroundTaskProgress Progress { get { return _progress; } }
 
         /// <summary>
         /// Gets the user state object associated with the task.
@@ -192,7 +230,7 @@ namespace ClearCanvas.Desktop
                 _owner._error = e;
             }
 
-            public void ReportProgress(object progress)
+            public void ReportProgress(BackgroundTaskProgress progress)
             {
                 _owner._backgroundWorker.ReportProgress(0, progress);
             }
@@ -338,7 +376,8 @@ namespace ClearCanvas.Desktop
 
         private void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            EventsHelper.Fire(_progressUpdated, this, new BackgroundTaskProgressEventArgs(_userState, e.UserState));
+            EventsHelper.Fire(_progressUpdated, this, new BackgroundTaskProgressEventArgs(_userState, 
+                (BackgroundTaskProgress)e.UserState));
         }
         
         private void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
