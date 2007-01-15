@@ -10,6 +10,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    //[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	public class DesktopViewSettings : ExtensionSettings
 	{
 		public DesktopViewSettings()
