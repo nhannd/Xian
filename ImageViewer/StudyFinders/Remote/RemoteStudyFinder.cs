@@ -33,14 +33,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         public override StudyItemList Query(QueryParameters queryParams)
         {
-            QueryKey queryKey = new QueryKey();
+			QueryKey queryKey = new QueryKey();
             queryKey.Add(DicomTag.PatientId, queryParams["PatientId"]);
             queryKey.Add(DicomTag.AccessionNumber, queryParams["AccessionNumber"]);
             queryKey.Add(DicomTag.PatientsName, queryParams["PatientsName"]);
             queryKey.Add(DicomTag.StudyDate, queryParams["StudyDate"]);
             queryKey.Add(DicomTag.StudyDescription, queryParams["StudyDescription"]);
             queryKey.Add(DicomTag.PatientsBirthDate, "");
-            queryKey.Add(DicomTag.ModalitiesInStudy, "");
+            queryKey.Add(DicomTag.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
 
             ReadOnlyQueryResultCollection results = Query(_selectedServer, queryKey);
             if (null == results)
@@ -77,12 +77,122 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			LocalAESettings myAESettings = new LocalAESettings();
             ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
 
-			using (DicomClient client = new DicomClient(me))
-            {
-                ReadOnlyQueryResultCollection results = client.Query(server, queryKey);
-                return results;
-            }
+			//special case code for ModalitiesInStudy.  An IStudyFinder must accept a multi-valued
+			//string for ModalitiesInStudy (e.g. "MR\\CT") and process it appropriately for the 
+			//datasource that is being queried.  In this case (Dicom) does not allow multiple
+			//query keys, so we have to execute one query per modality specified in the 
+			//ModalitiesInStudy query item.
+
+			List<string> modalityFilters = new List<string>();
+			if (queryKey.ContainsTag(DicomTag.ModalitiesInStudy))
+			{
+				string modalityFilterString = queryKey[DicomTag.ModalitiesInStudy].ToString();
+				if (!String.IsNullOrEmpty(modalityFilterString))
+					modalityFilters.AddRange(modalityFilterString.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries));
+
+				if (modalityFilters.Count == 0)
+					modalityFilters.Add(""); //make sure there is at least one filter, the default.
+			}
+
+			SortedList<string, QueryResult> resultsByStudy = new SortedList<string, QueryResult>();
+
+			string combinedFilter = queryKey[DicomTag.ModalitiesInStudy];
+
+			try
+			{
+				foreach (string modalityFilter in modalityFilters)
+				{
+					queryKey[DicomTag.ModalitiesInStudy] = modalityFilter;
+
+					using (DicomClient client = new DicomClient(me))
+					{
+						ReadOnlyQueryResultCollection results = client.Query(server, queryKey);
+
+						//if this function returns true, it means that studies came back whose 
+						//modalities did not match the filter, meaning that filtering on
+						//ModalitiesInStudy is not supported by that server.
+						if (FilterResultsByModality(results, resultsByStudy, modalityFilter))
+							break;
+					}
+				}
+
+				return new ReadOnlyQueryResultCollection(resultsByStudy.Values);
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				//for consistencies sake, put the original filter back.
+				queryKey[DicomTag.ModalitiesInStudy] = combinedFilter;
+			}
+
         }
+
+		protected bool FilterResultsByModality(ReadOnlyQueryResultCollection results, IDictionary<string, QueryResult> resultsByStudy, string modalityFilter)
+		{
+			//if this particular filter is a wildcard filter, we won't try to be smart about running extra queries.
+			bool isWildCardQuery = (modalityFilter.IndexOfAny(new char[] { '?', '*'}) >= 0);
+
+			//if the filter is "", then everything is a match.
+			bool everythingMatches = String.IsNullOrEmpty(modalityFilter);
+			
+			foreach (QueryResult result in results)
+			{
+				if (resultsByStudy.ContainsKey(result.StudyInstanceUid))
+					continue;
+
+				bool matchesFilter = true;
+
+				if (!everythingMatches)
+				{
+					//the server does not support this optional tag at all.
+					if (!result.ContainsTag(DicomTag.ModalitiesInStudy))
+					{
+						everythingMatches = true;
+					}
+					else if (!isWildCardQuery)
+					{
+						string returnedModalities = result.ModalitiesInStudy;
+						string[] returnedModalitiesArray = returnedModalities.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+
+						if (returnedModalitiesArray == null || returnedModalitiesArray.Length == 0)
+						{
+							matchesFilter = false;
+						}
+						else
+						{
+							matchesFilter = false;
+							foreach (string returnedModality in returnedModalitiesArray)
+							{
+								if (returnedModality == modalityFilter)
+								{
+									matchesFilter = true;
+									break;
+								}
+							}
+
+							// if we get back any studies that do not contain the modality specified in the filter,
+							// then that means the server does not support queries on ModalitiesInStudy, so we may
+							// as well stop querying because we already have all the results.
+							if (!matchesFilter)
+								everythingMatches = true;
+						}
+					}
+					else
+					{ 
+						//!!We don't actually use wildcard queries for modality, so this is not critical right now.  When C-FIND is written
+						//!!a method for post-filtering with wildcards will need to be determined.  At which point this can be completed as well.
+					}
+				}
+
+				if (matchesFilter)
+					resultsByStudy[result.StudyInstanceUid] = result;
+			}
+
+			return everythingMatches;
+		}
 
         private ApplicationEntity _selectedServer;
 	}

@@ -59,5 +59,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple wildcard queries cannot be performed on the ModalitiesInStudy tag..
+        /// </summary>
+        public static string ExceptionModalitiesInStudyCannotPerformMultipleWildcardQueries {
+            get {
+                return ResourceManager.GetString("ExceptionModalitiesInStudyCannotPerformMultipleWildcardQueries", resourceCulture);
+            }
+        }
     }
 }

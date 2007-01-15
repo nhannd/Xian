@@ -61,6 +61,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The list of available Modalities has not yet been set..
+        /// </summary>
+        internal static string ErrorAvailableModalitiesNotSet {
+            get {
+                return ResourceManager.GetString("ErrorAvailableModalitiesNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The control cannot have its modalities set multiple times..
+        /// </summary>
+        internal static string ErrorCannotResetModalities {
+            get {
+                return ResourceManager.GetString("ErrorCannotResetModalities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        internal static string ItemClear {
+            get {
+                return ResourceManager.GetString("ItemClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to query server..
         /// </summary>
         internal static string MessageUnableToQueryServer {

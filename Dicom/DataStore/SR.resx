@@ -120,6 +120,9 @@
   <data name="ExceptionDicomDictionaryFailedToLoad" xml:space="preserve">
     <value>DicomDictionary could not be loaded.</value>
   </data>
+  <data name="ExceptionModalitiesInStudyWildcardsNotSupported" xml:space="preserve">
+    <value>The ModalitiesInStudy Key Attribute cannot contain wildcards.</value>
+  </data>
   <data name="ExceptionPathCannotBeNull" xml:space="preserve">
     <value>The path cannot be null.</value>
   </data>

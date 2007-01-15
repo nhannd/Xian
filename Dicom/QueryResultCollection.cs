@@ -125,7 +125,7 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class ReadOnlyQueryResultCollection : ReadOnlyCollection<QueryResult>
     {
-        public ReadOnlyQueryResultCollection(QueryResultList queryResults) : base(queryResults)
+        public ReadOnlyQueryResultCollection(IList<QueryResult> queryResults) : base(queryResults)
         {
         }
     }

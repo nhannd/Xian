@@ -336,4 +336,7 @@
   <data name="ExceptionGeneralPatientIdNull" xml:space="preserve">
     <value>Patient's Id cannot be null</value>
   </data>
+  <data name="ExceptionPoorlyFormattedDateRange" xml:space="preserve">
+    <value>Poorly formatted Dicom date range {0}.</value>
+  </data>
 </root>

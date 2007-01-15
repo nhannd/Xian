@@ -87,6 +87,7 @@
     <Compile Include="Accession.cs" />
     <Compile Include="AETitle.cs" />
     <Compile Include="DateParser.cs" />
+    <Compile Include="DateRangeParser.cs" />
     <Compile Include="DateTimeParser.cs" />
     <Compile Include="DicomException.cs" />
     <Compile Include="DicomImage.cs" />

@@ -436,6 +436,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string TitleSearch {
+            get {
+                return ResourceManager.GetString("TitleSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search Panel.
         /// </summary>
         internal static string TitleSearchPanelPane {

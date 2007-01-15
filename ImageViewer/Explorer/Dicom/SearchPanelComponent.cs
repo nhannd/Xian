@@ -32,6 +32,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _accessionNumber = "";
 		private string _studyDescription = "";
 
+		private bool _useStudyDateFrom = false;
+		private bool _useStudyDateTo = false;
+		private DateTime _studyDateFrom;
+		private DateTime _studyDateTo;
+
+		private List<string> _searchModalities;
+		private List<string> _availableModalities;
+		
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -40,6 +48,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			Platform.CheckForNullReference(studyBrowserComponent, "studyBrowserComponent");
 			_studyBrowserComponent = studyBrowserComponent;
 			_studyBrowserComponent.SearchPanelComponent = this;
+
+			_searchModalities = new List<string>();
+
+			//!!This is hard-coded for now.  Will add it to application settings once they have been finalized.
+			_availableModalities = new List<string>();
+			_availableModalities.AddRange(new string[] { "CR", "CT", "DX", "ES", "MG", "MR", "NM", "OT", "PT", "RF", "SC", "US", "XA" });
+
+			InternalClearDates();
 		}
 
 		public string Title
@@ -102,9 +118,95 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		public DateTime? StudyDateFrom
+		{
+			get
+			{
+				if (_useStudyDateFrom)
+					return _studyDateFrom;
+				else
+					return null;
+			}
+			set
+			{
+				if (value == null || (object)value == System.DBNull.Value)
+				{
+					_useStudyDateFrom = false;
+				}
+				else
+				{
+					_studyDateFrom = this.MinimumDate((DateTime)value, this.MaximumStudyDateFrom);
+					_useStudyDateFrom = true;
+				}
+
+				NotifyPropertyChanged("StudyDateFrom");
+			}
+		}
+
+		public DateTime? StudyDateTo
+		{
+			get
+			{
+				if (_useStudyDateTo)
+					return _studyDateTo;
+				else 
+					return null;
+			}
+			set
+			{
+				if (value == null || (object)value == System.DBNull.Value)
+				{
+					_useStudyDateTo = false;
+				}
+				else
+				{
+					_studyDateTo = MinimumDate((DateTime)value, this.MaximumStudyDateTo);
+					_useStudyDateTo = true;
+				}
+
+				NotifyPropertyChanged("StudyDateTo");
+
+				//always keep the fromdate less that the todate
+				if (this.StudyDateFrom != null)
+				{
+					//try re-setting the fromdate, it will be automatically changed if it's not valid.
+					this.StudyDateFrom = this.StudyDateFrom;
+				}
+			}
+		}
+
+		public DateTime MaximumStudyDateFrom
+		{
+			get { return this.StudyDateTo ?? DateTime.Today; }
+		}
+
+		public DateTime MaximumStudyDateTo
+		{
+			get { return DateTime.Today; }
+		}
+
+		public IList<string> AvailableSearchModalities
+		{
+			get { return _availableModalities; }
+		}
+
+		public IList<string> SearchModalities
+		{
+			get { return _searchModalities; }
+			set
+			{
+				_searchModalities.Clear();
+
+				if (value != null)
+					_searchModalities.AddRange(value);
+
+				NotifyPropertyChanged("SearchModalities");
+			}
+		}
+
 		public override void Start()
 		{
-			this.Title = "Search";
+			this.Title = SR.TitleSearch;
 
 			base.Start();
 		}
@@ -116,11 +218,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			base.Stop();
 		}
 
-		public void Search()
-		{
-			_studyBrowserComponent.Search();
-		}
-
 		public void Clear()
 		{
 			this.PatientID = "";
@@ -128,11 +225,57 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.LastName = "";
 			this.AccessionNumber = "";
 			this.StudyDescription = "";
+			this.SearchModalities = new List<string>(); //clear the checked modalities.
+
+			InternalClearDates();
 		}
 
-        public void SearchToday()
+		public void Search()
+		{
+			_studyBrowserComponent.Search();
+		}
+		
+		public void SearchToday()
         {
-            _studyBrowserComponent.SearchToday();
+			InternalSearchLastXDays(0);
         }
+
+		public void SearchLastWeek()
+		{
+			InternalSearchLastXDays(7);
+		}
+
+		public void SearchLastXDays(int numberOfDays)
+		{
+			InternalSearchLastXDays(numberOfDays);
+		}
+
+		private void InternalSearchLastXDays(int numberOfDays)
+		{
+			this.StudyDateTo = DateTime.Today;
+			this.StudyDateFrom = DateTime.Today - TimeSpan.FromDays((double)numberOfDays);
+
+			_studyBrowserComponent.Search();
+		}
+
+		private DateTime MinimumDate(params DateTime[] dates)
+		{
+			DateTime minimumDate = dates[0];
+			for (int i = 1; i < dates.Length; ++i)
+			{
+				if (dates[i] < minimumDate)
+					minimumDate = dates[i];
+			}
+
+			return minimumDate;
+		}
+
+		private void InternalClearDates()
+		{
+			this.StudyDateTo = DateTime.Today;
+			this.StudyDateFrom = DateTime.Today;
+			this.StudyDateTo = null;
+			this.StudyDateFrom = null;
+		}
     }
 }

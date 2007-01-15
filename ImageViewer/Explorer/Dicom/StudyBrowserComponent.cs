@@ -276,7 +276,88 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
-            InternalSearch(DateTime.MinValue, DateTime.MinValue);
+			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
+			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
+
+			// create patient's name query key
+			// LastName   FirstName   Result
+			//    X           X        <Blank>
+			//    V           X        LastName*
+			//    V           V        LastName*FirstName*
+			//    X           V        *FirstName*
+			string patientsName = "";
+			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
+				patientsName = _searchPanelComponent.LastName + "*";
+			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
+				patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
+			if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
+				patientsName = "*" + _searchPanelComponent.FirstName + "*";
+
+			string patientId = "";
+			if (_searchPanelComponent.PatientID.Length > 0)
+				patientId = _searchPanelComponent.PatientID + "*";
+
+			string accessionNumber = "";
+			if (_searchPanelComponent.AccessionNumber.Length > 0)
+				accessionNumber = _searchPanelComponent.AccessionNumber + "*";
+
+			string studyDescription = "";
+			if (_searchPanelComponent.StudyDescription.Length > 0)
+				studyDescription = _searchPanelComponent.StudyDescription +"*";
+
+			DateTime fromDate = _searchPanelComponent.StudyDateFrom ?? DateTime.MinValue;
+			DateTime toDate = _searchPanelComponent.StudyDateTo ?? DateTime.MinValue;
+			string dateRange = GetDicomDateRangeMatchString(fromDate, toDate);
+
+			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
+			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
+			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
+			//or by running multiple queries, one per modality specified (for example).
+			IList<string> searchModalities = _searchPanelComponent.SearchModalities;
+			string modalityFilter = "";
+			if (searchModalities != null)
+			{
+				foreach (string modality in searchModalities)
+					modalityFilter += modality + @"\";
+
+				if (modalityFilter != "")
+					modalityFilter = modalityFilter.Remove(modalityFilter.Length - 1);
+			}
+
+			QueryParameters queryParams = new QueryParameters();
+			queryParams.Add("PatientsName", patientsName);
+			queryParams.Add("PatientId", patientId);
+			queryParams.Add("AccessionNumber", accessionNumber);
+			queryParams.Add("StudyDescription", studyDescription);
+			queryParams.Add("ModalitiesInStudy", modalityFilter);
+			queryParams.Add("StudyDate", dateRange);
+
+			StudyItemList aggregateStudyItemList = new StudyItemList();
+
+			try
+			{
+				foreach (DicomServer server in _selectedServerGroup.Servers)
+				{
+					StudyItemList serverStudyItemList = _studyFinder.Query(server.DicomAE, queryParams);
+					aggregateStudyItemList.AddRange(serverStudyItemList);
+				}
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e, LogLevel.Error);
+				throw;
+			}
+			finally
+			{
+				this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
+
+				UpdateComponent();
+
+				foreach (StudyItem item in aggregateStudyItemList)
+					_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
+
+				_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
+			}
 		}
 
 		public void ItemDoubleClick()
@@ -363,92 +444,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		}
 
-        internal void SearchToday()
-        {
-            InternalSearch(DateTime.Today, DateTime.Today);
-        }
-
-        /// <summary>
-        /// The semantics of the fromDate and toDate, is:
-        /// <table>
-        /// <tr><td>fromDate</td><td>toDate</td><td>Query</td></tr>
-        /// <tr><td>null</td><td>null</td><td>Empty</td></tr>
-        /// <tr><td>20060608</td><td>null</td><td>Since: "20060608-"</td></tr>
-        /// <tr><td>20060608</td><td>20060610</td><td>Between: "20060608-20060610"</td></tr>
-        /// <tr><td>null</td><td>20060610</td><td>Prior to: "-20060610"</td></tr>
-        /// </table>
-        /// Treat "null" above as DateTime.MinValue
-        /// </summary>
-        /// <param name="fromDate"></param>
-        /// <param name="toDate"></param>
-        private void InternalSearch(DateTime fromDate, DateTime toDate)
-        {
-            Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
-            Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
-
-            // create patient's name query key
-            // LastName   FirstName   Result
-            //    X           X        <Blank>
-            //    V           X        LastName*
-            //    V           V        LastName*FirstName*
-            //    X           V        *FirstName*
-            string patientsName = "";
-            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
-                patientsName = _searchPanelComponent.LastName + "*";
-            if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
-                patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
-            if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
-                patientsName = "*" + _searchPanelComponent.FirstName + "*";
-
-            string patientId = "";
-            if (_searchPanelComponent.PatientID.Length > 0)
-                patientId = _searchPanelComponent.PatientID + "*";
-
-            string accessionNumber = "";
-            if (_searchPanelComponent.AccessionNumber.Length > 0)
-                accessionNumber = _searchPanelComponent.AccessionNumber + "*";
-
-            string studyDescription = "";
-            if (_searchPanelComponent.StudyDescription.Length > 0)
-                studyDescription = _searchPanelComponent.StudyDescription + "*";
-
-            QueryParameters queryParams = new QueryParameters();
-            queryParams.Add("PatientsName", patientsName);
-            queryParams.Add("PatientId", patientId);
-            queryParams.Add("AccessionNumber", accessionNumber);
-            queryParams.Add("StudyDescription", studyDescription);
-            queryParams.Add("ModalitiesInStudy", "");
-            queryParams.Add("StudyDate", GetDicomDateRangeMatchString(fromDate, toDate));
-
-            StudyItemList aggregateStudyItemList = new StudyItemList();
-
-            try
-            {
-                foreach (DicomServer server in _selectedServerGroup.Servers)
-                {
-                    StudyItemList serverStudyItemList = _studyFinder.Query(server.DicomAE, queryParams);
-                    aggregateStudyItemList.AddRange(serverStudyItemList);
-                }
-            }
-            catch (Exception e)
-            {
-                Platform.Log(e, LogLevel.Error);
-                throw;
-            }
-            finally
-            {
-                this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
-
-                UpdateComponent();
-
-                foreach (StudyItem item in aggregateStudyItemList)
-                    _searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
-
-                _searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
-            }
-        }
-
-        private string GetDicomDateRangeMatchString(DateTime fromDate, DateTime toDate)
+		/// <summary>
+		/// The semantics of the fromDate and toDate, is:
+		/// <table>
+		/// <tr><td>fromDate</td><td>toDate</td><td>Query</td></tr>
+		/// <tr><td>null</td><td>null</td><td>Empty</td></tr>
+		/// <tr><td>20060608</td><td>null</td><td>Since: "20060608-"</td></tr>
+		/// <tr><td>20060608</td><td>20060610</td><td>Between: "20060608-20060610"</td></tr>
+		/// <tr><td>null</td><td>20060610</td><td>Prior to: "-20060610"</td></tr>
+		/// </table>
+		/// Treat "null" above as DateTime.MinValue
+		/// </summary>
+		/// <param name="fromDate"></param>
+		/// <param name="toDate"></param>
+		private string GetDicomDateRangeMatchString(DateTime fromDate, DateTime toDate)
         {
             if (DateTime.MinValue == fromDate && DateTime.MinValue == toDate)
             {
@@ -473,6 +482,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             return "";
         }
-
     }
 }

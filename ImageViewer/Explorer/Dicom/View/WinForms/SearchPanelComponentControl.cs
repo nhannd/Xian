@@ -31,6 +31,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_titleBar.Style = WinFormsView.VisualStyle;
 
+			_modalityPicker.SetAvailableModalities(_component.AvailableSearchModalities);
+
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _component;
 
@@ -41,19 +43,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyDescription.DataBindings.Add("Text", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 			_titleBar.DataBindings.Add("Text", _bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_searchButton.Click += new EventHandler(OnSearchButtonClicked);
-			_clearButton.Click += new EventHandler(OnClearButonClicked);
+			_studyDateFrom.DataBindings.Add("Value", _bindingSource, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateTo.DataBindings.Add("Value", _bindingSource, "StudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_studyDateFrom.DataBindings.Add("Maximum", _bindingSource, "MaximumStudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateTo.DataBindings.Add("Maximum", _bindingSource, "MaximumStudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_modalityPicker.DataBindings.Add("CheckedModalities", _bindingSource, "SearchModalities", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
-		void OnClearButonClicked(object sender, EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Clear();
-			}
-		}
-
-		void OnSearchButtonClicked(object sender, EventArgs e)
+		private void OnSearchButtonClicked(object sender, EventArgs e)
 		{
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
@@ -68,19 +67,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 		}
 
-        private void OnSearchTodayButtonClicked(object sender, EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                try
-                {
-                    _component.SearchToday();
-                }
-                catch
-                {
+		private void OnSearchLastWeekButtonClick(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				try
+				{
+					_component.SearchLastWeek();
+				}
+				catch
+				{
 					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
-                }
-            }
-        }
+				}
+			}
+		}
+
+		private void OnSearchTodayButtonClicked(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				try
+				{
+					_component.SearchToday();
+				}
+				catch
+				{
+					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
+				}
+			}
+		}
+
+		private void OnClearButonClicked(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Clear();
+			}
+		}
     }
 }

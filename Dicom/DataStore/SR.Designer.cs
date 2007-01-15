@@ -70,6 +70,15 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The ModalitiesInStudy Key Attribute cannot contain wildcards..
+        /// </summary>
+        internal static string ExceptionModalitiesInStudyWildcardsNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionModalitiesInStudyWildcardsNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The path cannot be null..
         /// </summary>
         internal static string ExceptionPathCannotBeNull {

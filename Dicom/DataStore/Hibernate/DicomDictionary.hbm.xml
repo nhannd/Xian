@@ -17,6 +17,7 @@
 				<property name="InternalPath" column="Path_" type="string" length="256" />
 			</nested-composite-element>
 			<property name="IsComputed" column="IsComputed_" type="Boolean" />
+      <property name="ValueRepresentation" column="ValueRepresentation_" type="string" length ="16" />
 		</composite-element>
 	</list>
   </class>

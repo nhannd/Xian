@@ -246,6 +246,9 @@ Location: {4}</value>
   <data name="TitleRetrieveProgressComponent" xml:space="preserve">
     <value>Retrieve Progress</value>
   </data>
+  <data name="TitleSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="TitleSearchPanelPane" xml:space="preserve">
     <value>Search Panel</value>
   </data>

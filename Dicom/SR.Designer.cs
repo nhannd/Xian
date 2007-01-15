@@ -698,5 +698,14 @@ namespace ClearCanvas.Dicom {
                 return ResourceManager.GetString("ExceptionOffisUnknownError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Poorly formatted Dicom date range {0}..
+        /// </summary>
+        public static string ExceptionPoorlyFormattedDateRange {
+            get {
+                return ResourceManager.GetString("ExceptionPoorlyFormattedDateRange", resourceCulture);
+            }
+        }
     }
 }

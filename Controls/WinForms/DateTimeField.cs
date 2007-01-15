@@ -89,13 +89,25 @@ namespace ClearCanvas.Controls.WinForms
             }
         }
 
-        public event EventHandler ValueChanged
+		public DateTime Maximum
+		{
+			get { return _dateTimePicker.MaxDate; }
+			set	{ _dateTimePicker.MaxDate = value; }
+		}
+
+		public DateTime Minimum
+		{
+			get { return _dateTimePicker.MinDate; }
+			set { _dateTimePicker.MinDate = value; }
+		}
+
+		public event EventHandler ValueChanged
         {
             add { _valueChanged += value; }
             remove { _valueChanged -= value; }
         }
 
-        private static bool TestNull(object value)
+		private static bool TestNull(object value)
         {
             return value == null || value == System.DBNull.Value;
         }

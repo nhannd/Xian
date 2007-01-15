@@ -315,6 +315,128 @@ namespace ClearCanvas.Dicom.Tests
 			returnValue = DateTimeParser.Parse(null, out dateTime);
 			Assert.IsFalse(returnValue);
 		}
+
+		[Test]
+		public void TestDateRangeParser()
+		{
+			string[,] tests = 
+			{
+				{ "20070101","20070101", "", "False" },
+				{ "20070101-", "20070101", "", "True" },
+				{ "-20070101", "", "20070101", "True" },
+				{ "20070101-20070101", "20070101", "20070101", "True" },
+				{ "20070101-20070202", "20070101", "20070202", "True" },
+
+				{ "2007.01.01", "20070101", "", "False" },
+				{ "2007.01.01-", "20070101", "", "True" },
+				{ "-2007.01.01", "", "20070101", "True" },
+				{ "2007.01.01-2007.01.01", "20070101", "20070101", "True" },
+				{ "2007.01.01-2007.02.02", "20070101", "20070202", "True" },
+
+				{ "20070101-2007.01.01", "20070101", "20070101", "True" },
+				{ "2007.01.01-20070101", "20070101", "20070101", "True" },
+
+				//from date is after to
+				{ "20070102-20070101", "", "", "exception" },
+
+				//bad format, extra '-'
+				{ "20070101-20070101-", "", "", "exception" },
+				{ "-20070101-20070101", "", "", "exception" },
+				{ "2007.01.01-2007.01.01-", "", "", "exception" },
+				{ "2007.01.01-2007.01.01-", "", "", "exception" },
+
+				//bad format, missing '-'
+				{ "2007010120070101", "", "", "exception" },
+				
+				//bad format, missing character
+				{ "20070101-2007010", "", "", "exception" },
+
+				//bad format, bad characters
+				{ "2007010a-20070101", "", "", "exception" }
+			};
+
+			for (int i = 0; i < tests.Length / 4; ++i)
+			{
+				string dateRange = tests[i, 0];
+				string expectedFromDate = tests[i, 1];
+				string expectedToDate = tests[i, 2];
+				string expectedResult = tests[i, 3];
+
+				bool isRange;
+
+				try
+				{
+					DateTime? from, to;
+
+					DateRangeParser.Parse(dateRange, out from, out to, out isRange);
+					if (expectedResult == "exception")
+						Assert.Fail("expected an exception");
+
+					if (expectedFromDate == "")
+						Assert.IsNull(from);
+					else
+						Assert.AreEqual(((DateTime)from).ToString(DateParser.DicomDateFormat), expectedFromDate);
+					
+					if (expectedToDate == "")
+						Assert.IsNull(to);
+					else
+						Assert.AreEqual(((DateTime)to).ToString(DateParser.DicomDateFormat), expectedToDate);
+
+					Assert.AreEqual(isRange.ToString(), expectedResult);
+
+				}
+				catch (Exception e)
+				{
+					if (expectedResult != "exception")
+						Assert.Fail(e.Message);
+				}
+
+				try
+				{
+					string fromString, toString;
+
+					DateRangeParser.Parse(dateRange, out fromString, out toString, out isRange);
+					if (expectedResult == "exception")
+						Assert.Fail("expected an exception");
+
+					Assert.AreEqual(fromString, expectedFromDate);
+					Assert.AreEqual(toString, expectedToDate);
+					Assert.AreEqual(isRange.ToString(), expectedResult);
+
+				}
+				catch (Exception e)
+				{
+					if (expectedResult != "exception")
+						Assert.Fail(e.Message);
+				}
+
+				try
+				{
+					int fromInt, toInt;
+
+					DateRangeParser.Parse(dateRange, out fromInt, out toInt, out isRange);
+					if (expectedResult == "exception")
+						Assert.Fail("expected an exception");
+
+					if (expectedFromDate == "")
+						Assert.AreEqual(fromInt, 0);
+					else
+						Assert.AreEqual(fromInt, Convert.ToInt32(expectedFromDate));
+
+					if (expectedToDate == "")
+						Assert.AreEqual(toInt, 0);
+					else
+						Assert.AreEqual(toInt, Convert.ToInt32(expectedToDate));
+
+				}
+				catch (Exception e)
+				{
+					if (expectedResult != "exception")
+						Assert.Fail(e.Message);
+				}
+
+			}
+		}
 	}
 }
 

@@ -35,10 +35,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             queryKey.Add(DicomTag.PatientId, queryParams["PatientId"]);
             queryKey.Add(DicomTag.AccessionNumber, queryParams["AccessionNumber"]);
             queryKey.Add(DicomTag.PatientsName, queryParams["PatientsName"]);
-            queryKey.Add(DicomTag.StudyDate, "");
+            queryKey.Add(DicomTag.StudyDate, queryParams["StudyDate"]);
             queryKey.Add(DicomTag.StudyDescription, queryParams["StudyDescription"]);
             queryKey.Add(DicomTag.PatientsBirthDate, "");
-            queryKey.Add(DicomTag.ModalitiesInStudy, "");
+            queryKey.Add(DicomTag.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
 
             ReadOnlyQueryResultCollection results = Query(queryKey);
             if (null == results)

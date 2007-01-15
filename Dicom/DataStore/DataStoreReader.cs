@@ -299,13 +299,24 @@ namespace ClearCanvas.Dicom.DataStore
             if (null == queryKey)
 				throw new System.ArgumentNullException("queryKey", SR.ExceptionStudyQueryNullKey);
 
-            //
+			if (queryKey.ContainsTag(DicomTag.ModalitiesInStudy))
+			{
+				// Dicom *does* support wildcards on this tag, but right now the local datastore
+				// does not.  This is because the modalities are post-filtered in the code 
+				// and I couldn't find a good wildcard RegEx pattern to use.  This should get
+				// sorted out when C-FIND is implemented.
+				if (ContainsWildCards(queryKey[DicomTag.ModalitiesInStudy]))
+					throw new NotSupportedException(SR.ExceptionModalitiesInStudyWildcardsNotSupported);
+			}
+
+			//
             // prepare the HQL query string
             //
             StringBuilder selectCommandString = new StringBuilder(1024);
             selectCommandString.AppendFormat("FROM Study ");
 
-            int index = 1;
+			bool whereClauseAdded = false;
+
             foreach (DicomTag tag in queryKey.DicomTags)
             {
                 if (queryKey[tag].Length > 0)
@@ -313,17 +324,27 @@ namespace ClearCanvas.Dicom.DataStore
                     Path path = new Path(tag.ToString());
                     DictionaryEntry column = DataAccessLayer.GetIDicomDictionary().GetColumn(path);
 
-                    string queryKeyString = StandardizeQueryKey(queryKey[tag]);
+					if (column.IsComputed)
+						continue;
 
-                    if (index > 1)
-                        selectCommandString.AppendFormat(" AND ");
-                    else
-                        selectCommandString.AppendFormat("WHERE ");
+					StringBuilder nextCriteria = new StringBuilder();
+					AppendQuery(queryKey[tag], column, nextCriteria);
 
-                    // don't forget to append the trailing underscore for column names
-                    selectCommandString.AppendFormat("{0} LIKE '{1}'", column.TagName.ToString() + "_", queryKeyString);
-                    ++index;
-                }
+					if (nextCriteria.Length == 0)
+						continue;
+
+					if (whereClauseAdded)
+					{
+						selectCommandString.AppendFormat(" AND ");
+					}
+					else
+					{
+						selectCommandString.AppendFormat("WHERE ");
+						whereClauseAdded = true;
+					}
+
+					selectCommandString.Append(nextCriteria.ToString());
+				}
             }
 
             //
@@ -352,12 +373,30 @@ namespace ClearCanvas.Dicom.DataStore
                     session.Close();
             }
 
-            // 
-            // compile the query results
-            //
-            QueryResultList results = new QueryResultList();
+			return CompileResults(queryKey, studiesFound);
+		}
 
-            foreach (object element in studiesFound)
+		private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
+		{
+			List<string> modalitiesInStudyFilterValues = new List<string>();
+			bool processModalitiesInStudy = queryKey.ContainsTag(DicomTag.ModalitiesInStudy);
+			if (processModalitiesInStudy)
+			{
+				string modalitiesInStudyFilter = queryKey[DicomTag.ModalitiesInStudy].ToString();
+				if (!String.IsNullOrEmpty(modalitiesInStudyFilter))
+				{
+					string[] splitValues = modalitiesInStudyFilter.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+					if (splitValues != null && splitValues.Length > 0)
+						modalitiesInStudyFilterValues.AddRange(splitValues);
+				}
+			}
+
+			// 
+			// compile the query results
+			//
+			QueryResultList results = new QueryResultList();
+			
+			foreach (object element in studiesFound)
             {
                 Study study = element as Study;
                 QueryResult result = new QueryResult();
@@ -379,23 +418,37 @@ namespace ClearCanvas.Dicom.DataStore
                 }
 
                 // special tags
-                if (queryKey.ContainsTag(DicomTag.ModalitiesInStudy))
+                if (processModalitiesInStudy)
                 {
                     Dictionary<string, string> set = new Dictionary<string, string>();
                     foreach (Series series in study.Series)
                     {
+						if (String.IsNullOrEmpty(series.Modality))
+							continue;
+
                         if (!set.ContainsKey(series.Modality))
                             set.Add(series.Modality, series.Modality);
                     }
 
-                    string modalities = "";
-                    foreach (KeyValuePair<string,string> pair in set)
+					if (modalitiesInStudyFilterValues.Count > 0 && set.Count > 0)
+					{
+						//when filter values have been specified for the ModalitiesInStudyTag, if any of the filter values is a match
+						//for any of the modalities contained in the study, then the study is returned.  Otherwise, the study is
+						//filtered out, hence we continue right away, skipping the addition of the study to the results.
+						if (!modalitiesInStudyFilterValues.Exists(delegate(string filterValue) { return set.ContainsKey(filterValue); }))
+							continue;
+					}
+										
+					string modalities = "";
+                    foreach (string modality in set.Keys)
                     {
-                        modalities += pair.Key + @"\";
+                        modalities += modality + @"\";
                     }
 
                     // get rid of trailing slash
-                    modalities = modalities.Remove(modalities.Length - 1);
+					if (modalities != "")
+						modalities = modalities.Remove(modalities.Length - 1);
+
                     result.Add(DicomTag.ModalitiesInStudy, modalities);
                 }
 
@@ -404,11 +457,114 @@ namespace ClearCanvas.Dicom.DataStore
             return new ReadOnlyQueryResultCollection(results); 
         }
 
+		private void AppendQuery(string queryKeyString, DictionaryEntry column, StringBuilder returnBuilder)
+		{ 
+			string newQueryKeyString = StandardizeQueryKey(queryKeyString);
+
+			if (column.ValueRepresentation == "DA")
+			{
+				AppendDateQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
+			}
+			else if (column.ValueRepresentation == "TM")
+			{
+				// Unsupported at this time.
+				//AppendTimeQuery(...)
+			}
+			else if (column.ValueRepresentation == "DT")
+			{
+				// Unsupported at this time.
+				//AppendDateTimeQuery(...)
+			}
+			else if (IsWildCardQuery(newQueryKeyString, column))
+			{
+				AppendWildCardQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
+			}
+			else
+			{
+				AppendSingleValueQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
+			}
+		}
+
+		private void AppendDateQuery(string dateQueryString, string columnName, StringBuilder returnBuilder)
+		{
+			string fromDate, toDate;
+			bool isRange;
+
+			try
+			{
+				DateRangeParser.Parse(dateQueryString, out fromDate, out toDate, out isRange);
+			}
+			catch (Exception e)
+			{ 
+				throw;
+			}
+
+			StringBuilder dateRangeQueryBuilder = new StringBuilder();
+
+			if (fromDate != "")
+			{
+				//When a dicom date is specified with no '-', it is to be taken as an exact date.
+				if (!isRange)
+				{
+					dateRangeQueryBuilder.AppendFormat("( CAST({0} as DATE) = CAST('{1}' as DATE) )", columnName + "_", fromDate.ToString());
+				}
+				else
+				{
+					dateRangeQueryBuilder.AppendFormat("( CAST({0} AS DATE) IS NOT NULL AND CAST({0} as DATE) >= CAST('{1}' AS DATE) )", columnName + "_", fromDate);
+				}
+			}
+
+			if (toDate != "")
+			{
+				if (fromDate == "")
+					dateRangeQueryBuilder.AppendFormat("( CAST({0} as DATE) IS NULL OR ", columnName + "_");
+				else
+					dateRangeQueryBuilder.AppendFormat(" AND (");
+
+				dateRangeQueryBuilder.AppendFormat("CAST({0} as DATE) <= CAST('{1}' AS DATE) )", columnName + "_", toDate);
+			}
+
+			returnBuilder.AppendFormat("({0})", dateRangeQueryBuilder.ToString());
+		}
+
+		private void AppendWildCardQuery(string wildCardQuery, string columnName, StringBuilder returnBuilder)
+		{
+			string newWildCardQuery = wildCardQuery.Replace("*", "%");
+
+			// don't forget to append the trailing underscore for column names
+			returnBuilder.AppendFormat("{0} LIKE '{1}'", columnName + "_", newWildCardQuery);
+		}
+
+		private void AppendSingleValueQuery(string exactQueryString, string columnName, StringBuilder returnBuilder)
+		{
+			returnBuilder.AppendFormat("{0} = '{1}'", columnName + "_", exactQueryString);
+		}
+
+		private bool IsWildCardQuery(string queryStringCandidate, DictionaryEntry column)
+		{
+			string[] excludeVRs = { "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
+			foreach (string excludeVR in excludeVRs)
+			{
+				if (0 == String.Compare(excludeVR, column.ValueRepresentation, true))
+					return false;
+			}
+
+			return ContainsWildCards(queryStringCandidate);
+		}
+
+		private bool ContainsWildCards(string queryString)
+		{
+			string wildcardChars = "?*";
+
+			if (queryString.IndexOfAny(wildcardChars.ToCharArray()) < 0)
+				return false;
+
+			return true;
+		}
+
         private string StandardizeQueryKey(string inputQueryKeyString)
         {
-            string output = inputQueryKeyString.Replace('*', '%');
-            output = output.Replace("'", "''");
-            return output;
+			return inputQueryKeyString.Replace("'", "''");
         }
 
         #endregion
