@@ -24,9 +24,11 @@ namespace ClearCanvas.Desktop
 
         public Selection(object item)
         {
-            Platform.CheckForNullReference(item, "item");
-
-            _items.Add(item);
+            // if item == null, then don't add it, which gives us the Empty Selection
+            if (item != null)
+            {
+                _items.Add(item);
+            }
         }
 
         public Selection(IEnumerable items)

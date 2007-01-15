@@ -133,6 +133,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The background task is already running.
+        /// </summary>
+        public static string ExceptionBackgroundTaskAlreadyRunning {
+            get {
+                return ResourceManager.GetString("ExceptionBackgroundTaskAlreadyRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot set pane after container has been started..
         /// </summary>
         public static string ExceptionCannotSetPaneAfterContainerStarted {

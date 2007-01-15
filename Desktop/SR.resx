@@ -141,6 +141,9 @@
   <data name="ExceptionAssociateViewAttributeNotSpecified" xml:space="preserve">
     <value>An AssociateViewAttribute must be specified for the input Type in order to create the Associated View.</value>
   </data>
+  <data name="ExceptionBackgroundTaskAlreadyRunning" xml:space="preserve">
+    <value>The background task is already running</value>
+  </data>
   <data name="ExceptionCannotSetPaneAfterContainerStarted" xml:space="preserve">
     <value>Cannot set pane after container has been started.</value>
   </data>
