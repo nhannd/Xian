@@ -59,5 +59,14 @@ namespace ClearCanvas.Enterprise.Configuration {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings group {0} {1} has not been imported.
+        /// </summary>
+        internal static string ExceptionSettingsNotImported {
+            get {
+                return ResourceManager.GetString("ExceptionSettingsNotImported", resourceCulture);
+            }
+        }
     }
 }

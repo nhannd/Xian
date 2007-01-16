@@ -35,6 +35,7 @@
       <HintPath>..\Common\refs\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -141,6 +142,7 @@
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
     <Compile Include="Validation\NoNodesContainerValidationStrategy.cs" />
+    <Compile Include="Validation\ValidationRulesSettings.cs" />
     <Compile Include="Validation\ValidationXmlProcessor.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />

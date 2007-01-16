@@ -14,25 +14,10 @@ namespace ClearCanvas.Enterprise.Configuration {
 
 
     /// <summary>
-    /// ConfigSettingsInstance entity
+    /// Stores a set of settings keys and values for a given settings group.  Used internally by the framework.
     /// </summary>
 	public partial class ConfigSettingsInstance : Entity
 	{
-        private Dictionary<string, string> _values;
-        private bool _unsaved;
-
-        /// <summary>
-        /// Constructor creates a new settings instance for the specified group
-        /// </summary>
-        /// <param name="group"></param>
-        public ConfigSettingsInstance(ConfigSettingsGroup group, string user, string instanceKey)
-        {
-            _user = user;
-            _instanceKey = instanceKey;
-            _group = group;
-            _unsaved = true;
-        }
-	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
@@ -41,57 +26,64 @@ namespace ClearCanvas.Enterprise.Configuration {
 		{
 		}
 
-        public bool Unsaved
+        /// <summary>
+        /// Adds the set of values stored in this <see cref="ConfigSettingsInstance"/> to the specified dictionary.
+        /// </summary>
+        /// <param name="values"></param>
+        public void GetValues(IDictionary<string, string> values)
         {
-            get { return _unsaved; }
+            ReadXml(values);
         }
 
-        public void PrepareSave()
+        /// <summary>
+        /// Assigns the specified dictionary of settigns values to this <see cref="ConfigSettingsInstance"/>,
+        /// removing any existing settings.
+        /// </summary>
+        /// <param name="values"></param>
+        public void SetValues(IDictionary<string, string> values)
         {
-            if (_values != null)
-            {
-                WriteXml();
-            }
+            WriteXml(values);
         }
 
-        public string this[string name]
+        /// <summary>
+        /// Overwrites any values stored in this instance with values having the same key
+        /// from a previous version
+        /// </summary>
+        /// <param name="previousVersion">The previous version from which to copy settings values</param>
+        public void UpgradeFrom(ConfigSettingsInstance previousVersion)
         {
-            get
-            {
-                if (_values == null)
-                {
-                    ReadXml();
-                }
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            this.GetValues(values);
 
-                return _values.ContainsKey(name) ? _values[name] : this.Group.Settings[name].DefaultValue;
-            }
-            set
-            {
-                if (_values == null)
-                {
-                    ReadXml();
-                }
+            // overwrite any values with those from the previous version
+            previousVersion.GetValues(values);
 
-                _values[name] = value;
-            }
+            // re-write the values into this object
+            this.SetValues(values);
         }
 
+        /// <summary>
+        /// Clears all stored values
+        /// </summary>
+        public void Clear()
+        {
+            _settingsValuesXml = null;
+        }
 
         #region XML de/serialization
 
-        private void ReadXml()
+        private void ReadXml(IDictionary<string, string> values)
         {
-            _values = new Dictionary<string, string>();
             if (_settingsValuesXml != null)
             {
                 using (XmlReader reader = XmlReader.Create(new StringReader(_settingsValuesXml)))
                 {
-                    ReadXml(reader);
+                    ReadXml(reader, values);
                 }
             }
         }
 
-        private void ReadXml(XmlReader reader)
+        private void ReadXml(XmlReader reader, IDictionary<string, string> values)
         {
             string settingName = "";
 
@@ -105,33 +97,37 @@ namespace ClearCanvas.Enterprise.Configuration {
                             settingName = reader.GetAttribute("name");
                             break;
                         case "value":
-                            _values[settingName] = reader.ReadElementContentAsString();
+                            values[settingName] = reader.ReadElementContentAsString();
                             break;
                     }
                 }
             }
         }
 
-        private void WriteXml()
+        private void WriteXml(IDictionary<string, string> values)
         {
             StringWriter sw = new StringWriter();
             using (XmlTextWriter writer = new XmlTextWriter(sw))
             {
                 writer.Formatting = Formatting.Indented;
-                WriteXml(writer);
+                WriteXml(writer, values);
                 _settingsValuesXml = sw.ToString();
             }
         }
 
-        private void WriteXml(XmlWriter writer)
+        private void WriteXml(XmlWriter writer, IDictionary<string, string> values)
         {
             writer.WriteStartDocument();
             writer.WriteStartElement("settings");
-            foreach (KeyValuePair<string, string> kvp in _values)
+            foreach (KeyValuePair<string, string> kvp in values)
             {
                 writer.WriteStartElement("setting");
                 writer.WriteAttributeString("name", kvp.Key);
-                writer.WriteElementString("value", kvp.Value);
+
+                writer.WriteStartElement("value");
+                writer.WriteCData(kvp.Value);
+                writer.WriteEndElement();
+
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();
@@ -155,6 +151,5 @@ namespace ClearCanvas.Enterprise.Configuration {
 		}
 		
 		#endregion
-
-	}
+    }
 }

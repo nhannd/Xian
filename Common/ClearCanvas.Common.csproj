@@ -96,7 +96,9 @@
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\IEnterpriseConfigurationStore.cs" />
+    <Compile Include="Configuration\ConfigurationStoreSettingsProvider.cs" />
+    <Compile Include="Configuration\IConfigurationStore.cs" />
+    <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="ExtensionSettings.cs">
       <SubType>Code</SubType>
@@ -143,6 +145,7 @@
     <Compile Include="Specifications\FalseSpecification.cs" />
     <Compile Include="Specifications\IsNullSpecification.cs" />
     <Compile Include="Specifications\ISpecification.cs" />
+    <Compile Include="Specifications\ISpecificationXmlSource.cs" />
     <Compile Include="Specifications\OrSpecification.cs" />
     <Compile Include="Specifications\PrimitiveSpecification.cs" />
     <Compile Include="Specifications\RegexSpecification.cs" />

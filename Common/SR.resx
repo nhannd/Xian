@@ -238,6 +238,9 @@
     <value>Finding plugins...</value>
   </data>
   <data name="LogEnterpriseConfigurationStoreNotFound" xml:space="preserve">
-    <value>Enterprise configuration store not found - using local file settings</value>
+    <value>Enterprise configuration store not found - assuming standalone operation</value>
+  </data>
+  <data name="LogLocalConfigurationStoreNotFound" xml:space="preserve">
+    <value>Local configuration store not found - defaulting to LocalFileSettingsProvider</value>
   </data>
 </root>

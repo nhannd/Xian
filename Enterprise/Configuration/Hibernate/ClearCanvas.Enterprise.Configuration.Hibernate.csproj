@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
-    <Compile Include="Brokers\ConfigSettingsInstanceBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -71,9 +70,6 @@
       <Project>{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}</Project>
       <Name>ClearCanvas.Enterprise.Configuration</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\ConfigSettingsGroup.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\ConfigSettingsInstance.hbm.xml" />

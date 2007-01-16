@@ -376,7 +376,7 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enterprise configuration store not found - using local file settings.
+        ///   Looks up a localized string similar to Enterprise configuration store not found - assuming standalone operation.
         /// </summary>
         public static string LogEnterpriseConfigurationStoreNotFound {
             get {
@@ -399,6 +399,15 @@ namespace ClearCanvas.Common {
         public static string LogFoundUnmanagedDLL {
             get {
                 return ResourceManager.GetString("LogFoundUnmanagedDLL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local configuration store not found - defaulting to LocalFileSettingsProvider.
+        /// </summary>
+        public static string LogLocalConfigurationStoreNotFound {
+            get {
+                return ResourceManager.GetString("LogLocalConfigurationStoreNotFound", resourceCulture);
             }
         }
         

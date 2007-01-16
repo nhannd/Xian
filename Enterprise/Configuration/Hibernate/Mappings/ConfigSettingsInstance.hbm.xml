@@ -7,8 +7,9 @@
       </generator>
     </id>
     <version name="Version" column="Version_"/>
-    <many-to-one name="Group" class="ConfigSettingsGroup" column="ConfigSettingsGroupOID_" not-null="true" fetch="join"/>
-    <property name="User" column="User_" type="String" length="200" not-null="true"/>
+    <property name="GroupName" column="GroupName_" type="String" length="1000" not-null="true"/>
+    <property name="GroupVersionString" column="GroupVersionString_" type="String" length="30" not-null="true"/>
+    <property name="User" column="User_" type="String" length="200" not-null="false"/>
     <property name="InstanceKey" column="InstanceKey_" type="String" length="1000" not-null="false"/>
     <property name="SettingsValuesXml" column="SettingsValuesXml_" type="StringClob" length="65000" not-null="false"/>
   </class>
