@@ -27,37 +27,5 @@ namespace SampleShred1
         }
 
         #endregion
-
-        private void FindNextPrime()
-        {
-            if (2 == _currentPrime)
-            {
-                _currentPrime = 3;
-                return;
-            }
-
-            int numberToCheck = _currentPrime + 2;
-            double squareRoot = Math.Sqrt(numberToCheck);
-
-            int factor = 3; // we can start at 3, 'coz numberToCheck will never be even
-            while (factor <= squareRoot)
-            {
-                if (0 == numberToCheck % factor)
-                {
-                    numberToCheck = numberToCheck + 2;
-                    factor = 3;
-                }
-                else
-                {
-                    factor += 2;
-                }
-
-            }
-
-            _currentPrime = numberToCheck;
-            return;
-        }
-
-        private int _currentPrime = 2;
     }
 }

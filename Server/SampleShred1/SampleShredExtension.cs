@@ -32,13 +32,13 @@ namespace SampleShred1
             _settings.Save();
         }
 
-        public override void Start(int port)
+        public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on port " + this.ServicePort.ToString());
             _stopSignal.Reset();
             GlobalStore.CurrentPrime = 2;
 
-            StartHost<SampleShredServiceType, ISampleShred1Interface>(port, _serviceEndPointName, "Prime number calculator");
+            StartHost<SampleShredServiceType, ISampleShred1Interface>(_serviceEndPointName, "Prime number calculator");
 
             // start up processing thread
             Thread t = new Thread(new ThreadStart(ComputePrimes));
@@ -102,6 +102,11 @@ namespace SampleShred1
 
             GlobalStore.CurrentPrime = numberToCheck;
             return;
+        }
+
+        public override string GetDescription()
+        {
+            return "This shred calculates prime numbers";
         }
     }
 }

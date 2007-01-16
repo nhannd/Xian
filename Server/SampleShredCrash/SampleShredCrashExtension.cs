@@ -24,7 +24,7 @@ namespace SampleShredCrash
             System.Diagnostics.Trace.WriteLine(_className + ": constructed");
         }
 
-        public override void Start(int port)
+        public override void Start()
         {
             Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
             _stopSignal.Reset();
@@ -66,6 +66,11 @@ namespace SampleShredCrash
                     break;
                 ++count;
             }
+        }
+
+        public override string GetDescription()
+        {
+            return "This shred just crashes after around 1 minute of running";
         }
     }
 }

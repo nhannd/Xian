@@ -24,14 +24,14 @@ namespace SampleShred2
             System.Diagnostics.Trace.WriteLine(_className + ": constructed");
         }
 
-        public override void Start(int port)
+        public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on port " + this.ServicePort.ToString());
             _stopSignal.Reset();
             GlobalStore.Score = 0;
             GlobalStore.Darts = 0;
 
-            StartHost<SampleShredServiceType, ISampleShred2Interface>(port, _serviceEndPointName, "pi digits calculator");
+            StartHost<SampleShredServiceType, ISampleShred2Interface>(_serviceEndPointName, "pi digits calculator");
 
             // start up processing thread
             Thread t = new Thread(new ThreadStart(ComputePi));
@@ -84,5 +84,10 @@ namespace SampleShred2
         }
 
 
+
+        public override string GetDescription()
+        {
+            return "This shred calculates the value of pi based on the probability of throwing darts into one quadrant of a circle.";
+        }
     }
 }

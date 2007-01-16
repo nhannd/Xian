@@ -13,9 +13,10 @@ namespace ClearCanvas.Server.ShredHost
         }
 
         #region IShred Members
-        public abstract void Start(int port);
-        public abstract string GetDisplayName();
+        public abstract void Start();
         public abstract void Stop();
+        public abstract string GetDisplayName();
+        public abstract string GetDescription();
         #endregion       
     }
 }

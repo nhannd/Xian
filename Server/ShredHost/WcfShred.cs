@@ -7,7 +7,7 @@ using System.ServiceModel.Description;
 
 namespace ClearCanvas.Server.ShredHost
 {
-    public abstract class WcfShred : ShredBase
+    public abstract class WcfShred : ShredBase, IWcfShred
     {
         public WcfShred()
         {
@@ -31,11 +31,11 @@ namespace ClearCanvas.Server.ShredHost
             return uriBuilder.Uri;
         }
 
-        protected void StartHost<TServiceType, TServiceInterfaceType>(int port, string name, string description)
+        protected void StartHost<TServiceType, TServiceInterfaceType>(string name, string description)
         {
-            ServiceEndpointDescription sed = new ServiceEndpointDescription(port, name, description);
+            ServiceEndpointDescription sed = new ServiceEndpointDescription(this.ServicePort, name, description);
             sed.Binding = new WSHttpBinding();
-            sed.ServiceHost = new ServiceHost(typeof(TServiceType), GetServiceHostBaseAddress(port));
+            sed.ServiceHost = new ServiceHost(typeof(TServiceType), GetServiceHostBaseAddress(this.ServicePort));
 
             ServiceMetadataBehavior metadataBehavior = sed.ServiceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
             if (null == metadataBehavior)
@@ -110,6 +110,24 @@ namespace ClearCanvas.Server.ShredHost
         }
 
         private Dictionary<string, ServiceEndpointDescription> _serviceEndpointDescriptions;
+        #endregion
+
+
+        #region IWcfShred Members
+        private int _servicePort;
+
+        public int ServicePort
+        {
+            get
+            {
+                return _servicePort;
+            }
+            set
+            {
+                _servicePort = value;
+            }
+        }
+
         #endregion
     }
 }

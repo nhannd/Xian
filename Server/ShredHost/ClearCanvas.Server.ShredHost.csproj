@@ -43,8 +43,11 @@
       <HintPath>..\..\..\WINDOWS\Microsoft.NET\Framework\v3.0\Windows Communication Foundation\System.ServiceModel.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IShredHost.cs" />
+    <Compile Include="IWcfShred.cs" />
     <Compile Include="ShredExtensionPoint.cs" />
     <Compile Include="ShredHost.cs" />
     <Compile Include="ExtensionScanner.cs" />
@@ -55,10 +58,13 @@
     <Compile Include="ProxyList.cs" />
     <Compile Include="ShredBase.cs" />
     <Compile Include="ShredCommunicationServiceType.cs" />
-    <Compile Include="ShredInfo.cs" />
-    <Compile Include="ShredInfoList.cs" />
+    <Compile Include="ShredController.cs" />
+    <Compile Include="ShredControllerList.cs" />
+    <Compile Include="ShredHostServiceType.cs" />
     <Compile Include="ShredStartupInfo.cs" />
     <Compile Include="ShredStartupInfoList.cs" />
+    <Compile Include="WcfDataShred.cs" />
+    <Compile Include="WcfDataShredCollection.cs" />
     <Compile Include="WcfShred.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
