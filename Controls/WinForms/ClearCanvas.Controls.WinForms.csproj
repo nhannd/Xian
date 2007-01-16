@@ -119,6 +119,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TextAreaField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextAreaField.Designer.cs">
+      <DependentUpon>TextAreaField.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -164,6 +170,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\folder.ico" />
+    <EmbeddedResource Include="TextAreaField.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TextAreaField.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TextField.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TextField.cs</DependentUpon>
