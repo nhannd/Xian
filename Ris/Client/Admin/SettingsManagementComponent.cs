@@ -14,13 +14,14 @@ using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop.Trees;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Configuration/Settings")]
     [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class SettingsManagementTool : Tool<IDesktopToolContext>
+    public class SettingsManagementLaunchTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;
 
@@ -40,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
     }
-    
+
     /// <summary>
     /// Extension point for views onto <see cref="SettingsManagementComponent"/>
     /// </summary>
@@ -55,53 +56,6 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(SettingsManagementComponentViewExtensionPoint))]
     public class SettingsManagementComponent : ApplicationComponent
     {
-        #region SettingsGroupNode class
-
-        class SettingsGroupNode
-        {
-            private string _nodeName;
-            private List<SettingsGroupNode> _childNodes;
-            private Type _settingsClass;
-
-            public SettingsGroupNode(string name)
-            {
-                _nodeName = name;
-                _childNodes = new List<SettingsGroupNode>();
-            }
-
-            public string Name { get { return _nodeName; } }
-            public Type SettingsClass { get { return _settingsClass; } }
-            public IList<SettingsGroupNode> ChildNodes { get { return _childNodes; } }
-
-            public void InsertGroup(Type settingsClass)
-            {
-                InsertGroup(settingsClass, settingsClass.FullName.Split('.'), 0);
-            }
-
-            private void InsertGroup(Type settingsClass, string[] pathParts, int depth)
-            {
-                if (depth == pathParts.Length)
-                {
-                    _settingsClass = settingsClass;
-                }
-                else
-                {
-                    SettingsGroupNode child = CollectionUtils.SelectFirst<SettingsGroupNode>(_childNodes,
-                        delegate(SettingsGroupNode c) { return c._nodeName == pathParts[depth]; });
-                    if (child == null)
-                    {
-                        child = new SettingsGroupNode(pathParts[depth]);
-                        _childNodes.Add(child);
-                    }
-                    child.InsertGroup(settingsClass, pathParts, depth + 1);
-                }
-            }
-        }
-
-
-        #endregion
-
-
         #region SettingsProperty class
 
         public class SettingsProperty
@@ -110,6 +64,8 @@ namespace ClearCanvas.Ris.Client.Admin
             private string _value;
             private string _startingValue;
             private string _defaultValue;
+
+            private event EventHandler _valueChanged;
 
             public SettingsProperty(PropertyInfo propertyInfo, string value)
             {
@@ -146,7 +102,20 @@ namespace ClearCanvas.Ris.Client.Admin
             public string Value
             {
                 get { return _value; }
-                set { _value = value; }
+                set
+                {
+                    if (value != _value)
+                    {
+                        _value = value;
+                        EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
+                    }
+                }
+            }
+
+            public event EventHandler ValueChanged
+            {
+                add { _valueChanged += value; }
+                remove { _valueChanged -= value; }
             }
 
             public bool UsingDefaultValue
@@ -162,50 +131,67 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #endregion
 
-        private SettingsGroupNode _rootGroupNode;
-        private Tree<SettingsGroupNode> _settingsGroupTree;
-
         private IConfigurationService _service;
-        private Table<SettingsProperty> _settingsPropertiesTable;
 
-        private SettingsGroupNode _selectedSettingsGroup;
+        private Table<Type> _settingsGroupTable;
+        private Type _selectedSettingsGroup;
         private event EventHandler _selectedSettingsGroupChanged;
+
+        private Table<SettingsProperty> _settingsPropertiesTable;
+        private SettingsProperty _selectedSettingsProperty;
+        private event EventHandler _selectedSettingsPropertyChanged;
+
+        private SimpleActionModel _settingsPropertiesActionModel;
+        private ClickAction _saveAllAction;
+        private ClickAction _resetAllAction;
+        private ClickAction _resetAction;
+        private ClickAction _editAction;
+
 
         /// <summary>
         /// Constructor
         /// </summary>
         public SettingsManagementComponent()
         {
-            // define the structure of the settings group tree
-            TreeItemBinding<SettingsGroupNode> settingsGroupTreeBinding = new TreeItemBinding<SettingsGroupNode>();
-            settingsGroupTreeBinding.NodeTextProvider = delegate(SettingsGroupNode node) { return node.Name; };
-            settingsGroupTreeBinding.SubTreeProvider = delegate(SettingsGroupNode node)
-                    {
-                        return new Tree<SettingsGroupNode>(settingsGroupTreeBinding, node.ChildNodes);
-                    };
-            settingsGroupTreeBinding.CanHaveSubTreeHandler = 
-                delegate(SettingsGroupNode node) { return node.ChildNodes.Count > 0; };
+            // define the structure of the settings group table
+            _settingsGroupTable = new Table<Type>();
+            _settingsGroupTable.Columns.Add(new TableColumn<Type, string>("Group",
+                delegate(Type t) { return SettingsClassMetaDataReader.GetGroupName(t); }));
+            _settingsGroupTable.Columns.Add(new TableColumn<Type, string>("Version",
+                delegate(Type t) { return SettingsClassMetaDataReader.GetVersion(t).ToString(); }));
+            _settingsGroupTable.Columns.Add(new TableColumn<Type, string>("Description",
+                delegate(Type t) { return SettingsClassMetaDataReader.GetGroupDescription(t); }));
 
-            _settingsGroupTree = new Tree<SettingsGroupNode>(settingsGroupTreeBinding);
-            _settingsGroupTree.Items.Add(_rootGroupNode = new SettingsGroupNode("Groups"));
 
             // define the settings properties table
             _settingsPropertiesTable = new Table<SettingsProperty>();
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Name",
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Property",
                 delegate(SettingsProperty p) { return p.Name; }));
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Description",
+               delegate(SettingsProperty p) { return p.Description; }));
             _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Scope",
                 delegate(SettingsProperty p) { return p.Scope; }));
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Type",
+                delegate(SettingsProperty p) { return p.TypeName; }));
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Default Value",
+                delegate(SettingsProperty p) { return p.DefaultValue; }));
             _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Value",
                delegate(SettingsProperty p) { return p.Value; },
                delegate(SettingsProperty p, string text) { p.Value = text; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Default Value",
-                delegate(SettingsProperty p) { return p.DefaultValue; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Type",
-                delegate(SettingsProperty p) { return p.TypeName; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Description",
-                delegate(SettingsProperty p) { return p.Description; }));
 
+            _settingsPropertiesActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 
+            _saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "Icons.Edit.png",
+                delegate() { SaveModifiedSettings(false); });
+
+            _resetAllAction = _settingsPropertiesActionModel.AddAction("resetall", SR.LabelResetAll, "Icons.Edit.png",
+                delegate() { ResetAllPropertyValues(); });
+
+            _resetAction = _settingsPropertiesActionModel.AddAction("reset", SR.LabelReset, "Icons.Edit.png",
+                delegate() { ResetPropertyValue(_selectedSettingsProperty); });
+
+            _editAction = _settingsPropertiesActionModel.AddAction("edit", SR.LabelEdit, "Icons.Edit.png",
+                delegate() { EditProperty(_selectedSettingsProperty); });
 
         }
 
@@ -213,22 +199,15 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _service = ApplicationContext.GetService<IConfigurationService>();
 
-            List<Type> settingsClasses = new List<Type>();
             foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
             {
                 foreach (Type t in plugin.Assembly.GetTypes())
                 {
-                    if (t.IsSubclassOf(typeof(SettingsBase)))
+                    if (t.IsSubclassOf(typeof(ApplicationSettingsBase)))
                     {
-                        settingsClasses.Add(t);
+                        _settingsGroupTable.Items.Add(t);
                     }
                 }
-            }
-
-            settingsClasses.Sort(delegate(Type t1, Type t2) { return t1.FullName.CompareTo(t2.FullName); });
-            foreach (Type t in settingsClasses)
-            {
-                _rootGroupNode.InsertGroup(t);
             }
 
             base.Start();
@@ -249,9 +228,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
-        public ITree SettingsGroupTree
+        public ITable SettingsGroupTable
         {
-            get { return _settingsGroupTree; }
+            get { return _settingsGroupTable; }
         }
 
         public ISelection SelectedSettingsGroup
@@ -259,14 +238,15 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return new Selection(_selectedSettingsGroup); }
             set
             {
-                SettingsGroupNode node = (SettingsGroupNode)value.Item;
-                if (node != _selectedSettingsGroup)
+                Type settingsClass = (Type)value.Item;
+                if (settingsClass != _selectedSettingsGroup)
                 {
                     // save any changes before changing _selectedSettingsGroup
                     SaveModifiedSettings(true);
 
-                    _selectedSettingsGroup = node;
+                    _selectedSettingsGroup = settingsClass;
                     LoadSettingsProperties();
+                    UpdateActionEnablement();
                     EventsHelper.Fire(_selectedSettingsGroupChanged, this, EventArgs.Empty);
                 }
             }
@@ -283,9 +263,38 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _settingsPropertiesTable; }
         }
 
-        public void SaveChanges()
+        public ActionModelRoot SettingsPropertiesActionModel
         {
-            SaveModifiedSettings(false);
+            get { return _settingsPropertiesActionModel; }
+        }
+
+        public ISelection SelectedSettingsProperty
+        {
+            get { return new Selection(_selectedSettingsProperty); }
+            set
+            {
+                SettingsProperty p = (SettingsProperty)value.Item;
+                if (p != _selectedSettingsProperty)
+                {
+                    _selectedSettingsProperty = p;
+                    UpdateActionEnablement();
+                    EventsHelper.Fire(_selectedSettingsPropertyChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler SelectedSettingsPropertyChanged
+        {
+            add { _selectedSettingsPropertyChanged += value; }
+            remove { _selectedSettingsPropertyChanged -= value; }
+        }
+
+        public void SettingsPropertyDoubleClicked()
+        {
+            if (_selectedSettingsProperty != null)
+            {
+                EditProperty(_selectedSettingsProperty);
+            }
         }
 
         #endregion
@@ -294,12 +303,12 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _settingsPropertiesTable.Items.Clear();
 
-            if (_selectedSettingsGroup != null && _selectedSettingsGroup.SettingsClass != null)
+            if (_selectedSettingsGroup != null)
             {
                 Dictionary<string, string> values = new Dictionary<string, string>();
                 _service.LoadSettingsValues(
-                    SettingsClassMetaDataReader.GetGroupName(_selectedSettingsGroup.SettingsClass),
-                    SettingsClassMetaDataReader.GetVersion(_selectedSettingsGroup.SettingsClass),
+                    SettingsClassMetaDataReader.GetGroupName(_selectedSettingsGroup),
+                    SettingsClassMetaDataReader.GetVersion(_selectedSettingsGroup),
                     null, null, // load the default profile
                     values);    
 
@@ -310,7 +319,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private void SaveModifiedSettings(bool confirmationRequired)
         {
             // if no dirty properties, nothing to save
-            if (_selectedSettingsGroup != null && _selectedSettingsGroup.SettingsClass != null && IsAnyPropertyDirty())
+            if (_selectedSettingsGroup != null && IsAnyPropertyDirty())
             {
                 if (confirmationRequired && !ConfirmSave())
                     return;
@@ -326,24 +335,80 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
 
                 _service.SaveSettingsValues(
-                        SettingsClassMetaDataReader.GetGroupName(_selectedSettingsGroup.SettingsClass),
-                        SettingsClassMetaDataReader.GetVersion(_selectedSettingsGroup.SettingsClass),
+                        SettingsClassMetaDataReader.GetGroupName(_selectedSettingsGroup),
+                        SettingsClassMetaDataReader.GetVersion(_selectedSettingsGroup),
                         null, null,    // save to the default profile
                         values);
 
                 // refresh the table so that properties are no longer marked dirty
                 FillSettingsPropertiesTable(values);
+                UpdateActionEnablement();
             }
+        }
+
+        private void ResetAllPropertyValues()
+        {
+            DialogBoxAction action = this.Host.ShowMessageBox("Reset all settings back to default values?", MessageBoxActions.YesNo);
+            if (action == DialogBoxAction.Yes)
+            {
+                foreach (SettingsProperty property in _settingsPropertiesTable.Items)
+                {
+                    property.Value = property.DefaultValue;
+                    _settingsPropertiesTable.Items.NotifyItemUpdated(property);
+                }
+            }
+        }
+
+        private void ResetPropertyValue(SettingsProperty property)
+        {
+            DialogBoxAction action = this.Host.ShowMessageBox("Reset this setting back to its default value?", MessageBoxActions.YesNo);
+            if (action == DialogBoxAction.Yes)
+            {
+                property.Value = property.DefaultValue;
+                _settingsPropertiesTable.Items.NotifyItemUpdated(property);
+            }
+        }
+
+        private void EditProperty(SettingsProperty property)
+        {
+            if (property != null)
+            {
+                SettingEditorComponent editor = new SettingEditorComponent(property.DefaultValue, property.Value);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Edit Value");
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    property.Value = editor.CurrentValue;
+
+                    // update the table to reflect the changed value
+                    _settingsPropertiesTable.Items.NotifyItemUpdated(property);
+                }
+            }
+        }
+
+        private void UpdateActionEnablement()
+        {
+            _resetAction.Enabled = (_selectedSettingsProperty != null && !_selectedSettingsProperty.UsingDefaultValue);
+            _editAction.Enabled = (_selectedSettingsProperty != null);
+            _saveAllAction.Enabled = (_selectedSettingsGroup != null && IsAnyPropertyDirty());
+            _resetAllAction.Enabled = CollectionUtils.Contains<SettingsProperty>(_settingsPropertiesTable.Items,
+                delegate(SettingsProperty p) { return !p.UsingDefaultValue; });
         }
 
         private void FillSettingsPropertiesTable(IDictionary<string, string> storedValues)
         {
             _settingsPropertiesTable.Items.Clear();
-            foreach (PropertyInfo pi in SettingsClassMetaDataReader.GetSettingsProperties(_selectedSettingsGroup.SettingsClass))
+            foreach (PropertyInfo pi in SettingsClassMetaDataReader.GetSettingsProperties(_selectedSettingsGroup))
             {
                 string value = storedValues.ContainsKey(pi.Name) ? storedValues[pi.Name] : SettingsClassMetaDataReader.GetDefaultValue(pi);
-                _settingsPropertiesTable.Items.Add(new SettingsProperty(pi, value));
+                SettingsProperty property = new SettingsProperty(pi, value);
+                property.ValueChanged += SettingsPropertyValueChangedEventHandler;
+                _settingsPropertiesTable.Items.Add(property);
             }
+        }
+
+        private void SettingsPropertyValueChangedEventHandler(object sender, EventArgs args)
+        {
+            UpdateActionEnablement();
         }
 
         private bool IsAnyPropertyDirty()

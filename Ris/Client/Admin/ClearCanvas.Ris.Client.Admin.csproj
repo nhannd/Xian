@@ -46,6 +46,7 @@
     <Compile Include="ModalitySummaryComponent.cs" />
     <Compile Include="ModalityEditorComponent.cs" />
     <Compile Include="ModalityTable.cs" />
+    <Compile Include="SettingEditorComponent.cs" />
     <Compile Include="SettingsManagementComponent.cs" />
     <Compile Include="StaffDetailsEditorComponent.cs" />
     <Compile Include="StaffEditorComponent.cs" />

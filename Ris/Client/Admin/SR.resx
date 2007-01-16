@@ -189,6 +189,18 @@
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
+  <data name="LabelEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="LabelReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="LabelResetAll" xml:space="preserve">
+    <value>Reset All</value>
+  </data>
+  <data name="LabelSaveAll" xml:space="preserve">
+    <value>Save All</value>
+  </data>
   <data name="MessageDeleteSelectedDiagnosticService" xml:space="preserve">
     <value>Are you sure you want to delete this diagnostic service?</value>
   </data>

@@ -6,60 +6,43 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Common
 {
-    public class CrudActionModel : ActionModelRoot
+    public class CrudActionModel : SimpleActionModel
     {
-
-        public class CrudAction : ClickAction
-        {
-            internal CrudAction(string name, string icon, IResourceResolver resolver)
-                : base(name, new ActionPath(string.Format("root/{0}", name), resolver), ClickActionFlags.None, resolver)
-            {
-                this.Tooltip = name;
-                this.Label = name;
-                this.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
-            }
-        }
-
-
-        private CrudAction _add;
-        private CrudAction _edit;
-        private CrudAction _delete;
-
         public CrudActionModel()
             :this(true, true, true)
         {
         }
 
         public CrudActionModel(bool add, bool edit, bool delete)
+            :base(new ResourceResolver(typeof(CrudActionModel).Assembly))
         {
-            IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
             if (add)
             {
-                this.InsertAction(_add = new CrudAction(SR.TitleAdd, "Icons.Add.png", resolver));
+                this.AddAction("Add", SR.TitleAdd, "Icons.Add.png");
             }
             if (edit)
             {
-                this.InsertAction(_edit = new CrudAction(SR.TitleEdit, "Icons.Edit.png", resolver));
+                this.AddAction("Edit", SR.TitleEdit, "Icons.Edit.png");
             }
             if (delete)
             {
-                this.InsertAction(_delete = new CrudAction(SR.TitleDelete, "Icons.Delete.png", resolver));
+                this.AddAction("Delete", SR.TitleDelete, "Icons.Delete.png");
             }
         }
 
-        public CrudAction Add
+        public ClickAction Add
         {
-            get { return _add; }
+            get { return this["Add"]; }
         }
 
-        public CrudAction Edit
+        public ClickAction Edit
         {
-            get { return _edit; }
+            get { return this["Edit"]; }
         }
 
-        public CrudAction Delete
+        public ClickAction Delete
         {
-            get { return _delete; }
+            get { return this["Delete"]; }
         }
     }
 }

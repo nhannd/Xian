@@ -28,10 +28,19 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             // TODO add .NET databindings to _component
-            _settingsGroupTreeView.Tree = _component.SettingsGroupTree;
-            _settingsGroupTreeView.DataBindings.Add("Selection", _component, "SelectedSettingsGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+            _settingsGroupTableView.Table = _component.SettingsGroupTable;
+            _settingsGroupTableView.DataBindings.Add("Selection", _component, "SelectedSettingsGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _valueTableView.Table = _component.SettingsPropertiesTable;
+            _valueTableView.DataBindings.Add("Selection", _component, "SelectedSettingsProperty", true, DataSourceUpdateMode.OnPropertyChanged);
+            _valueTableView.ToolbarModel = _component.SettingsPropertiesActionModel;
+
+            _valueTableView.ItemDoubleClicked += new EventHandler(ValueTableItemDoubleClicked);
+        }
+
+        private void ValueTableItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.SettingsPropertyDoubleClicked();
         }
     }
 }

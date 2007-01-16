@@ -277,6 +277,42 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        internal static string LabelEdit {
+            get {
+                return ResourceManager.GetString("LabelEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string LabelReset {
+            get {
+                return ResourceManager.GetString("LabelReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset All.
+        /// </summary>
+        internal static string LabelResetAll {
+            get {
+                return ResourceManager.GetString("LabelResetAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save All.
+        /// </summary>
+        internal static string LabelSaveAll {
+            get {
+                return ResourceManager.GetString("LabelSaveAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this diagnostic service?.
         /// </summary>
         internal static string MessageDeleteSelectedDiagnosticService {
