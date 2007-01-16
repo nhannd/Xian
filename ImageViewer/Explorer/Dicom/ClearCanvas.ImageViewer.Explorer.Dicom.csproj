@@ -58,6 +58,7 @@
     <Compile Include="DicomServerSettings.cs" />
     <Compile Include="DicomServerTree.cs" />
     <Compile Include="IDicomServer.cs" />
+    <Compile Include="DicomServerTestComponent.cs" />
     <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="RetrieveStudyToolProgressComponent.cs" />
     <Compile Include="SearchPanelComponent.cs" />

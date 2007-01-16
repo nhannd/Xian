@@ -115,14 +115,24 @@ SWIGEXPORT void SWIGSTDCALL RegisterMoveCallbackHelper_OffisDcm(MoveCallbackHelp
 	CSharpMoveCallbackHelperCallback = callback;
 }
 //--------------------------------------------------------------
-typedef void (SWIGSTDCALL* FindScpCallbackHelperCallback)(InteropFindScpCallbackInfo*);
-static FindScpCallbackHelperCallback CSharpFindScpCallbackHelperCallback = NULL;
+typedef void (SWIGSTDCALL* FindScpCallbackHelper_QueryDBCallback)(InteropFindScpCallbackInfo*);
+static FindScpCallbackHelper_QueryDBCallback CSharpFindScpCallbackHelper_QueryDBCallback = NULL;
 
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT void SWIGSTDCALL RegisterFindScpCallbackHelper_OffisDcm(FindScpCallbackHelperCallback callback) {
-	CSharpFindScpCallbackHelperCallback = callback;
+SWIGEXPORT void SWIGSTDCALL RegisterFindScpCallbackHelper_QueryDB_OffisDcm(FindScpCallbackHelper_QueryDBCallback callback) {
+	CSharpFindScpCallbackHelper_QueryDBCallback = callback;
+}
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* FindScpCallbackHelper_GetNextFindResponseCallback)(InteropFindScpCallbackInfo*);
+static FindScpCallbackHelper_GetNextFindResponseCallback CSharpFindScpCallbackHelper_GetNextFindResponseCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(FindScpCallbackHelper_GetNextFindResponseCallback callback) {
+	CSharpFindScpCallbackHelper_GetNextFindResponseCallback = callback;
 }
 //--------------------------------------------------------------
 %}

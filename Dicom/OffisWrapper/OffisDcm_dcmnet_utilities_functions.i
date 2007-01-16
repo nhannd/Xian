@@ -513,63 +513,76 @@ static void FindScpCallback(
 
     context = (FindCallbackData*)callbackData;	/* recover context */
 
-    if (responseCount == 1) 
+
+	// Build info to pass back to the Callback
+	InteropFindScpCallbackInfo info;
+	bzero((char*)&info, sizeof(info));
+
+	if (info.ResponseIdentifiers == NULL)
+		*responseIdentifiers = new DcmDataset();
+
+	// prepare the transmission of data 
+	info.Cancelled = cancelled;
+	info.ResponseCount = responseCount;
+	info.Request = request;
+	info.RequestIdentifiers = requestIdentifiers; 
+	info.Response = response;
+	info.ResponseIdentifiers = *responseIdentifiers;
+
+	if (responseCount == 1) 
 	{
         // start the database search 
-		// dbcond = DB_startFindRequest(context->dbHandle, STATUS_FIND_Refused_OutOfResources
-		//		request->AffectedSOPClassUID, requestIdentifiers, &dbStatus);
-
-    }
+		if (NULL != CSharpFindScpCallbackHelper_QueryDBCallback)
+			CSharpFindScpCallbackHelper_QueryDBCallback(&info);
+	}
     
     // cancel was requested, cancel the find
     if (cancelled) 
 	{
-
+		// Not implemented
     }
 
     if (DICOM_PENDING_STATUS(context->priorStatus)) 
 	{
-		// find the next matching response
-		//dbcond = DB_nextFindResponse(context->dbHandle,
-		//		responseIdentifiers, &dbStatus);
-		//
-		
-		// should fire off image received event
-		if (NULL != CSharpMoveCallbackHelperCallback)
+		if (NULL != CSharpFindScpCallbackHelper_GetNextFindResponseCallback)
 		{
-			InteropFindScpCallbackInfo info;
-			bzero((char*)&info, sizeof(info));
+			// find the next matching response
+			CSharpFindScpCallbackHelper_GetNextFindResponseCallback(&info);
 
-			// prepare the transmission of data 
-			info.Cancelled = cancelled;
-			info.Request = request;
-			info.RequestIdentifiers = requestIdentifiers; 
-			info.Response = new T_DIMSE_C_FindRSP();
-			info.ResponseIdentifiers = new DcmDataset();
-			info.StatusDetail = new DcmDataset();
+			response->DimseStatus = info.Response->DimseStatus;
 
-			CSharpFindScpCallbackHelperCallback(&info);
+			if (response->DimseStatus != STATUS_Pending)
+			{
+				// *responseIdentifiers MUST be NULL
+				// Otherwise there will be problem releasing association
+				if (*responseIdentifiers != NULL)
+				{
+					delete *responseIdentifiers;
+					*responseIdentifiers = NULL;
+				}
+			}
+
+			if (*responseIdentifiers != NULL) 
+			{
+				AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
+			}
 		}
 		else
 		{
-			*responseIdentifiers = NULL;
 			response->DimseStatus = STATUS_FIND_Refused_OutOfResources;
-			*statusDetail = new DcmDataset();
+			
+			if (*responseIdentifiers != NULL)
+			{
+				delete *responseIdentifiers;
+				*responseIdentifiers = NULL;
+			}
+
+			if (*statusDetail == NULL)
+				*statusDetail = new DcmDataset();
+
 			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
-			return;
 		}
     }
-
-    if (*responseIdentifiers != NULL) 
-	{
-		AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
-    }
-
-	// set the response status, i.e. whether there are more results 
-	// and the status detail
-    // response->DimseStatus = dbStatus.status;
-    // *statusDetail = dbStatus.statusDetail;
-
 }
 
 static OFCondition FindScp(T_ASC_Association * assoc, T_DIMSE_C_FindRQ * request,
@@ -580,6 +593,9 @@ static OFCondition FindScp(T_ASC_Association * assoc, T_DIMSE_C_FindRQ * request
 	FindCallbackData context;
 
 	context.priorStatus = STATUS_Pending;
+	context.assoc = assoc;
+	context.presID = presID;
+	
 	ASC_getAPTitles(assoc->params, NULL, context.ourAETitle, NULL);
 
 	cond = DIMSE_findProvider(assoc, presID, request, 

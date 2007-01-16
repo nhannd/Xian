@@ -13,6 +13,8 @@ struct FindCallbackData
 {
 	DIC_US priorStatus;
 	DIC_AE ourAETitle;
+	T_ASC_Association * assoc;
+	T_ASC_PresentationContextID presID;
 };
 
 struct MoveCallbackData

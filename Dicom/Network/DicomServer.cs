@@ -7,12 +7,56 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.OffisWrapper;
     using System.Runtime.InteropServices;    
     using MySR = ClearCanvas.Dicom.SR;
+    using ClearCanvas.Common.Utilities;
+
+    public class FindScpEventArgs : EventArgs
+    {
+        private QueryKey _queryKey;
+        private ReadOnlyQueryResultCollection _queryResults;
+
+        public FindScpEventArgs(QueryKey queryKey, ReadOnlyQueryResultCollection queryResults)
+        {
+            _queryKey = queryKey;
+            _queryResults = queryResults;
+        }
+
+        public QueryKey QueryKey
+        {
+            get { return _queryKey; }
+            set { _queryKey = value; }
+        }
+
+        public ReadOnlyQueryResultCollection QueryResults
+        {
+            get { return _queryResults; }
+            set { _queryResults = value; }
+        }
+    }
 
     /// <summary>
     /// This class's implementation is not yet complete. Use at your own risk.
     /// </summary>
     public class DicomServer
     {
+        /// <summary>
+        /// Fires when a C-FIND request is initiated.
+        /// </summary>
+        private event EventHandler<FindScpEventArgs> _findScpEvent;
+
+        /// <summary>
+        /// Event accessor.
+        /// </summary>
+        public event EventHandler<FindScpEventArgs> FindScpEvent
+        {
+            add { _findScpEvent += value; }
+            remove { _findScpEvent -= value; }
+        }
+
+        protected void OnFindScpEvent(FindScpEventArgs e)
+        {
+            EventsHelper.Fire(_findScpEvent, this, e);
+        }
+
         public DicomServer(ApplicationEntity ownAEParameters, String saveDirectory)
         {
             SocketManager.InitializeSockets();
@@ -20,7 +64,10 @@ namespace ClearCanvas.Dicom.Network
             _state = ServerState.STOPPED;
             _stopRequestedFlag = false;
             _saveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
+
+            _findScpCallbackHelper = new FindScpCallbackHelper(this);
         }
+
 
         public void Start()
         {
@@ -147,6 +194,17 @@ namespace ClearCanvas.Dicom.Network
                 if (DicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
                 {
                     _association.RespondToReleaseRequest();
+                }
+                else
+                {
+                    try
+                    {
+                        bool releaseSuccessful = _association.Release();
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
                 }
             }
 
@@ -287,44 +345,151 @@ namespace ClearCanvas.Dicom.Network
 
         class FindScpCallbackHelper
         {
+            private FindScpCallbackHelper_QueryDBDelegate _findScpCallbackHelper_QueryDBDelegate;
+            private FindScpCallbackHelper_GetNextResponseDelegate _findScpCallbackHelper_GetNextResponseDelegate;
+            private DicomServer _parent;
+            private ReadOnlyQueryResultCollection _queryResults;
+            private int _resultIndex;
+
             public FindScpCallbackHelper(DicomServer parent)
             {
                 _parent = parent;
-                _findScpCallbackHelperDelegate = new FindScpCallbackHelperDelegate(DefaultCallback);
-                RegisterFindScpCallbackHelper_OffisDcm(_findScpCallbackHelperDelegate);
+                _queryResults = null;
+                _resultIndex = 0;
+
+                _findScpCallbackHelper_QueryDBDelegate = new FindScpCallbackHelper_QueryDBDelegate(QueryDBCallback);
+                _findScpCallbackHelper_GetNextResponseDelegate = new FindScpCallbackHelper_GetNextResponseDelegate(GetNextResponseCallback);
+                RegisterFindScpCallbackHelper_QueryDB_OffisDcm(_findScpCallbackHelper_QueryDBDelegate);
+                RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(_findScpCallbackHelper_GetNextResponseDelegate);
             }
 
             ~FindScpCallbackHelper()
             {
-                RegisterFindScpCallbackHelper_OffisDcm(null);
+                RegisterFindScpCallbackHelper_QueryDB_OffisDcm(null);
+                RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(null);
             }
 
-            public delegate void FindScpCallbackHelperDelegate(IntPtr interopFindScpCallbackInfo);
+            public delegate void FindScpCallbackHelper_QueryDBDelegate(IntPtr interopFindScpCallbackInfo);
+            public delegate void FindScpCallbackHelper_GetNextResponseDelegate(IntPtr interopFindScpCallbackInfo);
 
-            [DllImport("OffisDcm", EntryPoint = "RegisterFindScpCallbackHelper_OffisDcm")]
-            public static extern void RegisterFindScpCallbackHelper_OffisDcm(FindScpCallbackHelperDelegate callbackDelegate);
+            [DllImport("OffisDcm", EntryPoint = "RegisterFindScpCallbackHelper_QueryDB_OffisDcm")]
+            public static extern void RegisterFindScpCallbackHelper_QueryDB_OffisDcm(FindScpCallbackHelper_QueryDBDelegate callbackDelegate);
 
-            public void DefaultCallback(IntPtr interopFindScpCallbackInfoPointer)
+            [DllImport("OffisDcm", EntryPoint = "RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm")]
+            public static extern void RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(FindScpCallbackHelper_GetNextResponseDelegate callbackDelegate);
+
+            public void QueryDBCallback(IntPtr interopFindScpCallbackInfoPointer)
             {
-                /*
                 InteropFindScpCallbackInfo interopFindScpCallbackInfo = new InteropFindScpCallbackInfo(interopFindScpCallbackInfoPointer, false);
 
+                T_DIMSE_C_FindRQ request = interopFindScpCallbackInfo.Request;
                 T_DIMSE_C_FindRSP response = interopFindScpCallbackInfo.Response;
-                DcmDataset responseIdentifiers = interopFindScpCallbackInfo.RequestIdentifiers;
-                DcmDataset statusDetail = interopFindScpCallbackInfo.StatusDetail;
+                DcmDataset requestIdentifiers = interopFindScpCallbackInfo.RequestIdentifiers;
 
-                response.DimseStatus = STATUS_FIND_Refused_OutOfResources;
-                response.DimseStatus = OffisDcm.STATUS
-                *statusDetail = new DcmDataset();
-                (*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
-                */
+                try
+                {
+                    _resultIndex = 0;
+                    _queryResults = null;
 
+                    QueryKey queryKey = BuildQueryKey(requestIdentifiers);
+                    FindScpEventArgs args = new FindScpEventArgs(queryKey, null);
+                    _parent.OnFindScpEvent(args);
+                    _queryResults = args.QueryResults;
+
+                    response.MessageIDBeingRespondedTo = request.MessageID;
+                    response.AffectedSOPClassUID = request.AffectedSOPClassUID;
+                    if (_queryResults.Count == 0)
+                        response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
+                    else
+                        response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
+                }
+                catch
+                {
+                    response.DimseStatus = (ushort)OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+                }
             }
 
-            private FindScpCallbackHelperDelegate _findScpCallbackHelperDelegate;
-            private DicomServer _parent;
-        }
+            public void GetNextResponseCallback(IntPtr interopFindScpCallbackInfoPointer)
+            {
+                InteropFindScpCallbackInfo interopFindScpCallbackInfo = new InteropFindScpCallbackInfo(interopFindScpCallbackInfoPointer, false);
 
+                T_DIMSE_C_FindRQ request = interopFindScpCallbackInfo.Request;
+                T_DIMSE_C_FindRSP response = interopFindScpCallbackInfo.Response;
+                DcmDataset requestIdentifiers = interopFindScpCallbackInfo.RequestIdentifiers;
+                DcmDataset responseIdentifiers = interopFindScpCallbackInfo.ResponseIdentifiers;
+
+                try
+                {
+                    response.MessageIDBeingRespondedTo = request.MessageID;
+                    response.AffectedSOPClassUID = request.AffectedSOPClassUID;
+
+                    if (_queryResults.Count == 0 || _resultIndex >= _queryResults.Count)
+                        response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
+                    else
+                    {
+                        GetQueryResult(_resultIndex, responseIdentifiers);
+                        _resultIndex++;
+                    }
+                }
+                catch
+                {
+                    response.DimseStatus = (ushort)OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+                }
+            }
+
+            private QueryKey BuildQueryKey(DcmDataset requestIdentifiers)
+            {
+                OFCondition cond;
+                QueryKey queryKey = new QueryKey();
+
+                // TODO: shouldn't hard code the buffer length like this
+                StringBuilder buf = new StringBuilder(1024);
+
+                // TODO: Edit these when we need to expand the support of search parameters
+                cond = requestIdentifiers.findAndGetOFString(Dcm.PatientId, buf);
+                if (cond.good())
+                    queryKey.Add(DicomTag.PatientId, buf.ToString());
+
+                cond = requestIdentifiers.findAndGetOFString(Dcm.AccessionNumber, buf);
+                if (cond.good())
+                    queryKey.Add(DicomTag.AccessionNumber, buf.ToString());
+
+                cond = requestIdentifiers.findAndGetOFString(Dcm.PatientsName, buf);
+                if (cond.good())
+                    queryKey.Add(DicomTag.PatientsName, buf.ToString());
+
+                cond = requestIdentifiers.findAndGetOFString(Dcm.StudyDate, buf);
+                if (cond.good())
+                    queryKey.Add(DicomTag.StudyDate, buf.ToString());
+
+                cond = requestIdentifiers.findAndGetOFString(Dcm.StudyDescription, buf);
+                if (cond.good())
+                    queryKey.Add(DicomTag.StudyDescription, buf.ToString());
+
+                cond = requestIdentifiers.findAndGetOFString(Dcm.ModalitiesInStudy, buf);
+                if (cond.good())
+                    queryKey.Add(DicomTag.ModalitiesInStudy, buf.ToString());
+
+                return queryKey;
+            }
+
+            private void GetQueryResult(int index, DcmDataset responseIdentifiers)
+            {
+                QueryResult result = _queryResults[index];
+
+                // TODO:  edit these when we need to expand the list of supported return tags
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsName), result.PatientsName);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDescription), result.StudyDescription);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
+                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
+            }
+        }
 
         #region Private members
         private ServerState State
@@ -372,6 +537,8 @@ namespace ClearCanvas.Dicom.Network
         private object _monitorLock = new object();
         private ThreadList _threadList = new ThreadList();
         private String _saveDirectory;
+        private FindScpCallbackHelper _findScpCallbackHelper;
+
         #endregion
     }
 }

@@ -61,6 +61,13 @@
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentView.cs" />
+    <Compile Include="DicomServerTestComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerTestComponentControl.Designer.cs">
+      <DependentUpon>DicomServerTestComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerTestComponentView.cs" />
     <Compile Include="ModalityPicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -147,6 +154,10 @@
     <EmbeddedResource Include="DicomServerGroupEditComponentControl.resx">
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomServerTestComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DicomServerTestComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModalityPicker.resx">
       <SubType>Designer</SubType>
