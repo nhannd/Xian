@@ -6,7 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.HL7;
 using ClearCanvas.HL7.Brokers;
-using ClearCanvas.HL7.PreProcessor;
+using ClearCanvas.HL7.PreProcessing;
+using ClearCanvas.HL7.Processing;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 
