@@ -62,7 +62,8 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Obtains the default value of a setting from the <see cref="DefaultSettingValueAttribute"/>
+        /// Obtains the default value of a setting from the <see cref="DefaultSettingValueAttribute"/>.
+        /// If the value is the name of an embedded resource, it is automatically translated.
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>
@@ -74,14 +75,27 @@ namespace ClearCanvas.Common.Configuration
             if (a == null)
                 return "";
 
-            // does the default value look like it could be an embedded resource?
-            if (Regex.IsMatch(a.Value, @"^([\w]+\.)+\w+$"))
+            return TranslateDefaultValue(property.ReflectedType, a.Value);
+        }
+
+        /// <summary>
+        /// If the specified raw value is the name of an embedded resource (embedded in the same
+        /// assembly as the specified settings class), the contents of the resource are returned.
+        /// Otherwise, the raw value is simply returned.
+        /// </summary>
+        /// <param name="settingsClass"></param>
+        /// <param name="rawValue"></param>
+        /// <returns></returns>
+        public static string TranslateDefaultValue(Type settingsClass, string rawValue)
+        {
+            // does the raw value look like it could be an embedded resource?
+            if (Regex.IsMatch(rawValue, @"^([\w]+\.)+\w+$"))
             {
                 try
                 {
                     // try to open the resource
-                    IResourceResolver resolver = new ResourceResolver(property.ReflectedType.Assembly);
-                    using (Stream resourceStream = resolver.OpenResource(a.Value))
+                    IResourceResolver resolver = new ResourceResolver(settingsClass.Assembly);
+                    using (Stream resourceStream = resolver.OpenResource(rawValue))
                     {
                         StreamReader r = new StreamReader(resourceStream);
                         return r.ReadToEnd();
@@ -89,13 +103,13 @@ namespace ClearCanvas.Common.Configuration
                 }
                 catch (MissingManifestResourceException)
                 {
-                    // guess it was not an embedded resource, so return the literal value
-                    return a.Value;
+                    // guess it was not an embedded resource, so return the raw value
+                    return rawValue;
                 }
             }
             else
             {
-                return a.Value;
+                return rawValue;
             }
         }
 

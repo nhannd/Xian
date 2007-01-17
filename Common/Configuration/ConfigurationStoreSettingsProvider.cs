@@ -56,8 +56,9 @@ namespace ClearCanvas.Common.Configuration
             {
                 SettingsPropertyValue value = new SettingsPropertyValue(setting);
                 value.IsDirty = false;
-                if(storedValues.ContainsKey(setting.Name))
-                    value.SerializedValue = storedValues[setting.Name];
+
+                // use the stored value, or set the SerializedValue to null, which tells .NET to use the default value
+                value.SerializedValue = storedValues.ContainsKey(setting.Name) ? storedValues[setting.Name] : null;
                 values.Add(value);
             }
  

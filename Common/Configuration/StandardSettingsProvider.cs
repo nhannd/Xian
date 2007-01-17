@@ -35,6 +35,8 @@ namespace ClearCanvas.Common.Configuration
             _appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
         }
 
+        #region SettingsProvider overrides
+
         public override string ApplicationName
         {
             get
@@ -79,21 +81,33 @@ namespace ClearCanvas.Common.Configuration
             base.Initialize(this.ApplicationName, config);
         }
 
-        private SettingsProvider GetConfigurationStoreProvider(IExtensionPoint configStoreExtPoint)
-        {
-            IConfigurationStore ecs = (IConfigurationStore)configStoreExtPoint.CreateExtension();
-            return new ConfigurationStoreSettingsProvider(ecs);
-        }
-
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection props)
         {
-            return _sourceProvider.GetPropertyValues(context, props);
+            Type settingsClass = (Type)context["SettingsClassType"];
+
+            SettingsPropertyValueCollection values = _sourceProvider.GetPropertyValues(context, props);
+            foreach (SettingsPropertyValue value in values)
+            {
+                // normally, if there is no stored value, the SerializedValue property is null,
+                // which tells .NET to use the default value
+                // however, by handling this logic ourselves, we can do special processing, such
+                // as loading a default value from an embedded resource
+                if (value.SerializedValue == null)
+                {
+                    value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
+                        (string)value.Property.DefaultValue);
+                }
+            }
+            return values;
         }
 
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
         {
             _sourceProvider.SetPropertyValues(context, settings);
         }
+
+        #endregion
+
 
         #region IApplicationSettingsProvider Members
 
@@ -135,5 +149,12 @@ namespace ClearCanvas.Common.Configuration
         }
 
         #endregion
+
+
+        private SettingsProvider GetConfigurationStoreProvider(IExtensionPoint configStoreExtPoint)
+        {
+            IConfigurationStore ecs = (IConfigurationStore)configStoreExtPoint.CreateExtension();
+            return new ConfigurationStoreSettingsProvider(ecs);
+        }
     }
 }
