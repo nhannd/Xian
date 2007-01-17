@@ -37,9 +37,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _showModalityListButton
 			// 
 			this._showModalityListButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this._showModalityListButton.Location = new System.Drawing.Point(157, 6);
+			this._showModalityListButton.Location = new System.Drawing.Point(168, 4);
+			this._showModalityListButton.Margin = new System.Windows.Forms.Padding(2);
 			this._showModalityListButton.Name = "_showModalityListButton";
-			this._showModalityListButton.Size = new System.Drawing.Size(33, 22);
+			this._showModalityListButton.Size = new System.Drawing.Size(25, 18);
 			this._showModalityListButton.TabIndex = 2;
 			this._showModalityListButton.TabStop = false;
 			this._showModalityListButton.UseVisualStyleBackColor = true;
@@ -47,12 +48,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _contextMenuStrip
 			// 
+			this._contextMenuStrip.AllowMerge = false;
+			this._contextMenuStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this._contextMenuStrip.DropShadowEnabled = false;
-			this._contextMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			this._contextMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
 			this._contextMenuStrip.Name = "contextMenuStrip1";
 			this._contextMenuStrip.ShowImageMargin = false;
 			this._contextMenuStrip.ShowItemToolTips = false;
-			this._contextMenuStrip.Size = new System.Drawing.Size(36, 4);
+			this._contextMenuStrip.Size = new System.Drawing.Size(128, 26);
 			// 
 			// _modalitiesString
 			// 
@@ -60,20 +63,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._modalitiesString.AutoEllipsis = true;
 			this._modalitiesString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this._modalitiesString.Enabled = false;
-			this._modalitiesString.Location = new System.Drawing.Point(4, 6);
+			this._modalitiesString.Location = new System.Drawing.Point(3, 4);
+			this._modalitiesString.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this._modalitiesString.Name = "_modalitiesString";
-			this._modalitiesString.Size = new System.Drawing.Size(147, 22);
+			this._modalitiesString.Size = new System.Drawing.Size(161, 18);
 			this._modalitiesString.TabIndex = 1;
 			// 
 			// ModalityPicker
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.Controls.Add(this._modalitiesString);
 			this.Controls.Add(this._showModalityListButton);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "ModalityPicker";
-			this.Size = new System.Drawing.Size(195, 35);
+			this.Size = new System.Drawing.Size(195, 28);
 			this.ResumeLayout(false);
 
 		}

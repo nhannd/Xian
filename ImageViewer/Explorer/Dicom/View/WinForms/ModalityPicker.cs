@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_modalityPicker.BorderStyle = BorderStyle.None;
 			_modalityPicker.CheckOnClick = true;
 			_modalityPicker.SelectionMode = SelectionMode.One;
-
+			
 			// We don't sort the list automatically, because we want the "Clear" item at the top.
 			_modalityPicker.Sorted = false;
 			_modalityPicker.ItemCheck += new ItemCheckEventHandler(OnModalityPickerItemCheck);
@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_checkedModalities = new SortedList<string, string>();
 		}
 
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)] 
 		[Browsable(false)]
 		public IList<string> CheckedModalities
 		{
@@ -85,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void SetCheckedModalities(IList<string> modalities)
 		{
 			if (!_availableModalitiesSet)
-				throw new InvalidOperationException(SR.ErrorAvailableModalitiesNotSet);
+				return;
 
 			List<string> checkedModalities = new List<string>();
 			if (modalities != null)
