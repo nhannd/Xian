@@ -36,6 +36,7 @@ namespace ClearCanvas.Dicom.Services
             {
                 // put the parcel into the SendQueue
                 this.SendQueue.Add(aParcel);
+                aParcel.StartSend();
             }
         }
 

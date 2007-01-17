@@ -135,6 +135,7 @@
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="TimeParser.cs" />
+    <Compile Include="TransferSyntaxHelper.cs" />
     <Compile Include="Uid.cs" />
     <Compile Include="VMStringConverter.cs" />
     <Compile Include="Window.cs" />

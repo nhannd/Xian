@@ -253,39 +253,7 @@ namespace ClearCanvas.Dicom.DataStore
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.PhotometricInterpretation, stringValue);
             if (cond.good())
-            {
-                PhotometricInterpretation pi;
-                if (stringValue.ToString() == "ARGB")
-                    pi = PhotometricInterpretation.Argb;
-                else if (stringValue.ToString() == "CMYK")
-                    pi = PhotometricInterpretation.Cmyk;
-                else if (stringValue.ToString() == "HSV")
-                    pi = PhotometricInterpretation.Hsv;
-                else if (stringValue.ToString() == "MONOCHROME1")
-                    pi = PhotometricInterpretation.Monochrome1;
-                else if (stringValue.ToString() == "MONOCHROME2")
-                    pi = PhotometricInterpretation.Monochrome2;
-                else if (stringValue.ToString() == "PALETTE_COLOR")
-                    pi = PhotometricInterpretation.PaletteColor;
-                else if (stringValue.ToString() == "RGB")
-                    pi = PhotometricInterpretation.Rgb;
-                else if (stringValue.ToString() == "YBR_FULL")
-                    pi = PhotometricInterpretation.YbrFull;
-                else if (stringValue.ToString() == "YBR_FULL_422")
-                    pi = PhotometricInterpretation.YbrFull422;
-                else if (stringValue.ToString() == "YBR_ICT")
-                    pi = PhotometricInterpretation.YbrIct;
-                else if (stringValue.ToString() == "YBR_PARTIAL_420")
-                    pi = PhotometricInterpretation.YbrPartial420;
-                else if (stringValue.ToString() == "YBR_PARTIAL_422")
-                    pi = PhotometricInterpretation.YbrPartial422;
-                else if (stringValue.ToString() == "YBR_RCT")
-                    pi = PhotometricInterpretation.YbrRct;
-                else
-                    pi = PhotometricInterpretation.Monochrome1;
-
-                image.PhotometricInterpretation = pi;
-            }
+                image.PhotometricInterpretation = PhotometricInterpretationHelper.FromString(stringValue.ToString());
 
             cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out ushortValue);
             if (cond.good())

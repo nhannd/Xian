@@ -33,28 +33,54 @@ namespace ClearCanvas.Dicom.Network
         }
     }
 
+    public class StoreScpEventArgs : EventArgs
+    {
+        private string _fileName;
+        private DcmDataset _imageDataset;
+
+        public StoreScpEventArgs(string fileName, DcmDataset imageDataSet)
+        {
+            _fileName = fileName;
+            _imageDataset = imageDataSet;
+        }
+
+        public string FileName
+        {
+            get { return _fileName; }
+            set { _fileName = value; }
+        }
+
+        public DcmDataset ImageDataSet
+        {
+            get { return _imageDataset; }
+            set { _imageDataset = value; }
+        }
+    }
+
     /// <summary>
     /// This class's implementation is not yet complete. Use at your own risk.
     /// </summary>
     public class DicomServer
     {
-        /// <summary>
-        /// Fires when a C-FIND request is initiated.
-        /// </summary>
         private event EventHandler<FindScpEventArgs> _findScpEvent;
-
-        /// <summary>
-        /// Event accessor.
-        /// </summary>
+        private event EventHandler<StoreScpEventArgs> _storeScpEvent;
         public event EventHandler<FindScpEventArgs> FindScpEvent
         {
             add { _findScpEvent += value; }
             remove { _findScpEvent -= value; }
         }
-
+        public event EventHandler<StoreScpEventArgs> StoreScpEvent
+        {
+            add { _storeScpEvent += value; }
+            remove { _storeScpEvent -= value; }
+        }
         protected void OnFindScpEvent(FindScpEventArgs e)
         {
             EventsHelper.Fire(_findScpEvent, this, e);
+        }
+        protected void OnStoreScpEvent(StoreScpEventArgs e)
+        {
+            EventsHelper.Fire(_storeScpEvent, this, e);
         }
 
         public DicomServer(ApplicationEntity ownAEParameters, String saveDirectory)
@@ -66,6 +92,7 @@ namespace ClearCanvas.Dicom.Network
             _saveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
 
             _findScpCallbackHelper = new FindScpCallbackHelper(this);
+            _storeScpCallbackHelper = new StoreScpCallbackHelper(this);
         }
 
 
@@ -491,6 +518,39 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        class StoreScpCallbackHelper
+        {
+            private StoreScpCallbackHelperDelegate _storeScpCallbackHelperDelegate;
+            private DicomServer _parent;
+
+            public StoreScpCallbackHelper(DicomServer parent)
+            {
+                _parent = parent;
+
+                _storeScpCallbackHelperDelegate = new StoreScpCallbackHelperDelegate(DefaultCallback);
+                RegisterStoreCallbackHelper_OffisDcm(_storeScpCallbackHelperDelegate);
+            }
+
+            ~StoreScpCallbackHelper()
+            {
+                RegisterStoreCallbackHelper_OffisDcm(null);
+            }
+
+            public delegate void StoreScpCallbackHelperDelegate(IntPtr interopStoreCallbackInfo);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterStoreCallbackHelper_OffisDcm")]
+            public static extern void RegisterStoreCallbackHelper_OffisDcm(StoreScpCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr interopStoreCallbackInfoPointer)
+            {
+                InteropStoreCallbackInfo interopStoreCallbackInfo = new InteropStoreCallbackInfo(interopStoreCallbackInfoPointer, false);
+
+                StoreScpEventArgs args = new StoreScpEventArgs(interopStoreCallbackInfo.FileName, interopStoreCallbackInfo.ImageDataset);
+                _parent.OnStoreScpEvent(args);
+
+            }
+        }
+
         #region Private members
         private ServerState State
         {
@@ -538,6 +598,7 @@ namespace ClearCanvas.Dicom.Network
         private ThreadList _threadList = new ThreadList();
         private String _saveDirectory;
         private FindScpCallbackHelper _findScpCallbackHelper;
+        private StoreScpCallbackHelper _storeScpCallbackHelper;
 
         #endregion
     }

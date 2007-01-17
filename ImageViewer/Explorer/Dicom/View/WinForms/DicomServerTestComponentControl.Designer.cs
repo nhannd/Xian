@@ -32,11 +32,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._closeButton = new System.Windows.Forms.Button();
             this._aeTitle = new ClearCanvas.Controls.WinForms.TextField();
             this._port = new ClearCanvas.Controls.WinForms.TextField();
+            this._saveDirectory = new ClearCanvas.Controls.WinForms.TextField();
             this.SuspendLayout();
             // 
             // _toggleServerButton
             // 
-            this._toggleServerButton.Location = new System.Drawing.Point(4, 97);
+            this._toggleServerButton.Location = new System.Drawing.Point(4, 156);
             this._toggleServerButton.Name = "_toggleServerButton";
             this._toggleServerButton.Size = new System.Drawing.Size(75, 23);
             this._toggleServerButton.TabIndex = 0;
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             // _closeButton
             // 
-            this._closeButton.Location = new System.Drawing.Point(92, 97);
+            this._closeButton.Location = new System.Drawing.Point(92, 156);
             this._closeButton.Name = "_closeButton";
             this._closeButton.Size = new System.Drawing.Size(75, 23);
             this._closeButton.TabIndex = 1;
@@ -76,17 +77,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._port.TabIndex = 3;
             this._port.Value = null;
             // 
+            // _saveDirectory
+            // 
+            this._saveDirectory.LabelText = "Save Directory";
+            this._saveDirectory.Location = new System.Drawing.Point(4, 98);
+            this._saveDirectory.Margin = new System.Windows.Forms.Padding(2);
+            this._saveDirectory.Mask = "";
+            this._saveDirectory.Name = "_saveDirectory";
+            this._saveDirectory.Size = new System.Drawing.Size(150, 41);
+            this._saveDirectory.TabIndex = 4;
+            this._saveDirectory.Value = null;
+            // 
             // DicomServerTestComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._closeButton;
+            this.Controls.Add(this._saveDirectory);
             this.Controls.Add(this._port);
             this.Controls.Add(this._aeTitle);
             this.Controls.Add(this._closeButton);
             this.Controls.Add(this._toggleServerButton);
             this.Name = "DicomServerTestComponentControl";
-            this.Size = new System.Drawing.Size(170, 128);
+            this.Size = new System.Drawing.Size(170, 182);
             this.ResumeLayout(false);
 
         }
@@ -97,5 +110,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private System.Windows.Forms.Button _closeButton;
         private ClearCanvas.Controls.WinForms.TextField _aeTitle;
         private ClearCanvas.Controls.WinForms.TextField _port;
+        private ClearCanvas.Controls.WinForms.TextField _saveDirectory;
     }
 }

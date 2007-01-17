@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             _aeTitle.DataBindings.Add("Value", component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
             _port.DataBindings.Add("Value", component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
+            _saveDirectory.DataBindings.Add("Value", component, "SaveDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _toggleServerButton_Click(object sender, EventArgs e)
@@ -38,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _toggleServerButton.Text = "Start";
                 _aeTitle.Enabled = true;
                 _port.Enabled = true;
+                _saveDirectory.Enabled = true;
             }
             else
             {
@@ -45,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _toggleServerButton.Text = "Stop";
                 _aeTitle.Enabled = false;
                 _port.Enabled = false;
+                _saveDirectory.Enabled = false;
             }
         }
 

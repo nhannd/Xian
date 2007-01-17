@@ -20,12 +20,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class DICOMServerTestTool : Tool<IDesktopToolContext>
     {
+        private DicomServerTestComponent _component;
         public void Launch()
         {
-            ApplicationComponent.LaunchAsDialog(
-                this.Context.DesktopWindow,
-                new DicomServerTestComponent(),
-                "DICOM Server");
+            if (_component == null)
+            {
+                _component = new DicomServerTestComponent();
+                ApplicationComponent.LaunchAsShelf(
+                        this.Context.DesktopWindow,
+                        _component,
+                        "DICOM Server",
+                        ShelfDisplayHint.DockRight,
+                        delegate(IApplicationComponent component) { _component = null; });
+            }
         }
     }
 
@@ -45,6 +52,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     {
         private ClearCanvas.Dicom.Network.DicomServer _dicomServer;
         private string _aeTitle;
+        private string _saveDirectory;
         private int _port;
         private bool _isServerStarted;
         
@@ -53,8 +61,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// </summary>
         public DicomServerTestComponent()
         {
-            _aeTitle = "JLNETTEST";
-            _port = 4000;
+            DicomServerTree dicomServerTree = new DicomServerTree();
+            if (dicomServerTree.CurrentServer != null)
+            {
+                DicomServer server = (DicomServer)dicomServerTree.CurrentServer;
+                _aeTitle = server.DicomAE.AE;
+                _port = server.DicomAE.Port;
+            }
+            else
+            {
+                _aeTitle = "STORESCP";
+                _port = 4000;
+            }
+
+            _saveDirectory = ".\\dicom";
             _isServerStarted = false;
         }
 
@@ -65,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public override void Stop()
         {
+            StopServer();
             base.Stop();
         }
 
@@ -73,8 +94,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle(_aeTitle), new ListeningPort(_port));
 
-            _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myOwnAEParameters, @"..\studies\");
+            _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myOwnAEParameters, _saveDirectory);
             _dicomServer.FindScpEvent += OnFindScpEvent;
+            _dicomServer.StoreScpEvent += OnStoreScpEvent;
+
             try
             {
                 _dicomServer.Start();
@@ -92,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_dicomServer != null)
             {
                 _dicomServer.FindScpEvent -= OnFindScpEvent;
+                _dicomServer.StoreScpEvent -= OnStoreScpEvent;
                 _dicomServer.Stop();
                 _dicomServer = null;
             }
@@ -108,6 +132,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get { return _port; }
             set { _port = value; }
+        }
+
+        public string SaveDirectory
+        {
+            get { return _saveDirectory; }
+            set { _saveDirectory = value; }
         }
 
         public bool IsServerStarted
@@ -139,5 +169,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ExceptionHandler.Report(exception, this.Host.DesktopWindow);
             }
         }
+
+        private void OnStoreScpEvent(object sender, StoreScpEventArgs e)
+        {
+            if (e == null)
+                return;
+
+            try
+            {
+                // need to extract the transfersyntax from ImageDataSet and store in a separate MetaInfo variable as part of the InsertSopInstance argument
+                DcmMetaInfo metaInfo = new DcmMetaInfo();
+                string xfer = TransferSyntaxHelper.GetString(e.ImageDataSet.getOriginalXfer());
+                if (xfer != null)
+                    metaInfo.putAndInsertString(new DcmTag(Dcm.TransferSyntaxUID), xfer);
+
+                IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore();
+                if (store != null)
+                {
+                    store.InsertSopInstance(metaInfo, e.ImageDataSet, e.FileName);
+                    store.Flush();
+                }
+            }
+            catch (System.Data.SqlClient.SqlException exception)
+            {
+                ExceptionHandler.Report(exception, "MessageUnableToConnectToDataStore", this.Host.DesktopWindow);
+            }
+            catch (Exception exception)
+            {
+                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+            }
+        }        
     }
 }
