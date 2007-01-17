@@ -27,7 +27,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public string TooltipText { get { return _tooltip; } }
 
-        internal override void Apply(IActionBuildingContext builder)
+        public override void Apply(IActionBuildingContext builder)
         {
             // assert _action != null
             builder.Action.Tooltip = builder.ResourceResolver.LocalizeString(this.TooltipText);

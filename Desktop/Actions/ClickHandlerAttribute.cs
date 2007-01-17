@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop.Actions
 
         public string HandlerMethodName { get { return _handlerMethod; } }
 
-        internal override void Apply(IActionBuildingContext builder)
+        public override void Apply(IActionBuildingContext builder)
         {
             // check that the method exists, etc
             ValidateClickHandler(builder.ActionTarget, this.HandlerMethodName);

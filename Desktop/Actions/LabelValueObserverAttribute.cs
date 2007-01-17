@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop.Actions
 		{
 		}
 
-		internal override void Apply(IActionBuildingContext builder)
+        public override void Apply(IActionBuildingContext builder)
 		{
             Bind<string>(builder, "Label", "LabelChanged");
         }

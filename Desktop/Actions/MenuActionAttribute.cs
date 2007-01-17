@@ -19,7 +19,7 @@ namespace ClearCanvas.Desktop.Actions
         {
         }
 
-        internal override void Apply(IActionBuildingContext builder)
+        public override void Apply(IActionBuildingContext builder)
         {
             ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
             builder.Action = new MenuAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);

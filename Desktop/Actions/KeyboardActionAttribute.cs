@@ -13,7 +13,7 @@ namespace ClearCanvas.Desktop.Actions
 		{
 		}
 
-		internal override void Apply(IActionBuildingContext builder)
+        public override void Apply(IActionBuildingContext builder)
 		{
             // assert _action == null
             ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);

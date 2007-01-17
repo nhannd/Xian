@@ -20,8 +20,8 @@ namespace ClearCanvas.Desktop.Actions
 
 			_groupHint = groupHint;
 		}
-	
-		internal override void Apply(IActionBuildingContext builder)
+
+        public override void Apply(IActionBuildingContext builder)
 		{
 			builder.Action.GroupHint = new GroupHint(_groupHint);
 		}
