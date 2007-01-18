@@ -48,8 +48,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._clearButton = new System.Windows.Forms.Button();
 			this._searchTodayButton = new System.Windows.Forms.Button();
 			this._modalityLabel = new System.Windows.Forms.Label();
-			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.Size = new System.Drawing.Size(571, 136);
+			this._tableLayoutPanel.Size = new System.Drawing.Size(574, 136);
 			this._tableLayoutPanel.TabIndex = 2;
 			// 
 			// _searchButton
@@ -281,6 +281,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._modalityLabel.TabIndex = 14;
 			this._modalityLabel.Text = "Modality";
 			// 
+			// _titleBar
+			// 
+			this._titleBar.Dock = System.Windows.Forms.DockStyle.Top;
+			this._titleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._titleBar.Location = new System.Drawing.Point(0, 0);
+			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
+			this._titleBar.Name = "_titleBar";
+			this._titleBar.Size = new System.Drawing.Size(587, 29);
+			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
+			this._titleBar.TabIndex = 20;
+			this._titleBar.Text = "Search";
+			// 
 			// _modalityPicker
 			// 
 			this._modalityPicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -291,18 +303,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._modalityPicker.Size = new System.Drawing.Size(160, 20);
 			this._modalityPicker.TabIndex = 15;
 			// 
-			// _titleBar
-			// 
-			this._titleBar.Dock = System.Windows.Forms.DockStyle.Top;
-			this._titleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._titleBar.Location = new System.Drawing.Point(0, 0);
-			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
-			this._titleBar.Name = "_titleBar";
-			this._titleBar.Size = new System.Drawing.Size(584, 29);
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
-			this._titleBar.TabIndex = 20;
-			this._titleBar.Text = "Search";
-			// 
 			// SearchPanelComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.Controls.Add(this._titleBar);
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Name = "SearchPanelComponentControl";
-			this.Size = new System.Drawing.Size(584, 178);
+			this.Size = new System.Drawing.Size(587, 178);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this._tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
