@@ -181,17 +181,17 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _settingsPropertiesActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 
-            _saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "Icons.Edit.png",
+            _saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "SaveAll.png",
                 delegate() { SaveModifiedSettings(false); });
 
-            _resetAllAction = _settingsPropertiesActionModel.AddAction("resetall", SR.LabelResetAll, "Icons.Edit.png",
+            _editAction = _settingsPropertiesActionModel.AddAction("edit", SR.LabelEdit, "Edit.png",
+               delegate() { EditProperty(_selectedSettingsProperty); });
+
+            _resetAction = _settingsPropertiesActionModel.AddAction("reset", SR.LabelReset, null,
+               delegate() { ResetPropertyValue(_selectedSettingsProperty); });
+
+            _resetAllAction = _settingsPropertiesActionModel.AddAction("resetall", SR.LabelResetAll, null,
                 delegate() { ResetAllPropertyValues(); });
-
-            _resetAction = _settingsPropertiesActionModel.AddAction("reset", SR.LabelReset, "Icons.Edit.png",
-                delegate() { ResetPropertyValue(_selectedSettingsProperty); });
-
-            _editAction = _settingsPropertiesActionModel.AddAction("edit", SR.LabelEdit, "Icons.Edit.png",
-                delegate() { EditProperty(_selectedSettingsProperty); });
 
         }
 
@@ -203,7 +203,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 foreach (Type t in plugin.Assembly.GetTypes())
                 {
-                    if (t.IsSubclassOf(typeof(ApplicationSettingsBase)))
+                    if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
                     {
                         _settingsGroupTable.Items.Add(t);
                     }
