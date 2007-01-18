@@ -251,12 +251,14 @@ namespace ClearCanvas.Desktop
         /// Creates and executes a new <see cref="BackgroundTask"/> based on the specified arguments.
         /// </summary>
         /// <param name="method">The method to run in the background</param>
+        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
         /// <param name="terminateHandler">Method that will be called when the task terminates</param>
         /// <param name="progressHandler">Optional method to handle progress updates, may be null</param>
         /// <param name="userState">Optional state to be passed to the background task, may be null</param>
         /// <returns>A running <see cref="BackgroundTask"/> object.</returns>
         public static BackgroundTask CreateAndRun(
             BackgroundTaskMethod method,
+            bool supportsCancel,
             EventHandler<BackgroundTaskTerminatedEventArgs> terminateHandler,
             EventHandler<BackgroundTaskProgressEventArgs> progressHandler,
             object userState)
@@ -264,7 +266,7 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(method, "method");
             Platform.CheckForNullReference(terminateHandler, "terminateHandler");
 
-            BackgroundTask task = new BackgroundTask(method, userState);
+            BackgroundTask task = new BackgroundTask(method, supportsCancel, userState);
             task.Terminated += terminateHandler;
             if (progressHandler != null)
             {
@@ -279,8 +281,9 @@ namespace ClearCanvas.Desktop
         /// is not executed until the <see cref="Run"/> method is called.
         /// </summary>
         /// <param name="method">The method to run in the background</param>
+        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
         /// <param name="userState">Optional state to be passed to the background method</param>
-        public BackgroundTask(BackgroundTaskMethod method, object userState)
+        public BackgroundTask(BackgroundTaskMethod method, bool supportsCancel, object userState)
         {
             Platform.CheckForNullReference(method, "method");
             _method = method;
@@ -288,7 +291,7 @@ namespace ClearCanvas.Desktop
 
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.WorkerReportsProgress = true;
-            _backgroundWorker.WorkerSupportsCancellation = true;
+            _backgroundWorker.WorkerSupportsCancellation = supportsCancel;
             _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
             _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
             _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_backgroundWorker_RunWorkerCompleted);
@@ -299,8 +302,9 @@ namespace ClearCanvas.Desktop
         /// is not executed until the <see cref="Run"/> method is called.
         /// </summary>
         /// <param name="method">The method to run in the background</param>
-        public BackgroundTask(BackgroundTaskMethod method)
-            :this(method, null)
+        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
+        public BackgroundTask(BackgroundTaskMethod method, bool supportsCancel)
+            : this(method, supportsCancel, null)
         {
         }
 
@@ -321,6 +325,14 @@ namespace ClearCanvas.Desktop
         public bool IsRunning
         {
             get { return _backgroundWorker.IsBusy; }
+        }
+
+        /// <summary>
+        /// True if the task supports cancellation
+        /// </summary>
+        public bool SupportsCancel
+        {
+            get { return _backgroundWorker.WorkerSupportsCancellation; }
         }
 
         /// <summary>
