@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (presentationImage == null)
 				return string.Empty;
 
-			DicomPresentationImage dicomPresentationImage = (DicomPresentationImage)presentationImage;
+			DicomPresentationImage dicomPresentationImage = presentationImage as DicomPresentationImage;
 			if (dicomPresentationImage != null)
 			{
 				try

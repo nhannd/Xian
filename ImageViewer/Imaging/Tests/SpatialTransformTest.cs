@@ -297,6 +297,83 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.IsTrue(sourcePointExpected == SourcePointCalculated);
 			Assert.IsTrue(destinationPointBackCalculated == destinationPoint);
 		}
+
+		[Test]
+		public void TransformVectorsTest()
+		{
+			PointF[] originalVectors = new PointF[] { new PointF(1, 1), new PointF(1, -1), new PointF(-1, 1), new PointF(-1, -1) };
+			
+			SpatialTransform transform = new SpatialTransform();
+			transform.SourceRectangle = new Rectangle(0, 0, 10, 10);
+			transform.DestinationRectangle= new Rectangle(0, 0, 15, 25);
+
+			PointF[] testVectors;
+			PointF[] resultVectors;
+
+			testVectors = (PointF[])originalVectors.Clone();
+			resultVectors = new PointF[] {new PointF(1.5F, 1.5F), new PointF(1.5F, -1.5F), new PointF(-1.5F, 1.5F), new PointF(-1.5F, -1.5F) };
+			transform.ConvertVectorsToDestination(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			resultVectors = (PointF[])originalVectors.Clone();
+			transform.ConvertVectorsToSource(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			testVectors = (PointF[])originalVectors.Clone();
+			resultVectors = new PointF[] { new PointF(-1.5F, 1.5F), new PointF(-1.5F, -1.5F), new PointF(1.5F, 1.5F), new PointF(1.5F, -1.5F) };
+			transform.FlipHorizontal = true;
+			transform.ConvertVectorsToDestination(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			resultVectors = (PointF[])originalVectors.Clone();
+			transform.ConvertVectorsToSource(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			testVectors = (PointF[])originalVectors.Clone();
+			resultVectors = new PointF[] { new PointF(-1.5F, -1.5F), new PointF(-1.5F, 1.5F), new PointF(1.5F, -1.5F), new PointF(1.5F, 1.5F) };
+			transform.FlipVertical = true;
+			transform.ConvertVectorsToDestination(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			resultVectors = (PointF[])originalVectors.Clone();
+			transform.ConvertVectorsToSource(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			testVectors = (PointF[])originalVectors.Clone();
+			resultVectors = new PointF[] { new PointF(-3F, -3F), new PointF(-3F, 3F), new PointF(3F, -3F), new PointF(3F, 3F) };
+			transform.ScaleToFit = false;
+			transform.Scale = 3F;
+			transform.ConvertVectorsToDestination(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+			
+			resultVectors = (PointF[])originalVectors.Clone();
+			transform.ConvertVectorsToSource(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			testVectors = (PointF[])originalVectors.Clone();
+			resultVectors = new PointF[] { new PointF(-3F, 3F), new PointF(3F, 3F), new PointF(-3F, -3F), new PointF(3F, -3F) };
+			transform.Rotation = -90;
+			transform.ConvertVectorsToDestination(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+
+			resultVectors = (PointF[])originalVectors.Clone();
+			transform.ConvertVectorsToSource(testVectors);
+			Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
+		}
+
+		private bool VerifyTestVectors(PointF[] transformed, PointF[] expected)
+		{
+			for (int i = 0; i < transformed.Length; ++i)
+			{
+				double xDifference = Math.Abs(transformed[i].X - expected[i].X);
+				double yDifference = Math.Abs(transformed[i].Y - expected[i].Y);
+
+				if (xDifference > 0.001 || yDifference > 0.001)
+					return false;
+			}
+
+			return true;
+		}
 	}
 }
 

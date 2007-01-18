@@ -449,6 +449,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
+		/// Transforms an array of vectors from the source to destination coordinate system.
+		/// The input array is modified directly, and contains the return values.
+		/// </summary>
+		public void ConvertVectorsToDestination(PointF[] sourceVectors)
+		{
+			Calculate();
+
+			_resultMatrix.TransformVectors(sourceVectors);
+		}
+
+		/// <summary>
+		/// Transforms an array of vectors from the destination to source coordinate system.
+		/// The input array is modified directly, and contains the return values.
+		/// </summary>
+		public void ConvertVectorsToSource(PointF[] destinationVectors)
+		{
+			Calculate();
+
+			Matrix inverse = _resultMatrix.Clone();
+			inverse.Invert();
+
+			inverse.TransformVectors(destinationVectors);
+		}
+
+		/// <summary>
 		/// Converts a <see cref="SizeF"/> from source to destination coordinates.
 		/// </summary>
 		/// <param name="sourceDimensions"></param>

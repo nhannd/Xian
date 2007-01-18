@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		protected override bool MeetsCriteria(IPresentationImage presentationImage)
 		{
-			DicomPresentationImage dicomImage = (DicomPresentationImage)presentationImage;
+			DicomPresentationImage dicomImage = presentationImage as DicomPresentationImage;
 			if (dicomImage == null)
 				return false;
 

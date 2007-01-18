@@ -14,6 +14,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 		private IAnnotationItemProvider _ownerProvider;
 
 		protected AnnotationItem(string identifier, IAnnotationItemProvider ownerProvider)
+			: this(identifier, ownerProvider, false)
+		{ 
+		}
+
+		protected AnnotationItem(string identifier, IAnnotationItemProvider ownerProvider, bool allowEmptyLabel)
 		{
 			_ownerProvider = ownerProvider;
 
@@ -34,10 +39,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 
 
 			_label = SR.ResourceManager.GetString(resourceString + "_Label");
-			if (string.IsNullOrEmpty(_label))
+			if (string.IsNullOrEmpty(_label) && !allowEmptyLabel)
 			{
 #if DEBUG
-				throw new NotImplementedException("AnnotationItem has no associated label: " + this.GetType().ToString());
+					throw new NotImplementedException("AnnotationItem has no associated label: " + this.GetType().ToString());
 #else
 				_label = SR.Unknown;
 #endif

@@ -61,6 +61,8 @@
     <Compile Include="Dicom\GeneralEquipment\SoftwareVersionsAnnotationItem.cs" />
     <Compile Include="Dicom\GeneralEquipment\SpatialResolutionAnnotationItem.cs" />
     <Compile Include="Dicom\GeneralEquipment\StationNameAnnotationItem.cs" />
+    <Compile Include="Presentation\DirectionalMarkerAnnotationItem.cs" />
+    <Compile Include="Presentation\Tests\DirectionalMarkerTests.cs" />
     <Compile Include="Tests\BasicTests.cs" />
     <Compile Include="Dicom\GeneralEquipment\TimeOfLastCalibrationAnnotationItem.cs" />
     <Compile Include="Dicom\GeneralImage\AcquisitionDateAnnotationItem.cs" />

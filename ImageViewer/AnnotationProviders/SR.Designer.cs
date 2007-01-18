@@ -1249,6 +1249,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The transformed edge does not have a corresponding value..
+        /// </summary>
+        internal static string ExceptionTransformedEdgeDoesNotMatch {
+            get {
+                return ResourceManager.GetString("ExceptionTransformedEdgeDoesNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lut (Applied).
         /// </summary>
         internal static string Presentation_AppliedLut_DisplayName {
@@ -1263,6 +1272,78 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Presentation_AppliedLut_Label {
             get {
                 return ResourceManager.GetString("Presentation_AppliedLut_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directional Marker (Bottom).
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Bottom_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Bottom_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Bottom_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Bottom_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directional Marker (Left).
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Left_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Left_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Left_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Left_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directional Marker (Right).
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Right_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Right_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Right_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Right_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directional Marker (Top).
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Top_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Top_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Presentation_DirectionalMarkers_Top_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DirectionalMarkers_Top_Label", resourceCulture);
             }
         }
         
@@ -1299,6 +1380,60 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Unknown {
             get {
                 return ResourceManager.GetString("Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A.
+        /// </summary>
+        internal static string ValueDirectionalMarkersAnterior {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersAnterior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to F.
+        /// </summary>
+        internal static string ValueDirectionalMarkersFoot {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersFoot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to H.
+        /// </summary>
+        internal static string ValueDirectionalMarkersHead {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersHead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L.
+        /// </summary>
+        internal static string ValueDirectionalMarkersLeft {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to P.
+        /// </summary>
+        internal static string ValueDirectionalMarkersPosterior {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersPosterior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R.
+        /// </summary>
+        internal static string ValueDirectionalMarkersRight {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersRight", resourceCulture);
             }
         }
     }

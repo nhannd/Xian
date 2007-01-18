@@ -133,6 +133,7 @@
     <Compile Include="Tests\DcmDataTest.cs" />
     <Compile Include="Tests\DcmNetTest.cs" />
     <Compile Include="Tests\DateTimeTests.cs" />
+    <Compile Include="Tests\ImageOrientationPatientTests.cs" />
     <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="TimeParser.cs" />
     <Compile Include="TransferSyntaxHelper.cs" />

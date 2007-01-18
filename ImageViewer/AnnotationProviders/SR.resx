@@ -513,11 +513,38 @@
   <data name="Dicom_PatientStudy_PatientsWeight_Label" xml:space="preserve">
     <value>Weight</value>
   </data>
+  <data name="ExceptionTransformedEdgeDoesNotMatch" xml:space="preserve">
+    <value>The transformed edge does not have a corresponding value.</value>
+  </data>
   <data name="Presentation_AppliedLut_DisplayName" xml:space="preserve">
     <value>Lut (Applied)</value>
   </data>
   <data name="Presentation_AppliedLut_Label" xml:space="preserve">
     <value>Lut</value>
+  </data>
+  <data name="Presentation_DirectionalMarkers_Bottom_DisplayName" xml:space="preserve">
+    <value>Directional Marker (Bottom)</value>
+  </data>
+  <data name="Presentation_DirectionalMarkers_Bottom_Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Presentation_DirectionalMarkers_Left_DisplayName" xml:space="preserve">
+    <value>Directional Marker (Left)</value>
+  </data>
+  <data name="Presentation_DirectionalMarkers_Left_Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Presentation_DirectionalMarkers_Right_DisplayName" xml:space="preserve">
+    <value>Directional Marker (Right)</value>
+  </data>
+  <data name="Presentation_DirectionalMarkers_Right_Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Presentation_DirectionalMarkers_Top_DisplayName" xml:space="preserve">
+    <value>Directional Marker (Top)</value>
+  </data>
+  <data name="Presentation_DirectionalMarkers_Top_Label" xml:space="preserve">
+    <value />
   </data>
   <data name="Presentation_Zoom_DisplayName" xml:space="preserve">
     <value>Zoom</value>
@@ -530,5 +557,23 @@
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
+  </data>
+  <data name="ValueDirectionalMarkersAnterior" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="ValueDirectionalMarkersFoot" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="ValueDirectionalMarkersHead" xml:space="preserve">
+    <value>H</value>
+  </data>
+  <data name="ValueDirectionalMarkersLeft" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="ValueDirectionalMarkersPosterior" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="ValueDirectionalMarkersRight" xml:space="preserve">
+    <value>R</value>
   </data>
 </root>
