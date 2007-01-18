@@ -27,6 +27,7 @@ namespace ClearCanvas.Common.Configuration
     {
         private string _appName;
         private SettingsProvider _sourceProvider;
+        private object _syncLock = new object();
 
 
         public StandardSettingsProvider()
@@ -51,59 +52,67 @@ namespace ClearCanvas.Common.Configuration
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
-
-            // obtain a source provider, using an enterprise one if available
-            try
+            lock (_syncLock)
             {
-                _sourceProvider = GetConfigurationStoreProvider(new EnterpriseConfigurationStoreExtensionPoint());
-            }
-            catch (NotSupportedException)
-            {
-                Platform.Log(SR.LogEnterpriseConfigurationStoreNotFound, LogLevel.Info);
-
+                // obtain a source provider, using an enterprise one if available
                 try
                 {
-                    // try for a local configuration store
-                    _sourceProvider = GetConfigurationStoreProvider(new LocalConfigurationStoreExtensionPoint());
+                    _sourceProvider = GetConfigurationStoreProvider(new EnterpriseConfigurationStoreExtensionPoint());
                 }
                 catch (NotSupportedException)
                 {
-                    Platform.Log(SR.LogLocalConfigurationStoreNotFound, LogLevel.Info);
-                    
-                    // default to LocalFileSettingsProvider as a last resort
-                    _sourceProvider = new LocalFileSettingsProvider();
-                }
-            }
+                    Platform.Log(SR.LogEnterpriseConfigurationStoreNotFound, LogLevel.Info);
 
-            // init source provider
-            // according to sample implementations, use the application name here
-            _sourceProvider.Initialize(this.ApplicationName, config);
-            base.Initialize(this.ApplicationName, config);
+                    try
+                    {
+                        // try for a local configuration store
+                        _sourceProvider = GetConfigurationStoreProvider(new LocalConfigurationStoreExtensionPoint());
+                    }
+                    catch (NotSupportedException)
+                    {
+                        Platform.Log(SR.LogLocalConfigurationStoreNotFound, LogLevel.Info);
+
+                        // default to LocalFileSettingsProvider as a last resort
+                        _sourceProvider = new LocalFileSettingsProvider();
+                    }
+                }
+
+                // init source provider
+                // according to sample implementations, use the application name here
+                _sourceProvider.Initialize(this.ApplicationName, config);
+                base.Initialize(this.ApplicationName, config);
+            }
         }
 
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection props)
         {
-            Type settingsClass = (Type)context["SettingsClassType"];
-
-            SettingsPropertyValueCollection values = _sourceProvider.GetPropertyValues(context, props);
-            foreach (SettingsPropertyValue value in values)
+            lock (_syncLock)
             {
-                // normally, if there is no stored value, the SerializedValue property is null,
-                // which tells .NET to use the default value
-                // however, by handling this logic ourselves, we can do special processing, such
-                // as loading a default value from an embedded resource
-                if (value.SerializedValue == null)
+                Type settingsClass = (Type)context["SettingsClassType"];
+
+                SettingsPropertyValueCollection values = _sourceProvider.GetPropertyValues(context, props);
+                foreach (SettingsPropertyValue value in values)
                 {
-                    value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
-                        (string)value.Property.DefaultValue);
+                    // normally, if there is no stored value, the SerializedValue property is null,
+                    // which tells .NET to use the default value
+                    // however, by handling this logic ourselves, we can do special processing, such
+                    // as loading a default value from an embedded resource
+                    if (value.SerializedValue == null)
+                    {
+                        value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
+                            (string)value.Property.DefaultValue);
+                    }
                 }
+                return values;
             }
-            return values;
         }
 
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
         {
-            _sourceProvider.SetPropertyValues(context, settings);
+            lock (_syncLock)
+            {
+                _sourceProvider.SetPropertyValues(context, settings);
+            }
         }
 
         #endregion
@@ -113,38 +122,47 @@ namespace ClearCanvas.Common.Configuration
 
         public SettingsPropertyValue GetPreviousVersion(SettingsContext context, SettingsProperty property)
         {
-            if (_sourceProvider is IApplicationSettingsProvider)
+            lock (_syncLock)
             {
-                return (_sourceProvider as IApplicationSettingsProvider).GetPreviousVersion(context, property);
-            }
-            else
-            {
-                // fail silently as per MSDN 
-                return new SettingsPropertyValue(property);
+                if (_sourceProvider is IApplicationSettingsProvider)
+                {
+                    return (_sourceProvider as IApplicationSettingsProvider).GetPreviousVersion(context, property);
+                }
+                else
+                {
+                    // fail silently as per MSDN 
+                    return new SettingsPropertyValue(property);
+                }
             }
         }
 
         public void Reset(SettingsContext context)
         {
-            if (_sourceProvider is IApplicationSettingsProvider)
+            lock (_syncLock)
             {
-                (_sourceProvider as IApplicationSettingsProvider).Reset(context);
-            }
-            else
-            {
-                // fail silently as per MSDN 
+                if (_sourceProvider is IApplicationSettingsProvider)
+                {
+                    (_sourceProvider as IApplicationSettingsProvider).Reset(context);
+                }
+                else
+                {
+                    // fail silently as per MSDN 
+                }
             }
         }
 
         public void Upgrade(SettingsContext context, SettingsPropertyCollection properties)
         {
-            if (_sourceProvider is IApplicationSettingsProvider)
+            lock (_syncLock)
             {
-                (_sourceProvider as IApplicationSettingsProvider).Upgrade(context, properties);
-            }
-            else
-            {
-                // fail silently as per MSDN 
+                if (_sourceProvider is IApplicationSettingsProvider)
+                {
+                    (_sourceProvider as IApplicationSettingsProvider).Upgrade(context, properties);
+                }
+                else
+                {
+                    // fail silently as per MSDN 
+                }
             }
         }
 
