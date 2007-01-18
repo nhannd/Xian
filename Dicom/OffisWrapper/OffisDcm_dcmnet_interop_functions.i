@@ -23,7 +23,7 @@ StoreScuProgressCallback(void * progressInfo,
     T_DIMSE_C_StoreRQ * req)
 {
 	// should fire off image received event
-	if (NULL != CSharpStoreCallbackHelperCallback)
+	if (NULL != CSharpStoreScuCallbackHelperCallback)
 	{
 		InteropStoreScuFileCountProgressInfo* pInfo = (InteropStoreScuFileCountProgressInfo*) progressInfo;
 		InteropStoreScuCallbackInfo info;
@@ -71,7 +71,30 @@ static void StoreScpCallback(
     DIC_UI sopClass;
     DIC_UI sopInstance;
 
-	if (progress->state == DIMSE_StoreEnd)
+	StoreCallbackData *cbdata = (StoreCallbackData*) callbackData;
+	const char* fileName = cbdata->imageFileName;
+
+	// prepare the transmission of data 
+	InteropStoreScpCallbackInfo info;
+	bzero((char*)&info, sizeof(info));
+	info.FileName = fileName;
+	info.ImageDataset = (*imageDataSet);
+	info.Progress = progress;
+	info.Request = req;
+
+	if (progress->state == DIMSE_StoreBegin)
+	{
+		// should fire off image store begin event
+		if (NULL != CSharpStoreScpCallbackHelper_StoreBeginCallback)
+			CSharpStoreScpCallbackHelper_StoreBeginCallback(&info);
+	}
+	else if (progress->state == DIMSE_StoreProgressing)
+	{
+		// should fire off image store progressing event
+		if (NULL != CSharpStoreScpCallbackHelper_StoreProgressingCallback)
+			CSharpStoreScpCallbackHelper_StoreProgressingCallback(&info);	
+	}
+	else if (progress->state == DIMSE_StoreEnd)
 	{
 		*statusDetail = NULL;    /* no status detail */
 
@@ -85,9 +108,6 @@ static void StoreScpCallback(
 
 		if ((imageDataSet)&&(*imageDataSet))
 		{
-			StoreCallbackData *cbdata = (StoreCallbackData*) callbackData;
-			const char* fileName = cbdata->imageFileName;
-
 			E_TransferSyntax xfer = (*imageDataSet)->getOriginalXfer();
 
 			OFCondition cond = cbdata->dcmff->saveFile(fileName, xfer, EET_ExplicitLength, EGL_recalcGL,
@@ -120,17 +140,8 @@ static void StoreScpCallback(
 			}
 
 			// should fire off image received event
-			if (NULL != CSharpStoreCallbackHelperCallback)
-			{
-				InteropStoreCallbackInfo info;
-
-				// prepare the transmission of data 
-				bzero((char*)&info, sizeof(info));
-				info.FileName = fileName;
-				info.ImageDataset = (*imageDataSet);
-
-				CSharpStoreCallbackHelperCallback(&info);
-			}
+			if (NULL != CSharpStoreScpCallbackHelper_StoreEndCallback)
+				CSharpStoreScpCallbackHelper_StoreEndCallback(&info);
 		}
 	}
     return;

@@ -28,7 +28,7 @@ namespace ClearCanvas.Dicom.Services
 		public int Port
 		{
 			get { return (int)this["Port"]; }
-			set { this["AETitle"] = value; }
+			set { this["Port"] = value; }
 		}
 
 		[ApplicationScopedSettingAttribute()]

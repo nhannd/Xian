@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -55,7 +56,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private string _saveDirectory;
         private int _port;
         private bool _isServerStarted;
-        
+        private int _progressBytes;
+        private int _totalBytes;
+        private string _sopInstanceUID;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -94,9 +98,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle(_aeTitle), new ListeningPort(_port));
 
+            CreateStorageDirectory(_saveDirectory);
+
             _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myOwnAEParameters, _saveDirectory);
             _dicomServer.FindScpEvent += OnFindScpEvent;
-            _dicomServer.StoreScpEvent += OnStoreScpEvent;
+            _dicomServer.StoreScpBeginEvent += OnStoreScpBeginEvent;
+            _dicomServer.StoreScpProgressingEvent += OnStoreScpProgressingEvent;
+            _dicomServer.StoreScpEndEvent += OnStoreScpEndEvent;
 
             try
             {
@@ -115,7 +123,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_dicomServer != null)
             {
                 _dicomServer.FindScpEvent -= OnFindScpEvent;
-                _dicomServer.StoreScpEvent -= OnStoreScpEvent;
+                _dicomServer.StoreScpBeginEvent -= OnStoreScpBeginEvent;
+                _dicomServer.StoreScpProgressingEvent -= OnStoreScpProgressingEvent;
+                _dicomServer.StoreScpEndEvent -= OnStoreScpEndEvent;
                 _dicomServer.Stop();
                 _dicomServer = null;
             }
@@ -145,6 +155,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return _isServerStarted; }
         }
 
+        public string SOPInstanceUID
+        {
+            get { return _sopInstanceUID; }
+        }
+
+        public int ProgressBytes
+        {
+            get { return _progressBytes; }
+        }
+
+        public int TotalBytes
+        {
+            get { return _totalBytes; }
+        }
+
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
@@ -170,25 +195,40 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-        private void OnStoreScpEvent(object sender, StoreScpEventArgs e)
+        private void OnStoreScpBeginEvent(object sender, StoreScpProgressUpdateEventArgs e)
         {
+            // Receiving of new SOP Instance is about to beging, do something
+            if (e == null)
+                return;
+
+            _sopInstanceUID = e.SOPInstanceUID;
+            _progressBytes = (int) e.ProgressBytes;
+            _totalBytes = (int) e.TotalBytes;
+
+            NotifyPropertyChanged("SOPInstanceUID");
+            NotifyPropertyChanged("ProgressBytes");
+            NotifyPropertyChanged("TotalBytes");
+        }
+
+        private void OnStoreScpProgressingEvent(object sender, StoreScpProgressUpdateEventArgs e)
+        {
+            // More data for the new SOP Instance has arrived, update progress
+            if (e == null)
+                return;
+
+            _progressBytes = (int) e.ProgressBytes;
+            NotifyPropertyChanged("ProgressBytes");
+        }
+
+        private void OnStoreScpEndEvent(object sender, StoreScpImageReceivedEventArgs e)
+        {
+            // A new SOP Instance has been written successfully to the disk, update database
             if (e == null)
                 return;
 
             try
             {
-                // need to extract the transfersyntax from ImageDataSet and store in a separate MetaInfo variable as part of the InsertSopInstance argument
-                DcmMetaInfo metaInfo = new DcmMetaInfo();
-                string xfer = TransferSyntaxHelper.GetString(e.ImageDataSet.getOriginalXfer());
-                if (xfer != null)
-                    metaInfo.putAndInsertString(new DcmTag(Dcm.TransferSyntaxUID), xfer);
-
-                IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore();
-                if (store != null)
-                {
-                    store.InsertSopInstance(metaInfo, e.ImageDataSet, e.FileName);
-                    store.Flush();
-                }
+                InsertSopInstance(e.FileName);
             }
             catch (System.Data.SqlClient.SqlException exception)
             {
@@ -198,6 +238,70 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 ExceptionHandler.Report(exception, this.Host.DesktopWindow);
             }
-        }        
+        }
+
+        private void CreateStorageDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+        }
+
+        /// <summary>
+        /// Indirectly hooked up to DicomServer.OnStoreScpEndEvent to 
+        /// store the instance object when it arrives.
+        /// </summary>
+        /// <param name="fileName">Path to the file</param>
+        private void InsertSopInstance(string fileName)
+        {
+            DcmFileFormat file = new DcmFileFormat();
+            OFCondition condition = file.loadFile(fileName);
+            if (!condition.good())
+            {
+                // there was an error reading the file, possibly it's not a DICOM file
+                return;
+            }
+
+            DcmMetaInfo metaInfo = file.getMetaInfo();
+            DcmDataset dataset = file.getDataset();
+
+            if (ConfirmProcessableFile(metaInfo, dataset))
+            {
+                IDicomPersistentStore dicomStore = DataAccessLayer.GetIDicomPersistentStore();
+                dicomStore.InsertSopInstance(metaInfo, dataset, fileName);
+                dicomStore.Flush();
+            }
+
+            // keep the file object alive until the end of this scope block
+            // otherwise, it'll be GC'd and metaInfo and dataset will be gone
+            // as well, even though they are needed in the InsertSopInstance
+            // and sub methods
+            GC.KeepAlive(file);
+        }
+
+        /// <summary>
+        /// Determine various characteristics to see whether we can actually
+        /// store this file. For retrievals this should never be a problem. For
+        /// DatabaseRebuild, sometimes objects are stored without their Group 2
+        /// tags, which makes them impossible to process, i.e. we'd have to guess
+        /// correctly the transfer syntax.
+        /// </summary>
+        /// <param name="metaInfo">Group 2 (metaheader) tags</param>
+        /// <param name="dataset">DICOM header</param>
+        /// <returns></returns>
+        private bool ConfirmProcessableFile(DcmMetaInfo metaInfo, DcmDataset dataset)
+        {
+            StringBuilder stringValue = new StringBuilder(1024);
+            OFCondition cond;
+            cond = metaInfo.findAndGetOFString(Dcm.MediaStorageSOPClassUID, stringValue);
+            if (cond.good())
+            {
+                // we want to skip Media Storage Directory Storage (DICOMDIR directories)
+                if ("1.2.840.10008.1.3.10" == stringValue.ToString())
+                    return false;
+            }
+
+            return true;
+        }
+    
     }
 }

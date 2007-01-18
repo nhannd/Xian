@@ -29,6 +29,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _aeTitle.DataBindings.Add("Value", component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
             _port.DataBindings.Add("Value", component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
             _saveDirectory.DataBindings.Add("Value", component, "SaveDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
+            _sopInstanceUID.DataBindings.Add("Text", component, "SOPInstanceUID", true, DataSourceUpdateMode.OnPropertyChanged);
+            _progress.DataBindings.Add("Value", component, "ProgressBytes", true, DataSourceUpdateMode.OnPropertyChanged);
+            _progress.DataBindings.Add("Maximum", component, "TotalBytes", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _toggleServerButton_Click(object sender, EventArgs e)
@@ -49,14 +52,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _port.Enabled = false;
                 _saveDirectory.Enabled = false;
             }
-        }
-
-        private void _closeButton_Click(object sender, EventArgs e)
-        {
-            if (_component.IsStarted)
-                _component.StopServer();
-
-            _component.Cancel();
         }
     }
 }

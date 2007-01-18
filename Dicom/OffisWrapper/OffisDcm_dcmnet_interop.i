@@ -4,10 +4,12 @@
 // Structs for interop; these need to be here
 // so that C# code can access them
 //-------------------------------------------
-struct InteropStoreCallbackInfo
+struct InteropStoreScpCallbackInfo
 {
 	const char* FileName;
 	DcmDataset* ImageDataset;
+    T_DIMSE_StoreProgress *Progress;
+    T_DIMSE_C_StoreRQ *Request;
 };
 
 struct InteropStoreScuFileCountProgressInfo
@@ -69,17 +71,6 @@ extern "C"
 SWIGEXPORT void SWIGSTDCALL RegisterStoreScuCallbackHelper_OffisDcm(StoreScuCallbackHelperCallback callback) {
 	CSharpStoreScuCallbackHelperCallback = callback;
 }
-// -----------------------------------
-typedef void (SWIGSTDCALL* StoreCallbackHelperCallback)(InteropStoreCallbackInfo*);
-static StoreCallbackHelperCallback CSharpStoreCallbackHelperCallback = NULL;
-
-#ifdef __cplusplus
-extern "C" 
-#endif
-SWIGEXPORT void SWIGSTDCALL RegisterStoreCallbackHelper_OffisDcm(StoreCallbackHelperCallback callback) {
-	CSharpStoreCallbackHelperCallback = callback;
-}
-
 //-----------------------------------
 typedef void (SWIGSTDCALL* RetrieveCallbackHelperCallback)(InteropRetrieveCallbackInfo*);
 static RetrieveCallbackHelperCallback CSharpRetrieveCallbackHelperCallback = NULL;
@@ -133,6 +124,36 @@ extern "C"
 #endif
 SWIGEXPORT void SWIGSTDCALL RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(FindScpCallbackHelper_GetNextFindResponseCallback callback) {
 	CSharpFindScpCallbackHelper_GetNextFindResponseCallback = callback;
+}
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* StoreScpCallbackHelper_StoreBeginCallback)(InteropStoreScpCallbackInfo*);
+static StoreScpCallbackHelper_StoreBeginCallback CSharpStoreScpCallbackHelper_StoreBeginCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterStoreScpCallbackHelper_StoreBegin_OffisDcm(StoreScpCallbackHelper_StoreBeginCallback callback) {
+	CSharpStoreScpCallbackHelper_StoreBeginCallback = callback;
+}
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* StoreScpCallbackHelper_StoreProgressingCallback)(InteropStoreScpCallbackInfo*);
+static StoreScpCallbackHelper_StoreProgressingCallback CSharpStoreScpCallbackHelper_StoreProgressingCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterStoreScpCallbackHelper_StoreProgressing_OffisDcm(StoreScpCallbackHelper_StoreProgressingCallback callback) {
+	CSharpStoreScpCallbackHelper_StoreProgressingCallback = callback;
+}
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* StoreScpCallbackHelper_StoreEndCallback)(InteropStoreScpCallbackInfo*);
+static StoreScpCallbackHelper_StoreEndCallback CSharpStoreScpCallbackHelper_StoreEndCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterStoreScpCallbackHelper_StoreEnd_OffisDcm(StoreScpCallbackHelper_StoreEndCallback callback) {
+	CSharpStoreScpCallbackHelper_StoreEndCallback = callback;
 }
 //--------------------------------------------------------------
 %}

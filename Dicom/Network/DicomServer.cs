@@ -9,80 +9,73 @@ namespace ClearCanvas.Dicom.Network
     using MySR = ClearCanvas.Dicom.SR;
     using ClearCanvas.Common.Utilities;
 
-    public class FindScpEventArgs : EventArgs
-    {
-        private QueryKey _queryKey;
-        private ReadOnlyQueryResultCollection _queryResults;
-
-        public FindScpEventArgs(QueryKey queryKey, ReadOnlyQueryResultCollection queryResults)
-        {
-            _queryKey = queryKey;
-            _queryResults = queryResults;
-        }
-
-        public QueryKey QueryKey
-        {
-            get { return _queryKey; }
-            set { _queryKey = value; }
-        }
-
-        public ReadOnlyQueryResultCollection QueryResults
-        {
-            get { return _queryResults; }
-            set { _queryResults = value; }
-        }
-    }
-
-    public class StoreScpEventArgs : EventArgs
-    {
-        private string _fileName;
-        private DcmDataset _imageDataset;
-
-        public StoreScpEventArgs(string fileName, DcmDataset imageDataSet)
-        {
-            _fileName = fileName;
-            _imageDataset = imageDataSet;
-        }
-
-        public string FileName
-        {
-            get { return _fileName; }
-            set { _fileName = value; }
-        }
-
-        public DcmDataset ImageDataSet
-        {
-            get { return _imageDataset; }
-            set { _imageDataset = value; }
-        }
-    }
-
     /// <summary>
     /// This class's implementation is not yet complete. Use at your own risk.
     /// </summary>
-    public class DicomServer
+    public partial class DicomServer
     {
+        /// <summary>
+        /// Fires when a C-FIND query has been received
+        /// </summary>
         private event EventHandler<FindScpEventArgs> _findScpEvent;
-        private event EventHandler<StoreScpEventArgs> _storeScpEvent;
+        /// <summary>
+        /// Fires when a new SOP Instance has arrived and is starting to be written to the local filesystem.
+        /// </summary>
+        private event EventHandler<StoreScpProgressUpdateEventArgs> _storeScpBeginEvent;
+        /// <summary>
+        /// Fires when more data of the new SOP Instance has arrived
+        /// </summary>
+        private event EventHandler<StoreScpProgressUpdateEventArgs> _storeScpProgressingEvent;
+        /// <summary>
+        /// Fires when a new SOP Instance has been successfully written to the local filesystem.
+        /// </summary>
+        private event EventHandler<StoreScpImageReceivedEventArgs> _storeScpEndEvent;
+
         public event EventHandler<FindScpEventArgs> FindScpEvent
         {
             add { _findScpEvent += value; }
             remove { _findScpEvent -= value; }
         }
-        public event EventHandler<StoreScpEventArgs> StoreScpEvent
+        public event EventHandler<StoreScpProgressUpdateEventArgs> StoreScpBeginEvent
         {
-            add { _storeScpEvent += value; }
-            remove { _storeScpEvent -= value; }
+            add { _storeScpBeginEvent += value; }
+            remove { _storeScpBeginEvent -= value; }
         }
+        public event EventHandler<StoreScpProgressUpdateEventArgs> StoreScpProgressingEvent
+        {
+            add { _storeScpProgressingEvent += value; }
+            remove { _storeScpProgressingEvent -= value; }
+        }
+        public event EventHandler<StoreScpImageReceivedEventArgs> StoreScpEndEvent
+        {
+            add { _storeScpEndEvent += value; }
+            remove { _storeScpEndEvent -= value; }
+        }
+
         protected void OnFindScpEvent(FindScpEventArgs e)
         {
             EventsHelper.Fire(_findScpEvent, this, e);
         }
-        protected void OnStoreScpEvent(StoreScpEventArgs e)
+        protected void OnStoreScpBeginEvent(StoreScpProgressUpdateEventArgs e)
         {
-            EventsHelper.Fire(_storeScpEvent, this, e);
+            EventsHelper.Fire(_storeScpBeginEvent, this, e);
+        }
+        protected void OnStoreScpProgressingEvent(StoreScpProgressUpdateEventArgs e)
+        {
+            EventsHelper.Fire(_storeScpProgressingEvent, this, e);
+        }
+        protected void OnStoreScpEndEvent(StoreScpImageReceivedEventArgs e)
+        {
+            EventsHelper.Fire(_storeScpEndEvent, this, e);
         }
 
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="ownAEParameters">The AE parameters of the DICOM server. That is,
+        /// the user's AE parameters that will be passed to the server as the source
+        /// of the DICOM commands, and will also become the destination for the receiving
+        /// of DICOM data.</param>
         public DicomServer(ApplicationEntity ownAEParameters, String saveDirectory)
         {
             SocketManager.InitializeSockets();
@@ -370,186 +363,6 @@ namespace ClearCanvas.Dicom.Network
             private List<Thread> _threadList = new List<Thread>();
         }
 
-        class FindScpCallbackHelper
-        {
-            private FindScpCallbackHelper_QueryDBDelegate _findScpCallbackHelper_QueryDBDelegate;
-            private FindScpCallbackHelper_GetNextResponseDelegate _findScpCallbackHelper_GetNextResponseDelegate;
-            private DicomServer _parent;
-            private ReadOnlyQueryResultCollection _queryResults;
-            private int _resultIndex;
-
-            public FindScpCallbackHelper(DicomServer parent)
-            {
-                _parent = parent;
-                _queryResults = null;
-                _resultIndex = 0;
-
-                _findScpCallbackHelper_QueryDBDelegate = new FindScpCallbackHelper_QueryDBDelegate(QueryDBCallback);
-                _findScpCallbackHelper_GetNextResponseDelegate = new FindScpCallbackHelper_GetNextResponseDelegate(GetNextResponseCallback);
-                RegisterFindScpCallbackHelper_QueryDB_OffisDcm(_findScpCallbackHelper_QueryDBDelegate);
-                RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(_findScpCallbackHelper_GetNextResponseDelegate);
-            }
-
-            ~FindScpCallbackHelper()
-            {
-                RegisterFindScpCallbackHelper_QueryDB_OffisDcm(null);
-                RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(null);
-            }
-
-            public delegate void FindScpCallbackHelper_QueryDBDelegate(IntPtr interopFindScpCallbackInfo);
-            public delegate void FindScpCallbackHelper_GetNextResponseDelegate(IntPtr interopFindScpCallbackInfo);
-
-            [DllImport("OffisDcm", EntryPoint = "RegisterFindScpCallbackHelper_QueryDB_OffisDcm")]
-            public static extern void RegisterFindScpCallbackHelper_QueryDB_OffisDcm(FindScpCallbackHelper_QueryDBDelegate callbackDelegate);
-
-            [DllImport("OffisDcm", EntryPoint = "RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm")]
-            public static extern void RegisterFindScpCallbackHelper_GetNextFindResponse_OffisDcm(FindScpCallbackHelper_GetNextResponseDelegate callbackDelegate);
-
-            public void QueryDBCallback(IntPtr interopFindScpCallbackInfoPointer)
-            {
-                InteropFindScpCallbackInfo interopFindScpCallbackInfo = new InteropFindScpCallbackInfo(interopFindScpCallbackInfoPointer, false);
-
-                T_DIMSE_C_FindRQ request = interopFindScpCallbackInfo.Request;
-                T_DIMSE_C_FindRSP response = interopFindScpCallbackInfo.Response;
-                DcmDataset requestIdentifiers = interopFindScpCallbackInfo.RequestIdentifiers;
-
-                try
-                {
-                    _resultIndex = 0;
-                    _queryResults = null;
-
-                    QueryKey queryKey = BuildQueryKey(requestIdentifiers);
-                    FindScpEventArgs args = new FindScpEventArgs(queryKey, null);
-                    _parent.OnFindScpEvent(args);
-                    _queryResults = args.QueryResults;
-
-                    response.MessageIDBeingRespondedTo = request.MessageID;
-                    response.AffectedSOPClassUID = request.AffectedSOPClassUID;
-                    if (_queryResults.Count == 0)
-                        response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
-                    else
-                        response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
-                }
-                catch
-                {
-                    response.DimseStatus = (ushort)OffisDcm.STATUS_FIND_Failed_UnableToProcess;
-                }
-            }
-
-            public void GetNextResponseCallback(IntPtr interopFindScpCallbackInfoPointer)
-            {
-                InteropFindScpCallbackInfo interopFindScpCallbackInfo = new InteropFindScpCallbackInfo(interopFindScpCallbackInfoPointer, false);
-
-                T_DIMSE_C_FindRQ request = interopFindScpCallbackInfo.Request;
-                T_DIMSE_C_FindRSP response = interopFindScpCallbackInfo.Response;
-                DcmDataset requestIdentifiers = interopFindScpCallbackInfo.RequestIdentifiers;
-                DcmDataset responseIdentifiers = interopFindScpCallbackInfo.ResponseIdentifiers;
-
-                try
-                {
-                    response.MessageIDBeingRespondedTo = request.MessageID;
-                    response.AffectedSOPClassUID = request.AffectedSOPClassUID;
-
-                    if (_queryResults.Count == 0 || _resultIndex >= _queryResults.Count)
-                        response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
-                    else
-                    {
-                        GetQueryResult(_resultIndex, responseIdentifiers);
-                        _resultIndex++;
-                    }
-                }
-                catch
-                {
-                    response.DimseStatus = (ushort)OffisDcm.STATUS_FIND_Failed_UnableToProcess;
-                }
-            }
-
-            private QueryKey BuildQueryKey(DcmDataset requestIdentifiers)
-            {
-                OFCondition cond;
-                QueryKey queryKey = new QueryKey();
-
-                // TODO: shouldn't hard code the buffer length like this
-                StringBuilder buf = new StringBuilder(1024);
-
-                // TODO: Edit these when we need to expand the support of search parameters
-                cond = requestIdentifiers.findAndGetOFString(Dcm.PatientId, buf);
-                if (cond.good())
-                    queryKey.Add(DicomTag.PatientId, buf.ToString());
-
-                cond = requestIdentifiers.findAndGetOFString(Dcm.AccessionNumber, buf);
-                if (cond.good())
-                    queryKey.Add(DicomTag.AccessionNumber, buf.ToString());
-
-                cond = requestIdentifiers.findAndGetOFString(Dcm.PatientsName, buf);
-                if (cond.good())
-                    queryKey.Add(DicomTag.PatientsName, buf.ToString());
-
-                cond = requestIdentifiers.findAndGetOFString(Dcm.StudyDate, buf);
-                if (cond.good())
-                    queryKey.Add(DicomTag.StudyDate, buf.ToString());
-
-                cond = requestIdentifiers.findAndGetOFString(Dcm.StudyDescription, buf);
-                if (cond.good())
-                    queryKey.Add(DicomTag.StudyDescription, buf.ToString());
-
-                cond = requestIdentifiers.findAndGetOFString(Dcm.ModalitiesInStudy, buf);
-                if (cond.good())
-                    queryKey.Add(DicomTag.ModalitiesInStudy, buf.ToString());
-
-                return queryKey;
-            }
-
-            private void GetQueryResult(int index, DcmDataset responseIdentifiers)
-            {
-                QueryResult result = _queryResults[index];
-
-                // TODO:  edit these when we need to expand the list of supported return tags
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsName), result.PatientsName);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDescription), result.StudyDescription);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
-                responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
-            }
-        }
-
-        class StoreScpCallbackHelper
-        {
-            private StoreScpCallbackHelperDelegate _storeScpCallbackHelperDelegate;
-            private DicomServer _parent;
-
-            public StoreScpCallbackHelper(DicomServer parent)
-            {
-                _parent = parent;
-
-                _storeScpCallbackHelperDelegate = new StoreScpCallbackHelperDelegate(DefaultCallback);
-                RegisterStoreCallbackHelper_OffisDcm(_storeScpCallbackHelperDelegate);
-            }
-
-            ~StoreScpCallbackHelper()
-            {
-                RegisterStoreCallbackHelper_OffisDcm(null);
-            }
-
-            public delegate void StoreScpCallbackHelperDelegate(IntPtr interopStoreCallbackInfo);
-
-            [DllImport("OffisDcm", EntryPoint = "RegisterStoreCallbackHelper_OffisDcm")]
-            public static extern void RegisterStoreCallbackHelper_OffisDcm(StoreScpCallbackHelperDelegate callbackDelegate);
-
-            public void DefaultCallback(IntPtr interopStoreCallbackInfoPointer)
-            {
-                InteropStoreCallbackInfo interopStoreCallbackInfo = new InteropStoreCallbackInfo(interopStoreCallbackInfoPointer, false);
-
-                StoreScpEventArgs args = new StoreScpEventArgs(interopStoreCallbackInfo.FileName, interopStoreCallbackInfo.ImageDataset);
-                _parent.OnStoreScpEvent(args);
-
-            }
-        }
 
         #region Private members
         private ServerState State
@@ -601,5 +414,17 @@ namespace ClearCanvas.Dicom.Network
         private StoreScpCallbackHelper _storeScpCallbackHelper;
 
         #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            SocketManager.DeinitializeSockets();
+            _findScpCallbackHelper.Dispose();
+            _storeScpCallbackHelper.Dispose();
+        }
+
+        #endregion
+
     }
 }
