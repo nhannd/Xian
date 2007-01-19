@@ -52,6 +52,7 @@
     <Compile Include="Folder.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="ImportDiagnosticServicesApplication.cs" />
+    <Compile Include="ImportDiagnosticServicesComponent.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
