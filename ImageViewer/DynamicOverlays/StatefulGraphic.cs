@@ -230,6 +230,10 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		#endregion
 
+		public virtual void InstallDefaultCursors()
+		{ 
+		}
+
 		public virtual void OnStateChanged(GraphicStateChangedEventArgs e)
 		{
 			EventsHelper.Fire(_stateChangedEvent, this, e);

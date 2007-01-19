@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Rendering
+namespace ClearCanvas.ImageViewer.Mathematics
 {
 	public class RectangleUtilities
 	{
@@ -256,6 +257,32 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			return Rectangle.FromLTRB(left, top, right, bottom);
+		}
+
+		/// <summary>
+		/// Computes the bounding rectangle of a collection of points.
+		/// </summary>
+		/// <param name="points">a collection of points.</param>
+		/// <returns>the bounding rectangle of all the points.</returns>
+		/// <exception cref="NullReferenceException">if the input array is null.</exception>
+		/// <exception cref="ArgumentException">if the input array is empty.</exception>
+		public static RectangleF ComputeBoundingRectangle(params PointF[] points)
+		{
+			Platform.CheckForNullReference(points, "points");
+			Platform.CheckPositive(points.Length, "points.Length");
+
+			PointF topLeft = points[0], bottomRight = points[0];
+
+			for (int i = 1; i < points.Length; ++i)
+			{
+				PointF point = points[i];
+				topLeft.X = Math.Min(topLeft.X, point.X);
+				topLeft.Y = Math.Min(topLeft.Y, point.Y);
+				bottomRight.X = Math.Max(bottomRight.X, point.X);
+				bottomRight.Y = Math.Max(bottomRight.Y, point.Y);
+			}
+
+			return RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 		}
 	}
 }

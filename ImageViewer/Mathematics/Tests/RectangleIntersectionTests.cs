@@ -11,7 +11,7 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Rendering;
 
-namespace ClearCanvas.ImageViewer.Rendering.Tests
+namespace ClearCanvas.ImageViewer.Mathematics.Tests
 {
 
 	[TestFixture]

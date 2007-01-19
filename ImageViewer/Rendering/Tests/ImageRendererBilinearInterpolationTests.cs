@@ -7,6 +7,7 @@ using System.Diagnostics;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.Layers;
 using NUnit.Framework;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {

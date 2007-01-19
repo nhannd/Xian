@@ -45,10 +45,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			InteractiveMultiLineGraphic multilineGraphic = new InteractiveMultiLineGraphic(true, 2);
 			_createGraphic = new ROIGraphic(multilineGraphic, true);
 
-			multilineGraphic.StretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
-			multilineGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-			_createGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-
 			_createGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
 			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
 			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);

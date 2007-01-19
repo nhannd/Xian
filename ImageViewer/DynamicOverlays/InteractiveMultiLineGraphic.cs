@@ -90,6 +90,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return token;
 		}
 
+		public override void InstallDefaultCursors()
+		{
+			base.InstallDefaultCursors();
+			this.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+		}
+
 		// This acts as a mediator.  It listens for changes in the anchor points
 		// and make corresponding changes in the position of the control points.
 		protected void OnAnchorPointChanged(object sender, AnchorPointEventArgs e)

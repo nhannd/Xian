@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {

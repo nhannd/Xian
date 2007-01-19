@@ -108,6 +108,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			return token;
 		}
 
+		public override void InstallDefaultCursors()
+		{
+			base.InstallDefaultCursors();
+			this.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+		}
+
 		private void BuildGraphic()
 		{
 			AddRectangle();

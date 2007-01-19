@@ -46,10 +46,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			InteractiveRectangleGraphic rectangleGraphic = new InteractiveRectangleGraphic(true);
 			_createGraphic = new ROIGraphic(rectangleGraphic, true);
 
-			rectangleGraphic.StretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
-			rectangleGraphic.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-			_createGraphic.Callout.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-
 			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
 			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
 			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);

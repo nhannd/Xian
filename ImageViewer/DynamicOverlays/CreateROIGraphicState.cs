@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class CreateROIGraphicState : GraphicState
+	public class CreateROIGraphicState : CreateGraphicState
 	{
 		private StatefulGraphic _childGraphic;
 

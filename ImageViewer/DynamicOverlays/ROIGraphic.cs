@@ -21,7 +21,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 		private event EventHandler _roiChangedEvent;
 		private ToolSet _toolSet;
 
-        public ROIGraphic(InteractiveGraphic graphic, bool userCreated)
+		public ROIGraphic(InteractiveGraphic graphic, bool userCreated)
+			: this(graphic, userCreated, true)
+		{ 
+		}
+
+		public ROIGraphic(InteractiveGraphic graphic, bool userCreated, bool installDefaultCursors)
         {
 			_roiGraphic = graphic;
 
@@ -31,6 +36,12 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 				base.State = CreateCreateState();
 			else
 				base.State = CreateInactiveState();
+
+			if (installDefaultCursors)
+			{
+				_roiGraphic.InstallDefaultCursors();
+				_calloutGraphic.InstallDefaultCursors();
+			}
 		}
 
 		public CalloutGraphic Callout

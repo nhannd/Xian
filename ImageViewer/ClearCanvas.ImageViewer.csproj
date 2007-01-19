@@ -93,6 +93,8 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationConfiguration.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
+    <Compile Include="DynamicOverlays\CompassStretchIndicatorCursorProvider.cs" />
+    <Compile Include="DynamicOverlays\CreateGraphicState.cs" />
     <Compile Include="ImageSet.cs" />
     <Compile Include="ImageSetEventArgs.cs" />
     <Compile Include="DiagnosticImageViewerComponent.cs" />
@@ -142,7 +144,7 @@
     <Compile Include="Rendering\Tests\ImageRendererRGBPlanarOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
-    <Compile Include="Rendering\Tests\RectangleIntersectionTests.cs" />
+    <Compile Include="Mathematics\Tests\RectangleIntersectionTests.cs" />
     <Compile Include="StudyManagement\ICacheableSop.cs" />
     <Compile Include="StudyManagement\ImageSopProxy.cs" />
     <Compile Include="StudyManagement\LocalImageLoader.cs">
@@ -305,7 +307,7 @@
     <Compile Include="Rendering\ImageInterpolatorBilinearFast.cs" />
     <Compile Include="Rendering\ImageInterpolatorNearestNeighbour.cs" />
     <Compile Include="Rendering\ImageRenderer.cs" />
-    <Compile Include="Rendering\RectangleUtilities.cs" />
+    <Compile Include="Mathematics\RectangleUtilities.cs" />
     <Compile Include="Rendering\Win32.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

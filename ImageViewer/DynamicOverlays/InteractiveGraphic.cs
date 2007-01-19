@@ -6,6 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
+using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
@@ -15,6 +17,7 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		private ControlPointsGraphic _controlPoints = new ControlPointsGraphic();
 		private CursorToken _stretchToken;
+		private ICursorTokenProvider _stretchIndicatorProvider;
 
 		protected InteractiveGraphic(bool userCreated)
 		{
@@ -37,6 +40,17 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 			set { _stretchToken = value; }
 		}
 
+		protected ICursorTokenProvider StretchIndicatorProvider
+		{
+			get { return _stretchIndicatorProvider; }
+			set { _stretchIndicatorProvider = value; }
+		}
+
+		protected virtual bool Stretching
+		{
+			get { return (this.State is MoveControlPointGraphicState || this.State is CreateGraphicState); }
+		}
+
 		#region IMemorable Members
 
 		public abstract IMemento CreateMemento();
@@ -47,10 +61,29 @@ namespace ClearCanvas.ImageViewer.DynamicOverlays
 
 		public override CursorToken GetCursorToken(Point point)
 		{
-			if (_controlPoints.HitTest(point))
-				return this.StretchToken;
+			CursorToken returnToken = null;
 
-			return null;
+			if (_controlPoints.HitTest(point))
+			{
+				returnToken = this.StretchToken;
+
+				if (!this.Stretching && _stretchIndicatorProvider != null)
+				{
+					CursorToken indicatorToken = _stretchIndicatorProvider.GetCursorToken(point);
+					if (indicatorToken != null)
+						returnToken = indicatorToken;
+				}
+			}
+
+			return returnToken;
+		}
+
+		public override void InstallDefaultCursors()
+		{
+			base.InstallDefaultCursors();
+
+			_stretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
+			_stretchIndicatorProvider = new CompassStretchIndicatorCursorProvider(_controlPoints);
 		}
 
 		public override GraphicState CreateFocusSelectedState()

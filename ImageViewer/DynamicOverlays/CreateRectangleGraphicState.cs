@@ -6,7 +6,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.DynamicOverlays
 {
-	public class CreateRectangleGraphicState : GraphicState
+	public class CreateRectangleGraphicState : CreateGraphicState
 	{
 		private int _controlPointIndex;
 		private int _numberOfPointsAnchored = 1;
