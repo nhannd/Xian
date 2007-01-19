@@ -9,18 +9,21 @@ namespace ClearCanvas.Server.ShredHost
     public interface IShredHost
     {
         [OperationContract]
-        void Start();
+        bool Start();
 
         [OperationContract]
-        void Stop();
+        bool Stop();
 
         [OperationContract]
-        WcfDataShredCollection GetShreds();
+        bool IsShredHostRunning();
 
         [OperationContract]
-        void StartShred(WcfDataShred shred);
+        WcfDataShred[] GetShreds();
 
         [OperationContract]
-        void StopShred(WcfDataShred shred);
+        bool StartShred(WcfDataShred shred);
+
+        [OperationContract]
+        bool StopShred(WcfDataShred shred);
     }
 }

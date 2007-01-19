@@ -27,24 +27,47 @@ namespace ClearCanvas.Server.ShredHost
             _nextId = 101;
         }
 
-        public void Start()
+        public bool Start()
         {
-            if (RunningState.Stopped == _runningState)
+            lock (_lockRunningState)
             {
-                _thread.Start(this);
+                if (RunningState.Running == _runningState || RunningState.Transition == _runningState)
+                    return (RunningState.Running == _runningState);
+
+                _runningState = RunningState.Transition;
+            }
+
+            _thread = new Thread(new ParameterizedThreadStart(StartupShred));
+            _thread.Start(this);
+
+            lock (_lockRunningState)
+            {
                 _runningState = RunningState.Running;
             }
+
+            return (RunningState.Running == _runningState);
         }
 
 
-        public void Stop()
+        public bool Stop()
         {
-            if (RunningState.Running == _runningState)
+            lock (_lockRunningState)
             {
-                _shredObject.Stop();
-                _thread.Join();
+                if (RunningState.Stopped == _runningState || RunningState.Transition == _runningState)
+                    return (RunningState.Running == _runningState);
+
+                _runningState = RunningState.Transition;
+            }
+
+            _shredObject.Stop();
+            _thread.Join();
+
+            lock (_lockRunningState)
+            {
                 _runningState = RunningState.Stopped;
             }
+
+            return (RunningState.Running == _runningState);
         }
 
         private void StartupShred(object threadData)
@@ -63,7 +86,7 @@ namespace ClearCanvas.Server.ShredHost
         {
             int servicePort;
 
-            lock (_lockObject)
+            lock (_lockShredId)
             {
                 servicePort = _servicePort;
                 _servicePort++;
@@ -72,11 +95,10 @@ namespace ClearCanvas.Server.ShredHost
             return servicePort;
         }
 
-        private enum RunningState { Stopped, Running };
-
         #region Private fields
-        private static int _servicePort = 21000;
-        private static object _lockObject = new object();
+        private static int _servicePort = 49153;
+        private static object _lockShredId = new object();
+        private static object _lockRunningState = new object();
         private RunningState _runningState;
         #endregion
 

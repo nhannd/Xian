@@ -11,7 +11,7 @@ namespace ClearCanvas.Server.ShredHost
     /// Class created only to allow WCF serialization and usage in service operations
     /// </summary>
     [Serializable]
-    public class WcfDataShred : INotifyPropertyChanged
+    public partial class WcfDataShred
     {
         public WcfDataShred(int id, string name, string description, bool isRunning)
         {
@@ -37,7 +37,6 @@ namespace ClearCanvas.Server.ShredHost
             set
             {
                 _id = value;
-                NotifyPropertyChanged("Id");
             }
         }
 	
@@ -48,7 +47,6 @@ namespace ClearCanvas.Server.ShredHost
             set 
             { 
                 _isRunning = value;
-                NotifyPropertyChanged("IsRunning");
             }
         }
 	
@@ -58,7 +56,6 @@ namespace ClearCanvas.Server.ShredHost
             set 
             { 
                 _description = value;
-                NotifyPropertyChanged("Description");
             }
         }
 	
@@ -68,23 +65,9 @@ namespace ClearCanvas.Server.ShredHost
             set 
             { 
                 _name = value;
-                NotifyPropertyChanged("Name");
             }
         }
 	
-        #endregion
-
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            if (null != PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
         #endregion
     }
 }

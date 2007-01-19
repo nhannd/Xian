@@ -10,8 +10,20 @@ namespace ClearCanvas.Server.ShredHost
 {
     public static class ShredHost
     {
-        public static void Start()
+        /// <summary>
+        /// Starts the ShredHost routine.
+        /// </summary>
+        /// <returns>true - if the ShredHost is currently running, false - if ShredHost is stopped.</returns>
+        public static bool Start()
         {
+            lock (_lockObject)
+            {
+                if (RunningState.Running == _runningState || RunningState.Transition == _runningState)
+                    return (RunningState.Running == _runningState);
+
+                _runningState = RunningState.Transition;
+            }
+
             Platform.Log("Starting up in AppDomain [" + AppDomain.CurrentDomain.FriendlyName + "]");
 
             // the ShredList and shreds objects are proxy objects that actually exist
@@ -31,6 +43,84 @@ namespace ClearCanvas.Server.ShredHost
                 Platform.Log(pluginException, LogLevel.Warn);
             }
 
+            StartShreds(shredStartupInfoList);
+
+            // all the shreds have been created, so we can dismantle the secondary domain that was used 
+            // for scanning for all Extensions that are shreds
+            AppDomain.Unload(stagingDomain);
+
+            _sed = WcfHelper.StartHost<ShredHostServiceType, IShredHost>(49152, "ShredHost", "Host program of multiple indepdent service-like subprograms");
+            Platform.Log("ShredHost WCF Service started on port 49152");
+            lock (_lockObject)
+            {
+                _runningState = RunningState.Running;
+            }
+
+            return (RunningState.Running == _runningState);
+        }
+
+        /// <summary>
+        /// Stops the running ShredHost.
+        /// </summary>
+        /// <returns>true - if the ShredHost is running, false - if the ShredHost is stopped.</returns>
+        public static bool Stop()
+        {
+            lock (_lockObject)
+            {
+                if (RunningState.Stopped == _runningState || RunningState.Transition == _runningState)
+                    return (RunningState.Running == _runningState);
+
+                _runningState = RunningState.Transition;
+            }
+
+            Platform.Log("Shred Host stop request received");
+            WcfHelper.StopHost(_sed);
+            Platform.Log("ShredHost WCF Service stopped");
+            StopShreds();
+            Platform.Log("Completing Shred Host stop");
+
+            _shredInfoList.Clear();
+            lock (_lockObject)
+            {
+                _runningState = RunningState.Stopped;
+            }
+
+            return (RunningState.Running == _runningState);
+        }
+
+        static public bool IsShredHostRunning
+        {
+            get
+            {
+                bool isRunning;
+                lock (_lockObject)
+                {
+                    isRunning = (RunningState.Running == _runningState);
+                }
+
+                return isRunning;
+            }
+        }
+
+        static public bool StartShred(WcfDataShred shred)
+        {
+            return ShredHost.ShredControllerList[shred.Id].Start();
+        }
+
+        static public bool StopShred(WcfDataShred shred)
+        {
+            return ShredHost.ShredControllerList[shred.Id].Stop();
+        }
+
+        static ShredHost()
+        {
+            _shredInfoList = new ShredControllerList();
+            _sed = null;
+            _runningState = RunningState.Stopped;
+        }
+
+        private static void StartShreds(ShredStartupInfoList shredStartupInfoList)
+        {
             if (null != shredStartupInfoList)
             {
                 // create the data structure that will hold the shreds and their thread, etc. related objects
@@ -49,23 +139,16 @@ namespace ClearCanvas.Server.ShredHost
                     }
 
                 }
-            }          
-
-            // all the shreds have been created, so we can dismantle the secondary domain that was used 
-            // for scanning for all Extensions that are shreds
-            AppDomain.Unload(stagingDomain);
+            }
 
             foreach (ShredController shredInfo in _shredInfoList)
             {
                 shredInfo.Start();
             }
-
         }
 
-        public static void Stop()
+        private static void StopShreds()
         {
-            Platform.Log("Shred Host stop request received");
-
             foreach (ShredController shredController in _shredInfoList)
             {
                 Platform.Log(shredController.Shred.GetDisplayName() + ": Signalling stop");
@@ -73,11 +156,7 @@ namespace ClearCanvas.Server.ShredHost
                 Platform.Log(shredController.Shred.GetDisplayName() + ": Stopped");
             }
 
-            Platform.Log("Completing Shred Host stop");
-
-            _shredInfoList.Clear();
         }
-
 
         #region Print asms in AD helper f(x)
         public static void PrintAllAssembliesInAppDomain(AppDomain ad)
@@ -94,7 +173,10 @@ namespace ClearCanvas.Server.ShredHost
         #endregion
 
         #region Private Members
-        private static ShredControllerList _shredInfoList = new ShredControllerList();
+        private static ShredControllerList _shredInfoList;
+        private static ServiceEndpointDescription _sed;
+        private static RunningState _runningState;
+        private static object _lockObject = new object();
         #endregion
 
         internal static ShredControllerList ShredControllerList

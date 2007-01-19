@@ -34,5 +34,21 @@ namespace ClearCanvas.Server.ShredHost
                 throw new System.IndexOutOfRangeException(message);
             }
         }
+
+        public WcfDataShred[] WcfDataShredCollection
+        {
+            get
+            {
+                WcfDataShred[] shreds = new WcfDataShred[this.ContainedObjects.Count];
+
+                int i = 0;
+                foreach (ShredController shredController in this.ContainedObjects)
+                {
+                    shreds[i++] = shredController.WcfDataShred;
+                }
+
+                return shreds;
+            }
+        }
     }
 }

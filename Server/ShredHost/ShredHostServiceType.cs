@@ -9,29 +9,35 @@ namespace ClearCanvas.Server.ShredHost
     class ShredHostServiceType : IShredHost
     {
         #region IShredHost Members
-        public void Start()
+
+        public bool Start()
         {
-            ShredHost.Start();
+            return ShredHost.Start();
         }
 
-        public void Stop()
+        public bool Stop()
         {
-            ShredHost.Stop();
+            return ShredHost.Stop();
         }
 
-        public WcfDataShredCollection GetShreds()
+        public bool IsShredHostRunning()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return ShredHost.IsShredHostRunning;
         }
 
-        public void StartShred(WcfDataShred shred)
+        public WcfDataShred[] GetShreds()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return ShredHost.ShredControllerList.WcfDataShredCollection;
         }
 
-        public void StopShred(WcfDataShred shred)
+        public bool StartShred(WcfDataShred shred)
         {
-            throw new Exception("The method or operation is not implemented.");
+            return ShredHost.StartShred(shred);
+        }
+
+        public bool StopShred(WcfDataShred shred)
+        {
+            return ShredHost.StopShred(shred);
         }
 
         #endregion

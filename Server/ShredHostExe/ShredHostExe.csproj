@@ -59,6 +59,6 @@
   <PropertyGroup>
     <PostBuildEvent>copy $(ProjectDir)..\SampleShred1\$(Outdir)SampleShred1.dll $(TargetDir)plugins
 copy $(ProjectDir)..\SampleShred2\$(Outdir)SampleShred2.dll $(TargetDir)plugins
-copy $(ProjectDir)..\SampleShredCrash\$(Outdir)SampleShredCrash.dll $(TargetDir)plugins</PostBuildEvent>
+rem copy $(ProjectDir)..\SampleShredCrash\$(Outdir)SampleShredCrash.dll $(TargetDir)plugins</PostBuildEvent>
   </PropertyGroup>
 </Project>
