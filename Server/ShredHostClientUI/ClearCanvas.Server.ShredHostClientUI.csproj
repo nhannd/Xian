@@ -51,6 +51,7 @@
     <Compile Include="ShredHostClientUI.cs" />
     <Compile Include="ShredHostClientUILaunchTool.cs" />
     <Compile Include="ShredHostProxy.cs" />
+    <Compile Include="ShredHostClientPartial.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

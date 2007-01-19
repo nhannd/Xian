@@ -104,11 +104,13 @@ namespace ClearCanvas.Server.ShredHost
 
         static public bool StartShred(WcfDataShred shred)
         {
+            Platform.Log("Attempting to start shred: " + shred.Name);
             return ShredHost.ShredControllerList[shred.Id].Start();
         }
 
         static public bool StopShred(WcfDataShred shred)
         {
+            Platform.Log("Attempting to stop shred: " + shred.Name);
             return ShredHost.ShredControllerList[shred.Id].Stop();
         }
 
@@ -128,22 +130,21 @@ namespace ClearCanvas.Server.ShredHost
                 {
                     if (null != shredStartupInfo)
                     {
-                        // create the shred's own AppDomain for it to run in
-                        AppDomain newShredDomain = AppDomain.CreateDomain(shredStartupInfo.ShredName);
-                        IShred shred = (IShred)newShredDomain.CreateInstanceFromAndUnwrap(shredStartupInfo.AssemblyPath.LocalPath, shredStartupInfo.ShredTypeName);
-
-                        // start up the thread that will actually run the shred
-
-                        ShredController newShredInfo = new ShredController(newShredDomain, shred, shredStartupInfo);
-                        _shredInfoList.Add(newShredInfo);
+                        // clone the shredStartupInfo structure into the current AppDomain, otherwise, once the StagingDomain 
+                        // has been unloaded, the shredStartupInfo structure will be destroyed
+                        ShredStartupInfo newShredStartupInfo = new ShredStartupInfo(shredStartupInfo.AssemblyPath, shredStartupInfo.ShredName, shredStartupInfo.ShredTypeName);
+                        
+                        // create the controller that will allow us to start and stop the shred
+                        ShredController shredController = new ShredController(newShredStartupInfo);
+                        _shredInfoList.Add(shredController);
                     }
 
                 }
             }
 
-            foreach (ShredController shredInfo in _shredInfoList)
+            foreach (ShredController shredController in _shredInfoList)
             {
-                shredInfo.Start();
+                shredController.Start();
             }
         }
 
@@ -151,9 +152,10 @@ namespace ClearCanvas.Server.ShredHost
         {
             foreach (ShredController shredController in _shredInfoList)
             {
-                Platform.Log(shredController.Shred.GetDisplayName() + ": Signalling stop");
+                string displayName = shredController.Shred.GetDisplayName();
+                Platform.Log(displayName + ": Signalling stop");
                 shredController.Stop();
-                Platform.Log(shredController.Shred.GetDisplayName() + ": Stopped");
+                Platform.Log(displayName + ": Stopped");
             }
 
         }

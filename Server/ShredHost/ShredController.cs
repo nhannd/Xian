@@ -8,18 +8,14 @@ namespace ClearCanvas.Server.ShredHost
 {
     internal class ShredController : MarshalByRefObject
     {
-        public ShredController(AppDomain shredDomain, IShred shred, ShredStartupInfo startupInfo)
+        public ShredController(ShredStartupInfo startupInfo)
         {
-            Platform.CheckForNullReference(shred, "shred");
-            Platform.CheckForNullReference(shredDomain, "shredDomain");
             Platform.CheckForNullReference(startupInfo, "startupInfo");
 
-            _domain = shredDomain;
-            _shredObject = shred;
             _startupInfo = startupInfo;
             _id = ShredController.NextId;
-            _thread = new Thread(new ParameterizedThreadStart(StartupShred));
             _runningState = RunningState.Stopped;
+            _servicePortHash = new Dictionary<int, string>();
         }
 
         static ShredController()
@@ -37,6 +33,9 @@ namespace ClearCanvas.Server.ShredHost
                 _runningState = RunningState.Transition;
             }
 
+            // create the AppDomain that the shred object will be instantiated in
+            _domain = AppDomain.CreateDomain(_startupInfo.ShredTypeName);
+            _shredObject = (IShred)_domain.CreateInstanceFromAndUnwrap(_startupInfo.AssemblyPath.LocalPath, _startupInfo.ShredTypeName);
             _thread = new Thread(new ParameterizedThreadStart(StartupShred));
             _thread.Start(this);
 
@@ -61,6 +60,8 @@ namespace ClearCanvas.Server.ShredHost
 
             _shredObject.Stop();
             _thread.Join();
+            AppDomain.Unload(_domain);
+            _domain = null;         // need to explicity set to null, otherwise any references to it in the future will throw an exception
 
             lock (_lockRunningState)
             {
@@ -76,30 +77,32 @@ namespace ClearCanvas.Server.ShredHost
             IWcfShred wcfShred = shredController.Shred as IWcfShred;
             if (null != wcfShred)
             {
-                wcfShred.ServicePort = GetNextAvailableServicePort();
+                wcfShred.ServicePort = GetServicePortHash(shredController.StartupInfo.ShredTypeName);
             }
 
             shredController.Shred.Start();
         }
 
-        private static int GetNextAvailableServicePort()
+        private int GetServicePortHash(string displayName)
         {
-            int servicePort;
+            int hashedValue = displayName.GetHashCode();
+            int validRange = _highestServicePort - _baseServicePort;
+            int portOffset = hashedValue % validRange;
 
-            lock (_lockShredId)
-            {
-                servicePort = _servicePort;
-                _servicePort++;
-            }
+            // find a port offset that hasn't been used yet
+            while (_servicePortHash.ContainsKey(portOffset))
+                ++portOffset;
 
-            return servicePort;
+            return _baseServicePort + portOffset;
         }
 
         #region Private fields
-        private static int _servicePort = 49153;
+        private readonly int _highestServicePort = 65535;
+        private readonly int _baseServicePort = 49153;
         private static object _lockShredId = new object();
         private static object _lockRunningState = new object();
         private RunningState _runningState;
+        private Dictionary<int, string> _servicePortHash;
         #endregion
 
         #region Properties
@@ -107,12 +110,6 @@ namespace ClearCanvas.Server.ShredHost
         private IShred _shredObject;
         private AppDomain _domain;
         private ShredStartupInfo _startupInfo;
-
-        public ShredStartupInfo StartupInfo
-        {
-            get { return _startupInfo; }
-        }
-	
         private int _id;
         private static int _nextId;
         protected static int NextId
@@ -124,17 +121,17 @@ namespace ClearCanvas.Server.ShredHost
         {
             get { return _id; }
         }
-	
-        public AppDomain ShredDomain
+
+        public ShredStartupInfo StartupInfo
         {
-            get { return _domain; }
+            get { return _startupInfo; }
         }
-	
+
         public IShred Shred
         {
             get { return _shredObject; }
         }
-	
+
         public WcfDataShred WcfDataShred
         {
             get

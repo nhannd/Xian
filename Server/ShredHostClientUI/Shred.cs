@@ -40,6 +40,11 @@ namespace ClearCanvas.Server.ShredHostClientUI
             return new WcfDataShred(this.Id, this.Name, this.Description, this.IsRunning);
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+        
         public override bool Equals(object obj)
         {
             Shred otherShred = obj as Shred;

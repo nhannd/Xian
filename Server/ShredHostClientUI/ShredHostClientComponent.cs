@@ -56,11 +56,6 @@ namespace ClearCanvas.Server.ShredHostClientUI
                 }
             }
 
-            public ShredHostClient ShredHostClient
-            {
-                get { return _component.ShredHostProxy; }
-            }
-
             public void StartShred(Shred shred)
             {
                 _component.StartShred(shred);
@@ -91,9 +86,6 @@ namespace ClearCanvas.Server.ShredHostClientUI
             // TODO prepare the component for its live phase
             base.Start();
 
-            // connect to the ShredHost WCF Service
-            _shredHostProxy = new ShredHostClient();
-
             // initialize the list of shreds to be displayed
             _shredCollection = new Table<Shred>();
             _shredCollection.Columns.Add(new TableColumn<Shred, string>("Shreds",
@@ -103,14 +95,18 @@ namespace ClearCanvas.Server.ShredHostClientUI
                 delegate(Shred shred) { return (shred.IsRunning) ? "Running" : "Stopped"; }
                 ));
 
-            WcfDataShred[] shreds = _shredHostProxy.GetShreds();
+            WcfDataShred[] shreds;
+            using (ShredHostClient client = new ShredHostClient())
+            {
+                shreds = client.GetShreds();
+                // poll to see if ShredHost is running
+                _isShredHostRunning = client.IsShredHostRunning();
+            }
+
             foreach (WcfDataShred shred in shreds)
             {
                 _shredCollection.Items.Add(new Shred(shred._id, shred._name, shred._description, shred._isRunning));
             }
-
-            // poll to see if ShredHost is running
-            _isShredHostRunning = _shredHostProxy.IsShredHostRunning();
 
             _toolSet = new ToolSet(new ShredHostClientToolExtensionPoint(), new ShredHostClientToolContext(this));
             _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "shredhostclient-toolbar", _toolSet.Actions);
@@ -121,7 +117,6 @@ namespace ClearCanvas.Server.ShredHostClientUI
         {
             // TODO prepare the component to exit the live phase
             // This is a good place to do any clean up
-            _shredHostProxy.Close();
             _toolSet.Dispose();
             _toolSet = null;
 
@@ -130,38 +125,51 @@ namespace ClearCanvas.Server.ShredHostClientUI
 
         public void Toggle()
         {
-            this.IsShredHostRunning = _shredHostProxy.IsShredHostRunning();
-            if (this.IsShredHostRunning)
+            using (ShredHostClient client = new ShredHostClient())
             {
-                this.IsShredHostRunning = _shredHostProxy.Stop();
-            }
-            else
-            {
-                this.IsShredHostRunning = _shredHostProxy.Start();
+                this.IsShredHostRunning = client.IsShredHostRunning();
+                if (this.IsShredHostRunning)
+                {
+                    this.IsShredHostRunning = client.Stop();
+                }
+                else
+                {
+                    this.IsShredHostRunning = client.Start();
+                }
             }
         }
 
         public void StartShred(Shred shred)
         {
-            bool newRunningState = this.ShredHostProxy.StartShred(shred.GetWcfDataShred());
+            bool isRunning;
+            using (ShredHostClient client = new ShredHostClient())
+            {
+                isRunning = client.StartShred(shred.GetWcfDataShred());
+            }
+
             int indexCurrentShred = this.ShredCollection.Items.FindIndex(delegate(Shred otherShred)
             {
                 return otherShred.Id == shred.Id;
             });
 
-            this.ShredCollection.Items[indexCurrentShred].IsRunning = newRunningState;
+            this.ShredCollection.Items[indexCurrentShred].IsRunning = isRunning;
             this.ShredCollection.Items.NotifyItemUpdated(indexCurrentShred);
         }
 
         public void StopShred(Shred shred)
         {
-            bool newRunningState = this.ShredHostProxy.StopShred(shred.GetWcfDataShred());
+            bool isRunning;
+            using (ShredHostClient client = new ShredHostClient())
+            {
+                isRunning = client.StopShred(shred.GetWcfDataShred());
+            }
+
             int indexCurrentShred = this.ShredCollection.Items.FindIndex(delegate(Shred otherShred)
             {
                 return otherShred.Id == shred.Id;
             });
 
-            this.ShredCollection.Items[indexCurrentShred].IsRunning = newRunningState;
+            this.ShredCollection.Items[indexCurrentShred].IsRunning = isRunning;
             this.ShredCollection.Items.NotifyItemUpdated(indexCurrentShred);
         }
 
@@ -169,12 +177,6 @@ namespace ClearCanvas.Server.ShredHostClientUI
         private bool _isShredHostRunning;
         private ISelection _tableSelection;
         private Table<Shred> _shredCollection;
-        ShredHostClient _shredHostProxy;
-
-        public ShredHostClient ShredHostProxy
-        {
-            get { return _shredHostProxy; }
-        }
 
         public ISelection TableSelection
         {
