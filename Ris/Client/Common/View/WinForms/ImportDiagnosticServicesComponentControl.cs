@@ -32,10 +32,11 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
 
         private void _browseButton_Click(object sender, EventArgs e)
         {
-            openFileDialog1.InitialDirectory = "c:\\Projects\\Xian\\trunk\\Ris\\SampleData\\";
+            openFileDialog1.InitialDirectory = ".";
             openFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.FileName = "";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
