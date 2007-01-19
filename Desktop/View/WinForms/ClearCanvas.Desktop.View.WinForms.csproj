@@ -90,6 +90,13 @@
     </Compile>
     <Compile Include="HtmlComponentView.cs" />
     <Compile Include="BindingTreeNode.cs" />
+    <Compile Include="ProgressDialogComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogComponentControl.Designer.cs">
+      <DependentUpon>ProgressDialogComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressDialogComponentView.cs" />
     <Compile Include="SplitComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -183,6 +190,10 @@
     <EmbeddedResource Include="HtmlComponentControl.resx">
       <DependentUpon>HtmlComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialogComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProgressDialogComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SplitComponentContainerControl.resx">
       <SubType>Designer</SubType>

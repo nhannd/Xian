@@ -45,8 +45,7 @@ namespace ClearCanvas.Desktop
         /// in response to querying the <see cref="CancelRequested"/> flag, and return the result object
         /// to the foreground thread.  After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.
         /// </summary>
-        /// <param name="result"></param>
-        void Cancel(object result);
+        void Cancel();
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it cannot complete due to an exception,
@@ -219,9 +218,8 @@ namespace ClearCanvas.Desktop
                 _doWorkArgs.Result = result;
             }
 
-            public void Cancel(object result)
+            public void Cancel()
             {
-                _doWorkArgs.Result = result;
                 _doWorkArgs.Cancel = true;
             }
 
@@ -403,8 +401,11 @@ namespace ClearCanvas.Desktop
             BackgroundTaskTerminatedReason reason = (_error != null) ? BackgroundTaskTerminatedReason.Exception
                 : (e.Cancelled ? BackgroundTaskTerminatedReason.Cancelled : BackgroundTaskTerminatedReason.Completed);
 
+            // the e.Result object is an exception for e.Cancelled status, we don't want that
+            Object obj = (e.Cancelled ? null : e.Result);
+
             EventsHelper.Fire(_terminated, this,
-                new BackgroundTaskTerminatedEventArgs(_userState, reason, e.Result, _error));
+                new BackgroundTaskTerminatedEventArgs(_userState, reason, obj, _error));
         }
 
     }

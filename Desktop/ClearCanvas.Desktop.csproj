@@ -84,6 +84,8 @@
     <Compile Include="IItemCollection.cs" />
     <Compile Include="ItemCollection.cs" />
     <Compile Include="PagedComponentContainer.cs" />
+    <Compile Include="ProgressDialog.cs" />
+    <Compile Include="ProgressDialogComponent.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="Tables\ITable.cs" />
     <Compile Include="Tables\ITableColumn.cs" />
