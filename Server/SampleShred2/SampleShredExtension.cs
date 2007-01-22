@@ -54,6 +54,7 @@ namespace SampleShred2
 
         public override void Stop()
         {
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
             _stopSignal.Set();
         }
 
@@ -62,7 +63,7 @@ namespace SampleShred2
             while (true)
             {
                 FindNextPi();
-                if (_stopSignal.WaitOne(100, false))
+                if (_stopSignal.WaitOne(50, false))
                     break;
             }
         }

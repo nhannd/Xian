@@ -11,6 +11,5 @@ namespace ClearCanvas.Server.ShredHost
             get;
             set;
         }
-	
     }
 }

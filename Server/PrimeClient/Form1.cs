@@ -13,14 +13,14 @@ namespace PrimeClient
         public Form1()
         {
             InitializeComponent();
-            _proxy = new SampleShred1InterfaceClient();
-            _piProxy = new SampleShred2InterfaceClient();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int primeNumber = _proxy.GetLastPrimeFound();
+            SampleShred1InterfaceClient proxy = new SampleShred1InterfaceClient();
+            int primeNumber = proxy.GetLastPrimeFound();
             textBox1.Text = primeNumber.ToString();
+            proxy.Close();
         }
 
         private SampleShred1InterfaceClient _proxy;
@@ -28,14 +28,14 @@ namespace PrimeClient
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _proxy.Close();
-            _piProxy.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string pi = _piProxy.GetLastPiFound();
+            SampleShred2InterfaceClient piProxy = new SampleShred2InterfaceClient();
+            string pi = piProxy.GetLastPiFound();
             textBox2.Text = pi;
+            piProxy.Close();
         }
     }
 }

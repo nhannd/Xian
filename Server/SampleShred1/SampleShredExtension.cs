@@ -14,7 +14,6 @@ namespace SampleShred1
     {
         private readonly string _className;
         private readonly string _serviceEndPointName;
-        private SampleShred1Settings _settings;
         private EventWaitHandle _stopSignal;
 
         public SampleShredExtension()
@@ -23,13 +22,6 @@ namespace SampleShred1
             _serviceEndPointName = "SampleShred1";
             _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
             System.Diagnostics.Trace.WriteLine(_className + ": constructed");
-
-            _settings = new SampleShred1Settings();
-        }
-
-        ~SampleShredExtension()
-        {
-            _settings.Save();
         }
 
         public override void Start()
@@ -56,11 +48,12 @@ namespace SampleShred1
 
         public override string GetDisplayName()
         {
-            return _settings.FriendlyName;
+            return "SampleShred1";
         }
 
         public override void Stop()
         {
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
             _stopSignal.Set();
         }
 
