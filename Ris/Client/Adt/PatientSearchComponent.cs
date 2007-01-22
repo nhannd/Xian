@@ -9,6 +9,7 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Common.Utilities;
 using System.ComponentModel;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -41,7 +42,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private string _mrn;
         private string _healthcard;
-        private string _healthcardMask;
         private string _familyName;
         private string _givenName;
         private Sex? _sex;
@@ -63,8 +63,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _sexChoices = _patientAdminService.GetSexEnumTable();
-
-            _healthcardMask = "0000 000 000";
         }
 
         public override void Stop()
@@ -115,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string HealthcardMask
         {
-            get { return _healthcardMask; }
+            get { return TextFieldMasks.HealthcardNumberMask; }
         }
 
         public string FamilyName

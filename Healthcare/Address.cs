@@ -13,7 +13,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// Address component
     /// </summary>
-	public partial class Address
+	public partial class Address : IFormattable
 	{
         private void CustomInitialize()
         {
@@ -22,14 +22,6 @@ namespace ClearCanvas.Healthcare {
         public bool IsCurrent
         {
             get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }
-        }
-
-        public string Format()
-        {
-            string address = "";
-            address += (_unit != null && !_unit.Trim().Equals("")) ? string.Format("{0}-", _unit) : "";
-            address += string.Format("{0}, {1} {2} {3}", _street, _city, _province, _postalCode);
-            return address;
         }
 
         /// <summary>
@@ -49,5 +41,27 @@ namespace ClearCanvas.Healthcare {
                 ((this._type == default(AddressType)) ? (that._type == default(AddressType)) : this._type.Equals(that._type))  &&
                 true;
         }
-	}
+
+        #region IFormattable Members
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            // TODO interpret the format string according to custom-defined format characters
+            StringBuilder sb = new StringBuilder();
+            if (!String.IsNullOrEmpty(_unit))
+            {
+                sb.Append(_unit);
+                sb.Append("-");
+            }
+            sb.AppendFormat("{0}, {1} {2} {3}", _street, _city, _province, _postalCode);
+            return sb.ToString();
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return this.ToString(null, null);
+        }
+    }
 }

@@ -23,8 +23,6 @@ namespace ClearCanvas.Ris.Client.Common
         private TelephoneEquipmentEnumTable _phoneEquipments;
         private TelephoneUseEnumTable _phoneUses;
 
-        private string _phoneNumberMask;
-
         public PhoneNumberEditorComponent(TelephoneNumber phoneNumber)
         {
             _phoneNumber = phoneNumber;
@@ -36,8 +34,6 @@ namespace ClearCanvas.Ris.Client.Common
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _phoneEquipments = _patientAdminService.GetTelephoneEquipmentEnumTable();
             _phoneUses = _patientAdminService.GetTelephoneUseEnumTable();
-
-            _phoneNumberMask = "000-0000";
         }
 
         /// <summary>
@@ -52,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Common
 
         public string PhoneNumberMask
         {
-            get { return _phoneNumberMask; }
+            get { return TextFieldMasks.TelephoneNumberLocalMask; }
         }
 
         public string CountryCode

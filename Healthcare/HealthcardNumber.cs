@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// HealthcardNumber component
     /// </summary>
-	public partial class HealthcardNumber
+	public partial class HealthcardNumber : IFormattable
 	{
 	
 		/// <summary>
@@ -23,16 +23,11 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public string Format()
-        {
-            return string.Format("{0} {1} {2}", _assigningAuthority, _id, _versionCode).Trim();
-        }
         /// <summary>
         /// Equivalence comparison which ignores validity range
         /// </summary>
         /// <param name="that">The HealthcardNumber to compare to</param>
         /// <returns>True if all fields other than the validity range are the same, False otherwise</returns>
-
         public bool IsEquivalentTo(HealthcardNumber that)
         {
             return (that != null) &&
@@ -46,6 +41,21 @@ namespace ClearCanvas.Healthcare {
             ((this._expiryDate == default(DateTime?)) ? (that._expiryDate == default(DateTime?)) : this._expiryDate.Value.Date.Equals(that._expiryDate.Value.Date)) &&
 
                 true;
+        }
+
+        #region IFormattable Members
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            // TODO interpret the format string according to custom-defined format characters
+            return string.Format("{0} {1} {2}", this.AssigningAuthority, this.Id, this.VersionCode);
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return this.ToString(null, null);
         }
     }
 }

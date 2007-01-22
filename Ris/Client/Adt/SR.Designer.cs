@@ -565,6 +565,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string TextUnknownValue {
+            get {
+                return ResourceManager.GetString("TextUnknownValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Visit....
         /// </summary>
         internal static string TitleAddVisit {

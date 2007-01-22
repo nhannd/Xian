@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// CompositeIdentifier component
     /// </summary>
-	public partial class CompositeIdentifier
+	public partial class CompositeIdentifier : IFormattable
 	{
         private void CustomInitialize()
         {
@@ -22,5 +22,20 @@ namespace ClearCanvas.Healthcare {
         {
             return string.Format("{0} {1}", _assigningAuthority, _id);
         }
-	}
+
+        #region IFormattable Members
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            // TODO interpret the format string according to custom-defined format characters
+            return string.Format("{0} {1}", _assigningAuthority, _id);
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return this.ToString(null, null);
+        }
+    }
 }

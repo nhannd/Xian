@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 _profileAuthorities = CollectionUtils.Map<PatientProfile, string, List<string>>(diffData.Profiles, delegate(PatientProfile p) { return p.Mrn.AssigningAuthority; });
 
-                AddField(SR.ColumnHealthcardNumber, PatientProfileDiscrepancy.Healthcard, diffData, delegate(PatientProfile p) { return p.Healthcard.Format(); });
+                AddField(SR.ColumnHealthcardNumber, PatientProfileDiscrepancy.Healthcard, diffData, delegate(PatientProfile p) { return Format.Custom(p.Healthcard); });
                 AddField(SR.ColumnFamilyName, PatientProfileDiscrepancy.FamilyName, diffData, delegate(PatientProfile p) { return p.Name.GivenName; });
                 AddField(SR.ColumnGivenName, PatientProfileDiscrepancy.GivenName, diffData, delegate(PatientProfile p) { return p.Name.FamilyName; });
                 AddField(SR.ColumnMiddleName, PatientProfileDiscrepancy.MiddleName, diffData, delegate(PatientProfile p) { return p.Name.MiddleName; });
@@ -201,13 +201,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 AddField(SR.ColumnSex, PatientProfileDiscrepancy.Sex, diffData, delegate(PatientProfile p) { return _sexEnumTable[p.Sex].Value; });
 
                 AddField(SR.ColumnHomePhone, PatientProfileDiscrepancy.HomePhone, diffData,
-                    delegate(PatientProfile p) { return p.CurrentHomePhone == null ? "" : p.CurrentHomePhone.Format(); });
+                    delegate(PatientProfile p) { return p.CurrentHomePhone == null ? "" : Format.Custom(p.CurrentHomePhone); });
                 AddField(SR.ColumnWorkPhone, PatientProfileDiscrepancy.WorkPhone, diffData,
-                    delegate(PatientProfile p) { return p.CurrentWorkPhone == null ? "" : p.CurrentWorkPhone.Format(); });
+                    delegate(PatientProfile p) { return p.CurrentWorkPhone == null ? "" : Format.Custom(p.CurrentWorkPhone); });
                 AddField(SR.ColumnHomeAddress, PatientProfileDiscrepancy.HomeAddress, diffData,
-                    delegate(PatientProfile p) { return p.CurrentHomeAddress == null ? "" : p.CurrentHomeAddress.Format(); });
+                    delegate(PatientProfile p) { return p.CurrentHomeAddress == null ? "" : Format.Custom(p.CurrentHomeAddress); });
                 AddField(SR.ColumnWorkAddress, PatientProfileDiscrepancy.WorkAddress, diffData,
-                    delegate(PatientProfile p) { return p.CurrentWorkAddress == null ? "" : p.CurrentWorkAddress.Format(); });
+                    delegate(PatientProfile p) { return p.CurrentWorkAddress == null ? "" : Format.Custom(p.CurrentWorkAddress); });
             }
 
             NotifyAllPropertiesChanged();

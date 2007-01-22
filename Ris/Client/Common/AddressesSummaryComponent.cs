@@ -83,10 +83,6 @@ namespace ClearCanvas.Ris.Client.Common
         {
             Address address = new Address();
 
-            // For now, hard code default values that correspond to first entry in the the _dummy*Choices string arrays in AddressesEditorComponent
-            address.Province = "Ontario";
-            address.Country = "Canada";
-
             AddressEditorComponent editor = new AddressEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
             if (exitCode == ApplicationComponentExitCode.Normal)

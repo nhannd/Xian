@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Common
                 }, 
                 1.1f)); 
             this.Columns.Add(new TableColumn<TelephoneNumber, string>(SR.ColumnNumber, 
-                delegate(TelephoneNumber pn) { return pn.Format(); },
+                delegate(TelephoneNumber pn) { return Format.Custom(pn); },
                 2.2f));
             this.Columns.Add(new TableColumn<TelephoneNumber, string>(SR.ColumnExpiryDate, 
                 delegate(TelephoneNumber pn) { return Format.Date(pn.ValidRange.Until); }, 

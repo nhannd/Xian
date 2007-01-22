@@ -285,6 +285,9 @@
   <data name="MessagePatientNotFound" xml:space="preserve">
     <value>Patient not found</value>
   </data>
+  <data name="TextUnknownValue" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
   <data name="TitleAddVisit" xml:space="preserve">
     <value>Add Visit...</value>
   </data>

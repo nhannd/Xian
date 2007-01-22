@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Common
 
         public string Healthcard
         {
-            get { return _patientProfile.Healthcard.Format(); }
+            get { return Format.Custom(_patientProfile.Healthcard); }
         }
 
         public string Sex

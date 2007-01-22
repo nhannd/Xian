@@ -33,6 +33,7 @@
       <HintPath>..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -95,6 +96,12 @@
     <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />
     <Compile Include="TelephoneNumber.cs" />
+    <Compile Include="TelephoneNumberSettings.cs" />
+    <Compile Include="TelephoneNumberSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>TelephoneNumberSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="TelephoneUse.cs" />
     <Compile Include="TranscriptionStep.cs" />
     <Compile Include="VerificationStep.cs" />
@@ -122,6 +129,13 @@
       <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
       <Name>ClearCanvas.Workflow</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="TelephoneNumberSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TelephoneNumberSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

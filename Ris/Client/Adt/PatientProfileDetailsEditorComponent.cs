@@ -12,6 +12,7 @@ using ClearCanvas.Healthcare;
 using Iesi.Collections;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -27,10 +28,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private IPatientAdminService _patientAdminService;
         private SexEnumTable _sexChoices;
 
-        private string _healthcardMask;
-
-        private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
-        private string[] _dummySiteChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
+        private string[] _dummyHealthcardAssigningAuthorityChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
+        private string[] _dummyMrnAssigningAuthorityChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
 
         public PatientProfileDetailsEditorComponent()
         {
@@ -52,9 +51,6 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _sexChoices = _patientAdminService.GetSexEnumTable();
-
-            //TODO: replace hardcoded mask with something from validation framework
-            _healthcardMask = "0000 000 000";
         }
 
         #region Presentation Model
@@ -148,9 +144,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string[] MrnSiteChoices
+        public string[] MrnAssigningAuthorityChoices
         {
-            get { return _dummySiteChoices;  }
+            get { return _dummyMrnAssigningAuthorityChoices;  }
         }
 
         public string HealthcardID
@@ -165,7 +161,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string HealtcardMask
         {
-            get { return _healthcardMask; }
+            get { return TextFieldMasks.HealthcardNumberMask; }
         }
 
         public string HealthcardProvince
@@ -178,9 +174,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string[] HealthcardProvinceChoices
+        public string[] HealthcardAssigningAuthorityChoices
         {
-            get { return _dummyProvinceChoices;  }
+            get { return _dummyHealthcardAssigningAuthorityChoices;  }
         }
 
         public string HealthcardVersionCode

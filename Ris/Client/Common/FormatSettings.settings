@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Common" GeneratedClassName="FormatSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="HealthcardNumberMask" Description="Specifies a mask used on healthcard number input fields" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0000 000 000</Value>
+    </Setting>
+    <Setting Name="HealthcardVersionCodeMask" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="TelephoneNumberLocalMask" Description="Specifies a mask used on telephone number input fields" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">000-0000</Value>
+    </Setting>
+    <Setting Name="TelephoneNumberFullMask" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">(000) 000-0000</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

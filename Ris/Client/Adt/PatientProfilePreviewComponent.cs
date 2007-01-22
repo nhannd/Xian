@@ -213,7 +213,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Healthcard
         {
-            get { return _patientProfile.Healthcard.Format(); }
+            get { return Format.Custom(_patientProfile.Healthcard); }
         }
 
         public string Sex
@@ -226,7 +226,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get
             {
                 Address address = _patientProfile.CurrentHomeAddress;
-                return (address == null) ? "Unknown" : address.Format();
+                return (address == null) ? SR.TextUnknownValue : Format.Custom(address);
             }
         }
 
@@ -235,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get
             {
                 TelephoneNumber phone = _patientProfile.CurrentHomePhone;
-                return (phone == null) ? "Unknown" : phone.Format();
+                return (phone == null) ? SR.TextUnknownValue : Format.Custom(phone);
             }
         }
 

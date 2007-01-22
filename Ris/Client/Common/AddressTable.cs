@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Common
                 delegate(Address a) { return _addressTypes[a.Type].Value; }, 
                 1.1f));
             this.Columns.Add(new TableColumn<Address, string>(SR.ColumnAddress, 
-                delegate(Address a) { return a.Format(); }, 
+                delegate(Address a) { return Format.Custom(a); }, 
                 2.2f));
             this.Columns.Add(new TableColumn<Address, string>(SR.ColumnExpiryDate, delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
                 0.9f));

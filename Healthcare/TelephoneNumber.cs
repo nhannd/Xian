@@ -13,7 +13,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// TelephoneNumber component
     /// </summary>
-	public partial class TelephoneNumber
+	public partial class TelephoneNumber : IFormattable
 	{
         private void CustomInitialize()
         {
@@ -22,34 +22,6 @@ namespace ClearCanvas.Healthcare {
         public bool IsCurrent
         {
             get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }    
-        }
-
-        /// <summary>
-        /// Default Telephone Number string, suppresses the country code for numbers within the installed site
-        /// </summary>
-        /// <returns>A string representation of the telephone number</returns>
-        public string Format()
-        {
-            /// todo: replace hard-coded "1" with the site's default country code
-            return this.Format("1");
-        }
-
-        /// <summary>
-        /// Telephone number string, which suppresses country code output for the specified country code
-        /// </summary>
-        /// <param name="filteredCountryCode">Country code to suppress.  Null will display all country codes.</param>
-        /// <returns>A string representation of the telephone number</returns>
-        public string Format(string filteredCountryCode)
-        {
-            string number = "";
-
-            number += (_countryCode != null && !_countryCode.Trim().Equals("") && _countryCode != filteredCountryCode) 
-                ? string.Format("+{0} ", _countryCode) : "";
-            number += string.Format("({0}) {1}-{2}", _areaCode, _number.Substring(0,3), _number.Substring(3));
-            number += (_extension != null && !_extension.Trim().Equals(""))
-                ? string.Format(" x{0}", _extension) : "";
-
-            return number.ToString();
         }
 
         /// <summary>
@@ -70,5 +42,41 @@ namespace ClearCanvas.Healthcare {
 
         }
 
-	}
+
+        #region IFormattable Members
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            // TODO interpret the format string according to custom-defined format characters
+            StringBuilder sb = new StringBuilder();
+            if (!String.IsNullOrEmpty(this.CountryCode) && !this.CountryCode.Equals(TelephoneNumber.DefaultCountryCode))
+            {
+                sb.Append("+");
+                sb.Append(this.CountryCode);
+                sb.Append(" ");
+            }
+            
+            sb.Append(string.Format("({0}) {1}-{2}", this.AreaCode, this.Number.Substring(0, 3), this.Number.Substring(3)));
+            
+            if (!String.IsNullOrEmpty(this.Extension))
+            {
+                sb.Append(" x");
+                sb.Append(this.Extension);
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return this.ToString(null, null);
+        }
+
+        public static string DefaultCountryCode
+        {
+            get { return TelephoneNumberSettings.Default.DefaultCountryCode; }
+        }
+    }
 }

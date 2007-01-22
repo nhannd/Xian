@@ -8,6 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Common
 {
@@ -19,12 +20,11 @@ namespace ClearCanvas.Ris.Client.Common
     [AssociateView(typeof(AddressesEditorComponentViewExtensionPoint))]
     public class AddressEditorComponent : ApplicationComponent
     {
-        Address _address;
-        private string[] _dummyProvinceChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
-        private string[] _dummyCountryChoices = new string[] { "Canada" };
+        private Address _address;
         private IPatientAdminService _patientAdminService;
 
         private AddressTypeEnumTable _addressTypes;
+        private AddressSettings _settings;
 
         public AddressEditorComponent(Address address)
         {
@@ -46,6 +46,8 @@ namespace ClearCanvas.Ris.Client.Common
             base.Start();
             _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
             _addressTypes = _patientAdminService.GetAddressTypeEnumTable();
+
+            _settings = new AddressSettings();
         }
 
         public string Street
@@ -88,9 +90,9 @@ namespace ClearCanvas.Ris.Client.Common
             }
         }
 
-        public string[] ProvinceChoices
+        public ICollection<string> ProvinceChoices
         {
-            get { return _dummyProvinceChoices; }
+            get { return _settings.ProvinceChoices; }
         }
 
         public string Country
@@ -103,9 +105,9 @@ namespace ClearCanvas.Ris.Client.Common
             }
         }
 
-        public string[] CountryChoices
+        public ICollection<string> CountryChoices
         {
-            get { return _dummyCountryChoices; }
+            get { return _settings.CountryChoices; }
         }
 
         public string PostalCode
