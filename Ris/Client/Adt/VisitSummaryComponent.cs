@@ -60,7 +60,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _visitActionHandler.Add.Enabled = true;
 
-            this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
+            this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
+                Format.Custom(_patientProfile.Name), Format.Custom(_patientProfile.Mrn)));
 
             base.Start();
         }

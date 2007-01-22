@@ -63,7 +63,9 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _profile = _adtService.LoadPatientProfile(_profileRef, true);
                 this.Host.SetTitle(
-                    string.Format(SR.TitlePatientComponent, _profile.Name.Format(), _profile.Mrn.Format()));
+                    string.Format(SR.TitlePatientComponent,
+                    Format.Custom(_profile.Name),
+                    Format.Custom(_profile.Mrn)));
             }
 
 

@@ -119,7 +119,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private void Refresh()
         {
             _patientProfile = _adtService.LoadPatientProfile(_patientProfileRef, false);
-            this.Host.SetTitle(string.Format(SR.TitlePatientComponent, _patientProfile.Name.Format(), _patientProfile.Mrn.Format()));
+            this.Host.SetTitle(string.Format(SR.TitlePatientComponent,
+                Format.Custom(_patientProfile.Name),
+                Format.Custom(_patientProfile.Mrn)));
 
             _preview.PatientProfileRef = _patientProfileRef;
         }

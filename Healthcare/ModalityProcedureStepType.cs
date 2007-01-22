@@ -23,11 +23,6 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public virtual string Format()
-        {
-            return string.Format("{0} ({1})", _name, _id);
-        }
-        
         #region Object overrides
 
         public override bool Equals(object that)

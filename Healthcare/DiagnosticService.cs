@@ -24,11 +24,6 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public virtual string Format()
-        {
-            return string.Format("{0} ({1})", _name, _id);
-        }
-
         public virtual void AddRequestedProcedureType(RequestedProcedureType rpt)
         {
             if (this.RequestedProcedureTypes.Contains(rpt))
@@ -56,6 +51,5 @@ namespace ClearCanvas.Healthcare {
         }
 
 		#endregion
-
-	}
+    }
 }

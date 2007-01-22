@@ -18,11 +18,6 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        public virtual string Format()
-        {
-            return this.Name;
-        }
-
         public override string ToString()
         {
             return Name;

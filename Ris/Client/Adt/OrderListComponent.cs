@@ -63,11 +63,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _orderList = new Table<ModalityWorklistQueryResult>();
             _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnMRN,
-                delegate(ModalityWorklistQueryResult item) { return item.Mrn.Format(); }));
+                delegate(ModalityWorklistQueryResult item) { return Format.Custom(item.Mrn); }));
             _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnName,
-                delegate(ModalityWorklistQueryResult item) { return item.PatientName.Format(); }));
+                delegate(ModalityWorklistQueryResult item) { return Format.Custom(item.PatientName); }));
             _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnVisitNumber,
-                delegate(ModalityWorklistQueryResult item) { return item.VisitNumber.Format(); }));
+                delegate(ModalityWorklistQueryResult item) { return Format.Custom(item.VisitNumber); }));
             _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnAccessionNumber,
                 delegate(ModalityWorklistQueryResult item) { return item.AccessionNumber; }));
             _orderList.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnDiagnosticService,

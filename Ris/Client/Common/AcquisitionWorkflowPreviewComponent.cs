@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Common
                     delegate(PatientProfile pp) { return _worklistItem.PatientProfile.RefersTo(pp); });
 
             }
-
+            
             NotifyAllPropertiesChanged();
         }
 
@@ -85,17 +85,17 @@ namespace ClearCanvas.Ris.Client.Common
 
         public string Name
         {
-            get { return _patientProfile.Name.Format(); }
+            get { return Format.Custom(_patientProfile.Name); }
         }
 
         public string DateOfBirth
         {
-            get { return ClearCanvas.Desktop.Format.Date(_patientProfile.DateOfBirth); }
+            get { return Format.Date(_patientProfile.DateOfBirth); }
         }
 
         public string Mrn
         {
-            get { return _patientProfile.Mrn.Format(); }
+            get { return Format.Custom(_patientProfile.Mrn); }
         }
 
         public string Healthcard

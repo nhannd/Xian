@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client.Adt
             VisitStatusEnumTable visitStatuses = service.GetVisitStatusEnumTable();
 
             this.Columns.Add(new TableColumn<Visit, string>(SR.ColumnVisitNumber,
-                delegate(Visit v) { return v.VisitNumber.Format(); },
+                delegate(Visit v) { return Format.Custom(v.VisitNumber); },
                 1.0f));
 
             //Visit type description

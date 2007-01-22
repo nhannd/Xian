@@ -12,21 +12,24 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// Implements a simplified version of the HL7 XPN (Extended Person Name) data type
     /// </summary>
-	public partial class PersonName
+	public partial class PersonName : IFormattable
 	{
         private void CustomInitialize()
         {
         }
 
-        /// <summary>
-        /// Returns a string formatting the person name for purpose of display.
-        /// NB. should probably create an overload that takes a format string for more
-        /// flexibility
-        /// </summary>
-        /// <returns></returns>
-        public string Format()
+        #region IFormattable Members
+
+        public string ToString(string format, IFormatProvider formatProvider)
         {
-            return string.Format("{0}, {1} {2}", FamilyName, GivenName, MiddleName).Trim();
+            return string.Format("{0}, {1} {2}", _familyName, _givenName, _middleName).Trim();
         }
-	}
+
+        #endregion
+
+        public override string ToString()
+        {
+            return this.ToString(null, null);
+        }
+    }
 }

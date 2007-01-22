@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.PatientProfile.Mrn.Id; }, 1.0f));
             this.Columns.Add(
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnName,
-                  delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.PatientProfile.Name.Format(); }, 2.0f));
+                  delegate(ReconciliationCandidateTableEntry item) { return Format.Custom(item.ProfileMatch.PatientProfile.Name); }, 2.0f));
             this.Columns.Add(
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnHealthcardNumber,
                   delegate(ReconciliationCandidateTableEntry item) { return item.ProfileMatch.PatientProfile.Healthcard.Id; }, 1.0f));

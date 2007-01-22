@@ -20,9 +20,9 @@ namespace ClearCanvas.Ris.Client.Common
             OrderPriorityEnumTable orderPriorities = orderEntryService.GetOrderPriorityEnumTable();
 
             this.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnMRN,
-                delegate(ModalityWorklistQueryResult item) { return item.Mrn.Format(); }));
+                delegate(ModalityWorklistQueryResult item) { return Format.Custom(item.Mrn); }));
             this.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnName,
-                delegate(ModalityWorklistQueryResult item) { return item.PatientName.Format(); }));
+                delegate(ModalityWorklistQueryResult item) { return Format.Custom(item.PatientName); }));
             //this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnVisitNumber,
             //    delegate(WorklistItem item) { return item.VisitNumber.Format(); }));
             this.Columns.Add(new TableColumn<ModalityWorklistQueryResult, string>(SR.ColumnAccessionNumber,

@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 SR.ColumnPractitioner,
                 delegate(VisitPractitioner vp)
                 {
-                    return vp.Practitioner.Format();
+                    return Format.Custom(vp.Practitioner.Name);
                 },
                 2.5f));
             _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(

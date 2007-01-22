@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 {
                     facilityStrings.AddRange(
                         CollectionUtils.Map<Facility, string>(_facilityAdminService.GetAllFacilities(),
-                                delegate(Facility f) { return f.Format(); }));
+                                delegate(Facility f) { return Format.Custom(f); }));
                 }
                 catch (Exception e)
                 {
@@ -106,14 +106,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string Facility
         {
-            get { return _location.Facility == null ? "" : _location.Facility.Format(); }
+            get { return _location.Facility == null ? "" : Format.Custom(_location.Facility); }
             set
             {
                 try
                 {
                     _location.Facility = (value == "") ? null :
                         CollectionUtils.SelectFirst<Facility>(_facilityAdminService.GetAllFacilities(),
-                            delegate(Facility f) { return f.Format() == value; });
+                            delegate(Facility f) { return Format.Custom(f) == value; });
 
                     this.Modified = true;
                 }

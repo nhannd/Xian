@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(PatientProfile profile) { return profile.Mrn.Id; }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfile, string>(SR.ColumnName,
-                  delegate(PatientProfile profile) { return profile.Name.Format(); }, 2.0f));
+                  delegate(PatientProfile profile) { return Format.Custom(profile.Name); }, 2.0f));
             this.Columns.Add(
               new TableColumn<PatientProfile, string>(SR.ColumnHealthcardNumber,
                   delegate(PatientProfile profile) { return profile.Healthcard.Id; }, 1.0f));

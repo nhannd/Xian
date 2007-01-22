@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 dsStrings.Add("");
                 dsStrings.AddRange(
                     CollectionUtils.Map<DiagnosticService, string>(
-                        _diagnosticServiceChoices, delegate(DiagnosticService ds) { return ds.Format(); }));
+                        _diagnosticServiceChoices, delegate(DiagnosticService ds) { return ds.Name; }));
 
                 return dsStrings;
             }
@@ -139,12 +139,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string SelectedDiagnosticService
         {
-            get { return _selectedDiagnosticService == null ? "" : _selectedDiagnosticService.Format(); }
+            get { return _selectedDiagnosticService == null ? "" : _selectedDiagnosticService.Name; }
             set
             {
                 DiagnosticService diagnosticService = (value == "") ? null :
                     CollectionUtils.SelectFirst<DiagnosticService>(_diagnosticServiceChoices,
-                            delegate(DiagnosticService ds) { return ds.Format() == value; });
+                            delegate(DiagnosticService ds) { return ds.Name == value; });
 
                 if (diagnosticService == null || !diagnosticService.Equals(_selectedDiagnosticService))
                 {
@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 facilityStrings.Add("");
                 facilityStrings.AddRange(
                     CollectionUtils.Map<Facility, string>(_facilityChoices,
-                            delegate(Facility f) { return f.Format(); }));
+                            delegate(Facility f) { return f.Name; }));
 
                 return facilityStrings;
             }
@@ -181,12 +181,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string SelectedFacility
         {
-            get { return _selectedFacility == null ? "" : _selectedFacility.Format(); }
+            get { return _selectedFacility == null ? "" : _selectedFacility.Name; }
             set
             {
                 _selectedFacility = (value == "") ? null : 
                     CollectionUtils.SelectFirst<Facility>(_facilityChoices,
-                        delegate(Facility f) { return f.Format() == value; });
+                        delegate(Facility f) { return f.Name == value; });
             }
         }
 
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
                     CollectionUtils.Map<Practitioner, string>(_orderingPhysicianChoices,
-                            delegate(Practitioner p) { return p.Format(); }));
+                            delegate(Practitioner p) { return Format.Custom(p.Name); }));
 
                 return physicianStrings;
             }
@@ -206,12 +206,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string SelectedOrderingPhysician
         {
-            get { return _selectedOrderingPhysician == null ? "" : _selectedOrderingPhysician.Format(); }
+            get { return _selectedOrderingPhysician == null ? "" : Format.Custom(_selectedOrderingPhysician.Name); }
             set
             {
                 _selectedOrderingPhysician = (value == "") ? null :
                    CollectionUtils.SelectFirst<Practitioner>(_orderingPhysicianChoices,
-                       delegate(Practitioner p) { return p.Format() == value; });
+                       delegate(Practitioner p) { return Format.Custom(p.Name) == value; });
             }
         }
 
@@ -292,12 +292,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 _diagnosticServiceBreakdown = new Tree<RequestedProcedureType>(
                     new TreeItemBinding<RequestedProcedureType>(
-                        delegate(RequestedProcedureType rpt) { return rpt.Format(); },
+                        delegate(RequestedProcedureType rpt) { return rpt.Name; },
                         delegate(RequestedProcedureType rpt)
                         {
                             return new Tree<ModalityProcedureStepType>(
                                 new TreeItemBinding<ModalityProcedureStepType>(
-                                    delegate(ModalityProcedureStepType spt) { return spt.Format(); }),
+                                    delegate(ModalityProcedureStepType spt) { return spt.Name; }),
                                     rpt.ModalityProcedureStepTypes);
                         }), _selectedDiagnosticService.RequestedProcedureTypes);
             }

@@ -18,11 +18,6 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        public string Format()
-        {
-            return string.Format("{0} {1}", _assigningAuthority, _id);
-        }
-
         #region IFormattable Members
 
         public string ToString(string format, IFormatProvider formatProvider)

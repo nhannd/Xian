@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Name
         {
-            get { return _patientProfile.Name.Format(); }
+            get { return Format.Custom(_patientProfile.Name); }
         }
 
         public string DateOfBirth
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Mrn
         {
-            get { return _patientProfile.Mrn.Format(); }
+            get { return Format.Custom(_patientProfile.Mrn); }
         }
 
         public string Healthcard
