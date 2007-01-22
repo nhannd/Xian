@@ -103,6 +103,10 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         public static string Custom(object obj)
         {
+            if (obj is IFormattable)
+            {
+                return (obj as IFormattable).ToString(null, null);
+            }
             return obj.ToString();
         }
     }
