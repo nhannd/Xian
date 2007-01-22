@@ -21,7 +21,7 @@ namespace ClearCanvas.Common.Configuration
     /// This class is the standard settings provider that should be used by all settings classes that operate
     /// within the ClearCanvas framework.  Internally, this class will delegate the storage of settings between
     /// the local file system and an implemetation of <see cref="EnterpriseConfigurationStoreExtensionPoint"/>,
-    /// if an extension is found.
+    /// if an extension is found.  All methods on this class are thread-safe, as per MSDN guidelines.
     /// </summary>
     public class StandardSettingsProvider : SettingsProvider, IApplicationSettingsProvider
     {
