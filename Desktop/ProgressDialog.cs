@@ -12,7 +12,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Show the progress dialog to to the user
         /// </summary>
-        /// <param name="task">The background task to execute</param>
+        /// <param name="task">The <see cref="BackgroundTask"/> to execute</param>
         /// <param name="desktopWindow">Desktop window that parents the progress dialog</param>
         public static void Show(BackgroundTask task, IDesktopWindow desktopWindow)
         {

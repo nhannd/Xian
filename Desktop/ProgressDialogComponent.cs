@@ -7,23 +7,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop
 {
-    //[MenuAction("launch", "global-menus/Tools/Test Progress Bar")]
-    //[ClickHandler("launch", "Launch")]
-    //[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    //public class ImportDiagnosticServicesTool : Tool<IDesktopToolContext>
-    //{
-    //    public void DoWork()
-    //    {
-    //        int a = 1;
-    //        a = 2;
-    //    }
-
-    //    public void Launch()
-    //    {
-    //        ProgressDialogComponent component = new ProgressDialogComponent(new ProgressDialogDelegate(DoWork()));
-    //    }
-    //}
-
     /// <summary>
     /// Extension point for views onto <see cref="ProgressDialogComponent"/>
     /// </summary>
@@ -72,6 +55,7 @@ namespace ClearCanvas.Desktop
 
         public override void Stop()
         {
+            // wait for the background task to stop running
             if (_task != null && _task.IsRunning)
                 return;
 
@@ -174,7 +158,7 @@ namespace ClearCanvas.Desktop
                 if (_task.SupportsCancel)
                     _task.RequestCancel();
                 else
-                    return;
+                    return; // should never get here
             }
             else
             {
