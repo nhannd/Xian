@@ -79,6 +79,12 @@
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="ExceptionHandlerComponent.cs" />
     <Compile Include="Format.cs" />
+    <Compile Include="FormatSettings.cs" />
+    <Compile Include="FormatSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>FormatSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="IApplicationComponentContainer.cs" />
     <Compile Include="IApplicationComponentContainerValidationStrategy.cs" />
     <Compile Include="IItemCollection.cs" />
@@ -215,8 +221,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Actions\Actions.cd" />
+    <None Include="app.config" />
     <None Include="ApplicationComponents.cd" />
     <None Include="Desktop.cd" />
+    <None Include="FormatSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Tools\Tools.cd" />
   </ItemGroup>
   <ItemGroup>

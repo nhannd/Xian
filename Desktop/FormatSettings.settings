@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Desktop" GeneratedClassName="FormatSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DateFormat" Description="Date format string" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dd-MMM-yyyy</Value>
+    </Setting>
+    <Setting Name="TimeFormat" Description="Time format string" Type="System.String" Scope="User">
+      <Value Profile="(Default)">hh:mm tt</Value>
+    </Setting>
+    <Setting Name="DateTimeFormat" Description="Date and time format string" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dd-MMM-yyyy hh:mm tt</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
