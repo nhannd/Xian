@@ -189,6 +189,11 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public string HealthcardVersionCodeMask
+        {
+            get { return TextFieldMasks.HealthcardVersionCodeMask; }
+        }
+
         public DateTime? HealthcardExpiryDate
         {
             get { return _patient.Healthcard.ExpiryDate; }

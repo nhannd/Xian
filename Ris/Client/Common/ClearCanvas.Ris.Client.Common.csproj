@@ -59,7 +59,9 @@
     <Compile Include="Folder.cs" />
     <Compile Include="FormatSettings.cs" />
     <Compile Include="FormatSettings.designer.cs">
-      <DependentUpon>FormatSettings.cs</DependentUpon>
+      <DependentUpon>FormatSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="IFolder.cs" />
     <Compile Include="ImportDiagnosticServicesApplication.cs" />
@@ -138,7 +140,10 @@
       <LastGenOutput>AddressSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="FormatSettings.settings" />
+    <None Include="FormatSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

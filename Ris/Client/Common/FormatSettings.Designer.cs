@@ -24,10 +24,10 @@ namespace ClearCanvas.Ris.Client.Common {
         }
         
         /// <summary>
-        /// Specifies a mask used on healthcard number input fields
+        /// Mask used on healthcard number input fields
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Specifies a mask used on healthcard number input fields")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on healthcard number input fields")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0000 000 000")]
         public string HealthcardNumberMask {
@@ -36,9 +36,13 @@ namespace ClearCanvas.Ris.Client.Common {
             }
         }
         
+        /// <summary>
+        /// Mask used on healthcard version code input field
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on healthcard version code input field")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("LL")]
         public string HealthcardVersionCodeMask {
             get {
                 return ((string)(this["HealthcardVersionCodeMask"]));
@@ -46,10 +50,10 @@ namespace ClearCanvas.Ris.Client.Common {
         }
         
         /// <summary>
-        /// Specifies a mask used on telephone number input fields
+        /// Mask used on local telephone number input fields
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Specifies a mask used on telephone number input fields")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on local telephone number input fields")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("000-0000")]
         public string TelephoneNumberLocalMask {
@@ -58,7 +62,11 @@ namespace ClearCanvas.Ris.Client.Common {
             }
         }
         
+        /// <summary>
+        /// Mask used on full telephone number input fields
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on full telephone number input fields")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("(000) 000-0000")]
         public string TelephoneNumberFullMask {

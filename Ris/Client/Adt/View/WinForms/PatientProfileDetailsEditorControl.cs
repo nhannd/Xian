@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void PatientEditorControl_Load(object sender, EventArgs e)
         {
             _healthcard.Mask = _component.HealtcardMask;
+            _healthcardVersionCode.Mask = _component.HealthcardVersionCodeMask;
         }
     }
 }
