@@ -46,7 +46,7 @@ namespace ClearCanvas.Desktop.Validation
                     IDictionary<string, ISpecification> specs = specFactory.GetAllSpecifications();
                     foreach (KeyValuePair<string, ISpecification> kvp in specs)
                     {
-                        target.Validation.Add(new ValidationRule(target, kvp.Key, kvp.Value));
+                        target.Validation.Add(new ValidationRule(kvp.Key, kvp.Value));
                     }
                 }
             }

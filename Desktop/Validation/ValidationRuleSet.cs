@@ -33,21 +33,21 @@ namespace ClearCanvas.Desktop.Validation
             _rules.Remove(rule);
         }
 
-        public List<ValidationResult> GetResults()
+        public List<ValidationResult> GetResults(IApplicationComponent component)
         {
-            return GetResults(_rules);
+            return GetResults(component, _rules);
         }
 
-        public List<ValidationResult> GetResults(string propertyName)
+        public List<ValidationResult> GetResults(IApplicationComponent component, string propertyName)
         {
-            return GetResults(_rules.FindAll(delegate(IValidationRule v) { return v.PropertyName == propertyName; }));
+            return GetResults(component, _rules.FindAll(delegate(IValidationRule v) { return v.PropertyName == propertyName; }));
         }
 
         #endregion
 
-        private List<ValidationResult> GetResults(List<IValidationRule> validators)
+        private List<ValidationResult> GetResults(IApplicationComponent component, List<IValidationRule> validators)
         {
-            return validators.ConvertAll<ValidationResult>(delegate(IValidationRule v) { return v.Result; });
+            return validators.ConvertAll<ValidationResult>(delegate(IValidationRule v) { return v.GetResult(component); });
         }
     }
 }

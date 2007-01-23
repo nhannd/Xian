@@ -59,7 +59,7 @@ namespace ClearCanvas.Desktop.Validation
             SpecificationFactory specFactory = new SpecificationFactory(new SpecXmlSource(this));
             foreach (SettingsProperty prop in this.Properties)
             {
-                new ValidationRule(null, prop.Name, specFactory.GetSpecification(prop.Name));
+                new ValidationRule(prop.Name, specFactory.GetSpecification(prop.Name));
             }
         }
 

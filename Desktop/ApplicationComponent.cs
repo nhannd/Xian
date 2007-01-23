@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler _allPropertiesChanged;
         private event PropertyChangedEventHandler _propertyChanged;
 
-        private ValidationRuleSet _validation;
+        private IValidationRuleSet _validation;
         private bool _showValidationErrors;
         private event EventHandler _showValidationErrorsChanged;
 
@@ -109,6 +109,9 @@ namespace ClearCanvas.Desktop
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
             
+            // default empty validation rule set
+            _validation = new ValidationRuleSet();
+
             // load validation rules
             ValidationXmlProcessor.ProcessXml(this);
         }
@@ -158,14 +161,8 @@ namespace ClearCanvas.Desktop
 
         public IValidationRuleSet Validation
         {
-            get
-            {
-                if (_validation == null)
-                {
-                    _validation = new ValidationRuleSet();
-                }
-                return _validation;
-            }
+            get { return _validation; }
+            set { _validation = value; }
         }
 
         #region IApplicationComponent Members
@@ -301,7 +298,7 @@ namespace ClearCanvas.Desktop
             {
                 AssertStarted();
 
-                return this.Validation.GetResults().FindAll(delegate(ValidationResult r) { return !r.Success; }).Count > 0;
+                return this.Validation.GetResults(this).FindAll(delegate(ValidationResult r) { return !r.Success; }).Count > 0;
             }
         }
 
@@ -349,7 +346,7 @@ namespace ClearCanvas.Desktop
             {
                 if (_showValidationErrors && _validation != null)
                 {
-                    ValidationResult result = _validation.GetResults(propertyName).Find(
+                    ValidationResult result = _validation.GetResults(this, propertyName).Find(
                         delegate(ValidationResult r) { return !r.Success; });
 
                     return result == null ? null : result.GetMessageString("\n");

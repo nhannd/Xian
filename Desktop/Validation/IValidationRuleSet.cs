@@ -22,16 +22,18 @@ namespace ClearCanvas.Desktop.Validation
         void Remove(IValidationRule rule);
 
         /// <summary>
-        /// Evaluates every rule in the set and obtains the results.
+        /// Evaluates every rule in the set against the specified component.
         /// </summary>
+        /// <param name="component">Component to validate</param>
         /// <returns></returns>
-        List<ValidationResult> GetResults();
+        List<ValidationResult> GetResults(IApplicationComponent component);
 
         /// <summary>
-        /// Evaluates all rules in the set that apply to the specified property, and returns the results.
+        /// Evaluates all rules in the set that apply to the specified property against the specified component.
         /// </summary>
-        /// <param name="propertyName"></param>
+        /// <param name="component">Component to validate</param>
+        /// <param name="propertyName">Property to validate</param>
         /// <returns></returns>
-        List<ValidationResult> GetResults(string propertyName);
+        List<ValidationResult> GetResults(IApplicationComponent component, string propertyName);
     }
 }
