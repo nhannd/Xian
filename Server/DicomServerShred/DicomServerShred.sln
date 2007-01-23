@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DicomServerShred", "DicomServerShred.csproj", "{3A171EDF-0F50-436D-941C-0B0FE74534DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHostClientUI", "..\ShredHostClientUI\ClearCanvas.Server.ShredHostClientUI.csproj", "{FB57A7F9-F7D6-49D5-A58A-177A131415E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeClient", "..\PrimeClient\PrimeClient.csproj", "{EB5196C6-30D4-484D-954F-EF820DA815C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A171EDF-0F50-436D-941C-0B0FE74534DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A171EDF-0F50-436D-941C-0B0FE74534DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A171EDF-0F50-436D-941C-0B0FE74534DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A171EDF-0F50-436D-941C-0B0FE74534DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB57A7F9-F7D6-49D5-A58A-177A131415E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB57A7F9-F7D6-49D5-A58A-177A131415E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB57A7F9-F7D6-49D5-A58A-177A131415E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB57A7F9-F7D6-49D5-A58A-177A131415E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

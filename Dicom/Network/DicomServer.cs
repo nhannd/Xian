@@ -363,6 +363,10 @@ namespace ClearCanvas.Dicom.Network
             private List<Thread> _threadList = new List<Thread>();
         }
 
+        public bool IsRunning
+        {
+            get { return _state == ServerState.STARTED; }
+        }
 
         #region Private members
         private ServerState State
