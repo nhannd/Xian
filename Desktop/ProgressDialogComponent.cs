@@ -22,6 +22,8 @@ namespace ClearCanvas.Desktop
     public class ProgressDialogComponent : ApplicationComponent
     {
         private BackgroundTask _task;
+        private bool _closeDialog;
+
         private int _progressBar;
         private string _progressMessage;
         private bool _enableCancel;
@@ -29,9 +31,11 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProgressDialogComponent(BackgroundTask task)
+        public ProgressDialogComponent(BackgroundTask task, bool closeDialog)
         {
             _task = task;
+            _closeDialog = closeDialog;
+
             _progressBar = 0;
             _progressMessage = "";
 
@@ -124,7 +128,17 @@ namespace ClearCanvas.Desktop
 
             _enableCancel = true;
 
-            SignalProgressTerminate();
+
+            if (_closeDialog)
+            {
+                this.ExitCode = ApplicationComponentExitCode.Cancelled;
+                Host.Exit();
+            }
+            else
+            {
+                SignalProgressTerminate();
+            }
+
         }
 
         #endregion
