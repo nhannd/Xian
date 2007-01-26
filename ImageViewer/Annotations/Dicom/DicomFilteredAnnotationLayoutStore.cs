@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 			try
 			{
-				DicomFilteredAnnotationLayoutSettings settings = new DicomFilteredAnnotationLayoutSettings();
+				DicomFilteredAnnotationLayoutStoreSettings settings = new DicomFilteredAnnotationLayoutStoreSettings();
 				_document = new XmlDocument();
 
 				if (!String.IsNullOrEmpty(settings.FilteredLayoutSettings))
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 		private void SaveSettings(string settingsXml)
 		{
-			DicomFilteredAnnotationLayoutSettings settings = new DicomFilteredAnnotationLayoutSettings();
+			DicomFilteredAnnotationLayoutStoreSettings settings = new DicomFilteredAnnotationLayoutStoreSettings();
 			settings.FilteredLayoutSettings = settingsXml;
 			settings.Save();
 		}

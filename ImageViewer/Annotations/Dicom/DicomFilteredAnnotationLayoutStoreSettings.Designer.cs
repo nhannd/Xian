@@ -13,11 +13,11 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class DicomFilteredAnnotationLayoutSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class DicomFilteredAnnotationLayoutStoreSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static DicomFilteredAnnotationLayoutSettings defaultInstance = ((DicomFilteredAnnotationLayoutSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new DicomFilteredAnnotationLayoutSettings())));
+        private static DicomFilteredAnnotationLayoutStoreSettings defaultInstance = ((DicomFilteredAnnotationLayoutStoreSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new DicomFilteredAnnotationLayoutStoreSettings())));
         
-        public static DicomFilteredAnnotationLayoutSettings Default {
+        public static DicomFilteredAnnotationLayoutStoreSettings Default {
             get {
                 return defaultInstance;
             }
@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+		[global::System.Configuration.DefaultSettingValueAttribute("")]
         public string FilteredLayoutSettings {
             get {
                 return ((string)(this["FilteredLayoutSettings"]));
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+		[global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ApplicationDefaultFilteredLayoutSettings {
             get {
                 return ((string)(this["ApplicationDefaultFilteredLayoutSettings"]));

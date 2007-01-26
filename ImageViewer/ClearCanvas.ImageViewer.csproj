@@ -94,26 +94,26 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationItem.cs" />
     <Compile Include="Annotations\AnnotationLayoutProvider.cs" />
-    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutProvider.cs" />
-    <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
-    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayout.cs" />
-    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutSettings.cs" />
-    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DicomFilteredAnnotationLayoutSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
-    <Compile Include="Annotations\Dicom\Tests\DicomFilteredAnnotationLayoutStoreTests.cs" />
-    <Compile Include="Annotations\IAnnotationLayoutProvider.cs" />
-    <Compile Include="Annotations\StoredAnnotationBoxGroup.cs" />
-    <Compile Include="Annotations\StoredAnnotationLayout.cs" />
     <Compile Include="Annotations\AnnotationLayoutStoreSettings.cs" />
     <Compile Include="Annotations\AnnotationLayoutStoreSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AnnotationLayoutStoreSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutProvider.cs" />
+    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreSettings.cs" />
+    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomFilteredAnnotationLayoutStoreSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
+    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayout.cs" />
+    <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
+    <Compile Include="Annotations\Dicom\Tests\DicomFilteredAnnotationLayoutStoreTests.cs" />
+    <Compile Include="Annotations\IAnnotationLayoutProvider.cs" />
+    <Compile Include="Annotations\StoredAnnotationBoxGroup.cs" />
+    <Compile Include="Annotations\StoredAnnotationLayout.cs" />
     <Compile Include="Annotations\AnnotationLayoutStore.cs" />
     <Compile Include="Annotations\BasicTextAnnotationItem.cs" />
     <Compile Include="Annotations\IAnnotationLayout.cs" />
@@ -381,9 +381,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Annotations\Dicom\DicomFilteredAnnotationLayoutSettings.settings">
+    <None Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DicomFilteredAnnotationLayoutSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>DicomFilteredAnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
     <None Include="Layers\Layers.cd" />

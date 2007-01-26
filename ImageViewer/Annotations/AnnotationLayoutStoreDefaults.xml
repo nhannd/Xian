@@ -4,7 +4,7 @@
     <annotation-layout id="Dicom.OT">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -33,12 +33,12 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
@@ -99,7 +99,7 @@
     <annotation-layout id="Dicom.CR">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -128,17 +128,17 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
@@ -198,7 +198,7 @@
     <annotation-layout id="Dicom.DX">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -227,17 +227,17 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
@@ -297,7 +297,7 @@
     <annotation-layout id="Dicom.MG">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -326,17 +326,17 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="Dicom.GeneralImage.Composite.LateralityViewPosition" >
             <box-settings>
-              <configuration-settings show-label="True" show-label-if-empty="True" />
+              <configuration-settings show-label="true" show-label-if-empty="true" />
             </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
@@ -396,7 +396,7 @@
     <annotation-layout id="Dicom.CT">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -425,12 +425,12 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
@@ -486,7 +486,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
@@ -506,7 +506,7 @@
     <annotation-layout id="Dicom.MR">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -535,12 +535,12 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
@@ -596,7 +596,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
@@ -616,7 +616,7 @@
     <annotation-layout id="Dicom.PT">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -645,12 +645,12 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
@@ -706,7 +706,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
@@ -726,7 +726,7 @@
     <annotation-layout id="Dicom.NM">
       <annotation-box-groups>
         <annotation-box-group id="TopLeftQuadrant">
-          <default-box-settings bold="True" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
             <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
@@ -755,12 +755,12 @@
             <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
             <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
-                <configuration-settings show-label="True" show-label-if-empty="True" />
+                <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />

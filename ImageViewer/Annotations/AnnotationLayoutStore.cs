@@ -315,9 +315,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 				if (!String.IsNullOrEmpty(color))
 					boxSettings.Color = color;
 				if (!String.IsNullOrEmpty(italics))
-					boxSettings.Italics = (String.Compare("True", italics, true) == 0);
+					boxSettings.Italics = (String.Compare("true", italics, true) == 0);
 				if (!String.IsNullOrEmpty(bold))
-					boxSettings.Bold = (String.Compare("True", bold, true) == 0);
+					boxSettings.Bold = (String.Compare("true", bold, true) == 0);
 				if (!String.IsNullOrEmpty(numberOfLines))
 				{
 					byte result;
@@ -347,9 +347,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 					string showLabel = configurationSettings.GetAttribute("show-label");
 					string showLabelIfEmpty = configurationSettings.GetAttribute("show-label-if-empty");
 					if (!String.IsNullOrEmpty(showLabel))
-						boxSettings.ConfigurationOptions.ShowLabel = (String.Compare("True", showLabel, true) == 0);
+						boxSettings.ConfigurationOptions.ShowLabel = (String.Compare("true", showLabel, true) == 0);
 					if (!String.IsNullOrEmpty(showLabelIfEmpty))
-						boxSettings.ConfigurationOptions.ShowLabelIfValueEmpty = (String.Compare("True", showLabelIfEmpty, true) == 0);
+						boxSettings.ConfigurationOptions.ShowLabelIfValueEmpty = (String.Compare("true", showLabelIfEmpty, true) == 0);
 				}
 			}
 
@@ -470,9 +470,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 			{
 				//only save values that are different from the defaults.
 				if (annotationBox.Bold != defaultSettings.Bold)
-					boxSettingsNode.SetAttribute("bold", annotationBox.Bold ? "True" : "False");
+					boxSettingsNode.SetAttribute("bold", annotationBox.Bold ? "true" : "false");
 				if (annotationBox.Italics != defaultSettings.Italics)
-					boxSettingsNode.SetAttribute("italics", annotationBox.Italics ? "True" : "False");
+					boxSettingsNode.SetAttribute("italics", annotationBox.Italics ? "true" : "false");
 				if (annotationBox.Font != defaultSettings.Font)
 					boxSettingsNode.SetAttribute("font", annotationBox.Font);
 				if (annotationBox.Color != defaultSettings.Color)
@@ -486,10 +486,10 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 				XmlElement configurationSettingsNode = this.Document.CreateElement("configuration-settings");
 				if (annotationBox.ConfigurationOptions.ShowLabel != defaultSettings.ConfigurationOptions.ShowLabel)
-					configurationSettingsNode.SetAttribute("show-label", annotationBox.ConfigurationOptions.ShowLabel ? "True" : "False");
+					configurationSettingsNode.SetAttribute("show-label", annotationBox.ConfigurationOptions.ShowLabel ? "true" : "false");
 
 				if (annotationBox.ConfigurationOptions.ShowLabelIfValueEmpty != defaultSettings.ConfigurationOptions.ShowLabelIfValueEmpty)
-					configurationSettingsNode.SetAttribute("show-label-if-empty", annotationBox.ConfigurationOptions.ShowLabelIfValueEmpty ? "True" : "False");
+					configurationSettingsNode.SetAttribute("show-label-if-empty", annotationBox.ConfigurationOptions.ShowLabelIfValueEmpty ? "true" : "false");
 
 				if (configurationSettingsNode.Attributes.Count > 0)
 					boxSettingsNode.AppendChild(configurationSettingsNode);
