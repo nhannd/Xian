@@ -142,6 +142,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Annotation Layout XML ({0})..
+        /// </summary>
+        public static string ExceptionInvalidAnnotationLayoutXml {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidAnnotationLayoutXml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to BitsAllocated must be either 8 or 16 (bitsAllocated = {0})..
         /// </summary>
         public static string ExceptionInvalidBitsAllocated {
@@ -174,6 +183,15 @@ namespace ClearCanvas.ImageViewer {
         public static string ExceptionInvalidColumns {
             get {
                 return ResourceManager.GetString("ExceptionInvalidColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Filtered Annotation Layout XML ({0})..
+        /// </summary>
+        public static string ExceptionInvalidFilteredAnnotationLayoutXml {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidFilteredAnnotationLayoutXml", resourceCulture);
             }
         }
         

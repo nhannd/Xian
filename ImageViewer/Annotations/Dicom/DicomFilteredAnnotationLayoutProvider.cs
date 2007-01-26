@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common;
+using System.Diagnostics;
+
+namespace ClearCanvas.ImageViewer.Annotations.Dicom
+{
+	class DicomFilteredAnnotationLayoutProvider : StoredAnnotatationLayoutProvider
+	{
+		private DicomPresentationImage _image;
+
+		public DicomFilteredAnnotationLayoutProvider(DicomPresentationImage image)
+		{
+			Platform.CheckForNullReference(image, "image");
+			_image = image;
+		}
+
+		protected override string StoredLayoutId
+		{
+			get 
+			{
+				string layoutId = DicomFilteredAnnotationLayoutStore.Instance.GetMatchingStoredLayoutId(_image);
+				//Trace.WriteLine(String.Format("Layout Id: {0}", layoutId));
+				return layoutId;
+			}
+		}
+	}
+}

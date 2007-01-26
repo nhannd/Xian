@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public class AnnotationItemConfigurationOptions
+	public sealed class AnnotationItemConfigurationOptions
 	{
 		private bool _showLabel = false;
 		private bool _showLabelIfValueEmpty = false;
@@ -19,6 +19,16 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			get { return _showLabelIfValueEmpty; }
 			set { _showLabelIfValueEmpty = value; }
+		}
+
+		public AnnotationItemConfigurationOptions Clone()
+		{
+			AnnotationItemConfigurationOptions newItem = new AnnotationItemConfigurationOptions();
+
+			newItem.ShowLabel = this.ShowLabel;
+			newItem.ShowLabelIfValueEmpty = this.ShowLabelIfValueEmpty;
+
+			return newItem;
 		}
 	}
 }

@@ -207,17 +207,6 @@ namespace ClearCanvas.ImageViewer
 			set { _normalizedRectangle = value; }
 		}
 
-		public IEnumerable<AnnotationBox> AnnotationBoxes
-		{
-			get
-			{
-				if (ImageViewerComponent.AnnotationManager != null)
-					return ImageViewerComponent.AnnotationManager.GetAnnotationBoxes(this.PresentationImage);
-
-				return null;
-			}
-		}
-
 		public InformationBox InformationBox
 		{
 			get { return _informationBox; }

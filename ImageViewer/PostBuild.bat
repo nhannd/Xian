@@ -51,3 +51,5 @@ copy "..\..\..\..\ReferencedAssemblies\vtk\*.*" .\plugins
 copy "..\..\..\..\Utilities\DicomEditor\bin\%1\ClearCanvas.Utilities.DicomEditor.dll" ".\plugins"
 copy "..\..\..\..\Utilities\DicomEditor\View\WinForms\bin\%1\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" ".\plugins"
 
+copy "..\..\..\..\ImageViewer\Annotations\AnnotationLayoutStoreDefaults.xml" ".\"
+copy "..\..\..\..\ImageViewer\Annotations\Dicom\DicomFilteredAnnotationLayoutStoreDefaults.xml" ".\"

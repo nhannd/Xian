@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer
 
 		private static StudyFinderMap _studyFinders;
 		private static StudyLoaderMap _studyLoaders;
-		private static AnnotationManager _annotationManager;
 
 		private event EventHandler _closingEvent;
 
@@ -276,17 +275,6 @@ namespace ClearCanvas.ImageViewer
 			get
 			{
 				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-keyboard", _toolSet.Actions);
-			}
-		}
-
-		internal static AnnotationManager AnnotationManager
-		{
-			get
-			{
-				if (_annotationManager == null)
-					_annotationManager = new AnnotationManager();
-
-				return _annotationManager;
 			}
 		}
 

@@ -144,6 +144,9 @@
   <data name="ExceptionImageBufferWin32NotSupported" xml:space="preserve">
     <value>ImageBufferWin32 is not supported on non-Win32 platforms.</value>
   </data>
+  <data name="ExceptionInvalidAnnotationLayoutXml" xml:space="preserve">
+    <value>Invalid Annotation Layout XML ({0}).</value>
+  </data>
   <data name="ExceptionInvalidBitsAllocated" xml:space="preserve">
     <value>BitsAllocated must be either 8 or 16 (bitsAllocated = {0}).</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="ExceptionInvalidColumns" xml:space="preserve">
     <value>Columns must be greater than zero (columns = {0}).</value>
+  </data>
+  <data name="ExceptionInvalidFilteredAnnotationLayoutXml" xml:space="preserve">
+    <value>Invalid Filtered Annotation Layout XML ({0}).</value>
   </data>
   <data name="ExceptionInvalidHighBit" xml:space="preserve">
     <value>HighBit must be greater than zero (highBit = {0}).</value>

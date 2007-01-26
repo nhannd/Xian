@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				drawArgs.ClientRectangle, 
 				true);
 
-			DrawTextOverlay(drawArgs.PresentationImage, drawArgs.ClientRectangle, (drawArgs.Tile as Tile).AnnotationBoxes);
+			DrawTextOverlay(drawArgs.PresentationImage, drawArgs.ClientRectangle);
 
 			clock.Stop();
 			string str = String.Format("Render: {0}\n", clock.ToString());
@@ -381,12 +381,16 @@ namespace ClearCanvas.ImageViewer.Rendering
 			textPrimitive.ResetCoordinateSystem();
 		}
 
-		private void DrawTextOverlay(IPresentationImage presentationImage, Rectangle rectangle, IEnumerable<AnnotationBox> annotationBoxes)
+		private void DrawTextOverlay(IPresentationImage presentationImage, Rectangle rectangle)
 		{
-			if (annotationBoxes == null)
+			if (!(presentationImage is IAnnotationLayoutProvider))
 				return;
 
-			foreach (AnnotationBox annotationBox in annotationBoxes)
+			IAnnotationLayout layout = (presentationImage as IAnnotationLayoutProvider).AnnotationLayout;
+			if (layout == null)
+				return;
+
+			foreach (AnnotationBox annotationBox in layout.AnnotationBoxes)
 			{
 				string annotationText = annotationBox.GetAnnotationText(presentationImage);
 				//don't waste the CPU cycles.

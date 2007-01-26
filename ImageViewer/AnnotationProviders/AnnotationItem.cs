@@ -5,12 +5,8 @@ using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders
 {
-	public abstract class AnnotationItem : IAnnotationItem
+	internal abstract class AnnotationItem : ClearCanvas.ImageViewer.Annotations.AnnotationItem
 	{
-		private string _identifier;
-		private string _displayName;
-		private string _label;
-
 		private IAnnotationItemProvider _ownerProvider;
 
 		protected AnnotationItem(string identifier, IAnnotationItemProvider ownerProvider)
@@ -22,72 +18,35 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 		{
 			_ownerProvider = ownerProvider;
 
-			_identifier = identifier;
+			this.Identifier = identifier;
 
-			string resourceString = _identifier.Replace('.', '_');
+			string resourceString = this.Identifier.Replace('.', '_');
 
-			_displayName = SR.ResourceManager.GetString(resourceString + "_DisplayName");
-			
-			if (string.IsNullOrEmpty(_displayName))
+			this.DisplayName = SR.ResourceManager.GetString(resourceString + "_DisplayName");
+
+			if (string.IsNullOrEmpty(this.DisplayName))
 			{
 #if DEBUG
 				throw new NotImplementedException("AnnotationItem has no display name: " + this.GetType().ToString());
 #else
-				_displayName = SR.Unknown;
+				this.DisplayName = SR.Unknown;
 #endif
 			}
 
-
-			_label = SR.ResourceManager.GetString(resourceString + "_Label");
-			if (string.IsNullOrEmpty(_label) && !allowEmptyLabel)
+			this.Label = SR.ResourceManager.GetString(resourceString + "_Label");
+			if (string.IsNullOrEmpty(this.Label) && !allowEmptyLabel)
 			{
 #if DEBUG
 					throw new NotImplementedException("AnnotationItem has no associated label: " + this.GetType().ToString());
 #else
-				_label = SR.Unknown;
+					this.Label = SR.Unknown;
 #endif
-			}
-		}
-
-		public string Identifier
-		{
-			get { return _identifier; }
-		}
-		
-		public string DisplayName
-		{
-			get { return _displayName; }
-		}
-
-		public string Label
-		{
-			get { return _label; }
+				}
 		}
 
 		public IAnnotationItemProvider OwnerProvider
 		{
 			get { return _ownerProvider; }
 		}
-
-		#region IAnnotationItem
-
-		public string GetIdentifier()
-		{
-			return this.Identifier;
-		}
-
-		public string GetDisplayName()
-		{
-			return this.DisplayName;
-		}
-
-		public string GetLabel()
-		{
-			return this.Label;
-		}
-
-		public abstract string GetAnnotationText(IPresentationImage presentationImage);
-
-		#endregion
 	}
 }

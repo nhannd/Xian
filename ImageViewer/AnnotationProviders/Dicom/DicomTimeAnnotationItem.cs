@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
-	public abstract class DicomTimeAnnotationItem : DicomStringAnnotationItem
+	internal abstract class DicomTimeAnnotationItem : DicomStringAnnotationItem
 	{
 		public DicomTimeAnnotationItem(string identifier, IAnnotationItemProvider ownerProvider)
 			: base(identifier, ownerProvider)

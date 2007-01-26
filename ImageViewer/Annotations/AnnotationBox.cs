@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public class AnnotationBox
+	public sealed class AnnotationBox
 	{
 		public enum TruncationBehaviour { TRUNCATE, ELLIPSES };
 		public enum JustificationBehaviour { NEAR, CENTRE, FAR };
@@ -28,10 +30,16 @@ namespace ClearCanvas.ImageViewer.Annotations
 		
 		private TruncationBehaviour _truncation = TruncationBehaviour.ELLIPSES;
 		private JustificationBehaviour _justification = JustificationBehaviour.NEAR;
-		
-		public AnnotationBox(RectangleF normalizedRectangle)
+
+		public AnnotationBox()
 		{
-			_normalizedRectangle = normalizedRectangle;
+			this.NormalizedRectangle = new RectangleF();
+		}
+
+		public AnnotationBox(RectangleF normalizedRectangle, IAnnotationItem annotationItem)
+		{
+			this.NormalizedRectangle = normalizedRectangle;
+			_annotationItem = annotationItem;
 		}
 
 		public string GetAnnotationText(IPresentationImage presentationImage)
@@ -64,7 +72,24 @@ namespace ClearCanvas.ImageViewer.Annotations
 		public RectangleF NormalizedRectangle
 		{
 			get { return _normalizedRectangle; }
-			set { _normalizedRectangle = value; }
+			set 
+			{
+				if (FloatComparer.IsLessThan(value.Left, 0.0f) ||
+					FloatComparer.IsGreaterThan(value.Left, 1.0f) ||
+					FloatComparer.IsLessThan(value.Right, 0.0f) ||
+					FloatComparer.IsGreaterThan(value.Right, 1.0f) ||
+					FloatComparer.IsLessThan(value.Top, 0.0f) ||
+					FloatComparer.IsGreaterThan(value.Top, 1.0f) ||
+					FloatComparer.IsLessThan(value.Bottom, 0.0f) ||
+					FloatComparer.IsGreaterThan(value.Bottom, 1.0f) ||
+					FloatComparer.IsGreaterThan(value.Left, value.Right) ||
+					FloatComparer.IsGreaterThan(value.Top, value.Bottom))
+				{
+					throw new ArgumentException(String.Format(SR.ExceptionInvalidNormalizedRectangle, value.Top.ToString(), value.Left.ToString(), value.Bottom.ToString(), value.Right.ToString()));
+				}
+
+				_normalizedRectangle = value;
+			}
 		}
 
 		public AnnotationItemConfigurationOptions ConfigurationOptions
@@ -92,13 +117,21 @@ namespace ClearCanvas.ImageViewer.Annotations
 		public string Font
 		{
 			get { return _font; }
-			set { _font = value; }
+			set
+			{
+				Platform.CheckForEmptyString(value, "value");
+				_font = value;
+			}
 		}
 
 		public string Color
 		{
 			get { return _color; }
-			set { _color = value; }
+			set
+			{
+				Platform.CheckForEmptyString(value, "value");
+				_color = value;
+			}
 		}
 
 		public bool Italics
@@ -129,6 +162,23 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			get { return _justification; }
 			set { _justification = value; }
+		}
+
+		public AnnotationBox Clone()
+		{
+			AnnotationBox newBox = new AnnotationBox(this.NormalizedRectangle, this.AnnotationItem);
+			if (this.ConfigurationOptions != null)
+				newBox.ConfigurationOptions = this.ConfigurationOptions.Clone();
+
+			newBox.Font = this.Font;
+			newBox.Color = this.Color;
+			newBox.Italics = this.Italics;
+			newBox.Bold = this.Bold;
+			newBox.NumberOfLines = this.NumberOfLines;
+			newBox.Truncation = this.Truncation;
+			newBox.Justification = this.Justification;
+
+			return newBox;
 		}
 	}
 }

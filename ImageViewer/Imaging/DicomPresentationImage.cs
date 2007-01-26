@@ -7,11 +7,13 @@ using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	// Maybe call this PresetationImage2D instead?
-	public class DicomPresentationImage : PresentationImage
+	public class DicomPresentationImage : PresentationImage, IAnnotationLayoutProvider
 	{
 		#region Private fields
 
@@ -19,6 +21,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private LayerGroup _imageLayerGroup;
 		private DicomImageLayer _imageLayer;
 		private GraphicLayer _graphicLayer;
+		private IAnnotationLayoutProvider _annotationLayoutProvider;
 
 		#endregion
 
@@ -27,6 +30,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
 
+			_annotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+			
 			// For standard DICOM image, we have an image layer and an overlay layer
 			_imageSop = imageSop;
 			_imageLayerGroup = new LayerGroup();
@@ -134,5 +139,27 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			WindowLevelOperator.InstallVOILUTLinear(this);
 		}
+
+		#region IAnnotationLayoutProvider Members
+
+		public virtual IAnnotationLayout AnnotationLayout
+		{
+			get
+			{
+				if (_annotationLayoutProvider == null)
+					return null;
+
+				return _annotationLayoutProvider.AnnotationLayout; 
+			}
+		}
+
+		#endregion	
+
+		public IAnnotationLayoutProvider AnnotationLayoutProvider
+		{
+			get { return _annotationLayoutProvider; }
+			protected set { _annotationLayoutProvider = value; }
+		}
+
 	}
 }
