@@ -9,12 +9,6 @@ namespace ClearCanvas.Server.ShredHost
     public interface IShredHost
     {
         [OperationContract]
-        bool Start();
-
-        [OperationContract]
-        bool Stop();
-
-        [OperationContract]
         bool IsShredHostRunning();
 
         [OperationContract]

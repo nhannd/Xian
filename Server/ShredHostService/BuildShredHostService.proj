@@ -1,0 +1,112 @@
+<Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+		<Appname>Shred Host Service</Appname>
+		<ProjectRoot>..\..</ProjectRoot>
+		<ClearCanvasCommonLocation>$(ProjectRoot)\Common</ClearCanvasCommonLocation>
+		<OutputDir>bin\$(Configuration)\dist</OutputDir>
+		<KeyFile>ClearCanvasPublicKey.snk</KeyFile>
+		<ReferenceAssembliesPath>C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0</ReferenceAssembliesPath>
+		<PrivateKeyFile>C:\Documents And Settings\clinton\My Documents\ClearCanvas\Confidential\DigitalSignature\ClearCanvasPublicPrivateKeyFile.snk</PrivateKeyFile>
+	</PropertyGroup>
+	<Choose>
+		<When Condition=" '$(Configuration)' == 'Debug' ">
+			<PropertyGroup>
+				<EmitDebugInformation>true</EmitDebugInformation>
+				<Optimize>false</Optimize>
+			</PropertyGroup>
+		</When>
+		<When Condition=" '$(Configuration)' == 'Release' ">
+			<PropertyGroup>
+				<EmitDebugInformation>false</EmitDebugInformation>
+				<Optimize>true</Optimize>
+			</PropertyGroup>
+		</When>
+	</Choose>
+	<ItemGroup>
+		<StrongClearCanvasCommonSourceFiles Include="$(ClearCanvasCommonLocation)\*.cs" />
+		<StrongClearCanvasCommonSourceFiles Include="$(ClearCanvasCommonLocation)\Utilities\*.cs" />
+		<StrongClearCanvasCommonSourceFiles Include="$(ClearCanvasCommonLocation)\Auditing\*.cs" />
+		<StrongClearCanvasCommonSourceFiles Include="$(ClearCanvasCommonLocation)\Configuration\*.cs" />
+		<StrongClearCanvasCommonSourceFiles Include="$(ClearCanvasCommonLocation)\Scripting\*.cs" /> 
+		<StrongClearCanvasCommonSourceFiles Include="$(ClearCanvasCommonLocation)\Specifications\*.cs" />
+		<StrongClearCanvasCommonResourceSources Include="$(ClearCanvasCommonLocation)\SR.resx" />
+		<StrongClearCanvasCommonResourceFiles Include="$(ClearCanvasCommonLocation)\ClearCanvas.Common.SR.resources" />
+		<StrongClearCanvasCommonReferences Include="$(ClearCanvasCommonLocation)\..\ReferencedAssemblies\log4net.dll" />
+		<StrongClearCanvasCommonOutput Include="$(OutputDir)\ClearCanvas.Common.dll" />
+		<StrongShredHostSourceFiles Include="$(ProjectRoot)\Server\ShredHost\*.cs" />
+		<StrongShredHostReferences Include="WindowsBase.dll" />
+		<StrongShredHostReferences Include="System.ServiceModel.dll" />
+		<StrongShredHostReferences Include="$(OutputDir)\ClearCanvas.Common.dll" />
+		<StrongShredHostOutput Include="$(OutputDir)\ClearCanvas.Server.ShredHost.dll" />
+		<StrongShredHostServiceSourceFiles Include="*.cs" />
+		<StrongShredHostServiceReferences Include="$(OutputDir)\ClearCanvas.Server.ShredHost.dll" />
+		<StrongShredHostServiceOutput Include="$(OutputDir)\ClearCanvas.Server.ShredHostService.exe" />
+		<CleanTarget Include="$(OutputDir)\*" />
+		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\log4net.dll" />
+		<DependentAuxiliaryFiles Include="Logging.config" />
+	</ItemGroup> 
+	<Target Name="Preparation">
+		<MakeDir Directories="$(OutputDir)" Condition="!Exists('$(OutputDir)')" />
+		<MakeDir Directories="$(OutputDir)\logs" Condition="!Exists('$(OutputDir)\logs')" />
+		<MakeDir Directories="$(OutputDir)\plugins" Condition="!Exists('$(OutputDir)\plugins')" />
+		<Copy SourceFiles="@(DependentAuxiliaryFiles)" DestinationFolder="$(OutputDir)" />
+	</Target>
+	<Target Name="ClearCanvasCommonResourceFile"
+		Inputs="@(StrongClearCanvasCommonResourceSources)"
+		Outputs="@(StrongClearCanvasCommonResourceSources->'%(Identity).resources')">
+		<GenerateResource 
+			Sources="@(StrongClearCanvasCommonResourceSources)"
+			OutputResources="@(StrongClearCanvasCommonResourceFiles)" />
+	</Target>
+	<Target Name="BuildStrongClearCanvasCommon" DependsOnTargets="Preparation;ClearCanvasCommonResourceFile"
+		Inputs="@(StrongClearCanvasCommonSourceFiles);@(StrongClearCanvasCommonResourceFiles)"
+		Outputs="@(StrongClearCanvasCommonOutput)">
+		<Csc Sources="@(StrongClearCanvasCommonSourceFiles)" 
+			OutputAssembly="@(StrongClearCanvasCommonOutput)"
+			TargetType="library" 
+			EmitDebugInformation="$(EmitDebugInformation)"
+			DelaySign="true" 
+			KeyFile="$(KeyFile)" 
+			Resources="@(StrongClearCanvasCommonResourceFiles)"
+			References="@(StrongClearCanvasCommonReferences)" 
+			Optimize="$(Optimize)"
+		/>
+	</Target>
+	<Target Name="BuildStrongShredHost" DependsOnTargets="BuildStrongClearCanvasCommon"
+		Inputs="@(StrongShredHostSourceFiles)"
+		Outputs="@(StrongShredHostOutput)">
+		<Csc Sources="@(StrongShredHostSourceFiles)"
+			OutputAssembly="@(StrongShredHostOutput)"
+			TargetType="library"
+			EmitDebugInformation="$(EmitDebugInformation)"
+			DelaySign="true"
+			KeyFile="$(KeyFile)"
+			Optimize="$(Optimize)"
+			AdditionalLibPaths="$(ReferenceAssembliesPath)"
+			References="@(StrongShredHostReferences)"
+		/>
+	</Target>
+	<Target Name="BuildStrongShredHostService" DependsOnTargets="BuildStrongShredHost" 
+		Inputs="@(StrongShredHostServiceSourceFiles)"
+		Outputs="@(StrongShredHostServiceOutput)">
+		<Csc Sources="@(StrongShredHostServiceSourceFiles)"
+			OutputAssembly="@(StrongShredHostServiceOutput)"
+			TargetType="exe"
+			EmitDebugInformation="$(EmitDebugInformation)"
+			DelaySign="true"
+			KeyFile="$(KeyFile)"
+			Optimize="$(Optimize)"
+			References="@(StrongShredHostServiceReferences)"
+		/>
+	</Target>
+	<Target Name="BuildAll" DependsOnTargets="BuildStrongShredHostService" />
+	<Target Name="Clean">
+		<Delete Files="@(CleanTarget)" Condition="Exists('$(OutputDir)')" />
+	</Target>
+	<Target Name="FinalSigning" DependsOnTargets="BuildStrongShredHostService">
+		<Exec Command="sn -R &quot;@(StrongClearCanvasCommonOutput)&quot; &quot;$(PrivateKeyFile)&quot;" />
+		<Exec Command="sn -R &quot;@(StrongShredHostOutput)&quot; &quot;$(PrivateKeyFile)&quot;" />
+		<Exec Command="sn -R &quot;@(StrongShredHostServiceOutput)&quot; &quot;$(PrivateKeyFile)&quot;" />
+	</Target>
+</Project>

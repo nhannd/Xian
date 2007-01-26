@@ -100,12 +100,6 @@ namespace ClearCanvas.Server.ShredHost
 public interface IShredHost
 {
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IShredHost/Start", ReplyAction="http://tempuri.org/IShredHost/StartResponse")]
-    bool Start();
-    
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IShredHost/Stop", ReplyAction="http://tempuri.org/IShredHost/StopResponse")]
-    bool Stop();
-    
     [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IShredHost/IsShredHostRunning", ReplyAction="http://tempuri.org/IShredHost/IsShredHostRunningResponse")]
     bool IsShredHostRunning();
     
@@ -151,16 +145,6 @@ public partial class ShredHostClient : System.ServiceModel.ClientBase<IShredHost
     public ShredHostClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
             base(binding, remoteAddress)
     {
-    }
-    
-    public bool Start()
-    {
-        return base.Channel.Start();
-    }
-    
-    public bool Stop()
-    {
-        return base.Channel.Stop();
     }
     
     public bool IsShredHostRunning()

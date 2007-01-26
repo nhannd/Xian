@@ -10,16 +10,6 @@ namespace ClearCanvas.Server.ShredHost
     {
         #region IShredHost Members
 
-        public bool Start()
-        {
-            return ShredHost.Start();
-        }
-
-        public bool Stop()
-        {
-            return ShredHost.Stop();
-        }
-
         public bool IsShredHostRunning()
         {
             return ShredHost.IsShredHostRunning;

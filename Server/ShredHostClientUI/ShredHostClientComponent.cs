@@ -125,18 +125,7 @@ namespace ClearCanvas.Server.ShredHostClientUI
 
         public void Toggle()
         {
-            using (ShredHostClient client = new ShredHostClient())
-            {
-                this.IsShredHostRunning = client.IsShredHostRunning();
-                if (this.IsShredHostRunning)
-                {
-                    this.IsShredHostRunning = client.Stop();
-                }
-                else
-                {
-                    this.IsShredHostRunning = client.Start();
-                }
-            }
+
         }
 
         public void StartShred(Shred shred)

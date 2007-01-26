@@ -25,15 +25,7 @@ namespace ClearCanvas.Server.ShredHostClientUI
 
         public void Toggle()
         {
-            this.IsShredHostRunning = _shredHostProxy.IsShredHostRunning();
-            if (this.IsShredHostRunning)
-            {
-                _shredHostProxy.Stop();
-            }
-            else
-            {
-                _shredHostProxy.Start();
-            }
+
         }
 
         #region Properties
