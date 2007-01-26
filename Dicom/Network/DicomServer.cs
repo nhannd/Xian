@@ -30,6 +30,14 @@ namespace ClearCanvas.Dicom.Network
         /// Fires when a new SOP Instance has been successfully written to the local filesystem.
         /// </summary>
         private event EventHandler<StoreScpImageReceivedEventArgs> _storeScpEndEvent;
+        /// <summary>
+        /// Fires when a C-MOVE query has been received
+        /// </summary>
+        private event EventHandler<MoveScpEventArgs> _moveScpBeginEvent;
+        /// <summary>
+        /// Fires when a C-MOVE query has asked for an update
+        /// </summary>
+        private event EventHandler<MoveScpProgressEventArgs> _moveScpProgressEvent;
 
         public event EventHandler<FindScpEventArgs> FindScpEvent
         {
@@ -51,6 +59,16 @@ namespace ClearCanvas.Dicom.Network
             add { _storeScpEndEvent += value; }
             remove { _storeScpEndEvent -= value; }
         }
+        public event EventHandler<MoveScpEventArgs> MoveScpBeginEvent
+        {
+            add { _moveScpBeginEvent += value; }
+            remove { _moveScpBeginEvent -= value; }
+        }
+        public event EventHandler<MoveScpProgressEventArgs> MoveScpProgressEvent
+        {
+            add { _moveScpProgressEvent += value; }
+            remove { _moveScpProgressEvent -= value; }
+        }
 
         protected void OnFindScpEvent(FindScpEventArgs e)
         {
@@ -67,6 +85,14 @@ namespace ClearCanvas.Dicom.Network
         protected void OnStoreScpEndEvent(StoreScpImageReceivedEventArgs e)
         {
             EventsHelper.Fire(_storeScpEndEvent, this, e);
+        }
+        protected void OnMoveScpBeginEvent(MoveScpEventArgs e)
+        {
+            EventsHelper.Fire(_moveScpBeginEvent, this, e);
+        }
+        protected void OnMoveScpProgressEvent(MoveScpProgressEventArgs e)
+        {
+            EventsHelper.Fire(_moveScpProgressEvent, this, e);
         }
 
         /// <summary>
@@ -86,6 +112,7 @@ namespace ClearCanvas.Dicom.Network
 
             _findScpCallbackHelper = new FindScpCallbackHelper(this);
             _storeScpCallbackHelper = new StoreScpCallbackHelper(this);
+            _moveScpCallbackHelper = new MoveScpCallbackHelper(this);
         }
 
 
@@ -210,23 +237,20 @@ namespace ClearCanvas.Dicom.Network
 
             public void Process()
             {
-                OFCondition cond = _association.ProcessServerCommands(-1, _parent.SaveDirectory);
-                if (DicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
+                try
                 {
-                    _association.RespondToReleaseRequest();
+                    OFCondition cond = _association.ProcessServerCommands(-1, _parent.SaveDirectory);
+                    if (DicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
+                        _association.RespondToReleaseRequest();
+                    else
+                        _association.Release();
                 }
-                else
+                catch (Exception e)
                 {
-                    try
-                    {
-                        bool releaseSuccessful = _association.Release();
-                    }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
+                    // TODO: Instead of throwing here, log or do something to exit gracefully
+                    throw e;
                 }
-            }
+        }
 
             private T_ASC_Association _association;
             private ThreadList _threadList;
@@ -369,6 +393,7 @@ namespace ClearCanvas.Dicom.Network
         }
 
         #region Private members
+
         private ServerState State
         {
             get
@@ -416,6 +441,7 @@ namespace ClearCanvas.Dicom.Network
         private String _saveDirectory;
         private FindScpCallbackHelper _findScpCallbackHelper;
         private StoreScpCallbackHelper _storeScpCallbackHelper;
+        private MoveScpCallbackHelper _moveScpCallbackHelper;
 
         #endregion
 
@@ -426,6 +452,7 @@ namespace ClearCanvas.Dicom.Network
             SocketManager.DeinitializeSockets();
             _findScpCallbackHelper.Dispose();
             _storeScpCallbackHelper.Dispose();
+            _moveScpCallbackHelper.Dispose();
         }
 
         #endregion

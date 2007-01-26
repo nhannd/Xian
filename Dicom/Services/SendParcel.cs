@@ -260,26 +260,34 @@ namespace ClearCanvas.Dicom.Services
 
             this.ParcelTransferState = ParcelTransferState.InProgress;
             this.SendQueue.UpdateParcel(this);
+            try
+            {
+                this.DicomSender.Send(this.SopInstanceFilenamesList, 
+                    this.SopClassesList, 
+                    this.TransferSyntaxesList, 
+                    delegate(object source, SendProgressUpdatedEventArgs args)
+                    {
+                        this.TotalProgressSteps = args.TotalCount;
+                        this.CurrentProgressStep = args.CurrentCount;
 
-            this.DicomSender.Send(this.SopInstanceFilenamesList, 
-                this.SopClassesList, 
-                this.TransferSyntaxesList, 
-                delegate(object source, SendProgressUpdatedEventArgs args)
-                {
-                    this.TotalProgressSteps = args.TotalCount;
-                    this.CurrentProgressStep = args.CurrentCount;
+                        this.SendQueue.UpdateParcel(this);
+                    }
+                    );
 
-                    this.SendQueue.UpdateParcel(this);
-                }
-                );
+                this.ParcelTransferState = ParcelTransferState.Completed;
+            }
+            catch
+            {
+                // TODO: do some logging here
+                this.ParcelTransferState = ParcelTransferState.Error;
+            }
 
-            this.ParcelTransferState = ParcelTransferState.Completed;
-            this.SendQueue.UpdateParcel(this);
+            this.SendQueue.UpdateParcel(this);        
         }
 
         public void StopSend()
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new Exception("TODO: The method or operation is not implemented.");
         }
 
         public int GetToSendObjectCount()

@@ -13,6 +13,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -60,6 +61,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private int _totalBytes;
         private string _sopInstanceUID;
 
+        // Used by CMove to keep track of the sub-CStore progerss
+        private SendParcel _sendParcel;
+        private BackgroundTask _task;
+        private int _lastSendParcelProgress = 0;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -105,6 +111,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _dicomServer.StoreScpBeginEvent += OnStoreScpBeginEvent;
             _dicomServer.StoreScpProgressingEvent += OnStoreScpProgressingEvent;
             _dicomServer.StoreScpEndEvent += OnStoreScpEndEvent;
+            _dicomServer.MoveScpBeginEvent += OnMoveScpBeginEvent;
+            _dicomServer.MoveScpProgressEvent += OnMoveScpProgressEvent;
 
             try
             {
@@ -126,11 +134,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _dicomServer.StoreScpBeginEvent -= OnStoreScpBeginEvent;
                 _dicomServer.StoreScpProgressingEvent -= OnStoreScpProgressingEvent;
                 _dicomServer.StoreScpEndEvent -= OnStoreScpEndEvent;
+                _dicomServer.MoveScpBeginEvent -= OnMoveScpBeginEvent;
+                _dicomServer.MoveScpProgressEvent -= OnMoveScpProgressEvent;
+
                 _dicomServer.Stop();
                 _dicomServer = null;
             }
             _isServerStarted = false;
         }
+
+        #region Properties
 
         public string AETitle
         {
@@ -169,6 +182,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get { return _totalBytes; }
         }
+
+        #endregion
 
         public void Cancel()
         {
@@ -238,6 +253,126 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 ExceptionHandler.Report(exception, this.Host.DesktopWindow);
             }
+        }
+
+        private void OnMoveScpBeginEvent(object sender, MoveScpEventArgs e)
+        {
+            if (e == null)
+            {
+                e.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+                return;
+            }
+
+            if (_task == null || _task.IsRunning == false)
+            {
+                ApplicationEntity destinationAE = FindDestinationAE(e.MoveDestination);
+                if (destinationAE == null)
+                {
+                    e.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown;
+                    return;
+                }
+
+                // Add it to send Queue
+                ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(_aeTitle), new ListeningPort(_port));
+                _sendParcel = (SendParcel)DicomServicesLayer.GetISender(me).Send(new Uid(e.StudyInstanceUID), destinationAE, e.Description);
+                _lastSendParcelProgress = 0;
+                e.Response.NumberOfRemainingSubOperations = (ushort)_sendParcel.GetToSendObjectCount();
+
+                // Start sending the parcel
+                _task = new BackgroundTask(delegate(IBackgroundTaskContext context) { _sendParcel.StartSend(); }, false);
+                _task.Run();
+            }
+        }
+
+        private void OnMoveScpProgressEvent(object sender, MoveScpProgressEventArgs e)
+        {
+            if (e == null)
+            {
+                e.Response.DimseStatus = (ushort) OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+                return;
+            }
+
+            // Keep the thread here and only reutrn CMoveRSP when there's an error or progress update
+            while (_lastSendParcelProgress == _sendParcel.CurrentProgressStep)
+            {
+                switch (_sendParcel.GetState())
+                {
+                    case ParcelTransferState.Completed:
+                        e.Response.NumberOfCompletedSubOperations++;
+                        e.Response.NumberOfRemainingSubOperations = 0;
+                        e.Response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
+                        break;
+                    case ParcelTransferState.Cancelled:
+                    case ParcelTransferState.CancelRequested:
+                        e.Response.NumberOfWarningSubOperations++;
+                        e.Response.NumberOfRemainingSubOperations--;
+                        e.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Cancel_SubOperationsTerminatedDueToCancelIndication;
+                        break;
+                    case ParcelTransferState.Error:
+                    case ParcelTransferState.Unknown:
+                        e.Response.NumberOfFailedSubOperations++;
+                        e.Response.NumberOfRemainingSubOperations--;
+                        e.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+                        break;
+                    case ParcelTransferState.InProgress:
+                    case ParcelTransferState.Paused:
+                    case ParcelTransferState.PauseRequested:
+                    case ParcelTransferState.Pending:
+                    default:
+                        e.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
+                        System.Threading.Thread.Sleep(1000);
+                        break;
+                }
+
+                if (e.Response.DimseStatus != (ushort)OffisDcm.STATUS_Pending)
+                {
+                    _task = null;
+                    _sendParcel = null;
+                    return;
+                }
+            }
+
+            e.Response.NumberOfCompletedSubOperations++;
+            e.Response.NumberOfRemainingSubOperations--;
+            _lastSendParcelProgress = _sendParcel.CurrentProgressStep;
+        }
+
+        private ApplicationEntity FindDestinationAE(string aeTitle)
+        {
+            // TODO: base on the AETitle passed in, find the server detail in the DicomServerTree
+            // But the interface is difficult to use, so this is a stub until the DicomServerTree interface is improved
+
+            DicomServerTree serverTree = new DicomServerTree();
+            return FindDestinationAE(aeTitle, serverTree.MyServerGroup.ChildServers);
+        }
+
+        private ApplicationEntity FindDestinationAE(string aeTitle, List<IDicomServer> listServer)
+        {
+            if (listServer == null)
+                return null;
+
+            ApplicationEntity ae = null;
+            foreach (IDicomServer ids in listServer)
+            {
+                if (ids.IsServer)
+                {
+                    DicomServer dicomServer = ids as DicomServer;
+                    if (dicomServer != null && dicomServer.DicomAE.AE == aeTitle)
+                        return dicomServer.DicomAE;
+                }
+                else
+                {
+                    DicomServerGroup serverGroup = ids as DicomServerGroup;
+                    if (serverGroup != null)
+                    {
+                        ae = FindDestinationAE(aeTitle, serverGroup.ChildServers);
+                        if (ae != null)
+                            return ae;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private void CreateStorageDirectory(string path)

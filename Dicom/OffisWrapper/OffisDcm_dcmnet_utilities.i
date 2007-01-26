@@ -13,14 +13,31 @@ struct FindCallbackData
 {
 	DIC_US priorStatus;
 	DIC_AE ourAETitle;
-	T_ASC_Association * assoc;
-	T_ASC_PresentationContextID presID;
 };
 
 struct MoveCallbackData
 {
 	DIC_US priorStatus;
-	DIC_AE ourAETitle;
+    DIC_AE ourAETitle;  	/* our current title */
+    DIC_AE dstAETitle;		/* destination title for move */
+
+    T_ASC_Association   *origAssoc;	/* association of requestor */
+    T_ASC_Association   *subAssoc;	/* sub-association */
+
+    OFBool assocStarted;	/* true if the association was started */
+    
+    DIC_US origMsgId;		/* message id of request */
+    DIC_AE origAETitle;		/* title of requestor */
+    DIC_NODENAME origHostName;	/* hostname of move requestor */
+
+    T_DIMSE_Priority priority;	/* priority of move request */
+
+    char *failedUIDs;		/* instance UIDs of failed store sub-ops */
+
+    DIC_US nRemaining; 
+    DIC_US nCompleted; 
+    DIC_US nFailed; 
+    DIC_US nWarning;
 };
 
 %}

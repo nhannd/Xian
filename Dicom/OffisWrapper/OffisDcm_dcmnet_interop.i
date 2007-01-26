@@ -28,24 +28,27 @@ struct InteropStoreScuCallbackInfo
 
 struct InteropFindScpCallbackInfo
 {
-	OFBool Cancelled; 
-	T_DIMSE_C_FindRQ *Request;
+	DIC_US MessageID;
 	DcmDataset *RequestIdentifiers; 
-	int ResponseCount;
 	// out 
-	T_DIMSE_C_FindRSP *Response;
 	DcmDataset *ResponseIdentifiers;
-	DcmDataset *StatusDetail;
+	DIC_US DimseStatus;
 };
 
-struct InteropQueryRetrieveCallbackInfo {
+struct InteropQueryRetrieveCallbackInfo 
+{
     T_ASC_Association *assoc;
     T_ASC_PresentationContextID presId;
 };
 
-struct InteropMoveCallbackInfo
+struct InteropMoveScpCallbackInfo
 {
-
+	OFBool Cancelled; 
+	T_DIMSE_C_MoveRQ *Request;
+	DcmDataset *RequestIdentifiers; 
+	// out 
+	T_DIMSE_C_MoveRSP *Response;
+	DcmDataset *ResponseIdentifiers;
 };
 
 struct InteropRetrieveCallbackInfo
@@ -96,14 +99,24 @@ SWIGEXPORT void SWIGSTDCALL RegisterQueryCallbackHelper_OffisDcm(QueryCallbackHe
 	CSharpQueryCallbackHelperCallback = callback;
 }
 //-------------------------------------------
-typedef void (SWIGSTDCALL* MoveCallbackHelperCallback)(InteropMoveCallbackInfo*);
-static MoveCallbackHelperCallback CSharpMoveCallbackHelperCallback = NULL;
+typedef void (SWIGSTDCALL* MoveScpCallbackHelper_QueryDBCallback)(InteropMoveScpCallbackInfo*);
+static MoveScpCallbackHelper_QueryDBCallback CSharpMoveScpCallbackHelper_QueryDBCallback = NULL;
 
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT void SWIGSTDCALL RegisterMoveCallbackHelper_OffisDcm(MoveCallbackHelperCallback callback) {
-	CSharpMoveCallbackHelperCallback = callback;
+SWIGEXPORT void SWIGSTDCALL RegisterMoveScpCallbackHelper_QueryDB_OffisDcm(MoveScpCallbackHelper_QueryDBCallback callback) {
+	CSharpMoveScpCallbackHelper_QueryDBCallback = callback;
+}
+//--------------------------------------------------------------
+typedef void (SWIGSTDCALL* MoveScpCallbackHelper_MoveNextResponseCallback)(InteropMoveScpCallbackInfo*);
+static MoveScpCallbackHelper_MoveNextResponseCallback CSharpMoveScpCallbackHelper_MoveNextResponseCallback = NULL;
+
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL RegisterMoveScpCallbackHelper_MoveNextResponse_OffisDcm(MoveScpCallbackHelper_MoveNextResponseCallback callback) {
+	CSharpMoveScpCallbackHelper_MoveNextResponseCallback = callback;
 }
 //--------------------------------------------------------------
 typedef void (SWIGSTDCALL* FindScpCallbackHelper_QueryDBCallback)(InteropFindScpCallbackInfo*);

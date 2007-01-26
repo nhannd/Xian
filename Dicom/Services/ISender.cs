@@ -12,6 +12,6 @@ namespace ClearCanvas.Dicom.Services
     /// </summary>
     public interface ISender
     {
-        void Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription);
+        ISendParcel Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription);
     }
 }

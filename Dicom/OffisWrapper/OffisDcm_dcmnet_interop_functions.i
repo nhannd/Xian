@@ -13,6 +13,125 @@ AddRetrieveAETitle(DcmDataset *rspIds, DIC_AE ourAETitle);
 // DEPENDS: These functions are dependent on the typdefs defined above.
 // ------------------------------------------------------------------------------------
 //
+
+
+static void CFindProgressCallback(
+        void *callbackData,
+        T_DIMSE_C_FindRQ *request,
+        int responseCount,
+        T_DIMSE_C_FindRSP *rsp,
+        DcmDataset *responseIdentifiers
+        )
+{
+	if (NULL != CSharpQueryCallbackHelperCallback)
+	{
+		CSharpQueryCallbackHelperCallback(callbackData,
+											request,
+											responseCount,
+											rsp,
+											responseIdentifiers);
+	}
+}
+
+static void FindScpCallback(
+	/* in */ 
+	void *callbackData,  
+	OFBool cancelled, T_DIMSE_C_FindRQ *request, 
+	DcmDataset *requestIdentifiers, int responseCount,
+	/* out */
+	T_DIMSE_C_FindRSP *response,
+	DcmDataset **responseIdentifiers,
+	DcmDataset **statusDetail)
+{
+    OFCondition dbcond = EC_Normal;
+    FindCallbackData *context;
+
+    context = (FindCallbackData*)callbackData;	/* recover context */
+
+	// Build info to pass back to the Callback
+	InteropFindScpCallbackInfo info;
+	bzero((char*)&info, sizeof(info));
+
+	if (info.ResponseIdentifiers == NULL)
+		*responseIdentifiers = new DcmDataset();
+
+	// prepare the transmission of data 
+	info.MessageID = request->MessageID;
+	info.RequestIdentifiers = requestIdentifiers; 
+	info.ResponseIdentifiers = *responseIdentifiers;
+
+	if (responseCount == 1) 
+	{
+        // start the database search 
+		if (NULL != CSharpFindScpCallbackHelper_QueryDBCallback)
+		{
+			CSharpFindScpCallbackHelper_QueryDBCallback(&info);	
+		}
+		else
+		{
+			response->DimseStatus = STATUS_FIND_Refused_OutOfResources;
+			
+			if (*responseIdentifiers != NULL)
+			{
+				delete *responseIdentifiers;
+				*responseIdentifiers = NULL;
+			}
+
+			if (*statusDetail == NULL)
+				*statusDetail = new DcmDataset();
+
+			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
+		}
+	}
+    
+    // cancel was requested, cancel the find
+    if (cancelled) 
+	{
+		// Not implemented
+    }
+
+    if (DICOM_PENDING_STATUS(context->priorStatus)) 
+	{
+		if (NULL != CSharpFindScpCallbackHelper_GetNextFindResponseCallback)
+		{
+			// find the next matching response
+			CSharpFindScpCallbackHelper_GetNextFindResponseCallback(&info);
+			response->DimseStatus = info.DimseStatus;
+
+			if (response->DimseStatus != STATUS_Pending)
+			{
+				// *responseIdentifiers MUST be NULL
+				// Otherwise there will be problem releasing association
+				if (*responseIdentifiers != NULL)
+				{
+					delete *responseIdentifiers;
+					*responseIdentifiers = NULL;
+				}
+			}
+
+			if (*responseIdentifiers != NULL) 
+			{
+				AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
+			}
+		}
+		else
+		{
+			response->DimseStatus = STATUS_FIND_Refused_OutOfResources;
+			
+			if (*responseIdentifiers != NULL)
+			{
+				delete *responseIdentifiers;
+				*responseIdentifiers = NULL;
+			}
+
+			if (*statusDetail == NULL)
+				*statusDetail = new DcmDataset();
+
+			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
+		}
+    }
+}
+
 //
 // Hook back into the managed world realm to
 // indicate progress for StoreScu operations.
@@ -162,36 +281,80 @@ static void MoveScpCallback(
 
     context = (MoveCallbackData*)callbackData;	/* recover context */
 
+	// Build info to pass back to the Callback
+	InteropMoveScpCallbackInfo info;
+	bzero((char*)&info, sizeof(info));
+
+	if (info.ResponseIdentifiers == NULL)
+		*responseIdentifiers = new DcmDataset();
+
+	// prepare the transmission of data 
+	info.Cancelled = cancelled;
+	info.Request = request;
+	info.Response = response;
+	info.RequestIdentifiers = requestIdentifiers; 
+	info.ResponseIdentifiers = *responseIdentifiers;
+
     if (responseCount == 1) 
 	{
-        // start the database search 
-		// dbcond = DB_startFindRequest(context->dbHandle, STATUS_FIND_Refused_OutOfResources
-		//		request->AffectedSOPClassUID, requestIdentifiers, &dbStatus);
+        // start the database search
+		if (NULL != CSharpMoveScpCallbackHelper_QueryDBCallback)
+		{
+			CSharpMoveScpCallbackHelper_QueryDBCallback(&info);	
 
+			// if CFind can't find it, move failed
+			
+			// Find is successful, start move request
+			// Instead of within the toolkit, we want to let the app (client of the toolkit)
+			// starts the CStore sub-operation so the app can log/queue it appropriately
+		}
+		else
+		{
+			response->DimseStatus = STATUS_MOVE_Refused_OutOfResourcesNumberOfMatches;
+			
+			if (*responseIdentifiers != NULL)
+			{
+				delete *responseIdentifiers;
+				*responseIdentifiers = NULL;
+			}
+
+			if (*statusDetail == NULL)
+				*statusDetail = new DcmDataset();
+
+			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-MOVE missing.");
+		}
     }
     
-    // cancel was requested, cancel the find
     if (cancelled) 
 	{
+	    // cancel was requested, cancel the move
 
     }
 
     if (DICOM_PENDING_STATUS(context->priorStatus)) 
 	{
 		// find the next matching response
-		//dbcond = DB_nextFindResponse(context->dbHandle,
-		//		responseIdentifiers, &dbStatus);
-		//
 		
-		// should fire off image received event
-		if (NULL != CSharpMoveCallbackHelperCallback)
+		// move the next matching response
+		if (NULL != CSharpMoveScpCallbackHelper_MoveNextResponseCallback)
 		{
-			InteropMoveCallbackInfo info;
-			bzero((char*)&info, sizeof(info));
-
-			// prepare the transmission of data 
-
-			CSharpMoveCallbackHelperCallback(&info);
+			CSharpMoveScpCallbackHelper_MoveNextResponseCallback(&info);
+			if (response->DimseStatus != STATUS_Pending)
+			{
+				// *responseIdentifiers MUST be NULL
+				// Otherwise there will be problem releasing association
+				if (*responseIdentifiers != NULL)
+				{
+					delete *responseIdentifiers;
+					*responseIdentifiers = NULL;
+				}
+				
+				if (*statusDetail != NULL)
+				{
+					delete *statusDetail;
+					*statusDetail = NULL;
+				}
+			}
 		}
 		else
 		{

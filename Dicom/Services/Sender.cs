@@ -26,7 +26,7 @@ namespace ClearCanvas.Dicom.Services
 
         #region ISendService Members
 
-        public void Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription)
+        public ISendParcel Send(Uid referencedUid, ApplicationEntity destinationAE, string parcelDescription)
         {
             // create the parcel
             ISendParcel aParcel = this.SendQueue.CreateNewParcel(this.MyAE, destinationAE, parcelDescription);
@@ -36,8 +36,9 @@ namespace ClearCanvas.Dicom.Services
             {
                 // put the parcel into the SendQueue
                 this.SendQueue.Add(aParcel);
-                aParcel.StartSend();
             }
+
+            return aParcel;
         }
 
         #endregion

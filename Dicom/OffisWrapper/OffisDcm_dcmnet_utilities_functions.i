@@ -480,121 +480,13 @@ CStoreSubOpCallback(void * subOpCallbackData,
     }
 }
 
-static void CFindProgressCallback(
-        void *callbackData,
-        T_DIMSE_C_FindRQ *request,
-        int responseCount,
-        T_DIMSE_C_FindRSP *rsp,
-        DcmDataset *responseIdentifiers
-        )
-{
-	if (NULL != CSharpQueryCallbackHelperCallback)
-	{
-		CSharpQueryCallbackHelperCallback(callbackData,
-											request,
-											responseCount,
-											rsp,
-											responseIdentifiers);
-	}
-}
-
-static void FindScpCallback(
-	/* in */ 
-	void *callbackData,  
-	OFBool cancelled, T_DIMSE_C_FindRQ *request, 
-	DcmDataset *requestIdentifiers, int responseCount,
-	/* out */
-	T_DIMSE_C_FindRSP *response,
-	DcmDataset **responseIdentifiers,
-	DcmDataset **statusDetail)
-{
-    OFCondition dbcond = EC_Normal;
-    FindCallbackData *context;
-
-    context = (FindCallbackData*)callbackData;	/* recover context */
-
-
-	// Build info to pass back to the Callback
-	InteropFindScpCallbackInfo info;
-	bzero((char*)&info, sizeof(info));
-
-	if (info.ResponseIdentifiers == NULL)
-		*responseIdentifiers = new DcmDataset();
-
-	// prepare the transmission of data 
-	info.Cancelled = cancelled;
-	info.ResponseCount = responseCount;
-	info.Request = request;
-	info.RequestIdentifiers = requestIdentifiers; 
-	info.Response = response;
-	info.ResponseIdentifiers = *responseIdentifiers;
-
-	if (responseCount == 1) 
-	{
-        // start the database search 
-		if (NULL != CSharpFindScpCallbackHelper_QueryDBCallback)
-			CSharpFindScpCallbackHelper_QueryDBCallback(&info);
-	}
-    
-    // cancel was requested, cancel the find
-    if (cancelled) 
-	{
-		// Not implemented
-    }
-
-    if (DICOM_PENDING_STATUS(context->priorStatus)) 
-	{
-		if (NULL != CSharpFindScpCallbackHelper_GetNextFindResponseCallback)
-		{
-			// find the next matching response
-			CSharpFindScpCallbackHelper_GetNextFindResponseCallback(&info);
-
-			response->DimseStatus = info.Response->DimseStatus;
-
-			if (response->DimseStatus != STATUS_Pending)
-			{
-				// *responseIdentifiers MUST be NULL
-				// Otherwise there will be problem releasing association
-				if (*responseIdentifiers != NULL)
-				{
-					delete *responseIdentifiers;
-					*responseIdentifiers = NULL;
-				}
-			}
-
-			if (*responseIdentifiers != NULL) 
-			{
-				AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
-			}
-		}
-		else
-		{
-			response->DimseStatus = STATUS_FIND_Refused_OutOfResources;
-			
-			if (*responseIdentifiers != NULL)
-			{
-				delete *responseIdentifiers;
-				*responseIdentifiers = NULL;
-			}
-
-			if (*statusDetail == NULL)
-				*statusDetail = new DcmDataset();
-
-			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
-		}
-    }
-}
-
 static OFCondition FindScp(T_ASC_Association * assoc, T_DIMSE_C_FindRQ * request,
 	T_ASC_PresentationContextID presID)
 
 {
 	OFCondition cond = EC_Normal;
 	FindCallbackData context;
-
 	context.priorStatus = STATUS_Pending;
-	context.assoc = assoc;
-	context.presID = presID;
 	
 	ASC_getAPTitles(assoc->params, NULL, context.ourAETitle, NULL);
 
