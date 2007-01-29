@@ -85,7 +85,7 @@ namespace ClearCanvas.Server.ShredHost
 
         private int GetServicePortHash(string displayName)
         {
-            int hashedValue = displayName.GetHashCode();
+            int hashedValue = Math.Abs(displayName.GetHashCode());
             int validRange = _highestServicePort - _baseServicePort;
             int portOffset = hashedValue % validRange;
 
