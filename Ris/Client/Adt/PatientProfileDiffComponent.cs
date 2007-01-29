@@ -61,34 +61,34 @@ namespace ClearCanvas.Ris.Client.Adt
                 char[] ar = diff.AlignedRight.ToCharArray();
                 char diagCh = '|';
                 List<String> ls2 = new List<String>();
-                String s1 = "";
-                String s2 = "";
+                StringBuilder sb1 = new StringBuilder();
+                StringBuilder sb2 = new StringBuilder();
                 int n1 = 0;
                 int n2 = 0;
                 for (int i = 0; i < dm.Length; i++)
                 {
                     if (!dm[i].Equals(diagCh))
                     {
-                        ls1.Add(s1);
-                        ls2.Add(s2);
+                        ls1.Add(sb1.ToString());
+                        ls2.Add(sb2.ToString());
                         diagCh = dm[i];
-                        s1 = "";
-                        s2 = "";
+                        sb1 = new StringBuilder();
+                        sb2 = new StringBuilder();
                     }
                     if (al[i].Equals(' '))
-                        s1 += fieldValues[0].Substring(i - n1, 1);
+                        sb1.Append(fieldValues[0].Substring(i - n1, 1));
                     else
                         n1 += 1;
                     if (ar[i].Equals(' '))
-                        s2 += fieldValues[1].Substring(i - n2, 1);
+                        sb2.Append(fieldValues[1].Substring(i - n2, 1));
                     else
                         n2 += 1;
                 }
-                ls1.Add(s1);
-                ls2.Add(s2);
+                ls1.Add(sb1.ToString());
+                ls2.Add(sb2.ToString());
                 _values.Add(new Value(ls1));
                 _values.Add(new Value(ls2));
-                return; 
+                return;
             }
 
             public string Heading
