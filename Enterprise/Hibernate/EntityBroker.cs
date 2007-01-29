@@ -17,7 +17,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// <typeparam name="TEntity">The entity class on which this broker operates</typeparam>
     /// <typeparam name="TSearchCriteria">The corresponding <see cref="SearchCriteria"/> class.</typeparam>
     public abstract class EntityBroker<TEntity, TSearchCriteria> : Broker, IEntityBroker<TEntity, TSearchCriteria>
-        where TEntity : Entity, new()
+        where TEntity : Entity
         where TSearchCriteria : SearchCriteria, new()
     {
         public IList<TEntity> Find(TSearchCriteria criteria)

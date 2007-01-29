@@ -63,9 +63,7 @@ namespace ClearCanvas.Enterprise
         {
             if (_eventMap.ContainsKey(change.EntityClass))
             {
-                Type[] genericParams = new Type[] { change.EntityClass };
-                EntityRefFactoryBase factory = (EntityRefFactoryBase)Activator.CreateInstance(typeof(EntityRefFactory<>).MakeGenericType(genericParams));
-                EntityRefBase entityRef = factory.CreateReference(change.EntityOID, change.Version);
+                EntityRefBase entityRef = EntityRefFactory.CreateReference(change.EntityClass, change.EntityOID, change.Version);
 
                 EventsHelper.Fire(_eventMap[change.EntityClass], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
             }
