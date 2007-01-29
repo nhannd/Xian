@@ -59,5 +59,23 @@ namespace ClearCanvas.Workflow {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transition from {0} to {1} is not allowed.
+        /// </summary>
+        internal static string ExceptionIllegalStateTransition {
+            get {
+                return ResourceManager.GetString("ExceptionIllegalStateTransition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no valid pathway for the specified input.
+        /// </summary>
+        internal static string ExceptionNoValidPathway {
+            get {
+                return ResourceManager.GetString("ExceptionNoValidPathway", resourceCulture);
+            }
+        }
     }
 }

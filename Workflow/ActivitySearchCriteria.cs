@@ -35,15 +35,15 @@ namespace ClearCanvas.Workflow
 	  		}
 	  	}
 	  	
-	  	public ISearchCondition<ActivityStatus> Status
+	  	public ISearchCondition<ActivityStatus> State
 	  	{
 	  		get
 	  		{
-	  			if(!this.SubCriteria.ContainsKey("Status"))
+                if (!this.SubCriteria.ContainsKey("State"))
 	  			{
-	  				this.SubCriteria["Status"] = new SearchCondition<ActivityStatus>("Status");
+                    this.SubCriteria["State"] = new SearchCondition<ActivityStatus>("State");
 	  			}
-	  			return (ISearchCondition<ActivityStatus>)this.SubCriteria["Status"];
+                return (ISearchCondition<ActivityStatus>)this.SubCriteria["State"];
 	  		}
 	  	}
    }

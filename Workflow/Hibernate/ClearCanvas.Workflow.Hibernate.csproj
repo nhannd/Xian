@@ -75,7 +75,7 @@
     <EmbeddedResource Include="Mappings\ActivityStatusEnum.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\ActivityPerformedStepStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PerformedStepStatusEnum.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

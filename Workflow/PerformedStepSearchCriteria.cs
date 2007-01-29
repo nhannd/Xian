@@ -5,32 +5,32 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Workflow
 {
-    public class ActivityPerformedStepSearchCriteria : EntitySearchCriteria
+    public class PerformedStepSearchCriteria : EntitySearchCriteria
     {
  		/// <summary>
 		/// Constructor for top-level search criteria (no key required)
 		/// </summary>
-		public ActivityPerformedStepSearchCriteria()
+		public PerformedStepSearchCriteria()
 		{
 		}
 	
 		/// <summary>
 		/// Constructor for sub-criteria (key required)
 		/// </summary>
-        public ActivityPerformedStepSearchCriteria(string key)
+        public PerformedStepSearchCriteria(string key)
 			:base(key)
 		{
 		}
 
-        public ISearchCondition<ActivityPerformedStepStatus> Status
+        public ISearchCondition<PerformedStepStatus> Status
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("Status"))
                 {
-                    this.SubCriteria["Status"] = new SearchCondition<ActivityPerformedStepStatus>("Status");
+                    this.SubCriteria["Status"] = new SearchCondition<PerformedStepStatus>("Status");
                 }
-                return (ISearchCondition<ActivityPerformedStepStatus>)this.SubCriteria["Status"];
+                return (ISearchCondition<PerformedStepStatus>)this.SubCriteria["Status"];
             }
         }
 

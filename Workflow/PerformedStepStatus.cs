@@ -5,24 +5,24 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Workflow
 {
-    public enum ActivityPerformedStepStatus
+    public enum PerformedStepStatus
     {
         /// <summary>
         /// In Progress
         /// </summary>
         [EnumValue("In Progress")]
-        IP,
+        IP = 0,
 
         /// <summary>
         /// Completed
         /// </summary>
         [EnumValue("Completed")]
-        CM,
+        CM = 1,
 
         /// <summary>
         /// Discontinued
         /// </summary>
         [EnumValue("Discontinued")]
-        DC
+        DC = 2
     }
 }
