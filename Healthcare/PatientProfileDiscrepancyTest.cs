@@ -38,7 +38,7 @@ namespace ClearCanvas.Healthcare
 
             // MiddleName
             result |= tester.TestEqual(PatientProfileDiscrepancy.MiddleName,
-                delegate(PatientProfile x, PatientProfile y) { return x.Name.MiddleName.Equals(y.Name.MiddleName, StringComparison.CurrentCultureIgnoreCase); });
+                delegate(PatientProfile x, PatientProfile y) { return x.Name.MiddleName != null ? x.Name.MiddleName.Equals(y.Name.MiddleName, StringComparison.CurrentCultureIgnoreCase) : y.Name.MiddleName == null; });
 
             // DateOfBirth
             result |= tester.TestEqual(PatientProfileDiscrepancy.DateOfBirth,

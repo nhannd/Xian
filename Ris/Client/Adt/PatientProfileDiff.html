@@ -25,14 +25,16 @@ var component = this.Component;
             <% for(var value in field.Values) {
                     var i=0;
                     var tdcell = "";
-                    for(var segment in value.Segments) {
-                        if (i%2 == 1) {
-                            tdcell += "<span class='discrepancy'>" + segment.replace(" ", "&nbsp") + "</span>"
+                    for(var segment in value.Segments) {                        
+                        if (segment != null) {                        
+                            if (i%2 == 1) {
+                                tdcell += "<span class='discrepancy'>" + segment.replace(" ", "&nbsp") + "</span>"
+                            }
+                            else {
+                                tdcell += "<span class=''>" + segment.replace(" ", "&nbsp") + "</span>"
+                            }
+                            i += 1;
                         }
-                        else {
-                            tdcell += "<span class=''>" + segment.replace(" ", "&nbsp") + "</span>"
-                        }
-                        i += 1;
                     }
             %>
         <td ><%= tdcell %></td>
