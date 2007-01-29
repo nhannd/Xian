@@ -12,15 +12,15 @@ namespace ClearCanvas.Healthcare
         private EntityRef<PatientProfile> _patientProfile;
         private EntityRef<Order> _order;
         private EntityRef<RequestedProcedure> _requestedProcedure;
-        private EntityRef<ModalityProcedureStep> _workflowStep;
+        private EntityRef<ModalityProcedureStep> _procedureStep;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private CompositeIdentifier _visitNumber;
         private string _accessionNumber;
-        private string _diagnosticService;
+        private string _diagnosticServiceName;
         private string _requestedProcedureName;
-        private string _modalityProcedureStepName;
+        private string _procedureStepName;
         private string _modalityName;
         private OrderPriority _priority;
         private ActivityStatus _status;
@@ -30,15 +30,15 @@ namespace ClearCanvas.Healthcare
             PatientProfile profile,
             Order order,
             RequestedProcedure requestedProcedure,
-            ModalityProcedureStep workflowStep,
+            ModalityProcedureStep procedureStep,
             CompositeIdentifier mrn,
             PersonName patientName,
             CompositeIdentifier visitNumber,
             string accessionNumber,
             string diagnosticService,
-            string procedure,
-            string scheduledStep,
-            string modality,
+            string requestedProcedureName,
+            string procedureStepName,
+            string modalityName,
             OrderPriority priority,
             ActivityStatus status)
         {
@@ -46,23 +46,23 @@ namespace ClearCanvas.Healthcare
             _patientProfile = new EntityRef<PatientProfile>(profile);
             _order = new EntityRef<Order>(order);
             _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
-            _workflowStep = new EntityRef<ModalityProcedureStep>(workflowStep);
+            _procedureStep = new EntityRef<ModalityProcedureStep>(procedureStep);
 
             _mrn = mrn;
             _patientName = patientName;
             _visitNumber = visitNumber;
             _accessionNumber = accessionNumber;
-            _diagnosticService = diagnosticService;
-            _requestedProcedureName = procedure;
-            _modalityProcedureStepName = scheduledStep;
-            _modalityName = modality;
+            _diagnosticServiceName = diagnosticService;
+            _requestedProcedureName = requestedProcedureName;
+            _procedureStepName = procedureStepName;
+            _modalityName = modalityName;
             _priority = priority;
             _status = status;
         }
 
-        public EntityRef<ModalityProcedureStep> WorkflowStep
+        public EntityRef<ModalityProcedureStep> ProcedureStep
         {
-            get { return _workflowStep; }
+            get { return _procedureStep; }
         }
 
         public EntityRef<Patient> Patient
@@ -99,22 +99,27 @@ namespace ClearCanvas.Healthcare
         {
             get { return _visitNumber; }
         }
+
         public string AccessionNumber
         {
             get { return _accessionNumber; }
         }
+
         public string DiagnosticService
         {
-            get { return _diagnosticService; }
+            get { return _diagnosticServiceName; }
         }
+
         public string RequestedProcedureName
         {
             get { return _requestedProcedureName; }
         }
+
         public string ModalityProcedureStepName
         {
-            get { return _modalityProcedureStepName; }
+            get { return _procedureStepName; }
         }
+
         public string ModalityName
         {
             get { return _modalityName; }

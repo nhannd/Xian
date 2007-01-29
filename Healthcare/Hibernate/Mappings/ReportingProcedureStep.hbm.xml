@@ -2,9 +2,5 @@
 <!-- @codegen: ignore -->
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <subclass name="ReportingProcedureStep" proxy="ReportingProcedureStep" extends="ProcedureStep" discriminator-value="RWF">
-    <set name="PerformedSteps" table="ProcedureStepPerformedProcedureStep_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
-      <key column="ProcedureStepOID_"/>
-      <many-to-many column="PerformedProcedureStepOID_" class="ReportingPerformedProcedureStep" fetch="join"/>
-    </set>
   </subclass>
 </hibernate-mapping>

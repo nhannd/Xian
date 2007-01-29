@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override IList<ModalityWorklistQueryResult> QueryItems()
             {
                 ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-                criteria.Status.EqualTo(ActivityStatus.SC);
+                criteria.State.EqualTo(ActivityStatus.SC);
 
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
                 return service.GetWorklist(criteria);
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override IList<ModalityWorklistQueryResult> QueryItems()
             {
                 ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-                criteria.Status.EqualTo(ActivityStatus.IP);
+                criteria.State.EqualTo(ActivityStatus.IP);
 
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
                 return service.GetWorklist(criteria);
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override bool ProcessDrop(ModalityWorklistQueryResult item)
             {
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
-                service.StartProcedureStep(item.WorkflowStep);
+                service.StartProcedureStep(item.ProcedureStep);
                 return true;
             }
         }
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override IList<ModalityWorklistQueryResult> QueryItems()
             {
                 ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-                criteria.Status.EqualTo(ActivityStatus.CM);
+                criteria.State.EqualTo(ActivityStatus.CM);
 
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
                 return service.GetWorklist(criteria);
@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override bool ProcessDrop(ModalityWorklistQueryResult item)
             {
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
-                service.CompleteProcedureStep(item.WorkflowStep);
+                service.CompleteProcedureStep(item.ProcedureStep);
                 return true;
             }
         }
@@ -158,7 +158,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override IList<ModalityWorklistQueryResult> QueryItems()
             {
                 ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-                criteria.Status.EqualTo(ActivityStatus.DC);
+                criteria.State.EqualTo(ActivityStatus.DC);
 
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
                 return service.GetWorklist(criteria);
@@ -178,7 +178,7 @@ namespace ClearCanvas.Ris.Client.Common
             protected override bool ProcessDrop(ModalityWorklistQueryResult item)
             {
                 IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
-                service.CancelProcedureStep(item.WorkflowStep);
+                service.CancelProcedureStep(item.ProcedureStep);
                 return true;
             }
         }

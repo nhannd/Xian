@@ -48,6 +48,7 @@
     <Compile Include="Brokers\IModalityWorklistBroker.cs" />
     <Compile Include="Brokers\IModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
+    <Compile Include="Brokers\IReportingProcedureStepBroker.cs" />
     <Compile Include="CompositeIdentifier.cs" />
     <Compile Include="ContactPerson.cs" />
     <Compile Include="ContactPersonRelationship.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="HealthcardNumber.cs" />
     <Compile Include="HealthcareWorkflowException.cs" />
     <Compile Include="InterpretationStep.cs" />
+    <Compile Include="IProcedureStepProperties.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Modality.cs" />
     <Compile Include="ModalityPerformedProcedureStep.cs" />
@@ -112,6 +114,9 @@
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
     <Compile Include="ModalityWorklistQueryResult.cs" />
+    <Compile Include="Workflow\Acquisition\Operations.cs" />
+    <Compile Include="Workflow\Operation.cs" />
+    <Compile Include="Workflow\Reporting\Operations.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

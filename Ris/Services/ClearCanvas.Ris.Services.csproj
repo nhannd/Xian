@@ -64,6 +64,7 @@
     <Compile Include="IPatientAdminService.cs" />
     <Compile Include="IPatientReconciliationStrategy.cs" />
     <Compile Include="IPractitionerAdminService.cs" />
+    <Compile Include="IReportingWorkflowService.cs" />
     <Compile Include="IStaffAdminService.cs" />
     <Compile Include="LocationAdminService.cs" />
     <Compile Include="ModalityAdminService.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="PatientProfileDiff.cs" />
     <Compile Include="PractitionerAdminService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportingWorkflowService.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -79,6 +81,7 @@
     </Compile>
     <Compile Include="StaffAdminService.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
+    <Compile Include="WorkflowServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

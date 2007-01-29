@@ -48,6 +48,7 @@
     <Compile Include="Brokers\LocationBroker.cs" />
     <Compile Include="Brokers\ModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\PatientProfileBroker.cs" />
+    <Compile Include="Brokers\ReportingProcedureStepBroker.cs" />
     <Compile Include="DateTimeRangeHbm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
@@ -130,9 +131,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\ReportingProcedureStep.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\ReportingPerformedProcedureStep.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\InterpretationStep.hbm.xml" />

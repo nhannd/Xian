@@ -123,8 +123,6 @@ namespace ClearCanvas.Ris.Client.Common
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
@@ -150,7 +148,15 @@ namespace ClearCanvas.Ris.Client.Common
                 if (_selectedFolder != folderToSelect)
                 {
                     _selectedFolder = folderToSelect;
-                    _selectedFolder.Refresh();
+                    try
+                    {
+                        _selectedFolder.Refresh();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, "Folder refresh failed", this.Host.DesktopWindow);
+                    }
+
                     EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
                 }
             }

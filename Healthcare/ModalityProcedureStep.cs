@@ -21,11 +21,10 @@ namespace ClearCanvas.Healthcare {
         private Modality _modality;
 
         public ModalityProcedureStep(RequestedProcedure procedure, ModalityProcedureStepType type, Modality modality)
+            :base(procedure)
         {
-            this.RequestedProcedure = procedure;
             this.Type = type;
             this.Modality = modality;
-            this.Status = ActivityStatus.SC;
         }
 
         /// <summary>
@@ -35,68 +34,22 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
+        public override string Name
+        {
+            get { return _type.Name; }
+        }
+
         public virtual ModalityProcedureStepType Type
         {
             get { return _type; }
             set { _type = value; }
         }
 
-
-
         public virtual Modality Modality
         {
             get { return _modality; }
             set { _modality = value; }
         }
-
-
-        /// <summary>
-        /// Starts the scheduled procedure step
-        /// </summary>
-        public virtual void Start()
-        {
-            if (!InStatus(new ActivityStatus[] { ActivityStatus.SC }))
-                throw new HealthcareWorkflowException("The step has already been started");
-
-            //this.StartTime = Platform.Time;
-            this.Status = ActivityStatus.IP;
-        }
-
-        /// <summary>
-        /// Completes the scheduled procedure step
-        /// </summary>
-        public virtual void Complete()
-        {
-            if (InStatus(new ActivityStatus[] {
-                ActivityStatus.CM,
-                ActivityStatus.DC }))
-                throw new HealthcareWorkflowException("Step has already been completed or discontinued");
-
-            //this.EndTime = Platform.Time;
-            this.Status = ActivityStatus.CM;
-
-        }
-
-        /// <summary>
-        /// Discontinues the scheduled procedure step
-        /// </summary>
-        public virtual void Discontinue()
-        {
-            if (InStatus(new ActivityStatus[] {
-                ActivityStatus.CM,
-                ActivityStatus.DC }))
-                throw new HealthcareWorkflowException("Step has already been completed or discontinued");
-
-            //this.EndTime = Platform.Time;
-            this.Status = ActivityStatus.DC;
-        }
-
-        private bool InStatus(ActivityStatus[] statuses)
-        {
-            return CollectionUtils.Contains<ActivityStatus>(statuses,
-                delegate(ActivityStatus s) { return this.Status == s; });
-        }
-
 
 		#region Object overrides
 		

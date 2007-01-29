@@ -13,22 +13,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
-/*            
-            HqlQuery query = new HqlQuery(
-                "select new WorklistItem(pp.Mrn, pp.Name, v.VisitNumber, o.AccessionNumber, ds.Name, rpt.Name, spst.Name, m.Name, o.Priority)"
-                + " from ScheduledProcedureStep sps"
-                + " join sps.Type spst"
-                + " join sps.Modality m"
-                + " join sps.RequestedProcedure rp"
-                + " join rp.Type rpt"
-                + " join rp.Order o"
-                + " join o.DiagnosticService ds"
-                + " join o.Visit v"
-                + " join o.Patient p"
-                + " join p.Profiles pp"
-            );
-*/            
-
             HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ModalityProcedureStep"));
             query.Joins.Add(new HqlJoin("spst", "sps.Type"));
             query.Joins.Add(new HqlJoin("m", "sps.Modality"));
@@ -54,7 +38,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             query.Selectors.Add(new HqlSelector("ScheduledStep", "spst.Name"));
             query.Selectors.Add(new HqlSelector("Modality", "m.Name"));
             query.Selectors.Add(new HqlSelector("Priority", "o.Priority"));
-            query.Selectors.Add(new HqlSelector("Status", "sps.Status"));
+            query.Selectors.Add(new HqlSelector("State", "sps.State"));
 
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("sps", criteria));
             

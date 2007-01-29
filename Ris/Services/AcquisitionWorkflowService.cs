@@ -7,11 +7,12 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Healthcare.Workflow.Acquisition;
 
 namespace ClearCanvas.Ris.Services
 {
     [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
-    public class AcquisitionWorkflowService : HealthcareServiceLayer, IAcquisitionWorkflowService
+    public class AcquisitionWorkflowService : WorkflowServiceBase, IAcquisitionWorkflowService
     {
         [ReadOperation]
         public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
@@ -28,7 +29,7 @@ namespace ClearCanvas.Ris.Services
             IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
             IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
 
-            ModalityProcedureStep sps = spsBroker.Load(item.WorkflowStep);
+            ModalityProcedureStep sps = spsBroker.Load(item.ProcedureStep);
 
             // force a whole bunch of relationships to load... this could be optimized by using fetch joins
             //spsBroker.LoadRequestedProcedureForModalityProcedureStep(sps);
@@ -48,41 +49,19 @@ namespace ClearCanvas.Ris.Services
         [UpdateOperation]
         public void StartProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            ModalityProcedureStep step = LoadStep(stepRef);
-            step.Start();
-
-            step.AddPerformedStep(
-                new ModalityPerformedProcedureStep());
+            ExecuteOperation(LoadStep(stepRef), new Operations.StartModalityProcedureStep());
         }
 
         [UpdateOperation]
         public void CompleteProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            ModalityProcedureStep mps = LoadStep(stepRef);
-            mps.Complete();
-
-            ModalityPerformedProcedureStep mpps =
-                CollectionUtils.FirstElement<ModalityPerformedProcedureStep>(mps.PerformedSteps);
-
-            if (mpps != null)
-            {
-                mpps.Complete();
-            }
+            ExecuteOperation(LoadStep(stepRef), new Operations.CompleteModalityProcedureStep());
         }
 
         [UpdateOperation]
         public void CancelProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
         {
-            ModalityProcedureStep step = LoadStep(stepRef);
-            step.Discontinue();
-
-            ModalityPerformedProcedureStep mpps =
-               CollectionUtils.FirstElement<ModalityPerformedProcedureStep>(step.PerformedSteps);
-
-            if (mpps != null)
-            {
-                mpps.Discontinue();
-            }
+            ExecuteOperation(LoadStep(stepRef), new Operations.CancelModalityProcedureStep());
         }
 
         private ModalityProcedureStep LoadStep(EntityRef<ModalityProcedureStep> stepRef)

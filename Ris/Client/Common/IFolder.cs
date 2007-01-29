@@ -12,15 +12,39 @@ namespace ClearCanvas.Ris.Client.Common
 {
     public interface IFolder
     {
+        /// <summary>
+        /// Gets the text that should be displayed for the folder
+        /// </summary>
         string Text { get; }
+        
+        /// <summary>
+        /// Allows the folder to notify that it's text has changed
+        /// </summary>
         event EventHandler TextChanged;
 
+        /// <summary>
+        /// Gets the icon that should be displayed for the folder
+        /// </summary>
         Image Icon { get; }
+
+        /// <summary>
+        /// Allows the folder to nofity that it's icon has changed
+        /// </summary>
         event EventHandler IconChanged;
 
+        /// <summary>
+        /// Gets the tooltip that should be displayed for the folder
+        /// </summary>
         string Tooltip { get; }
+
+        /// <summary>
+        /// Allows the folder to notify that it's tooltip has changed
+        /// </summary>
         event EventHandler TooltipChanged;
 
+        /// <summary>
+        /// Gets the menu model for the context menu that should be displayed when the user right-clicks on the folder
+        /// </summary>
         ActionModelNode MenuModel { get; }
 
         void Refresh();
@@ -48,6 +72,9 @@ namespace ClearCanvas.Ris.Client.Common
         /// <param name="result">The result of the drag drop operation</param>
         void DragComplete(object[] items, DragDropKind result);
 
+        /// <summary>
+        /// Gets a table of the items that are contained in this folder
+        /// </summary>
         ITable ItemsTable { get; }
     }
 }

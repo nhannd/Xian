@@ -10,6 +10,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Common
 {
@@ -82,6 +83,8 @@ namespace ClearCanvas.Ris.Client.Common
         public void AddAddress()
         {
             Address address = new Address();
+            address.Province = CollectionUtils.FirstElement<string>(AddressSettings.Default.ProvinceChoices);
+            address.Country = CollectionUtils.FirstElement<string>(AddressSettings.Default.CountryChoices);
 
             AddressEditorComponent editor = new AddressEditorComponent(address);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);

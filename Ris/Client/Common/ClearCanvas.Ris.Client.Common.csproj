@@ -64,6 +64,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="IFolder.cs" />
+    <Compile Include="IFolderGroup.cs" />
     <Compile Include="ImportDiagnosticServicesApplication.cs" />
     <Compile Include="ImportDiagnosticServicesComponent.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />

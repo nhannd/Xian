@@ -81,7 +81,8 @@ namespace ClearCanvas.Ris.Client.Common
                 }
                 catch (Exception e)
                 {
-                    // TODO report this
+                    // tOdo report this
+                    Console.WriteLine("error");
                 }
             }
 

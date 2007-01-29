@@ -14,6 +14,11 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class TranscriptionStep : ReportingProcedureStep
 	{
+
+        public TranscriptionStep(ReportingProcedureStep previousStep)
+            :base(previousStep)
+        {
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -22,6 +27,11 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
+
+        public override string Name
+        {
+            get { return "Transcription"; }
+        }
 		
 		#region Object overrides
 		

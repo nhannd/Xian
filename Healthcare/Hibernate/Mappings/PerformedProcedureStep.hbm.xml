@@ -10,7 +10,9 @@
     <discriminator column="Discriminator_"  type="String" length="20"/>
     <version name="Version" column="Version_"/>
 
-    <property name="Status" column="Status_" type="ClearCanvas.Workflow.Hibernate.ActivityPerformedStepStatusEnumHbm, ClearCanvas.Workflow.Hibernate" not-null="true"/>
+    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+    <property name="State" column="State_" type="ClearCanvas.Workflow.Hibernate.PerformedStepStatusEnumHbm, ClearCanvas.Workflow.Hibernate" not-null="true"/>
+    <property name="LastStateChangeTime" column="LastStateChangeTime_" type="DateTime" not-null="true"/>
     <property name="StartTime" column="StartTime_" type="DateTime" not-null="false"/>
     <property name="EndTime" column="EndTime_" type="DateTime" not-null="false"/>
     <component name="Performer" class="ProcedureStepPerformer">

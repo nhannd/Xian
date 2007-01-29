@@ -17,7 +17,11 @@ namespace ClearCanvas.Healthcare {
         public InterpretationStep(RequestedProcedure procedure)
             :base(procedure)
         {
+        }
 
+        public InterpretationStep(ReportingProcedureStep previousStep)
+            :base(previousStep)
+        {
         }
 	
 		/// <summary>
@@ -27,6 +31,11 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
+
+        public override string Name
+        {
+            get { return "Interpretation"; }
+        }
 		
 		#region Object overrides
 		

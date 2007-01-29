@@ -11,7 +11,7 @@ namespace ClearCanvas.Healthcare {
     /// Search criteria for <see cref="PerformedProcedureStep"/> entity
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public partial class PerformedProcedureStepSearchCriteria : ActivityPerformedStepSearchCriteria
+	public partial class PerformedProcedureStepSearchCriteria : PerformedStepSearchCriteria
 	{
 		/// <summary>
 		/// Constructor for top-level search criteria (no key required)
