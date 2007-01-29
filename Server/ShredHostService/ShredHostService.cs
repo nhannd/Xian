@@ -5,7 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
-using ClearCanvas.Server.ShredHost;
+using System.Reflection;
 
 namespace ClearCanvas.Server.ShredHostService
 {
@@ -14,6 +14,7 @@ namespace ClearCanvas.Server.ShredHostService
         public ShredHostService()
         {
             InitializeComponent();
+
         }
 
         protected override void OnStart(string[] args)
@@ -23,12 +24,19 @@ namespace ClearCanvas.Server.ShredHostService
             string startupPath = System.AppDomain.CurrentDomain.BaseDirectory;
             System.IO.Directory.SetCurrentDirectory(startupPath);
 
-            ShredHost.ShredHost.Start();
+            _assembly = Assembly.Load("ClearCanvas.Server.ShredHost");
+            _shredHostType = _assembly.GetType("ClearCanvas.Server.ShredHost.ShredHost");
+            _shredHostType.InvokeMember("Start", BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Public,
+                null, null, new object[] { });
         }
 
         protected override void OnStop()
         {
-            ShredHost.ShredHost.Stop();
+            _shredHostType.InvokeMember("Stop", BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Public,
+                null, null, new object[] { });
         }
+
+        private Assembly _assembly;
+        private Type _shredHostType;
     }
 }

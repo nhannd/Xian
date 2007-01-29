@@ -87,7 +87,7 @@
 			References="@(StrongShredHostReferences)"
 		/>
 	</Target>
-	<Target Name="BuildStrongShredHostService" DependsOnTargets="BuildStrongShredHost" 
+	<Target Name="BuildStrongShredHostService" DependsOnTargets="Preparation"
 		Inputs="@(StrongShredHostServiceSourceFiles)"
 		Outputs="@(StrongShredHostServiceOutput)">
 		<Csc Sources="@(StrongShredHostServiceSourceFiles)"
@@ -105,8 +105,8 @@
 		<Delete Files="@(CleanTarget)" Condition="Exists('$(OutputDir)')" />
 	</Target>
 	<Target Name="FinalSigning" DependsOnTargets="BuildStrongShredHostService">
-		<Exec Command="sn -R &quot;@(StrongClearCanvasCommonOutput)&quot; &quot;$(PrivateKeyFile)&quot;" />
-		<Exec Command="sn -R &quot;@(StrongShredHostOutput)&quot; &quot;$(PrivateKeyFile)&quot;" />
+		<!-- <Exec Command="sn -R &quot;@(StrongClearCanvasCommonOutput)&quot; &quot;$(PrivateKeyFile)&quot;" /> -->
+		<!-- <Exec Command="sn -R &quot;@(StrongShredHostOutput)&quot; &quot;$(PrivateKeyFile)&quot;" /> -->
 		<Exec Command="sn -R &quot;@(StrongShredHostServiceOutput)&quot; &quot;$(PrivateKeyFile)&quot;" />
 	</Target>
 </Project>
