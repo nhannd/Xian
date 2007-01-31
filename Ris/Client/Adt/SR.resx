@@ -318,9 +318,6 @@
   <data name="TitleHL7Queue" xml:space="preserve">
     <value>HL7 Queue</value>
   </data>
-  <data name="TitleHome" xml:space="preserve">
-    <value>Home</value>
-  </data>
   <data name="TitleJScriptWindow" xml:space="preserve">
     <value>JScript Window</value>
   </data>
@@ -347,6 +344,9 @@
   </data>
   <data name="TitlePreview" xml:space="preserve">
     <value>Preview</value>
+  </data>
+  <data name="TitleRegistrationHome" xml:space="preserve">
+    <value>Registration Home</value>
   </data>
   <data name="TitleResults" xml:space="preserve">
     <value>Results</value>

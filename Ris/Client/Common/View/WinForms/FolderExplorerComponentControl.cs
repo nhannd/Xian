@@ -35,6 +35,8 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
 
             //_folderContentsTableView.DataBindings.Add("Table", _component, "FolderContentsTable", true, DataSourceUpdateMode.Never);
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _folderContentsTableView.MenuModel = _component.ItemsContextMenuModel;
         }
 
         private void _component_FolderContentsTableChanged(object sender, EventArgs e)

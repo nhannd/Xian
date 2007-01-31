@@ -10,9 +10,9 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/Go/Home")]
-    [ButtonAction("launch", "global-toolbars/Go/Home")]
-    [Tooltip("launch", "Home")]
+    [MenuAction("launch", "global-menus/Go/Registration Home")]
+    [ButtonAction("launch", "global-toolbars/Go/Registration Home")]
+    [Tooltip("launch", "Registration Home")]
     [IconSet("launch", IconScheme.Colour, "Icons.HomeToolSmall.png", "Icons.HomeToolMedium.png", "Icons.HomeToolLarge.png")]
     [ClickHandler("launch", "Launch")]
 
@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     BuildComponent(),
-                    SR.TitleHome,
+                    SR.TitleRegistrationHome,
                     delegate(IApplicationComponent c) { _workspace = null; });
             }
             else

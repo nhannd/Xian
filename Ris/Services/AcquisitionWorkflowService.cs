@@ -71,6 +71,20 @@ namespace ClearCanvas.Ris.Services
             ExecuteOperation(LoadStep(stepRef), new Operations.CancelModalityProcedureStep());
         }
 
+        [UpdateOperation]
+        public void ExecuteOperation(EntityRef<ModalityProcedureStep> stepRef, string operationClassName)
+        {
+            ExecuteOperation(LoadStep(stepRef), 
+                new ClearCanvas.Healthcare.Workflow.Acquisition.WorkflowOperationExtensionPoint(), operationClassName);
+        }
+
+        [ReadOperation]
+        public IDictionary<string, bool> GetOperationEnablement(EntityRef<ModalityProcedureStep> stepRef)
+        {
+            return GetOperationEnablement(LoadStep(stepRef),
+                new ClearCanvas.Healthcare.Workflow.Acquisition.WorkflowOperationExtensionPoint());
+        }
+
         private ModalityProcedureStep LoadStep(EntityRef<ModalityProcedureStep> stepRef)
         {
             IModalityProcedureStepBroker broker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();

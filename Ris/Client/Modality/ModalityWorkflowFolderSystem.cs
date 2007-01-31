@@ -7,17 +7,18 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Modality
 {
 
     public interface IModalityWorkflowToolContext : IToolContext
     {
-        //bool GetWorkflowOperationEnablement(string operationClass);
-        //void ExecuteWorkflowOperation(string operationClass);
+        bool GetWorkflowOperationEnablement(string operationClass);
+        void ExecuteWorkflowOperation(string operationClass);
 
-        //ICollection<ModalityWorklistQueryResult> SelectedItems { get; }
-        //event EventHandler SelectedItemsChanged;
+        ICollection<ModalityWorklistQueryResult> SelectedItems { get; }
+        event EventHandler SelectedItemsChanged;
     }
 
     [ExtensionPoint]
@@ -36,12 +37,38 @@ namespace ClearCanvas.Ris.Client.Modality
             {
                 _owner = owner;
             }
+
+            #region IModalityWorkflowToolContext Members
+
+            public ICollection<ModalityWorklistQueryResult> SelectedItems
+            {
+                get { return _owner.SelectedItems; }
+            }
+
+            public event EventHandler SelectedItemsChanged
+            {
+                add { _owner.SelectedItemsChanged += value; }
+                remove { _owner.SelectedItemsChanged -= value; }
+            }
+
+            public bool GetWorkflowOperationEnablement(string operationClass)
+            {
+                return _owner.GetOperationEnablement(operationClass);
+            }
+
+            public void ExecuteWorkflowOperation(string operationClass)
+            {
+                _owner.ExecuteOperation(operationClass);
+            }
+
+            #endregion
         }
 
 
 
         private IAcquisitionWorkflowService _workflowService;
         private ToolSet _toolSet;
+        private IDictionary<string, bool> _workflowEnablment;
 
         public ModalityWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             :base(folderExplorer)
@@ -50,12 +77,30 @@ namespace ClearCanvas.Ris.Client.Modality
             _workflowService = ApplicationContext.GetService<IAcquisitionWorkflowService>();
             _workflowService.ModalityProcedureStepChanged += ModalityProcedureStepChangedEventHandler;
 
+            this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
+
             this.AddFolder(new Folders.ScheduledFolder(this));
             this.AddFolder(new Folders.InProgressFolder(this));
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
 
             _toolSet = new ToolSet(new ModalityWorkflowToolExtensionPoint(), new ModalityWorkflowToolContext(this));
+
+            folderExplorer.AddActions(_toolSet.Actions);
+        }
+
+        private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+        {
+            // update workflow enablement
+            ModalityWorklistQueryResult selectedItem = CollectionUtils.FirstElement<ModalityWorklistQueryResult>(this.SelectedItems);
+            if (selectedItem != null)
+            {
+                _workflowEnablment = _workflowService.GetOperationEnablement(selectedItem.ProcedureStep);
+            }
+            else
+            {
+                _workflowEnablment = null;
+            }
         }
 
         private void ModalityProcedureStepChangedEventHandler(object sender, EntityChangeEventArgs e)
@@ -74,6 +119,17 @@ namespace ClearCanvas.Ris.Client.Modality
             {
                 folder.UpdateWorklistItem(worklistItem);
             }
+        }
+
+        private void ExecuteOperation(string operationName)
+        {
+            ModalityWorklistQueryResult selectedItem = CollectionUtils.FirstElement<ModalityWorklistQueryResult>(this.SelectedItems);
+            _workflowService.ExecuteOperation(selectedItem.ProcedureStep, operationName);
+        }
+
+        private bool GetOperationEnablement(string operationName)
+        {
+            return _workflowEnablment == null ? false : _workflowEnablment[operationName];
         }
 
         public IAcquisitionWorkflowService WorkflowService

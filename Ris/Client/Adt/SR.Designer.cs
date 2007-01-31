@@ -664,15 +664,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Home.
-        /// </summary>
-        internal static string TitleHome {
-            get {
-                return ResourceManager.GetString("TitleHome", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to JScript Window.
         /// </summary>
         internal static string TitleJScriptWindow {
@@ -750,6 +741,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitlePreview {
             get {
                 return ResourceManager.GetString("TitlePreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration Home.
+        /// </summary>
+        internal static string TitleRegistrationHome {
+            get {
+                return ResourceManager.GetString("TitleRegistrationHome", resourceCulture);
             }
         }
         

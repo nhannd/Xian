@@ -13,7 +13,7 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Common
 {
-    [MenuAction("show", "global-menus/Folders/Show")]
+    [MenuAction("show", "global-menus/Go/Technologist Home")]
     [ClickHandler("show", "Show")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class LaunchFolderExplorerTool : Tool<IDesktopToolContext>
@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Client.Common
             ApplicationComponent.LaunchAsWorkspace(
                 this.Context.DesktopWindow,
                 split,
-                "Folders",
+                "Technologist Home",
                 null);
         }
     }
@@ -50,6 +50,11 @@ namespace ClearCanvas.Ris.Client.Common
         void RemoveFolder(IFolder folder);
         IFolder SelectedFolder { get; set; }
         event EventHandler SelectedFolderChanged;
+
+        ISelection SelectedItems { get; }
+        event EventHandler SelectedItemsChanged;
+
+        void AddActions(IActionSet actions);
     }
 
     [ExtensionPoint]
@@ -112,6 +117,22 @@ namespace ClearCanvas.Ris.Client.Common
                 remove { _component.SelectedFolderChanged -= value; }
             }
 
+            public ISelection SelectedItems
+            {
+                get { return _component.SelectedItems; }
+            }
+
+            public event EventHandler SelectedItemsChanged
+            {
+                add { _component.SelectedItemsChanged += value; }
+                remove { _component.SelectedItemsChanged -= value; }
+            }
+
+            public void AddActions(IActionSet actions)
+            {
+                _component._itemActions = _component._itemActions.Union(actions);
+            }
+
             #endregion
         }
 
@@ -126,6 +147,8 @@ namespace ClearCanvas.Ris.Client.Common
         private event EventHandler _selectedItemsChanged;
 
         private ToolSet _tools;
+
+        private IActionSet _itemActions = new ActionSet();
 
         /// <summary>
         /// Constructor
@@ -214,6 +237,14 @@ namespace ClearCanvas.Ris.Client.Common
         {
             add { _selectedItemsChanged += value; }
             remove { _selectedItemsChanged -= value; }
+        }
+
+        public ActionModelRoot ItemsContextMenuModel
+        {
+            get
+            {
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _itemActions);
+            }
         }
 
         #endregion

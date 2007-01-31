@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Common
 {
@@ -10,6 +11,7 @@ namespace ClearCanvas.Ris.Client.Common
     {
         private IFolderExplorerToolContext _folderExplorer;
         private List<WorkflowFolder<TItem>> _folders;
+        private event EventHandler _selectedItemsChanged;
 
         public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
         {
@@ -17,6 +19,7 @@ namespace ClearCanvas.Ris.Client.Common
 
             _folderExplorer = folderExplorer;
             _folderExplorer.SelectedFolderChanged += new EventHandler(_folderExplorer_SelectedFolderChanged);
+            _folderExplorer.SelectedItemsChanged += new EventHandler(_folderExplorer_SelectedItemsChanged);
         }
 
         ~WorkflowFolderSystem()
@@ -29,9 +32,42 @@ namespace ClearCanvas.Ris.Client.Common
             get { return _folderExplorer.DesktopWindow; }
         }
 
+        public event EventHandler SelectedItemsChanged
+        {
+            add { _selectedItemsChanged += value; }
+            remove { _selectedItemsChanged -= value; }
+        }
+
+        public ICollection<TItem> SelectedItems
+        {
+            get
+            {
+                // in general we don't know what type the selected items are, since they may
+                // have come from another folder system
+                // therefore, need to check if they are of type TItem and only include them
+                // in SelectedItems if they are of the correct type
+                List<TItem> items = new List<TItem>();
+
+                // map the selection to a collection of TItem
+                foreach(object obj in _folderExplorer.SelectedItems.Items)
+                {
+                    if(obj is TItem)
+                        items.Add((TItem)obj);
+                }
+                return items;
+            }
+        }
+
         private void _folderExplorer_SelectedFolderChanged(object sender, EventArgs e)
         {
+
         }
+
+        private void _folderExplorer_SelectedItemsChanged(object sender, EventArgs e)
+        {
+            EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+        }
+
 
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {

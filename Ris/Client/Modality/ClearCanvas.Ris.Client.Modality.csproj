@@ -44,6 +44,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Folders\TestWorkflowFolders.cs" />
+    <Compile Include="TestTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

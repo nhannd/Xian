@@ -14,5 +14,9 @@ namespace ClearCanvas.Ris.Services
         void StartProcedureStep(EntityRef<ModalityProcedureStep> stepRef);
         void CompleteProcedureStep(EntityRef<ModalityProcedureStep> stepRef);
         void CancelProcedureStep(EntityRef<ModalityProcedureStep> stepRef);
+
+        IDictionary<string, bool> GetOperationEnablement(EntityRef<ModalityProcedureStep> stepRef);
+        void ExecuteOperation(EntityRef<ModalityProcedureStep> stepRef, string operationClassName);
+
     }
 }

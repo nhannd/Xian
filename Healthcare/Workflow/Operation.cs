@@ -6,7 +6,7 @@ using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
-    public abstract class Operation
+    public abstract class Operation : IOperation
     {
         private Staff _currentUserStaff;
 
@@ -23,9 +23,8 @@ namespace ClearCanvas.Healthcare.Workflow
 
             public TestResult Test(object obj)
             {
-                IProcedureStepProperties psp = (IProcedureStepProperties)obj;
-                //return new TestResult(_owner.CanExecute(psp));
-                return new TestResult(true);
+                ProcedureStep ps = (ProcedureStep)obj;
+                return new TestResult(_owner.CanExecute(ps));
             }
 
             public IEnumerable<ISpecification> SubSpecs
@@ -37,7 +36,10 @@ namespace ClearCanvas.Healthcare.Workflow
         }
 
         protected abstract void Execute(ProcedureStep step, IWorkflow workflow);
-        //protected abstract bool CanExecute(IProcedureStepProperties psp);
+        protected virtual bool CanExecute(ProcedureStep step)
+        {
+            return false;
+        }
 
         public ISpecification InputSpecification
         {
