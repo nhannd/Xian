@@ -93,9 +93,11 @@ namespace ClearCanvas.Common.Configuration
                 SettingsPropertyValueCollection values = _sourceProvider.GetPropertyValues(context, props);
                 foreach (SettingsPropertyValue value in values)
                 {
-					//Assume any value that matches an embedded resource name is intended to be loaded from the resource.
-					value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
-                        (string)value.Property.DefaultValue);
+					if (value.SerializedValue == null || (value.SerializedValue is string) && ((string)value.SerializedValue) == ((string)value.Property.DefaultValue))
+					{
+						value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
+							(string)value.Property.DefaultValue);
+					}
                 }
                 return values;
             }
