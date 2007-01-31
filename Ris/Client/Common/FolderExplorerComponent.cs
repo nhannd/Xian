@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client.Common
     [MenuAction("show", "global-menus/Folders/Show")]
     [ClickHandler("show", "Show")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class FolderExplorerTool : Tool<IDesktopToolContext>
+    public class LaunchFolderExplorerTool : Tool<IDesktopToolContext>
     {
         public void Show()
         {
@@ -43,6 +43,20 @@ namespace ClearCanvas.Ris.Client.Common
     }
 
 
+    public interface IFolderExplorerToolContext : IToolContext
+    {
+        IDesktopWindow DesktopWindow { get; }
+        void AddFolder(IFolder folder);
+        void RemoveFolder(IFolder folder);
+        IFolder SelectedFolder { get; set; }
+        event EventHandler SelectedFolderChanged;
+    }
+
+    [ExtensionPoint]
+    public class FolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
 
     /// <summary>
     /// Extension point for views onto <see cref="WorklistExplorerComponent"/>
@@ -58,6 +72,52 @@ namespace ClearCanvas.Ris.Client.Common
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
     public class FolderExplorerComponent : ApplicationComponent
     {
+        #region IFolderExplorerToolContext implementation
+
+        class FolderExplorerToolContext : ToolContext, IFolderExplorerToolContext
+        {
+            private FolderExplorerComponent _component;
+
+            public FolderExplorerToolContext(FolderExplorerComponent component)
+            {
+                _component = component;
+            }
+
+            #region IFolderExplorerToolContext Members
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _component.Host.DesktopWindow; }
+            }
+
+            public void AddFolder(IFolder folder)
+            {
+                _component._folderTree.Items.Add(folder);
+            }
+
+            public void RemoveFolder(IFolder folder)
+            {
+                _component._folderTree.Items.Remove(folder);
+            }
+
+            public IFolder SelectedFolder
+            {
+                get { return _component._selectedFolder; }
+                set { _component.SelectFolder(value); }
+            }
+
+            public event EventHandler SelectedFolderChanged
+            {
+                add { _component.SelectedFolderChanged += value; }
+                remove { _component.SelectedFolderChanged -= value; }
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+
         private Tree<IFolder> _folderTree;
         private IFolder _selectedFolder;
         private event EventHandler _selectedFolderChanged;
@@ -65,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Common
         private ISelection _selectedItems = Selection.Empty;
         private event EventHandler _selectedItemsChanged;
 
-
+        private ToolSet _tools;
 
         /// <summary>
         /// Constructor
@@ -82,49 +142,23 @@ namespace ClearCanvas.Ris.Client.Common
             _folderTree.Items.ItemsChanged += new EventHandler<ItemEventArgs>(RootFoldersChangedEventHandler);
         }
 
-        private void RootFoldersChangedEventHandler(object sender, ItemEventArgs e)
-        {
-            if (e.ChangeType == ItemChangeType.ItemAdded)
-            {
-                IFolder folder = (IFolder)e.Item;
-                folder.TextChanged += FolderTextChangedEventHandler;
-            }
-
-            if (e.ChangeType == ItemChangeType.ItemRemoved)
-            {
-                IFolder folder = (IFolder)e.Item;
-                folder.TextChanged -= FolderTextChangedEventHandler;
-            }
-        }
-
-        private void FolderTextChangedEventHandler(object sender, EventArgs e)
-        {
-            _folderTree.Items.NotifyItemUpdated((IFolder)sender);
-        }
+        #region Application Component overrides
 
         public override void Start()
         {
-            // add folders
-            /*
-            _folderTree.Items.Add(new TestStorageFolders.MyDogsFolder());
-            _folderTree.Items.Add(new TestStorageFolders.LostDogsFolder());
-            _folderTree.Items.Add(new TestStorageFolders.FoundDogsFolder());
-            _folderTree.Items.Add(new TestStorageFolders.CryingCatsFolder());
-            _folderTree.Items.Add(new TestStorageFolders.FriendlyCatsFolder());
-            _folderTree.Items.Add(new TestStorageFolders.StrayCatsFolder());
-             */
-            _folderTree.Items.Add(new TestWorkflowFolders.ScheduledItemsFolder());
-            _folderTree.Items.Add(new TestWorkflowFolders.InProgressItemsFolder());
-            _folderTree.Items.Add(new TestWorkflowFolders.CompletedItemsFolder());
-            _folderTree.Items.Add(new TestWorkflowFolders.CancelledItemsFolder());
-
             base.Start();
+
+            _tools = new ToolSet(new FolderExplorerToolExtensionPoint(), new FolderExplorerToolContext(this));
         }
 
         public override void Stop()
         {
+            _tools.Dispose();
+
             base.Stop();
         }
+
+        #endregion
 
         #region Presentation Model
 
@@ -140,25 +174,12 @@ namespace ClearCanvas.Ris.Client.Common
         {
             get
             {
-                return _selectedFolder == null ? Selection.Empty : new Selection(_selectedFolder);
+                return new Selection(_selectedFolder);
             }
             set
             {
                 IFolder folderToSelect = (IFolder)value.Item;
-                if (_selectedFolder != folderToSelect)
-                {
-                    _selectedFolder = folderToSelect;
-                    try
-                    {
-                        _selectedFolder.Refresh();
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, "Folder refresh failed", this.Host.DesktopWindow);
-                    }
-
-                    EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
-                }
+                SelectFolder(folderToSelect);
             }
         }
 
@@ -197,6 +218,29 @@ namespace ClearCanvas.Ris.Client.Common
 
         #endregion
 
+        #region Private methods
+
+        private void SelectFolder(IFolder folder)
+        {
+            if (_selectedFolder != folder)
+            {
+                _selectedFolder = folder;
+                if (_selectedFolder != null)
+                {
+                    try
+                    {
+                        _selectedFolder.Refresh();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, "Folder refresh failed", this.Host.DesktopWindow);
+                    }
+                }
+
+                EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
+            }
+        }
+
         private DragDropKind CanFolderAcceptDrop(IFolder folder, object dropData, DragDropKind kind)
         {
             if (folder != _selectedFolder && dropData is ISelection)
@@ -218,6 +262,28 @@ namespace ClearCanvas.Ris.Client.Common
             }
             return DragDropKind.None;
         }
+
+        private void RootFoldersChangedEventHandler(object sender, ItemEventArgs e)
+        {
+            if (e.ChangeType == ItemChangeType.ItemAdded)
+            {
+                IFolder folder = (IFolder)e.Item;
+                folder.TextChanged += FolderTextChangedEventHandler;
+            }
+
+            if (e.ChangeType == ItemChangeType.ItemRemoved)
+            {
+                IFolder folder = (IFolder)e.Item;
+                folder.TextChanged -= FolderTextChangedEventHandler;
+            }
+        }
+
+        private void FolderTextChangedEventHandler(object sender, EventArgs e)
+        {
+            _folderTree.Items.NotifyItemUpdated((IFolder)sender);
+        }
+
+        #endregion
 
     }
 }

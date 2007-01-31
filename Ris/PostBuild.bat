@@ -40,6 +40,8 @@ copy "..\..\..\..\Ris\Client\Adt\bin\%1\ClearCanvas.Ris.Client.Adt.dll" .\plugin
 copy "..\..\..\..\Ris\Client\Adt\View\WinForms\bin\%1\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" .\plugins
 copy "..\..\..\..\Ris\Client\Common\bin\%1\ClearCanvas.Ris.Client.Common.dll" .\plugins
 copy "..\..\..\..\Ris\Client\Common\View\WinForms\bin\%1\ClearCanvas.Ris.Client.Common.View.WinForms.dll" .\plugins
+copy "..\..\..\..\Ris\Client\Modality\bin\%1\ClearCanvas.Ris.Client.Modality.dll" .\plugins
+copy "..\..\..\..\Ris\Client\Modality\View\WinForms\bin\%1\ClearCanvas.Ris.Client.Modality.View.WinForms.dll" .\plugins
 copy "..\..\..\..\Jscript\bin\%1\ClearCanvas.Jscript.dll" .\plugins
 
 :: Copy HL7

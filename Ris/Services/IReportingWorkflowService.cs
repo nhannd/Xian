@@ -6,8 +6,10 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Services
 {
-    public interface IReportingWorkflowService
+    public interface IReportingWorkflowService : IHealthcareServiceLayer
     {
+        IList<ReportingWorklistQueryResult> GetWorklist(Type stepClass, ReportingProcedureStepSearchCriteria criteria);
+
         void ScheduleInterpretation(EntityRef<RequestedProcedure> procedure);
 
         void ClaimInterpretation(EntityRef<InterpretationStep> step);

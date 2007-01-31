@@ -12,8 +12,9 @@ namespace ClearCanvas.Ris.Client.Common
     {
         private string _folderName;
         private Table<TItem> _itemsTable;
+        private bool _isPopulated;
 
-        public WorkflowFolder(string folderName, Table<TItem> itemsTable)
+        public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
         {
             _folderName = folderName;
             _itemsTable = itemsTable;
@@ -23,9 +24,46 @@ namespace ClearCanvas.Ris.Client.Common
                 };
         }
 
+        public void UpdateWorklistItem(TItem item)
+        {
+            // if the folder has not yet been populated, then nothing to do
+            if (!_isPopulated)
+                return;
+
+            // get the index of the item in this folder, if it exists
+            int i = _itemsTable.Items.FindIndex(delegate(TItem x) { return x.Equals(item); });
+
+            // is the item a member of this folder?
+            if (IsMember(item))
+            {
+                if (i > -1)
+                {
+                    // update the item that is already contained in this folder
+                    _itemsTable.Items[i] = item;
+                }
+                else
+                {
+                    // add the item, because it was not already contained in this folder
+                    _itemsTable.Items.Add(item);
+                }
+            }
+            else
+            {
+                if (i > -1)
+                {
+                    // remove the item from this folder, because it is no longer a member
+                    _itemsTable.Items.RemoveAt(i);
+                }
+            }
+        }
+
         public override string Text
         {
-            get { return string.Format("{0} ({1})", _folderName, this._itemsTable.Items.Count); }
+            get
+            {
+                return _isPopulated ?
+                    string.Format("{0} ({1})", _folderName, this._itemsTable.Items.Count) : _folderName;
+            }
         }
 
         public override ITable ItemsTable
@@ -39,6 +77,7 @@ namespace ClearCanvas.Ris.Client.Common
         public override void Refresh()
         {
             IList<TItem> items = QueryItems();
+            _isPopulated = true;
             _itemsTable.Items.Clear();
             _itemsTable.Items.AddRange(items);
         }
@@ -48,9 +87,6 @@ namespace ClearCanvas.Ris.Client.Common
             if (kind == DragDropKind.Move)
             {
                 // items have been "moved" out of this folder
-                // however, we don't know, in general, whether this folder still "contains" them or not
-                // so we need a refresh
-                Refresh();
             }
         }
 
@@ -76,8 +112,6 @@ namespace ClearCanvas.Ris.Client.Common
                 try
                 {
                     bool processed = ProcessDrop(item);
-                    if(processed)
-                        _itemsTable.Items.Add(item);
                 }
                 catch (Exception e)
                 {
@@ -100,6 +134,9 @@ namespace ClearCanvas.Ris.Client.Common
         /// <param name="item"></param>
         /// <returns></returns>
         protected abstract bool ProcessDrop(TItem item);
+
+
+        protected abstract bool IsMember(TItem item);
 
     }
 }

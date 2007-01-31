@@ -44,6 +44,13 @@ namespace ClearCanvas.Ris.Services
 
         #region IReportingWorkflowService Members
 
+        [ReadOperation]
+        public IList<ReportingWorklistQueryResult> GetWorklist(Type stepClass, ReportingProcedureStepSearchCriteria criteria)
+        {
+            IReportingWorklistBroker broker = this.CurrentContext.GetBroker<IReportingWorklistBroker>();
+            return broker.GetWorklist(stepClass, criteria);
+        }
+
         [UpdateOperation]
         public void ScheduleInterpretation(EntityRef<RequestedProcedure> procedure)
         {

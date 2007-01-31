@@ -1,44 +1,39 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using ClearCanvas.Enterprise;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare
 {
-    public class ModalityWorklistQueryResult
+    public class ReportingWorklistQueryResult
     {
         private EntityRef<Patient> _patient;
         private EntityRef<PatientProfile> _patientProfile;
         private EntityRef<Order> _order;
         private EntityRef<RequestedProcedure> _requestedProcedure;
-        private EntityRef<ModalityProcedureStep> _procedureStep;
+        private EntityRef<ReportingProcedureStep> _procedureStep;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
-        private CompositeIdentifier _visitNumber;
         private string _accessionNumber;
         private string _diagnosticServiceName;
         private string _requestedProcedureName;
-        private string _procedureStepName;
-        private string _modalityName;
         private OrderPriority _priority;
         private ActivityStatus _status;
 
-        public ModalityWorklistQueryResult(
+        public ReportingWorklistQueryResult(
             Patient patient,
             PatientProfile profile,
             Order order,
             RequestedProcedure requestedProcedure,
-            ModalityProcedureStep procedureStep,
+            ReportingProcedureStep procedureStep,
             CompositeIdentifier mrn,
             PersonName patientName,
-            CompositeIdentifier visitNumber,
             string accessionNumber,
             string diagnosticService,
             string requestedProcedureName,
-            string procedureStepName,
-            string modalityName,
             OrderPriority priority,
             ActivityStatus status)
         {
@@ -46,32 +41,19 @@ namespace ClearCanvas.Healthcare
             _patientProfile = new EntityRef<PatientProfile>(profile);
             _order = new EntityRef<Order>(order);
             _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
-            _procedureStep = new EntityRef<ModalityProcedureStep>(procedureStep);
+            _procedureStep = new EntityRef<ReportingProcedureStep>(procedureStep);
 
             _mrn = mrn;
             _patientName = patientName;
-            _visitNumber = visitNumber;
             _accessionNumber = accessionNumber;
             _diagnosticServiceName = diagnosticService;
             _requestedProcedureName = requestedProcedureName;
-            _procedureStepName = procedureStepName;
-            _modalityName = modalityName;
             _priority = priority;
             _status = status;
         }
 
-        public override bool Equals(object obj)
-        {
-            ModalityWorklistQueryResult that = (ModalityWorklistQueryResult)obj;
-            return that != null && this._procedureStep.Equals(that._procedureStep);
-        }
 
-        public override int GetHashCode()
-        {
-            return _procedureStep.GetHashCode();
-        }
-
-        public EntityRef<ModalityProcedureStep> ProcedureStep
+        public EntityRef<ReportingProcedureStep> ProcedureStep
         {
             get { return _procedureStep; }
         }
@@ -106,17 +88,12 @@ namespace ClearCanvas.Healthcare
             get { return _patientName; }
         }
 
-        public CompositeIdentifier VisitNumber
-        {
-            get { return _visitNumber; }
-        }
-
         public string AccessionNumber
         {
             get { return _accessionNumber; }
         }
 
-        public string DiagnosticService
+        public string DiagnosticServiceName
         {
             get { return _diagnosticServiceName; }
         }
@@ -124,16 +101,6 @@ namespace ClearCanvas.Healthcare
         public string RequestedProcedureName
         {
             get { return _requestedProcedureName; }
-        }
-
-        public string ModalityProcedureStepName
-        {
-            get { return _procedureStepName; }
-        }
-
-        public string ModalityName
-        {
-            get { return _modalityName; }
         }
 
         public OrderPriority Priority

@@ -8,6 +8,7 @@ namespace ClearCanvas.Ris.Services
     public interface IAcquisitionWorkflowService : IHealthcareServiceLayer
     {
         IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria);
+        ModalityWorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef);
         ModalityProcedureStep LoadWorklistItemPreview(ModalityWorklistQueryResult item);
 
         void StartProcedureStep(EntityRef<ModalityProcedureStep> stepRef);

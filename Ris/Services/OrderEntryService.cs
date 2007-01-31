@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Services
         public IList<ModalityWorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
             IModalityWorklistBroker broker = this.CurrentContext.GetBroker<IModalityWorklistBroker>();
-            return broker.GetWorklist(criteria);
+            return broker.GetWorklist(criteria, "UHN");
         }
 
 /*
