@@ -117,16 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MenuOptions" xml:space="preserve">
-    <value>Options</value>
-  </data>
-  <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
-    <value>No configuration pages exist.</value>
-  </data>
-  <data name="TitleDateFormat" xml:space="preserve">
-    <value>Date Format</value>
-  </data>
-  <data name="TitleMenuOptions" xml:space="preserve">
-    <value>Options</value>
-  </data>
 </root>

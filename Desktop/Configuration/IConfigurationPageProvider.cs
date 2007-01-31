@@ -6,6 +6,6 @@ namespace ClearCanvas.Desktop.Configuration
 {
 	public interface IConfigurationPageProvider
 	{
-		IConfigurationPage[] GetPages();
+		IEnumerable<IConfigurationPage> GetPages();
 	}
 }

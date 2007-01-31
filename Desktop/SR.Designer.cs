@@ -232,6 +232,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The custom date format must be from the available list..
+        /// </summary>
+        public static string InvalidCustomDateFormat {
+            get {
+                return ResourceManager.GetString("InvalidCustomDateFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Edit.
         /// </summary>
         public static string MenuEdit {
@@ -313,6 +322,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        public static string MenuOptions {
+            get {
+                return ResourceManager.GetString("MenuOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Tools.
         /// </summary>
         public static string MenuTools {
@@ -327,6 +345,33 @@ namespace ClearCanvas.Desktop {
         public static string MessageConfirmSaveChangesBeforeClosing {
             get {
                 return ResourceManager.GetString("MessageConfirmSaveChangesBeforeClosing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No configuration pages exist..
+        /// </summary>
+        public static string MessageNoConfigurationPagesExist {
+            get {
+                return ResourceManager.GetString("MessageNoConfigurationPagesExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date Format.
+        /// </summary>
+        public static string TitleDateFormat {
+            get {
+                return ResourceManager.GetString("TitleDateFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        public static string TitleMenuOptions {
+            get {
+                return ResourceManager.GetString("TitleMenuOptions", resourceCulture);
             }
         }
     }

@@ -93,15 +93,9 @@ namespace ClearCanvas.Common.Configuration
                 SettingsPropertyValueCollection values = _sourceProvider.GetPropertyValues(context, props);
                 foreach (SettingsPropertyValue value in values)
                 {
-                    // normally, if there is no stored value, the SerializedValue property is null,
-                    // which tells .NET to use the default value
-                    // however, by handling this logic ourselves, we can do special processing, such
-                    // as loading a default value from an embedded resource
-                    if (value.SerializedValue == null)
-                    {
-                        value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
-                            (string)value.Property.DefaultValue);
-                    }
+					//Assume any value that matches an embedded resource name is intended to be loaded from the resource.
+					value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
+                        (string)value.Property.DefaultValue);
                 }
                 return values;
             }

@@ -36,7 +36,7 @@ copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\SQLite.NET.dll" ".\Common"
 
 :: Copy shared plugins
 copy "..\..\..\bin\%2\ClearCanvas.Desktop.dll" ".\plugins"
-copy "..\..\..\Configuration\bin\%2\ClearCanvas.Desktop.Configuration.dll" .\plugins
+copy "..\..\..\Configuration\Tools\bin\%2\ClearCanvas.Desktop.Configuration.Tools.dll" .\plugins
 copy "..\..\..\Configuration\View\WinForms\bin\%2\ClearCanvas.Desktop.Configuration.View.Winforms.dll" .\plugins
 copy "..\..\..\View\WinForms\bin\%2\ClearCanvas.Desktop.View.WinForms.dll" ".\plugins"
 copy "..\..\..\Help\bin\%2\ClearCanvas.Desktop.Help.dll" ".\plugins"

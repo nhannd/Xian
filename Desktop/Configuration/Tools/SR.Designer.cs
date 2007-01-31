@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Desktop.Configuration {
+namespace ClearCanvas.Desktop.Configuration.Tools {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop.Configuration {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.Configuration.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.Configuration.Tools.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,42 +57,6 @@ namespace ClearCanvas.Desktop.Configuration {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Options.
-        /// </summary>
-        internal static string MenuOptions {
-            get {
-                return ResourceManager.GetString("MenuOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No configuration pages exist..
-        /// </summary>
-        internal static string MessageNoConfigurationPagesExist {
-            get {
-                return ResourceManager.GetString("MessageNoConfigurationPagesExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Date Format.
-        /// </summary>
-        internal static string TitleDateFormat {
-            get {
-                return ResourceManager.GetString("TitleDateFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Options.
-        /// </summary>
-        internal static string TitleMenuOptions {
-            get {
-                return ResourceManager.GetString("TitleMenuOptions", resourceCulture);
             }
         }
     }

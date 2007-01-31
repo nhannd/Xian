@@ -64,6 +64,18 @@
     <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
+    <Compile Include="Configuration\ConfigurationDialog.cs" />
+    <Compile Include="Configuration\ConfigurationPageManager.cs" />
+    <Compile Include="Configuration\Standard\CustomDateFormatSettings.cs" />
+    <Compile Include="Configuration\Standard\CustomDateFormatSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>CustomDateFormatSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Standard\DateFormatApplicationComponent.cs" />
+    <Compile Include="Configuration\Standard\DateFormatConfigurationPage.cs" />
+    <Compile Include="Configuration\IConfigurationPage.cs" />
+    <Compile Include="Configuration\IConfigurationPageProvider.cs" />
     <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />
@@ -222,6 +234,10 @@
     <None Include="Actions\Actions.cd" />
     <None Include="app.config" />
     <None Include="ApplicationComponents.cd" />
+    <None Include="Configuration\Standard\CustomDateFormatSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>CustomDateFormatSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Desktop.cd" />
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -232,6 +248,7 @@
   <ItemGroup>
     <Content Include="Actions\actionmodels.xml">
     </Content>
+    <EmbeddedResource Include="Configuration\Standard\CustomDateFormatSettings.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

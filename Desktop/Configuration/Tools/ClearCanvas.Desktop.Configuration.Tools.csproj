@@ -7,8 +7,8 @@
     <ProjectGuid>{F7244490-8FC8-4296-A97F-024070A4816A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Desktop.Configuration</RootNamespace>
-    <AssemblyName>ClearCanvas.Desktop.Configuration</AssemblyName>
+    <RootNamespace>ClearCanvas.Desktop.Configuration.Tools</RootNamespace>
+    <AssemblyName>ClearCanvas.Desktop.Configuration.Tools</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,14 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateFormatConfiguration.cs" />
-    <Compile Include="User\DateFormatSettings.cs" />
-    <Compile Include="User\UserConfigurationPageProvider.cs" />
-    <Compile Include="User\DateFormatConfigurationPage.cs" />
-    <Compile Include="ConfigurationPageManager.cs" />
-    <Compile Include="DateFormatApplicationComponent.cs" />
-    <Compile Include="IConfigurationPage.cs" />
-    <Compile Include="IConfigurationPageProvider.cs" />
+    <Compile Include="StandardOptionsConfigurationPageProvider.cs" />
     <Compile Include="MenuOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
@@ -66,11 +59,11 @@
     <EmbeddedResource Include="Icons\MenuOptionsSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClearCanvas.Desktop.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>

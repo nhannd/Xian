@@ -12,7 +12,7 @@ namespace ClearCanvas.Desktop.Configuration
 	{
 	}
 
-	public class ConfigurationPageManager : BasicExtensionPointManager<IConfigurationPageProvider>
+	internal class ConfigurationPageManager : BasicExtensionPointManager<IConfigurationPageProvider>
 	{
 		private class SortPagesByPath : IComparer<IConfigurationPage>
 		{
@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop.Configuration
 			#endregion
 		}
 
-		List<IConfigurationPage> _pageList;
+		private List<IConfigurationPage> _pageList;
 
 		public ConfigurationPageManager()
 		{
@@ -53,18 +53,16 @@ namespace ClearCanvas.Desktop.Configuration
 		{ 
 			get 
 			{
-				if (_pageList != null)
-					return _pageList;
-
-				_pageList = new List<IConfigurationPage>();
-				foreach (IConfigurationPageProvider provider in Providers)
+				if (_pageList == null)
 				{
-					foreach (IConfigurationPage configurationPage in provider.GetPages())
-						_pageList.Add(configurationPage);
+					_pageList = new List<IConfigurationPage>();
+					foreach (IConfigurationPageProvider provider in Providers)
+						_pageList.AddRange(provider.GetPages());
+
+					_pageList.Sort((IComparer<IConfigurationPage>)new SortPagesByPath());
 				}
 
-				_pageList.Sort((IComparer<IConfigurationPage>)new SortPagesByPath());
-				return _pageList;
+				return _pageList.AsReadOnly();
 			}
 		}
 

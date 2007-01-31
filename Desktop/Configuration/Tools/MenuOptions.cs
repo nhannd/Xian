@@ -5,10 +5,12 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Configuration.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Desktop.Configuration
+namespace ClearCanvas.Desktop.Configuration.Tools
 {
 	[MenuAction("show", "global-menus/MenuTools/MenuOptions", KeyStroke = XKeys.Control | XKeys.O)]
 	[Tooltip("show", "MenuOptions")]
@@ -74,47 +76,12 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 			try
 			{
-				ConfigurationPageManager configurationPageManager = new ConfigurationPageManager();
-
-				IEnumerable<IConfigurationPage> pages = configurationPageManager.Pages;
-
-				NavigatorComponentContainer container = new NavigatorComponentContainer();
-
-				foreach (IConfigurationPage configurationPage in pages)
-					container.Pages.Add(new NavigatorPage(configurationPage.GetPath(), configurationPage.GetComponent()));
-
-				if (container.Pages.Count > 0)
-				{
-					try
-					{
-						container.CurrentPage = container.Pages[0];
-						if (ApplicationComponentExitCode.Normal == ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, container, SR.TitleMenuOptions))
-						{
-							foreach (IConfigurationPage configurationPage in pages)
-							{
-								if (configurationPage.GetComponent().Modified)
-									configurationPage.SaveConfiguration();
-							}
-						}
-					}
-					catch (Exception e)
-					{
-						Platform.Log(e);
-					}
-					finally
-					{
-						container.Stop();
-					}
-				}
-				else
-				{
-					Platform.ShowMessageBox(SR.MessageNoConfigurationPagesExist);
-				}
+				ConfigurationDialog configurationDialog = new ConfigurationDialog();
+				configurationDialog.Show(this.Context.DesktopWindow);
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
-				Platform.ShowMessageBox(e.Message);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 	}
