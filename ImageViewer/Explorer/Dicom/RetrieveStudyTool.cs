@@ -48,16 +48,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
             }
 
-            DicomServerTree dicomServerTree = new DicomServerTree();
-            ApplicationEntity me;
-            if (dicomServerTree.CurrentServer != null)
-            {
-                DicomServer server = dicomServerTree.CurrentServer as DicomServer;
-                me = server.DicomAE;
-            }
-            else
-				me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
-
             // Try to create the storage directory if it doesn't already exist.
             // Ideally, this code should eventually be removed when the
             // directory is handled properly by the dicom.services layer.
@@ -72,6 +62,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
 
             // create an instance of the retrieval component if it doesn't already exist
+            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
             if (null == this.RetrieveProgressComponent)
 				this.RetrieveProgressComponent = new RetrieveStudyToolProgressComponent(me, LocalApplicationEntity.DicomStoragePath);
 
