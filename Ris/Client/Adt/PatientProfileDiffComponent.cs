@@ -46,21 +46,22 @@ namespace ClearCanvas.Ris.Client.Adt
                     return;
                 }
                 List<String> ls1 = new List<String>();
+                List<String> ls2 = new List<String>();
+                String str1 = fieldValues[0] == null ? "" : fieldValues[0];
+                String str2 = fieldValues[1] == null ? "" : fieldValues[1];
                 if (!_discrepancy)
                 {
-                    ls1.Add(fieldValues[0]);
+                    ls1.Add(str1);
                     _values.Add(new Value(ls1));
-                    ls1.Clear();
-                    ls1.Add(fieldValues[1]);
-                    _values.Add(new Value(ls1));
+                    ls2.Add(str2);
+                    _values.Add(new Value(ls2));
                     return;
                 }
-                StringDiff diff = new StringDiff(fieldValues[0].ToLower(), fieldValues[1].ToLower());
+                StringDiff diff = new StringDiff(str1.ToLower(), str2.ToLower());
                 char[] dm = diff.DiffMask.ToCharArray();
                 char[] al = diff.AlignedLeft.ToCharArray();
                 char[] ar = diff.AlignedRight.ToCharArray();
                 char diagCh = '|';
-                List<String> ls2 = new List<String>();
                 StringBuilder sb1 = new StringBuilder();
                 StringBuilder sb2 = new StringBuilder();
                 int n1 = 0;
@@ -76,11 +77,11 @@ namespace ClearCanvas.Ris.Client.Adt
                         sb2 = new StringBuilder();
                     }
                     if (al[i].Equals(' '))
-                        sb1.Append(fieldValues[0].Substring(i - n1, 1));
+                        sb1.Append(str1.Substring(i - n1, 1));
                     else
                         n1 += 1;
                     if (ar[i].Equals(' '))
-                        sb2.Append(fieldValues[1].Substring(i - n2, 1));
+                        sb2.Append(str2.Substring(i - n2, 1));
                     else
                         n2 += 1;
                 }
@@ -194,8 +195,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 _profileAuthorities = CollectionUtils.Map<PatientProfile, string, List<string>>(diffData.Profiles, delegate(PatientProfile p) { return p.Mrn.AssigningAuthority; });
 
                 AddField(SR.ColumnHealthcardNumber, PatientProfileDiscrepancy.Healthcard, diffData, delegate(PatientProfile p) { return Format.Custom(p.Healthcard); });
-                AddField(SR.ColumnFamilyName, PatientProfileDiscrepancy.FamilyName, diffData, delegate(PatientProfile p) { return p.Name.GivenName; });
-                AddField(SR.ColumnGivenName, PatientProfileDiscrepancy.GivenName, diffData, delegate(PatientProfile p) { return p.Name.FamilyName; });
+                AddField(SR.ColumnFamilyName, PatientProfileDiscrepancy.FamilyName, diffData, delegate(PatientProfile p) { return p.Name.FamilyName; });
+                AddField(SR.ColumnGivenName, PatientProfileDiscrepancy.GivenName, diffData, delegate(PatientProfile p) { return p.Name.GivenName; });
                 AddField(SR.ColumnMiddleName, PatientProfileDiscrepancy.MiddleName, diffData, delegate(PatientProfile p) { return p.Name.MiddleName; });
                 AddField(SR.ColumnDateOfBirth, PatientProfileDiscrepancy.DateOfBirth, diffData, delegate(PatientProfile p) { return Format.Date(p.DateOfBirth); });
                 AddField(SR.ColumnSex, PatientProfileDiscrepancy.Sex, diffData, delegate(PatientProfile p) { return _sexEnumTable[p.Sex].Value; });
