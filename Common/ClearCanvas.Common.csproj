@@ -186,6 +186,7 @@
     <Compile Include="Tests\PluginSetupTeardown.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\BackgroundTask.cs" />
     <Compile Include="Utilities\BasicExtensionPointManager.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />

@@ -243,4 +243,7 @@
   <data name="LogLocalConfigurationStoreNotFound" xml:space="preserve">
     <value>Local configuration store not found - defaulting to LocalFileSettingsProvider</value>
   </data>
+  <data name="ExceptionBackgroundTaskAlreadyRunning" xml:space="preserve">
+    <value>The background task is already running</value>
+  </data>
 </root>

@@ -64,7 +64,6 @@
     <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
-    <Compile Include="BackgroundTask.cs" />
     <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />

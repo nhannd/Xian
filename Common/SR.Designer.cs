@@ -88,6 +88,15 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The background task is already running.
+        /// </summary>
+        public static string ExceptionBackgroundTaskAlreadyRunning {
+            get {
+                return ResourceManager.GetString("ExceptionBackgroundTaskAlreadyRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expression must evaluate to Array, ICollection, or IEnumerable type..
         /// </summary>
         public static string ExceptionCastExpressionArrayCollectionEnumerable {
