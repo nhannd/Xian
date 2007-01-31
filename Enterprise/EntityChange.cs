@@ -9,9 +9,9 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     public enum EntityChangeType
     {
-        Create,
-        Update,
-        Delete
+        Update = 0,
+        Create = 1,
+        Delete = 2
     }
     
     /// <summary>
@@ -42,7 +42,7 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// The type of change
         /// </summary>
-        internal EntityChangeType ChangeType
+        public EntityChangeType ChangeType
         {
             get { return _changeType; }
         }
@@ -50,7 +50,7 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// The class of the entity
         /// </summary>
-        internal Type EntityClass
+        public Type EntityClass
         {
             get { return _entityClass; }
         }
@@ -58,7 +58,7 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// The entity OID
         /// </summary>
-        internal long EntityOID
+        public long EntityOID
         {
             get { return _entityOid; }
         }
@@ -66,9 +66,28 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// The entity version
         /// </summary>
-        internal int Version
+        public int Version
         {
             get { return _version; }
+        }
+
+        /// <summary>
+        /// Checks whether this change supercedes the specified other change.  This change supercedes other iff
+        /// the version of this change is greater than the version of the other change, the version of this change
+        /// is the same as the version of the other change and the <see cref="ChangeType"/>
+        /// of this change supercedes the <see cref="ChangeType"/> of the other.  Note that
+        /// <see cref="EntityChangeType.Create"/> supercedes <see cref="EntityChangeType.Update"/>, and 
+        /// <see cref="EntityChangeType.Delete"/> supercedes both (e.g. a Create followed by an update is fundamentally a Create, and
+        /// a Create or Update followed by a Delete is fundamentally a Delete).
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Supercedes(EntityChange other)
+        {
+            if (!_entityClass.Equals(other._entityClass) || !_entityOid.Equals(other._entityOid))
+                throw new ArgumentException("Argument must represent a change to the same entity");
+
+            return _version > other._version || (_version == other._version && _changeType > other._changeType);
         }
     }
 }

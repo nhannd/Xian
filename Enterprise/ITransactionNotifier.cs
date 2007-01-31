@@ -32,6 +32,6 @@ namespace ClearCanvas.Enterprise
         /// Allows a client to queue a set of changes for notification to other clients.
         /// </summary>
         /// <param name="changeSet"></param>
-        void Queue(EntityChange[] changeSet);
+        void Queue(ICollection<EntityChange> changeSet);
     }
 }

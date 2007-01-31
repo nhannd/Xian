@@ -11,19 +11,34 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public class DefaultInterceptor : IInterceptor
     {
-        private List<EntityChange> _changes = new List<EntityChange>();
+        private Dictionary<object, EntityChange> _changes = new Dictionary<object, EntityChange>();
 
         /// <summary>
         /// Returns the set of entities that were changed during the session
         /// </summary>
-        public EntityChange[] EntityChangeSet
+        public ICollection<EntityChange> EntityChangeSet
         {
-            get { return _changes.ToArray(); }
+            get { return _changes.Values; }
         }
 
         public void ClearChangeSet()
         {
             _changes.Clear();
+        }
+
+        private void AddChange(EntityChange change)
+        {
+            if (_changes.ContainsKey(change.EntityOID))
+            {
+                // check if the previous change to this entity has been succeeded by another change with a higher ChangeType
+                EntityChange prevChange = _changes[change.EntityOID];
+                if (change.Supercedes(prevChange))
+                    _changes[change.EntityOID] = change;
+            }
+            else
+            {
+                _changes.Add(change.EntityOID, change);
+            }
         }
 
         #region IInterceptor Members
@@ -39,7 +54,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         public void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
             Entity ent = (Entity)entity;
-            _changes.Add(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Delete));
+            AddChange(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Delete));
         }
 
         /// <summary>
@@ -55,7 +70,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         public bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
             Entity ent = (Entity)entity;
-            _changes.Add(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Update));
+            AddChange(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Update));
             return false;
         }
 
@@ -71,7 +86,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         public bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
             Entity ent = (Entity)entity;
-            _changes.Add(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Create));
+            AddChange(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Create));
             return false;
 
         }

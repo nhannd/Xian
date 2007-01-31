@@ -13,7 +13,7 @@ namespace <%= @namespace %> {
     /// Abstract base class for service layers that make use of this domain model.
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public abstract class <%= shortName %>ServiceLayer : ServiceLayer
+	public abstract partial class <%= shortName %>ServiceLayer : ServiceLayer
 	{
 	
 		<% @entityDefs.each do |e| %>

@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise
             }
         }
 
-        public void Queue(EntityChange[] changeSet)
+        public void Queue(ICollection<EntityChange> changeSet)
         {
             // in a real implementation, the changeSet would be forwarded to some server
             // but for now we just post the changes as local events within this process
@@ -61,11 +61,15 @@ namespace ClearCanvas.Enterprise
 
         private void Notify(EntityChange change)
         {
-            if (_eventMap.ContainsKey(change.EntityClass))
+            foreach (Type eventKeyClass in _eventMap.Keys)
             {
-                EntityRefBase entityRef = EntityRefFactory.CreateReference(change.EntityClass, change.EntityOID, change.Version);
-
-                EventsHelper.Fire(_eventMap[change.EntityClass], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
+                // check if the eventKeyClass is the entity class, or a superclass of it
+                if (eventKeyClass.IsAssignableFrom(change.EntityClass))
+                {
+                    // create an entity ref based on the eventKeyClass, regardless of the actual entity class
+                    EntityRefBase entityRef = EntityRefFactory.CreateReference(eventKeyClass, change.EntityOID, change.Version);
+                    EventsHelper.Fire(_eventMap[change.EntityClass], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
+                }
             }
         }
     }

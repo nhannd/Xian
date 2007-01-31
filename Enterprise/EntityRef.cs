@@ -70,7 +70,7 @@ namespace ClearCanvas.Enterprise
         /// </summary>
         /// <returns></returns>
         public EntityRef<TCast> Cast<TCast>()
-            where TCast : TEntity
+            where TCast : Entity
         {
             return new EntityRef<TCast>(this.EntityOID, this.Version);
         }

@@ -13,7 +13,7 @@ namespace <%= @namespace %> {
     /// Base interface for service layers that make use of this domain model.
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public interface I<%= shortName %>ServiceLayer : IServiceLayer
+	public partial interface I<%= shortName %>ServiceLayer : IServiceLayer
 	{
 		<% @entityDefs.each do |e| %>
 		/// <summary>
