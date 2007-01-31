@@ -43,5 +43,14 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <returns></returns>
         bool CanClose();
+
+        /// <summary>
+        /// Shows a message box in this desktop window
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="buttons"></param>
+        /// <returns></returns>
+        DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
+
     }
 }

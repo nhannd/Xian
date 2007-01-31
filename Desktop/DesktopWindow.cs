@@ -195,6 +195,17 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
+        /// Shows a message box in this desktop window
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="buttons"></param>
+        /// <returns></returns>
+        public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
+        {
+            return Platform.ShowMessageBox(message, buttons);
+        }
+
+        /// <summary>
         /// Builds the action model for the specified action site.
         /// </summary>
         /// <param name="site"></param>
