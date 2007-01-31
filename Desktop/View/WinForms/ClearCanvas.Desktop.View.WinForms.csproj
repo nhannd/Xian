@@ -65,6 +65,14 @@
     <Compile Include="DataGridViewWithDragSupport.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DesktopViewSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DesktopViewSettings.Designer.cs">
+      <DependentUpon>DesktopViewSettings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="DialogComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -111,7 +119,6 @@
       <DependentUpon>TabComponentContainerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TabComponentContainerView.cs" />
-    <Compile Include="DesktopViewSettings.cs" />
     <Compile Include="DialogBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -232,6 +239,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="DesktopViewSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DesktopViewSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\Stop.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

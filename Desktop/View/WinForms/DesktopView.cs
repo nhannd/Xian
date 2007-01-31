@@ -17,7 +17,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         private IDesktopWindow _window;
         private DesktopForm _mainForm;
-		private static DesktopViewSettings _settings;
 
         public DesktopView()
         {
@@ -28,14 +27,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             _window = window;
         }
 
-		public static DesktopViewSettings Settings
+		internal static DesktopViewSettings Settings
 		{
 			get
 			{
-				if (_settings == null)
-					_settings = new DesktopViewSettings();
-
-				return _settings;
+				return DesktopViewSettings.Default;
 			}
 		}
 
