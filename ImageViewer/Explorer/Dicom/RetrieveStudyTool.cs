@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
             }
 
-            LocalAESettings myAESettings = new LocalAESettings();
             DicomServerTree dicomServerTree = new DicomServerTree();
             ApplicationEntity me;
             if (dicomServerTree.CurrentServer != null)
@@ -57,14 +56,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 me = server.DicomAE;
             }
             else
-                me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+				me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
 
             // Try to create the storage directory if it doesn't already exist.
             // Ideally, this code should eventually be removed when the
             // directory is handled properly by the dicom.services layer.
             try
             {
-                CreateStorageDirectory(myAESettings.DicomStoragePath);
+				CreateStorageDirectory(LocalApplicationEntity.DicomStoragePath);
             }
             catch
             {
@@ -74,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             // create an instance of the retrieval component if it doesn't already exist
             if (null == this.RetrieveProgressComponent)
-                this.RetrieveProgressComponent = new RetrieveStudyToolProgressComponent(me, myAESettings.DicomStoragePath);
+				this.RetrieveProgressComponent = new RetrieveStudyToolProgressComponent(me, LocalApplicationEntity.DicomStoragePath);
 
             // open the retrieval component shelf if it's currently closed
             // delegate is used to reset the state of ProgressComponentShelfClosed

@@ -35,8 +35,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public DicomServerEventManager()
         {
             DicomServerTree dicomServerTree = new DicomServerTree();
-            LocalAESettings myAESettings = new LocalAESettings();
-            _saveDirectory = myAESettings.DicomStoragePath;
+			_saveDirectory = LocalApplicationEntity.DicomStoragePath;
 
             if (dicomServerTree.CurrentServer != null)
             {
@@ -46,8 +45,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             else
             {
-                _aeTitle = myAESettings.AETitle;
-                _port = myAESettings.Port;
+				_aeTitle = LocalApplicationEntity.AETitle;
+				_port = LocalApplicationEntity.Port;
             }
         }
 

@@ -74,8 +74,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         protected ReadOnlyQueryResultCollection Query(ApplicationEntity server, QueryKey queryKey)
         {
-			LocalAESettings myAESettings = new LocalAESettings();
-            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+			ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
 
 			//special case code for ModalitiesInStudy.  An IStudyFinder must accept a multi-valued
 			//string for ModalitiesInStudy (e.g. "MR\\CT") and process it appropriately for the 
