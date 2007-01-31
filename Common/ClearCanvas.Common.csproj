@@ -192,7 +192,6 @@
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
-    <Compile Include="Utilities\EnumUtilities.cs" />
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />

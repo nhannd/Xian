@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using System.Configuration;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -330,15 +331,17 @@ namespace ClearCanvas.ImageViewer.Annotations
 				if (!String.IsNullOrEmpty(truncation))
 				{
 					AnnotationBox.TruncationBehaviour fromString = boxSettings.Truncation;
-					if (EnumUtilities.StringToEnum(truncation, ref fromString))
-						boxSettings.Truncation = fromString;
+					EnumConverter converter = new EnumConverter(typeof(AnnotationBox.TruncationBehaviour));
+					if (converter.IsValid(fromString))
+						boxSettings.Truncation = (AnnotationBox.TruncationBehaviour)converter.ConvertFromString(truncation);
 				}
 
 				if (!String.IsNullOrEmpty(justification))
 				{
 					AnnotationBox.JustificationBehaviour fromString = boxSettings.Justification;
-					if (EnumUtilities.StringToEnum(justification, ref fromString))
-						boxSettings.Justification = fromString;
+					EnumConverter converter = new EnumConverter(typeof(AnnotationBox.JustificationBehaviour));
+					if (converter.IsValid(fromString))
+						boxSettings.Justification = (AnnotationBox.JustificationBehaviour)converter.ConvertFromString(justification);
 				}
 
 				XmlElement configurationSettings = (XmlElement)boxSettingsNode.SelectSingleNode("configuration-settings");
@@ -356,7 +359,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			private bool DeserializeNormalizedRectangle(string normalizedRectangleString, out RectangleF normalizedRectangle)
 			{
 				normalizedRectangle = new RectangleF();
-
+				
 				string[] rectangleComponents = normalizedRectangleString.Split('\\');
 				if (rectangleComponents.Length != 4)
 					return false;
