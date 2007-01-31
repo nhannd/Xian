@@ -54,7 +54,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
 
             LocalAESettings myAESettings = new LocalAESettings();
-            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+            DicomServerTree dicomServerTree = new DicomServerTree();
+            ApplicationEntity me;
+            if (dicomServerTree.CurrentServer != null)
+            {
+                DicomServer server = dicomServerTree.CurrentServer as DicomServer;
+                me = server.DicomAE;
+            }
+            else
+                me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+            
             ISendParcel iParcel = DicomServicesLayer.GetISender(me).Send(new Uid(this.Context.SelectedStudy.StudyInstanceUID), destinationAE, this.Context.SelectedStudy.StudyDescription);
             iParcel.StartSend();
         }

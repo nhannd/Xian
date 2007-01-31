@@ -53,6 +53,7 @@
     <Compile Include="DicomServer.cs" />
     <Compile Include="DicomServerBase.cs" />
     <Compile Include="DicomServerEditComponent.cs" />
+    <Compile Include="DicomServerEventManager.cs" />
     <Compile Include="DicomServerGroup.cs" />
     <Compile Include="DicomServerGroupEditComponent.cs" />
     <Compile Include="DicomServerSettings.cs" />

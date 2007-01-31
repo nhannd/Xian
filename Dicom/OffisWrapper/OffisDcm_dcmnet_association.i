@@ -114,6 +114,7 @@ struct T_ASC_Association
 		else // some other abnormal condition
 		{
 			string msg = string("SendCStore: Bad dicom file - ") + (*iter) + cond.text();
+			ASC_abortAssociation(self);
 			throw dicom_runtime_error(cond, msg);
 		}
 	}

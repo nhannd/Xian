@@ -44,21 +44,26 @@ static void FindScpCallback(
 	DcmDataset **statusDetail)
 {
     OFCondition dbcond = EC_Normal;
-    FindCallbackData *context;
-
-    context = (FindCallbackData*)callbackData;	/* recover context */
+    FindCallbackData *context = (FindCallbackData*)callbackData;
 
 	// Build info to pass back to the Callback
 	InteropFindScpCallbackInfo info;
 	bzero((char*)&info, sizeof(info));
 
-	if (info.ResponseIdentifiers == NULL)
+	if (*responseIdentifiers == NULL)
 		*responseIdentifiers = new DcmDataset();
 
-	// prepare the transmission of data 
-	info.MessageID = request->MessageID;
+	if (*statusDetail == NULL)
+		*statusDetail = new DcmDataset();
+		
+	// prepare the transmission of data
+	info.CallingAETitle = context->callingAETitle;
+	info.CallingPresentationAddress = context->callingPresentationAddress;
+	info.Request = request;
+	info.Response = response;
 	info.RequestIdentifiers = requestIdentifiers; 
 	info.ResponseIdentifiers = *responseIdentifiers;
+	info.StatusDetail = *statusDetail;
 
 	if (responseCount == 1) 
 	{
@@ -96,8 +101,6 @@ static void FindScpCallback(
 		{
 			// find the next matching response
 			CSharpFindScpCallbackHelper_GetNextFindResponseCallback(&info);
-			response->DimseStatus = info.DimseStatus;
-
 			if (response->DimseStatus != STATUS_Pending)
 			{
 				// *responseIdentifiers MUST be NULL
@@ -107,6 +110,13 @@ static void FindScpCallback(
 					delete *responseIdentifiers;
 					*responseIdentifiers = NULL;
 				}
+			}
+
+			if (response->DimseStatus == STATUS_Pending ||
+				response->DimseStatus == STATUS_Success)
+			{
+				delete *statusDetail;
+				*statusDetail = NULL;
 			}
 
 			if (*responseIdentifiers != NULL) 
@@ -193,6 +203,9 @@ static void StoreScpCallback(
 	StoreCallbackData *cbdata = (StoreCallbackData*) callbackData;
 	const char* fileName = cbdata->imageFileName;
 
+	if (*statusDetail == NULL)
+		*statusDetail = new DcmDataset();
+
 	// prepare the transmission of data 
 	InteropStoreScpCallbackInfo info;
 	bzero((char*)&info, sizeof(info));
@@ -210,8 +223,8 @@ static void StoreScpCallback(
 	else if (progress->state == DIMSE_StoreProgressing)
 	{
 		// should fire off image store progressing event
-		if (NULL != CSharpStoreScpCallbackHelper_StoreProgressingCallback)
-			CSharpStoreScpCallbackHelper_StoreProgressingCallback(&info);	
+		if (NULL != CSharpStoreScpCallbackHelper_StoreProgressCallback)
+			CSharpStoreScpCallbackHelper_StoreProgressCallback(&info);	
 	}
 	else if (progress->state == DIMSE_StoreEnd)
 	{
@@ -285,28 +298,28 @@ static void MoveScpCallback(
 	InteropMoveScpCallbackInfo info;
 	bzero((char*)&info, sizeof(info));
 
-	if (info.ResponseIdentifiers == NULL)
+	if (*responseIdentifiers == NULL)
 		*responseIdentifiers = new DcmDataset();
 
+	if (*statusDetail == NULL)
+		*statusDetail = new DcmDataset();
+
 	// prepare the transmission of data 
+	info.CallingAETitle = context->callingAETitle;
+	info.CallingPresentationAddress = context->callingPresentationAddress;
 	info.Cancelled = cancelled;
 	info.Request = request;
 	info.Response = response;
 	info.RequestIdentifiers = requestIdentifiers; 
 	info.ResponseIdentifiers = *responseIdentifiers;
+	info.StatusDetail = *statusDetail;
 
     if (responseCount == 1) 
 	{
         // start the database search
-		if (NULL != CSharpMoveScpCallbackHelper_QueryDBCallback)
+		if (NULL != CSharpMoveScpCallbackHelper_MoveBeginCallback)
 		{
-			CSharpMoveScpCallbackHelper_QueryDBCallback(&info);	
-
-			// if CFind can't find it, move failed
-			
-			// Find is successful, start move request
-			// Instead of within the toolkit, we want to let the app (client of the toolkit)
-			// starts the CStore sub-operation so the app can log/queue it appropriately
+			CSharpMoveScpCallbackHelper_MoveBeginCallback(&info);	
 		}
 		else
 		{
@@ -348,34 +361,38 @@ static void MoveScpCallback(
 					delete *responseIdentifiers;
 					*responseIdentifiers = NULL;
 				}
-				
-				if (*statusDetail != NULL)
-				{
-					delete *statusDetail;
-					*statusDetail = NULL;
-				}
 			}
+			
+			if (response->DimseStatus == STATUS_Pending ||
+				response->DimseStatus == STATUS_Success)
+			{
+				if (*statusDetail != NULL)
+					delete *statusDetail;
+				*statusDetail = NULL;
+			}
+			
+			if (*responseIdentifiers != NULL) 
+			{
+				AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
+			}
+
 		}
 		else
 		{
-			*responseIdentifiers = NULL;
 			response->DimseStatus = STATUS_MOVE_Refused_OutOfResourcesNumberOfMatches;
-			*statusDetail = new DcmDataset();
-			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-MOVE missing.");
-			return;
+			
+			if (*responseIdentifiers != NULL)
+			{
+				delete *responseIdentifiers;
+				*responseIdentifiers = NULL;
+			}
+
+			if (*statusDetail == NULL)
+				*statusDetail = new DcmDataset();
+
+			(*statusDetail)->putAndInsertString(DCM_ErrorComment, "User-defined callback function for C-FIND missing.");
 		}
     }
-
-    if (*responseIdentifiers != NULL) 
-	{
-		AddRetrieveAETitle(*responseIdentifiers, context->ourAETitle);
-    }
-
-	// set the response status, i.e. whether there are more results 
-	// and the status detail
-    // response->DimseStatus = dbStatus.status;
-    // *statusDetail = dbStatus.statusDetail;
-
 }
 
 %}

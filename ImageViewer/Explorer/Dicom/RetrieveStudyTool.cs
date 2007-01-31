@@ -49,7 +49,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
 
             LocalAESettings myAESettings = new LocalAESettings();
-            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+            DicomServerTree dicomServerTree = new DicomServerTree();
+            ApplicationEntity me;
+            if (dicomServerTree.CurrentServer != null)
+            {
+                DicomServer server = dicomServerTree.CurrentServer as DicomServer;
+                me = server.DicomAE;
+            }
+            else
+                me = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
 
             // Try to create the storage directory if it doesn't already exist.
             // Ideally, this code should eventually be removed when the

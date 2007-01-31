@@ -110,8 +110,9 @@ namespace ClearCanvas.Dicom.Network
             // when this instance is created. This is not thread-safe
             _queryCallbackHelper = new QueryCallbackHelper(this);
 
-            // same goes for the store callback helper
-            _storeCallbackHelper = new StoreCallbackHelper(this);
+            //// same goes for the store callback helper
+            // TODO: disable this, because it's competing for Callback with the DicomServer
+            //_storeCallbackHelper = new StoreCallbackHelper(this);
 
             // same goes for the store scu callback helper
             _storeScuCallbackHelper = new StoreScuCallbackHelper(this);
@@ -894,7 +895,7 @@ namespace ClearCanvas.Dicom.Network
         #region Private members
         
         private QueryCallbackHelper _queryCallbackHelper;
-        private StoreCallbackHelper _storeCallbackHelper;
+        //private StoreCallbackHelper _storeCallbackHelper;
         private StoreScuCallbackHelper _storeScuCallbackHelper;
         private RetrieveCallbackHelper _retrieveCallbackHelper;
         private QueryResultList _queryResults;
@@ -918,7 +919,7 @@ namespace ClearCanvas.Dicom.Network
         {
             SocketManager.DeinitializeSockets();
             _queryCallbackHelper.Dispose();
-            _storeCallbackHelper.Dispose();
+            //_storeCallbackHelper.Dispose();
         }
 
         #endregion

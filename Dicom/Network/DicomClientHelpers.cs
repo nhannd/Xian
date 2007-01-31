@@ -127,6 +127,7 @@ namespace ClearCanvas.Dicom.Network
             #endregion
         }
 
+        /*
         class StoreCallbackHelper : IDisposable
         {
             public StoreCallbackHelper(DicomClient parent)
@@ -168,6 +169,7 @@ namespace ClearCanvas.Dicom.Network
 
             #endregion
         }
+        */
 
         class StoreScuCallbackHelper : IDisposable
         {

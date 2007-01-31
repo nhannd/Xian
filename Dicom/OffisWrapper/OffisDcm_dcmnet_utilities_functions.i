@@ -486,9 +486,10 @@ static OFCondition FindScp(T_ASC_Association * assoc, T_DIMSE_C_FindRQ * request
 {
 	OFCondition cond = EC_Normal;
 	FindCallbackData context;
-	context.priorStatus = STATUS_Pending;
-	
-	ASC_getAPTitles(assoc->params, NULL, context.ourAETitle, NULL);
+
+	context.priorStatus = STATUS_Pending;	
+	ASC_getAPTitles(assoc->params, context.callingAETitle, context.ourAETitle, NULL);
+	ASC_getPresentationAddresses(assoc->params, context.callingPresentationAddress, NULL);
 
 	cond = DIMSE_findProvider(assoc, presID, request, 
 		FindScpCallback, &context, DIMSE_BLOCKING, 0);
@@ -504,7 +505,8 @@ static OFCondition MoveScp(T_ASC_Association * assoc, T_DIMSE_C_MoveRQ * request
 	MoveCallbackData context;
 
 	context.priorStatus = STATUS_Pending;
-	ASC_getAPTitles(assoc->params, NULL, context.ourAETitle, NULL);
+	ASC_getAPTitles(assoc->params, context.callingAETitle, context.ourAETitle, NULL);
+	ASC_getPresentationAddresses(assoc->params, context.callingPresentationAddress, NULL);
 
 	cond = DIMSE_moveProvider(assoc, presID, request, 
 		MoveScpCallback, &context, DIMSE_BLOCKING, 0);

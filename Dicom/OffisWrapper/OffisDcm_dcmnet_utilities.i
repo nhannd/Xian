@@ -13,6 +13,8 @@ struct FindCallbackData
 {
 	DIC_US priorStatus;
 	DIC_AE ourAETitle;
+	DIC_AE callingAETitle;
+    char callingPresentationAddress[64];
 };
 
 struct MoveCallbackData
@@ -20,6 +22,8 @@ struct MoveCallbackData
 	DIC_US priorStatus;
     DIC_AE ourAETitle;  	/* our current title */
     DIC_AE dstAETitle;		/* destination title for move */
+	DIC_AE callingAETitle;
+    char callingPresentationAddress[64];
 
     T_ASC_Association   *origAssoc;	/* association of requestor */
     T_ASC_Association   *subAssoc;	/* sub-association */

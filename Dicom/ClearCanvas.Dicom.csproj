@@ -100,11 +100,10 @@
     <Compile Include="Network\DicomClient.cs" />
     <Compile Include="Network\DicomClientHelpers.cs" />
     <Compile Include="Network\DicomServer.cs" />
+    <Compile Include="Network\DicomServerEventArgs.cs" />
     <Compile Include="Network\DicomServerHelpers.cs" />
-    <Compile Include="Network\FindScpEventArgs.cs" />
     <Compile Include="Network\HostName.cs" />
     <Compile Include="Network\ListeningPort.cs" />
-    <Compile Include="Network\MoveScpEventArgs.cs" />
     <Compile Include="Network\QueryCompletedEventArgs.cs" />
     <Compile Include="Network\QueryResultReceivedEventArgs.cs" />
     <Compile Include="Network\RetrieveProgressUpdatedEventArgs.cs" />
@@ -112,7 +111,6 @@
     <Compile Include="Network\SeriesCompletedEventArgs.cs" />
     <Compile Include="Network\SocketManager.cs" />
     <Compile Include="Network\SopInstanceReceivedEventArgs.cs" />
-    <Compile Include="Network\StoreScpEventArgs.cs" />
     <Compile Include="Network\StudyCompletedEventArgs.cs" />
     <Compile Include="OffisConditionParser.cs" />
     <Compile Include="PatientOrientation.cs" />
