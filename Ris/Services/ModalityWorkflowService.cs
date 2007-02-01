@@ -7,12 +7,12 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare.Workflow.Acquisition;
+using ClearCanvas.Healthcare.Workflow.Modality;
 
 namespace ClearCanvas.Ris.Services
 {
     [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
-    public class AcquisitionWorkflowService : WorkflowServiceBase, IAcquisitionWorkflowService
+    public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
         [ReadOperation]
         public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
@@ -54,35 +54,17 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void StartProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
-        {
-            ExecuteOperation(LoadStep(stepRef), new Operations.StartModalityProcedureStep());
-        }
-
-        [UpdateOperation]
-        public void CompleteProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
-        {
-            ExecuteOperation(LoadStep(stepRef), new Operations.CompleteModalityProcedureStep());
-        }
-
-        [UpdateOperation]
-        public void CancelProcedureStep(EntityRef<ModalityProcedureStep> stepRef)
-        {
-            ExecuteOperation(LoadStep(stepRef), new Operations.CancelModalityProcedureStep());
-        }
-
-        [UpdateOperation]
         public void ExecuteOperation(EntityRef<ModalityProcedureStep> stepRef, string operationClassName)
         {
             ExecuteOperation(LoadStep(stepRef), 
-                new ClearCanvas.Healthcare.Workflow.Acquisition.WorkflowOperationExtensionPoint(), operationClassName);
+                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint(), operationClassName);
         }
 
         [ReadOperation]
         public IDictionary<string, bool> GetOperationEnablement(EntityRef<ModalityProcedureStep> stepRef)
         {
             return GetOperationEnablement(LoadStep(stepRef),
-                new ClearCanvas.Healthcare.Workflow.Acquisition.WorkflowOperationExtensionPoint());
+                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint());
         }
 
         private ModalityProcedureStep LoadStep(EntityRef<ModalityProcedureStep> stepRef)
