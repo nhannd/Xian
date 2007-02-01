@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Services
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.Patient.EqualTo(patient);
-            criteria.VisitStatus.NotEqualTo(VisitStatus.D);
+            criteria.VisitStatus.NotEqualTo(VisitStatus.DISCHARGED);
 
             IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
             return visitBroker.Find(criteria);

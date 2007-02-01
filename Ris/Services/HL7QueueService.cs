@@ -98,11 +98,10 @@ namespace ClearCanvas.Ris.Services
             IHL7PreProcessor preProcessor = new HL7PreProcessor();
             HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(hl7QueueItem);
 
-            //IHL7Processor processor = HL7ProcessorFactory.GetProcessor(hl7QueueItem.Message);
             IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
 
             processor.Patients = LoadOrCreatePatientsFromMrn(
-                processor.ListReferencedPatientIdentifiers(), 
+                processor.ListReferencedPatientIdentifiers(),
                 processor.ReferencedPatientIdentifiersAssigningAuthority());
             processor.Visits = LoadOrCreateVisitFromVisitNumber(
                 processor.ListReferencedVisitIdentifiers(),
@@ -110,20 +109,15 @@ namespace ClearCanvas.Ris.Services
 
             processor.Process();
 
-            //foreach (Entity newEntity in processor.NewEntities)
-            foreach (Entity newEntity in processor.Patients)
+            foreach (EntityAccess<Patient> patientAccess in processor.Patients)
             {
-                this.CurrentContext.Lock(newEntity, DirtyState.New);
+                this.CurrentContext.Lock(patientAccess.Entity, patientAccess.State);
             }
-            foreach (Visit newEntity in processor.Visits)
+            foreach (EntityAccess<Visit> visitAccess in processor.Visits)
             {
-                this.CurrentContext.Lock(newEntity, DirtyState.New);
+                this.CurrentContext.Lock(visitAccess.Entity, visitAccess.State);
             }
-            foreach (Entity dirtyEntity in processor.DirtyEntities)
-            {
-                this.CurrentContext.Lock(dirtyEntity, DirtyState.Dirty);
-            }
-            
+
             return referencedPatients;
         }
 
@@ -164,11 +158,11 @@ namespace ClearCanvas.Ris.Services
 
         #region Private Methods
 
-        private IList<Patient> LoadOrCreatePatientsFromMrn(IList<string> mrns, string assigningAuthority)
+        private IList<EntityAccess<Patient>> LoadOrCreatePatientsFromMrn(IList<string> mrns, string assigningAuthority)
         {
-            IList<Patient> loadedPatients = new List<Patient>();
+            IList<EntityAccess<Patient>> loadedPatients = new List<EntityAccess<Patient>>();
 
-            foreach(string mrn in mrns)
+            foreach (string mrn in mrns)
             {
                 PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
                 criteria.Mrn.Id.EqualTo(mrn);
@@ -177,7 +171,7 @@ namespace ClearCanvas.Ris.Services
                 IList<PatientProfile> profiles = this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
                 if (profiles.Count > 0)
                 {
-                    loadedPatients.Add(profiles[0].Patient);
+                    loadedPatients.Add(new EntityAccess<Patient>(profiles[0].Patient, DirtyState.Dirty));
                 }
                 else
                 {
@@ -189,16 +183,16 @@ namespace ClearCanvas.Ris.Services
 
                     patient.AddProfile(profile);
 
-                    loadedPatients.Add(patient);
+                    loadedPatients.Add(new EntityAccess<Patient>(patient, DirtyState.New));
                 }
             }
 
             return loadedPatients;
         }
 
-        private IList<Visit> LoadOrCreateVisitFromVisitNumber(IList<string> visitNumbers, string assigningAuthority)
+        private IList<EntityAccess<Visit>> LoadOrCreateVisitFromVisitNumber(IList<string> visitNumbers, string assigningAuthority)
         {
-            IList<Visit> loadedVisits = new List<Visit>();
+            IList<EntityAccess<Visit>> loadedVisits = new List<EntityAccess<Visit>>();
 
             if (visitNumbers.Count == 0) return loadedVisits;
 
@@ -211,7 +205,7 @@ namespace ClearCanvas.Ris.Services
                 IList<Visit> visits = this.CurrentContext.GetBroker<IVisitBroker>().Find(criteria);
                 if (visits.Count > 0)
                 {
-                    loadedVisits.Add(visits[0]);
+                    loadedVisits.Add(new EntityAccess<Visit>(visits[0], DirtyState.Dirty));
                 }
                 else
                 {
@@ -223,7 +217,7 @@ namespace ClearCanvas.Ris.Services
                     IList<Facility> facilities = this.CurrentContext.GetBroker<IFacilityBroker>().FindAll();
                     visit.Facility = facilities[0];
 
-                    loadedVisits.Add(visit);
+                    loadedVisits.Add(new EntityAccess<Visit>(visit, DirtyState.New));
                 }
             }
 

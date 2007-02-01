@@ -4,10 +4,14 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Healthcare {
-
+    
+    public class PatientClassConversionException : Exception
+    {
+    }
 
     /// <summary>
     /// Visit entity
@@ -53,5 +57,89 @@ namespace ClearCanvas.Healthcare {
                 this.Locations.Add(location);
             }
         }
-	}
+
+        public void Cancel()
+        {
+            this.VisitStatus = VisitStatus.CANCELLED;
+        }
+
+        public void CancelPreAdmit()
+        {
+            this.VisitStatus = VisitStatus.PREADMITCANCELLED;
+        }
+
+        /// <summary>
+        /// Infers VisitStatus from AdmitDateTime and DischargeDateTime.  
+        /// </summary>
+        public void InferVisitStatus()
+        {
+            if (this.AdmitDateTime.HasValue) this.VisitStatus = VisitStatus.ADMITTED;
+            if (this.DischargeDateTime.HasValue) this.VisitStatus = VisitStatus.DISCHARGED;
+        }
+
+        public void ChangeInpatientToOutpatient()
+        {
+            if (this.PatientClass == PatientClass.I)
+            {
+                this.PatientClass = PatientClass.O;
+            }
+            else
+            {
+                throw new PatientClassConversionException();
+            }
+        }
+
+        public void ChangeOutpatientToInpatient()
+        {
+            if (this.PatientClass == PatientClass.O)
+            {
+                this.PatientClass = PatientClass.I;
+            }
+            else
+            {
+                throw new PatientClassConversionException();
+            }
+        }
+
+        public void Discharge(DateTime dischargeDateTime, string dischargeDispostion)
+        {
+            if (this.VisitStatus != VisitStatus.DISCHARGED && this.VisitStatus != VisitStatus.CANCELLED)
+            {
+                this.VisitStatus = VisitStatus.DISCHARGED;
+                this.DischargeDateTime = dischargeDateTime;
+                this.DischargeDisposition = dischargeDispostion;
+            }
+        }
+
+        public void PopCurrentLocation()
+        {
+            DateTime previousCurrentDate = DateTime.MinValue;
+            VisitLocation current = null;
+            VisitLocation previousCurrent = null;
+            
+            foreach (VisitLocation vl in this.Locations)
+            {
+                if (vl.Role == VisitLocationRole.CR)
+                {
+                    if (vl.EndTime == null)
+                    {
+                        current = vl;
+                    }
+                    else if (vl.EndTime > previousCurrentDate)
+                    {
+                        previousCurrent = vl;
+                    }
+                }
+            }
+
+            if (current != null && previousCurrent != null)
+            {
+                this.Locations.Remove(current);
+                previousCurrent.EndTime = null;
+            }
+            else
+            {
+            }
+        }
+    }
 }
