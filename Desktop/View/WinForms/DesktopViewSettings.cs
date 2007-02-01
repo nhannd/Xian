@@ -4,12 +4,10 @@ using System.Configuration;
 namespace ClearCanvas.Desktop.View.WinForms
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Stores window position for the application, so it can be restored the next time it runs")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class DesktopViewSettings
 	{
-
 		public DesktopViewSettings()
 		{
 		}

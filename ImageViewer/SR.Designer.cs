@@ -554,5 +554,23 @@ namespace ClearCanvas.ImageViewer {
                 return ResourceManager.GetString("ExceptionStatefulGraphicMustBeIMemorable", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error:.
+        /// </summary>
+        public static string LabelError {
+            get {
+                return ResourceManager.GetString("LabelError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details..
+        /// </summary>
+        public static string MessageErrorLoadingAnnotationLayout {
+            get {
+                return ResourceManager.GetString("MessageErrorLoadingAnnotationLayout", resourceCulture);
+            }
+        }
     }
 }

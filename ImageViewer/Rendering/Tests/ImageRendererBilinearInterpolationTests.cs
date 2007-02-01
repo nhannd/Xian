@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 	[TestFixture]
     public class ImageRendererBilinearInterpolationTests
     {
-        enum ImageTypes { MONO8, MONO16, RGB_PLANAR, RGB_TRIPLET};
+        enum ImageTypes { Mono8, Mono16, RgbPlanar, RgbTriplet};
 
 		ImageGraphic.InterpolationMethods _interpolationMethod; 
         CompositeGraphic _layerGroup;
@@ -254,19 +254,19 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
         private void TestAllImageTypes(Point[] ArrayOfPoints)
         {
-            _sourceImageType = ImageTypes.MONO16;
+            _sourceImageType = ImageTypes.Mono16;
             InitializeTransform();
             TestImageVariousTranslationsScalesAndOrientations(ArrayOfPoints);
 
-            _sourceImageType = ImageTypes.MONO8;
+            _sourceImageType = ImageTypes.Mono8;
             InitializeTransform();
             TestImageVariousTranslationsScalesAndOrientations(ArrayOfPoints);
 
-            _sourceImageType = ImageTypes.RGB_PLANAR;
+            _sourceImageType = ImageTypes.RgbPlanar;
             InitializeTransform();
             TestImageVariousTranslationsScalesAndOrientations(ArrayOfPoints);
 
-            _sourceImageType = ImageTypes.RGB_TRIPLET;
+            _sourceImageType = ImageTypes.RgbTriplet;
             InitializeTransform();
             TestImageVariousTranslationsScalesAndOrientations(ArrayOfPoints);
         }
@@ -352,14 +352,14 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			if (_trace)
 			{
 				string imageType = String.Empty;
-				if (_sourceImageType == ImageTypes.MONO16)
-					imageType = "MONO16";
-				else if (_sourceImageType == ImageTypes.MONO8)
-					imageType = "MONO8";
-				else if (_sourceImageType == ImageTypes.RGB_PLANAR)
-					imageType = "RGB_PLANAR";
+				if (_sourceImageType == ImageTypes.Mono16)
+					imageType = "Mono16";
+				else if (_sourceImageType == ImageTypes.Mono8)
+					imageType = "Mono8";
+				else if (_sourceImageType == ImageTypes.RgbPlanar)
+					imageType = "RgbPlanar";
 				else
-					imageType = "RGB_TRIPLET";
+					imageType = "RgbTriplet";
 
 				Trace.WriteLine("");
 				Trace.WriteLine(imageType);
@@ -530,13 +530,13 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
         private void CreateImageLayer(ImageTypes imageType)
         {
-            if (imageType == ImageTypes.MONO16)
+            if (imageType == ImageTypes.Mono16)
                 _layer = ImageLayerFactory.CreateMonochrome16ImageLayer(_srcWidth, _srcHeight);
-            else if (imageType == ImageTypes.MONO8)
+            else if (imageType == ImageTypes.Mono8)
                 _layer = ImageLayerFactory.CreateMonochrome8ImageLayer(_srcWidth, _srcHeight);
-            else if (imageType == ImageTypes.RGB_PLANAR)
+            else if (imageType == ImageTypes.RgbPlanar)
                 _layer = ImageLayerFactory.CreateRGBPlanarImageLayer(_srcWidth, _srcHeight);
-            else if (imageType == ImageTypes.RGB_TRIPLET)
+            else if (imageType == ImageTypes.RgbTriplet)
                 _layer = ImageLayerFactory.CreateRGBTripletImageLayer(_srcWidth, _srcHeight);
 
 			_layerGroup = new CompositeGraphic();

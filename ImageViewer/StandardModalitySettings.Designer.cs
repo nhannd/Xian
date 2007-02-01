@@ -8,30 +8,27 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Annotations {
+namespace ClearCanvas.ImageViewer {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class AnnotationLayoutStoreSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class StandardModalitySettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static AnnotationLayoutStoreSettings defaultInstance = ((AnnotationLayoutStoreSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AnnotationLayoutStoreSettings())));
+        private static StandardModalitySettings defaultInstance = ((StandardModalitySettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new StandardModalitySettings())));
         
-        public static AnnotationLayoutStoreSettings Default {
+        public static StandardModalitySettings Default {
             get {
                 return defaultInstance;
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AnnotationLayoutStoreDefaults.xml")]
-        public string LayoutSettingsXml {
+        [global::System.Configuration.DefaultSettingValueAttribute("CR, CT, DX, ES, MG, MR, NM, OT, PT, RF, SC, US, XA")]
+        public string Modalities {
             get {
-                return ((string)(this["LayoutSettingsXml"]));
-            }
-            set {
-                this["LayoutSettingsXml"] = value;
+                return ((string)(this["Modalities"]));
             }
         }
     }

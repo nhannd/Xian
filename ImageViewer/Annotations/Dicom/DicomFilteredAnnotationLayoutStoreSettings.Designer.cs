@@ -25,22 +25,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilteredLayoutSettings {
+        [global::System.Configuration.DefaultSettingValueAttribute("DicomFilteredAnnotationLayoutStoreDefaults.xml")]
+        public string FilteredLayoutSettingsXml {
             get {
-                return ((string)(this["FilteredLayoutSettings"]));
+                return ((string)(this["FilteredLayoutSettingsXml"]));
             }
             set {
-                this["FilteredLayoutSettings"] = value;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ApplicationDefaultFilteredLayoutSettings {
-            get {
-                return ((string)(this["ApplicationDefaultFilteredLayoutSettings"]));
+                this["FilteredLayoutSettingsXml"] = value;
             }
         }
     }

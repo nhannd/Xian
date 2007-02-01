@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -19,14 +20,31 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			get
 			{
+				IAnnotationLayout returnLayout;
+
 				try
 				{
-					return AnnotationLayoutStore.Instance.GetLayout(this.StoredLayoutId, this.AvailableAnnotationItems);
+					returnLayout = AnnotationLayoutStore.Instance.GetLayout(this.StoredLayoutId, this.AvailableAnnotationItems);
 				}
-				catch
+				catch(Exception e)
 				{
-					throw;
+					Platform.Log(e);
+
+					StoredAnnotationLayout layout = new StoredAnnotationLayout("error");
+					layout.AnnotationBoxGroups.Add(new StoredAnnotationBoxGroup("errorgroup"));
+					IAnnotationItem item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError, SR.MessageErrorLoadingAnnotationLayout);
+
+					AnnotationBox box = new AnnotationBox(new RectangleF(0.5F,0.90F, 0.5F, 0.10F), item);
+					box.Bold = true;
+					box.Color = "Red";
+					box.Justification = AnnotationBox.JustificationBehaviour.Far;
+					box.NumberOfLines = 5;
+
+					layout.AnnotationBoxGroups[0].AnnotationBoxes.Add(box);
+					returnLayout = layout;
 				}
+
+				return returnLayout;
 			}
 		}
 

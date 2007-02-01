@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private DateTime _studyDateTo;
 
 		private List<string> _searchModalities;
-		private List<string> _availableModalities;
+		private ICollection<string> _availableModalities;
 		
 		/// <summary>
 		/// Constructor
@@ -50,10 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyBrowserComponent.SearchPanelComponent = this;
 
 			_searchModalities = new List<string>();
-
-			//!!This is hard-coded for now.  Will add it to application settings once they have been finalized.
-			_availableModalities = new List<string>();
-			_availableModalities.AddRange(new string[] { "CR", "CT", "DX", "ES", "MG", "MR", "NM", "OT", "PT", "RF", "SC", "US", "XA" });
+			_availableModalities = StandardModalities.Modalities;
 
 			InternalClearDates();
 		}
@@ -185,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return DateTime.Today; }
 		}
 
-		public IList<string> AvailableSearchModalities
+		public ICollection<string> AvailableSearchModalities
 		{
 			get { return _availableModalities; }
 		}

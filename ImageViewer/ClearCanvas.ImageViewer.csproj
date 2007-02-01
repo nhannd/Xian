@@ -191,6 +191,13 @@
     <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
     <Compile Include="Mathematics\Tests\RectangleIntersectionTests.cs" />
+    <Compile Include="StandardModalities.cs" />
+    <Compile Include="StandardModalitySettings.cs" />
+    <Compile Include="StandardModalitySettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StandardModalitySettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\ICacheableSop.cs" />
     <Compile Include="StudyManagement\ImageSopProxy.cs" />
     <Compile Include="StudyManagement\LocalImageLoader.cs">
@@ -393,6 +400,10 @@
     </None>
     <None Include="app.config" />
     <None Include="PostBuild.bat" />
+    <None Include="StandardModalitySettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Workspaces.cd" />
     <None Include="StudyManagement\StudyFindersAndLoaders.cd" />
     <None Include="StudyManagement\StudyTree.cd" />
@@ -408,9 +419,8 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Annotations\AnnotationLayoutStoreDefaults.xml">
-    </Content>
-    <Content Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreDefaults.xml" />
+    <EmbeddedResource Include="Annotations\AnnotationLayoutStoreDefaults.xml" />
+    <EmbeddedResource Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreDefaults.xml" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

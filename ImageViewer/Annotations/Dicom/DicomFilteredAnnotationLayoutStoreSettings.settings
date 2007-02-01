@@ -2,11 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Annotations.Dicom" GeneratedClassName="DicomFilteredAnnotationLayoutStoreSettings">
   <Profiles />
   <Settings>
-    <Setting Name="FilteredLayoutSettings" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ApplicationDefaultFilteredLayoutSettings" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+    <Setting Name="FilteredLayoutSettingsXml" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DicomFilteredAnnotationLayoutStoreDefaults.xml</Value>
     </Setting>
   </Settings>
 </SettingsFile>

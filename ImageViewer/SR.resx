@@ -282,4 +282,10 @@
   <data name="ExceptionStatefulGraphicMustBeIMemorable" xml:space="preserve">
     <value>For undo support, your StatefulGraphic subclass must implement IMemorable.</value>
   </data>
+  <data name="LabelError" xml:space="preserve">
+    <value>Error:</value>
+  </data>
+  <data name="MessageErrorLoadingAnnotationLayout" xml:space="preserve">
+    <value>An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details.</value>
+  </data>
 </root>

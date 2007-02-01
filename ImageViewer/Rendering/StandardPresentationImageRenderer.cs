@@ -385,14 +385,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			StringFormat format = new StringFormat();
 
-			if (annotationBox.Truncation == AnnotationBox.TruncationBehaviour.TRUNCATE)
+			if (annotationBox.Truncation == AnnotationBox.TruncationBehaviour.Truncate)
 				format.Trimming = StringTrimming.Character;
 			else
 				format.Trimming = StringTrimming.EllipsisCharacter;
 
-			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.FAR)
+			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Far)
 				format.Alignment = StringAlignment.Far;
-			else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.CENTRE)
+			else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Center)
 				format.Alignment = StringAlignment.Center;
 			else
 				format.Alignment = StringAlignment.Near;

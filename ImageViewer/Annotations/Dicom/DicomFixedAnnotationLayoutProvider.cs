@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			layout.AnnotationBoxGroups.Add(group);
 			group.DefaultBoxSettings.Color = "OrangeRed";
 			group.DefaultBoxSettings.Font = "Century Gothic";
-			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.FAR;
+			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Far;
 			y = 0.0F;
 			//TR
 			for (int i = 0; i < numberOfBoxesPerQuadrant; ++i)
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			group.DefaultBoxSettings.Color = "Yellow";
 			group.DefaultBoxSettings.Font = "Century Gothic";
 			//group.DefaultBoxSettings.NumberOfLines = 2;
-			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.FAR;
+			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Far;
 
 			y = 1.0F - boxheight;
 			//BR
@@ -171,10 +171,10 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			group.DefaultBoxSettings.Font = "Century Gothic";
 			group.DefaultBoxSettings.NumberOfLines = 1;
 
-			CreateDirectionalMarkerBox(0.00F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.NEAR, "Presentation.DirectionalMarkers.Left", group);
-			CreateDirectionalMarkerBox(0.90F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.FAR, "Presentation.DirectionalMarkers.Right", group);
-			CreateDirectionalMarkerBox(0.45F, 0F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.CENTRE, "Presentation.DirectionalMarkers.Top", group);
-			CreateDirectionalMarkerBox(0.45F, 1F - boxheight, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.CENTRE, "Presentation.DirectionalMarkers.Bottom", group);
+			CreateDirectionalMarkerBox(0.00F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Near, "Presentation.DirectionalMarkers.Left", group);
+			CreateDirectionalMarkerBox(0.90F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Far, "Presentation.DirectionalMarkers.Right", group);
+			CreateDirectionalMarkerBox(0.45F, 0F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Top", group);
+			CreateDirectionalMarkerBox(0.45F, 1F - boxheight, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Bottom", group);
 
 			return layout;
 		}
@@ -193,15 +193,6 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 		{
 			get
 			{
-				//StoredAnnotationLayout layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.General", this.AvailableAnnotationItems);
-				//if (layout == null)
-				//{
-				//    layout = this.GetLayout();
-				//    AnnotationLayoutStore.Instance.Update(layout);
-				//}
-
-				//return layout;
-
 				return this.GetLayout();
 			}
 		}

@@ -9,8 +9,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 {
 	public sealed class AnnotationBox
 	{
-		public enum TruncationBehaviour { TRUNCATE, ELLIPSES };
-		public enum JustificationBehaviour { NEAR, CENTRE, FAR };
+		public enum TruncationBehaviour { Truncate, Ellipsis };
+		public enum JustificationBehaviour { Near, Center, Far };
 
 		private IAnnotationItem _annotationItem;
 		private AnnotationItemConfigurationOptions _annotationItemConfigurationOptions;
@@ -28,8 +28,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private bool _bold = false;
 		private bool _italics = false;
 		
-		private TruncationBehaviour _truncation = TruncationBehaviour.ELLIPSES;
-		private JustificationBehaviour _justification = JustificationBehaviour.NEAR;
+		private TruncationBehaviour _truncation = TruncationBehaviour.Ellipsis;
+		private JustificationBehaviour _justification = JustificationBehaviour.Near;
 
 		public AnnotationBox()
 		{

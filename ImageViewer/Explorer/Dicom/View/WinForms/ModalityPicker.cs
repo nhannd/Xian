@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 		}
 
-		public void SetAvailableModalities(IList<string> modalities)
+		public void SetAvailableModalities(ICollection<string> modalities)
 		{
 			if (_availableModalitiesSet || modalities == null || modalities.Count == 0)
 				throw new InvalidOperationException(SR.ErrorCannotResetModalities);

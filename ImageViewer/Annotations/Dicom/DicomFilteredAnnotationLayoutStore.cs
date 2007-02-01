@@ -55,28 +55,11 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 			try
 			{
-				DicomFilteredAnnotationLayoutStoreSettings settings = new DicomFilteredAnnotationLayoutStoreSettings();
 				_document = new XmlDocument();
 
-				if (!String.IsNullOrEmpty(settings.FilteredLayoutSettings))
+				if (!String.IsNullOrEmpty(DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml))
 				{
-					_document.LoadXml(settings.FilteredLayoutSettings);
-				}
-				else if (!String.IsNullOrEmpty(settings.ApplicationDefaultFilteredLayoutSettings))
-				{
-					_document.LoadXml(settings.ApplicationDefaultFilteredLayoutSettings);
-
-					SaveSettings(settings.ApplicationDefaultFilteredLayoutSettings);
-				}
-				else if (File.Exists(DefaultSettingsFile))
-				{
-					using (FileStream stream = new FileStream(DefaultSettingsFile, FileMode.Open))
-					{
-						XmlTextReader reader = new XmlTextReader(stream);
-						_document.Load(reader);
-
-						SaveSettings(_document.OuterXml);
-					}
+					_document.LoadXml(DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml);
 				}
 				else
 				{
@@ -96,9 +79,8 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 		private void SaveSettings(string settingsXml)
 		{
-			DicomFilteredAnnotationLayoutStoreSettings settings = new DicomFilteredAnnotationLayoutStoreSettings();
-			settings.FilteredLayoutSettings = settingsXml;
-			settings.Save();
+			DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml = settingsXml;
+			DicomFilteredAnnotationLayoutStoreSettings.Default.Save();
 		}
 
 		private DicomFilteredAnnotationLayout DeserializeFilteredLayout(XmlElement dicomFilteredLayoutNode)

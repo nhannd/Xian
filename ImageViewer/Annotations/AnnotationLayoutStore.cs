@@ -170,9 +170,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		private void SaveSettings(string settingsXml)
 		{
-			AnnotationLayoutStoreSettings settings = new AnnotationLayoutStoreSettings();
-			settings.LayoutSettings = settingsXml;
-			settings.Save();
+			AnnotationLayoutStoreSettings.Default.LayoutSettingsXml = settingsXml;
+			AnnotationLayoutStoreSettings.Default.Save();
 
 			if (_storeChanged != null)
 				_storeChanged(this, EventArgs.Empty);
@@ -187,28 +186,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 			try
 			{
-				AnnotationLayoutStoreSettings settings = new AnnotationLayoutStoreSettings();
 				_document = new XmlDocument();
 
-				if (!String.IsNullOrEmpty(settings.LayoutSettings))
+				if (!String.IsNullOrEmpty(AnnotationLayoutStoreSettings.Default.LayoutSettingsXml))
 				{
-					_document.LoadXml(settings.LayoutSettings);
-				}
-				else if (!String.IsNullOrEmpty(settings.ApplicationDefaultLayoutSettings))
-				{
-					_document.LoadXml(settings.ApplicationDefaultLayoutSettings);
-
-					SaveSettings(settings.ApplicationDefaultLayoutSettings);
-				}
-				else if (File.Exists(DefaultSettingsFile))
-				{
-					using (FileStream stream = new FileStream(DefaultSettingsFile, FileMode.Open))
-					{
-						XmlTextReader reader = new XmlTextReader(stream);
-						_document.Load(reader);
-
-						SaveSettings(_document.OuterXml);
-					}
+					_document.LoadXml(AnnotationLayoutStoreSettings.Default.LayoutSettingsXml);
 				}
 				else
 				{
