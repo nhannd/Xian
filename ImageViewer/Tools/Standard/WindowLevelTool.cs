@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -53,11 +52,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             base.Initialize();
 		}
 
-		private void CaptureBeginState(IPresentationImage image)
+		private void CaptureBeginState(IVOILUTLinearProvider image)
 		{
-			if (image == null)
-				return;
-
 			_applicator = new WindowLevelApplicator(image);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandWindowLevel;
@@ -84,23 +80,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.Context.Viewer.CommandHistory.AddCommand(_command);
 		}
 
-		private void InitImage(IPresentationImage image)
-		{
-			DicomPresentationImage dicomImage = image as DicomPresentationImage;
-
-			if (dicomImage == null ||
-				dicomImage.LayerManager.SelectedImageLayer == null ||
-				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
-				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
-				return;
-
-			IGrayscaleLUT lut = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.VoiLUT;
-
-			// If the VOILUT of the image is not linear anymore, install a linear one
-			if (!(lut is VOILUTLinear))
-				WindowLevelOperator.InstallVOILUTLinear(dicomImage);
-		}
-
 		private void IncrementWindowWidth()
 		{
 			IncrementWindow(10, 0);
@@ -123,42 +102,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void IncrementWindow(double windowIncrement, double levelIncrement)
 		{
-			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+			IVOILUTLinearProvider image = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
 
-			if (!IsImageValid(image))
+			if (image == null)
 				return;
 
-			InitImage(image);
+			//InitImage(image);
 			this.CaptureBeginState(image);
 			this.IncrementWindow(image, windowIncrement, levelIncrement);
 			this.CaptureEndState();
 		}
 
-		private void IncrementWindow(IPresentationImage image, double windowIncrement, double levelIncrement)
+		private void IncrementWindow(IVOILUTLinearProvider image, double windowIncrement, double levelIncrement)
 		{
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			DicomPresentationImage dicomImage = image as DicomPresentationImage;
-
-			if (dicomImage == null ||
-				dicomImage.LayerManager.SelectedImageLayer == null ||
-				dicomImage.LayerManager.SelectedImageLayer.IsColor ||
-				dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline == null)
-				return;
-
-			GrayscaleLUTPipeline pipeline = dicomImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
-			VOILUTLinear voiLUT = pipeline.VoiLUT as VOILUTLinear;
-
-			// This should never happens since we insure that linear VOILUT is
-			// installed in OnMouseDown
-			if (voiLUT == null)
-				return;
-
-			voiLUT.WindowWidth += windowIncrement;
-			voiLUT.WindowCenter += levelIncrement;
-
-			dicomImage.Draw();
+			image.VoiLut.WindowWidth += windowIncrement;
+			image.VoiLut.WindowCenter += levelIncrement;
+			image.Draw();
 
 			counter.Stop();
 
@@ -170,12 +132,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			IVOILUTLinearProvider image = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
+
+			if (image == null)
 				return false;
 
-			InitImage(mouseInformation.Tile.PresentationImage);
-
-			CaptureBeginState(mouseInformation.Tile.PresentationImage);
+			CaptureBeginState(image);
 
 			return true;
 		}
@@ -184,13 +146,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			IVOILUTLinearProvider image = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
+
+			if (image == null)
 				return false;
 
-			if (_command == null)
-				return false;
-
-			this.IncrementWindow(mouseInformation.Tile.PresentationImage, this.DeltaX * 10, this.DeltaY * 10);
+			IncrementWindow(image, this.DeltaX * 10, this.DeltaY * 10);
 
 			return true;
 		}
@@ -198,9 +159,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
-
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
 
 			this.CaptureEndState();
 

@@ -8,7 +8,6 @@ using System.Drawing.Imaging;
 using NUnit.Framework;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Mathematics.Tests

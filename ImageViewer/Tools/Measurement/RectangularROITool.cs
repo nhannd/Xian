@@ -2,12 +2,13 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.DynamicOverlays;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -34,7 +35,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.Start(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage)) 
+			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
+
+			if (image == null)
 				return false;
 
 			if (_createGraphic != null)
@@ -43,11 +46,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
 			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
-			InteractiveRectangleGraphic rectangleGraphic = new InteractiveRectangleGraphic(true);
+			RectangleInteractiveGraphic rectangleGraphic = new RectangleInteractiveGraphic(true);
 			_createGraphic = new ROIGraphic(rectangleGraphic, true);
 
 			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
-			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
+			image.OverlayGraphics.Add(_createGraphic);
 			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
 			if (_createGraphic.Start(mouseInformation))
@@ -82,7 +85,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_createGraphic != null)
 				_createGraphic.Cancel();
 
-			_createGraphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(_createGraphic);
+			IOverlayGraphicsProvider image = _createGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
+			image.OverlayGraphics.Remove(_createGraphic);
+
 			_createGraphic = null;
 		}
 
@@ -114,8 +119,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			ROIGraphic roiGraphic = sender as ROIGraphic;
 
-			InteractiveRectangleGraphic rectangleGraphic = roiGraphic.Roi as InteractiveRectangleGraphic;
-			DicomPresentationImage image = roiGraphic.ParentPresentationImage as DicomPresentationImage;
+			RectangleInteractiveGraphic rectangleGraphic = roiGraphic.Roi as RectangleInteractiveGraphic;
+			StandardPresentationImage image = roiGraphic.ParentPresentationImage as StandardPresentationImage;
 
 			rectangleGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (rectangleGraphic.BottomRight.X - rectangleGraphic.TopLeft.X);

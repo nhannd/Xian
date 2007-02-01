@@ -503,7 +503,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string patientOrientation;
 				_dicomImage.GetTagArray(Dcm.PatientOrientation, out patientOrientation, out tagExists);
-				if (!String.IsNullOrEmpty(patientOrientation))
+				if (tagExists)
 				{
 					string[] values = VMStringConverter.ToStringArray(patientOrientation);
 					return new PatientOrientation(values[0], values[1]);

@@ -142,6 +142,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image is not grayscale..
+        /// </summary>
+        public static string ExceptionImageIsNotGrayscale {
+            get {
+                return ResourceManager.GetString("ExceptionImageIsNotGrayscale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Annotation Layout XML ({0})..
         /// </summary>
         public static string ExceptionInvalidAnnotationLayoutXml {

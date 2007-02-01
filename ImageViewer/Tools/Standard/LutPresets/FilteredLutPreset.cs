@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			set { _preset = value; }
 		}
 
-		public bool IsMatch(DicomPresentationImage image)
+		public bool IsMatch(IPresentationImage image)
 		{
 			if (image == null)
 				return false;
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			return _filterSet.IsMatch(image);
 		}
 
-		public bool Apply(DicomPresentationImage image)
+		public bool Apply(IPresentationImage image)
 		{
 			if (!_filterSet.IsMatch(image))
 				return false;

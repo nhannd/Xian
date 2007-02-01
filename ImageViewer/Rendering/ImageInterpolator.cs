@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Rendering
@@ -11,12 +11,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 	/// </summary>
 	internal abstract class ImageInterpolator
 	{
-		public static ImageInterpolator AllocateInterpolator(ImageLayer.InterpolationMethods interpolationMethod)
+		public static ImageInterpolator AllocateInterpolator(ImageGraphic.InterpolationMethods interpolationMethod)
 		{
-			if (interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR)
+			if (interpolationMethod == ImageGraphic.InterpolationMethods.Bilinear)
 				return new ImageInterpolatorBilinear();
 
-			if (interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR_FAST)
+			if (interpolationMethod == ImageGraphic.InterpolationMethods.FastBilinear)
 				return new ImageInterpolatorBilinearFast();
 
 			return new ImageInterpolatorNearestNeighbour();

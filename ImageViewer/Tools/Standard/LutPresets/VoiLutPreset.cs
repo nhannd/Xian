@@ -33,16 +33,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			set { _windowCenter = value; }
 		}
 
-		public override bool Apply(DicomPresentationImage image)
+		public override bool Apply(IPresentationImage image)
 		{
 			Platform.CheckForNullReference(image, "image");
 
-			WindowLevelApplicator applicator = new WindowLevelApplicator(image);
+			IVOILUTLinearProvider associatedWindowLevel = image as IVOILUTLinearProvider;
+
+			if (associatedWindowLevel == null)
+				return false;
+
+			WindowLevelApplicator applicator = new WindowLevelApplicator(associatedWindowLevel);
+
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevel;
 			command.BeginState = applicator.CreateMemento();
 
-			WindowLevelOperator.InstallVOILUTLinear(image, WindowWidth, WindowCenter);
+			associatedWindowLevel.VoiLut.WindowWidth = this.WindowWidth;
+			associatedWindowLevel.VoiLut.WindowCenter = this.WindowCenter;
 			image.Draw();
 
 			command.EndState = applicator.CreateMemento();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -15,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	{
 		#region Private Fields
 
+		private CompositeGraphic _sceneGraph;
 		private IPresentationImage _presentationImage;
 		private ITile _tile;
 		private IDisplaySet _displaySet;
@@ -39,6 +41,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_clientRectangle = clientRectangle;
 			_clipRectangle = clipRectangle;
 			_drawMode = drawMode;
+		}
+
+		public CompositeGraphic SceneGraph
+		{
+			get { return _sceneGraph; }
+			internal set { _sceneGraph = value; }
 		}
 
 		public IPresentationImage PresentationImage

@@ -97,15 +97,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dicom (Image Plane).
-        /// </summary>
-        internal static string AnnotationItemProviders_Dicom_ImagePlane_DisplayName {
-            get {
-                return ResourceManager.GetString("AnnotationItemProviders_Dicom_ImagePlane_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Dicom (Patient).
         /// </summary>
         internal static string AnnotationItemProviders_Dicom_Patient_DisplayName {
@@ -291,24 +282,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Dicom_GeneralEquipment_SoftwareVersions_Label {
             get {
                 return ResourceManager.GetString("Dicom_GeneralEquipment_SoftwareVersions_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Spatial Resolution.
-        /// </summary>
-        internal static string Dicom_GeneralEquipment_SpatialResolution_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralEquipment_SpatialResolution_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Spat. Res..
-        /// </summary>
-        internal static string Dicom_GeneralEquipment_SpatialResolution_Label {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralEquipment_SpatialResolution_Label", resourceCulture);
             }
         }
         
@@ -583,24 +556,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient Orientation.
-        /// </summary>
-        internal static string Dicom_GeneralImage_PatientOrientation_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralImage_PatientOrientation_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pat. Orient..
-        /// </summary>
-        internal static string Dicom_GeneralImage_PatientOrientation_Label {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralImage_PatientOrientation_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Quality Control Image.
         /// </summary>
         internal static string Dicom_GeneralImage_QualityControlImage_DisplayName {
@@ -687,24 +642,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Dicom_GeneralSeries_OperatorsName_Label {
             get {
                 return ResourceManager.GetString("Dicom_GeneralSeries_OperatorsName_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient Position.
-        /// </summary>
-        internal static string Dicom_GeneralSeries_PatientPosition_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralSeries_PatientPosition_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pat. Pos..
-        /// </summary>
-        internal static string Dicom_GeneralSeries_PatientPosition_Label {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralSeries_PatientPosition_Label", resourceCulture);
             }
         }
         
@@ -943,96 +880,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Image Orientation (Patient).
-        /// </summary>
-        internal static string Dicom_ImagePlane_ImageOrientationPatient_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_ImageOrientationPatient_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Orientation.
-        /// </summary>
-        internal static string Dicom_ImagePlane_ImageOrientationPatient_Label {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_ImageOrientationPatient_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image Position (Patient).
-        /// </summary>
-        internal static string Dicom_ImagePlane_ImagePositionPatient_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_ImagePositionPatient_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Position.
-        /// </summary>
-        internal static string Dicom_ImagePlane_ImagePositionPatient_Label {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_ImagePositionPatient_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pixel Spacing.
-        /// </summary>
-        internal static string Dicom_ImagePlane_PixelSpacing_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_PixelSpacing_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pixel Spacing.
-        /// </summary>
-        internal static string Dicom_ImagePlane_PixelSpacing_Label {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_PixelSpacing_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Slice Location.
-        /// </summary>
-        internal static string Dicom_ImagePlane_SliceLocation_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_SliceLocation_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Slice Location.
-        /// </summary>
-        internal static string Dicom_ImagePlane_SliceLocation_Label {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_SliceLocation_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Slice Thickness.
-        /// </summary>
-        internal static string Dicom_ImagePlane_SliceThickness_DisplayName {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_SliceThickness_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Slice Thickness.
-        /// </summary>
-        internal static string Dicom_ImagePlane_SliceThickness_Label {
-            get {
-                return ResourceManager.GetString("Dicom_ImagePlane_SliceThickness_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ethnic Group.
         /// </summary>
         internal static string Dicom_Patient_EthnicGroup_DisplayName {
@@ -1254,6 +1101,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string ExceptionTransformedEdgeDoesNotMatch {
             get {
                 return ResourceManager.GetString("ExceptionTransformedEdgeDoesNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to kg.
+        /// </summary>
+        internal static string Label_kilograms {
+            get {
+                return ResourceManager.GetString("Label_kilograms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to m.
+        /// </summary>
+        internal static string Label_metres {
+            get {
+                return ResourceManager.GetString("Label_metres", resourceCulture);
             }
         }
         

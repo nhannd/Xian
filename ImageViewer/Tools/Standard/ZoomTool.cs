@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CursorToken = new CursorToken("Icons.ZoomMedium.png", this.GetType().Assembly);
 		}
 
-		private void CaptureBeginState(IPresentationImage image)
+		private void CaptureBeginState(ISpatialTransformProvider image)
 		{
 			_applicator = new SpatialTransformApplicator(image);
 			_command = new UndoableCommand(_applicator);
@@ -72,13 +71,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomIn()
 		{
-			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
-			if (!IsImageValid(image))
+			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+
+			if (image == null)
 				return;
 
 			CaptureBeginState(image);
 
-			float increment = 0.1F * image.LayerManager.SelectedLayerGroup.SpatialTransform.Scale;
+			float increment = 0.1F * image.SpatialTransform.Scale;
 			IncrementZoom(image, increment);
 
 			CaptureEndState();
@@ -86,27 +86,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomOut()
 		{
-			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
-			if (!IsImageValid(image))
+			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+
+			if (image == null)
 				return;
 
 			CaptureBeginState(image);
 
-			float increment = -0.1F * image.LayerManager.SelectedLayerGroup.SpatialTransform.Scale;
+			float increment = -0.1F * image.SpatialTransform.Scale;
 			IncrementZoom(image, increment);
 
 			CaptureEndState();
 		}
 
-		private void IncrementZoom(IPresentationImage image, float scaleIncrement)
+		private void IncrementZoom(ISpatialTransformProvider image, float scaleIncrement)
 		{
-			if (!IsImageValid(image))
-				return;
-
-			SpatialTransform spatialTransform = image.LayerManager.SelectedLayerGroup.SpatialTransform;
-			spatialTransform.ScaleToFit = false;
-			spatialTransform.Scale += scaleIncrement;
-			spatialTransform.Calculate();
+			image.SpatialTransform.ScaleToFit = false;
+			image.SpatialTransform.Scale += scaleIncrement;
 			image.Draw();
 		}
 
@@ -114,10 +110,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			ISpatialTransformProvider image = mouseInformation.Tile.PresentationImage as ISpatialTransformProvider;
+
+			if (image == null)
 				return false;
 
-			CaptureBeginState(mouseInformation.Tile.PresentationImage);
+			CaptureBeginState(image);
 
 			return true;
 		}
@@ -126,10 +124,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			ISpatialTransformProvider image = mouseInformation.Tile.PresentationImage as ISpatialTransformProvider;
+
+			if (image == null)
 				return false;
 
-			IncrementZoom(mouseInformation.Tile.PresentationImage, (float)base.DeltaY * 0.025F);
+			IncrementZoom(image, (float)base.DeltaY * 0.025F);
 
 			return true;
 		}
@@ -137,9 +137,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
-
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
 
 			CaptureEndState();
 			

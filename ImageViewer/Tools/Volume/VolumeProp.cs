@@ -7,12 +7,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 {
 	class VolumeProp : IVtkProp
 	{
-		private VolumeLayer _volumeLayer;
+		private VolumeGraphic _volumeLayer;
 		private vtkVolume _vtkVolume;
 		private vtkPiecewiseFunction _opacityTransferFunction;
 		private vtkColorTransferFunction _colorTransferFunction;
 
-		public VolumeProp(VolumeLayer volumeLayer)
+		public VolumeProp(VolumeGraphic volumeLayer)
 		{
 			_volumeLayer = volumeLayer;
 		}

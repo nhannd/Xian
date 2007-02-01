@@ -6,7 +6,7 @@ using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
-	internal class ZoomAnnotationItem : AnnotationItem
+	internal sealed class ZoomAnnotationItem : ResourceResolvingAnnotationItem
 	{
 		public ZoomAnnotationItem(IAnnotationItemProvider ownerProvider)
 			: base("Presentation.Zoom", ownerProvider)
@@ -19,19 +19,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (presentationImage == null)
 				return string.Empty;
 
-			string strAnnotationText = String.Empty;
+			ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
+			if (image  == null)
+				return string.Empty;
 
-			try
-			{
-				SpatialTransform transform = presentationImage.LayerManager.SelectedLayerGroup.SpatialTransform;
-				strAnnotationText = transform.Scale.ToString("F2");
-				strAnnotationText += SR.Presentation_Zoom_Indicator;
-			}
-			catch
-			{
-			}
-
-			return strAnnotationText;
+			return String.Format("{0}{1}", new DoubleFormatter().Format(image.SpatialTransform.Scale), SR.Presentation_Zoom_Indicator);
 		}
 	}
 }

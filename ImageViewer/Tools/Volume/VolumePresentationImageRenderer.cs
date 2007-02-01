@@ -5,7 +5,7 @@ using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.Common;
 using vtk;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -57,13 +57,18 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private void AddLayers(DrawArgs args)
 		{
-			LayerCollection layers = args.PresentationImage.LayerManager.RootLayerGroup.Layers;
+			IAssociatedTissues volume = args.PresentationImage as IAssociatedTissues;
+
+			if (volume == null)
+				return;
+
+			GraphicCollection layers = volume.TissueLayers;
 			vtkPropCollection props = _vtkRenderer.GetViewProps();
 
-			foreach (VolumeLayer volumeLayer in layers)
+			foreach (VolumeGraphic volumeGraphic in layers)
 			{
-				if (props.IsItemPresent(volumeLayer.VtkProp) == 0)
-					_vtkRenderer.AddViewProp(volumeLayer.VtkProp);
+				if (props.IsItemPresent(volumeGraphic.VtkProp) == 0)
+					_vtkRenderer.AddViewProp(volumeGraphic.VtkProp);
 
 				//if (volumeLayer.OldVtkProp != null)
 				//{

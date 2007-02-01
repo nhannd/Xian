@@ -1,53 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	public static unsafe class ColorSpaceConverter
 	{
-		public static void YbrToRgb(ImageLayer imageLayer)
+		public static void YbrToRgb(ImageGraphic imageGraphic)
 		{
-			if (imageLayer.PhotometricInterpretation == PhotometricInterpretation.Rgb)
+			if (imageGraphic.PhotometricInterpretation == PhotometricInterpretation.Rgb)
 				return;
 
-			if (imageLayer.IsPlanar)
+			if (imageGraphic.IsPlanar)
 			{
-				switch (imageLayer.PhotometricInterpretation)
+				switch (imageGraphic.PhotometricInterpretation)
 				{
 					case PhotometricInterpretation.YbrFull:
 					case PhotometricInterpretation.YbrFull422:
-						YbrFullToRgbPlanar(imageLayer);
+						YbrFullToRgbPlanar(imageGraphic);
 						break;
 					case PhotometricInterpretation.YbrPartial422:
-						YbrPartial422ToRgbPlanar(imageLayer);
+						YbrPartial422ToRgbPlanar(imageGraphic);
 						break;
 					case PhotometricInterpretation.YbrIct:
-						YbrIctToRgbPlanar(imageLayer);
+						YbrIctToRgbPlanar(imageGraphic);
 						break;
 					case PhotometricInterpretation.YbrRct:
-						YbrRctToRgbPlanar(imageLayer);
+						YbrRctToRgbPlanar(imageGraphic);
 						break;
 				}
 			}
 			else
 			{
-				switch (imageLayer.PhotometricInterpretation)
+				switch (imageGraphic.PhotometricInterpretation)
 				{
 					case PhotometricInterpretation.YbrFull:
 					case PhotometricInterpretation.YbrFull422:
-						YbrFullToRgbTriplet(imageLayer);
+						YbrFullToRgbTriplet(imageGraphic);
 						break;
 					case PhotometricInterpretation.YbrPartial422:
-						YbrPartial422ToRgbTriplet(imageLayer);
+						YbrPartial422ToRgbTriplet(imageGraphic);
 						break;
 					case PhotometricInterpretation.YbrIct:
-						YbrIctToRgbTriplet(imageLayer);
+						YbrIctToRgbTriplet(imageGraphic);
 						break;
 					case PhotometricInterpretation.YbrRct:
-						YbrRctToRgbTriplet(imageLayer);
+						YbrRctToRgbTriplet(imageGraphic);
 						break;
 				}
 			}
@@ -114,10 +114,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return rgb;
 		}
 
-		private static void YbrFullToRgbPlanar(ImageLayer imageLayer)
+		private static void YbrFullToRgbPlanar(ImageGraphic imageGraphic)
 		{
-			int imageSizeInPixels = imageLayer.Rows * imageLayer.Columns;
-			byte[] pixelData = imageLayer.GetPixelData();
+			int imageSizeInPixels = imageGraphic.Rows * imageGraphic.Columns;
+			byte[] pixelData = imageGraphic.GetPixelData();
 
 			fixed (byte* pBytePixelData = pixelData)
 			{
@@ -138,25 +138,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private static void YbrPartial422ToRgbPlanar(ImageLayer imageLayer)
+		private static void YbrPartial422ToRgbPlanar(ImageGraphic imageGraphic)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		private static void YbrIctToRgbPlanar(ImageLayer imageLayer)
+		private static void YbrIctToRgbPlanar(ImageGraphic imageGraphic)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		private static void YbrRctToRgbPlanar(ImageLayer imageLayer)
+		private static void YbrRctToRgbPlanar(ImageGraphic imageGraphic)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		private static void YbrFullToRgbTriplet(ImageLayer imageLayer)
+		private static void YbrFullToRgbTriplet(ImageGraphic imageGraphic)
 		{
-			int imageSizeInPixels = imageLayer.Rows * imageLayer.Columns;
-			byte[] pixelData = imageLayer.GetPixelData();
+			int imageSizeInPixels = imageGraphic.Rows * imageGraphic.Columns;
+			byte[] pixelData = imageGraphic.GetPixelData();
 
 			fixed (byte* pBytePixelData = pixelData)
 			{
@@ -175,17 +175,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private static void YbrPartial422ToRgbTriplet(ImageLayer imageLayer)
+		private static void YbrPartial422ToRgbTriplet(ImageGraphic imageGraphic)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		private static void YbrIctToRgbTriplet(ImageLayer imageLayer)
+		private static void YbrIctToRgbTriplet(ImageGraphic imageGraphic)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		private static void YbrRctToRgbTriplet(ImageLayer imageLayer)
+		private static void YbrRctToRgbTriplet(ImageGraphic imageGraphic)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}

@@ -8,13 +8,13 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.Mathematics;
 using System.Diagnostics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private event EventHandler _enabledChanged;
 
 		private Tile _selectedTile;
-		private ImageLayer _selectedImageLayer;
+		private ImageGraphic _selectedImageGraphic;
 		private PixelDataWrapper _wrapper;
 
 		/// <summary>
@@ -91,25 +91,27 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			//base.Start(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			IImageGraphicProvider associatedImageGraphic = mouseInformation.Tile.PresentationImage as IImageGraphicProvider;
+
+			if (associatedImageGraphic == null)
 				return false;
 
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
-			_selectedImageLayer = _selectedTile.PresentationImage.LayerManager.SelectedImageLayer;
+			_selectedImageGraphic = associatedImageGraphic.Image;
 
 			_wrapper = new PixelDataWrapper
 				(
-					_selectedImageLayer.Columns,
-					_selectedImageLayer.Rows,
-					_selectedImageLayer.BitsAllocated,
-					_selectedImageLayer.BitsStored,
-					_selectedImageLayer.HighBit,
-					_selectedImageLayer.SamplesPerPixel,
-					_selectedImageLayer.PixelRepresentation,
-					_selectedImageLayer.PlanarConfiguration,
-					_selectedImageLayer.PhotometricInterpretation,
-					_selectedImageLayer.GetPixelData()
+					_selectedImageGraphic.Columns,
+					_selectedImageGraphic.Rows,
+					_selectedImageGraphic.BitsAllocated,
+					_selectedImageGraphic.BitsStored,
+					_selectedImageGraphic.HighBit,
+					_selectedImageGraphic.SamplesPerPixel,
+					_selectedImageGraphic.PixelRepresentation,
+					_selectedImageGraphic.PlanarConfiguration,
+					_selectedImageGraphic.PhotometricInterpretation,
+					_selectedImageGraphic.GetPixelData()
 				);
 
 			Probe(mouseInformation.Location);
@@ -125,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// <returns>True if the event was handled, false otherwise</returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_selectedTile == null || _selectedImageLayer == null)
+			if (_selectedTile == null || _selectedImageGraphic == null)
 				return false;
 
 			//base.Track(mouseInformation);
@@ -148,12 +150,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void Cancel()
 		{
-			if (_selectedTile == null || _selectedImageLayer == null)
+			if (_selectedTile == null || _selectedImageGraphic == null)
 				return;
 
 			//base.Stop(mouseInformation);
 
-			_selectedImageLayer = null;
+			_selectedImageGraphic = null;
 
 			_selectedTile.InformationBox.Visible = false;
 			_selectedTile.InformationBox = null;
@@ -164,8 +166,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void Probe(Point destinationPoint)
 		{
-			PointUtilities.ConfinePointToRectangle(ref destinationPoint, _selectedImageLayer.SpatialTransform.DestinationRectangle);
-			Point sourcePointRounded = Point.Round(_selectedImageLayer.SpatialTransform.ConvertToSource(destinationPoint));
+			PointUtilities.ConfinePointToRectangle(ref destinationPoint, _selectedImageGraphic.SpatialTransform.ClientRectangle);
+			Point sourcePointRounded = Point.Round(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
 			//!! Make these user preferences later.
 			bool showPixelValue = true;
@@ -176,9 +178,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
 
-			if (_selectedImageLayer.SpatialTransform.SourceRectangle.Contains(sourcePointRounded))
+			Rectangle imageRectangle = new Rectangle(0, 0, _selectedImageGraphic.Columns, _selectedImageGraphic.Rows);
+
+			if (imageRectangle.Contains(sourcePointRounded))
 			{
-				if (!_selectedImageLayer.IsColor)
+				if (!_selectedImageGraphic.IsColor)
 				{
 					int pixelValue = 0;
 					int modalityLutValue = 0;
@@ -186,36 +190,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 					string formatString = "{0}: {1}";
 
-					if (_selectedImageLayer.BitsAllocated == 16)
+					if (_selectedImageGraphic.BitsAllocated == 16)
 						pixelValue = _wrapper.GetPixel16(sourcePointRounded.X, sourcePointRounded.Y);
 					else
 						pixelValue = _wrapper.GetPixel8(sourcePointRounded.X, sourcePointRounded.Y);
 
-					if (_selectedImageLayer.IsSigned)
+					if (_selectedImageGraphic.IsSigned)
 						pixelValue = (short)pixelValue;
 
-					GrayscaleLUTPipeline pipeline = _selectedImageLayer.GrayscaleLUTPipeline;
-					if (pipeline != null)
-					{
-						if (pipeline.ModalityLUT != null)
-						{
-							modalityLutValue = pipeline.ModalityLUT[pixelValue];
-							modalityLutString = String.Format(formatString, SR.LabelModalityLut, modalityLutValue);
+					//GrayscaleLUTPipeline pipeline = _selectedImageGraphic.GrayscaleLUTPipeline;
+					//if (pipeline != null)
+					//{
+					//    if (pipeline.ModalityLUT != null)
+					//    {
+					//        modalityLutValue = pipeline.ModalityLUT[pixelValue];
+					//        modalityLutString = String.Format(formatString, SR.LabelModalityLut, modalityLutValue);
 
-							if (_selectedTile.PresentationImage is DicomPresentationImage)
-							{ 
-								DicomPresentationImage image = _selectedTile.PresentationImage as DicomPresentationImage;
-								if (String.Compare(image.ImageSop.Modality, "CT", true) == 0)
-									modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
-							}
-						}
+					//        if (_selectedTile.PresentationImage is StandardPresentationImage)
+					//        { 
+					//            StandardPresentationImage image = _selectedTile.PresentationImage as StandardPresentationImage;
+					//            if (String.Compare(image.ImageSop.Modality, "CT", true) == 0)
+					//                modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
+					//        }
+					//    }
 
-						if (pipeline.VoiLUT != null)
-						{
-							voiLutValue = pipeline.VoiLUT[modalityLutValue];
-							voiLutString = String.Format(formatString, SR.LabelVOILut, voiLutValue);
-						}
-					}
+					//    if (pipeline.VoiLUT != null)
+					//    {
+					//        voiLutValue = pipeline.VoiLUT[modalityLutValue];
+					//        voiLutString = String.Format(formatString, SR.LabelVOILut, voiLutValue);
+					//    }
+					//}
 
 					pixelValueString = String.Format(formatString, SR.LabelPixelValue, pixelValue);
 				}
@@ -234,10 +238,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			if (showPixelValue)
 				probeString = probeString + "\n" + pixelValueString;
-			if (showModalityValue)
-				probeString = probeString + "\n" + modalityLutString;
-			if (showVoiValue)
-				probeString = probeString + "\n" + voiLutString;
+			//if (showModalityValue)
+			//    probeString = probeString + "\n" + modalityLutString;
+			//if (showVoiValue)
+			//    probeString = probeString + "\n" + voiLutString;
 
 			_selectedTile.InformationBox.Update(probeString, destinationPoint);
 		}

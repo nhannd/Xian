@@ -5,9 +5,8 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 {
@@ -66,14 +65,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 
 		private void UpdateTabControl()
 		{
-			if (_component.VolumeLayers == null)
+			if (_component.VolumeGraphics == null)
 				return;
 
 			int i = 0;
 
-			foreach (Layer layer in _component.VolumeLayers)
+			foreach (Graphic layer in _component.VolumeGraphics)
 			{
-				VolumeLayer volumeLayer = layer as VolumeLayer;
+				VolumeGraphic volumeLayer = layer as VolumeGraphic;
 
 				if (volumeLayer != null)
 				{

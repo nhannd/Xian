@@ -26,19 +26,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Activate()
 		{
-			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
+			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
 
-			if (selectedImage == null)
+			if (image == null)
 				return;
 
-			SpatialTransformApplicator applicator = new SpatialTransformApplicator(selectedImage);
+			SpatialTransformApplicator applicator = new SpatialTransformApplicator(image);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandRotateRight;
 			command.BeginState = applicator.CreateMemento();
 
-			SpatialTransform spatialTransform = selectedImage.LayerManager.SelectedLayerGroup.SpatialTransform;
-			spatialTransform.Rotation = spatialTransform.Rotation + 90;
-			spatialTransform.Calculate();
+			image.SpatialTransform.Rotation += 90;
 
 			command.EndState = applicator.CreateMemento();
 

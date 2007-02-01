@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 		    set { _isDataLut = value; }
 		}
 
-		private bool ApplyDataLut(DicomPresentationImage image)
+		private bool ApplyDataLut(IPresentationImage image)
 		{
 			throw new NotImplementedException("The method or operation is not implemented.");
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			//return false;
 		}
 
-		private bool ApplyLinearLut(DicomPresentationImage image)
+		private bool ApplyLinearLut(IPresentationImage image)
 		{
 			throw new NotImplementedException("The method or operation is not implemented.");
 
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			//return true;
 		}
 
-		public override bool Apply(DicomPresentationImage image)
+		public override bool Apply(IPresentationImage image)
 		{
 			try
 			{

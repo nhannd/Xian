@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		private string _selectedPreset;
 		private bool _presetSetting;
 
-		private VolumeLayer _volumeLayer;
+		private VolumeGraphic _volumeGraphic;
 
 		public TissueSettings()
 		{
@@ -47,10 +47,10 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		internal VolumeLayer VolumeLayer
+		internal VolumeGraphic VolumeGraphic
 		{
-			get { return _volumeLayer; }
-			set { _volumeLayer = value; }
+			get { return _volumeGraphic; }
+			set { _volumeGraphic = value; }
 		}
 
 		public bool Visible
@@ -377,8 +377,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public void Apply()
 		{
-			if (_volumeLayer != null)
-				_volumeLayer.Draw();
+			if (_volumeGraphic != null)
+				_volumeGraphic.Draw();
 		}
 
 		private void OnPropertyChanged(string propertyName)

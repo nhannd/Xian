@@ -8,64 +8,43 @@ namespace ClearCanvas.Dicom
 	{
 		static public string[] ToStringArray(string arrayString)
 		{
-			if (string.IsNullOrEmpty(arrayString))
-				return null;
+			if (arrayString == null)
+				arrayString = ""; //return an empty array.
 
-			return arrayString.Split('\\');
+			return arrayString.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 		}
 
 		static public double[] ToDoubleArray(string arrayString)
 		{
 			string[] stringValues = ToStringArray(arrayString);
-			if (stringValues == null)
-				return null;
 
-			if (stringValues.Length == 0)
-				return null;
+			List<double> doubleValues = new List<double>();
+			foreach(string value in stringValues)
+				doubleValues.Add(System.Convert.ToDouble(value));
 
-			double[] doubleValues = new double[stringValues.Length];
-			for (int i = 0; i < stringValues.Length; ++i)
-			{
-				doubleValues[i] = System.Convert.ToDouble(stringValues[i]);
-			}
-
-			return doubleValues;
+			return doubleValues.ToArray();
 		}
 
 		static public int[] ToIntArray(string arrayString)
 		{
 			string[] stringValues = ToStringArray(arrayString);
-			if (stringValues == null)
-				return null;
 
-			if (stringValues.Length == 0)
-				return null;
+			List<int> intValues = new List<int>();
+			foreach (string value in stringValues)
+				intValues.Add(System.Convert.ToInt32(value));
 
-			int[] intValues = new int[stringValues.Length];
-			for (int i = 0; i < stringValues.Length; ++i)
-			{
-				intValues[i] = System.Convert.ToInt32(stringValues[i]);
-			}
-
-			return intValues;
+			return intValues.ToArray();
 		}
 
 		static public PersonName[] ToPersonNameArray(string arrayString)
 		{
 			string[] stringValues = ToStringArray(arrayString);
-			if (stringValues == null)
-				return null;
 
-			if (stringValues.Length == 0)
-				return null;
+			List<PersonName> personNames = new List<PersonName>();
+			foreach (string value in stringValues)
+				personNames.Add(new PersonName(value));
 
-			PersonName[] personNames = new PersonName[stringValues.Length];
-			for (int i = 0; i < stringValues.Length; ++i)
-			{
-				personNames[i] = new PersonName(stringValues[i]);
-			}
-
-			return personNames;
+			return personNames.ToArray();
 		}
 	}
 }

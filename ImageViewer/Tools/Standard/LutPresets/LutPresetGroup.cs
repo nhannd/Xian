@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			set { _actionId = value; }
 		}
 
-		public FilteredLutPreset GetFirstMatch(DicomPresentationImage image)
+		public FilteredLutPreset GetFirstMatch(StandardPresentationImage image)
 		{
 			if (image == null)
 				return null;
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			return null;
 		}
 
-		public bool Apply(DicomPresentationImage image)
+		public bool Apply(StandardPresentationImage image)
 		{
 			if (image == null)
 				return false;

@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			junkImageSop.InstanceNumber = 0;
 			junkImageSop.StudyInstanceUID = "123";
 			junkImageSop.SeriesInstanceUID = "1";
-			orderedCollection.Add(new DicomPresentationImage(junkImageSop));
+			orderedCollection.Add(new StandardPresentationImage(junkImageSop));
 
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
 			
@@ -103,9 +103,9 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{ 
 			foreach (PresentationImage image in collection)
 			{
-				if (image is DicomPresentationImage)
+				if (image is StandardPresentationImage)
 				{
-					DicomPresentationImage dicomImage = (DicomPresentationImage)image;
+					StandardPresentationImage dicomImage = (StandardPresentationImage)image;
 					string line = string.Format("StudyUID: {0}, Series: {1}, Instance: {2}", dicomImage.ImageSop.StudyInstanceUID,
 																			dicomImage.ImageSop.SeriesInstanceUID,
 																			dicomImage.ImageSop.InstanceNumber);
@@ -145,20 +145,20 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			{
 				IPresentationImage nonOrderedImage = nonOrderedCollection[index];
 
-				if (!(orderedImage is DicomPresentationImage) && !(nonOrderedImage is DicomPresentationImage))
+				if (!(orderedImage is StandardPresentationImage) && !(nonOrderedImage is StandardPresentationImage))
 				{
 					++index;
 					continue;
 				}
 
-				if (!(orderedImage is DicomPresentationImage) && (nonOrderedImage is DicomPresentationImage))
+				if (!(orderedImage is StandardPresentationImage) && (nonOrderedImage is StandardPresentationImage))
 					return false;
 
-				if ((orderedImage is DicomPresentationImage) && !(nonOrderedImage is DicomPresentationImage))
+				if ((orderedImage is StandardPresentationImage) && !(nonOrderedImage is StandardPresentationImage))
 					return false;
 
-				DicomPresentationImage dicomOrdered = orderedImage as DicomPresentationImage;
-				DicomPresentationImage dicomNonOrdered = nonOrderedImage as DicomPresentationImage;
+				StandardPresentationImage dicomOrdered = orderedImage as StandardPresentationImage;
+				StandardPresentationImage dicomNonOrdered = nonOrderedImage as StandardPresentationImage;
 
 				if (dicomOrdered.ImageSop.StudyInstanceUID != dicomNonOrdered.ImageSop.StudyInstanceUID ||
 					dicomOrdered.ImageSop.SeriesInstanceUID != dicomNonOrdered.ImageSop.SeriesInstanceUID ||
@@ -190,13 +190,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			return listImages;
 		}
 
-		public DicomPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
+		public StandardPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
 		{
 			MockImageSop newImageSop = new MockImageSop();
 			newImageSop.StudyInstanceUID = studyUID;
 			newImageSop.SeriesInstanceUID = seriesUID;
 			newImageSop.InstanceNumber = instanceNumber;
-			return new DicomPresentationImage(newImageSop);
+			return new StandardPresentationImage(newImageSop);
 		}
 	}
 }

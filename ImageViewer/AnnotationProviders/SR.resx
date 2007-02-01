@@ -129,9 +129,6 @@
   <data name="AnnotationItemProviders_Dicom_GeneralStudy_DisplayName" xml:space="preserve">
     <value>Dicom (General Study)</value>
   </data>
-  <data name="AnnotationItemProviders_Dicom_ImagePlane_DisplayName" xml:space="preserve">
-    <value>Dicom (Image Plane)</value>
-  </data>
   <data name="AnnotationItemProviders_Dicom_Patient_DisplayName" xml:space="preserve">
     <value>Dicom (Patient)</value>
   </data>
@@ -194,12 +191,6 @@
   </data>
   <data name="Dicom_GeneralEquipment_SoftwareVersions_Label" xml:space="preserve">
     <value>Software Version(s)</value>
-  </data>
-  <data name="Dicom_GeneralEquipment_SpatialResolution_DisplayName" xml:space="preserve">
-    <value>Spatial Resolution</value>
-  </data>
-  <data name="Dicom_GeneralEquipment_SpatialResolution_Label" xml:space="preserve">
-    <value>Spat. Res.</value>
   </data>
   <data name="Dicom_GeneralEquipment_StationName_DisplayName" xml:space="preserve">
     <value>Station Name</value>
@@ -291,12 +282,6 @@
   <data name="Dicom_GeneralImage_LossyImageCompressionRatio_Label" xml:space="preserve">
     <value>Lossy Img. Comp. Ratio</value>
   </data>
-  <data name="Dicom_GeneralImage_PatientOrientation_DisplayName" xml:space="preserve">
-    <value>Patient Orientation</value>
-  </data>
-  <data name="Dicom_GeneralImage_PatientOrientation_Label" xml:space="preserve">
-    <value>Pat. Orient.</value>
-  </data>
   <data name="Dicom_GeneralImage_QualityControlImage_DisplayName" xml:space="preserve">
     <value>Quality Control Image</value>
   </data>
@@ -326,12 +311,6 @@
   </data>
   <data name="Dicom_GeneralSeries_OperatorsName_Label" xml:space="preserve">
     <value>Operator</value>
-  </data>
-  <data name="Dicom_GeneralSeries_PatientPosition_DisplayName" xml:space="preserve">
-    <value>Patient Position</value>
-  </data>
-  <data name="Dicom_GeneralSeries_PatientPosition_Label" xml:space="preserve">
-    <value>Pat. Pos.</value>
   </data>
   <data name="Dicom_GeneralSeries_PerformedProcedureStepDescription_DisplayName" xml:space="preserve">
     <value>Performed Procedure Step Description</value>
@@ -411,36 +390,6 @@
   <data name="Dicom_GeneralStudy_StudyTime_Label" xml:space="preserve">
     <value>Study Time</value>
   </data>
-  <data name="Dicom_ImagePlane_ImageOrientationPatient_DisplayName" xml:space="preserve">
-    <value>Image Orientation (Patient)</value>
-  </data>
-  <data name="Dicom_ImagePlane_ImageOrientationPatient_Label" xml:space="preserve">
-    <value>Orientation</value>
-  </data>
-  <data name="Dicom_ImagePlane_ImagePositionPatient_DisplayName" xml:space="preserve">
-    <value>Image Position (Patient)</value>
-  </data>
-  <data name="Dicom_ImagePlane_ImagePositionPatient_Label" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="Dicom_ImagePlane_PixelSpacing_DisplayName" xml:space="preserve">
-    <value>Pixel Spacing</value>
-  </data>
-  <data name="Dicom_ImagePlane_PixelSpacing_Label" xml:space="preserve">
-    <value>Pixel Spacing</value>
-  </data>
-  <data name="Dicom_ImagePlane_SliceLocation_DisplayName" xml:space="preserve">
-    <value>Slice Location</value>
-  </data>
-  <data name="Dicom_ImagePlane_SliceLocation_Label" xml:space="preserve">
-    <value>Slice Location</value>
-  </data>
-  <data name="Dicom_ImagePlane_SliceThickness_DisplayName" xml:space="preserve">
-    <value>Slice Thickness</value>
-  </data>
-  <data name="Dicom_ImagePlane_SliceThickness_Label" xml:space="preserve">
-    <value>Slice Thickness</value>
-  </data>
   <data name="Dicom_Patient_EthnicGroup_DisplayName" xml:space="preserve">
     <value>Ethnic Group</value>
   </data>
@@ -515,6 +464,12 @@
   </data>
   <data name="ExceptionTransformedEdgeDoesNotMatch" xml:space="preserve">
     <value>The transformed edge does not have a corresponding value.</value>
+  </data>
+  <data name="Label_kilograms" xml:space="preserve">
+    <value>kg</value>
+  </data>
+  <data name="Label_metres" xml:space="preserve">
+    <value>m</value>
   </data>
   <data name="Presentation_AppliedLut_DisplayName" xml:space="preserve">
     <value>Lut (Applied)</value>

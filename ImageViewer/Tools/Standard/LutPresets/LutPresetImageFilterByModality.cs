@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
 using System.Runtime.Serialization;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 {
@@ -16,10 +17,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			get { return _modality; }
 			set { _modality = value; }
 		}
-	
-		public override bool IsMatch(DicomPresentationImage image)
+
+		public override bool IsMatch(IPresentationImage image)
 		{
-			return (_modality == image.ImageSop.Modality);
+			IImageSopProvider associatedDicom = image as IImageSopProvider;
+
+			if (associatedDicom == null)
+				return false;
+
+			return (_modality == associatedDicom.ImageSop.Modality);
 		}
 	}
 }

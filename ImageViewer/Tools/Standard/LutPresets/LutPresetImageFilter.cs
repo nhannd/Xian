@@ -11,6 +11,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 	[XmlInclude(typeof(LutPresetImageFilterByModality))]
 	public abstract class LutPresetImageFilter
 	{
-		public abstract bool IsMatch(DicomPresentationImage image);
+		public abstract bool IsMatch(IPresentationImage image);
 	}
 }

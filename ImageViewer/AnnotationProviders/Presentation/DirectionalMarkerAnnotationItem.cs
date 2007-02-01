@@ -6,6 +6,7 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
 using System.Drawing.Drawing2D;
 using System.Drawing;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
@@ -23,7 +24,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	/// - Once in destination coordinates, the (image) edge that has now effectively moved to the viewport edge
 	///   represented by this object is determined and its marker becomes the new marker for this viewport edge. 
 	/// </summary>
-	internal class DirectionalMarkerAnnotationItem : AnnotationItem
+	internal sealed class DirectionalMarkerAnnotationItem : ResourceResolvingAnnotationItem
 	{
 		public enum ImageEdge { Left = 0, Top = 1, Right = 2, Bottom = 3 };
 		private static readonly PointF[] _edgeVectors = new PointF[] { new PointF(-1, 0), new PointF(0, -1), new PointF(1, 0), new PointF(0, 1) };
@@ -45,9 +46,19 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		{
 			string markerText = "";
 
-			DicomPresentationImage dicomImage = presentationImage as DicomPresentationImage;
-			if (dicomImage != null)
-				markerText = GetAnnotationTextInternal(dicomImage.ImageLayer.SpatialTransform, dicomImage.ImageSop.ImageOrientationPatient);
+			if (presentationImage != null)
+			{
+				ISpatialTransformProvider associatedTransform = presentationImage as ISpatialTransformProvider;
+				IImageSopProvider associatedDicom = presentationImage as IImageSopProvider;
+
+				if (associatedDicom != null && associatedTransform != null)
+				{
+					// TODO: Shouldn't have to recast.  Need to add a 2DTransform interface
+					SpatialTransform spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
+					if (spatialTransform != null)
+						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.ImageSop.ImageOrientationPatient);
+				}
+			}
 
 			return markerText;
 		}

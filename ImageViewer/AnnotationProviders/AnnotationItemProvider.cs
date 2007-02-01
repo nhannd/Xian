@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders
@@ -12,20 +14,19 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 		private IEnumerable<IAnnotationItem> _annotationItems;
 
 		protected AnnotationItemProvider(string identifier)
+			: this(identifier, null)
 		{
+		}
+
+		protected AnnotationItemProvider(string identifier, IAnnotationResourceResolver resolver)
+		{
+			Platform.CheckForEmptyString(identifier, "identifier");
+
+			if (resolver == null)
+				resolver = new AnnotationResourceResolver(this);
+
 			_identifier = identifier;
-
-			string resourceString = _identifier.Replace('.', '_');
-
-			_displayName = SR.ResourceManager.GetString(resourceString + "_DisplayName");
-			if (string.IsNullOrEmpty(_displayName))
-			{
-#if DEBUG
-				throw new NotImplementedException("AnnotationItemProvider has no display name: " + this.GetType().ToString());
-#else
-				_displayName = SR.Unknown;
-#endif
-			}
+			_displayName = resolver.ResolveDisplayName(identifier);
 		}
 
 		public string Identifier
@@ -38,6 +39,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 			get { return _displayName; }
 		}
 
+		protected abstract List<IAnnotationItem> AnnotationItems { get; }
+		
 		#region IAnnotationItemProvider Members
 
 		public string GetIdentifier()
@@ -53,14 +56,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 		public IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
 			if (_annotationItems == null)
-			{
 				_annotationItems = this.AnnotationItems.AsReadOnly();
-			}
 
 			return _annotationItems;
 		}
-
-		protected abstract List<IAnnotationItem> AnnotationItems { get; }
 
 		#endregion
 	}

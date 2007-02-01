@@ -8,8 +8,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -36,18 +36,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public void Delete()
 		{
-			Graphic graphic = this.Context.Graphic;
-			if (graphic == null)
+			IGraphic graphic = this.Context.Graphic;
+			
+			IOverlayGraphicsProvider image = graphic.ParentPresentationImage as IOverlayGraphicsProvider;
+
+			if (image == null)
 				return;
 
-			if (graphic.ParentLayerManager == null)
-				return;
-
-			if (graphic.ParentLayerManager.SelectedGraphicLayer == null)
-				return;
-
-			graphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(graphic);
-			graphic.ParentLayerManager.ParentPresentationImage.Draw();
+			image.OverlayGraphics.Remove(graphic);
+			image.Draw();
 		}
 	}
 }

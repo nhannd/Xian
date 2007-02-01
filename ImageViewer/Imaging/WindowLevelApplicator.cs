@@ -7,15 +7,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class WindowLevelApplicator : ImageOperationApplicator
 	{
-		public WindowLevelApplicator(IPresentationImage selectedPresentationImage)
-			: base(selectedPresentationImage)
+		public WindowLevelApplicator(IVOILUTLinearProvider associatedWindowLevel)
+			: base(associatedWindowLevel as IPresentationImage)
 		{
 
 		}
 
 		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
-			return new WindowLevelOperator(image);
+			return (image as IVOILUTLinearProvider).VoiLut;
 		}
 	}
 }

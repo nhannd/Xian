@@ -85,10 +85,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			imageSop.BitsStored = bitsStored;
 			imageSop.WindowCenterAndWidth = new Window[] { new Window(windowWidth, windowCenter) };
 
-			DicomPresentationImage image = new DicomPresentationImage(imageSop);
+			StandardPresentationImage image = new StandardPresentationImage(imageSop);
 
-			WindowLevelOperator.InstallVOILUTLinear(image);
-			VOILUTLinear lut = image.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline.VoiLUT as VOILUTLinear;
+			//WindowLevelOperator.InstallVOILUTLinear(image);
+			IVOILUTLinear lut = image.VoiLut;
 			
 			Assert.AreEqual(lut.WindowWidth, expectedWindowWidth);
 			Assert.AreEqual(lut.WindowCenter, expectedWindowCenter);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -45,13 +46,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public int Compare(IPresentationImage x, IPresentationImage y)
 		{
-			DicomPresentationImage dicomX = null;
-			DicomPresentationImage dicomY = null;
-
-			if (x is DicomPresentationImage)
-				dicomX = (DicomPresentationImage)x;
-			if (y is DicomPresentationImage)
-				dicomY = (DicomPresentationImage)y;
+			IImageSopProvider dicomX = x as IImageSopProvider;
+			IImageSopProvider dicomY = y as IImageSopProvider;
 
 			//just push non-DICOM images down to one end of the list.
 			if (dicomX == null)

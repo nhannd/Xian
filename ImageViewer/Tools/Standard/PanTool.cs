@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
@@ -47,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CursorToken = new CursorToken("Icons.PanMedium.png", this.GetType().Assembly);
 		}
 
-		private void CaptureBeginState(IPresentationImage image)
+		private void CaptureBeginState(ISpatialTransformProvider image)
 		{
 			_applicator = new SpatialTransformApplicator(image);
 			_command = new UndoableCommand(_applicator);
@@ -97,9 +96,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementPan(int xIncrement, int yIncrement)
 		{
-			IPresentationImage image = this.Context.Viewer.SelectedPresentationImage;
+			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
 
-			if (!IsImageValid(image))
+			if (image == null)
 				return;
 
 			this.CaptureBeginState(image);
@@ -107,15 +106,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CaptureEndState();
 		}
 
-		private void IncrementPan(IPresentationImage image, int xIncrement, int yIncrement)
+		private void IncrementPan(ISpatialTransformProvider image, int xIncrement, int yIncrement)
 		{
-			SpatialTransform spatialTransform = image.LayerManager.SelectedLayerGroup.SpatialTransform;
-			float scale = spatialTransform.Scale;
-			Platform.CheckPositive(scale, "spatialTransform.Scale");
+			float scale = image.SpatialTransform.Scale;
+			Platform.CheckPositive(scale, "standardImage.SpatialTransform.Scale");
 
-			spatialTransform.TranslationX += xIncrement / scale;
-			spatialTransform.TranslationY += yIncrement / scale;
-			spatialTransform.Calculate();
+			image.SpatialTransform.TranslationX += xIncrement / scale;
+			image.SpatialTransform.TranslationY += yIncrement / scale;
 			image.Draw();
 		}
 
@@ -123,10 +120,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			ISpatialTransformProvider image = mouseInformation.Tile.PresentationImage as ISpatialTransformProvider;
+
+			if (image == null)
 				return false;
 
-			CaptureBeginState(mouseInformation.Tile.PresentationImage);
+			CaptureBeginState(image);
 
 			return true;
 		}
@@ -135,13 +134,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			ISpatialTransformProvider image = mouseInformation.Tile.PresentationImage as ISpatialTransformProvider;
+
+			if (image == null)
 				return false;
 
 			if (_command == null)
 				return false;
 
-			this.IncrementPan(mouseInformation.Tile.PresentationImage, base.DeltaX, base.DeltaY);
+			this.IncrementPan(image, base.DeltaX, base.DeltaY);
 
 			return true;
 		}
@@ -149,9 +150,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
-
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
-				return true;
 
 			CaptureEndState();
 

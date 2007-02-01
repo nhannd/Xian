@@ -138,6 +138,7 @@
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Tests\ImageOrientationPatientTests.cs" />
     <Compile Include="Tests\TypeTests.cs" />
+    <Compile Include="Tests\VMStringConverterTests.cs" />
     <Compile Include="TimeParser.cs" />
     <Compile Include="TransferSyntaxHelper.cs" />
     <Compile Include="Uid.cs" />

@@ -1,3 +1,5 @@
+#if UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -63,9 +65,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 
 		private void NewTransform()
 		{
-			_transform = new SpatialTransform();
-			_transform.SourceRectangle = new Rectangle(0, 0, 10, 10);
-			_transform.DestinationRectangle = new Rectangle(0, 0, 15, 25);
+			_transform = new ImageSpatialTransform(null, 10,10,0,0,0,0);
+//			_transform.SourceRectangle = new Rectangle(0, 0, 10, 10);
+			_transform.ClientRectangle = new Rectangle(0, 0, 15, 25);
 		}
 
 		/// <summary>
@@ -194,3 +196,5 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 		}
 	}
 }
+
+#endif

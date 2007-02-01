@@ -9,7 +9,7 @@ namespace ClearCanvas.Common.Utilities
 		where TItemEventArgs : CollectionEventArgs<TItem>
 	{
 		event EventHandler<TItemEventArgs> ItemAdded;
-
 		event EventHandler<TItemEventArgs> ItemRemoved;
+		event EventHandler<TItemEventArgs> ItemChanged;
 	}
 }

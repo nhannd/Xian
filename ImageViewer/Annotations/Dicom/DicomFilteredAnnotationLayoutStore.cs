@@ -6,6 +6,7 @@ using System.IO;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
@@ -224,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			}
 		}
 
-		public string GetMatchingStoredLayoutId(DicomPresentationImage dicomImage)
+		public string GetMatchingStoredLayoutId(IImageSopProvider dicomImage)
 		{
 			if (dicomImage == null)
 				return null;

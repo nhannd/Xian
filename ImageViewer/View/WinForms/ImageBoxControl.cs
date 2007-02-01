@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return borderRectangle;
 		}
 
-		private void DrawBorder(Graphics graphics, Rectangle rectangle, Color borderColor, int borderWidth, int insetWidth)
+		private void DrawBorder(System.Drawing.Graphics graphics, Rectangle rectangle, Color borderColor, int borderWidth, int insetWidth)
 		{
 			int offset = insetWidth / 2;
 			Rectangle borderRectangle = Rectangle.Inflate(rectangle, -offset, -offset);

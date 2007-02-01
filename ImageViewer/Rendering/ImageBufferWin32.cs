@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Rendering
             _hDC = Win32.CreateCompatibleDC(IntPtr.Zero);
             _hBitmap = _bitmap.GetHbitmap();
             Win32.SelectObject(_hDC, _hBitmap);
-            _graphics = Graphics.FromHdc(_hDC);
+			_graphics = System.Drawing.Graphics.FromHdc(_hDC);
             _graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             _graphics.Clear(Color.Black);
         }
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Rendering
             }
         }
 
-        public override void RenderTo(Graphics dest, Rectangle rect)
+        public override void RenderTo(System.Drawing.Graphics dest, Rectangle rect)
         {
             IntPtr hdcDst = dest.GetHdc();
             IntPtr hdcSrc = _graphics.GetHdc();

@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class ImageAndOriginator
+	internal class ImageAndOriginator
 	{
 		private IPresentationImage _presentationImage;
 		private IMemorable _originator;
@@ -32,8 +32,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		private IPresentationImage _presentationImage;
 
-		public ImageOperationApplicator(IPresentationImage selectedPresentationImage)
+		protected ImageOperationApplicator(IPresentationImage selectedPresentationImage)
 		{
+			// If this fails, the cast in the subclass' constructor may have failed
 			Platform.CheckForNullReference(selectedPresentationImage, "selectedPresentationImage");
 
 			_presentationImage = selectedPresentationImage;

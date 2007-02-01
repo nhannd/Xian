@@ -5,7 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		public LayerCollection VolumeLayers
+		public GraphicCollection VolumeGraphics
 		{
 			get
 			{
@@ -77,7 +77,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 				if (this.ImageViewer.SelectedPresentationImage == null)
 					return null;
 
-				return this.ImageViewer.SelectedPresentationImage.LayerManager.RootLayerGroup.Layers;
+				IAssociatedTissues volume = this.ImageViewer.SelectedPresentationImage as IAssociatedTissues;
+
+				if (volume == null)
+					return null;
+
+				return volume.TissueLayers;
 			}
 		}
 
@@ -127,15 +132,15 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private void AddTissueLayers(VolumePresentationImage image)
 		{
-			LayerCollection layers = image.LayerManager.RootLayerGroup.Layers;
+			GraphicCollection layers = image.TissueLayers;
 
 			TissueSettings tissue = new TissueSettings();
 			tissue.SelectPreset("Bone");
-			layers.Add(new VolumeLayer(tissue));
+			layers.Add(new VolumeGraphic(tissue));
 
 			tissue = new TissueSettings();
 			tissue.SelectPreset("Blood");
-			layers.Add(new VolumeLayer(tissue));
+			layers.Add(new VolumeGraphic(tissue));
 		}
 
 	}

@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	/// The user could have changed the W/L, applied a custom Data Lut, or a Lut from a related
 	/// Grayscale Presentation State object could be applied.
 	/// </remarks>
-	internal class AppliedLutAnnotationItem : AnnotationItem
+	internal sealed class AppliedLutAnnotationItem : ResourceResolvingAnnotationItem
 	{
 		public AppliedLutAnnotationItem(IAnnotationItemProvider ownerProvider)
 			: base("Presentation.AppliedLut", ownerProvider)
@@ -28,24 +28,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (presentationImage == null)
 				return string.Empty;
 
-			string strAnnotationText = String.Empty;
+			IVOILUTLinearProvider image = presentationImage as IVOILUTLinearProvider;
+			if (image == null)
+				return string.Empty;
 
-			GrayscaleLUTPipeline pipeline = presentationImage.LayerManager.SelectedImageLayer.GrayscaleLUTPipeline;
-			if (pipeline != null)
-			{
-				IGrayscaleLUT voiLut = pipeline.VoiLUT;
-
-				if (voiLut != null)
-				{
-					strAnnotationText = "Unknown";
-
-					VOILUTLinear linearLut = (VOILUTLinear)voiLut;
-					if (linearLut != null)
-						strAnnotationText = String.Format("{0}/{1}", linearLut.WindowWidth, linearLut.WindowCenter);
-				}
-			}
-
-			return strAnnotationText;
+			return String.Format("{0}/{1}", image.VoiLut.WindowWidth, image.VoiLut.WindowCenter);
 		}
 	}
 }

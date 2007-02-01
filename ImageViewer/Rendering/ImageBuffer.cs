@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 {
     public class ImageBuffer : IDisposable
     {
-        protected Graphics _graphics;
+		protected System.Drawing.Graphics _graphics;
         protected Bitmap _bitmap;
 
         public ImageBuffer(int width, int height)
@@ -19,17 +19,17 @@ namespace ClearCanvas.ImageViewer.Rendering
         protected virtual void Initialize(int width, int height)
         {
             _bitmap = new Bitmap(width, height);
-            _graphics = Graphics.FromImage(_bitmap);
+			_graphics = System.Drawing.Graphics.FromImage(_bitmap);
             _graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             _graphics.Clear(Color.Black);
         }
 
-        public virtual void RenderTo(Graphics dest, Rectangle rect)
+		public virtual void RenderTo(System.Drawing.Graphics dest, Rectangle rect)
         {
             dest.DrawImage(_bitmap, rect, rect, GraphicsUnit.Pixel);
         }
 
-        public Graphics Graphics
+		public System.Drawing.Graphics Graphics
         {
             get { return _graphics; }
         }

@@ -4,13 +4,13 @@ using System.Text;
 using ClearCanvas.ImageViewer.Rendering;
 using vtk;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
-	public class VolumePresentationImage : PresentationImage
+	public class VolumePresentationImage : PresentationImage, IAssociatedTissues
 	{
 		#region Private fields
 
@@ -29,6 +29,15 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 
 		#region Public properties
+
+		#region IAssociatedTissues Members
+
+		public GraphicCollection TissueLayers
+		{
+			get { return this.SceneGraph.Graphics; }
+		}
+
+		#endregion
 
 		public override IRenderer ImageRenderer
 		{
@@ -59,12 +68,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public int Width
 		{
-			get { return GetDicomImageLayer().Columns; }
+			get { return GetImageGraphic().Columns; }
 		}
 
 		public int Height
 		{
-			get { return GetDicomImageLayer().Rows; }
+			get { return GetImageGraphic().Rows; }
 		}
 
 		public int Depth
@@ -94,31 +103,30 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			return new VolumePresentationImage(_displaySet);
 		}
 
-		private DicomPresentationImage GetDicomPresentationImage(int i)
+		private IPresentationImage GetDicomPresentationImage(int i)
 		{
-			return _displaySet.PresentationImages[i] as DicomPresentationImage;
+			return _displaySet.PresentationImages[i];
 		}
 
-		private DicomPresentationImage GetDicomPresentationImage()
+		private IPresentationImage GetDicomPresentationImage()
 		{
 			return GetDicomPresentationImage(0);
 		}
 
 		private ImageSop GetImageSop()
 		{
-			return GetDicomPresentationImage().ImageSop;
+			return (GetDicomPresentationImage() as IImageSopProvider).ImageSop;
 		}
 
-		private DicomImageLayer GetDicomImageLayer()
+		private ImageGraphic GetImageGraphic()
 		{
-			return GetDicomPresentationImage().ImageLayer;
+			return (GetDicomPresentationImage() as IImageGraphicProvider).Image;
 		}
 
 		private bool IsDataUnsigned()
 		{
 			return (GetImageSop().PixelRepresentation == 0);
 		}
-
 
 		private vtkImageData CreateVolumeImageData()
 		{
@@ -140,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 			if (IsDataUnsigned())
 			{
-				foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
+				foreach (IImageGraphicProvider slice in _displaySet.PresentationImages)
 				{
 					AddUnsignedSliceToVolume(volumeData, slice, imageIndex);
 					imageIndex++;
@@ -150,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			{
 				FindMinimumPixelValue();
 
-				foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
+				foreach (IImageGraphicProvider slice in _displaySet.PresentationImages)
 				{
 					AddSignedSliceToVolume(volumeData, slice, imageIndex);
 					imageIndex++;
@@ -167,9 +175,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			_minimumPixelValue = short.MaxValue;
 
-			foreach (DicomPresentationImage slice in _displaySet.PresentationImages)
+			foreach (IImageGraphicProvider slice in _displaySet.PresentationImages)
 			{
-				byte[] sliceData = slice.ImageLayer.GetPixelData();
+				byte[] sliceData = slice.Image.GetPixelData();
 				int length = sliceData.Length / 2;
 
 				for (int i = 0; i < length; i+=2)
@@ -184,9 +192,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		private void AddUnsignedSliceToVolume(ushort[] volumeData, DicomPresentationImage slice, int imageIndex)
+		private void AddUnsignedSliceToVolume(ushort[] volumeData, IImageGraphicProvider slice, int imageIndex)
 		{
-			byte[] sliceData = slice.ImageLayer.GetPixelData();
+			byte[] sliceData = slice.Image.GetPixelData();
 			int start = imageIndex * sliceData.Length / 2;
 			int end = start + sliceData.Length / 2;
 
@@ -201,9 +209,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		private void AddSignedSliceToVolume(ushort[] volumeData, DicomPresentationImage slice, int imageIndex)
+		private void AddSignedSliceToVolume(ushort[] volumeData, IImageGraphicProvider slice, int imageIndex)
 		{
-			byte[] sliceData = slice.ImageLayer.GetPixelData();
+			byte[] sliceData = slice.Image.GetPixelData();
 			int start = imageIndex * sliceData.Length / 2;
 			int end = start + sliceData.Length / 2;
 
@@ -229,8 +237,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			if (_displaySet.PresentationImages.Count > 1)
 			{
-				ImageSop slice1 = GetDicomPresentationImage(0).ImageSop;
-				ImageSop slice2 = GetDicomPresentationImage(1).ImageSop;
+				ImageSop slice1 = (GetDicomPresentationImage(0) as IImageSopProvider).ImageSop;
+				ImageSop slice2 = (GetDicomPresentationImage(1) as IImageSopProvider).ImageSop;
 				double sliceSpacing = Math.Abs(slice2.ImagePositionPatient.Z - slice1.ImagePositionPatient.Z);
 
 				return sliceSpacing;
@@ -250,5 +258,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 			base.Dispose(disposing);
 		}
+
 	}
 }

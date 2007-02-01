@@ -3,12 +3,13 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.DynamicOverlays;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -26,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     public class RulerTool : MouseTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
-		private ROIGraphic _createGraphic;
+		private ROIGraphic _roiGraphic;
 
 		public RulerTool()
 		{
@@ -36,53 +37,59 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.Start(mouseInformation);
 
-			if (!IsImageValid(mouseInformation.Tile.PresentationImage))
+			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
+
+			if (image == null)
 				return false;
 
-			if (_createGraphic != null)
-				return _createGraphic.Start(mouseInformation);
+			if (_roiGraphic != null)
+				return _roiGraphic.Start(mouseInformation);
 
-			InteractiveMultiLineGraphic multilineGraphic = new InteractiveMultiLineGraphic(true, 2);
-			_createGraphic = new ROIGraphic(multilineGraphic, true);
+			PolyLineInteractiveGraphic polyLineGraphic = new PolyLineInteractiveGraphic(true, 2);
+			_roiGraphic = new ROIGraphic(polyLineGraphic, true);
 
-			_createGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
-			mouseInformation.Tile.PresentationImage.LayerManager.SelectedGraphicLayer.Graphics.Add(_createGraphic);
-			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
+			_roiGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
+			image.OverlayGraphics.Add(_roiGraphic);
+			_roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);
+			_roiGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRulerStateChanged);
 
-			if (_createGraphic.Start(mouseInformation))
+			if (_roiGraphic.Start(mouseInformation))
 				return true;
 
 			this.Cancel();
 			return false;
 		}
 
+
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_createGraphic != null)
-				return _createGraphic.Track(mouseInformation);
+			if (_roiGraphic != null)
+				return _roiGraphic.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_createGraphic != null)
+			if (_roiGraphic != null)
 			{
-				if (_createGraphic.Stop(mouseInformation))
+				if (_roiGraphic.Stop(mouseInformation))
 					return true;
 			}
 
-			_createGraphic = null;
+			_roiGraphic = null;
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			if (_createGraphic != null)
-				_createGraphic.Cancel();
+			if (_roiGraphic != null)
+				_roiGraphic.Cancel();
 
-			_createGraphic.ParentLayerManager.SelectedGraphicLayer.Graphics.Remove(_createGraphic);
-			_createGraphic = null;
+			IOverlayGraphicsProvider image = _roiGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
+			image.OverlayGraphics.Remove(_roiGraphic);
+
+			_roiGraphic = null;
 		}
 
 		public override bool SuppressContextMenu
@@ -92,10 +99,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override CursorToken GetCursorToken(Point point)
 		{
-			if (_createGraphic != null)
-				return _createGraphic.GetCursorToken(point);
+			if (_roiGraphic != null)
+				return _roiGraphic.GetCursorToken(point);
 
 			return null;
+		}
+
+		private void OnRulerStateChanged(object sender, GraphicStateChangedEventArgs e)
+		{
+			
 		}
 
 		private bool PixelSpacingNotAllowed(ImageSop imageSop)
@@ -115,8 +127,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			ROIGraphic roiGraphic = sender as ROIGraphic;
 			
-			InteractiveMultiLineGraphic multiLineGraphic = roiGraphic.Roi as InteractiveMultiLineGraphic;
-			DicomPresentationImage image = roiGraphic.ParentPresentationImage as DicomPresentationImage;
+			PolyLineInteractiveGraphic multiLineGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
+			StandardPresentationImage image = roiGraphic.ParentPresentationImage as StandardPresentationImage;
 
 			multiLineGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (multiLineGraphic.AnchorPoints[1].X - multiLineGraphic.AnchorPoints[0].X);

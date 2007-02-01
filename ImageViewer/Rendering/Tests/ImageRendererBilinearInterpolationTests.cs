@@ -5,21 +5,21 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Diagnostics;
 using ClearCanvas.ImageViewer.Rendering;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
-	public unsafe class PublicMethodRenderer : ImageRenderer
+/*	public unsafe class PublicMethodRenderer : ImageRenderer
 	{
-		new public static bool IsRotated(ImageLayer imageLayer)
+		new public static bool IsRotated(ImageGraphic imageLayer)
 		{
 			return ImageRenderer.IsRotated(imageLayer);
 		}
 
 		new public static void CalculateVisibleRectangles(
-			ImageLayer imageLayer,
+			ImageGraphic imageLayer,
 			RectangleF clientRectangle,
 			out Rectangle dstVisibleRectangle,
 			out Rectangle srcVisibleRectangle)
@@ -36,9 +36,9 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
     {
         enum ImageTypes { MONO8, MONO16, RGB_PLANAR, RGB_TRIPLET};
 
-		ImageLayer.InterpolationMethods _interpolationMethod; 
-        LayerGroup _layerGroup;
-        MockImageLayer _layer;
+		ImageGraphic.InterpolationMethods _interpolationMethod; 
+        CompositeGraphic _layerGroup;
+        MockImageGraphic _layer;
 
         int _srcWidth, _srcHeight;
         int _dstWidth, _dstHeight;
@@ -159,13 +159,13 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
         private void TestVariousPointAllMethods()
         {
-			_interpolationMethod = ImageLayer.InterpolationMethods.BILINEAR;
+			_interpolationMethod = ImageGraphic.InterpolationMethods.Bilinear;
 
             TestAtCentreOfQuadrants();
             TestAtBoundaries();
             TestNearBoundaries();
 
-			_interpolationMethod = ImageLayer.InterpolationMethods.BILINEAR_FAST;
+			_interpolationMethod = ImageGraphic.InterpolationMethods.FastBilinear;
 
 			TestAtCentreOfQuadrants();
 			TestAtBoundaries();
@@ -498,7 +498,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
             float dx = srcPoint00.X - (float)srcPointInt00.X;
 			float dy = srcPoint00.Y - (float)srcPointInt00.Y;
 
-			if (_interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR)
+			if (_interpolationMethod == ImageGraphic.InterpolationMethods.Bilinear)
 			{
 				float yInterpolated1 = arrayOfValues[0, 0] + (arrayOfValues[1, 0] - arrayOfValues[0, 0]) * dy;
 				float yInterpolated2 = arrayOfValues[0, 1] + (arrayOfValues[1, 1] - arrayOfValues[0, 1]) * dy;
@@ -509,7 +509,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
 				return _layer.GrayscaleLUTPipeline.OutputLUT[(ushort)interpolated];
 			}
-			else if (_interpolationMethod == ImageLayer.InterpolationMethods.BILINEAR_FAST)
+			else if (_interpolationMethod == ImageGraphic.InterpolationMethods.FastBilinear)
 			{
 				int dyFixed = (int)(dy * _fixedScale);
 				int dxFixed = (int)(dx * _fixedScale);
@@ -539,8 +539,8 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
             else if (imageType == ImageTypes.RGB_TRIPLET)
                 _layer = ImageLayerFactory.CreateRGBTripletImageLayer(_srcWidth, _srcHeight);
 
-			_layerGroup = new LayerGroup();
-            _layerGroup.Layers.Add(_layer);
+			_layerGroup = new CompositeGraphic();
+            _layerGroup.Graphics.Add(_layer);
 
             _layer.SpatialTransform.Initialize(); 
             
@@ -550,11 +550,9 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
             _layer.SpatialTransform.FlipVertical = _flipVertical;
             _layer.SpatialTransform.Rotation = _rotation;
             _layer.SpatialTransform.Scale = _scale;
-            _layer.SpatialTransform.ScaleToFit = _scaleToFit;
+            //_layer.SpatialTransform.ScaleToFit = _scaleToFit;
             _layer.SpatialTransform.TranslationX = _translationX;
             _layer.SpatialTransform.TranslationY = _translationY;
-
-            _layer.SpatialTransform.Calculate();
 
 			_layer.NormalInterpolationMethod = _interpolationMethod;
         }
@@ -615,6 +613,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
                 Trace.WriteLine(strTracePhantom);
         }
     }
+*/
 }
 
 #endif

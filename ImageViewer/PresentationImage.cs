@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
@@ -12,7 +12,6 @@ namespace ClearCanvas.ImageViewer
 	{
 		#region Private Fields
 
-		private LayerManager _layerManager;
 		private ImageViewerComponent _imageViewer;
 		private DisplaySet _parentDisplaySet;
 		private Tile _tile;
@@ -23,6 +22,10 @@ namespace ClearCanvas.ImageViewer
 		private object _tag;
 		
 		protected IRenderer _imageRenderer;
+
+		private SceneGraph _sceneGraph;
+		private ISelectableGraphic _selectedGraphic;
+		private IFocussableGraphic _focussedGraphic;
 
 		// TODO: Perhaps each layer should have its own ILayerRenderer?  
 		// The idea is to delegate the actual rendering to the layers themselves, since
@@ -47,7 +50,6 @@ namespace ClearCanvas.ImageViewer
 
 		protected PresentationImage()
 		{
-
 		}
 
 		#region Public Properties
@@ -63,7 +65,7 @@ namespace ClearCanvas.ImageViewer
 			internal set 
 			{ 
 				_imageViewer = value as ImageViewerComponent;
-				//this.LayerManager.ImageViewer = _imageViewer;
+				this.SceneGraph.SetImageViewer(_imageViewer);
 			}
 		}
 
@@ -95,20 +97,6 @@ namespace ClearCanvas.ImageViewer
 					if (_tile != null)
 						_tile.PresentationImage = this;
 				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the <see cref="LayerManager"/>.
-		/// </summary>
-		public LayerManager LayerManager
-		{
-			get
-			{
-				if (_layerManager == null)
-				    _layerManager = new LayerManager(this);
-
-				return _layerManager;
 			}
 		}
 
@@ -170,6 +158,54 @@ namespace ClearCanvas.ImageViewer
 			set { _tag = value; }
 		}
 
+		public SceneGraph SceneGraph
+		{
+			get 
+			{
+				if (_sceneGraph == null)
+				{
+					_sceneGraph = new SceneGraph();
+					_sceneGraph.SetParentPresentationImage(this);
+				}
+
+				return _sceneGraph; 
+			}
+		}
+
+		public virtual ISelectableGraphic SelectedGraphic
+		{
+			get { return _selectedGraphic; }
+			set
+			{
+				if (_selectedGraphic == value)
+					return;
+
+				if (_selectedGraphic != null)
+					_selectedGraphic.Selected = false;
+
+				_selectedGraphic = value;
+
+				if (this.ImageViewer != null)
+					if (this.ImageViewer.EventBroker != null)
+						this.ImageViewer.EventBroker.OnGraphicSelected(new GraphicSelectedEventArgs(_selectedGraphic));
+			}
+		}
+
+		public virtual IFocussableGraphic FocussedGraphic
+		{
+			get { return _focussedGraphic; }
+			set
+			{
+				if (_focussedGraphic == value)
+					return;
+
+				if (_focussedGraphic != null)
+					_focussedGraphic.Focussed = false;
+
+				_focussedGraphic = value;
+			}
+		}
+
 		public abstract IRenderer ImageRenderer { get; }
 
 		#endregion
@@ -203,7 +239,6 @@ namespace ClearCanvas.ImageViewer
 			if (disposing)
 			{
 				DisposeRenderer();
-				DisposeLayerManager();
 			}
 		}
 
@@ -214,15 +249,6 @@ namespace ClearCanvas.ImageViewer
 
 			this.ImageRenderer.Dispose();
 			_imageRenderer = null;
-		}
-
-		private void DisposeLayerManager()
-		{
-			if (this.LayerManager == null)
-				return;
-
-			// TODO: Add disposal to LayerManager
-			//this.LayerManager.Dispose();
 		}
 
 		#endregion
@@ -239,18 +265,20 @@ namespace ClearCanvas.ImageViewer
 
 		public virtual void OnDraw(DrawArgs drawArgs)
 		{
+			drawArgs.SceneGraph = this.SceneGraph;
 			drawArgs.PresentationImage = this;
 			drawArgs.DisplaySet = this.ParentDisplaySet;
 
+			this.SceneGraph.ClientRectangle = drawArgs.ClientRectangle;
+
+			// Let others know that we're about to draw
 			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this);
 			this.ImageViewer.EventBroker.OnImageDrawing(args);
-
-			this.LayerManager.RootLayerGroup.RedrawRequired = true;
-			this.LayerManager.RootLayerGroup.DestinationRectangle = drawArgs.ClientRectangle;
 
 			this.ImageRenderer.Draw(drawArgs);
 		}
 
 		#endregion
+
 	}
 }

@@ -1,9 +1,12 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class VOILUTLinear : CalculatedGrayscaleLUT
+	public class VOILUTLinear : 
+		CalculatedGrayscaleLUT, 
+		IVOILUTLinear
 	{
 		private double _windowWidth = 1;
 		private double _windowCenter = 0;
@@ -79,11 +82,36 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#region IMemorable Members
+
+		public IMemento CreateMemento()
+		{
+			WindowLevelMemento memento = new WindowLevelMemento();
+
+			memento.WindowWidth = this.WindowWidth;
+			memento.WindowCenter = this.WindowCenter;
+
+			return memento;
+		}
+
+		public void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+			WindowLevelMemento windowLevelMemento = memento as WindowLevelMemento;
+			Platform.CheckForInvalidCast(windowLevelMemento, "memento", "WindowLevelMemento");
+
+			this.WindowWidth = windowLevelMemento.WindowWidth;
+			this.WindowCenter = windowLevelMemento.WindowCenter;
+		}
+
+		#endregion
+
 		private void Calculate()
 		{
 			double halfWindow = (_windowWidth - 1)  / 2;
 			_windowRegionStart = _windowCenter - 0.5 - halfWindow;
 			_windowRegionEnd = _windowCenter - 0.5 + halfWindow;
 		}
+
 	}
 }

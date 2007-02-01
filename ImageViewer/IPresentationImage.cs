@@ -1,5 +1,5 @@
 ﻿using System;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -7,12 +7,13 @@ namespace ClearCanvas.ImageViewer
 	{
 		IImageViewer ImageViewer { get; }
 		IDisplaySet ParentDisplaySet { get; }
-		LayerManager LayerManager { get; }
 		ITile Tile { get; }
 		bool Linked { get; set; }
 		bool Selected { get; }
 		bool Visible { get; }
 		object Tag { get; set; }
+		ISelectableGraphic SelectedGraphic { get; set; }
+		IFocussableGraphic FocussedGraphic { get; set; }
 
 		IPresentationImage Clone();
 		void Draw();

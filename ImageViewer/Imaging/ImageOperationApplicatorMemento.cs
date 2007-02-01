@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class ImageOperationApplicatorMemento : IMemento
+	internal class ImageOperationApplicatorMemento : IMemento
 	{
 		private IList<ImageAndOriginator> _linkedImagesAndOriginators;
 		private IMemento _memento;

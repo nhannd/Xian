@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.ImageViewer.Layers;
 using vtk;
 using System.ComponentModel;
+using System.Drawing;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -13,17 +14,17 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		Volume
 	}
 
-	public class VolumeLayer : Layer
+	public class VolumeGraphic : Graphic
 	{
 		private TissueSettings _tissueSettings;
 		private IVtkProp _surfaceProp;
 		private IVtkProp _volumeProp;
 		private RenderingMethod _renderingMethod = RenderingMethod.Surface;
 	
-		public VolumeLayer(TissueSettings tissueSettings) : base(true)
+		public VolumeGraphic(TissueSettings tissueSettings)
 		{
 			_tissueSettings = tissueSettings;
-			_tissueSettings.VolumeLayer = this;
+			_tissueSettings.VolumeGraphic = this;
 			_tissueSettings.PropertyChanged += new PropertyChangedEventHandler(OnTissueSettingsChanged);
 		}
 
@@ -144,9 +145,14 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		protected override BaseLayerCollection CreateChildLayers()
+		public override bool HitTest(Point point)
 		{
-			return null;
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Move(SizeF delta)
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

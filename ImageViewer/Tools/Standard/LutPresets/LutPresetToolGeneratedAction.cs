@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 				return;
 			}
 
-			FilteredLutPreset preset = _lutPresetGroup.GetFirstMatch(image as DicomPresentationImage);
+			FilteredLutPreset preset = _lutPresetGroup.GetFirstMatch(image as StandardPresentationImage);
 			if (preset == null)
 			{
 				Disable();
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			if (image == null)
 				return false;
 
-			if (!(image is DicomPresentationImage))
+			if (!(image is StandardPresentationImage))
 				return false;
 
 			return true;
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			try
 			{
-				_lutPresetGroup.Apply(_imageViewer.SelectedPresentationImage as DicomPresentationImage);
+				_lutPresetGroup.Apply(_imageViewer.SelectedPresentationImage as StandardPresentationImage);
 			}
 			catch (Exception e)
 			{

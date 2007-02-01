@@ -13,6 +13,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 	public abstract class LutPreset
 	{
 		public abstract string Label { get; set; }
-		public abstract bool Apply(DicomPresentationImage image);
+		public abstract bool Apply(IPresentationImage image);
 	}
 }

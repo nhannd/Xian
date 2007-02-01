@@ -43,97 +43,43 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnnotationItemProvider.cs" />
-    <Compile Include="Dicom\DicomDateAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomDateTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomDoubleAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomDoubleArrayAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomStringAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomOrientationAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomStringArrayAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\DateOfLastCalibrationAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\DeviceSerialNumberAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\GeneralEquipmentAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\GeneralEquipment\InstitutionAddressAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\InstitutionalDepartmentNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\InstitutionNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\ManufacturerAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\ManufacturersModelNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\SoftwareVersionsAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\SpatialResolutionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralEquipment\StationNameAnnotationItem.cs" />
-    <Compile Include="Presentation\DirectionalMarkerAnnotationItem.cs" />
-    <Compile Include="Presentation\Tests\DirectionalMarkerTests.cs" />
+    <Compile Include="AnnotationResourceResolver.cs" />
+    <Compile Include="Dicom\DicomAnnotationItem.cs" />
+    <Compile Include="DoubleFormatter.cs" />
+    <Compile Include="Dicom\DicomBasicResultFormatter.cs" />
+    <Compile Include="Dicom\DicomTagRetriever.cs" />
+    <Compile Include="Dicom\GeneralEquipmentAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralSeriesAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralStudyAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\GeneralImageAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\PatientStudyAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\PatientAnnotationItemProvider.cs" />
+    <Compile Include="IAnnotationResourceResolver.cs" />
+    <Compile Include="Presentation\AppliedLutAnnotationItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\DirectionalMarkerAnnotationItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\PresentationAnnotationItemProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dicom\Tests\DicomBasicFormatterTests.cs" />
+    <Compile Include="Presentation\Tests\DirectionalMarkerTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\ZoomAnnotationItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\BasicTests.cs" />
-    <Compile Include="Dicom\GeneralEquipment\TimeOfLastCalibrationAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\AcquisitionDateAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\AcquisitionDateTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\AcquisitionNumberAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\AcquisitionTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\ContentDateAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\ContentTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\DerivationDescriptionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\GeneralImageAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\GeneralImage\ImageCommentsAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\ImagesInAcquisitionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\ImageTypeAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\InstanceNumberAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\LossyImageCompressionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\LossyImageCompressionRatioAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\PatientOrientationAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralImage\QualityControlImageAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\BodyPartExaminedAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\GeneralSeriesAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\GeneralSeries\LateralityAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\ModalityAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\OperatorsNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\PatientPositionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\PerformedProcedureStepDescriptionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\PerformingPhysiciansNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\ProtocolNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\SeriesDateAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\SeriesDescriptionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\SeriesNumberAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralSeries\SeriesTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralStudy\AccessionNumberAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralStudy\GeneralStudyAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\GeneralStudy\ReferringPhysiciansNameAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralStudy\StudyDateAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralStudy\StudyDescriptionAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralStudy\StudyIdAnnotationItem.cs" />
-    <Compile Include="Dicom\GeneralStudy\StudyTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\ImagePlane\ImageOrientationPatientAnnotationItem.cs" />
-    <Compile Include="Dicom\ImagePlane\ImagePlaneAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\ImagePlane\ImagePositionPatientAnnotationItem.cs" />
-    <Compile Include="Dicom\ImagePlane\PixelSpacingAnnotationItem.cs" />
-    <Compile Include="Dicom\ImagePlane\SliceLocationAnnotationItem.cs" />
-    <Compile Include="Dicom\ImagePlane\SliceThicknessAnnotationItem.cs" />
-    <Compile Include="Dicom\PatientStudy\AdditionalPatientsHistoryAnnotationItem.cs" />
-    <Compile Include="AnnotationItem.cs" />
-    <Compile Include="Dicom\PatientStudy\PatientStudyAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\Patient\EthnicGroupAnnotationItem.cs" />
-    <Compile Include="Dicom\PatientStudy\OccupationAnnotationItem.cs" />
-    <Compile Include="Dicom\Patient\PatientAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\Patient\PatientCommentsAnnotationItem.cs" />
-    <Compile Include="Dicom\Patient\PatientIdAnnotationItem.cs" />
-    <Compile Include="Dicom\PatientStudy\PatientsAgeAnnotationItem.cs" />
-    <Compile Include="Dicom\Patient\PatientsBirthDateAnnotationItem.cs" />
-    <Compile Include="Dicom\Patient\PatientsBirthTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\Patient\PatientsSexAnnotationItem.cs" />
-    <Compile Include="Dicom\Patient\PatientsNameAnnotationItem.cs" />
-    <Compile Include="Dicom\PatientStudy\PatientsSizeAnnotationItem.cs" />
-    <Compile Include="Dicom\PatientStudy\PatientsWeightAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomPersonNameAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomTimeAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomYesNoAnnotationItem.cs" />
-    <Compile Include="Presentation\AppliedLutAnnotationItem.cs" />
-    <Compile Include="Presentation\PresentationAnnotationItemProvider.cs" />
-    <Compile Include="Presentation\ZoomAnnotationItem.cs" />
+    <Compile Include="ResourceResolvingAnnotationItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Tests\FormatterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

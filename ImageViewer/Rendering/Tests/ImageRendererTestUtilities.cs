@@ -8,13 +8,13 @@ using System.Drawing.Imaging;
 using NUnit.Framework;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
-	class MockImageLayer : ImageLayer
+	class MockImageGraphic : ImageGraphic
 	{
 		int _width;
 		int _height;
@@ -27,8 +27,9 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 		PhotometricInterpretation _photometricInterpretation;
 		byte[] _pixelData;
 		PixelDataWrapper _pixelDataWrapper;
+		private GrayscaleLUTPipeline _grayscaleLUTPipeline;
 
-		public MockImageLayer(
+		public MockImageGraphic(
 			int width,
 			int height,
 			int bitsAllocated,
@@ -113,9 +114,31 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			get { return _photometricInterpretation; }
 		}
 
+		public GrayscaleLUTPipeline GrayscaleLUTPipeline
+		{
+			get
+			{
+				if (this.IsColor)
+					return null;
+
+				if (_grayscaleLUTPipeline == null)
+					_grayscaleLUTPipeline = new GrayscaleLUTPipeline();
+
+				return _grayscaleLUTPipeline;
+			}
+		}
+
 		public override byte[]  GetPixelData()
 		{
 			return _pixelData;
+		}
+
+		public override byte[] GetGrayscaleLUT()
+		{
+			if (this.GrayscaleLUTPipeline == null)
+				throw new Exception(SR.ExceptionImageIsNotGrayscale);
+
+			return this.GrayscaleLUTPipeline.OutputLUT;
 		}
 
 		public PixelDataWrapper PixelDataWrapper
@@ -145,11 +168,22 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			this.GrayscaleLUTPipeline.VoiLUT = linearLut;
 			this.GrayscaleLUTPipeline.Execute();
 		}
+
+		public override bool HitTest(Point point)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Move(SizeF delta)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 	}
 
 	static class ImageLayerFactory
 	{
-		public static MockImageLayer CreateMonochrome8ImageLayer(int width, int height)
+		public static MockImageGraphic CreateMonochrome8ImageLayer(int width, int height)
 		{
 			int bitsAllocated = 8;
 			int bitsStored = 8;
@@ -159,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int planarConfiguration = 0;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			
-			return new MockImageLayer(
+			return new MockImageGraphic(
 				width, 
 				height, 
 				bitsAllocated,
@@ -171,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				photometricInterpretation);
 		}
 
-		public static MockImageLayer CreateMonochrome16ImageLayer(int width, int height)
+		public static MockImageGraphic CreateMonochrome16ImageLayer(int width, int height)
 		{
 			int bitsAllocated = 16;
 			int bitsStored = 16;
@@ -181,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int planarConfiguration = 0;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 
-			return new MockImageLayer(
+			return new MockImageGraphic(
 				width,
 				height,
 				bitsAllocated,
@@ -193,7 +227,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				photometricInterpretation);
 		}
 
-		public static MockImageLayer CreateRGBTripletImageLayer(int width, int height)
+		public static MockImageGraphic CreateRGBTripletImageLayer(int width, int height)
 		{
 			int bitsAllocated = 8;
 			int bitsStored = 8;
@@ -203,7 +237,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int planarConfiguration = 0;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 
-			return new MockImageLayer(
+			return new MockImageGraphic(
 				width,
 				height,
 				bitsAllocated,
@@ -215,7 +249,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				photometricInterpretation);
 		}
 
-		public static MockImageLayer CreateRGBPlanarImageLayer(int width, int height)
+		public static MockImageGraphic CreateRGBPlanarImageLayer(int width, int height)
 		{
 			int bitsAllocated = 8;
 			int bitsStored = 8;
@@ -225,7 +259,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int planarConfiguration = 1;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 
-			return new MockImageLayer(
+			return new MockImageGraphic(
 				width,
 				height,
 				bitsAllocated,
@@ -241,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
 	static class ImageRendererTestUtilities
 	{
-		public static Bitmap RenderLayer(MockImageLayer layer, int dstWidth, int dstHeight)
+		public static Bitmap RenderLayer(MockImageGraphic layer, int dstWidth, int dstHeight)
 		{
 			Bitmap bitmap = new Bitmap(dstWidth, dstHeight);
 			RectangleF clientArea = new RectangleF(0, 0, dstWidth, dstHeight);

@@ -120,15 +120,33 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
-    <Compile Include="DynamicOverlays\CompassStretchIndicatorCursorProvider.cs" />
-    <Compile Include="DynamicOverlays\CreateGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CompassStretchIndicatorCursorProvider.cs" />
+    <Compile Include="InteractiveGraphics\CreateGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\GraphicStateManager.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="Imaging\ISpatialTransformProvider.cs" />
+    <Compile Include="Imaging\IVOILUTLinearProvider.cs" />
+    <Compile Include="Imaging\ImageSpatialTransform.cs" />
+    <Compile Include="Imaging\ISpatialTransform.cs" />
+    <Compile Include="Imaging\IVOILUTLinear.cs" />
+    <Compile Include="Graphics\GeneratedImageGraphic.cs" />
+    <Compile Include="Graphics\GraphicSelectedEventArgs.cs" />
+    <Compile Include="Graphics\IImageSopProvider.cs" />
+    <Compile Include="Graphics\IOverlayGraphicsProvider.cs" />
+    <Compile Include="Graphics\IImageGraphicProvider.cs" />
+    <Compile Include="Graphics\IFocussableGraphic.cs" />
+    <Compile Include="Graphics\CompositeImageGraphic.cs" />
+    <Compile Include="Graphics\ISelectableGraphic.cs" />
+    <Compile Include="InteractiveGraphics\IStandardStatefulGraphic.cs" />
+    <Compile Include="InteractiveGraphics\StandardGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\IStatefulGraphic.cs" />
     <Compile Include="ImageSet.cs" />
     <Compile Include="ImageSetEventArgs.cs" />
     <Compile Include="DiagnosticImageViewerComponent.cs" />
-    <Compile Include="DynamicOverlays\FocusSelectedGraphicState.cs" />
-    <Compile Include="DynamicOverlays\FocusSelectedInteractiveGraphicState.cs" />
-    <Compile Include="DynamicOverlays\FocusSelectedROIGraphicState.cs" />
-    <Compile Include="DynamicOverlays\SelectedGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocusSelectedGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocusSelectedInteractiveGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocusSelectedROIGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
     <Compile Include="ImageViewerDesktopTool.cs" />
@@ -160,9 +178,10 @@
     <Compile Include="InputManagement\MouseWheelShortcut.cs" />
     <Compile Include="InputManagement\TrackMousePositionMessage.cs" />
     <Compile Include="InputManagement\TileController.cs" />
-    <Compile Include="Layers\GraphicFocusedEventArgs.cs" />
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
+    <Compile Include="Graphics\IGraphic.cs" />
+    <Compile Include="Graphics\SceneGraph.cs" />
     <Compile Include="LayoutCapableImageViewerComponent.cs" />
     <Compile Include="Rendering\ImageInterpolator.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
@@ -200,7 +219,7 @@
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
     <Compile Include="Tests\TestTree.cs" />
-    <Compile Include="Rendering\DicomPresentationImageRenderer.cs" />
+    <Compile Include="Rendering\StandardPresentationImageRenderer.cs" />
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
     <Compile Include="Imaging\Tests\DicomPresentationImageSortTests.cs" />
     <Compile Include="Mathematics\FloatComparer.cs" />
@@ -214,33 +233,32 @@
     <Compile Include="DisplaySetCollection.cs" />
     <Compile Include="DisplaySetEventArgs.cs" />
     <Compile Include="DisplaySetSelectedEventArgs.cs" />
-    <Compile Include="DynamicOverlays\AnchorPointEventArgs.cs" />
-    <Compile Include="DynamicOverlays\CalloutGraphic.cs" />
-    <Compile Include="DynamicOverlays\ControlPoint.cs" />
-    <Compile Include="DynamicOverlays\ControlPointEventArgs.cs" />
-    <Compile Include="DynamicOverlays\ControlPointsGraphic.cs" />
-    <Compile Include="DynamicOverlays\CreateMultiLineGraphicState.cs" />
-    <Compile Include="DynamicOverlays\CreateRectangleGraphicState.cs" />
-    <Compile Include="DynamicOverlays\CreateROIGraphicState.cs" />
-    <Compile Include="DynamicOverlays\FocusGraphicState.cs" />
-    <Compile Include="DynamicOverlays\GraphicState.cs" />
-    <Compile Include="DynamicOverlays\GraphicStateChangedEventArgs.cs" />
-    <Compile Include="DynamicOverlays\InactiveGraphicState.cs" />
-    <Compile Include="DynamicOverlays\InteractiveGraphic.cs" />
-    <Compile Include="DynamicOverlays\InteractiveMultiLineGraphic.cs" />
-    <Compile Include="DynamicOverlays\InteractiveRectangleGraphic.cs" />
-    <Compile Include="DynamicOverlays\MoveControlPointGraphicState.cs" />
-    <Compile Include="DynamicOverlays\MoveGraphicState.cs" />
-    <Compile Include="DynamicOverlays\MultiLineAnchorPointsGraphic.cs" />
-    <Compile Include="DynamicOverlays\PointMemento.cs" />
-    <Compile Include="DynamicOverlays\PointsMemento.cs" />
-    <Compile Include="DynamicOverlays\PositionInteractiveGraphicCommand.cs" />
-    <Compile Include="DynamicOverlays\RectangleMemento.cs" />
-    <Compile Include="DynamicOverlays\ROIGraphic.cs" />
-    <Compile Include="DynamicOverlays\StatefulGraphic.cs" />
+    <Compile Include="InteractiveGraphics\AnchorPointEventArgs.cs" />
+    <Compile Include="InteractiveGraphics\CalloutGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ControlPoint.cs" />
+    <Compile Include="InteractiveGraphics\ControlPointEventArgs.cs" />
+    <Compile Include="InteractiveGraphics\ControlPointGroup.cs" />
+    <Compile Include="InteractiveGraphics\CreateMultiLineGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreateRectangleGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreateROIGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocusGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\GraphicState.cs" />
+    <Compile Include="InteractiveGraphics\GraphicStateChangedEventArgs.cs" />
+    <Compile Include="InteractiveGraphics\InactiveGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\InteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\RectangleInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\MoveControlPointGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\MoveGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\PolyLineAnchorPointsGraphic.cs" />
+    <Compile Include="InteractiveGraphics\PointMemento.cs" />
+    <Compile Include="InteractiveGraphics\PointsMemento.cs" />
+    <Compile Include="InteractiveGraphics\PositionGraphicCommand.cs" />
+    <Compile Include="InteractiveGraphics\RectangleMemento.cs" />
+    <Compile Include="InteractiveGraphics\ROIGraphic.cs" />
+    <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="EventBroker.cs" />
-    <Compile Include="GraphicHitTestInfo.cs" />
     <Compile Include="Annotations\IAnnotationItem.cs" />
     <Compile Include="Annotations\IAnnotationItemProvider.cs" />
     <Compile Include="IImageViewer.cs" />
@@ -263,7 +281,7 @@
     <Compile Include="Imaging\SpatialTransformMemento.cs" />
     <Compile Include="Imaging\Tests\SpatialTransformTest.cs" />
     <Compile Include="Imaging\WindowLevelApplicator.cs" />
-    <Compile Include="Imaging\DicomPresentationImage.cs" />
+    <Compile Include="StandardPresentationImage.cs" />
     <Compile Include="Imaging\GrayscaleLUT.cs" />
     <Compile Include="Imaging\IGrayscaleLUT.cs" />
     <Compile Include="Imaging\ILUT.cs" />
@@ -280,37 +298,24 @@
     <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
     <Compile Include="Imaging\VOILUTLinear.cs" />
     <Compile Include="Imaging\WindowLevelMemento.cs" />
-    <Compile Include="Imaging\WindowLevelOperator.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
-    <Compile Include="Layers\BaseLayerCollection.cs" />
-    <Compile Include="Layers\GraphicLayer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Layers\GraphicLayerSelectedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Layers\GraphicSelectedEventArgs.cs" />
-    <Compile Include="Layers\ImageLayerSelectedEventArgs.cs" />
-    <Compile Include="Layers\Graphic.cs" />
-    <Compile Include="Layers\GraphicCollection.cs" />
-    <Compile Include="Layers\ImageLayer.cs" />
-    <Compile Include="Layers\InvariantPrimitive.cs" />
-    <Compile Include="Layers\InvariantRectanglePrimitive.cs" />
-    <Compile Include="Layers\InvariantTextPrimitive.cs" />
-    <Compile Include="Layers\Layer.cs" />
-    <Compile Include="Layers\LayerCollection.cs" />
-    <Compile Include="Layers\LayerEventArgs.cs" />
-    <Compile Include="Layers\LayerGroup.cs" />
-    <Compile Include="Layers\LayerGroupSelectedEventArgs.cs" />
-    <Compile Include="Layers\LayerManager.cs" />
-    <Compile Include="Layers\LinePrimitive.cs" />
-    <Compile Include="Layers\PixelDataWrapper.cs" />
-    <Compile Include="Layers\PointChangedEventArgs.cs" />
-    <Compile Include="Layers\RectanglePrimitive.cs" />
-    <Compile Include="Layers\DicomImageLayer.cs" />
-    <Compile Include="Layers\Tests\PixelDataWrapperTest.cs" />
-    <Compile Include="Layers\Tests\ImageLayerTest.cs" />
-    <Compile Include="Layers\Tests\LayerGroupTest.cs" />
+    <Compile Include="Graphics\GraphicCollection.cs" />
+    <Compile Include="Graphics\VectorGraphic.cs" />
+    <Compile Include="Graphics\ImageGraphic.cs" />
+    <Compile Include="Graphics\InvariantPrimitive.cs" />
+    <Compile Include="Graphics\InvariantRectanglePrimitive.cs" />
+    <Compile Include="Graphics\InvariantTextPrimitive.cs" />
+    <Compile Include="Graphics\Graphic.cs" />
+    <Compile Include="Graphics\GraphicEventArgs.cs" />
+    <Compile Include="Graphics\CompositeGraphic.cs" />
+    <Compile Include="Graphics\LinePrimitive.cs" />
+    <Compile Include="Graphics\PixelDataWrapper.cs" />
+    <Compile Include="Graphics\PointChangedEventArgs.cs" />
+    <Compile Include="Graphics\RectanglePrimitive.cs" />
+    <Compile Include="Graphics\StandardImageGraphic.cs" />
+    <Compile Include="Graphics\Tests\PixelDataWrapperTest.cs" />
+    <Compile Include="Graphics\Tests\ImageLayerTest.cs" />
+    <Compile Include="Graphics\Tests\LayerGroupTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
     <Compile Include="MouseTool.cs" />
@@ -377,6 +382,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="InteractiveGraphics\Graphics.cd" />
     <None Include="Annotations\AnnotationLayoutStoreSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
@@ -386,7 +392,6 @@
       <LastGenOutput>DicomFilteredAnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="Layers\Layers.cd" />
     <None Include="PostBuild.bat" />
     <None Include="Workspaces.cd" />
     <None Include="StudyManagement\StudyFindersAndLoaders.cd" />
@@ -408,7 +413,9 @@
     <Content Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreDefaults.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DynamicOverlays\Tests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InteractiveGraphics\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

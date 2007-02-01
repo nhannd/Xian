@@ -20,87 +20,46 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public bool ScaleToFit
 		{
-			get
-			{
-				return _scaleToFit;
-			}
-			set
-			{
-				_scaleToFit = value;
-			}
+			get { return _scaleToFit; }
+			set { _scaleToFit = value; }
 		}
 
 		public float Scale
 		{
-			get
-			{
-				return _scale;
-			}
-			set
-			{
-				_scale = value;
-			}
+			get { return _scale; }
+			set { _scale = value; }
 		}
 
 		public float TranslationX
 		{
-			get
-			{
-				return _translationX;
-			}
-			set
-			{
-				_translationX = value;
-			}
+			get { return _translationX; }
+			set { _translationX = value; }
 		}
 
 		public float TranslationY
 		{
-			get
-			{
-				return _translationY;
-			}
-			set
-			{
-				_translationY = value;
-			}
+			get { return _translationY; }
+			set { _translationY = value; }
 		}
 
 		public bool FlipHorizontal
 		{
-			get
-			{
-				return _flipHorizontal;
-			}
-			set
-			{
-				_flipHorizontal = value;
-			}
+			get { return _flipHorizontal; }
+			set { _flipHorizontal = value; }
 		}
 
 		public bool FlipVertical
 		{
-			get
-			{
-				return _flipVertical;
-			}
-			set
-			{
-				_flipVertical = value;
-			}
+			get { return _flipVertical; }
+			set { _flipVertical = value; }
 		}
 
 		public int Rotation
 		{
-			get
-			{
-				return _rotation;
-			}
-			set
-			{
-				_rotation = value;
-			}
+			get { return _rotation; }
+			set { _rotation = value; }
 		}
+
 
 		public override bool Equals(object obj)
 		{

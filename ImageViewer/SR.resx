@@ -144,6 +144,9 @@
   <data name="ExceptionImageBufferWin32NotSupported" xml:space="preserve">
     <value>ImageBufferWin32 is not supported on non-Win32 platforms.</value>
   </data>
+  <data name="ExceptionImageIsNotGrayscale" xml:space="preserve">
+    <value>Image is not grayscale.</value>
+  </data>
   <data name="ExceptionInvalidAnnotationLayoutXml" xml:space="preserve">
     <value>Invalid Annotation Layout XML ({0}).</value>
   </data>

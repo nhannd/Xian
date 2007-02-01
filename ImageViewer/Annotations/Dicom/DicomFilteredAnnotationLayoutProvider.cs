@@ -4,14 +4,15 @@ using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
 using System.Diagnostics;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	class DicomFilteredAnnotationLayoutProvider : StoredAnnotatationLayoutProvider
 	{
-		private DicomPresentationImage _image;
+		private IImageSopProvider _image;
 
-		public DicomFilteredAnnotationLayoutProvider(DicomPresentationImage image)
+		public DicomFilteredAnnotationLayoutProvider(IImageSopProvider image)
 		{
 			Platform.CheckForNullReference(image, "image");
 			_image = image;

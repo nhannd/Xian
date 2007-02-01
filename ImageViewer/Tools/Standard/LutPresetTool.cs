@@ -13,6 +13,7 @@ using System.IO;
 using ClearCanvas.ImageViewer.Tools.Standard.LutPresets;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -82,14 +83,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_settings = new LutPresetSettings();
 
 			this.Enabled = (this.Context.Viewer.SelectedPresentationImage != null &&
-								this.Context.Viewer.SelectedPresentationImage is DicomPresentationImage);
+								this.Context.Viewer.SelectedPresentationImage is StandardPresentationImage);
 
 			this.Context.Viewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
 		}
 
 		void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			this.Enabled = e.SelectedPresentationImage is DicomPresentationImage;
+			this.Enabled = e.SelectedPresentationImage is StandardPresentationImage;
 		}
 		
 		private void AutoApplyLut()
@@ -97,31 +98,31 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!this.Enabled)
 				return;
 
-			if (this.Context.Viewer.SelectedPresentationImage == null)
+			IVOILUTLinearProvider associatedWindowLevel = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
+			IImageSopProvider associatedDicom = this.Context.Viewer.SelectedPresentationImage as IImageSopProvider;
+
+			if (associatedWindowLevel == null || associatedDicom == null)
 				return;
 
-			if (!(this.Context.Viewer.SelectedPresentationImage is DicomPresentationImage))
-				return;
+			Window[] windowCenterAndWidth = associatedDicom.ImageSop.WindowCenterAndWidth;
 
-			DicomPresentationImage dicomImage = this.Context.Viewer.SelectedPresentationImage as DicomPresentationImage;
-
-			Window[] windowCenterAndWidth = dicomImage.ImageSop.WindowCenterAndWidth;
 			if (windowCenterAndWidth == null || windowCenterAndWidth.Length == 0)
 				return;
 
-			WindowLevelApplicator applicator = new WindowLevelApplicator(dicomImage);
+			WindowLevelApplicator applicator = new WindowLevelApplicator(associatedWindowLevel);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevel;
 			command.BeginState = applicator.CreateMemento();
 
-			WindowLevelOperator.InstallVOILUTLinear(dicomImage, windowCenterAndWidth[0].Width, windowCenterAndWidth[0].Center);
-			dicomImage.Draw();
+			associatedWindowLevel.VoiLut.WindowWidth = windowCenterAndWidth[0].Width;
+			associatedWindowLevel.VoiLut.WindowCenter = windowCenterAndWidth[0].Center;
+			associatedWindowLevel.Draw();
 
 			command.EndState = applicator.CreateMemento();
 			if (!command.EndState.Equals(command.BeginState))
 			{
 				applicator.SetMemento(command.EndState);
-				dicomImage.ImageViewer.CommandHistory.AddCommand(command);
+				this.Context.Viewer.CommandHistory.AddCommand(command);
 			}
 		}
 

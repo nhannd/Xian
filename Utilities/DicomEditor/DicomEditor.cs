@@ -7,7 +7,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.Layers;
 using ClearCanvas.ImageViewer.Explorer.Local;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
@@ -72,7 +71,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             if (this.ContextBase is IImageViewerToolContext)
             {
                 IImageViewerToolContext context = this.ContextBase as IImageViewerToolContext;
-                DicomPresentationImage image = context.Viewer.SelectedPresentationImage as DicomPresentationImage;
+                StandardPresentationImage image = context.Viewer.SelectedPresentationImage as StandardPresentationImage;
                 if (image == null)
                 {
                     Platform.ShowMessageBox(SR.MessagePleaseSelectAnImage);

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using ClearCanvas.ImageViewer.Layers;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop;
@@ -207,9 +207,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_startMousePoint = buttonMessage.Location;
 
 			//give unfocused graphics a chance to focus (in the case of going straight from context menu to a graphic).
-			FindHandlingLayer(TrackHandler);
+			FindHandlingGraphic(TrackHandler);
 
-			IMouseButtonHandler handler = FindHandlingLayer(StartHandler);
+			IMouseButtonHandler handler = FindHandlingGraphic(StartHandler);
 			if (handler != null)
 			{
 				this.CaptureHandler = handler;
@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 			}
 
-			IMouseButtonHandler handler = FindHandlingLayer(TrackHandler);
+			IMouseButtonHandler handler = FindHandlingGraphic(TrackHandler);
 			SetCursorToken(handler, trackMessage.Location);
 			return (handler != null);
 		}
@@ -315,46 +315,31 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return handler.Stop(this);
 		}
 
-		private IMouseButtonHandler FindHandlingLayer(CallHandlerMethodDelegate handlerDelegate)
+		private IMouseButtonHandler FindHandlingGraphic(CallHandlerMethodDelegate handlerDelegate)
 		{
-			return FindHandlingLayer(this.Tile.PresentationImage.LayerManager.RootLayerGroup, handlerDelegate);
+			PresentationImage image = this.Tile.PresentationImage as PresentationImage;
+
+			return FindHandlingGraphic(image.SceneGraph, handlerDelegate);
 		}
 
-		private IMouseButtonHandler FindHandlingLayer(LayerGroup layerGroup, CallHandlerMethodDelegate handlerDelegate)
+		private IMouseButtonHandler FindHandlingGraphic(CompositeGraphic compositeGraphic, CallHandlerMethodDelegate handlerDelegate)
 		{
-			for (int layerIndex = layerGroup.Layers.Count - 1; layerIndex >= 0; --layerIndex)
+			for (int graphicIndex = compositeGraphic.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
 			{
-				Layer layer = layerGroup.Layers[layerIndex];
+				IGraphic graphic = compositeGraphic.Graphics[graphicIndex];
 
-				if (layer.IsLeaf || !layer.Visible)
+				if (!graphic.Visible)
 					continue;
 
-				if (layer is LayerGroup)
+				if (graphic is IMouseButtonHandler)
 				{
-					return FindHandlingLayer(layer as LayerGroup, handlerDelegate);
+					IMouseButtonHandler handler = (IMouseButtonHandler)graphic;
+					if (handlerDelegate(handler))
+						return handler;
 				}
-				else if (layer is ImageLayer)
+				else if (graphic is CompositeGraphic)
 				{
-					if (layer is IMouseButtonHandler)
-					{
-						IMouseButtonHandler handler = (IMouseButtonHandler)layer;
-						if (handlerDelegate(handler))
-							return handler;
-					}
-				}
-				else if (layer is GraphicLayer)
-				{
-					GraphicLayer graphicLayer = layer as GraphicLayer;
-					for (int graphicIndex = graphicLayer.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
-					{
-						Layer graphic = graphicLayer.Graphics[graphicIndex];
-						if (graphic is IMouseButtonHandler)
-						{
-							IMouseButtonHandler handler = (IMouseButtonHandler)graphic;
-							if (handlerDelegate(handler))
-								return handler;
-						}
-					}
+					return FindHandlingGraphic(graphic as CompositeGraphic, handlerDelegate);
 				}
 			}
 
@@ -403,7 +388,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (message is MouseLeaveMessage)
 				{
 					if (_tile.PresentationImage != null)
-						_tile.PresentationImage.LayerManager.FocusGraphic = null;
+						_tile.PresentationImage.FocussedGraphic = null;
 				}
 			}
 

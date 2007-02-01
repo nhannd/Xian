@@ -172,15 +172,12 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		protected bool IsImageValid(IPresentationImage image)
+		protected virtual bool IsImageValid(IPresentationImage image)
 		{
 			if (image == null)
 				return false;
-
-			if (image.LayerManager.SelectedImageLayer == null)
-				return false;
-
-			return true;
+			else
+				return true;
 		}
 
 		#region ICursorTokenProvider Members

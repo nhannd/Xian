@@ -3,55 +3,46 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// Implements a 2D affine transformation
 	/// </summary>
-	public class SpatialTransform : IMemorable
+	public class SpatialTransform : ISpatialTransform
 	{
 		// Private attributes
-		private Rectangle _destinationRectangle;
-		private Rectangle _sourceRectangle;
-		private double _pixelSpacingX;
-		private double _pixelSpacingY;
-		private int _pixelAspectRatioX;
-		private int _pixelAspectRatioY;
+		private float _scale = 1.0f;
+		private float _maximumScale = 64.0f;
+		private float _minimumScale = 0.25f;
+		private float _scaleX = 1.0f;
+		private float _scaleY = 1.0f;
 		private bool _scaleToFit;
-		private float _scale;
-		private float _maximumScale = 64.0F;
-		private float _minimumScale = 0.5F;
-		private float _scaleX;
-		private float _scaleY;
+		private float _cumulativeScale = 1.0f;
 		private float _translationX;
 		private float _translationY;
 		private float _rotation;
 		private bool _flipHorizontal;
 		private bool _flipVertical;
-		private Matrix _resultMatrix = new Matrix();
+		private Matrix _cumulativeTransform;
+		private Matrix _transform;
+		private Rectangle _clientRectangle;
 		private bool _recalculationRequired;
+		private Graphic _ownerGraphic;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SpatialTransform"/> class.
 		/// </summary>
-		public SpatialTransform()
+		public SpatialTransform(Graphic ownerGraphic)
 		{
+			_ownerGraphic = ownerGraphic;
 			Initialize();
 		}
 
-		/// <summary>
-		/// Gets or sets a value indicating whether images will be scaled to fit
-		/// in a <see cref="Tile"/>.
-		/// </summary>
-		public bool ScaleToFit
+		internal Graphic OwnerGraphic
 		{
-			get { return _scaleToFit; }
-			set	
-			{ 
-				_scaleToFit = value;
-				_recalculationRequired = true;
-			}
+			get { return _ownerGraphic; }
 		}
 
 		/// <summary>
@@ -69,7 +60,36 @@ namespace ClearCanvas.ImageViewer.Imaging
 				else
 					_scale = value;
 
-				_recalculationRequired = true;
+				this.ScaleX = _scale;
+				this.ScaleY = _scale;
+
+				this.RecalculationRequired = true;
+			}
+		}
+
+		public float MinimumScale
+		{
+			get { return _minimumScale; }
+			protected set { _minimumScale = value; }
+		}
+
+		public float MaximumScale
+		{
+			get { return _maximumScale; }
+			protected set { _maximumScale = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether images will be scaled to fit
+		/// in a <see cref="Tile"/>.
+		/// </summary>
+		public bool ScaleToFit
+		{
+			get { return _scaleToFit; }
+			set
+			{
+				_scaleToFit = value;
+				this.RecalculationRequired = true;
 			}
 		}
 
@@ -82,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set	
 			{ 
 				_translationX = value;
-				_recalculationRequired = true;
+				this.RecalculationRequired = true;
 			}
 		}
 
@@ -95,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set	
 			{ 
 				_translationY = value;
-				_recalculationRequired = true;
+				this.RecalculationRequired = true;
 			}
 		}
 
@@ -109,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set 
 			{ 
 				_flipHorizontal = value;
-				_recalculationRequired = true;
+				this.RecalculationRequired = true;
 			}
 		}
 
@@ -123,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set 
 			{ 
 				_flipVertical = value;
-				_recalculationRequired = true;
+				this.RecalculationRequired = true;
 			}
 		}
 
@@ -140,17 +160,168 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return (int)_rotation; }
 			set 
 			{
-				if ((value % 90) != 0)
-					throw new ArgumentException(SR.ExceptionInvalidRotationValue);
+				//if ((value % 90) != 0)
+				//	throw new ArgumentException(SR.ExceptionInvalidRotationValue);
 
 				_rotation = value % 360;
 
 				if (_rotation < 0)
 					_rotation += 360;
 
-				_recalculationRequired = true;
+				this.RecalculationRequired = true;
 			}
 		}
+
+
+		/// <summary>
+		/// Gets the scale in the x-direction.
+		/// </summary>
+		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
+		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
+		/// will differ.</remarks>
+		public float ScaleX
+		{
+			get { return _scaleX; }
+			protected set 
+			{ 
+				_scaleX = value;
+				this.RecalculationRequired = true;
+			}
+		}
+
+		/// <summary>
+		/// Gets the scale in the y-direction.
+		/// </summary>
+		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
+		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
+		/// will differ.</remarks>
+		public float ScaleY
+		{
+			get { return _scaleY; }
+			protected set 
+			{
+				this.RecalculationRequired = true;
+				_scaleY = value; 
+			}
+		}
+
+		public Matrix Transform
+		{
+			get
+			{
+				if (_transform == null)
+					_transform = new Matrix();
+
+				_transform.Reset();
+				_transform.Translate(this.TranslationX * Math.Abs(this.ScaleX), this.TranslationY * Math.Abs(this.ScaleY));
+				_transform.Scale(this.ScaleX, this.ScaleY);
+				_transform.Rotate(this.Rotation);
+
+				return _transform;
+			}
+		}
+
+		public float CumulativeScale
+		{
+			get { return _cumulativeScale; }
+			protected set { _cumulativeScale = value; }
+		}
+
+		public Matrix CumulativeTransform
+		{
+			get 
+			{
+				Calculate();
+				return this.CumulativeTransformInternal; 
+			}
+		}
+
+		protected Matrix CumulativeTransformInternal
+		{
+			get
+			{
+				if (_cumulativeTransform == null)
+					_cumulativeTransform = new Matrix();
+
+				return _cumulativeTransform;
+			}
+		}
+
+		public Rectangle ClientRectangle
+		{
+			get { return _clientRectangle; }
+			set 
+			{ 
+				_clientRectangle = value;
+				this.RecalculationRequired = true;
+			}
+		}
+
+		protected bool RecalculationRequired
+		{
+			get { return _recalculationRequired; }
+			set { _recalculationRequired = value; }
+		}
+
+		/// <summary>
+		/// Resets all transform parameters to their defaults.
+		/// </summary>
+		public virtual void Initialize()
+		{
+			this.Scale = 1.0F;
+			this.ScaleX = 1.0F;
+			this.ScaleY = 1.0F;
+			this.ScaleToFit = true;
+			this.TranslationX = 0.0F;
+			this.TranslationY = 0.0F;
+			this.Rotation = 0;
+			this.FlipHorizontal = false;
+			this.FlipVertical = false;
+		}
+
+		/// <summary>
+		/// Calculates the transform.
+		/// </summary>
+		/// <remarks>Once this method is executed, the <see cref="Transform"/>
+		/// property will reflect any changes in the transform parameters.</remarks>
+		protected virtual void Calculate()
+		{
+			if (!this.RecalculationRequired)
+				return;
+
+			CalculateScale();
+			CalculateFlip();
+
+			// The cumulative transform is the product of the transform of the
+			// parent graphic and the transform of this graphic (i.e. the current transform)
+			// If there is no parent graphic, then the cumulative transform = current transform
+			this.CumulativeTransformInternal.Reset();
+
+			Graphic parentGraphic = this.OwnerGraphic.ParentGraphic as Graphic;
+
+			if (parentGraphic != null)
+				this.CumulativeTransformInternal.Multiply(parentGraphic.SpatialTransform.CumulativeTransform);
+
+			CalculatePreTransform();
+			this.CumulativeTransformInternal.Multiply(this.Transform);
+			CalculatePostTransform();
+
+			this.CumulativeScale = this.Scale;
+
+			if (parentGraphic != null)
+				this.CumulativeScale *= parentGraphic.SpatialTransform.CumulativeScale;
+
+			this.RecalculationRequired = false;
+		}
+
+		protected virtual void CalculatePreTransform()
+		{
+		}
+
+		protected virtual void CalculatePostTransform()
+		{
+		}
+
 
 		#region IMemorable members
 
@@ -167,7 +338,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			spatialTransformMemento.FlipVertical = this.FlipVertical;
 			spatialTransformMemento.Rotation = this.Rotation;
 			spatialTransformMemento.Scale = this.Scale;
-			spatialTransformMemento.ScaleToFit = this.ScaleToFit;
+			//spatialTransformMemento.ScaleToFit = this.ScaleToFit;
 			spatialTransformMemento.TranslationX = this.TranslationX;
 			spatialTransformMemento.TranslationY = this.TranslationY;
 
@@ -196,196 +367,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			this.ScaleToFit = spatialTransformMemento.ScaleToFit;
 			this.TranslationX = spatialTransformMemento.TranslationX;
 			this.TranslationY = spatialTransformMemento.TranslationY;
-
-			Calculate();
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Gets the <see cref="Matrix"/> representing the transform.
-		/// </summary>
-		public Matrix Transform
-		{
-			get { return _resultMatrix; }
-		}
-
-		/// <summary>
-		/// Gets or sets the destination rectangle.
-		/// </summary>
-		/// <remarks>Typically, this would be the rectangle of the
-		/// <see cref="Tile"/> in which layers are being rendered.
-		/// The top left corner of the <see cref="Tile"/> corresponds to
-		/// (0,0).</remarks>
-		/// <exception cref="ArgumentNullException"><i>value</i> is <b>null</b></exception>
-		public Rectangle DestinationRectangle
-		{
-			get { return _destinationRectangle; }
-			set 
-			{
-				Platform.CheckForNullReference(value, "DestinationRectangle");
-				_destinationRectangle = value;
-				_recalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the source rectangle.
-		/// </summary>
-		/// <remarks>Typically, this would be the rectangle of the
-		/// original image being rendered.</remarks>
-		/// <exception cref="ArgumentNullException"><i>value</i> is <b>null</b></exception>
-		public Rectangle SourceRectangle
-		{
-			get { return _sourceRectangle; }
-			set 
-			{
-				Platform.CheckForNullReference(value, "SourceRectangle");
-				_sourceRectangle = value;
-				_recalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the pixel spacing in the x-direction.
-		/// </summary>
-		public double PixelSpacingX
-		{
-			get { return _pixelSpacingX; }
-			set	
-			{ 
-				_pixelSpacingX = value;
-				_recalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the pixel spacing in the y-direction.
-		/// </summary>
-		public double PixelSpacingY
-		{
-			get { return _pixelSpacingY; }
-			set	
-			{ 
-				_pixelSpacingY = value;
-				_recalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the pixel aspect ratio in the x-direction.
-		/// </summary>
-		public int PixelAspectRatioX
-		{
-			get { return _pixelAspectRatioX; }
-			set	
-			{ 
-				_pixelAspectRatioX = value;
-				_recalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the pixel aspect ratio in the y-direction.
-		/// </summary>
-		public int PixelAspectRatioY
-		{
-			get { return _pixelAspectRatioY; }
-			set	
-			{ 
-				_pixelAspectRatioY = value;
-				_recalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets the scale in the x-direction.
-		/// </summary>
-		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
-		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
-		/// will differ.</remarks>
-		public float ScaleX
-		{
-			get { return _scaleX; }
-		}
-
-		/// <summary>
-		/// Gets the scale in the y-direction.
-		/// </summary>
-		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
-		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
-		/// will differ.</remarks>
-		public float ScaleY
-		{
-			get	{ return _scaleY; }
-		}
-
-		/// <summary>
-		/// Resets all transform parameters to their defaults.
-		/// </summary>
-		public void Initialize()
-		{
-			_pixelSpacingX = 0.0d;
-			_pixelSpacingY = 0.0d;
-			_pixelAspectRatioX = 0;
-			_pixelAspectRatioY = 0;
-			_scaleToFit = true;
-			_scale = 1.0F;
-			_scaleX = 1.0F;
-			_scaleY = 1.0F;
-			_translationX = 0.0F;
-			_translationY = 0.0F;
-			_rotation = 0.0F;
-			_flipHorizontal = false;
-			_flipVertical = false;
-			_recalculationRequired = true;
-		}
-
-		/// <summary>
-		/// Calculates the transform.
-		/// </summary>
-		/// <remarks>Once this method is executed, the <see cref="Transform"/>
-		/// property will reflect any changes in the transform parameters.</remarks>
-		public void Calculate()
-		{
-			if (!_recalculationRequired)
-				return;
-
-			Platform.CheckForNullReference(_sourceRectangle, "_sourceRectangle");
-			Platform.CheckForNullReference(_destinationRectangle, "_destinationRectangle");
-
-			// Don't bother calculating anything if the area of either rectangle is zero
-			if (_sourceRectangle.Width == 0 || _sourceRectangle.Height == 0 ||
-				_destinationRectangle.Width == 0 || _destinationRectangle.Height == 0)
-				return;
-
-			CalculateScale();
-			CalculateFlip();
-
-			Matrix scaleMatrix = new Matrix();
-			scaleMatrix.Scale(_scaleX, _scaleY);
-
-			Matrix translateCenterTileMatrix = new Matrix();
-			translateCenterTileMatrix.Translate(_destinationRectangle.Left + _destinationRectangle.Width / 2.0f, _destinationRectangle.Top + _destinationRectangle.Height / 2.0f);
-
-			Matrix translateCenterImageMatrix = new Matrix();
-			translateCenterImageMatrix.Translate(-(_sourceRectangle.Width / 2.0f) * _scaleX, -(_sourceRectangle.Height / 2.0f) * _scaleY);
-
-			Matrix translateOffsetMatrix = new Matrix();
-			translateOffsetMatrix.Translate(_translationX * Math.Abs(_scaleX), _translationY * Math.Abs(_scaleY));
-
-			Matrix rotationMatrix = new Matrix();
-			rotationMatrix.Rotate(_rotation);
-
-			_resultMatrix.Reset();
-			_resultMatrix.Multiply(translateCenterTileMatrix);
-			_resultMatrix.Multiply(translateOffsetMatrix);
-			_resultMatrix.Multiply(rotationMatrix);
-			_resultMatrix.Multiply(translateCenterImageMatrix);
-			_resultMatrix.Multiply(scaleMatrix);
-
-			_recalculationRequired = false;
-		}
 
 		/// <summary>
 		/// Converts a <see cref="PointF"/> from source to destination coordinates.
@@ -394,11 +378,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns></returns>
 		public PointF ConvertToDestination(PointF sourcePoint)
 		{
-			Calculate();
-
 			PointF[] points = new PointF[1];
 			points[0] = sourcePoint;
-			_resultMatrix.TransformPoints(points);
+			this.CumulativeTransform.TransformPoints(points);
 			
 			return points[0];
 		}
@@ -410,9 +392,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns></returns>
 		public PointF ConvertToSource(PointF destinationPoint)
 		{
-			Calculate();
-
-			Matrix inverse = _resultMatrix.Clone();
+			Matrix inverse = this.CumulativeTransform.Clone();
 			inverse.Invert();
 
 			PointF[] points = new PointF[1];
@@ -454,9 +434,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public void ConvertVectorsToDestination(PointF[] sourceVectors)
 		{
-			Calculate();
-
-			_resultMatrix.TransformVectors(sourceVectors);
+			this.CumulativeTransform.TransformVectors(sourceVectors);
 		}
 
 		/// <summary>
@@ -465,9 +443,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public void ConvertVectorsToSource(PointF[] destinationVectors)
 		{
-			Calculate();
-
-			Matrix inverse = _resultMatrix.Clone();
+			Matrix inverse = this.CumulativeTransform.Clone();
 			inverse.Invert();
 
 			inverse.TransformVectors(destinationVectors);
@@ -480,8 +456,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns></returns>
 		public SizeF ConvertToDestination(SizeF sourceDimensions)
 		{
-			float width = sourceDimensions.Width * _scaleX;
-			float height = sourceDimensions.Height * _scaleY;
+			float width = sourceDimensions.Width * this.ScaleX;
+			float height = sourceDimensions.Height * this.ScaleY;
 
 			return new SizeF(width, height);
 		}
@@ -493,77 +469,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns></returns>
 		public SizeF ConvertToSource(SizeF destinationDimensions)
 		{
-			float width = destinationDimensions.Width / _scaleX;
-			float height = destinationDimensions.Height / _scaleY;
+			float width = destinationDimensions.Width / this.ScaleX;
+			float height = destinationDimensions.Height / this.ScaleY;
 
 			return new SizeF(width, height);
 		}
 
-		// Private methods
-		private void CalculateScale()
+		protected virtual void CalculateScale()
 		{
-			float pixelAspectRatio;
-			
-			if (_pixelAspectRatioX == 0 || _pixelAspectRatioY == 0)
-			{
-				if (_pixelSpacingX == 0 || _pixelSpacingY == 0)
-					pixelAspectRatio = 1;
-				else
-					pixelAspectRatio = (float) _pixelSpacingY / (float) _pixelSpacingX;
-			}
-			else
-			{
-				pixelAspectRatio = (float) _pixelAspectRatioY / (float) _pixelAspectRatioX;
-			}
-
-			if (_scaleToFit)
-				CalculateScaleToFit();
-
-			if (pixelAspectRatio >= 1)
-			{
-				_scaleX = _scale * pixelAspectRatio;
-				_scaleY = _scale;
-			}
-			else
-			{
-				_scaleX = _scale;
-				_scaleY = _scale / pixelAspectRatio;
-			}
 		}
 
-		private void CalculateScaleToFit()
-		{
-			if (_rotation == 90 || _rotation == 270)
-			{
-				float imageAspectRatio = (float) _sourceRectangle.Width / (float) _sourceRectangle.Height;
-				float clientAspectRatio = (float) _destinationRectangle.Height / (float) _destinationRectangle.Width;
-
-				if (clientAspectRatio >= imageAspectRatio)
-					_scale = (float) _destinationRectangle.Width / (float) _sourceRectangle.Height;
-				else
-					_scale = (float) _destinationRectangle.Height / (float) _sourceRectangle.Width;
-			}
-			else
-			{
-				float imageAspectRatio = (float) _sourceRectangle.Height / (float) _sourceRectangle.Width;
-				float clientAspectRatio = (float) _destinationRectangle.Height / (float) _destinationRectangle.Width;
-
-				if (clientAspectRatio >= imageAspectRatio)
-					_scale = (float) _destinationRectangle.Width / (float) _sourceRectangle.Width;
-				else
-					_scale = (float) _destinationRectangle.Height / (float) _sourceRectangle.Height;
-			}
-
-			_minimumScale = _scale / 2;
-		}
-
-		private void CalculateFlip()
+		protected void CalculateFlip()
 		{
 			if (_flipVertical)
-				_scaleY *= -1;
+				this.ScaleY *= -1;
 
 			if (_flipHorizontal)
-				_scaleX *= -1;
+				this.ScaleX *= -1;
 		}
 	}
 }

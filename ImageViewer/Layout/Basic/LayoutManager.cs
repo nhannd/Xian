@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
 		{
-			DicomPresentationImage presentationImage = new DicomPresentationImage(image);
+			StandardPresentationImage presentationImage = new StandardPresentationImage(image);
 			presentationImage.Tag = image.SopInstanceUID;
 			displaySet.PresentationImages.Add(presentationImage);
 

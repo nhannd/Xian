@@ -73,16 +73,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public string AETitle
         {
             get { return _serverManager.AETitle; }
+            set { _serverManager.AETitle = value; }
         }
 
         public int Port
         {
             get { return _serverManager.Port; }
+            set { _serverManager.Port = value; }
         }
 
         public string SaveDirectory
         {
             get { return _serverManager.SaveDirectory; }
+            set { _serverManager.SaveDirectory = value; }
         }
 
         public bool IsServerStarted
