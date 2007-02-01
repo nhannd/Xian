@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Healthcare.Workflow.Acquisition
+namespace ClearCanvas.Healthcare.Workflow.Modality
 {
     [ExtensionPoint]
     public class WorkflowOperationExtensionPoint : ExtensionPoint<IOperation>

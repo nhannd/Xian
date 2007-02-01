@@ -118,7 +118,7 @@
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
     <Compile Include="ModalityWorklistQueryResult.cs" />
-    <Compile Include="Workflow\Acquisition\Operations.cs" />
+    <Compile Include="Workflow\Modality\Operations.cs" />
     <Compile Include="Workflow\IOperation.cs" />
     <Compile Include="Workflow\Operation.cs" />
     <Compile Include="Workflow\Reporting\Operations.cs" />
