@@ -31,9 +31,8 @@ namespace ClearCanvas.Server.ShredHostClientUI.View.WinForms
             ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
             this._shredCollectionTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._toggleButton = new System.Windows.Forms.Button();
-            this._runningStateLabel = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox1.SuspendLayout();
+            this._shredHostGroupBox = new System.Windows.Forms.GroupBox();
+            this._shredHostGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // _shredCollectionTable
@@ -53,45 +52,32 @@ namespace ClearCanvas.Server.ShredHostClientUI.View.WinForms
             // 
             // _toggleButton
             // 
-            this._toggleButton.Location = new System.Drawing.Point(158, 30);
+            this._toggleButton.Location = new System.Drawing.Point(6, 35);
             this._toggleButton.Name = "_toggleButton";
-            this._toggleButton.Size = new System.Drawing.Size(130, 23);
+            this._toggleButton.Size = new System.Drawing.Size(299, 57);
             this._toggleButton.TabIndex = 1;
             this._toggleButton.Text = "Start/Stop";
             this._toggleButton.UseVisualStyleBackColor = true;
             // 
-            // _runningStateLabel
+            // _shredHostGroupBox
             // 
-            this._runningStateLabel.AutoSize = true;
-            this._runningStateLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this._runningStateLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this._runningStateLabel.Location = new System.Drawing.Point(21, 30);
-            this._runningStateLabel.Name = "_runningStateLabel";
-            this._runningStateLabel.Size = new System.Drawing.Size(99, 19);
-            this._runningStateLabel.TabIndex = 0;
-            this._runningStateLabel.Text = "_runningState";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this._toggleButton);
-            this.groupBox1.Controls.Add(this._runningStateLabel);
-            this.groupBox1.Location = new System.Drawing.Point(6, 6);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(311, 111);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "ShredHost";
+            this._shredHostGroupBox.Controls.Add(this._toggleButton);
+            this._shredHostGroupBox.Location = new System.Drawing.Point(6, 6);
+            this._shredHostGroupBox.Name = "_shredHostGroupBox";
+            this._shredHostGroupBox.Size = new System.Drawing.Size(311, 111);
+            this._shredHostGroupBox.TabIndex = 3;
+            this._shredHostGroupBox.TabStop = false;
+            this._shredHostGroupBox.Text = "ShredHost";
             // 
             // ShredHostClientComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this._shredHostGroupBox);
             this.Controls.Add(this._shredCollectionTable);
             this.Name = "ShredHostClientComponentControl";
             this.Size = new System.Drawing.Size(322, 371);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this._shredHostGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -100,7 +86,6 @@ namespace ClearCanvas.Server.ShredHostClientUI.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.TableView _shredCollectionTable;
         private System.Windows.Forms.Button _toggleButton;
-        private System.Windows.Forms.Label _runningStateLabel;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox _shredHostGroupBox;
     }
 }

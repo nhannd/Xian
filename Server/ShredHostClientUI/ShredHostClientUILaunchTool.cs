@@ -10,9 +10,9 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Server.ShredHostClientUI
 {
-    [MenuAction("apply", "global-menus/MenuTools/MenuToolsMyTools/ShredHostClientUILaunchTool")]
-    [ButtonAction("apply", "global-toolbars/ToolbarMyTools/ShredHostClientUILaunchTool")]
-    [Tooltip("apply", "Place tooltip text here")]
+    [MenuAction("apply", "global-menus/Services/ShredHostClientUILaunchTool")]
+    [ButtonAction("apply", "global-toolbars/Services/ShredHostClientUILaunchTool")]
+    [Tooltip("apply", "Open the Shred Host client UI")]
     [IconSet("apply", IconScheme.Colour, "Icons.ShredHostClientUILaunchToolSmall.png", "Icons.ShredHostClientUILaunchToolMedium.png", "Icons.ShredHostClientUILaunchToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]

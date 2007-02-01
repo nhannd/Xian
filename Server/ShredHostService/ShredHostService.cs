@@ -24,6 +24,10 @@ namespace ClearCanvas.Server.ShredHostService
             string startupPath = System.AppDomain.CurrentDomain.BaseDirectory;
             System.IO.Directory.SetCurrentDirectory(startupPath);
 
+            // we choose to dynamically load the ShredHost dll so that we can bypass
+            // the requirement that the ShredHost dll be Strong Name signed, i.e.
+            // if we were to reference it directly in the the project at design time
+            // ClearCanvas.Server.ShredHost.dll would also need to be Strong Name signed
             _assembly = Assembly.Load("ClearCanvas.Server.ShredHost");
             _shredHostType = _assembly.GetType("ClearCanvas.Server.ShredHost.ShredHost");
             _shredHostType.InvokeMember("Start", BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Public,

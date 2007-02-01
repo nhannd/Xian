@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 
 namespace ClearCanvas.Server.ShredHost
 {
@@ -9,12 +10,6 @@ namespace ClearCanvas.Server.ShredHost
     class ShredHostServiceType : IShredHost
     {
         #region IShredHost Members
-
-        public bool IsShredHostRunning()
-        {
-            return ShredHost.IsShredHostRunning;
-        }
-
         public WcfDataShred[] GetShreds()
         {
             return ShredHost.ShredControllerList.WcfDataShredCollection;

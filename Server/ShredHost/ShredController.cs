@@ -36,6 +36,12 @@ namespace ClearCanvas.Server.ShredHost
             // create the AppDomain that the shred object will be instantiated in
             _domain = AppDomain.CreateDomain(_startupInfo.ShredTypeName);
             _shredObject = (IShred)_domain.CreateInstanceFromAndUnwrap(_startupInfo.AssemblyPath.LocalPath, _startupInfo.ShredTypeName);
+            
+            // cache the shred's details so that even if the shred is stopped and unloaded
+            // we still have it's display name 
+            _shredCacheObject = new ShredCacheObject(_shredObject.GetDisplayName(), _shredObject.GetDescription());
+            
+            // create the thread and start it
             _thread = new Thread(new ParameterizedThreadStart(StartupShred));
             _thread.Start(this);
 
@@ -62,6 +68,8 @@ namespace ClearCanvas.Server.ShredHost
             _thread.Join();
             AppDomain.Unload(_domain);
             _domain = null;         // need to explicity set to null, otherwise any references to it in the future will throw an exception
+            _shredObject = null;
+            _thread = null;
 
             lock (_lockRunningState)
             {
@@ -96,6 +104,44 @@ namespace ClearCanvas.Server.ShredHost
             return _baseServicePort + portOffset;
         }
 
+        private class ShredCacheObject : IShred
+        {
+            public ShredCacheObject(string displayName, string description)
+            {
+                _displayName = displayName;
+                _description = description;
+            }
+
+            #region Private fields
+            private string _displayName;
+            private string _description;
+            #endregion
+
+            #region IShred Members
+
+            public void Start()
+            {
+                throw new Exception("The method or operation is not implemented.");
+            }
+
+            public void Stop()
+            {
+                throw new Exception("The method or operation is not implemented.");
+            }
+
+            public string GetDisplayName()
+            {
+                return _displayName;
+            }
+
+            public string GetDescription()
+            {
+                return _description;
+            }
+
+            #endregion
+        }
+
         #region Private fields
         private readonly int _highestServicePort = 65535;
         private readonly int _baseServicePort = 49153;
@@ -108,6 +154,7 @@ namespace ClearCanvas.Server.ShredHost
         #region Properties
         private Thread _thread;
         private IShred _shredObject;
+        private ShredCacheObject _shredCacheObject;
         private AppDomain _domain;
         private ShredStartupInfo _startupInfo;
         private int _id;
@@ -129,7 +176,13 @@ namespace ClearCanvas.Server.ShredHost
 
         public IShred Shred
         {
-            get { return _shredObject; }
+            get 
+            {
+                if (null == _shredObject)
+                    return _shredCacheObject;
+                else
+                    return _shredObject; 
+            }
         }
 
         public WcfDataShred WcfDataShred

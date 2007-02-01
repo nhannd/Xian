@@ -9,9 +9,6 @@ namespace ClearCanvas.Server.ShredHost
     public interface IShredHost
     {
         [OperationContract]
-        bool IsShredHostRunning();
-
-        [OperationContract]
         WcfDataShred[] GetShreds();
 
         [OperationContract]

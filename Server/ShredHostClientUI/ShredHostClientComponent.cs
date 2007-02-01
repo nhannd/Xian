@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ServiceProcess;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Server.ShredHost;
+using System.Threading;
 
 namespace ClearCanvas.Server.ShredHostClientUI
 {
@@ -86,7 +88,7 @@ namespace ClearCanvas.Server.ShredHostClientUI
             // TODO prepare the component for its live phase
             base.Start();
 
-            // initialize the list of shreds to be displayed
+            // initialize the list object that will display the shreds
             _shredCollection = new Table<Shred>();
             _shredCollection.Columns.Add(new TableColumn<Shred, string>("Shreds",
                 delegate(Shred shred) { return shred.Name; }
@@ -95,22 +97,25 @@ namespace ClearCanvas.Server.ShredHostClientUI
                 delegate(Shred shred) { return (shred.IsRunning) ? "Running" : "Stopped"; }
                 ));
 
-            WcfDataShred[] shreds;
-            using (ShredHostClient client = new ShredHostClient())
-            {
-                shreds = client.GetShreds();
-                // poll to see if ShredHost is running
-                _isShredHostRunning = client.IsShredHostRunning();
-            }
-
-            foreach (WcfDataShred shred in shreds)
-            {
-                _shredCollection.Items.Add(new Shred(shred._id, shred._name, shred._description, shred._isRunning));
-            }
+            // refresh the state of the Shred Host and shreds
+            Refresh();
 
             _toolSet = new ToolSet(new ShredHostClientToolExtensionPoint(), new ShredHostClientToolContext(this));
             _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "shredhostclient-toolbar", _toolSet.Actions);
             _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "shredhostclient-contextmenu", _toolSet.Actions);
+
+            _refreshTask = new BackgroundTask(delegate(IBackgroundTaskContext context)
+            {
+                while (true)
+                {
+                    System.Threading.Thread.Sleep(3000);
+                    Refresh();
+                }
+            },true
+            );
+
+            _refreshTask.Run();
+
         }
 
         public override void Stop()
@@ -120,12 +125,63 @@ namespace ClearCanvas.Server.ShredHostClientUI
             _toolSet.Dispose();
             _toolSet = null;
 
+            // signal the refresh thread to stop
+            _refreshTask.RequestCancel();
+
             base.Stop();
         }
 
         public void Toggle()
         {
+            ServiceController controller = GetShredHostServiceController();
+            switch (controller.Status)
+            {
+                case ServiceControllerStatus.Running:
+                    controller.Stop();
+                    return;
+                case ServiceControllerStatus.Stopped:
+                    controller.Start();
+                    return;
+                default:
+                    return;
+            }
+        }
 
+        private void Refresh()
+        {
+            // poll to see if ShredHost is running
+            ServiceController controller = GetShredHostServiceController();
+            this.IsShredHostRunning = (controller.Status == ServiceControllerStatus.Running);
+
+            // if the shred host is not running, the WCF service will not be reachable.
+            if (!this.IsShredHostRunning)
+                return;
+
+            WcfDataShred[] shreds;
+            using (ShredHostClient client = new ShredHostClient())
+            {
+                shreds = client.GetShreds();
+            }
+
+            foreach (WcfDataShred shred in shreds)
+            {
+                int matchIndex = _shredCollection.Items.FindIndex(delegate(Shred otherShred)
+                {
+                    return otherShred.Id == shred._id;
+                });
+
+                // this is a new shred being reported from Shred Host, add it to our list,
+                // usually the case if we are refreshing for the first time
+                if (-1 == matchIndex)
+                {
+                    _shredCollection.Items.Add(new Shred(shred._id, shred._name, shred._description, shred._isRunning));
+                }
+                else
+                {
+                    if (_shredCollection.Items[matchIndex].IsRunning != shred._isRunning)
+                        _shredCollection.Items[matchIndex].IsRunning = shred._isRunning;
+                }
+            }
         }
 
         public void StartShred(Shred shred)
@@ -160,6 +216,11 @@ namespace ClearCanvas.Server.ShredHostClientUI
 
             this.ShredCollection.Items[indexCurrentShred].IsRunning = isRunning;
             this.ShredCollection.Items.NotifyItemUpdated(indexCurrentShred);
+        }
+
+        public ServiceController GetShredHostServiceController()
+        {
+            return new ServiceController("ClearCanvas Shred Host Service");
         }
 
         #region Properties
@@ -204,13 +265,13 @@ namespace ClearCanvas.Server.ShredHostClientUI
         {
             get { return _contextMenuModel; }
         }
-
         #endregion
 
         #region Private fields
         ToolSet _toolSet;
         ActionModelRoot _toolbarModel;
         ActionModelRoot _contextMenuModel;
+        BackgroundTask _refreshTask;
         #endregion
     }
 }

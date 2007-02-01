@@ -34,7 +34,7 @@
     </Reference>
     <Reference Include="ClearCanvas.Server.ShredHost, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ShredHost\bin\Debug\ClearCanvas.Server.ShredHost.dll</HintPath>
+      <HintPath>..\ShredHost\bin\Release\ClearCanvas.Server.ShredHost.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
