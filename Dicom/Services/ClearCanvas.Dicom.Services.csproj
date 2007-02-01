@@ -42,6 +42,7 @@
       <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -54,6 +55,12 @@
     <Compile Include="ISendParcel.cs" />
     <Compile Include="ISendQueue.cs" />
     <Compile Include="LocalAESettings.cs" />
+    <Compile Include="LocalAESettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LocalAESettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="LocalApplicationEntity.cs" />
     <Compile Include="Parcel.cs" />
     <Compile Include="ParcelTransferState.cs" />
     <Compile Include="QueueDisplayComponent.cs" />
@@ -88,6 +95,13 @@
       <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
       <Name>ClearCanvas.Dicom.DataStore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="LocalAESettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LocalAESettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

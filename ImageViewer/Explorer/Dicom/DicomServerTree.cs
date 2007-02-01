@@ -175,16 +175,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (isupdated)
             {
                 _myServerGroup = new DicomServerGroup();
-                LocalAESettings myAESettings = new LocalAESettings();
-                _myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", myAESettings.AETitle, myAESettings.Port));
+
+				_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", LocalApplicationEntity.AETitle, LocalApplicationEntity.Port));
                 _myServerGroup.AddChild(new DicomServerGroup(AENavigatorComponent.MyServersTitle, _myServerGroup.ServerPath));
             }
             else
             {
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyDatastoreTitle, svrPaths, 1) == null)
                 {
-                    LocalAESettings myAESettings = new LocalAESettings();
-                    _myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", myAESettings.AETitle, myAESettings.Port));
+					_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", LocalApplicationEntity.AETitle, LocalApplicationEntity.Port));
                     isupdated = true;
                 }
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyServersTitle, svrPaths, 1) == null)

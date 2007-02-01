@@ -19,9 +19,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     public class DicomServerEventManager
     {
         private ClearCanvas.Dicom.Network.DicomServer _dicomServer;
-        private string _aeTitle;
-        private string _saveDirectory;
-        private int _port;
 
         // Used by CFind
         private ReadOnlyQueryResultCollection _queryResults;
@@ -34,31 +31,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public DicomServerEventManager()
         {
-            DicomServerTree dicomServerTree = new DicomServerTree();
-            LocalAESettings myAESettings = new LocalAESettings();
-            _saveDirectory = myAESettings.DicomStoragePath;
-
-            if (dicomServerTree.CurrentServer != null)
-            {
-                DicomServer server = (DicomServer)dicomServerTree.CurrentServer;
-                _aeTitle = server.DicomAE.AE;
-                _port = server.DicomAE.Port;
-            }
-            else
-            {
-                _aeTitle = myAESettings.AETitle;
-                _port = myAESettings.Port;
-            }
         }
 
         public void StartServer()
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle(_aeTitle), new ListeningPort(_port));
+                new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
 
-            CreateStorageDirectory(_saveDirectory);
+            CreateStorageDirectory(LocalApplicationEntity.DicomStoragePath);
 
-            _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myOwnAEParameters, _saveDirectory);
+            _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myOwnAEParameters, LocalApplicationEntity.DicomStoragePath);
             _dicomServer.FindScpEvent += OnFindScpEvent;
             _dicomServer.FindScpProgressEvent += OnFindScpProgressEvent;
             _dicomServer.StoreScpBeginEvent += OnStoreScpBeginEvent;
@@ -91,20 +73,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public string AETitle
         {
-            get { return _aeTitle; }
-            set { _aeTitle = value; }
+            get { return LocalApplicationEntity.AETitle; }
         }
 
         public int Port
         {
-            get { return _port; }
-            set { _port = value; }
+            get { return LocalApplicationEntity.Port; }
         }
 
         public string SaveDirectory
         {
-            get { return _saveDirectory; }
-            set { _saveDirectory = value; }
+            get { return LocalApplicationEntity.DicomStoragePath; }
         }
 
         public bool IsServerRunning
@@ -458,7 +437,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     studyDescription = buf.ToString();
 
                 // Add it to send Queue
-                ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(_aeTitle), new ListeningPort(_port));
+                ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
                 _sendParcel = (SendParcel)DicomServicesLayer.GetISender(me).Send(new Uid(studyInstanceUID), destinationAE, studyDescription);
                 _lastSendParcelProgress = 0;
                 info.Response.NumberOfRemainingSubOperations = (ushort)_sendParcel.GetToSendObjectCount();

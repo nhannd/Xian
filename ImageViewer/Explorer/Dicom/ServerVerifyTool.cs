@@ -31,8 +31,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
 				throw new DicomServerException(SR.ExceptionNoServersSelected);
             }
-            LocalAESettings myAESettings = new LocalAESettings();
-            ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle(myAESettings.AETitle), new ListeningPort(myAESettings.Port));
+
+			ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
             StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
             using (DicomClient client = new DicomClient(myAE))
