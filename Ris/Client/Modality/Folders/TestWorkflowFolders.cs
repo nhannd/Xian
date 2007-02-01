@@ -68,8 +68,8 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         protected override bool ProcessDrop(ModalityWorklistQueryResult item)
         {
-            IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
-            service.StartProcedureStep(item.ProcedureStep);
+            IModalityWorkflowService service = ApplicationContext.GetService<IModalityWorkflowService>();
+            //service.StartProcedureStep(item.ProcedureStep);
             return true;
         }
     }
@@ -108,8 +108,8 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         protected override bool ProcessDrop(ModalityWorklistQueryResult item)
         {
-            IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
-            service.CompleteProcedureStep(item.ProcedureStep);
+            IModalityWorkflowService service = ApplicationContext.GetService<IModalityWorkflowService>();
+            //service.CompleteProcedureStep(item.ProcedureStep);
             return true;
         }
     }
@@ -148,8 +148,8 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         protected override bool ProcessDrop(ModalityWorklistQueryResult item)
         {
-            IAcquisitionWorkflowService service = ApplicationContext.GetService<IAcquisitionWorkflowService>();
-            service.CancelProcedureStep(item.ProcedureStep);
+            IModalityWorkflowService service = ApplicationContext.GetService<IModalityWorkflowService>();
+            //service.CancelProcedureStep(item.ProcedureStep);
             return true;
         }
     }

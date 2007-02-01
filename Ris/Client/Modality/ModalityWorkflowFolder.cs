@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Modality
             _folderSystem = folderSystem;
         }
 
-        protected IAcquisitionWorkflowService WorkflowService
+        protected IModalityWorkflowService WorkflowService
         {
             get { return _folderSystem.WorkflowService; }
         }

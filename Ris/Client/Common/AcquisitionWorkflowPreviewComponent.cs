@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Common
         private ModalityProcedureStep _scheduledProcStep;
         private PatientProfile _patientProfile;
 
-        private IAcquisitionWorkflowService _workflowService;
+        private IModalityWorkflowService _workflowService;
         private SexEnumTable _sexChoices;
         private OrderPriorityEnumTable _orderPriorities;
 
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Common
 
         public override void Start()
         {
-            _workflowService = ApplicationContext.GetService<IAcquisitionWorkflowService>();
+            _workflowService = ApplicationContext.GetService<IModalityWorkflowService>();
             _sexChoices = _workflowService.GetSexEnumTable();
             _orderPriorities = _workflowService.GetOrderPriorityEnumTable();
 

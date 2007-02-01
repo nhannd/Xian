@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Common
             folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
             {
                 ModalityWorklistQueryResult item = folderComponent.SelectedItems.Item as ModalityWorklistQueryResult;
-                previewComponent.WorklistItem = item;
+                //previewComponent.WorklistItem = item;
             };
 
             SplitComponentContainer split = new SplitComponentContainer(

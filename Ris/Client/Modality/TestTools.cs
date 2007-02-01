@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Modality
         public class StartTool : WorkflowTool
         {
             public StartTool()
-                :base("ClearCanvas.Healthcare.Workflow.Acquisition.Operations+StartModalityProcedureStep")
+                :base("ClearCanvas.Healthcare.Workflow.Modality.Operations+StartModalityProcedureStep")
             {
             }
         }
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Modality
         public class CompleteTool : WorkflowTool
         {
             public CompleteTool()
-                : base("ClearCanvas.Healthcare.Workflow.Acquisition.Operations+CompleteModalityProcedureStep")
+                : base("ClearCanvas.Healthcare.Workflow.Modality.Operations+CompleteModalityProcedureStep")
             {
             }
         }
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Modality
         public class CancelTool : WorkflowTool
         {
             public CancelTool()
-                : base("ClearCanvas.Healthcare.Workflow.Acquisition.Operations+CancelModalityProcedureStep")
+                : base("ClearCanvas.Healthcare.Workflow.Modality.Operations+CancelModalityProcedureStep")
             {
             }
         }

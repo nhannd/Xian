@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Modality
 
 
 
-        private IAcquisitionWorkflowService _workflowService;
+        private IModalityWorkflowService _workflowService;
         private ToolSet _toolSet;
         private IDictionary<string, bool> _workflowEnablment;
 
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Modality
             :base(folderExplorer)
         {
             // important to initialize service before adding any folders, because folders may access service
-            _workflowService = ApplicationContext.GetService<IAcquisitionWorkflowService>();
+            _workflowService = ApplicationContext.GetService<IModalityWorkflowService>();
             _workflowService.ModalityProcedureStepChanged += ModalityProcedureStepChangedEventHandler;
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Modality
             return _workflowEnablment == null ? false : _workflowEnablment[operationName];
         }
 
-        public IAcquisitionWorkflowService WorkflowService
+        public IModalityWorkflowService WorkflowService
         {
             get { return _workflowService; }
         }
