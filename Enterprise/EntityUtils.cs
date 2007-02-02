@@ -12,7 +12,7 @@ namespace ClearCanvas.Enterprise
     {
         public static bool CheckVersion(EntityRefBase entityRef, Entity entity)
         {
-            return entity.Version == entityRef.Version;
+            return entity.Version.Equals(entityRef.Version);
         }
 
         public static int GetVersion(EntityRefBase entityRef)
@@ -25,7 +25,7 @@ namespace ClearCanvas.Enterprise
             return entity.Version;
         }
 
-        public static long GetOID(EntityRefBase entityRef)
+        public static object GetOID(EntityRefBase entityRef)
         {
             return entityRef.EntityOID;
         }

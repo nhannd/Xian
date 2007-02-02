@@ -10,7 +10,7 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     internal static class EntityRefFactory
     {
-        public static EntityRefBase CreateReference(Type entityClass, long oid, int version)
+        public static EntityRefBase CreateReference(Type entityClass, object oid, int version)
         {
             Type typedEntityRef = typeof(EntityRef<>).MakeGenericType(new Type[] { entityClass });
 
@@ -46,7 +46,7 @@ namespace ClearCanvas.Enterprise
         /// </summary>
         /// <param name="oid"></param>
         /// <param name="version"></param>
-        internal EntityRef(long oid, int version)
+        internal EntityRef(object oid, int version)
             : base(typeof(TEntity), oid, version)
         {
         }

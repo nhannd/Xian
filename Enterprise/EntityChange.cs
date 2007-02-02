@@ -19,7 +19,7 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     public class EntityChange
     {
-        private long _entityOid;
+        private object _entityOid;
         private int _version;
         private Type _entityClass;
         private EntityChangeType _changeType;
@@ -31,7 +31,7 @@ namespace ClearCanvas.Enterprise
         /// <param name="entityOid"></param>
         /// <param name="version"></param>
         /// <param name="changeType"></param>
-        public EntityChange(Type entityType, long entityOid, int version, EntityChangeType changeType)
+        public EntityChange(Type entityType, object entityOid, int version, EntityChangeType changeType)
         {
             _entityOid = entityOid;
             _entityClass = entityType;
@@ -58,7 +58,7 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// The entity OID
         /// </summary>
-        public long EntityOID
+        public object EntityOID
         {
             get { return _entityOid; }
         }

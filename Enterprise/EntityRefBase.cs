@@ -10,7 +10,7 @@ namespace ClearCanvas.Enterprise
     public abstract class EntityRefBase
     {
         private Type _entityClass;
-        private long _entityOid;
+        private object _entityOid;
         private int _version;
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace ClearCanvas.Enterprise
         /// <param name="entityType"></param>
         /// <param name="entityOid"></param>
         /// <param name="version"></param>
-        protected EntityRefBase(Type entityType, long entityOid, int version)
+        protected EntityRefBase(Type entityType, object entityOid, int version)
         {
             _entityClass = entityType;
             _entityOid = entityOid;
@@ -37,7 +37,7 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// Returns the OID that this reference refers to
         /// </summary>
-        internal long EntityOID
+        internal object EntityOID
         {
             get { return _entityOid; }
         }
@@ -64,7 +64,7 @@ namespace ClearCanvas.Enterprise
 
             // also cannot check version here, because if the entity is a proxy, the Version property will not
             // be initialized
-            return entity != null && entity.OID == this.EntityOID;
+            return entity != null && entity.OID.Equals(this.EntityOID);
         }
         
         /// <summary>
@@ -82,9 +82,9 @@ namespace ClearCanvas.Enterprise
                 return false;
 
             // compare fields
-            return this._entityOid == that._entityOid
-                && this._entityClass == that._entityClass
-                && (!versionStrict || this._version == that._version);
+            return this._entityOid.Equals(that._entityOid)
+                && this._entityClass.Equals(that._entityClass)
+                && (!versionStrict || this._version.Equals(that._version));
         }
 
         /// <summary>

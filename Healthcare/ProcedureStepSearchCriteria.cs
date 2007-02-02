@@ -34,8 +34,8 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public ProcedureStepSearchCriteria(EntityRef<ProcedureStep> entityRef)
 		{
-			this.SubCriteria["OID"] = new SearchCondition<long>("OID");
-			((ISearchCondition<long>)this.SubCriteria["OID"]).EqualTo(EntityUtils.GetOID(entityRef));
+			this.SubCriteria["OID"] = new SearchCondition<object>("OID");
+            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityUtils.GetOID(entityRef));
 		}
 		
 	

@@ -9,7 +9,7 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     public abstract class Entity
     {
-        private long _oid;
+        private object _oid;
         private int _version;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace ClearCanvas.Enterprise
         /// object in the database.  This property is public for compatibility with NHibernate proxies.  It should
         /// not be used by application code.
         /// </summary>
-        public virtual long OID
+        public virtual object OID
         {
             get { return _oid; }
             private set { _oid = value; }
