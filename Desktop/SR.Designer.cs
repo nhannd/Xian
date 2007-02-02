@@ -340,6 +340,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The background task is still running.  Are you sure you want to cancel?.
+        /// </summary>
+        public static string MessageConfirmCancelTask {
+            get {
+                return ResourceManager.GetString("MessageConfirmCancelTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save changes before closing?.
         /// </summary>
         public static string MessageConfirmSaveChangesBeforeClosing {

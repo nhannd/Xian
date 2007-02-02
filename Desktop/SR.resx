@@ -210,6 +210,9 @@
   <data name="MenuTools" xml:space="preserve">
     <value>&amp;Tools</value>
   </data>
+  <data name="MessageConfirmCancelTask" xml:space="preserve">
+    <value>The background task is still running.  Are you sure you want to cancel?</value>
+  </data>
   <data name="MessageConfirmSaveChangesBeforeClosing" xml:space="preserve">
     <value>Save changes before closing?</value>
   </data>

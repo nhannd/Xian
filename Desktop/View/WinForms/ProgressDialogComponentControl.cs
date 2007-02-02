@@ -26,12 +26,37 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _message.DataBindings.Add("Text", _component, "ProgressMessage", true, DataSourceUpdateMode.OnPropertyChanged);
-            _progressBar.DataBindings.Add("Value", _component, "ProgressBar", true, DataSourceUpdateMode.OnPropertyChanged);
-            _progressBar.DataBindings.Add("Maximum", _component, "ProgressBarMaximum", true, DataSourceUpdateMode.OnPropertyChanged);
-            _cancelButton.DataBindings.Add("Enabled", _component, "EnableCancel", true, DataSourceUpdateMode.OnPropertyChanged);
-            _cancelButton.DataBindings.Add("Text", _component, "ButtonText", true, DataSourceUpdateMode.OnPropertyChanged);
-            
+            _cancelButton.Visible = _component.ShowCancel;
+            _cancelButton.Text = _component.ButtonText;
+            _message.Text = _component.ProgressMessage;
+            _progressBar.Value = _component.ProgressBar;
+            _progressBar.MarqueeAnimationSpeed = _component.MarqueeSpeed;
+            _progressBar.Style = (System.Windows.Forms.ProgressBarStyle)_component.ProgressBarStyle;
+            _progressBar.Maximum = _component.ProgressBarMaximum;
+
+            _component.ProgressUpdateEvent += OnProgressUpdate;
+            _component.ProgressTerminateEvent += OnProgressTerminate;
+        }
+
+        ~ProgressDialogComponentControl()
+        {
+            _component.ProgressUpdateEvent -= OnProgressUpdate;
+            _component.ProgressTerminateEvent -= OnProgressTerminate;
+        }
+
+        private void OnProgressUpdate(object sender, EventArgs e)
+        {
+            _message.Text = _component.ProgressMessage;
+            _progressBar.Value = _component.ProgressBar;
+        }
+
+        private void OnProgressTerminate(object sender, EventArgs e)
+        {
+            _cancelButton.Visible = _component.ShowCancel;
+            _cancelButton.Text = _component.ButtonText;
+            _message.Text = _component.ProgressMessage;
+            _progressBar.Value = _component.ProgressBar;
+            _progressBar.MarqueeAnimationSpeed = _component.MarqueeSpeed;
         }
 
         private void _cancelButton_Click(object sender, EventArgs e)

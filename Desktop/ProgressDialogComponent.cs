@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop
@@ -22,22 +23,39 @@ namespace ClearCanvas.Desktop
     public class ProgressDialogComponent : ApplicationComponent
     {
         private BackgroundTask _task;
-        private bool _closeDialog;
+        private bool _autoClose;
 
         private int _progressBar;
         private string _progressMessage;
         private bool _enableCancel;
+        private ProgressBarStyle _progressBarStyle;
+        private int _marqueeSpeed;
+
+        private EventHandler<EventArgs> _progressUpdateEvent;
+        private EventHandler<EventArgs> _progressTerminateEvent;
+        public event EventHandler<EventArgs> ProgressUpdateEvent
+        {
+            add { _progressUpdateEvent += value; }
+            remove { _progressUpdateEvent -= value; }
+        }
+        public event EventHandler<EventArgs> ProgressTerminateEvent
+        {
+            add { _progressTerminateEvent += value; }
+            remove { _progressTerminateEvent -= value; }
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProgressDialogComponent(BackgroundTask task, bool closeDialog)
+        public ProgressDialogComponent(BackgroundTask task, bool autoClose, ProgressBarStyle progressBarStyle)
         {
             _task = task;
-            _closeDialog = closeDialog;
+            _autoClose = autoClose;
 
             _progressBar = 0;
             _progressMessage = "";
+            _progressBarStyle = progressBarStyle;
+            _marqueeSpeed = 100;
 
             if (_task != null)
                 _enableCancel = _task.SupportsCancel;
@@ -68,11 +86,45 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
+        /// <summary>
+        /// Override implementation of <see cref="IApplicationComponent.CanExit"/>.
+        /// This is called when user click on the 'X' button to close the dialog
+        /// </summary>
+        public override bool CanExit()
+        {
+            // 
+            if (_task != null && _task.IsRunning)
+            {
+                if (_task.SupportsCancel)
+                {
+                    if (Platform.ShowMessageBox(SR.MessageConfirmCancelTask, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
+                    {
+                        _task.RequestCancel();
+                        _autoClose = true;
+                    }
+                }
+
+                // Don't allow the dialog to close until the task stop running or is properly cancelled
+                return false;
+            }
+
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            return true;
+        }
+
         #region Presentation Model
 
-        public bool EnableCancel
+        public bool ShowCancel
         {
-            get { return _enableCancel; }
+            get 
+            {
+                // Always show Cancel if the task is cancellable
+                if (_enableCancel)
+                    return true;
+
+                // Otherwise only show Cancel if the task stops running
+                return (_task != null && _task.IsRunning ? false : true); 
+            }
         }
 
         public int ProgressBarMaximum
@@ -83,6 +135,16 @@ namespace ClearCanvas.Desktop
         public int ProgressBar
         {
             get { return _progressBar; }
+        }
+
+        public ProgressBarStyle ProgressBarStyle
+        {
+            get { return _progressBarStyle; }
+        }
+
+        public int MarqueeSpeed
+        {
+            get { return _marqueeSpeed; }
         }
 
         public string ProgressMessage
@@ -101,17 +163,9 @@ namespace ClearCanvas.Desktop
 
         private void ProgressHandler(object sender, BackgroundTaskProgressEventArgs e)
         {
-            if (_progressMessage != e.Progress.Message)
-            {
-                _progressMessage = e.Progress.Message;
-                SignalMessageChanged();
-            }
-
-            if (_progressBar != e.Progress.Percent)
-            {
-                _progressBar = e.Progress.Percent;
-                SignalProgressChanged();
-            }
+            _progressMessage = e.Progress.Message;
+            _progressBar = e.Progress.Percent;
+            SignalProgressUpdate();
         }
 
         private void TerminatedHandler(object sender, BackgroundTaskTerminatedEventArgs e)
@@ -126,41 +180,31 @@ namespace ClearCanvas.Desktop
             //        break;
             //}
 
-            _enableCancel = true;
-
-
-            if (_closeDialog)
+            if (_autoClose)
             {
                 this.ExitCode = ApplicationComponentExitCode.Cancelled;
                 Host.Exit();
             }
             else
             {
+                _marqueeSpeed = 0;
+                _enableCancel = true;
                 SignalProgressTerminate();
             }
-
         }
 
         #endregion
 
         #region Signal Model Changed
 
-        private void SignalMessageChanged()
+        private void SignalProgressUpdate()
         {
-            NotifyPropertyChanged("ProgressMessage");
-        }
-
-        private void SignalProgressChanged()
-        {
-            NotifyPropertyChanged("ProgressBar");
+            EventsHelper.Fire(_progressUpdateEvent, this, new EventArgs());
         }
 
         private void SignalProgressTerminate()
         {
-            NotifyPropertyChanged("ProgressMessage");
-            NotifyPropertyChanged("ProgressBar");
-            NotifyPropertyChanged("EnableCancel");
-            NotifyPropertyChanged("ButtonText");
+            EventsHelper.Fire(_progressTerminateEvent, this, new EventArgs());
         }
 
         #endregion
@@ -170,9 +214,10 @@ namespace ClearCanvas.Desktop
             if (_task != null && _task.IsRunning)
             {
                 if (_task.SupportsCancel)
+                {
                     _task.RequestCancel();
-                else
-                    return; // should never get here
+                    _autoClose = true;
+                }
             }
             else
             {

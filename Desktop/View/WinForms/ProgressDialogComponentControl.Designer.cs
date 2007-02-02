@@ -53,7 +53,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             // _cancelButton
             // 
-            this._cancelButton.Enabled = false;
             this._cancelButton.Location = new System.Drawing.Point(232, 67);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
