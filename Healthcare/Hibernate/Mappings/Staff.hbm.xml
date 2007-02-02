@@ -1,10 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <class name="Staff" proxy="Staff" table="Staff_">
-    <id name="OID" column="OID_" type="Int64">
-      <generator class="hilo">
-        <param name="max_lo">100</param>
-      </generator>
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
     </id>
     <version name="Version" column="Version_"/>
     <component name="Name" class="PersonName">
@@ -17,10 +15,8 @@
     </component>
 
     <idbag name="TelephoneNumbers" lazy="true" table="StaffTelephoneNumber_" access="nosetter.camelcase-underscore">
-      <collection-id column="OID_" type="Int64">
-        <generator class="hilo">
-          <param name="max_lo">100</param>
-        </generator>
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
       </collection-id>
       <key column="StaffOID_"/>
       <composite-element class="TelephoneNumber">
@@ -37,10 +33,8 @@
       </composite-element>
     </idbag>
     <idbag name="Addresses" table="StaffAddress_" lazy="true" access="nosetter.camelcase-underscore">
-      <collection-id column="OID_" type="Int64">
-        <generator class="hilo">
-          <param name="max_lo">100</param>
-        </generator>
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
       </collection-id>
       <key column="StaffOID_"/>
       <composite-element class="Address">

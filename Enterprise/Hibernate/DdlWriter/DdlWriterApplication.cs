@@ -27,18 +27,25 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
             Dialect dialect = (databaseType == "SQLite") ? (Dialect)new NHibernate.Dialect.SQLiteDialect() : (Dialect)new CustomSqlDialect();
 
-            PersistentStore store = new PersistentStore();
-            store.Initialize();
+            using (StreamWriter sw = File.CreateText(outputFile))
+            {
+                try
+                {
+                    PersistentStore store = new PersistentStore();
+                    store.Initialize();
 
-            ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
-            StreamWriter sw = File.CreateText(outputFile);
+                    ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
 
-            // for now, write the drop script first, and then write the create script to the same file
-            // in future, might be good to control this using command line flags
-            scriptWriter.WriteDropScript(sw);
-            scriptWriter.WriteCreateScript(sw);
-
-            sw.Close();
+                    // for now, write the drop script first, and then write the create script to the same file
+                    // in future, might be good to control this using command line flags
+                    scriptWriter.WriteDropScript(sw);
+                    scriptWriter.WriteCreateScript(sw);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
         }
 
         private bool TryParseArg(string arg, string command, ref string val)

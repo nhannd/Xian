@@ -1,14 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <class name="Visit" proxy="Visit" table="Visit_">
-    <id name="OID" column="OID_" type="Int64">
-      <generator class="hilo">
-        <param name="max_lo">100</param>
-      </generator>
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
     </id>
     <version name="Version" column="Version_"/>
     <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true" fetch="join"/>
-    
+
     <component name="VisitNumber" class="CompositeIdentifier">
       <property name ="Id" column="VisitNumberId_" type="String" length="30" not-null="true"/>
       <property name="AssigningAuthority" column="VisitNumberAssigningAuthority_" type="String" length="100" not-null="true"/>
@@ -28,10 +26,8 @@
     <property name="DischargeDisposition" column="DischargeDisposition_" type="String" length="100" not-null="false"/>
 
     <idbag name="Locations" lazy="true" table="VisitLocation_" access="nosetter.camelcase-underscore">
-      <collection-id column="OID_" type="Int64">
-        <generator class="hilo">
-          <param name="max_lo">100</param>
-        </generator>
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
       </collection-id>
       <key column="VisitOID_"/>
       <composite-element class="VisitLocation">
@@ -43,10 +39,8 @@
     </idbag>
 
     <idbag name="Practitioners" lazy="true" table="VisitPractitioner_" access="nosetter.camelcase-underscore">
-      <collection-id column="OID_" type="Int64">
-        <generator class="hilo">
-          <param name="max_lo">100</param>
-        </generator>
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
       </collection-id>
       <key column="VisitOID_"/>
       <composite-element class="VisitPractitioner">
@@ -61,10 +55,8 @@
     <property name="PreadmitNumber" column="PreadmitNumber_" type="String" length="20" not-null="false"/>
 
     <idbag name="AmbulatoryStatuses" lazy="true" table="VisitAmbulatoryStatus_" access="nosetter.camelcase-underscore">
-      <collection-id column="OID_" type="Int64">
-        <generator class="hilo">
-          <param name="max_lo">100</param>
-        </generator>
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
       </collection-id>
       <key column="VisitOID_"/>
       <!--<property name="AmbulatoryStatus" column="AmbulatoryStatus_" type="ClearCanvas.Healthcare.Hibernate.AmbulatoryStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="false"/>-->

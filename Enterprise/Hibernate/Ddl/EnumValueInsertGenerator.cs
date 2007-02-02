@@ -46,7 +46,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
                             // extract the Description from the attribute, if it exists, otherwise set this to NULL
                             string description = SqlFormat(attr != null ? attr.Description : null);
-                            string script = string.Format("insert into {0} (Code_, Value_, Description_) values ({1}, {2}, {3})", tableName, code, value, description);
+                            string script = string.Format("insert into {0} (Code_, Value_, Description_) values ({1}, {2}, {3})",
+                                tableName,
+                                code,
+                                value,
+                                description);
                             scripts.Add(script);
                         }
                     }
@@ -70,7 +74,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         private string SqlFormat(string str)
         {
-            return str == null ? "NULL" : string.Format("'{0}'", str);
+            if (str == null)
+                return "NULL";
+
+            // make sure to escape ' to ''
+            return string.Format("'{0}'", str.Replace("'", "''"));
         }
 
     }

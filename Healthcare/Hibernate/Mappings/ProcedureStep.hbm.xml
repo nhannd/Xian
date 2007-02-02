@@ -2,10 +2,8 @@
 <!-- @codegen: ignore -->
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <class name="ProcedureStep" proxy="ProcedureStep" table="ProcedureStep_">
-    <id name="OID" column="OID_" type="Int64">
-      <generator class="hilo">
-        <param name="max_lo">100</param>
-      </generator>
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
     </id>
     <discriminator column="Discriminator_"  type="String" length="20"/>
     <version name="Version" column="Version_"/>
