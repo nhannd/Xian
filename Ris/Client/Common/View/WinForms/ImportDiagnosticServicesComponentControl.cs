@@ -41,12 +41,12 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 _filename.Value = openFileDialog1.FileName;
-                _component.OpenFile();
             }
         }
 
         private void _startButton_Click(object sender, EventArgs e)
         {
+            _component.OpenFile();
             _component.StartImport();
         }
     }
