@@ -160,8 +160,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return (int)_rotation; }
 			set 
 			{
-				//if ((value % 90) != 0)
-				//	throw new ArgumentException(SR.ExceptionInvalidRotationValue);
+				if ((value % 90) != 0)
+					throw new ArgumentException(SR.ExceptionInvalidRotationValue);
 
 				_rotation = value % 360;
 
