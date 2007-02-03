@@ -154,8 +154,8 @@ namespace ClearCanvas.ImageViewer
 			_compositeImageGraphic = new CompositeImageGraphic(
 				_imageSop.Rows,
 				_imageSop.Columns,
-				_imageSop.PixelAspectRatio.Row,
-				_imageSop.PixelAspectRatio.Column);
+				_imageSop.PixelSpacing.Column,
+				_imageSop.PixelSpacing.Row);
 
 			_imageGraphic = new StandardImageGraphic(_imageSop);
 			_overlayGraphics = new CompositeGraphic();
