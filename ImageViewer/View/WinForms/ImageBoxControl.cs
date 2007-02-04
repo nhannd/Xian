@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.SuspendLayout();
 
 			foreach (TileControl control in this.Controls)
-				control.SetParentImageBoxRectangle(this.ClientRectangle, _imageBox.InsetWidth);
+				control.SetParentImageBoxRectangle(this.ClientRectangle, ImageBox.InsetWidth);
 
 			this.ResumeLayout(false);
 
@@ -163,8 +163,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				e.Graphics,
 				this.ClientRectangle,
 				_imageBox.BorderColor,
-				_imageBox.BorderWidth,
-				_imageBox.InsetWidth);
+				ImageBox.BorderWidth,
+				ImageBox.InsetWidth);
 		}
 
 		private void DrawTileBorders(PaintEventArgs e)
@@ -180,8 +180,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 						e.Graphics,
 						rectangle,
 						control.Tile.BorderColor,
-						control.Tile.BorderWidth,
-						control.Tile.InsetWidth);
+						Tile.BorderWidth,
+						Tile.InsetWidth);
 				}
 			}
 		}
@@ -193,8 +193,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Rectangle borderRectangle =
 				Rectangle.Inflate(
 					tileRectangle,
-					control.Tile.InsetWidth,
-					control.Tile.InsetWidth);
+					Tile.InsetWidth,
+					Tile.InsetWidth);
 
 			return borderRectangle;
 		}
@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			view.Tile = tile;
 			view.ParentRectangle = this.ClientRectangle;
-			view.ParentImageBoxInsetWidth = _imageBox.InsetWidth;
+			view.ParentImageBoxInsetWidth = ImageBox.InsetWidth;
 
 			TileControl control = view.GuiElement as TileControl;
 			control.Tile.SelectionChanged += new EventHandler<TileEventArgs>(OnTileSelectionChanged);

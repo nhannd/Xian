@@ -33,6 +33,10 @@ namespace ClearCanvas.ImageViewer
 		private bool _selected = false;
 		private int _rows;
 		private int _columns;
+		private static int _borderWidth = 2;
+		private static int _insetWidth = 5;
+		private static Color _selectedColor = Color.White;
+		private static Color _unselectedColor = Color.DarkGray;
 
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ImageBoxEventArgs> _selectionChangedEvent;
@@ -214,28 +218,40 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public static Color SelectedColor
+		{
+			get { return _selectedColor; }
+			set { _selectedColor = value; }
+		}
+
+		public static Color UnselectedColor
+		{
+			get { return _unselectedColor; }
+			set { _unselectedColor = value; }
+		}
+
 		public Color BorderColor
 		{
 			get
 			{
-				// TODO: remove these hard codes and make this configurable
 				if (this.Selected)
-					return Color.White;
+					return _selectedColor;
 				else
-					return Color.DarkGray;
+					return _unselectedColor;
 			}
 		}
 
-		public int BorderWidth
+		public static int BorderWidth
 		{
-			get { return 2; }
+			get { return _borderWidth; }
+			set { _borderWidth = value; }
 		}
 
-		public int InsetWidth
+		public static int InsetWidth
 		{
-			get { return 5; }
+			get { return _insetWidth; }
+			set { _insetWidth = value; }
 		}
-
 
 		/// <summary>
 		/// Gets the number of rows of tiles in this <see cref="ImageBox"/>.

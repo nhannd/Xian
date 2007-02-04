@@ -35,6 +35,10 @@ namespace ClearCanvas.ImageViewer
 		private RectangleF _normalizedRectangle;
 		private bool _selected = false;
 		private InformationBox _informationBox;
+		private static int _borderWidth = 1;
+		private static int _insetWidth = 5;
+		private static Color _selectedColor = Color.Yellow;
+		private static Color _unselectedColor = Color.Gray;
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
@@ -173,26 +177,39 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public static Color SelectedColor
+		{
+			get { return _selectedColor; }
+			set { _selectedColor = value; }
+		}
+
+		public static Color UnselectedColor
+		{
+			get { return _unselectedColor; }
+			set { _unselectedColor = value; }
+		}
+
 		public Color BorderColor
 		{
 			get 
 			{
-				// TODO: remove these hard codes and make this configurable
 				if (this.Selected)
-					return Color.Yellow;
+					return _selectedColor;
 				else
-					return Color.Gray;
+					return _unselectedColor;
 			}
 		}
 
-		public int BorderWidth
+		public static int BorderWidth
 		{
-			get { return 1; }
+			get { return _borderWidth; }
+			set { _borderWidth = value; }
 		}
 
-		public int InsetWidth
+		public static int InsetWidth
 		{
-			get { return 5; }
+			get { return _insetWidth; }
+			set { _insetWidth = value; }
 		}
 
 		public Rectangle ClientRectangle

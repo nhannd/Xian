@@ -101,10 +101,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			int insetImageBoxWidth = parentImageBoxRectangle.Width - 2 * parentImageBoxBorderWidth;
 			int insetImageBoxHeight = parentImageBoxRectangle.Height - 2 * parentImageBoxBorderWidth;
 
-			int left = (int)(_tile.NormalizedRectangle.Left * insetImageBoxWidth + _tile.InsetWidth);
-			int top = (int)(_tile.NormalizedRectangle.Top * insetImageBoxHeight + _tile.InsetWidth);
-			int right = (int)(_tile.NormalizedRectangle.Right * insetImageBoxWidth - _tile.InsetWidth);
-			int bottom = (int)(_tile.NormalizedRectangle.Bottom * insetImageBoxHeight - _tile.InsetWidth);
+			int left = (int)(_tile.NormalizedRectangle.Left * insetImageBoxWidth + Tile.InsetWidth);
+			int top = (int)(_tile.NormalizedRectangle.Top * insetImageBoxHeight + Tile.InsetWidth);
+			int right = (int)(_tile.NormalizedRectangle.Right * insetImageBoxWidth - Tile.InsetWidth);
+			int bottom = (int)(_tile.NormalizedRectangle.Bottom * insetImageBoxHeight - Tile.InsetWidth);
 
 			this.SuspendLayout();
 
