@@ -161,7 +161,6 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "RebuildDatabaseForm";
-			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Silver;
 			this.Text = "Rebuild Database";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RebuildDatabaseFormClosing);
 			this._statusGroupBox.ResumeLayout(false);

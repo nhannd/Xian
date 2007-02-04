@@ -72,9 +72,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetMagic2005, Version=4.1.0.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
+    <Reference Include="DotNetMagic2005, Version=5.2.0.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Controls\WinForms\refs\DotNetMagic2005.DLL</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

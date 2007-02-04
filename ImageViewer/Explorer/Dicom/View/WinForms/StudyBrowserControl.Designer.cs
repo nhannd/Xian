@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
 			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
@@ -36,23 +37,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._resultsTitleBar.Dock = System.Windows.Forms.DockStyle.Top;
 			this._resultsTitleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._resultsTitleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
 			this._resultsTitleBar.Location = new System.Drawing.Point(0, 0);
 			this._resultsTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._resultsTitleBar.Name = "_resultsTitleBar";
-			this._resultsTitleBar.Size = new System.Drawing.Size(623, 29);
-			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
+			this._resultsTitleBar.Size = new System.Drawing.Size(623, 30);
+			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
 			this._resultsTitleBar.TabIndex = 3;
 			this._resultsTitleBar.Text = "10 results found on server";
 			// 
 			// _studyTableView
 			// 
 			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._studyTableView.Location = new System.Drawing.Point(0, 29);
+			this._studyTableView.Location = new System.Drawing.Point(0, 30);
 			this._studyTableView.MenuModel = null;
-			this._studyTableView.MultiSelect = true;
 			this._studyTableView.Name = "_studyTableView";
 			this._studyTableView.ReadOnly = false;
-			this._studyTableView.Size = new System.Drawing.Size(623, 326);
+			this._studyTableView.Selection = selection2;
+			this._studyTableView.Size = new System.Drawing.Size(623, 325);
 			this._studyTableView.TabIndex = 0;
 			this._studyTableView.Table = null;
 			this._studyTableView.ToolbarModel = null;

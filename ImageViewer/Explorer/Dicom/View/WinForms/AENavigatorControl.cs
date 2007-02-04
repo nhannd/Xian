@@ -31,7 +31,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
             this.ToolbarModel = _component.ToolbarModel;
             this.MenuModel = _component.ContextMenuModel;
-            this.titleBar1.Style = WinFormsView.VisualStyle;
 
             _aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
             BuildServerTreeView(_aeTreeView, _component.DicomServerTree);

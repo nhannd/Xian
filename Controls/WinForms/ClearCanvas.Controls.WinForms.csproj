@@ -93,9 +93,6 @@
     <Compile Include="FileBrowser\Shell\ShellImageList.cs" />
     <Compile Include="FileBrowser\Shell\ShellItem.cs" />
     <Compile Include="FileBrowser\Shell\StreamStorage.cs" />
-    <Compile Include="HeaderStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="NonEmptyNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>

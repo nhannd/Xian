@@ -29,7 +29,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             _shelfManager.Shelves.ItemRemoved += new EventHandler<ShelfEventArgs>(Shelves_ItemRemoved);
 
 			_dockingManager = dockingManager;
-			_dockingManager.Style = WinFormsView.VisualStyle;
 
 			// NY: We subscribe to ContentHiding instead of ContentHidden because ContentHidden
 			// is fired when the user double clicks the caption bar of a docking window, which

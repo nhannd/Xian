@@ -42,10 +42,5 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get;
         }
-
-		public static VisualStyle VisualStyle
-		{
-			get { return VisualStyle.Office2007Silver; }
-		}
-    }
+	}
 }

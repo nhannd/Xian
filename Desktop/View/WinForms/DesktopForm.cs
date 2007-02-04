@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public partial class DesktopForm : DotNetMagicForm
+    public partial class DesktopForm : Form
     {
         private IDesktopWindow _desktopWindow;
 
@@ -39,8 +39,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 			this.Text = String.Format("{0} {1}", Application.ApplicationName, GetVersion());
 
-			this.Style = WinFormsView.VisualStyle;
-
             // Subscribe to WorkspaceManager events so we know when workspaces are being
             // added, removed and activated
             _desktopWindow.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
@@ -52,7 +50,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             _dockingManager.InnerControl = _tabbedGroups;
 			_dockingManager.TabControlCreated += new DockingManager.TabControlCreatedHandler(OnDockingManagerTabControlCreated);
 
-			_tabbedGroups.Style = WinFormsView.VisualStyle; 
 			_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
 			_tabbedGroups.TabControlCreated += new TabbedGroups.TabControlCreatedHandler(OnTabbedGroupsTabControlCreated);
 
@@ -234,5 +231,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			return String.Format("{0}.{1}", major, minor);
 	    }
+
     }
 }

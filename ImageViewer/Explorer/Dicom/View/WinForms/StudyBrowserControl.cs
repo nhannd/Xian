@@ -22,8 +22,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			Platform.CheckForNullReference(component, "component");
 			InitializeComponent();
 
-			_resultsTitleBar.Style = WinFormsView.VisualStyle;
-
 			_studyBrowserComponent = component;
 			_studyBrowserComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 

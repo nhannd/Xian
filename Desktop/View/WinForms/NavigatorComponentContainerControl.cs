@@ -21,9 +21,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
 
             _nodeMap = new Dictionary<NavigatorPage, TreeNode>();
-            _createdControls = new List<Control>();
-
-            _headerStrip.HeaderStyle = AreaHeaderStyle.Small;
+            _createdControls = new List<Control>();        
 
             _component = component;
             _component.CurrentPageChanged += new EventHandler(_component_CurrentNodeChanged);
@@ -125,7 +123,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
 
             // set the title and selected tree node
-            _title.Text = page.Path.LastSegment.LocalizedText;
+            _titleBar.Text = page.Path.LastSegment.LocalizedText;
             _treeView.SelectedNode = _nodeMap[page];
         }
 
