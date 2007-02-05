@@ -33,7 +33,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			try
 			{
-				RebuildMenusAndToolbars();
 				_tabbedGroups.DisplayTabMode = DisplayTabModes.ShowAll;
 				// Add the new tab
 				WorkspaceTabPage workspaceTab = new WorkspaceTabPage(workspace);

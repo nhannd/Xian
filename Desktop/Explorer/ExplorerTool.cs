@@ -32,6 +32,7 @@ namespace ClearCanvas.Desktop.Explorer
 
 		public override void Initialize()
 		{
+			Show();
 			base.Initialize();
 		}
 

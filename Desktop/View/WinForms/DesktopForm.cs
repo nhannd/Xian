@@ -29,6 +29,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private DockingManager _dockingManager;
 
+		private bool _menusRebuilding = false;
+
         public DesktopForm(IDesktopWindow desktopWindow)
         {
             _desktopWindow = desktopWindow;
@@ -202,6 +204,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         internal void RebuildMenusAndToolbars()
         {
+			// When menus are being created, tools are are being instantiated
+			// and Tool.Initialize is called.  If in Tool.Initialize code is executed
+			// that results in this method being called again (such as creating a new
+			// workspace upon tool initialization), we can have an infinite mutual
+			// recursion situation.  The _menusRebuilding flag prevents that from
+			// happening.
+			if (_menusRebuilding)
+				return;
+
+			_menusRebuilding = true;
+
 			// Suspend the layouts so we avoid the flicker when we empty
 			// and refill the menus and toolbars
 			this._mainMenu.SuspendLayout();
@@ -222,6 +235,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			this._toolbar.ResumeLayout();
 			this._mainMenu.ResumeLayout();
+
+			_menusRebuilding = false;
 		}
 
 		private string GetVersion()
