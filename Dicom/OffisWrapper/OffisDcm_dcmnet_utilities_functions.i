@@ -390,11 +390,17 @@ static OFCondition StoreScp(
 	char imageFileName[2048];
 
 	req = &msg->msg.CStoreRQ;
-
-	sprintf(imageFileName, "%s%s.%s.dcm",
+	
+	// Use "GetTempFileName" instead of SOPInstanceUID to generate a temporary filename
+	// this will avoid collision when multiple server are storing the same SOPInstanceUID
+	// onto the server
+	if (GetTempFileName(saveDirectoryPath, "DCM", 0, imageFileName) == 0)
+	{
+		sprintf(imageFileName, "%s%s.%s.dcm",
 		saveDirectoryPath,
 		dcmSOPClassUIDToModality(req->AffectedSOPClassUID),
 		req->AffectedSOPInstanceUID);
+	}
 
 	StoreCallbackData callbackData;
 	callbackData.assoc = assoc;

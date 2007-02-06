@@ -30,6 +30,9 @@ namespace ClearCanvas.Dicom.Services
         #region ISendQueueService Members
         public void Add(ISendParcel aParcel)
         {
+            if (aParcel == null)
+                return;
+
             ISession session = null;
             ITransaction transaction = null;
             try
@@ -54,6 +57,9 @@ namespace ClearCanvas.Dicom.Services
 
         public void Remove(ISendParcel aParcel)
         {
+            if (aParcel == null)
+                return;
+
             ISession session = null;
             ITransaction transaction = null;
             try

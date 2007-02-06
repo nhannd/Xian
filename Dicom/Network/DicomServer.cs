@@ -7,6 +7,7 @@ namespace ClearCanvas.Dicom.Network
     using ClearCanvas.Dicom.OffisWrapper;
     using System.Runtime.InteropServices;    
     using MySR = ClearCanvas.Dicom.SR;
+    using ClearCanvas.Common;
     using ClearCanvas.Common.Utilities;
 
     /// <summary>
@@ -167,7 +168,7 @@ namespace ClearCanvas.Dicom.Network
                 catch (Exception e)
                 {
                     // TODO: Instead of throwing here, log or do something to exit gracefully
-                    throw e;
+                    Platform.Log(e);
                 }
         }
 
