@@ -78,11 +78,21 @@ namespace ClearCanvas.Common.Utilities
         /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved</exception>
         public string ResolveResource(string resourceName)
         { 
-            foreach (Assembly asm in _assemblies)
+			//resources are qualified internally in the manifest with '.' characters, so let's first try
+			//to find a resource that matches 'exactly' by preceding the name with a '.'
+			string exactMatch = String.Format(".{0}", resourceName);
+
+			foreach (Assembly asm in _assemblies)
             {
-                foreach (string match in GetResourcesEndingWith(asm, resourceName))
+				foreach (string match in GetResourcesEndingWith(asm, exactMatch))
+				{
+					return match;
+				}
+
+				//next we'll just try to find the first match ending with the resource name.
+				foreach (string match in GetResourcesEndingWith(asm, resourceName))
                 {
-                    return match;    // just return the first match
+                    return match;
                 }
             }
 
@@ -98,13 +108,23 @@ namespace ClearCanvas.Common.Utilities
         /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved</exception>
         public Stream OpenResource(string resourceName)
         {
-            foreach (Assembly asm in _assemblies)
-            {
-                foreach (string match in GetResourcesEndingWith(asm, resourceName))
-                {
-                    return asm.GetManifestResourceStream(match);    // just return the first match
-                }
-            }
+			//resources are qualified internally in the manifest with '.' characters, so let's first try
+			//to find a resource that matches 'exactly' by preceding the name with a '.'
+			string exactMatch = String.Format(".{0}", resourceName);
+			
+			foreach (Assembly asm in _assemblies)
+			{
+				foreach (string match in GetResourcesEndingWith(asm, exactMatch))
+				{
+					return asm.GetManifestResourceStream(match);
+				}
+
+				//next we'll just try to find the first match ending with the resource name.
+				foreach (string match in GetResourcesEndingWith(asm, resourceName))
+				{
+					return asm.GetManifestResourceStream(match);
+				}
+			}
 
 			throw new MissingManifestResourceException(SR.ExceptionResourceNotFound);
         }
