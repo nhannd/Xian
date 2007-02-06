@@ -390,6 +390,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 			else
 				format.Trimming = StringTrimming.EllipsisCharacter;
 
+			if (annotationBox.FitWidth)
+				format.Trimming = StringTrimming.None;
+
 			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Far)
 				format.Alignment = StringAlignment.Far;
 			else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Center)
@@ -397,7 +400,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 			else
 				format.Alignment = StringAlignment.Near;
 
-			//allow p's and q's, etc to extend slightly beyond the bounding rectangle.
+			if (annotationBox.VerticalAlignment == AnnotationBox.VerticalAlignmentBehaviour.Top)
+				format.LineAlignment = StringAlignment.Near;
+			else if (annotationBox.VerticalAlignment == AnnotationBox.VerticalAlignmentBehaviour.Center)
+				format.LineAlignment = StringAlignment.Center;
+			else
+				format.LineAlignment = StringAlignment.Far;
+
+			//allow p's and q's, etc to extend slightly beyond the bounding rectangle.  Only completely visible lines are shown.
 			format.FormatFlags = StringFormatFlags.NoClip;
 
 			if (annotationBox.NumberOfLines == 1)
@@ -409,14 +419,40 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (annotationBox.Italics)
 				style |= FontStyle.Italic;
 
+			//don't draw it if it's too small to read, anyway.
+			if (fontSize < _minimumFontSizeInPixels)
+				return;
+
 			Font font;
 			try
 			{
 				font = new Font(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel);
 			}
-			catch
+			catch (Exception e)
 			{
+				Platform.Log(e);
 				font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+			}
+
+			SizeF layoutArea = new SizeF(clientRectangle.Width, clientRectangle.Height);
+			SizeF size = _surface.FinalBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
+			if (annotationBox.FitWidth && size.Width > clientRectangle.Width)
+			{
+				fontSize = (int)(Math.Round(fontSize * clientRectangle.Width / (double)size.Width - 0.5));
+
+				//don't draw it if it's too small to read, anyway.
+				if (fontSize < _minimumFontSizeInPixels)
+					return;
+
+				try
+				{
+					font = new Font(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
+					font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+				}
 			}
 
 			// Draw drop shadow

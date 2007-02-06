@@ -284,5 +284,25 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			return RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 		}
+
+		public static bool IsRectangleNormalized(RectangleF rectangle)
+		{
+			return (!(FloatComparer.IsLessThan(rectangle.Left, 0.0f) ||
+					FloatComparer.IsGreaterThan(rectangle.Left, 1.0f) ||
+					FloatComparer.IsLessThan(rectangle.Right, 0.0f) ||
+					FloatComparer.IsGreaterThan(rectangle.Right, 1.0f) ||
+					FloatComparer.IsLessThan(rectangle.Top, 0.0f) ||
+					FloatComparer.IsGreaterThan(rectangle.Top, 1.0f) ||
+					FloatComparer.IsLessThan(rectangle.Bottom, 0.0f) ||
+					FloatComparer.IsGreaterThan(rectangle.Bottom, 1.0f) ||
+					FloatComparer.IsGreaterThan(rectangle.Left, rectangle.Right) ||
+					FloatComparer.IsGreaterThan(rectangle.Top, rectangle.Bottom)));
+		}
+
+		public static void VerifyNormalizedRectangle(RectangleF rectangle)
+		{ 
+			if (!IsRectangleNormalized(rectangle))
+				throw new ArgumentException(String.Format(SR.ExceptionInvalidNormalizedRectangle, rectangle.Top.ToString(), rectangle.Left.ToString(), rectangle.Bottom.ToString(), rectangle.Right.ToString()));
+		}
 	}
 }

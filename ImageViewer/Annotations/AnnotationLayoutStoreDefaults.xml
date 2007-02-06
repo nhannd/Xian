@@ -486,7 +486,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="true" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" vertical-alignment="Center" fit-width="true"/>
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
@@ -596,7 +596,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="true" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" vertical-alignment="Center" fit-width="true"/>
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
@@ -706,7 +706,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="true" font="Century Gothic" />
+          <default-box-settings bold="true" font="Century Gothic" vertical-alignment="Center" fit-width="true"/>
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">

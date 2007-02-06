@@ -46,21 +46,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _normalizedRectangle; }
 			set
 			{
-
-				if (FloatComparer.IsLessThan(value.Left, 0.0f) || 
-					FloatComparer.IsGreaterThan(value.Left, 1.0f) ||
-					FloatComparer.IsLessThan(value.Right, 0.0f) || 
-					FloatComparer.IsGreaterThan(value.Right, 1.0f) ||
-					FloatComparer.IsLessThan(value.Top, 0.0f) || 
-					FloatComparer.IsGreaterThan(value.Top, 1.0f) ||
-					FloatComparer.IsLessThan(value.Bottom, 0.0f) || 
-					FloatComparer.IsGreaterThan(value.Bottom, 1.0f) ||
-					FloatComparer.IsGreaterThan(value.Left, value.Right) ||
-					FloatComparer.IsGreaterThan(value.Top, value.Bottom))
-				{
-					throw new ArgumentException(String.Format(SR.ExceptionInvalidNormalizedRectangle, value.Top.ToString(), value.Left.ToString(), value.Bottom.ToString(), value.Right.ToString()));
-				}
-
+				RectangleUtilities.VerifyNormalizedRectangle(value);
 				_normalizedRectangle = value;
 				CalculateClientRectangle();
 			}

@@ -292,6 +292,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 				string numberOfLines = boxSettingsNode.GetAttribute("number-of-lines");
 				string truncation = boxSettingsNode.GetAttribute("truncation");
 				string justification = boxSettingsNode.GetAttribute("justification");
+				string verticalAlignment = boxSettingsNode.GetAttribute("vertical-alignment");
+				string fitWidth = boxSettingsNode.GetAttribute("fit-width");
 
 				if (!String.IsNullOrEmpty(font))
 					boxSettings.Font = font;
@@ -310,11 +312,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 					boxSettings.NumberOfLines = result;
 				}
 
+				if (!String.IsNullOrEmpty(fitWidth))
+					boxSettings.FitWidth = (String.Compare("true", fitWidth) == 0);
+
 				if (!String.IsNullOrEmpty(truncation))
 				{
 					AnnotationBox.TruncationBehaviour fromString = boxSettings.Truncation;
 					EnumConverter converter = new EnumConverter(typeof(AnnotationBox.TruncationBehaviour));
-					if (converter.IsValid(fromString))
+					if (converter.IsValid(truncation))
 						boxSettings.Truncation = (AnnotationBox.TruncationBehaviour)converter.ConvertFromString(truncation);
 				}
 
@@ -322,8 +327,16 @@ namespace ClearCanvas.ImageViewer.Annotations
 				{
 					AnnotationBox.JustificationBehaviour fromString = boxSettings.Justification;
 					EnumConverter converter = new EnumConverter(typeof(AnnotationBox.JustificationBehaviour));
-					if (converter.IsValid(fromString))
+					if (converter.IsValid(justification))
 						boxSettings.Justification = (AnnotationBox.JustificationBehaviour)converter.ConvertFromString(justification);
+				}
+
+				if (!String.IsNullOrEmpty(verticalAlignment))
+				{
+					AnnotationBox.VerticalAlignmentBehaviour fromString = boxSettings.VerticalAlignment;
+					EnumConverter converter = new EnumConverter(typeof(AnnotationBox.VerticalAlignmentBehaviour));
+					if (converter.IsValid(verticalAlignment))
+						boxSettings.VerticalAlignment = (AnnotationBox.VerticalAlignmentBehaviour)converter.ConvertFromString(verticalAlignment);
 				}
 
 				XmlElement configurationSettings = (XmlElement)boxSettingsNode.SelectSingleNode("configuration-settings");
@@ -468,6 +481,10 @@ namespace ClearCanvas.ImageViewer.Annotations
 					boxSettingsNode.SetAttribute("truncation", annotationBox.Truncation.ToString());
 				if (annotationBox.Justification != defaultSettings.Justification)
 					boxSettingsNode.SetAttribute("justification", annotationBox.Justification.ToString());
+				if (annotationBox.VerticalAlignment != defaultSettings.VerticalAlignment)
+					boxSettingsNode.SetAttribute("vertical-alignment", annotationBox.VerticalAlignment.ToString());
+				if (annotationBox.FitWidth != defaultSettings.FitWidth)
+					boxSettingsNode.SetAttribute("fit-width", annotationBox.FitWidth ? "true" : "false");
 
 				XmlElement configurationSettingsNode = this.Document.CreateElement("configuration-settings");
 				if (annotationBox.ConfigurationOptions.ShowLabel != defaultSettings.ConfigurationOptions.ShowLabel)

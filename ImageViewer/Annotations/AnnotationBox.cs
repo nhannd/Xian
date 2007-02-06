@@ -11,6 +11,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	{
 		public enum TruncationBehaviour { Truncate, Ellipsis };
 		public enum JustificationBehaviour { Near, Center, Far };
+		public enum VerticalAlignmentBehaviour { Top, Center, Bottom };
 
 		private IAnnotationItem _annotationItem;
 		private AnnotationItemConfigurationOptions _annotationItemConfigurationOptions;
@@ -27,9 +28,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 		
 		private bool _bold = false;
 		private bool _italics = false;
-		
+		private bool _fitWidth = false;
+
 		private TruncationBehaviour _truncation = TruncationBehaviour.Ellipsis;
 		private JustificationBehaviour _justification = JustificationBehaviour.Near;
+		private VerticalAlignmentBehaviour _verticalAlignment = VerticalAlignmentBehaviour.Center;
 
 		public AnnotationBox()
 		{
@@ -74,20 +77,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			get { return _normalizedRectangle; }
 			set 
 			{
-				if (FloatComparer.IsLessThan(value.Left, 0.0f) ||
-					FloatComparer.IsGreaterThan(value.Left, 1.0f) ||
-					FloatComparer.IsLessThan(value.Right, 0.0f) ||
-					FloatComparer.IsGreaterThan(value.Right, 1.0f) ||
-					FloatComparer.IsLessThan(value.Top, 0.0f) ||
-					FloatComparer.IsGreaterThan(value.Top, 1.0f) ||
-					FloatComparer.IsLessThan(value.Bottom, 0.0f) ||
-					FloatComparer.IsGreaterThan(value.Bottom, 1.0f) ||
-					FloatComparer.IsGreaterThan(value.Left, value.Right) ||
-					FloatComparer.IsGreaterThan(value.Top, value.Bottom))
-				{
-					throw new ArgumentException(String.Format(SR.ExceptionInvalidNormalizedRectangle, value.Top.ToString(), value.Left.ToString(), value.Bottom.ToString(), value.Right.ToString()));
-				}
-
+				RectangleUtilities.VerifyNormalizedRectangle(value);
 				_normalizedRectangle = value;
 			}
 		}
@@ -149,7 +139,27 @@ namespace ClearCanvas.ImageViewer.Annotations
 		public byte NumberOfLines
 		{
 			get { return _numberOfLines; }
-			set { _numberOfLines = Math.Max((byte)1, value); }
+			set
+			{
+				//you cannot have multiple lines in the 'fit width' scenario.
+				if (value > 1 && _fitWidth)
+					return;
+					
+				_numberOfLines = Math.Max((byte)1, value);
+			}
+		}
+
+		public bool FitWidth
+		{
+			get { return _fitWidth; }
+			set
+			{
+				_fitWidth = value;
+				
+				//you cannot have multiple lines in the 'fit width' scenario.
+				if (_numberOfLines > 1)
+					_numberOfLines = 1;
+			}
 		}
 
 		public TruncationBehaviour Truncation
@@ -162,6 +172,12 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			get { return _justification; }
 			set { _justification = value; }
+		}
+
+		public VerticalAlignmentBehaviour VerticalAlignment
+		{
+			get { return _verticalAlignment; }
+			set { _verticalAlignment = value; }
 		}
 
 		public AnnotationBox Clone()
@@ -177,6 +193,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 			newBox.NumberOfLines = this.NumberOfLines;
 			newBox.Truncation = this.Truncation;
 			newBox.Justification = this.Justification;
+			newBox.VerticalAlignment = this.VerticalAlignment;
+			newBox.FitWidth = this.FitWidth;
 
 			return newBox;
 		}

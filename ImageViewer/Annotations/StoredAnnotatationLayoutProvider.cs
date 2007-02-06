@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 					box.Color = "Red";
 					box.Justification = AnnotationBox.JustificationBehaviour.Far;
 					box.NumberOfLines = 5;
+					box.VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom;
 
 					layout.AnnotationBoxGroups[0].AnnotationBoxes.Add(box);
 					returnLayout = layout;
