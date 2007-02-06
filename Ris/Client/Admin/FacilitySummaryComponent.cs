@@ -144,11 +144,6 @@ namespace ClearCanvas.Ris.Client.Admin
             FacilityEditorComponent editor = new FacilityEditorComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddFacility);
-
-            if (exitCode == ApplicationComponentExitCode.Normal)
-            {
-                _facilityTable.Items.Add(editor.Facility);
-            }
         }
 
         public void UpdateSelectedFacility()

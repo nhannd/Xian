@@ -91,9 +91,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
                 try
                 {
+                    IList<Facility> facilityList = _facilityAdminService.GetAllFacilities();
+
                     facilityStrings.AddRange(
-                        CollectionUtils.Map<Facility, string>(_facilityAdminService.GetAllFacilities(),
+                        CollectionUtils.Map<Facility, string>(facilityList,
                                 delegate(Facility f) { return Format.Custom(f); }));
+
+                    if (_isNew && _location.Facility == null && facilityList.Count > 0)
+                        _location.Facility = facilityList[0];
                 }
                 catch (Exception e)
                 {
