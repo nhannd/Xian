@@ -9,8 +9,9 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Client.Common;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Tools/Import Diagnostic Services")]
     [ClickHandler("launch", "Launch")]
@@ -179,8 +180,6 @@ namespace ClearCanvas.Ris.Client.Common
                 }
 
                 context.ReportProgress(new BackgroundTaskProgress(percentage, String.Format("Importing batch {0} of {1}", batch, NumberOfBatches)));
-
-                System.Threading.Thread.Sleep(100);
             }
 
             context.ReportProgress(new BackgroundTaskProgress(100, String.Format("Importing {0} rows completed", _rows.Count)));

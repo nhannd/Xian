@@ -294,9 +294,6 @@
   <data name="TitleEdit" xml:space="preserve">
     <value>Edit</value>
   </data>
-  <data name="TitleImportDiagnosticServices" xml:space="preserve">
-    <value>Import Diagnostic Services</value>
-  </data>
   <data name="TitleUpdateAddress" xml:space="preserve">
     <value>Update Address...</value>
   </data>

@@ -264,6 +264,9 @@
   <data name="TitleFacilities" xml:space="preserve">
     <value>Facilities</value>
   </data>
+  <data name="TitleImportDiagnosticServices" xml:space="preserve">
+    <value>Import Diagnostic Services</value>
+  </data>
   <data name="TitleLocations" xml:space="preserve">
     <value>Locations</value>
   </data>

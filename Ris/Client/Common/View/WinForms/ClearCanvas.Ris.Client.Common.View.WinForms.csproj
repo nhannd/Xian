@@ -84,13 +84,6 @@
       <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="EmailAddressesSummaryComponentView.cs" />
-    <Compile Include="ImportDiagnosticServicesComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ImportDiagnosticServicesComponentControl.Designer.cs">
-      <DependentUpon>ImportDiagnosticServicesComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ImportDiagnosticServicesComponentView.cs" />
     <Compile Include="PhoneNumberEditorComponentView.cs" />
     <Compile Include="PhoneNumberEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -165,10 +158,6 @@
     <EmbeddedResource Include="FolderExplorerComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImportDiagnosticServicesComponentControl.resx">
-      <DependentUpon>ImportDiagnosticServicesComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PhoneNumberEditorControl.resx">
       <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>

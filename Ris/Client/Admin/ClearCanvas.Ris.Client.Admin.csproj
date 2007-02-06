@@ -41,6 +41,7 @@
     <Compile Include="FacilitySummaryComponent.cs" />
     <Compile Include="FacilityEditorComponent.cs" />
     <Compile Include="FacilityTable.cs" />
+    <Compile Include="ImportDiagnosticServicesComponent.cs" />
     <Compile Include="LocationSummaryComponent.cs" />
     <Compile Include="LocationEditorComponent.cs" />
     <Compile Include="LocationTable.cs" />

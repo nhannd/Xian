@@ -592,15 +592,6 @@ namespace ClearCanvas.Ris.Client.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import Diagnostic Services.
-        /// </summary>
-        internal static string TitleImportDiagnosticServices {
-            get {
-                return ResourceManager.GetString("TitleImportDiagnosticServices", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update Address....
         /// </summary>
         internal static string TitleUpdateAddress {

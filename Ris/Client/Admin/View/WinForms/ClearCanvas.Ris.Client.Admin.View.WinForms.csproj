@@ -49,6 +49,13 @@
       <DependentUpon>FacilityEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FacilityEditorComponentView.cs" />
+    <Compile Include="ImportDiagnosticServicesComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImportDiagnosticServicesComponentControl.designer.cs">
+      <DependentUpon>ImportDiagnosticServicesComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImportDiagnosticServicesComponentView.cs" />
     <Compile Include="LocationSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -140,6 +147,10 @@
     <EmbeddedResource Include="FacilityEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FacilityEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportDiagnosticServicesComponentControl.resx">
+      <DependentUpon>ImportDiagnosticServicesComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationSummaryComponentControl.resx">
       <SubType>Designer</SubType>

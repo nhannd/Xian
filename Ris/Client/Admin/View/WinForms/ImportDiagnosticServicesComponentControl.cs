@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Common.View.WinForms
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="ImportDiagnosticServicesComponent"/>

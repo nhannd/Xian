@@ -1,4 +1,4 @@
-namespace ClearCanvas.Ris.Client.Common.View.WinForms
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     partial class ImportDiagnosticServicesComponentControl
     {
