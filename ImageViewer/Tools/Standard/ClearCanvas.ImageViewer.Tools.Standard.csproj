@@ -125,8 +125,6 @@
     <Compile Include="LutPresets\LutPresetGroup.cs" />
     <Compile Include="LutPresets\LutPresetSettings.cs" />
     <Compile Include="LutPresetTool.cs" />
-    <Compile Include="Tool1.cs" />
-    <Compile Include="Tool2.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="ZoomFixedTool.cs" />
     <Compile Include="ZoomTool.cs" />
@@ -162,12 +160,6 @@
     <EmbeddedResource Include="Icons\ProbeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Tool1Large.png" />
-    <EmbeddedResource Include="Icons\Tool1Medium.png" />
-    <EmbeddedResource Include="Icons\Tool1Small.png" />
-    <EmbeddedResource Include="Icons\Tool2Large.png" />
-    <EmbeddedResource Include="Icons\Tool2Medium.png" />
-    <EmbeddedResource Include="Icons\Tool2Small.png" />
     <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
