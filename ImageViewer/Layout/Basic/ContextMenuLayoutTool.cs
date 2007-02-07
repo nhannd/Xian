@@ -5,6 +5,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -14,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ContextMenuLayoutTool : Tool<IImageViewerToolContext>
+	public class ContextMenuLayoutTool : ImageViewerTool
 	{
 		/// <summary>
         /// Constructor
@@ -30,11 +31,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         {
             base.Initialize();
         }
-
-		private IImageViewer ImageViewer
-		{
-			get { return this.Context.Viewer; }
-		}
 
 		public override IActionSet Actions
 		{

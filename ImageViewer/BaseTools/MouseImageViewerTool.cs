@@ -7,7 +7,7 @@ using System.Drawing;
 using ClearCanvas.Desktop;
 
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.BaseTools
 {
     /// <summary>
     /// Extends the <see cref="Tool"/> class to provide functionality that is common to mouse tools
@@ -17,8 +17,11 @@ namespace ClearCanvas.ImageViewer
     /// and is given the opportunity to respond to mouse events for that button.  Developers 
     /// implementing mouse tools should subclass this class rather than <see cref="Tool"/>.
     /// </remarks>
-	
-    public abstract class MouseTool : Tool<IImageViewerToolContext>, IMouseButtonHandler, ICursorTokenProvider
+
+	public abstract class MouseImageViewerTool :
+		ImageViewerTool, 
+		IMouseButtonHandler, 
+		ICursorTokenProvider
 	{
 		private int _lastX;
 		private int _lastY;
@@ -37,7 +40,7 @@ namespace ClearCanvas.ImageViewer
         /// and a preference for being the initially active tool.  There is no guarantee
         /// that this tool will actuall be initially active.
         /// </summary>
-        public MouseTool()
+        public MouseImageViewerTool()
         {
 			_requiresCapture = true;
         }

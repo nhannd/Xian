@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[GroupHint("show", "Tools.VolumeImage.Create")]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class CreateVolumeTool : ImageViewerDesktopTool
+	public class CreateVolumeTool : DesktopImageViewerTool
 	{
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the

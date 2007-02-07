@@ -14,6 +14,7 @@ using ClearCanvas.ImageViewer.Tools.Standard.LutPresets;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -25,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[GroupHint("auto", LutPresetTool.GroupHint)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class LutPresetTool : Tool<IImageViewerToolContext>
+	public class LutPresetTool : ImageViewerTool
 	{
 		public const string GroupHint = "Tools.Image.Manipulation.Lut.Presets";
 
@@ -98,8 +99,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!this.Enabled)
 				return;
 
-			IVOILUTLinearProvider associatedWindowLevel = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
-			IImageSopProvider associatedDicom = this.Context.Viewer.SelectedPresentationImage as IImageSopProvider;
+			IVOILUTLinearProvider associatedWindowLevel = this.SelectedVOILUTLinearProvider;
+			IImageSopProvider associatedDicom = this.SelectedImageSopProvider;
 
 			if (associatedWindowLevel == null || associatedDicom == null)
 				return;

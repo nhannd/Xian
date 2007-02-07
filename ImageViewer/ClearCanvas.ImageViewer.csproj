@@ -149,7 +149,7 @@
     <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
-    <Compile Include="ImageViewerDesktopTool.cs" />
+    <Compile Include="BaseTools\DesktopImageViewerTool.cs" />
     <Compile Include="ImageViewerToolComponent.cs" />
     <Compile Include="InputManagement\IContextMenuProvider.cs" />
     <Compile Include="InputManagement\ICursorTokenProvider.cs" />
@@ -191,6 +191,7 @@
     <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
     <Compile Include="Mathematics\Tests\RectangleIntersectionTests.cs" />
+    <Compile Include="BaseTools\ImageViewerTool.cs" />
     <Compile Include="StandardModalities.cs" />
     <Compile Include="StandardModalitySettings.cs" />
     <Compile Include="StandardModalitySettings.Designer.cs">
@@ -269,7 +270,7 @@
     <Compile Include="Annotations\IAnnotationItem.cs" />
     <Compile Include="Annotations\IAnnotationItemProvider.cs" />
     <Compile Include="IImageViewer.cs" />
-    <Compile Include="IImageViewerToolContext.cs" />
+    <Compile Include="BaseTools\IImageViewerToolContext.cs" />
     <Compile Include="ILayoutManager.cs" />
     <Compile Include="ImageBoxCollection.cs" />
     <Compile Include="ImageBoxEventArgs.cs" />
@@ -325,7 +326,7 @@
     <Compile Include="Graphics\Tests\LayerGroupTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
-    <Compile Include="MouseTool.cs" />
+    <Compile Include="BaseTools\MouseImageViewerTool.cs" />
     <Compile Include="OpenStudyException.cs" />
     <Compile Include="PhysicalWorkspace.cs" />
     <Compile Include="PhysicalWorkspaceMemento.cs" />

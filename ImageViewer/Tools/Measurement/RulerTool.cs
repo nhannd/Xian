@@ -10,6 +10,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -24,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RulerTool : MouseTool
+    public class RulerTool : MouseImageViewerTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
 		private ROIGraphic _roiGraphic;

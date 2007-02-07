@@ -15,6 +15,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 using System.Diagnostics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -31,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseToolButton(XMouseButtons.Left, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ProbeTool : MouseTool
+	public class ProbeTool : MouseImageViewerTool
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;

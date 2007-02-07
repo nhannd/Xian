@@ -6,7 +6,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.BaseTools
 {
     public interface IImageViewerToolContext : IToolContext
     {

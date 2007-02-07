@@ -6,6 +6,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
@@ -13,7 +14,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	{
 		private KeyStrokeSettings _keyStrokeSettings;
 
-		private Dictionary<MouseTool, XMouseButtons> _mouseToolButtonMap;
+		private Dictionary<MouseImageViewerTool, XMouseButtons> _mouseToolButtonMap;
 		private Dictionary<MouseButtonShortcut, IMouseButtonHandler> _activeMouseButtonShortcutMap;
 		private Dictionary<MouseWheelShortcut, IMouseWheelHandler> _activeMouseWheelShortcutMap;
 		private Dictionary<KeyboardButtonShortcut, IClickAction> _keyStrokeShortcutMap;
@@ -22,13 +23,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			_keyStrokeSettings = new KeyStrokeSettings();
 
-			_mouseToolButtonMap = new Dictionary<MouseTool, XMouseButtons>();
+			_mouseToolButtonMap = new Dictionary<MouseImageViewerTool, XMouseButtons>();
 			_activeMouseButtonShortcutMap = new Dictionary<MouseButtonShortcut, IMouseButtonHandler>();
 			_activeMouseWheelShortcutMap = new Dictionary<MouseWheelShortcut, IMouseWheelHandler>();
 			_keyStrokeShortcutMap = new Dictionary<KeyboardButtonShortcut, IClickAction>();
 		}
 
-		private void RegisterMouseToolButton(MouseTool mouseTool)
+		private void RegisterMouseToolButton(MouseImageViewerTool mouseTool)
 		{
 			try
 			{
@@ -51,7 +52,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		private void RegisterModifiedMouseToolButton(MouseTool mouseTool)
+		private void RegisterModifiedMouseToolButton(MouseImageViewerTool mouseTool)
 		{
 			try
 			{
@@ -75,7 +76,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		private void RegisterMouseWheelShortcuts(MouseTool mouseTool)
+		private void RegisterMouseWheelShortcuts(MouseImageViewerTool mouseTool)
 		{
 			object[] mouseWheelControlAssignments = mouseTool.GetType().GetCustomAttributes(typeof(MouseWheelControlAttribute), true);
 			if (mouseWheelControlAssignments == null || mouseWheelControlAssignments.Length == 0)
@@ -127,7 +128,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private void OnMouseToolActivationChanged(object sender, EventArgs e)
 		{
-			MouseTool mouseTool = (MouseTool)sender;
+			MouseImageViewerTool mouseTool = (MouseImageViewerTool)sender;
 
 			if (mouseTool.Active)
 				ActivateMouseTool(mouseTool, true);
@@ -135,7 +136,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				DeactivateMouseTool(mouseTool);
 		}
 
-		private void DeactivateMouseTool(MouseTool mouseTool)
+		private void DeactivateMouseTool(MouseImageViewerTool mouseTool)
 		{
 			if (_mouseToolButtonMap.ContainsKey(mouseTool))
 			{
@@ -149,7 +150,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		private void ActivateMouseTool(MouseTool activateMouseTool, bool replaceExisting)
+		private void ActivateMouseTool(MouseImageViewerTool activateMouseTool, bool replaceExisting)
 		{
 			try
 			{
@@ -163,7 +164,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					if (!replaceExisting)
 						return;
 					
-					MouseTool oldMouseTool = (MouseTool)_activeMouseButtonShortcutMap[shortcut];
+					MouseImageViewerTool oldMouseTool = (MouseImageViewerTool)_activeMouseButtonShortcutMap[shortcut];
 					if (oldMouseTool != activateMouseTool)
 					{
 						_activeMouseButtonShortcutMap[shortcut] = activateMouseTool;
@@ -188,10 +189,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			foreach (ITool tool in tools)
 			{
-				if (!(tool is MouseTool))
+				if (!(tool is MouseImageViewerTool))
 					continue;
 
-				MouseTool mouseTool = tool as MouseTool;
+				MouseImageViewerTool mouseTool = tool as MouseImageViewerTool;
 
 				RegisterMouseToolButton(mouseTool);
 				RegisterModifiedMouseToolButton(mouseTool);
@@ -219,7 +220,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		#region IViewerShortcutManager Members
 
-		public void ChangeMouseToolAssignment(MouseTool mouseTool, XMouseButtons button)
+		public void ChangeMouseToolAssignment(MouseImageViewerTool mouseTool, XMouseButtons button)
 		{
 			Platform.CheckForNullReference(mouseTool, "mouseTool");
 

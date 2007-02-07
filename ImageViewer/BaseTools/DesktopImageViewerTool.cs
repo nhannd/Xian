@@ -4,13 +4,13 @@ using System.Text;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.BaseTools
 {
-	public class ImageViewerDesktopTool : Tool<IDesktopToolContext>
+	public class DesktopImageViewerTool : Tool<IDesktopToolContext>
 	{
 		private ImageViewerToolComponent _imageViewerToolComponent;
 
-		public ImageViewerDesktopTool()
+		public DesktopImageViewerTool()
 		{
 
 		}

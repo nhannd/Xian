@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -31,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ZoomTool : MouseTool
+	public class ZoomTool : MouseImageViewerTool
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
@@ -71,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomIn()
 		{
-			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
 
 			if (image == null)
 				return;
@@ -86,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomOut()
 		{
-			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
 
 			if (image == null)
 				return;

@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -36,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseToolButton(XMouseButtons.Left, false)]
     
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class PanTool : MouseTool
+	public class PanTool : MouseImageViewerTool
 	{
 		private UndoableCommand _command;
 		private SpatialTransformApplicator _applicator;
@@ -96,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementPan(int xIncrement, int yIncrement)
 		{
-			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
 
 			if (image == null)
 				return;

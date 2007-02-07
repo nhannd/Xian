@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using vtk;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -22,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[GroupHint("activate", "Tools.VolumeImage.Manipulation.Rotate")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class RotateVolumeTool : MouseTool
+	public class RotateVolumeTool : MouseImageViewerTool
 	{
 		public RotateVolumeTool()
   		{

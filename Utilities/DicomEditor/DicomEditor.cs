@@ -11,6 +11,7 @@ using ClearCanvas.ImageViewer.Explorer.Local;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {

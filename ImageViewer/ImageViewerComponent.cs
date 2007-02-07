@@ -12,6 +12,7 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer
 {

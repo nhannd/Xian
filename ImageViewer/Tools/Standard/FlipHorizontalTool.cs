@@ -6,6 +6,8 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.BaseTools;
+
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -18,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Horizontal")]
 
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class FlipHorizontalTool : Tool<IImageViewerToolContext>
+    public class FlipHorizontalTool : ImageViewerTool
 	{
 		public FlipHorizontalTool()
 		{
@@ -26,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Activate()
 		{
-			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
 
 			if (image == null)
 				return;

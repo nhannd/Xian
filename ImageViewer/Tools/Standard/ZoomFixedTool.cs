@@ -6,10 +6,11 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    public abstract class ZoomFixedTool : Tool<IImageViewerToolContext>
+    public abstract class ZoomFixedTool : ImageViewerTool
     {
         public ZoomFixedTool()
 		{
@@ -19,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
         protected void ApplyZoom(float scale)
         {
-			ISpatialTransformProvider image = this.Context.Viewer.SelectedPresentationImage as ISpatialTransformProvider;
+			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
 
 			if (image == null)
 				return;

@@ -3,6 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -18,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class LayoutTool : ImageViewerDesktopTool
+	public class LayoutTool : DesktopImageViewerTool
 	{
         /// <summary>
         /// Constructor

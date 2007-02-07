@@ -6,6 +6,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -35,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("jumptoend", "JumpToEnd")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class StackTool : MouseTool
+	public class StackTool : MouseImageViewerTool
 	{
 		private UndoableCommand _command;
 		private int _initialPresentationImageIndex;

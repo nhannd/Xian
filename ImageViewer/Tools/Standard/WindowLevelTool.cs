@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Tools.Standard;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("decrementwindowcenter", "DecrementWindowCenter")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class WindowLevelTool : MouseTool
+	public class WindowLevelTool : MouseImageViewerTool
 	{
 		private UndoableCommand _command;
 		private WindowLevelApplicator _applicator;
@@ -102,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void IncrementWindow(double windowIncrement, double levelIncrement)
 		{
-			IVOILUTLinearProvider image = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
+			IVOILUTLinearProvider image = this.SelectedVOILUTLinearProvider;
 
 			if (image == null)
 				return;
