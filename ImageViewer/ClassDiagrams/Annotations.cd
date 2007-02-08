@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="ClearCanvas.ImageViewer.Annotations.AnnotationBox" Collapsed="true">
+    <Position X="7.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Annotations\AnnotationBox.cs</FileName>
+      <HashCode>QAwEAgAkCAAIACAAAAoAAAAACADAAAAJAAFEgAAGgBA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AnnotationItem" />
+    </ShowAsAssociation>
+    <NestedTypes>
+      <Enum Name="ClearCanvas.ImageViewer.Annotations.AnnotationBox.TruncationBehaviour" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Annotations\AnnotationBox.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="ClearCanvas.ImageViewer.Annotations.AnnotationBox.JustificationBehaviour" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Annotations\AnnotationBox.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="ClearCanvas.ImageViewer.Annotations.AnnotationBox.VerticalAlignmentBehaviour" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Annotations\AnnotationBox.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Annotations.StoredAnnotationBoxGroup" Collapsed="true">
+    <Position X="6.75" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Annotations\StoredAnnotationBoxGroup.cs</FileName>
+      <HashCode>AAAAAAACBAAAAAAABAAIgAAAAAAAAAAAAQAAQAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="AnnotationBoxes" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Annotations.AnnotationItemProviderManager" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Annotations\AnnotationItemProviderManager.cs</FileName>
+      <HashCode>AAAFAAAAAAAEAQAAAAAAAEAAAAAAAAAAQAAEAAAAAIA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="AnnotationItems" />
+      <Property Name="Providers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationItem" Collapsed="true">
+    <Position X="10" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Annotations\IAnnotationItem.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAABAEAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationLayout" Collapsed="true">
+    <Position X="4.25" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Annotations\IAnnotationLayout.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="AnnotationBoxes" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationLayoutProvider" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Annotations\IAnnotationLayoutProvider.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AnnotationLayout" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationItemProvider" Collapsed="true">
+    <Position X="6" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>Annotations\IAnnotationItemProvider.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAABAEAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+</ClassDiagram>

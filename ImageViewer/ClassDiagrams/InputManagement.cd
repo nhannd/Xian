@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="ClearCanvas.ImageViewer.InputManagement.TileController" Collapsed="true">
+    <Position X="3.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>InputManagement\TileController.cs</FileName>
+      <HashCode>EAAMgRCAAEBAIAACAAKABgDAAAGMgZBAAAAAiACQCxA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CaptureHandler" />
+      <Property Name="ContextMenuProvider" />
+      <Property Name="Tile" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Events" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="ClearCanvas.ImageViewer.InputManagement.TileController.CallHandlerMethodDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>InputManagement\TileController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <AssociationLine Name="CaptureHandler" Type="ClearCanvas.ImageViewer.InputManagement.IMouseButtonHandler" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.688" />
+        <Point X="5.125" Y="1.688" />
+        <Point X="5.125" Y="1.25" />
+        <Point X="6.75" Y="1.25" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="ContextMenuProvider" Type="ClearCanvas.ImageViewer.InputManagement.IContextMenuProvider" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.938" />
+        <Point X="5.125" Y="1.938" />
+        <Point X="5.125" Y="2.306" />
+        <Point X="6.75" Y="2.306" />
+      </Path>
+    </AssociationLine>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="ClearCanvas.ImageViewer.InputManagement.IMouseButtonHandler" Collapsed="true">
+    <Position X="6.75" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>InputManagement\IMouseButtonHandler.cs</FileName>
+      <HashCode>AAAAAAAAQGAAAAAAAAAAAAAAAAAAgAAAIAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.InputManagement.IContextMenuProvider" Collapsed="true">
+    <Position X="6.75" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>InputManagement\IContextMenuProvider.cs</FileName>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.ITile" Collapsed="true">
+    <Position X="0.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>ITile.cs</FileName>
+      <HashCode>AAAAAAAgAAAAAgAAACAIAAAACAIAAgAAAAAAQAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+</ClassDiagram>

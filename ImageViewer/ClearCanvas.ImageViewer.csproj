@@ -390,12 +390,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Graphics\Graphics.cd" />
+    <None Include="ClassDiagrams\Annotations.cd" />
+    <None Include="ClassDiagrams\Graphics.cd" />
+    <None Include="ClassDiagrams\ImageViewer.cd" />
+    <None Include="ClassDiagrams\InputManagement.cd" />
+    <None Include="ClassDiagrams\PresentationImage.cd" />
+    <None Include="ClassDiagrams\Tools.cd" />
     <None Include="Graphics\SceneGraph.cd" />
-    <None Include="InteractiveGraphics\GraphicStates.cd" />
-    <None Include="InteractiveGraphics\InteractiveGraphics.cd" />
-    <None Include="InteractiveGraphics\ROIGraphic.cd" />
-    <None Include="InteractiveGraphics\StatefulCompositeGraphic.cd" />
+    <None Include="ClassDiagrams\GraphicStates.cd" />
+    <None Include="ClassDiagrams\InteractiveGraphics.cd" />
+    <None Include="ClassDiagrams\ROIGraphic.cd" />
+    <None Include="ClassDiagrams\StatefulCompositeGraphic.cd" />
     <None Include="Annotations\AnnotationLayoutStoreSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
@@ -410,8 +415,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Workspaces.cd" />
-    <None Include="StudyManagement\StudyTree.cd" />
+    <None Include="ClassDiagrams\Workspaces.cd" />
+    <None Include="ClassDiagrams\StudyTree.cd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
