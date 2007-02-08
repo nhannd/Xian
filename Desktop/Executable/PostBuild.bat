@@ -22,9 +22,9 @@ copy "..\..\Logging.config" "."
 
 :: Copy shared libraries
 copy "..\..\..\..\Common\bin\%2\*.*" ".\Common"
-copy "..\..\..\..\Common\refs\nunit.framework.dll" ".\Common" 
-copy "..\..\..\..\Common\refs\log4net.dll" ".\Common"
 copy "..\..\..\..\Controls\WinForms\bin\%2\ClearCanvas.Controls.WinForms.dll" ".\Common"
+copy "..\..\..\..\ReferencedAssemblies\nunit.framework.dll" ".\Common" 
+copy "..\..\..\..\ReferencedAssemblies\log4net.dll" ".\Common"
 copy "..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL" ".\Common"
 copy "..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" ".\Common"
 copy "..\..\..\..\ReferencedAssemblies\Nhibernate.dll" ".\Common"
