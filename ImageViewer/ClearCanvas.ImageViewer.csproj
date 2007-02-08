@@ -390,7 +390,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="InteractiveGraphics\Graphics.cd" />
+    <None Include="Graphics\Graphics.cd" />
+    <None Include="Graphics\SceneGraph.cd" />
+    <None Include="InteractiveGraphics\GraphicStates.cd" />
+    <None Include="InteractiveGraphics\InteractiveGraphics.cd" />
+    <None Include="InteractiveGraphics\ROIGraphic.cd" />
+    <None Include="InteractiveGraphics\StatefulCompositeGraphic.cd" />
     <None Include="Annotations\AnnotationLayoutStoreSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
@@ -406,7 +411,6 @@
       <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Workspaces.cd" />
-    <None Include="StudyManagement\StudyFindersAndLoaders.cd" />
     <None Include="StudyManagement\StudyTree.cd" />
   </ItemGroup>
   <ItemGroup>

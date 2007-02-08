@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="ClearCanvas.ImageViewer.View.WinForms.TileControl" Collapsed="true">
     <Position X="2" Y="1.25" Width="1.5" />
@@ -8,8 +8,8 @@
       <HashCode>AwCERCyoACHBIgCAEECAAAAGBBIAAQBAIAAgAAACESA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Surface" />
       <Property Name="Tile" />
+      <Property Name="Surface" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.PresentationImage" Collapsed="true">
@@ -29,7 +29,7 @@
     <Lollipop Position="1.267" />
   </Class>
   <Interface Name="ClearCanvas.ImageViewer.Rendering.IRenderer">
-    <Position X="5.25" Y="5.5" Width="1.75" />
+    <Position X="5.25" Y="5.5" Width="2.75" />
     <TypeIdentifier />
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Rendering.IRenderingSurface">

@@ -5,7 +5,7 @@
     <Position X="1" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>IImageViewer.cs</FileName>
-      <HashCode>AAAAIAAAEABgAAAAAAAAAAAEAAAAAAAAAAACAAAAAAQ=</HashCode>
+      <HashCode>AACAoAAAEABgAAAAAAAAAAAEAAAAAAAAAQACAAAAAAQ=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PhysicalWorkspace" />
@@ -32,7 +32,7 @@
     <Position X="4.5" Y="0.75" Width="2" />
     <TypeIdentifier>
       <FileName>IPhysicalWorkspace.cs</FileName>
-      <HashCode>AAAAAAAAAABAAkAAAAAAAAAAAAAAAgBAAAACAAkAAAA=</HashCode>
+      <HashCode>AAAAAAAAABBAAkAAAAAAAAAAAAAAAgBAAAACCAkAAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="LogicalWorkspace" />
@@ -42,10 +42,10 @@
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IImageBox" Collapsed="true">
-    <Position X="8.25" Y="0.75" Width="1.5" />
+    <Position X="9.75" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>IImageBox.cs</FileName>
-      <HashCode>IAAQAAAAAAAAAkAACAAAAAAECAAAAgIAAAAAQAkgAAI=</HashCode>
+      <HashCode>IAAQAAAAAAAAAkAACAAAAAAECAEAAgIAAAAAQAkgAAI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="DisplaySet" />
@@ -55,7 +55,7 @@
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.ITile" Collapsed="true">
-    <Position X="12" Y="0.75" Width="1.5" />
+    <Position X="13" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>ITile.cs</FileName>
       <HashCode>AAAAAAAgAAAAAgAAACAIAAAACAIAAgAAAAAAQAAAAAI=</HashCode>
@@ -68,27 +68,37 @@
     <Position X="4.5" Y="2.5" Width="1.75" />
     <TypeIdentifier>
       <FileName>ILogicalWorkspace.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAgAAAAAAAAACAAAAAgAQAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAIAAAAAgAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="DisplaySets" />
+      <Property Name="ImageSets" />
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IDisplaySet" Collapsed="true">
-    <Position X="8.25" Y="2.5" Width="1.5" />
+    <Position X="9.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>IDisplaySet.cs</FileName>
-      <HashCode>AAAIAAAAAAAAAgAAAAACAAQAAAIgAgAIAAAAAAAEAAI=</HashCode>
+      <HashCode>AACIAAAAAAAgAgAAAAACAAQAAAIAAgAIAAAAAAAEABI=</HashCode>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="PresentationImages" />
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IPresentationImage" Collapsed="true">
-    <Position X="11.75" Y="2.5" Width="2" />
+    <Position X="12.75" Y="2.5" Width="2" />
     <TypeIdentifier>
       <FileName>IPresentationImage.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAgAAAAACAAAAAAAACgAIAAAAACAAAQI=</HashCode>
+      <HashCode>AAIEAAAAAAAgAgAAAAACAAAAAAAACgAIAAAAAAAAARI=</HashCode>
     </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.IImageSet" Collapsed="true">
+    <Position X="7.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IImageSet.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAgAAAAAAAAQCAAAgAgAQAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="DisplaySets" />
+    </ShowAsCollectionAssociation>
   </Interface>
 </ClassDiagram>
