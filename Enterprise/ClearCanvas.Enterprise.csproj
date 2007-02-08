@@ -58,6 +58,7 @@
     <Compile Include="IServiceManager.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="EntityNotFoundException.cs" />
+    <Compile Include="ITimeBroker.cs" />
     <Compile Include="PersistenceException.cs" />
     <Compile Include="PersistenceScope.cs" />
     <Compile Include="SearchResultPage.cs" />
@@ -68,6 +69,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Tests\ServiceLayerTestHelper.cs" />
+    <Compile Include="TimeService.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="Session.cs" />

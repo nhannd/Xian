@@ -56,6 +56,7 @@
     <Compile Include="EmailAddressEditorComponent.cs" />
     <Compile Include="EmailAddressesSummaryComponent.cs" />
     <Compile Include="EmailAddressTable.cs" />
+    <Compile Include="EnterpriseTimeProvider.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FormatSettings.cs" />
     <Compile Include="FormatSettings.designer.cs">
