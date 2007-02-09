@@ -130,7 +130,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\..\Desktop\Executable\bin\$(ConfigurationName)
-copy $(TargetDir)$(TargetName).pdb $(ProjectDir)..\..\Desktop\Executable\bin\$(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
