@@ -107,7 +107,7 @@ namespace ClearCanvas.Desktop
             {
                 return (obj as IFormattable).ToString(null, null);
             }
-            return obj.ToString();
+            return (obj == null ? "" : obj.ToString());
         }
     }
 }

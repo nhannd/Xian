@@ -11,22 +11,22 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Ris.Services;
 
-namespace ClearCanvas.Ris.Client.Modality
+namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("show", "global-menus/Go/Technologist Home")]
+    [MenuAction("show", "global-menus/Go/Registration Home")]
     [ClickHandler("show", "Show")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class LaunchFolderExplorerTool : Tool<IDesktopToolContext>
+    public class RegistrationLaunchFolderExplorerTool : Tool<IDesktopToolContext>
     {
         public void Show()
         {
-            FolderExplorerComponent folderComponent = new FolderExplorerComponent(new ModalityFolderExplorerToolExtensionPoint());
-            AcquisitionWorkflowPreviewComponent previewComponent = new AcquisitionWorkflowPreviewComponent();
+            FolderExplorerComponent folderComponent = new FolderExplorerComponent(new RegistrationFolderExplorerToolExtensionPoint());
+            RegistrationPreviewComponent previewComponent = new RegistrationPreviewComponent();
 
             folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
             {
-                ModalityWorklistQueryResult item = folderComponent.SelectedItems.Item as ModalityWorklistQueryResult;
-                //previewComponent.WorklistItem = item;
+                RegistrationWorklistItem item = folderComponent.SelectedItems.Item as RegistrationWorklistItem;
+                previewComponent.WorklistItem = item;
             };
 
             SplitComponentContainer split = new SplitComponentContainer(
@@ -37,22 +37,22 @@ namespace ClearCanvas.Ris.Client.Modality
             ApplicationComponent.LaunchAsWorkspace(
                 this.Context.DesktopWindow,
                 split,
-                "Technologist Home",
+                "Registration Home",
                 null);
         }
     }
 
     [ExtensionPoint]
-    public class ModalityFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
+    public class RegistrationFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    [ExtensionOf(typeof(ModalityFolderExplorerToolExtensionPoint))]
-    public class ModalityWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
+    [ExtensionOf(typeof(RegistrationFolderExplorerToolExtensionPoint))]
+    public class RegistrationWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
     {
-        private ModalityWorkflowFolderSystem _folderSystem;
+        private RegistrationWorkflowFolderSystem _folderSystem;
 
-        public ModalityWorkflowFolderSystemTool()
+        public RegistrationWorkflowFolderSystemTool()
         {
         }
 
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Modality
         {
             base.Initialize();
 
-            _folderSystem = new ModalityWorkflowFolderSystem(this.Context);
+            _folderSystem = new RegistrationWorkflowFolderSystem(this.Context);
         }
 
         protected override void Dispose(bool disposing)

@@ -17,6 +17,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [ButtonAction("apply", "global-toolbars/Patient/Reconcile")]
     [MenuAction("apply", "worklist-contextmenu/Reconcile")]
     [ButtonAction("apply", "worklist-toolbar/Reconcile")]
+    [ButtonAction("apply", "folderexplorer-items-contextmenu/Reconcile")]
+    [MenuAction("apply", "folderexplorer-items-toolbar/Reconcile")]
     [Tooltip("apply", "Reconcile patient profiles")]
     [IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]
     [ClickHandler("apply", "Reconcile")]
@@ -24,6 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowToolExtensionPoint))]
     public class PatientReconcileTool : ToolBase
     {
         private bool _enabled;
@@ -39,6 +42,15 @@ namespace ClearCanvas.Ris.Client.Adt
                 ((IWorklistToolContext)this.ContextBase).SelectedPatientProfileChanged += delegate(object sender, EventArgs args)
                 {
                     this.Enabled = ((IWorklistToolContext)this.ContextBase).SelectedPatientProfile != null;
+                };
+            }
+            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            {
+                _enabled = false;   // disable by default
+                ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                {
+                    this.Enabled = (((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems != null
+                        && ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
             }
             else
@@ -72,6 +84,12 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IWorklistToolContext context = (IWorklistToolContext)this.ContextBase;
                 ShowReconciliationDialog(context.SelectedPatientProfile, context.DesktopWindow);
+            }
+            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            {
+                IRegistrationWorkflowToolContext context = (IRegistrationWorkflowToolContext)this.ContextBase;
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                ShowReconciliationDialog(item.PatientProfile, context.DesktopWindow);
             }
             else
             {

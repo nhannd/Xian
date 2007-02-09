@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Common.Utilities;
+
+namespace ClearCanvas.Healthcare.Hibernate.Brokers
+{
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class RegistrationWorklistBroker : Broker, IRegistrationWorklistBroker
+    {
+        public IList<RegistrationWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority)
+        {
+            HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ModalityProcedureStep"));
+            query.Joins.Add(new HqlJoin("spst", "sps.Type"));
+            query.Joins.Add(new HqlJoin("m", "sps.Modality"));
+            query.Joins.Add(new HqlJoin("rp", "sps.RequestedProcedure"));
+            query.Joins.Add(new HqlJoin("rpt", "rp.Type"));
+            query.Joins.Add(new HqlJoin("o", "rp.Order"));
+            query.Joins.Add(new HqlJoin("ds", "o.DiagnosticService"));
+            query.Joins.Add(new HqlJoin("v", "o.Visit"));
+            query.Joins.Add(new HqlJoin("p", "o.Patient"));
+            query.Joins.Add(new HqlJoin("pp", "p.Profiles"));
+
+            query.Selectors.Add(new HqlSelector("Patient", "p"));
+            query.Selectors.Add(new HqlSelector("PatientProfile", "pp"));
+            query.Selectors.Add(new HqlSelector("Order", "o"));
+            query.Selectors.Add(new HqlSelector("RequestedProcedure", "rp"));
+            query.Selectors.Add(new HqlSelector("WorkflowStep", "sps"));
+            query.Selectors.Add(new HqlSelector("Mrn", "pp.Mrn"));
+            query.Selectors.Add(new HqlSelector("PatientName", "pp.Name"));
+            query.Selectors.Add(new HqlSelector("VisitNumber", "v.VisitNumber"));
+            query.Selectors.Add(new HqlSelector("AccessionNumber", "o.AccessionNumber"));
+            query.Selectors.Add(new HqlSelector("DiagnosticService", "ds.Name"));
+            query.Selectors.Add(new HqlSelector("Procedure", "rpt.Name"));
+            query.Selectors.Add(new HqlSelector("ScheduledStep", "spst.Name"));
+            query.Selectors.Add(new HqlSelector("Modality", "m.Name"));
+            query.Selectors.Add(new HqlSelector("Priority", "o.Priority"));
+            query.Selectors.Add(new HqlSelector("State", "sps.State"));
+
+            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("sps", criteria));
+
+            // add some criteria to filter the patient profiles
+            PatientProfileSearchCriteria profileCriteria = new PatientProfileSearchCriteria();
+            profileCriteria.Mrn.AssigningAuthority.EqualTo(patientProfileAuthority);
+            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", profileCriteria));
+
+            List<RegistrationWorklistQueryResult> items = new List<RegistrationWorklistQueryResult>();
+            foreach (object[] tuple in ExecuteHql(query))
+            {
+                items.Add( (RegistrationWorklistQueryResult)Activator.CreateInstance(typeof(RegistrationWorklistQueryResult), tuple) );
+            }
+            return items;
+        }
+
+        public RegistrationWorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority)
+        {
+            ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria(mpsRef);
+            IList<RegistrationWorklistQueryResult> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
+
+            // expect exactly one result
+            return CollectionUtils.FirstElement<RegistrationWorklistQueryResult>(results);
+        }
+
+    }
+}

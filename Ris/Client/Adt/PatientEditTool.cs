@@ -8,6 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -25,8 +26,16 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("edit2", "Edit Patient Information")]
     [IconSet("edit2", IconScheme.Colour, "Icons.Edit.png", "Icons.Edit.png", "Icons.Edit.png")]
 
+    [MenuAction("edit3", "folderexplorer-items-contextmenu/Edit Patient")]
+    [ButtonAction("edit3", "folderexplorer-items-toolbar/Edit")]
+    [ClickHandler("edit3", "Apply")]
+    [EnabledStateObserver("edit3", "Enabled", "EnabledChanged")]
+    [Tooltip("edit3", "Edit Patient Information")]
+    [IconSet("edit3", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
+
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowToolExtensionPoint))]
     public class PatientEditTool : ToolBase
     {
         private bool _enabled;
@@ -41,6 +50,15 @@ namespace ClearCanvas.Ris.Client.Adt
                 ((IWorklistToolContext)this.ContextBase).SelectedPatientProfileChanged += delegate(object sender, EventArgs args)
                 {
                     this.Enabled = ((IWorklistToolContext)this.ContextBase).SelectedPatientProfile != null;
+                };
+            }
+            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            {
+                _enabled = false;   // disable by default
+                ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                {
+                    this.Enabled = (((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems != null
+                        && ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
             }
             else
@@ -74,6 +92,12 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IWorklistToolContext context = (IWorklistToolContext)this.ContextBase;
                 Edit(context.SelectedPatientProfile, context.DesktopWindow);
+            }
+            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            {
+                IRegistrationWorkflowToolContext context = (IRegistrationWorkflowToolContext)this.ContextBase;
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                Edit(item.PatientProfile, context.DesktopWindow);
             }
             else
             {

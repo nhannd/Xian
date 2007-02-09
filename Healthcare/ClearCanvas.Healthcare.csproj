@@ -39,12 +39,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
+    <Compile Include="RegistrationWorklistQueryResult.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="AddressType.cs" />
     <Compile Include="AdmissionType.cs" />
     <Compile Include="AmbulatoryStatus.cs" />
     <Compile Include="Brokers\IAccessionNumberBroker.cs" />
+    <Compile Include="Brokers\IRegistrationWorklistBroker.cs" />
     <Compile Include="Brokers\IModalityWorklistBroker.cs" />
     <Compile Include="Brokers\IModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
     <Compile Include="ModalityWorklistQueryResult.cs" />
+    <Compile Include="Workflow\Registration\Operations.cs" />
     <Compile Include="Workflow\Modality\Operations.cs" />
     <Compile Include="Workflow\IOperation.cs" />
     <Compile Include="Workflow\Operation.cs" />

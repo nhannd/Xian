@@ -112,6 +112,7 @@
     <Compile Include="PatientSearchComponentControl.Designer.cs">
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="RegistrationPreviewComponentView.cs" />
     <Compile Include="VisitDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

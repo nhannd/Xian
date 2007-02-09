@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+<link href="http://172.16.10.167/RisTemplates/default.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<% 
+var component = this.Component;
+if(component.PatientProfileRef != null)
+{%>
+<% if(component.ShowHeader) { %>
+<table width="640" border="0">
+  <tr>
+    <td width="422" class="pageheading"><%= component.Name %></td>
+    <!--<td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>-->
+    <td rowspan="2" width="202"><img src="http://172.16.10.167/RisTemplates/logo.jpg" alt="UHN/MSH" align="left" /></td>
+  </tr>
+  <tr>
+    <td class="pageheading2"><%= component.Mrn %></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<% } // end-if(component.ShowHeader) %>
+
+<% if(component.ShowReconciliationAlert) { %>
+<div class="alert">
+<ul>
+   <li>Patient has unreconciled records</li>
+</ul>
+</div>
+<% } // end-if(component.ShowReconciliationAlert) %>
+
+<table width="640" border="0">
+  <tr class="sectionheading">
+    <td colspan="4">Basic Information </td>
+  </tr>
+  <tr>
+    <td width="120" class="propertyname">Name</td>
+    <td width="200"><%= component.Name %></td>
+    <td width="63" class="propertyname">MRN</td>
+    <td width="229"><%= component.Mrn %></td>
+  </tr>
+  <tr>
+    <td width="120" class="propertyname">Date of Birth</td>
+    <td width="200"><%= component.DateOfBirth %></td>
+    <td width="63" class="propertyname">Sex</td>
+    <td width="229"><%= component.Sex %></td>
+  </tr>
+  <tr>
+    <td class="propertyname">Healthcard # </td>
+    <td><%= component.Healthcard %></td>
+    <td class="propertyname">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="propertyname">Home Phone</td>
+    <td colspan="3"><%= component.CurrentHomePhone %></td>
+  </tr>
+  <tr>
+    <td class="propertyname">Home Address</td>
+    <td colspan="3"><%= component.CurrentHomeAddress %></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<% if(component.RIC.Items.Count > 0) { %>
+<table width="640" border="0">
+  <tr class="sectionheading">
+    <td colspan="5">Request for Imaging Consultation</td>
+  </tr>
+  <tr class="tableheading">
+  <% for(var column in component.RIC.Columns) { %>
+  <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
+  <% } %>
+  </tr>
+  <% var i = 0; %>
+  <% for(var ric in component.RIC.Items) {%>
+  <tr class="row<%= (i++) % 2 %>"><% for(var column in component.RIC.Columns) {%>
+    <td><%= column.GetValue(ric) %></td>
+      <% } %>
+  </tr>
+  <% } %>
+    <% if(component.MoreRICCount > 0) { %>
+    <tr class="additionalentriescount">
+        <td colspan="5">(<%= component.MoreRICCount %> more...)</td>
+    </tr>
+    <% } %>
+</table>
+<% } %>
+<p>&nbsp;</p>
+<% if(component.HasAlert) { %>
+<table width="640" border="0">
+  <tr class="sectionheading">
+    <td colspan="1">Alerts</td>
+  </tr>
+  <tr>
+    <td>
+        <img width=50 src="http://www.azcongresswatch.com/wp-content/uploads/medical_symbol_md.thumbnail.jpg" alt="Healthcare Alert" align="left" />
+        <img width=50 src="http://www3.sympatico.ca/robertblue/Nopeanuts.jpg" alt="Peanut Allergy" align="left" />
+    </td>
+  </tr>
+</table>
+<% } %>
+<%} // end-if(component != null)%>    
+</body>
+</html>

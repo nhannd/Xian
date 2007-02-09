@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RegistrationWorkflowService.cs" />
+    <Compile Include="IRegistrationWorkflowService.cs" />
     <Compile Include="ModalityWorkflowService.cs" />
     <Compile Include="AdtService.cs" />
     <Compile Include="DefaultPatientReconciliationStrategy.cs" />

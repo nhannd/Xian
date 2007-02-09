@@ -13,36 +13,6 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Common
 {
-    [MenuAction("show", "global-menus/Go/Technologist Home")]
-    [ClickHandler("show", "Show")]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class LaunchFolderExplorerTool : Tool<IDesktopToolContext>
-    {
-        public void Show()
-        {
-            FolderExplorerComponent folderComponent = new FolderExplorerComponent();
-            AcquisitionWorkflowPreviewComponent previewComponent = new AcquisitionWorkflowPreviewComponent();
-
-            folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
-            {
-                ModalityWorklistQueryResult item = folderComponent.SelectedItems.Item as ModalityWorklistQueryResult;
-                //previewComponent.WorklistItem = item;
-            };
-
-            SplitComponentContainer split = new SplitComponentContainer(
-                new SplitPane("Folders", folderComponent, 1.0f),
-                new SplitPane("Preview", previewComponent, 1.0f),
-                SplitOrientation.Vertical);
-
-            ApplicationComponent.LaunchAsWorkspace(
-                this.Context.DesktopWindow,
-                split,
-                "Technologist Home",
-                null);
-        }
-    }
-
-
     public interface IFolderExplorerToolContext : IToolContext
     {
         IDesktopWindow DesktopWindow { get; }
@@ -56,12 +26,6 @@ namespace ClearCanvas.Ris.Client.Common
 
         void AddActions(IActionSet actions);
     }
-
-    [ExtensionPoint]
-    public class FolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
 
     /// <summary>
     /// Extension point for views onto <see cref="WorklistExplorerComponent"/>
@@ -138,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Common
 
         #endregion
 
-
+        private IExtensionPoint _folderExplorerToolExtensionPoint;
         private Tree<IFolder> _folderTree;
         private IFolder _selectedFolder;
         private event EventHandler _selectedFolderChanged;
@@ -149,11 +113,12 @@ namespace ClearCanvas.Ris.Client.Common
         private ToolSet _tools;
 
         private IActionSet _itemActions = new ActionSet();
+        private IActionSet _folderActions = new ActionSet();
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public FolderExplorerComponent()
+        public FolderExplorerComponent(IExtensionPoint extensionPoint)
         {
             TreeItemBinding<IFolder> binding = new TreeItemBinding<IFolder>();
             binding.NodeTextProvider = delegate(IFolder folder) { return folder.Text; };
@@ -163,6 +128,7 @@ namespace ClearCanvas.Ris.Client.Common
 
             _folderTree = new Tree<IFolder>(binding);
             _folderTree.Items.ItemsChanged += new EventHandler<ItemEventArgs>(RootFoldersChangedEventHandler);
+            _folderExplorerToolExtensionPoint = extensionPoint;
         }
 
         #region Application Component overrides
@@ -171,7 +137,7 @@ namespace ClearCanvas.Ris.Client.Common
         {
             base.Start();
 
-            _tools = new ToolSet(new FolderExplorerToolExtensionPoint(), new FolderExplorerToolContext(this));
+            _tools = new ToolSet(_folderExplorerToolExtensionPoint, new FolderExplorerToolContext(this));
         }
 
         public override void Stop()
@@ -179,6 +145,11 @@ namespace ClearCanvas.Ris.Client.Common
             _tools.Dispose();
 
             base.Stop();
+        }
+
+        public override IActionSet ExportedActions
+        {
+            get { return _itemActions.Union(_folderActions); }
         }
 
         #endregion
@@ -244,6 +215,32 @@ namespace ClearCanvas.Ris.Client.Common
             get
             {
                 return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _itemActions);
+            }
+        }
+
+        public ActionModelNode ItemsToolbarModel
+        {
+            get
+            {
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-toolbar", _itemActions);
+            }
+        }
+
+        public ActionModelRoot FoldersContextMenuModel
+        {
+            get
+            {
+                //TODO
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _itemActions);
+            }
+        }
+
+        public ActionModelNode FoldersToolbarModel
+        {
+            get
+            {
+                //TODO
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _itemActions);
             }
         }
 
