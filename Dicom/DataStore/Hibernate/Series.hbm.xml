@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
   <class name="Series" table="Series_">
-    <id name="SeriesOid" column="SeriesOid_" type="Int64">
-      <generator class="hilo">
-        <param name="max_lo">100</param>
+    <id name="SeriesOid" column="SeriesOid_" type="Guid">
+      <generator class="guid.comb">
       </generator>
     </id>
     <property name="SeriesInstanceUid" column="SeriesInstanceUid_" type="string" length="64" />

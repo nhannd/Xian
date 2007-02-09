@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using Crownwood.DotNetMagic.Forms;
 using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Utilities.RebuildDatabase
 {
-    using System.Drawing;
-    using System.Text;
-    using System.Windows.Forms;
-    using System.IO;
-	using Crownwood.DotNetMagic.Forms;
-
     public partial class RebuildDatabaseForm : Form
     {
         delegate void UpdateProgressBarDelegate(ImageInsertCompletingEventArgs args);

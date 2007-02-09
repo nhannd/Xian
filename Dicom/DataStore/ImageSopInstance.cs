@@ -100,7 +100,7 @@ namespace ClearCanvas.Dicom.DataStore
             if (null == sop)
                 return false; // null or not a sop
 
-            if (this.Oid != 0 && sop.Oid != 0)
+            if (this.Oid != null && sop.Oid != null)
             {
                 if (this.Oid != sop.Oid)
                     return false;

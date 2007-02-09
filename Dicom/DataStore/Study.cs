@@ -19,7 +19,7 @@ namespace ClearCanvas.Dicom.DataStore
             _internalSeries = new HybridSet();
         }
 
-        protected virtual long StudyOid
+        protected virtual Guid StudyOid
         {
             get { return _studyOid; }
             set { _studyOid = value; }
@@ -122,7 +122,7 @@ namespace ClearCanvas.Dicom.DataStore
             if (null == study)
                 return false; // null or not a sop
 
-            if (this.StudyOid != 0 && study.StudyOid != 0)
+            if (this.StudyOid != null && study.StudyOid != null)
             {
                 if (this.StudyOid != study.StudyOid)
                     return false;
@@ -147,7 +147,7 @@ namespace ClearCanvas.Dicom.DataStore
             return accumulator;
         }
         #region Private Members
-        long _studyOid;
+        Guid _studyOid;
         string _procedureCodeSequenceCodingSchemeDesignator;
         string _studyId;
         string _studyTime;

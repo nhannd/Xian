@@ -27,7 +27,7 @@ namespace ClearCanvas.Dicom.Services
             protected set { _parcelTransferState = value; }
         }
 
-        protected virtual long ParcelOid
+        protected virtual Guid ParcelOid
         {
             get { return _parcelOid; }
             set { _parcelOid = value; }
@@ -48,7 +48,7 @@ namespace ClearCanvas.Dicom.Services
         #region Internal and Private members
         private ApplicationEntity _destinationAE;
         private ApplicationEntity _sourceAE;
-        private long _parcelOid;
+        private Guid _parcelOid;
         private ParcelTransferState _parcelTransferState = ParcelTransferState.Pending;
         private string _description;
         private int _currentProgressStep;

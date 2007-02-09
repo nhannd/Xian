@@ -47,6 +47,8 @@ namespace ClearCanvas.Dicom.DataStore
             // did not exist in the database, on UIDs, would take very very very long.
             // A workaround to this, is to clear the session of domain objects explicitly
             // before closing the session.
+            // Addendum 08-Feb-2007:
+            // This hack seems necessary for SQL Server CE as well.
             SingleSessionDataAccessLayer.SqliteWorkaround();
         }
 

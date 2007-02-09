@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using log4net;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Utilities.RebuildDatabase
 {
@@ -13,6 +13,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         [STAThread]
         static void Main()
         {
+            Platform.Log("RebuildDatabase application started up");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new RebuildDatabaseForm());

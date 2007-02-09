@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
@@ -89,6 +90,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         public void StartRebuild()
         {
             // TODO
+            Platform.Log("Rebuild starting...");
             if (RebuilderState.Stopped != _state)
 				throw new System.InvalidOperationException(SR.ExceptionCannotStartRebuilderUnlessStopped);
 
@@ -101,6 +103,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
         public void StopRebuild()
         {
             // TODO
+            Platform.Log("Rebuild stopping...");
             if (RebuilderState.Rebuilding != _state)
 				throw new System.InvalidOperationException(SR.ExceptionCannotStopRebuildUnlessStarted);
 
@@ -152,7 +155,7 @@ namespace ClearCanvas.Utilities.RebuildDatabase
 
         private void DatabaseFlush()
         {
-            if (this.DicomStore.GetCachedStudiesCount() > 10)
+            if (this.DicomStore.GetCachedStudiesCount() > 3)
                 this.DicomStore.Flush();
         }
 

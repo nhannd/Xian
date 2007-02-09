@@ -19,7 +19,7 @@ namespace ClearCanvas.Dicom.DataStore
             _internalSopInstances = new HybridSet();
         }
 
-        protected virtual long SeriesOid
+        protected virtual Guid SeriesOid
         {
             get { return _seriesOid; }
             set { _seriesOid = value; }
@@ -86,7 +86,7 @@ namespace ClearCanvas.Dicom.DataStore
             if (null == series)
                 return false; // null or not a sop
 
-            if (this.SeriesOid != 0 && series.SeriesOid != 0)
+            if (this.SeriesOid != null && series.SeriesOid != null)
             {
                 if (this.SeriesOid != series.SeriesOid)
                     return false;
@@ -112,7 +112,7 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         #region Private Members
-        long _seriesOid;
+        Guid _seriesOid;
         string _seriesInstanceUid;
         string _modality;
         int _seriesNumber;

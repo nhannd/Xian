@@ -5,6 +5,7 @@ using System.Text;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Expression;
+using NHibernate.Collection;
 using Iesi.Collections;
 using System.Reflection;
 
@@ -265,6 +266,9 @@ namespace ClearCanvas.Dicom.DataStore
             // has already been initialized, and skipping if it has. If 
             // we are using v1.2 of NHibernate or later, there should be
             // a WasInitialized property that can be checked
+            PersistentCollection associatedCollection = childObject as PersistentCollection;
+            if (null == associatedCollection || associatedCollection.WasInitialized)
+                return;
 
             try
             {

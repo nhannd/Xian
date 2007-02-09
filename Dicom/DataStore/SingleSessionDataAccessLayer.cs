@@ -5,7 +5,6 @@ using System.Threading;
 using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
-using NHibernate.Mapping.Attributes;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -120,6 +119,21 @@ namespace ClearCanvas.Dicom.DataStore
             _dataStoreWriteAccessors = new Dictionary<ISession, IDataStoreWriter>();
         }
 
+        // TODO:
+        // This is a hack. For some reason, when we do a whole succession of Stores,
+        // which involves SaveOrUpdate(), Commit(), Flush(), 
+        // the next time we try to do a query (on the next image rebuild), the Session
+        // seems closed, even though its state declares that it is not closed.
+        // The hack is to close the current session after flushing occurs, and then
+        // the SingleSessionDataAccessLayer will detect closed sessions, and open a new one
+        // when that occurs.
+        // Addendum:
+        // The hack employed worked, except that subsequent queries on objects that
+        // did not exist in the database, on UIDs, would take very very very long.
+        // A workaround to this, is to clear the session of domain objects explicitly
+        // before closing the session.
+        // Addendum 08-Feb-2007:
+        // This hack seems necessary for SQL Server CE as well.
         public static void SqliteWorkaround()
         {
             SingleSessionDataAccessLayer.CurrentSession.Disconnect();
@@ -134,27 +148,6 @@ namespace ClearCanvas.Dicom.DataStore
             SingleSessionDataAccessLayer.DataStoreWriters.Remove(SingleSessionDataAccessLayer.CurrentSession);
             SingleSessionDataAccessLayer.Sessions.Remove(SingleSessionDataAccessLayer.CurrentFactory);
         }
-
-        //public static void CloseCurrentSession()
-        //{
-        //    SingleSessionDataAccessLayer.CurrentSession.Close();
-        //}
-
-        //public static void ClearCurrentSession()
-        //{
-        //    SingleSessionDataAccessLayer.CurrentSession.Clear();
-        //}
-
-        //public static void ReconnectCurrentSession()
-        //{
-        //    if (!SingleSessionDataAccessLayer.CurrentSession.IsConnected)
-        //        SingleSessionDataAccessLayer.CurrentSession.Reconnect();
-        //}
-
-        //public static void DisconnectCurrentSession()
-        //{
-        //    SingleSessionDataAccessLayer.CurrentSession.Disconnect();
-        //}
 
         public static IDataStoreReader GetIDataStoreReader()
         {

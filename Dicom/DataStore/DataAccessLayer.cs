@@ -5,7 +5,6 @@ using System.Threading;
 using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
-using NHibernate.Mapping.Attributes;
 
 namespace ClearCanvas.Dicom.DataStore
 {

@@ -4,7 +4,7 @@ echo Executing ImageViewer post-build step
 
 :: Copy database file
 
-IF NOT EXIST ".\datastore\ripp.sqb" copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ripp.sqb" ".\datastore"
+IF NOT EXIST ".\datastore\viewer.sdf" copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" ".\datastore\viewer.sdf"
 
 :: Copy Hibernate configuration file
 copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" "."

@@ -13,7 +13,7 @@ namespace ClearCanvas.Dicom.DataStore
             _dictionaryEntries = new ArrayList();
         }
 
-        protected virtual long EntryOid
+        protected virtual Guid EntryOid
         {
             get { return _entryOid; }
             set { _entryOid = value; }
@@ -25,7 +25,7 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         private IList _dictionaryEntries;
-        private long _entryOid;
+        private Guid _entryOid;
 
     }
 }

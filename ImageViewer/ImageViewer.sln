@@ -275,6 +275,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configu
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataStore.NHibernateDriver", "..\Dicom\DataStore\NHibernateDriver\ClearCanvas.Dicom.DataStore.NHibernateDriver.csproj", "{AFD2273D-4124-466B-A9BA-0623347435EA}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -425,6 +431,10 @@ Global
 		{F7244490-8FC8-4296-A97F-024070A4816A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7244490-8FC8-4296-A97F-024070A4816A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7244490-8FC8-4296-A97F-024070A4816A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFD2273D-4124-466B-A9BA-0623347435EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFD2273D-4124-466B-A9BA-0623347435EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFD2273D-4124-466B-A9BA-0623347435EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFD2273D-4124-466B-A9BA-0623347435EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

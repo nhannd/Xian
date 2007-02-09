@@ -8,7 +8,7 @@ namespace ClearCanvas.Dicom.DataStore
     public abstract class SopInstance : ISopInstance
     {
         #region Handcoded Members
-        public virtual long Oid
+        public virtual Guid Oid
         {
             get { return _oid; }
             set { _oid = value; }
@@ -51,7 +51,7 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         #region Private members
-        long _oid;
+        Guid _oid;
         string _sopInstanceUid;
         string _sopClassUid;
         DicomUri _locationUri;
