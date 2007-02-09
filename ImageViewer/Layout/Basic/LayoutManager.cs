@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -12,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	public class LayoutManager : ILayoutManager
 	{
 		private IImageViewer _imageViewer;
-		private bool _physicalWorkspaceCreated = false;
+		private bool _physicalWorkspaceLayoutSet = false;
 
 		// Constructor
 		public LayoutManager()
@@ -30,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public void Layout()
 		{
-			CreatePhysicalWorkspaceTree(_imageViewer.PhysicalWorkspace);
+			LayoutPhysicalWorkspace(_imageViewer.PhysicalWorkspace);
 			FillPhysicalWorkspace(_imageViewer.PhysicalWorkspace, _imageViewer.LogicalWorkspace);
 			_imageViewer.PhysicalWorkspace.Draw();
 		}
@@ -211,27 +212,42 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return null;
 		}
 
-		private void CreatePhysicalWorkspaceTree(IPhysicalWorkspace physicalWorkspace)
+		private void LayoutPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace)
 		{
-			if (_physicalWorkspaceCreated)
+			if (_physicalWorkspaceLayoutSet)
 				return;
 
-			//physicalWorkspace.SetImageBoxGrid(1, 1);
-			physicalWorkspace.SetImageBoxGrid(1, 2);
+			_physicalWorkspaceLayoutSet = true;
 
-			//foreach (ImageBox imageBox in physicalWorkspace)
-			//{
-			//    CreateTileGrid(imageBox, 2, 2);
-			//}
+			StoredLayoutConfiguration configuration = null;
 
-			//physicalWorkspace[0].SetTileGrid(2,2);
-			physicalWorkspace.ImageBoxes[0].SetTileGrid(1,1);
-			physicalWorkspace.ImageBoxes[1].SetTileGrid(1,1);
-			//physicalWorkspace[2].SetTileGrid(3,4);
-			
-			_physicalWorkspaceCreated = true;
+			//take the first opened study, enumerate the modalities and compute the union of the layout configuration (in case there are multiple modalities).
+			if (physicalWorkspace.LogicalWorkspace.ImageSets.Count > 0)
+			{
+				IImageSet firstImageSet = physicalWorkspace.LogicalWorkspace.ImageSets[0];
+				foreach(IDisplaySet displaySet in firstImageSet.DisplaySets)
+				{
+					if (displaySet.PresentationImages.Count <= 0)
+						continue;
+
+					if (configuration == null)
+						configuration = new StoredLayoutConfiguration();
+
+					StoredLayoutConfiguration storedConfiguration = LayoutConfigurationSettings.Default.GetLayoutConfiguration(displaySet.PresentationImages[0] as IImageSopProvider);
+					configuration.ImageBoxRows = Math.Max(configuration.ImageBoxRows, storedConfiguration.ImageBoxRows);
+					configuration.ImageBoxColumns = Math.Max(configuration.ImageBoxColumns, storedConfiguration.ImageBoxColumns);
+					configuration.TileRows = Math.Max(configuration.TileRows, storedConfiguration.TileRows);
+					configuration.TileColumns = Math.Max(configuration.TileColumns, storedConfiguration.TileColumns);
+				}
+			}
+
+			if (configuration == null)
+				configuration = LayoutConfigurationSettings.Default.DefaultConfiguration;
+
+			physicalWorkspace.SetImageBoxGrid(configuration.ImageBoxRows, configuration.ImageBoxColumns);
+			for (int i = 0; i < physicalWorkspace.ImageBoxes.Count; ++i)
+				physicalWorkspace.ImageBoxes[i].SetTileGrid(configuration.TileRows, configuration.TileColumns);
 		}
-
 
 		static public void FillPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace, ILogicalWorkspace logicalWorkspace)
 		{

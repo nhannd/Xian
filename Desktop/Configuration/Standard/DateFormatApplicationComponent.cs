@@ -20,7 +20,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 	/// DateFormatApplicationComponent class
 	/// </summary>
 	[AssociateView(typeof(DateFormatApplicationComponentViewExtensionPoint))]
-	public sealed class DateFormatApplicationComponent : ApplicationComponent
+	public sealed class DateFormatApplicationComponent : ConfigurationApplicationComponent
 	{
 		public enum DateFormatOptions { Custom = 0, SystemShort, SystemLong };
 		
@@ -110,7 +110,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			}
 		}
 
-		public void Save()
+		public override void Save()
 		{
 			//Save the settings to the persistent store.
 			FormatSettings.Default.DateFormat = this.DateFormat;

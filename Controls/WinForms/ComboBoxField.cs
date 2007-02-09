@@ -45,5 +45,11 @@ namespace ClearCanvas.Controls.WinForms
             get { return _comboBox.DataSource; }
             set { _comboBox.DataSource = value; }
         }
+
+		public string DisplayMember
+		{
+			get { return _comboBox.DisplayMember; }
+			set { _comboBox.DisplayMember = value; }
+		}
     }
 }

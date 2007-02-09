@@ -106,6 +106,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Default).
+        /// </summary>
+        public static string LabelDefault {
+            get {
+                return ResourceManager.GetString("LabelDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout.
+        /// </summary>
+        public static string TitleLayoutConfiguration {
+            get {
+                return ResourceManager.GetString("TitleLayoutConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
         public static string TitleLayoutManager {

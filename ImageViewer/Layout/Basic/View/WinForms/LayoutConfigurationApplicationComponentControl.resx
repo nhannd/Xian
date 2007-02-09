@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,28 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandLayoutImageBoxes" xml:space="preserve">
-    <value>Layout image boxes</value>
-  </data>
-  <data name="CommandLayoutTiles" xml:space="preserve">
-    <value>Layout tiles</value>
-  </data>
-  <data name="ExceptionImageNotLoaded" xml:space="preserve">
-    <value>The specified image is not currently loaded (SopInstanceUID={0}).</value>
-  </data>
-  <data name="ExceptionSeriesNotLoaded" xml:space="preserve">
-    <value>The specified series is not currently loaded (SeriesInstanceUID={0}).</value>
-  </data>
-  <data name="ExceptionStudyNotLoaded" xml:space="preserve">
-    <value>The specified study is not currently loaded (StudyInstanceUID={0}).</value>
-  </data>
-  <data name="LabelDefault" xml:space="preserve">
-    <value>(Default)</value>
-  </data>
-  <data name="TitleLayoutConfiguration" xml:space="preserve">
-    <value>Layout</value>
-  </data>
-  <data name="TitleLayoutManager" xml:space="preserve">
-    <value>Layout Manager</value>
-  </data>
 </root>

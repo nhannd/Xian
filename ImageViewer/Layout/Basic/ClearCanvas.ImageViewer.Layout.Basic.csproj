@@ -77,6 +77,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -91,6 +92,14 @@
     </Compile>
     <Compile Include="ContextMenuLayoutTool.cs" />
     <Compile Include="LayoutComponent.cs" />
+    <Compile Include="LayoutConfigurationPageProvider.cs" />
+    <Compile Include="LayoutConfigurationSettings.cs" />
+    <Compile Include="LayoutConfigurationSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LayoutConfigurationSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="LayoutConfigurationApplicationComponent.cs" />
     <Compile Include="LayoutToolViewEventArgs.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LayoutTool.cs" />
@@ -104,6 +113,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StoredLayoutConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutLarge.png" />
@@ -111,6 +121,16 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="LayoutConfigurationSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LayoutConfigurationSettings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LayoutConfigurationSettingsDefaults.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

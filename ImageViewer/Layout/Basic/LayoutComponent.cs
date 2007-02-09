@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     [AssociateView(typeof(LayoutComponentViewExtensionPoint))]
 	public class LayoutComponent : ImageViewerToolComponent
     {
-        private int _imageBoxRows;
+		private int _imageBoxRows;
         private int _imageBoxColumns;
         private int _tileRows;
         private int _tileColumns;
@@ -83,7 +83,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public int ImageBoxRows
         {
             get { return _imageBoxRows; }
-            set { _imageBoxRows = value; }
+            set
+			{
+				_imageBoxRows = Math.Max(value, 1);
+				_imageBoxRows = Math.Min(_imageBoxRows, StoredLayoutConfiguration.MaximumImageBoxRows);
+			}
         }
 
         /// <summary>
@@ -92,7 +96,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public int ImageBoxColumns
         {
             get { return _imageBoxColumns; }
-            set { _imageBoxColumns = value; }
+			set
+			{
+				_imageBoxColumns = Math.Max(value, 1);
+				_imageBoxColumns = Math.Min(_imageBoxColumns, StoredLayoutConfiguration.MaximumImageBoxColumns);
+			}
         }
 
         /// <summary>
@@ -101,7 +109,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public int TileRows
         {
             get { return _tileRows; }
-            set { _tileRows = value; }
+			set
+			{
+				_tileRows = Math.Max(value, 1);
+				_tileRows = Math.Min(_tileRows, StoredLayoutConfiguration.MaximumTileRows);
+			}
         }
 
         /// <summary>
@@ -110,7 +122,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public int TileColumns
         {
             get { return _tileColumns; }
-            set { _tileColumns = value; }
+			set
+			{
+				_tileColumns = Math.Max(value, 1);
+				_tileColumns = Math.Min(_tileColumns, StoredLayoutConfiguration.MaximumTileColumns);
+			}
         }
 
         /// <summary>

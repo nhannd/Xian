@@ -2,23 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using System.Configuration;
 
-namespace ClearCanvas.Desktop.Configuration.Standard
+namespace ClearCanvas.Desktop.Configuration
 {
-	public sealed class DateFormatConfigurationPage : IConfigurationPage
+	public sealed class ConfigurationPage<T> : IConfigurationPage
+		 where T : ConfigurationApplicationComponent, new()
 	{
-		private string _path; 
-		private DateFormatApplicationComponent _component;
+		private T _component;
+		private string _path;
 
-		public DateFormatConfigurationPage(string path)
+		public ConfigurationPage(string path)
 		{
-			Platform.CheckForNullReference(path, "path");
 			Platform.CheckForEmptyString(path, "path");
-
 			_path = path;
+			_component = new T();
+		}
 
-			_component = new DateFormatApplicationComponent();
+		private ConfigurationPage()
+		{
 		}
 
 		#region IConfigurationPage Members

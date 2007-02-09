@@ -52,7 +52,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
             _bindingSource = new BindingSource();
             _bindingSource.DataSource = _layoutComponent;
 
-            // bind control values
+			//these values are just constants, so we won't databind them, it's unnecessary.
+			_imageBoxRows.Minimum = 1;
+			_imageBoxColumns.Minimum = 1;
+			_tileRows.Minimum = 1;
+			_tileColumns.Minimum = 1;
+
+			_imageBoxRows.Maximum = StoredLayoutConfiguration.MaximumImageBoxRows;
+			_imageBoxColumns.Maximum = StoredLayoutConfiguration.MaximumImageBoxColumns;
+			_tileRows.Maximum = StoredLayoutConfiguration.MaximumTileRows;
+			_tileColumns.Maximum = StoredLayoutConfiguration.MaximumTileColumns;
+			
+			// bind control values
             _tileColumns.DataBindings.Add("Value", _bindingSource, "TileColumns", true, DataSourceUpdateMode.OnPropertyChanged);
             _tileRows.DataBindings.Add("Value", _bindingSource, "TileRows", true, DataSourceUpdateMode.OnPropertyChanged);
             _imageBoxColumns.DataBindings.Add("Value", _bindingSource, "ImageBoxColumns", true, DataSourceUpdateMode.OnPropertyChanged);

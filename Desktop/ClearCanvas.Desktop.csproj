@@ -64,7 +64,9 @@
     <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
+    <Compile Include="Configuration\ConfigurationApplicationComponent.cs" />
     <Compile Include="Configuration\ConfigurationDialog.cs" />
+    <Compile Include="Configuration\ConfigurationPage.cs" />
     <Compile Include="Configuration\ConfigurationPageManager.cs" />
     <Compile Include="Configuration\Standard\CustomDateFormatSettings.cs" />
     <Compile Include="Configuration\Standard\CustomDateFormatSettings.Designer.cs">
@@ -73,7 +75,6 @@
       <DependentUpon>CustomDateFormatSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Configuration\Standard\DateFormatApplicationComponent.cs" />
-    <Compile Include="Configuration\Standard\DateFormatConfigurationPage.cs" />
     <Compile Include="Configuration\IConfigurationPage.cs" />
     <Compile Include="Configuration\IConfigurationPageProvider.cs" />
     <Compile Include="CursorToken.cs" />

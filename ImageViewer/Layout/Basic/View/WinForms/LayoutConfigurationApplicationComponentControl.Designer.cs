@@ -1,0 +1,194 @@
+namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
+{
+    partial class LayoutConfigurationApplicationComponentControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+			this._comboBoxModality = new ClearCanvas.Controls.WinForms.ComboBoxField();
+			this._imageBoxColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this._imageBoxLabelRows = new System.Windows.Forms.Label();
+			this._imageBoxRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._imageBoxLabelColumns = new System.Windows.Forms.Label();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this._tileLabelRows = new System.Windows.Forms.Label();
+			this._tileRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._tileLabelColumns = new System.Windows.Forms.Label();
+			this._tileColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).BeginInit();
+			this.groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).BeginInit();
+			this.groupBox2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._tileRows)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// _comboBoxModality
+			// 
+			this._comboBoxModality.AutoSize = true;
+			this._comboBoxModality.DataSource = null;
+			this._comboBoxModality.DisplayMember = "";
+			this._comboBoxModality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._comboBoxModality.LabelText = "Modality";
+			this._comboBoxModality.Location = new System.Drawing.Point(15, 11);
+			this._comboBoxModality.Margin = new System.Windows.Forms.Padding(2);
+			this._comboBoxModality.Name = "_comboBoxModality";
+			this._comboBoxModality.Size = new System.Drawing.Size(81, 41);
+			this._comboBoxModality.TabIndex = 0;
+			this._comboBoxModality.Value = null;
+			// 
+			// _imageBoxColumns
+			// 
+			this._imageBoxColumns.Location = new System.Drawing.Point(113, 40);
+			this._imageBoxColumns.Name = "_imageBoxColumns";
+			this._imageBoxColumns.Size = new System.Drawing.Size(60, 20);
+			this._imageBoxColumns.TabIndex = 5;
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this._imageBoxLabelRows);
+			this.groupBox1.Controls.Add(this._imageBoxRows);
+			this.groupBox1.Controls.Add(this._imageBoxLabelColumns);
+			this.groupBox1.Controls.Add(this._imageBoxColumns);
+			this.groupBox1.Location = new System.Drawing.Point(18, 63);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(189, 77);
+			this.groupBox1.TabIndex = 1;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Image Box";
+			// 
+			// _imageBoxLabelRows
+			// 
+			this._imageBoxLabelRows.AutoSize = true;
+			this._imageBoxLabelRows.Location = new System.Drawing.Point(15, 22);
+			this._imageBoxLabelRows.Name = "_imageBoxLabelRows";
+			this._imageBoxLabelRows.Size = new System.Drawing.Size(34, 13);
+			this._imageBoxLabelRows.TabIndex = 2;
+			this._imageBoxLabelRows.Text = "Rows";
+			// 
+			// _imageBoxRows
+			// 
+			this._imageBoxRows.Location = new System.Drawing.Point(18, 40);
+			this._imageBoxRows.Name = "_imageBoxRows";
+			this._imageBoxRows.Size = new System.Drawing.Size(60, 20);
+			this._imageBoxRows.TabIndex = 3;
+			// 
+			// _imageBoxLabelColumns
+			// 
+			this._imageBoxLabelColumns.AutoSize = true;
+			this._imageBoxLabelColumns.Location = new System.Drawing.Point(110, 22);
+			this._imageBoxLabelColumns.Name = "_imageBoxLabelColumns";
+			this._imageBoxLabelColumns.Size = new System.Drawing.Size(47, 13);
+			this._imageBoxLabelColumns.TabIndex = 4;
+			this._imageBoxLabelColumns.Text = "Columns";
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Controls.Add(this._tileLabelRows);
+			this.groupBox2.Controls.Add(this._tileRows);
+			this.groupBox2.Controls.Add(this._tileLabelColumns);
+			this.groupBox2.Controls.Add(this._tileColumns);
+			this.groupBox2.Location = new System.Drawing.Point(18, 156);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(189, 77);
+			this.groupBox2.TabIndex = 6;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Tile";
+			// 
+			// _tileLabelRows
+			// 
+			this._tileLabelRows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._tileLabelRows.AutoSize = true;
+			this._tileLabelRows.Location = new System.Drawing.Point(15, 21);
+			this._tileLabelRows.Name = "_tileLabelRows";
+			this._tileLabelRows.Size = new System.Drawing.Size(34, 13);
+			this._tileLabelRows.TabIndex = 7;
+			this._tileLabelRows.Text = "Rows";
+			// 
+			// _tileRows
+			// 
+			this._tileRows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._tileRows.Location = new System.Drawing.Point(18, 39);
+			this._tileRows.Name = "_tileRows";
+			this._tileRows.Size = new System.Drawing.Size(60, 20);
+			this._tileRows.TabIndex = 8;
+			// 
+			// _tileLabelColumns
+			// 
+			this._tileLabelColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._tileLabelColumns.AutoSize = true;
+			this._tileLabelColumns.Location = new System.Drawing.Point(110, 21);
+			this._tileLabelColumns.Name = "_tileLabelColumns";
+			this._tileLabelColumns.Size = new System.Drawing.Size(47, 13);
+			this._tileLabelColumns.TabIndex = 9;
+			this._tileLabelColumns.Text = "Columns";
+			// 
+			// _tileColumns
+			// 
+			this._tileColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._tileColumns.Location = new System.Drawing.Point(113, 39);
+			this._tileColumns.Name = "_tileColumns";
+			this._tileColumns.Size = new System.Drawing.Size(60, 20);
+			this._tileColumns.TabIndex = 10;
+			// 
+			// LayoutConfigurationApplicationComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.groupBox2);
+			this.Controls.Add(this._comboBoxModality);
+			this.Controls.Add(this.groupBox1);
+			this.Name = "LayoutConfigurationApplicationComponentControl";
+			this.Size = new System.Drawing.Size(227, 251);
+			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).EndInit();
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).EndInit();
+			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._tileRows)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).EndInit();
+			this.ResumeLayout(false);
+			this.PerformLayout();
+
+        }
+
+        #endregion
+
+		private ClearCanvas.Controls.WinForms.ComboBoxField _comboBoxModality;
+		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _imageBoxColumns;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.Label _imageBoxLabelColumns;
+		private System.Windows.Forms.Label _imageBoxLabelRows;
+		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _imageBoxRows;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.Label _tileLabelRows;
+		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _tileRows;
+		private System.Windows.Forms.Label _tileLabelColumns;
+		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _tileColumns;
+    }
+}

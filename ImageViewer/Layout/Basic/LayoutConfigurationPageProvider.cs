@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
-using ClearCanvas.Desktop.Configuration.Standard;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.Desktop.Configuration.Tools
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class StandardOptionsConfigurationPageProvider : IConfigurationPageProvider
+	public class LayoutConfigurationPageProvider : IConfigurationPageProvider
 	{
-		public StandardOptionsConfigurationPageProvider()
-		{ 
+		public LayoutConfigurationPageProvider()
+		{
 		}
 
 		#region IConfigurationPageProvider Members
@@ -20,8 +19,8 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<DateFormatApplicationComponent>("TitleDateFormat"));
-		
+			listPages.Add(new ConfigurationPage<LayoutConfigurationApplicationComponent>("TitleLayoutConfiguration"));
+
 			return listPages.AsReadOnly();
 		}
 
