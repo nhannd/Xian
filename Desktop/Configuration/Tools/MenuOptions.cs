@@ -76,8 +76,7 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 		{
 			try
 			{
-				ConfigurationDialog configurationDialog = new ConfigurationDialog();
-				configurationDialog.Show(this.Context.DesktopWindow);
+				ConfigurationDialog.Show(this.Context.DesktopWindow);
 			}
 			catch (Exception e)
 			{

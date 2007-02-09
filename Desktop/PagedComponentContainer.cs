@@ -91,7 +91,8 @@ namespace ClearCanvas.Desktop
         {
             base.Start();
 
-            MoveTo(0);
+            if (_current < 0)
+				MoveTo(0);
         }
 
         public override void Stop()
@@ -149,7 +150,7 @@ namespace ClearCanvas.Desktop
             get { return _pages[_current]; }
             set
             {
-				if (this.CurrentPage != value)
+				if (_current < 0 || this.CurrentPage != value)
 				{
 					int i = _pages.IndexOf(value);
 					if (i > -1 && i != _current)

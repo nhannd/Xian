@@ -129,6 +129,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
         }
 
+		public void Configure()
+		{
+			LayoutConfigurationApplicationComponent.Configure(this.Host.DesktopWindow);
+		}
+
         /// <summary>
         /// Called by the view to apply the image layout to the subject
         /// </summary>

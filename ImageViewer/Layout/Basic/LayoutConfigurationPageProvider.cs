@@ -11,6 +11,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
 		public LayoutConfigurationPageProvider()
 		{
+
+		}
+
+		public static string BasicLayoutConfigurationPath
+		{
+			get { return SR.TitleLayoutConfiguration; }
 		}
 
 		#region IConfigurationPageProvider Members
@@ -19,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<LayoutConfigurationApplicationComponent>("TitleLayoutConfiguration"));
+			listPages.Add(new ConfigurationPage<LayoutConfigurationApplicationComponent>(BasicLayoutConfigurationPath));
 
 			return listPages.AsReadOnly();
 		}

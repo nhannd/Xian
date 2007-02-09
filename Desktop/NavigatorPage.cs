@@ -24,6 +24,9 @@ namespace ClearCanvas.Desktop
         public NavigatorPage(string path, IApplicationComponent component)
             :base(component)
         {
+			Platform.CheckForEmptyString(path, "path");
+			Platform.CheckForNullReference(component, "component");
+
             _path = new ClearCanvas.Desktop.Path(path, new ResourceResolver(new Assembly[] { component.GetType().Assembly }));
         }
 

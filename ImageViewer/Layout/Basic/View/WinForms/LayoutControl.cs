@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
         private LayoutComponent _layoutComponent;
 		private GroupBox groupBox1;
 		private GroupBox groupBox2;
+		private Button _buttonConfigure;
         private BindingSource _bindingSource;
 
         /// <summary>
@@ -115,6 +116,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
             _layoutComponent.ApplyTileLayout();
         }
 
+		private void OnButtonConfigureClick(object sender, EventArgs e)
+		{
+			_layoutComponent.Configure();
+		}
+
         /// <summary> 
 		/// Clean up any resources being used.
 		/// </summary>
@@ -148,17 +154,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._imageBoxColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
 			this._imageBoxRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
 			this.tilePanel = new System.Windows.Forms.Panel();
-			this._tileColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
-			this._tileRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this._tileRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._tileColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._buttonConfigure = new System.Windows.Forms.Button();
 			this.imageBoxPanel.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).BeginInit();
 			this.tilePanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._tileRows)).BeginInit();
 			this.groupBox2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._tileRows)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _tileColumnsLabel
@@ -166,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._tileColumnsLabel.Location = new System.Drawing.Point(112, 28);
 			this._tileColumnsLabel.Name = "_tileColumnsLabel";
 			this._tileColumnsLabel.Size = new System.Drawing.Size(70, 23);
-			this._tileColumnsLabel.TabIndex = 7;
+			this._tileColumnsLabel.TabIndex = 11;
 			this._tileColumnsLabel.Text = "Columns";
 			// 
 			// _tileRowsLabel
@@ -174,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._tileRowsLabel.Location = new System.Drawing.Point(27, 28);
 			this._tileRowsLabel.Name = "_tileRowsLabel";
 			this._tileRowsLabel.Size = new System.Drawing.Size(48, 23);
-			this._tileRowsLabel.TabIndex = 6;
+			this._tileRowsLabel.TabIndex = 9;
 			this._tileRowsLabel.Text = "Rows";
 			// 
 			// _imageBoxColumnsLabel
@@ -182,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._imageBoxColumnsLabel.Location = new System.Drawing.Point(112, 32);
 			this._imageBoxColumnsLabel.Name = "_imageBoxColumnsLabel";
 			this._imageBoxColumnsLabel.Size = new System.Drawing.Size(67, 23);
-			this._imageBoxColumnsLabel.TabIndex = 2;
+			this._imageBoxColumnsLabel.TabIndex = 4;
 			this._imageBoxColumnsLabel.Text = "Columns";
 			// 
 			// _imageBoxRowsLabel
@@ -190,7 +197,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._imageBoxRowsLabel.Location = new System.Drawing.Point(27, 31);
 			this._imageBoxRowsLabel.Name = "_imageBoxRowsLabel";
 			this._imageBoxRowsLabel.Size = new System.Drawing.Size(48, 23);
-			this._imageBoxRowsLabel.TabIndex = 1;
+			this._imageBoxRowsLabel.TabIndex = 2;
 			this._imageBoxRowsLabel.Text = "Rows";
 			// 
 			// _applyTiles
@@ -198,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._applyTiles.Location = new System.Drawing.Point(59, 97);
 			this._applyTiles.Name = "_applyTiles";
 			this._applyTiles.Size = new System.Drawing.Size(75, 23);
-			this._applyTiles.TabIndex = 10;
+			this._applyTiles.TabIndex = 13;
 			this._applyTiles.Text = "Apply";
 			this._applyTiles.Click += new System.EventHandler(this._applyTiles_Click);
 			// 
@@ -207,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._applyImageBoxes.Location = new System.Drawing.Point(59, 98);
 			this._applyImageBoxes.Name = "_applyImageBoxes";
 			this._applyImageBoxes.Size = new System.Drawing.Size(75, 23);
-			this._applyImageBoxes.TabIndex = 5;
+			this._applyImageBoxes.TabIndex = 6;
 			this._applyImageBoxes.Text = "Apply";
 			this._applyImageBoxes.Click += new System.EventHandler(this._applyImageBoxes_Click);
 			// 
@@ -218,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this.imageBoxPanel.Location = new System.Drawing.Point(0, 0);
 			this.imageBoxPanel.Name = "imageBoxPanel";
 			this.imageBoxPanel.Size = new System.Drawing.Size(225, 155);
-			this.imageBoxPanel.TabIndex = 19;
+			this.imageBoxPanel.TabIndex = 0;
 			// 
 			// groupBox1
 			// 
@@ -232,7 +239,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this.groupBox1.Location = new System.Drawing.Point(15, 3);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(193, 152);
-			this.groupBox1.TabIndex = 6;
+			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Image Box";
 			// 
@@ -247,7 +254,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
             0});
 			this._imageBoxColumns.Name = "_imageBoxColumns";
 			this._imageBoxColumns.Size = new System.Drawing.Size(48, 22);
-			this._imageBoxColumns.TabIndex = 4;
+			this._imageBoxColumns.TabIndex = 5;
 			this._imageBoxColumns.Value = new decimal(new int[] {
             1,
             0,
@@ -279,43 +286,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this.tilePanel.Location = new System.Drawing.Point(0, 155);
 			this.tilePanel.Name = "tilePanel";
 			this.tilePanel.Size = new System.Drawing.Size(225, 155);
-			this.tilePanel.TabIndex = 20;
-			// 
-			// _tileColumns
-			// 
-			this._tileColumns.Font = new System.Drawing.Font("Arial", 9.75F);
-			this._tileColumns.Location = new System.Drawing.Point(115, 54);
-			this._tileColumns.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this._tileColumns.Name = "_tileColumns";
-			this._tileColumns.Size = new System.Drawing.Size(48, 22);
-			this._tileColumns.TabIndex = 9;
-			this._tileColumns.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			// 
-			// _tileRows
-			// 
-			this._tileRows.Font = new System.Drawing.Font("Arial", 9.75F);
-			this._tileRows.Location = new System.Drawing.Point(30, 54);
-			this._tileRows.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this._tileRows.Name = "_tileRows";
-			this._tileRows.Size = new System.Drawing.Size(48, 22);
-			this._tileRows.TabIndex = 8;
-			this._tileRows.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+			this.tilePanel.TabIndex = 7;
 			// 
 			// groupBox2
 			// 
@@ -329,28 +300,74 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this.groupBox2.Location = new System.Drawing.Point(15, 3);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(193, 146);
-			this.groupBox2.TabIndex = 11;
+			this.groupBox2.TabIndex = 8;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Tile";
 			// 
+			// _tileRows
+			// 
+			this._tileRows.Font = new System.Drawing.Font("Arial", 9.75F);
+			this._tileRows.Location = new System.Drawing.Point(30, 54);
+			this._tileRows.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this._tileRows.Name = "_tileRows";
+			this._tileRows.Size = new System.Drawing.Size(48, 22);
+			this._tileRows.TabIndex = 10;
+			this._tileRows.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// _tileColumns
+			// 
+			this._tileColumns.Font = new System.Drawing.Font("Arial", 9.75F);
+			this._tileColumns.Location = new System.Drawing.Point(115, 54);
+			this._tileColumns.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this._tileColumns.Name = "_tileColumns";
+			this._tileColumns.Size = new System.Drawing.Size(48, 22);
+			this._tileColumns.TabIndex = 12;
+			this._tileColumns.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// _buttonConfigure
+			// 
+			this._buttonConfigure.Location = new System.Drawing.Point(74, 316);
+			this._buttonConfigure.Name = "_buttonConfigure";
+			this._buttonConfigure.Size = new System.Drawing.Size(75, 23);
+			this._buttonConfigure.TabIndex = 14;
+			this._buttonConfigure.Text = "Configure";
+			this._buttonConfigure.UseVisualStyleBackColor = true;
+			this._buttonConfigure.Click += new System.EventHandler(this.OnButtonConfigureClick);
+			// 
 			// LayoutControl
 			// 
+			this.Controls.Add(this._buttonConfigure);
 			this.Controls.Add(this.tilePanel);
 			this.Controls.Add(this.imageBoxPanel);
 			this.Name = "LayoutControl";
-			this.Size = new System.Drawing.Size(225, 315);
+			this.Size = new System.Drawing.Size(225, 349);
 			this.imageBoxPanel.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).EndInit();
 			this.tilePanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._tileRows)).EndInit();
 			this.groupBox2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this._tileRows)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).EndInit();
 			this.ResumeLayout(false);
 
 		}
 		#endregion
-
 	}
 }

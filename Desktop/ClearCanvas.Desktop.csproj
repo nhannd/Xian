@@ -98,6 +98,7 @@
       <DependentUpon>FormatSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IApplicationComponentContainer.cs" />
+    <Compile Include="NavigatorPageSortByPath.cs" />
     <Compile Include="Validation\IApplicationComponentContainerValidationStrategy.cs" />
     <Compile Include="IItemCollection.cs" />
     <Compile Include="ItemCollection.cs" />

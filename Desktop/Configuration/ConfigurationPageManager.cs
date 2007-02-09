@@ -14,29 +14,6 @@ namespace ClearCanvas.Desktop.Configuration
 
 	internal class ConfigurationPageManager : BasicExtensionPointManager<IConfigurationPageProvider>
 	{
-		private class SortPagesByPath : IComparer<IConfigurationPage>
-		{
-			#region IComparer<IConfigurationPage> Members
-
-			public int Compare(IConfigurationPage x, IConfigurationPage y)
-			{
-				if (x == null)
-				{
-					if (y == null)
-						return 0;
-					else
-						return -1;
-				}
-
-				if (y == null)
-					return 1;
-
-				return x.GetPath().CompareTo(y.GetPath());
-			}
-
-			#endregion
-		}
-
 		private List<IConfigurationPage> _pageList;
 
 		public ConfigurationPageManager()
@@ -58,8 +35,6 @@ namespace ClearCanvas.Desktop.Configuration
 					_pageList = new List<IConfigurationPage>();
 					foreach (IConfigurationPageProvider provider in Providers)
 						_pageList.AddRange(provider.GetPages());
-
-					_pageList.Sort((IComparer<IConfigurationPage>)new SortPagesByPath());
 				}
 
 				return _pageList.AsReadOnly();

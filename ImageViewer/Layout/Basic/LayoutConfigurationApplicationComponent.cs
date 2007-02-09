@@ -66,6 +66,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+		public static void Configure(IDesktopWindow desktopWindow)
+		{
+			ConfigurationDialog.Show(desktopWindow, LayoutConfigurationPageProvider.BasicLayoutConfigurationPath);
+		}
+
 		public override void Start()
 		{
 			base.Start();

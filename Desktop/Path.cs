@@ -65,7 +65,22 @@ namespace ClearCanvas.Desktop
             get { return _segments.Length > 0 ? _segments[_segments.Length - 1] : null; }
         }
 
-        /// <summary>
+		public string LocalizedPath
+		{
+			get
+			{
+				StringBuilder sb = new StringBuilder();
+				foreach (PathSegment segment in _segments)
+				{
+					if (sb.Length > 0)
+						sb.Append(SEPARATOR);
+					sb.Append(segment.LocalizedText);
+				}
+				return sb.ToString();
+			}
+		}
+
+		/// <summary>
         /// Converts this path back to the original string from which it was created.
         /// </summary>
         /// <returns></returns>
