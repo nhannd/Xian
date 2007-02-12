@@ -202,9 +202,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 			}
 
+			_tile.Activate();
 			_tile.Select();
 			_contextMenuEnabled = (buttonMessage.Shortcut.MouseButton == XMouseButtons.Right);
 			_startMousePoint = buttonMessage.Location;
+			
+			if (_tile.PresentationImage == null)
+				return true;
 
 			//give unfocused graphics a chance to focus (in the case of going straight from context menu to a graphic).
 			FindHandlingGraphic(TrackHandler);
@@ -318,6 +322,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private IMouseButtonHandler FindHandlingGraphic(CallHandlerMethodDelegate handlerDelegate)
 		{
 			PresentationImage image = this.Tile.PresentationImage as PresentationImage;
+			if (image == null)
+				return null;
 
 			return FindHandlingGraphic(image.SceneGraph, handlerDelegate);
 		}
@@ -352,18 +358,18 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		public bool ProcessMessage(IInputMessage message)
 		{
+			if (message is MouseButtonMessage)
+			{
+				return ProcessMouseButtonMessage(message as MouseButtonMessage);
+			}
+			
+			if (message is TrackMousePositionMessage)
+			{
+				return ProcessTrackMessage(message as TrackMousePositionMessage);
+			}
+
 			if (_tile.PresentationImage != null)
 			{
-				if (message is MouseButtonMessage)
-				{
-					return ProcessMouseButtonMessage(message as MouseButtonMessage);
-				}
-
-				if (message is TrackMousePositionMessage)
-				{
-					return ProcessTrackMessage(message as TrackMousePositionMessage);
-				}
-
 				if (message is MouseWheelMessage)
 				{
 					bool returnValue = ProcessMouseWheelMessage(message as MouseWheelMessage);

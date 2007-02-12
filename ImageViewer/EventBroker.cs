@@ -15,6 +15,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<ImageBoxSelectedEventArgs> _imageBoxSelectedEvent;
 		private event EventHandler<DisplaySetSelectedEventArgs> _displaySetSelectedEvent;
 		private event EventHandler<TileSelectedEventArgs> _tileSelectedEvent;
+		private event EventHandler<TileActivatedEventArgs> _tileActivatedEvent;
 		private event EventHandler<PresentationImageSelectedEventArgs> _presentationImageSelectedEvent;
 		private event EventHandler<GraphicSelectedEventArgs> _graphicSelectedEvent;
 
@@ -68,6 +69,17 @@ namespace ClearCanvas.ImageViewer
 		internal void OnTileSelected(TileSelectedEventArgs args)
 		{
 			EventsHelper.Fire(_tileSelectedEvent, this, args);
+		}
+
+		public event EventHandler<TileActivatedEventArgs> TileActivated
+		{
+			add { _tileActivatedEvent += value; }
+			remove { _tileActivatedEvent -= value; }
+		}
+
+		internal void OnTileActivated(TileActivatedEventArgs args)
+		{
+			EventsHelper.Fire(_tileActivatedEvent, this, args);
 		}
 
 		public event EventHandler<PresentationImageSelectedEventArgs> PresentationImageSelected

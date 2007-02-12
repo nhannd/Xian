@@ -320,6 +320,18 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Activates the tile.  This is different from the concept of 'selected' in that activation
+		/// only indicates that the tile has been clicked.  In order to be selected, a tile must
+		/// already contain a presentation image.  No state is maintained regarding a tile's activation
+		/// because it is only meant to be used in conjunction with the <see cref="EventBroker"/> to notify tools
+		/// that a tile has been clicked.
+		/// </summary>
+		public void Activate()
+		{
+			this.ImageViewer.EventBroker.OnTileActivated(new TileActivatedEventArgs(this as ITile));
+		}
+
+		/// <summary>
 		/// Draws the <see cref="PresentationImage"/> in this <see cref="TileComponent"/>.
 		/// </summary>
 		/// <remarks>Use this method to redraw the <see cref="PresentationImage"/> in this 
