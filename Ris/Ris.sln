@@ -101,6 +101,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configuration.View.WinForms", "..\Desktop\Configuration\View\WinForms\ClearCanvas.Desktop.Configuration.View.WinForms.csproj", "{1AC0E6EC-4E65-4B90-936B-7174B870A30F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication", "..\Enterprise\Authentication\ClearCanvas.Enterprise.Authentication.csproj", "{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication.Hibernate", "..\Enterprise\Authentication\Hibernate\ClearCanvas.Enterprise.Authentication.Hibernate.csproj", "{E2266084-462A-446F-9CEA-9D132BC36851}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -235,6 +239,14 @@ Global
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

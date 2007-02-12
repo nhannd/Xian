@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Enterprise.Authentication" namespace="ClearCanvas.Enterprise.Authentication">
+  <class name="User" proxy="User" table="User_">
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
+    </id>
+    <version name="Version" column="Version_"/>
+    <property name="UserName" column="UserName_" type="String" length="30" not-null="true"/>
+    <set name="Groups" table="GroupUsers_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
+      <key column="UserOID_"/>
+      <many-to-many column="GroupOID_" class="Group" fetch="join"/>
+    </set>
+  </class>
+</hibernate-mapping>
