@@ -392,7 +392,10 @@
   <ItemGroup>
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />
-    <None Include="ClassDiagrams\ImageViewer.cd" />
+    <None Include="ClassDiagrams\DiagnosticImageViewerComponent.cd" />
+    <None Include="ClassDiagrams\GraphicsCompositePattern.cd" />
+    <None Include="ClassDiagrams\GraphicSpatialTransform.cd" />
+    <None Include="ClassDiagrams\ImageViewerComponent.cd" />
     <None Include="ClassDiagrams\InputManagement.cd" />
     <None Include="ClassDiagrams\PresentationImage.cd" />
     <None Include="ClassDiagrams\Tools.cd" />
