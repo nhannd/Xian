@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Modality
 
 
         private IModalityWorkflowService _workflowService;
-        private ToolSet _toolSet;
+        private ToolSet _itemToolSet;
         private IDictionary<string, bool> _workflowEnablment;
 
         public ModalityWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
@@ -84,9 +84,9 @@ namespace ClearCanvas.Ris.Client.Modality
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
 
-            _toolSet = new ToolSet(new ModalityWorkflowToolExtensionPoint(), new ModalityWorkflowToolContext(this));
+            _itemToolSet = new ToolSet(new ModalityWorkflowToolExtensionPoint(), new ModalityWorkflowToolContext(this));
 
-            folderExplorer.AddActions(_toolSet.Actions);
+            folderExplorer.AddItemActions(_itemToolSet.Actions);
         }
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client.Modality
             {
                 _workflowService.ModalityProcedureStepChanged -= ModalityProcedureStepChangedEventHandler;
 
-                if(_toolSet != null) _toolSet.Dispose();
+                if(_itemToolSet != null) _itemToolSet.Dispose();
             }
         }
 

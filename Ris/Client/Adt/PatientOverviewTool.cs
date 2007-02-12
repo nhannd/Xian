@@ -25,7 +25,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("view2", "Open patient details")]
     [IconSet("view2", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
 
-    [MenuAction("view3", "folderexplorer-items-contextmenu/View Details")]
     [ButtonAction("view3", "folderexplorer-items-toolbar/Details")]
     [ClickHandler("view3", "View")]
     [EnabledStateObserver("view3", "Enabled", "EnabledChanged")]
@@ -33,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("view3", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
 
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationWorkflowToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     public class PatientOverviewTool : Tool<IWorklistToolContext>
     {
         private bool _enabled;
@@ -50,13 +49,13 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Enabled = (this.Context.SelectedPatientProfile != null);
                 };
             }
-            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 //this.Context.DefaultAction = View;
-                ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
                 {
-                    this.Enabled = (((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems != null
-                        && ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems.Count == 1);
+                    this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+                        && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
             }
 
@@ -87,9 +86,9 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 OpenPatient(this.Context.SelectedPatientProfile, this.Context.DesktopWindow);
             }
-            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                IRegistrationWorkflowToolContext context = (IRegistrationWorkflowToolContext)this.ContextBase;
+                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 OpenPatient(item.PatientProfile, context.DesktopWindow);
             }

@@ -14,6 +14,7 @@ namespace ClearCanvas.Ris.Client.Common
         private event EventHandler _textChanged;
         private event EventHandler _iconChanged;
         private event EventHandler _tooltipChanged;
+        private ActionModelNode _menuModel;
 
 
         protected void NotifyTextChanged()
@@ -56,7 +57,8 @@ namespace ClearCanvas.Ris.Client.Common
 
         public virtual ActionModelNode MenuModel
         {
-            get { return null; }
+            get { return _menuModel; }
+            set { _menuModel = value; }
         }
 
         public virtual DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)

@@ -1,23 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
+
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Services;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
+        private SimpleActionModel _menuActionModel;
+        private ClickAction _optionAction;
+        
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Scheduled")
         {
-
+            _menuActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _optionAction = _menuActionModel.AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+                delegate() { DisplayOption(); });
         }
 
         protected override IList<RegistrationWorklistItem> QueryItems()
@@ -33,14 +42,29 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
             return item.HasStatus(ActivityStatus.SC);
         }
+
+        public override ActionModelNode MenuModel
+        {
+            get { return _menuActionModel; }
+        }
+
+        private void DisplayOption()
+        {
+            Platform.ShowMessageBox("Scheduled option not implemented");
+        }
     }
 
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
+        private SimpleActionModel _menuActionModel;
+        private ClickAction _optionAction;
+
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Checked In")
         {
-
+            _menuActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _optionAction = _menuActionModel.AddAction("CheckInOption", "Option", "Edit.png", "Option",
+                delegate() { DisplayOption(); });
         }
 
         protected override IList<RegistrationWorklistItem> QueryItems()
@@ -75,6 +99,16 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             IRegistrationWorkflowService service = ApplicationContext.GetService<IRegistrationWorkflowService>();
             //service.StartProcedureStep(item.ProcedureStep);
             return true;
+        }
+
+        public override ActionModelNode MenuModel
+        {
+            get { return _menuActionModel; }
+        }
+
+        private void DisplayOption()
+        {
+            Platform.ShowMessageBox("Check-In option not implemented");
         }
     }
 

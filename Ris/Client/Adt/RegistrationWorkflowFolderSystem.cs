@@ -14,11 +14,16 @@ using ClearCanvas.Ris.Services;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [ExtensionPoint]
-    public class RegistrationWorkflowToolExtensionPoint : ExtensionPoint<ITool>
+    public class RegistrationWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public interface IRegistrationWorkflowToolContext : IToolContext
+    [ExtensionPoint]
+    public class RegistrationWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public interface IRegistrationWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
         void ExecuteWorkflowOperation(string operationClass);
@@ -29,18 +34,24 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
+    public interface IRegistrationWorkflowFolderToolContext : IToolContext
+    {
+        event EventHandler SelectedFolderChanged;
+        IDesktopWindow DesktopWindow { get; }
+    }
+
     public class RegistrationWorkflowFolderSystem : WorkflowFolderSystem<RegistrationWorklistItem>
     {
-        class RegistrationWorkflowToolContext : ToolContext, IRegistrationWorkflowToolContext
+        class RegistrationWorkflowItemToolContext : ToolContext, IRegistrationWorkflowItemToolContext
         {
             private RegistrationWorkflowFolderSystem _owner;
 
-            public RegistrationWorkflowToolContext(RegistrationWorkflowFolderSystem owner)
+            public RegistrationWorkflowItemToolContext(RegistrationWorkflowFolderSystem owner)
             {
                 _owner = owner;
             }
 
-            #region IRegistrationWorkflowToolContext Members
+            #region IRegistrationWorkflowItemToolContext Members
 
             public IDesktopWindow DesktopWindow
             {
@@ -71,8 +82,34 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
+        class RegistrationWorkflowFolderToolContext : ToolContext, IRegistrationWorkflowFolderToolContext
+        {
+            private RegistrationWorkflowFolderSystem _owner;
+
+            public RegistrationWorkflowFolderToolContext(RegistrationWorkflowFolderSystem owner)
+            {
+                _owner = owner;
+            }
+
+            #region IRegistrationWorkflowItemToolContext Members
+
+            public event EventHandler SelectedFolderChanged
+            {
+                add { _owner.SelectedItemsChanged += value; }
+                remove { _owner.SelectedItemsChanged -= value; }
+            }
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _owner.DesktopWindow; }
+            }
+
+            #endregion
+        }
+
         private IRegistrationWorkflowService _workflowService;
-        private ToolSet _toolSet;
+        private ToolSet _itemToolSet;
+        private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
 
         public RegistrationWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
@@ -90,9 +127,11 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
 
-            _toolSet = new ToolSet(new RegistrationWorkflowToolExtensionPoint(), new RegistrationWorkflowToolContext(this));
-            
-            folderExplorer.AddActions(_toolSet.Actions);
+            _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));
+            _folderToolSet = new ToolSet(new RegistrationWorkflowFolderToolExtensionPoint(), new RegistrationWorkflowFolderToolContext(this));
+
+            folderExplorer.AddItemActions(_itemToolSet.Actions);
+            folderExplorer.AddFolderActions(_folderToolSet.Actions);
         }
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
@@ -157,7 +196,8 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _workflowService.ModalityProcedureStepChanged -= ModalityProcedureStepChangedEventHandler;
 
-                if(_toolSet != null) _toolSet.Dispose();
+                if(_itemToolSet != null) _itemToolSet.Dispose();
+                if (_folderToolSet != null) _folderToolSet.Dispose();
             }
         }
 

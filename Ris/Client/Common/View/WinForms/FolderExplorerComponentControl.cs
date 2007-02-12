@@ -29,9 +29,11 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             // TODO add .NET databindings to _component
             _folderTreeView.Tree = _component.FolderTree;
             _folderTreeView.DataBindings.Add("Selection", _component, "SelectedFolder", true, DataSourceUpdateMode.OnPropertyChanged);
+            _folderTreeView.MenuModel = _component.FoldersContextMenuModel;
+            _folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
 
             _folderContentsTableView.Table = _component.FolderContentsTable;
-            _component.SelectedFolderChanged += new EventHandler(_component_FolderContentsTableChanged);
+            _component.SelectedFolderChanged += new EventHandler(_component_SelectedFolderChanged);
 
             //_folderContentsTableView.DataBindings.Add("Table", _component, "FolderContentsTable", true, DataSourceUpdateMode.Never);
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -40,9 +42,13 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             _folderContentsTableView.ToolbarModel = _component.ItemsToolbarModel;
         }
 
-        private void _component_FolderContentsTableChanged(object sender, EventArgs e)
+        private void _component_SelectedFolderChanged(object sender, EventArgs e)
         {
             _folderContentsTableView.Table = _component.FolderContentsTable;
+
+            // Update action model based on the folder selected
+            _folderTreeView.MenuModel = _component.FoldersContextMenuModel;
+            _folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
         }
 
         /// <summary>

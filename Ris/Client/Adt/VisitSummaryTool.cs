@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationWorkflowToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     public class VisitSummaryTool : ToolBase
     {
         private bool _enabled;
@@ -40,13 +40,13 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Enabled = ((IWorklistToolContext)this.ContextBase).SelectedPatientProfile != null;
                 };
             }
-            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 _enabled = false;   // disable by default
-                ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
                 {
-                    this.Enabled = (((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems != null
-                        && ((IRegistrationWorkflowToolContext)this.ContextBase).SelectedItems.Count == 1);
+                    this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+                        && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
             }
             else
@@ -85,9 +85,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 IWorklistToolContext context = (IWorklistToolContext)this.ContextBase;
                 ShowVisitSummaryDialog(context.SelectedPatientProfile, context.DesktopWindow);
             }
-            else if (this.ContextBase is IRegistrationWorkflowToolContext)
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                IRegistrationWorkflowToolContext context = (IRegistrationWorkflowToolContext)this.ContextBase;
+                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 ShowVisitSummaryDialog(item.PatientProfile, context.DesktopWindow);
             }

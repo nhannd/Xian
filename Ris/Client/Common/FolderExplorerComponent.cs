@@ -24,7 +24,8 @@ namespace ClearCanvas.Ris.Client.Common
         ISelection SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
 
-        void AddActions(IActionSet actions);
+        void AddItemActions(IActionSet actions);
+        void AddFolderActions(IActionSet actions);
     }
 
     /// <summary>
@@ -92,9 +93,14 @@ namespace ClearCanvas.Ris.Client.Common
                 remove { _component.SelectedItemsChanged -= value; }
             }
 
-            public void AddActions(IActionSet actions)
+            public void AddItemActions(IActionSet actions)
             {
                 _component._itemActions = _component._itemActions.Union(actions);
+            }
+
+            public void AddFolderActions(IActionSet actions)
+            {
+                _component._folderActions = _component._folderActions.Union(actions);
             }
 
             #endregion
@@ -230,8 +236,10 @@ namespace ClearCanvas.Ris.Client.Common
         {
             get
             {
-                //TODO
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _itemActions);
+                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderActions);
+                if (_selectedFolder != null && _selectedFolder.MenuModel != null)
+                    amr.Merge(_selectedFolder.MenuModel);
+                return amr;
             }
         }
 
@@ -239,8 +247,10 @@ namespace ClearCanvas.Ris.Client.Common
         {
             get
             {
-                //TODO
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _itemActions);
+                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderActions);
+                if (_selectedFolder != null && _selectedFolder.MenuModel != null)
+                    amr.Merge(_selectedFolder.MenuModel);
+                return amr;
             }
         }
 

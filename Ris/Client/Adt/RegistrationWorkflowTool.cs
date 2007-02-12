@@ -14,11 +14,11 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class RegistrationWorkflowTool
     {
-        public abstract class WorkflowTool : Tool<IRegistrationWorkflowToolContext>
+        public abstract class WorkflowItemTool : Tool<IRegistrationWorkflowItemToolContext>
         {
             private string _operationClass;
 
-            public WorkflowTool(string operationClass)
+            public WorkflowItemTool(string operationClass)
             {
                 _operationClass = operationClass;
             }
@@ -46,8 +46,8 @@ namespace ClearCanvas.Ris.Client.Adt
         [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in")]
         [ClickHandler("apply", "Apply")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(RegistrationWorkflowToolExtensionPoint))]
-        public class StartTool : WorkflowTool
+        [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+        public class StartTool : WorkflowItemTool
         {
             public StartTool()
                 : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+CheckInPatient")

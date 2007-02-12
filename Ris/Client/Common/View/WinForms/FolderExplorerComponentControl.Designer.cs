@@ -65,11 +65,15 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             this._folderTreeView.AllowDrop = true;
             this._folderTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._folderTreeView.Location = new System.Drawing.Point(0, 0);
-            this._folderTreeView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._folderTreeView.Margin = new System.Windows.Forms.Padding(2);
+            this._folderTreeView.MenuModel = null;
             this._folderTreeView.Name = "_folderTreeView";
             this._folderTreeView.Selection = selection1;
             this._folderTreeView.Size = new System.Drawing.Size(176, 493);
             this._folderTreeView.TabIndex = 1;
+            this._folderTreeView.ToolbarModel = null;
+            this._folderTreeView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
+            this._folderTreeView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._folderTreeView.Tree = null;
             // 
             // _folderContentsTableView

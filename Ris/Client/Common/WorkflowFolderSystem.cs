@@ -12,6 +12,7 @@ namespace ClearCanvas.Ris.Client.Common
         private IFolderExplorerToolContext _folderExplorer;
         private List<WorkflowFolder<TItem>> _folders;
         private event EventHandler _selectedItemsChanged;
+        private event EventHandler _selectedFolderChanged;
 
         public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
         {
@@ -38,6 +39,12 @@ namespace ClearCanvas.Ris.Client.Common
             remove { _selectedItemsChanged -= value; }
         }
 
+        public event EventHandler SelectedFolderChanged
+        {
+            add { _selectedFolderChanged += value; }
+            remove { _selectedFolderChanged -= value; }
+        }
+
         public ICollection<TItem> SelectedItems
         {
             get
@@ -60,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Common
 
         private void _folderExplorer_SelectedFolderChanged(object sender, EventArgs e)
         {
-
+            EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
         }
 
         private void _folderExplorer_SelectedItemsChanged(object sender, EventArgs e)
