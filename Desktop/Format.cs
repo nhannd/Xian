@@ -24,7 +24,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string TimeFormat
         { 
-            get { return FormatSettings.Default.TimeFormat; } 
+            get { return FormatSettings.Default.TimeFormat; }
         }
 
         /// <summary>

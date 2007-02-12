@@ -113,8 +113,8 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 		public override void Save()
 		{
 			//Save the settings to the persistent store.
-			FormatSettings.Default.DateFormat = this.DateFormat;
-			FormatSettings.Default.Save();
+			//FormatSettings.Default.DateFormat = this.DateFormat;
+			//FormatSettings.Default.Save();
 		}
 
 		public override void Start()

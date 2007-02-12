@@ -5,6 +5,8 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using System.Threading;
+using System.Security.Principal;
 
 namespace ClearCanvas.Desktop
 {
@@ -49,6 +51,7 @@ namespace ClearCanvas.Desktop
         {
             try
             {
+                AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
                 _view.RunMessagePump();
             }
             finally
