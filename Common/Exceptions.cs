@@ -1,15 +1,21 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common
 {
 	/// <summary>
 	/// Summary description for PluginException.
 	/// </summary>
+    [SerializableAttribute]
 	public class PluginException : ApplicationException
 	{
-		public PluginException() {}
+		public PluginException(SerializationInfo info, StreamingContext context) : base(info, context) {}
 		public PluginException(string message) : base(message) {}
 		public PluginException(string message, Exception inner) : base(message, inner) {}
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+        }
 	}
 
     public class ExtensionException : Exception
