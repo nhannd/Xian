@@ -194,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.cfg.xml" />
     <EmbeddedResource Include="RegistrationPreview.html" />
     <EmbeddedResource Include="OrderEntryComponent.cfg.xml" />
     <EmbeddedResource Include="PatientProfileDetailsEditorComponent.cfg.xml" />

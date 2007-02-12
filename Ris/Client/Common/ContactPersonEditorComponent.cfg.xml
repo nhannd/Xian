@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+
+  <spec id="Name">
+    <not-null test="$.Name" failMessage="Name is required"/>
+  </spec>
+  
+  <spec id="Address">
+    <not-null test="$.Address" failMessage="Address is required"/>
+  </spec>
+  
+  <spec id="HomePhoneNumber">
+    <not-null test="$.HomePhoneNumber" failMessage="Home phone number is required"/>
+  </spec>
+
+  <!--<spec id="BusinessPhoneNumber">
+    <not-null test="$.BusinessPhoneNumber" failMessage="Business phone number is required"/>
+  </spec>-->
+  
+  <spec id="Type">
+    <not-null test="$.Type" failMessage="Type is required"/>
+  </spec>
+  
+  <spec id="Relationship">
+    <not-null test="$.Relationship" failMessage="Relationship is required"/>
+  </spec>
+  
+</specifications>
