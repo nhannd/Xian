@@ -7,15 +7,9 @@ using System.Reflection;
 namespace ClearCanvas.Common.Configuration
 {
     [ExtensionPoint]
-    public class EnterpriseConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
+    public class ConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
     {
     }
-
-    [ExtensionPoint]
-    public class LocalConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
-    {
-    }
-
 
     /// <summary>
     /// This class is the standard settings provider that should be used by all settings classes that operate
@@ -54,27 +48,18 @@ namespace ClearCanvas.Common.Configuration
         {
             lock (_syncLock)
             {
-                // obtain a source provider, using an enterprise one if available
+                // obtain a source provider
                 try
                 {
-                    _sourceProvider = GetConfigurationStoreProvider(new EnterpriseConfigurationStoreExtensionPoint());
+                    IConfigurationStore ecs = (IConfigurationStore)(new ConfigurationStoreExtensionPoint()).CreateExtension();
+                    _sourceProvider = new ConfigurationStoreSettingsProvider(ecs);
                 }
                 catch (NotSupportedException)
                 {
-                    Platform.Log(SR.LogEnterpriseConfigurationStoreNotFound, LogLevel.Info);
+                    Platform.Log(SR.LogConfigurationStoreNotFound, LogLevel.Warn);
 
-                    try
-                    {
-                        // try for a local configuration store
-                        _sourceProvider = GetConfigurationStoreProvider(new LocalConfigurationStoreExtensionPoint());
-                    }
-                    catch (NotSupportedException)
-                    {
-                        Platform.Log(SR.LogLocalConfigurationStoreNotFound, LogLevel.Info);
-
-                        // default to LocalFileSettingsProvider as a last resort
-                        _sourceProvider = new LocalFileSettingsProvider();
-                    }
+                    // default to LocalFileSettingsProvider as a last resort
+                    _sourceProvider = new LocalFileSettingsProvider();
                 }
 
                 // init source provider
@@ -165,10 +150,5 @@ namespace ClearCanvas.Common.Configuration
         #endregion
 
 
-        private SettingsProvider GetConfigurationStoreProvider(IExtensionPoint configStoreExtPoint)
-        {
-            IConfigurationStore ecs = (IConfigurationStore)configStoreExtPoint.CreateExtension();
-            return new ConfigurationStoreSettingsProvider(ecs);
-        }
     }
 }

@@ -11,14 +11,15 @@ namespace ClearCanvas.Common.Configuration
     public interface IConfigurationStore
     {
         /// <summary>
-        /// Obtains the settings values for the specified settings class, for the current user and
-        /// specified instance key. The method returns a dictionary containing only values for settings
+        /// Obtains the settings values for the specified settings class, user and instance key.
+        /// Places the values into the specified dictionary.  Only adds values for settings
         /// that differ from the default value as specified by the settings class.
         /// </summary>
         /// <param name="settingsClass"></param>
+        /// <param name="user"></param>
         /// <param name="instanceKey"></param>
-        /// <returns></returns>
-        IDictionary<string, string> LoadSettingsValues(Type settingsClass, string instanceKey);
+        /// <param name="values"></param>
+        void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values);
 
         /// <summary>
         /// Store the settings values for the specified settings class, for the current user and
@@ -27,24 +28,27 @@ namespace ClearCanvas.Common.Configuration
         /// stored settings values that are not contained in the dictionary should be removed from the store.
         /// </summary>
         /// <param name="settingsClass"></param>
+        /// <param name="user"></param>
         /// <param name="instanceKey"></param>
         /// <param name="values"></param>
-        void SaveSettingsValues(Type settingsClass, string instanceKey, IDictionary<string, string> values);
+        void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values);
 
         /// <summary>
         /// Removes user settings from this group, effectively causing them to be reset to their shared default
         /// values.  Application-scoped settings are unaffected.
         /// </summary>
         /// <param name="settingsClass"></param>
+        /// <param name="user"></param>
         /// <param name="instanceKey"></param>
-        void RemoveUserSettings(Type settingsClass, string instanceKey);
+        void RemoveUserSettings(Type settingsClass, string user, string instanceKey);
 
         /// <summary>
         /// Upgrades user settings in the group, effectively importing any settings saved in a previous version
         /// of the application into the current version.  Application-scoped settings are unaffected.
         /// </summary>
         /// <param name="settingsClass"></param>
+        /// <param name="user"></param>
         /// <param name="instanceKey"></param>
-        void UpgradeUserSettings(Type settingsClass, string instanceKey);
+        void UpgradeUserSettings(Type settingsClass, string user, string instanceKey);
     }
 }

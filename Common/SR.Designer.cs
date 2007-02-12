@@ -385,11 +385,11 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enterprise configuration store not found - assuming standalone operation.
+        ///   Looks up a localized string similar to Configuration store not found - defaulting to LocalFileSettingsProvider.
         /// </summary>
-        public static string LogEnterpriseConfigurationStoreNotFound {
+        public static string LogConfigurationStoreNotFound {
             get {
-                return ResourceManager.GetString("LogEnterpriseConfigurationStoreNotFound", resourceCulture);
+                return ResourceManager.GetString("LogConfigurationStoreNotFound", resourceCulture);
             }
         }
         

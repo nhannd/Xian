@@ -237,8 +237,8 @@
   <data name="MessageFindingPlugins" xml:space="preserve">
     <value>Finding plugins...</value>
   </data>
-  <data name="LogEnterpriseConfigurationStoreNotFound" xml:space="preserve">
-    <value>Enterprise configuration store not found - assuming standalone operation</value>
+  <data name="LogConfigurationStoreNotFound" xml:space="preserve">
+    <value>Configuration store not found - defaulting to LocalFileSettingsProvider</value>
   </data>
   <data name="LogLocalConfigurationStoreNotFound" xml:space="preserve">
     <value>Local configuration store not found - defaulting to LocalFileSettingsProvider</value>
