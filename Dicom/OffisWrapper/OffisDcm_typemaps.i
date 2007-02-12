@@ -211,8 +211,8 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 //
 %typemap(ctype) std::string& "char *"
 %typemap(imtype) std::string& "StringBuilder"
-%typemap(cstype) std::string& "StringBuilder"
-%typemap(csin) std::string& "$csinput"
+%typemap(cstype) std::string& "StringBuilder" 
+%typemap(csin) std::string& "$csinput.Remove(0, $csinput.Length)"
 
 %typemap(in) std::string&
 %{ 
