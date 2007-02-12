@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Trees;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 
@@ -23,6 +24,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
+
+        private ActionModelNode _toolbarModel;
+        private ActionModelNode _menuModel;
+        private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
 
         /// <summary>
         /// Constructor
@@ -133,6 +138,18 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _treeCtrl.ShowRootLines; }
             set { _treeCtrl.ShowRootLines = value;}
+        }
+
+        public RightToLeft ToolStripRightToLeft
+        {
+            get { return _toolStrip.RightToLeft; }
+            set { _toolStrip.RightToLeft = value; }
+        }
+
+        public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+        {
+            get { return _toolStripItemDisplayStyle; }
+            set { _toolStripItemDisplayStyle = value; }
         }
 
         #endregion
@@ -399,5 +416,68 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         #endregion
+
+        public ActionModelNode ToolbarModel
+        {
+            get { return _toolbarModel; }
+            set
+            {
+                _toolbarModel = value;
+                ToolStripBuilder.Clear(_toolStrip.Items);
+                if (_toolbarModel != null)
+                {
+                    if (_toolStrip.RightToLeft == RightToLeft.Yes)
+                    {
+                        ActionModelNode[] childNodesCopy = new ActionModelNode[_toolbarModel.ChildNodes.Count];
+                        for (int i = 0; i < _toolbarModel.ChildNodes.Count; i++)
+                        {
+                            childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
+                        }
+                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy, _toolStripItemDisplayStyle);
+                    }
+                    else
+                    {
+                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
+                    }
+                }
+            }
+        }
+
+        public ActionModelNode MenuModel
+        {
+            get { return _menuModel; }
+            set
+            {
+                _menuModel = value;
+                ToolStripBuilder.Clear(_contextMenu.Items);
+                if (_menuModel != null)
+                {
+                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
+                }
+            }
+        }
+
+        private void _contextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            // Find the node we're on
+            Point pt = _treeCtrl.PointToClient(TreeView.MousePosition);
+            BindingTreeNode node = (BindingTreeNode)_treeCtrl.GetNodeAt(pt.X, pt.Y);
+            _treeCtrl.SelectedNode = node;
+        }
+
+        private void _contextMenu_Opened(object sender, EventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        {
+
+        }
     }
 }

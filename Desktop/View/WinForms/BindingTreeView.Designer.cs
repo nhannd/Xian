@@ -33,6 +33,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._treeCtrl = new System.Windows.Forms.TreeView();
             this._iconImageList = new System.Windows.Forms.ImageList(this.components);
+            this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,32 +45,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._treeCtrl, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(486, 372);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(364, 302);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // _toolStrip
             // 
             this._toolStrip.Location = new System.Drawing.Point(0, 0);
             this._toolStrip.Name = "_toolStrip";
-            this._toolStrip.Size = new System.Drawing.Size(486, 25);
+            this._toolStrip.Size = new System.Drawing.Size(364, 25);
             this._toolStrip.TabIndex = 0;
             this._toolStrip.Text = "toolStrip1";
             // 
             // _treeCtrl
             // 
+            this._treeCtrl.ContextMenuStrip = this._contextMenu;
             this._treeCtrl.Dock = System.Windows.Forms.DockStyle.Fill;
             this._treeCtrl.HideSelection = false;
             this._treeCtrl.ImageIndex = 0;
             this._treeCtrl.ImageList = this._iconImageList;
-            this._treeCtrl.Location = new System.Drawing.Point(3, 28);
+            this._treeCtrl.Location = new System.Drawing.Point(2, 27);
+            this._treeCtrl.Margin = new System.Windows.Forms.Padding(2);
             this._treeCtrl.Name = "_treeCtrl";
             this._treeCtrl.SelectedImageIndex = 0;
             this._treeCtrl.ShowNodeToolTips = true;
-            this._treeCtrl.Size = new System.Drawing.Size(480, 341);
+            this._treeCtrl.Size = new System.Drawing.Size(360, 273);
             this._treeCtrl.TabIndex = 1;
             this._treeCtrl.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeExpand);
             this._treeCtrl.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterSelect);
@@ -80,14 +84,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._iconImageList.ImageSize = new System.Drawing.Size(16, 16);
             this._iconImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // BindableTreeView
+            // _contextMenu
+            // 
+            this._contextMenu.Name = "_contextMenu";
+            this._contextMenu.Size = new System.Drawing.Size(61, 4);
+            this._contextMenu.Opened += new System.EventHandler(this._contextMenu_Opened);
+            this._contextMenu.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this._contextMenu_Closed);
+            this._contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._contextMenu_Opening);
+            this._contextMenu.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this._contextMenu_Closing);
+            // 
+            // BindingTreeView
             // 
             this.AllowDrop = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "BindableTreeView";
-            this.Size = new System.Drawing.Size(486, 372);
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "BindingTreeView";
+            this.Size = new System.Drawing.Size(364, 302);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -100,5 +114,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.ToolStrip _toolStrip;
         private System.Windows.Forms.TreeView _treeCtrl;
         private System.Windows.Forms.ImageList _iconImageList;
+        private System.Windows.Forms.ContextMenuStrip _contextMenu;
     }
 }
