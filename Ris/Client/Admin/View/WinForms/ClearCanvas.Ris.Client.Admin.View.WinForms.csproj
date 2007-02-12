@@ -84,20 +84,6 @@
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ModalityEditorComponentView.cs" />
-    <Compile Include="SettingEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SettingEditorComponentControl.Designer.cs">
-      <DependentUpon>SettingEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SettingEditorComponentView.cs" />
-    <Compile Include="SettingsManagementComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SettingsManagementComponentControl.Designer.cs">
-      <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SettingsManagementComponentView.cs" />
     <Compile Include="StaffDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -167,14 +153,6 @@
     <EmbeddedResource Include="ModalityEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SettingEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SettingEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SettingsManagementComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StaffDetailsEditorComponentControl.resx">
       <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
