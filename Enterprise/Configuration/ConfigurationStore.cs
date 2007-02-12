@@ -9,10 +9,10 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Enterprise.Configuration
 {
     /// <summary>
-    /// Implementation of <see cref="IConfigurationStore"/>, extends <see cref="EnterpriseConfigurationStoreExtensionPoint"/>.
+    /// Implementation of <see cref="IConfigurationStore"/>, extends <see cref="ConfigurationStoreExtensionPoint"/>.
     /// Acts as a client-side proxy to <see cref="IConfigurationService"/>
     /// </summary>
-    [ExtensionOf(typeof(EnterpriseConfigurationStoreExtensionPoint))]
+    [ExtensionOf(typeof(ConfigurationStoreExtensionPoint))]
     public class ConfigurationStore : IConfigurationStore
     {
         private IConfigurationService _service;
@@ -24,34 +24,18 @@ namespace ClearCanvas.Enterprise.Configuration
 
         #region IEnterpriseConfigurationStore Members
 
-        public IDictionary<string, string> LoadSettingsValues(Type settingsClass, string instanceKey)
+        public void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
         {
-            Dictionary<string, string> values = new Dictionary<string, string>();
-            // get the shared values
-            _service.LoadSettingsValues(
-                SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                SettingsClassMetaDataReader.GetVersion(settingsClass),
-                null,
-                null,
-                values);
-
-            // overwrite the shared values with the user values
-            //TODO: determine current user
-            string user = "me";
             _service.LoadSettingsValues(
                 SettingsClassMetaDataReader.GetGroupName(settingsClass),
                 SettingsClassMetaDataReader.GetVersion(settingsClass),
                 user,
                 instanceKey,
                 values);
-
-            return values;
         }
 
-        public void SaveSettingsValues(Type settingsClass, string instanceKey, IDictionary<string, string> values)
+        public void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
         {
-            //TODO: determine current user
-            string user = "me";
             _service.SaveSettingsValues(
                 SettingsClassMetaDataReader.GetGroupName(settingsClass),
                 SettingsClassMetaDataReader.GetVersion(settingsClass),
@@ -60,10 +44,8 @@ namespace ClearCanvas.Enterprise.Configuration
                 values);
         }
 
-        public void RemoveUserSettings(Type settingsClass, string instanceKey)
+        public void RemoveUserSettings(Type settingsClass, string user, string instanceKey)
         {
-            //TODO: determine current user
-            string user = "me";
             _service.Clear(
                 SettingsClassMetaDataReader.GetGroupName(settingsClass),
                 SettingsClassMetaDataReader.GetVersion(settingsClass),
@@ -71,12 +53,10 @@ namespace ClearCanvas.Enterprise.Configuration
                 instanceKey);
         }
 
-        public void UpgradeUserSettings(Type settingsClass, string instanceKey)
+        public void UpgradeUserSettings(Type settingsClass, string user, string instanceKey)
         {
             Dictionary<string, string> values = new Dictionary<string, string>();
 
-            //TODO: determine current user
-            string user = "me";
             _service.UpgradeFromPreviousVersion(
                 SettingsClassMetaDataReader.GetGroupName(settingsClass),
                 SettingsClassMetaDataReader.GetVersion(settingsClass),
