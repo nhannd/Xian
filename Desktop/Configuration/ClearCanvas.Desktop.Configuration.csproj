@@ -54,7 +54,6 @@
     </Compile>
     <Compile Include="Standard\DateFormatApplicationComponent.cs" />
     <Compile Include="Tools\MenuOptions.cs" />
-    <Compile Include="Tools\SR.Designer.cs" />
     <Compile Include="Tools\StandardOptionsConfigurationPageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,9 +83,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Standard\CustomDateFormatSettings.xml" />
-    <EmbeddedResource Include="Tools\SR.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\SaveAll.png" />
