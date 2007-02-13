@@ -64,6 +64,7 @@
     <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
+    <Compile Include="BlockingOperation.cs" />
     <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />
@@ -85,6 +86,7 @@
       <DependentUpon>FormatSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IApplicationComponentContainer.cs" />
+    <Compile Include="IBlockingOperationView.cs" />
     <Compile Include="NavigatorPageSortByPath.cs" />
     <Compile Include="Actions\SimpleActionModel.cs" />
     <Compile Include="Validation\IApplicationComponentContainerValidationStrategy.cs" />

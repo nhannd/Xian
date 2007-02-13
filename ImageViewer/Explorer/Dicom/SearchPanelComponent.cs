@@ -55,6 +55,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			InternalClearDates();
 		}
 
+		public IDesktopWindow DesktopWindow
+		{
+			get { return this.Host.DesktopWindow; }
+		}
+
 		public string Title
 		{
 			get { return _title; }
@@ -229,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
-			_studyBrowserComponent.Search();
+			BlockingOperation.Run(_studyBrowserComponent.Search);
 		}
 		
 		public void SearchToday()
@@ -252,7 +257,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.StudyDateTo = DateTime.Today;
 			this.StudyDateFrom = DateTime.Today - TimeSpan.FromDays((double)numberOfDays);
 
-			_studyBrowserComponent.Search();
+			Search();
 		}
 
 		private DateTime MinimumDate(params DateTime[] dates)

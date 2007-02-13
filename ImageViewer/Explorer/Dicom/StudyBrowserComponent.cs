@@ -63,10 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				get
 				{
-					if (_component._currentSelection == null)
-						return null;
-
-					return _component._currentSelection.Item as StudyItem; 
+					return _component.SelectedStudy;
 				}
 			}
 
@@ -74,15 +71,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				get 
 				{
-					if (_component._currentSelection == null)
-						return null;
-
-					List<StudyItem> selectedStudies = new List<StudyItem>();
-
-					foreach (StudyItem item in _component._currentSelection.Items)
-						selectedStudies.Add(item);
-
-					return selectedStudies;
+					return _component.SelectedStudies;
 				} 
 			}
 
@@ -190,6 +179,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get { return _currentStudyList; }
 			set { _currentStudyList = value; }
+		}
+
+		public StudyItem SelectedStudy
+		{
+			get
+			{
+				if (_currentSelection == null)
+					return null;
+
+				return _currentSelection.Item as StudyItem;
+			}
+		}
+
+		public IEnumerable<StudyItem> SelectedStudies
+		{
+			get
+			{
+				if (_currentSelection == null)
+					return null;
+
+				List<StudyItem> selectedStudies = new List<StudyItem>();
+
+				foreach (StudyItem item in _currentSelection.Items)
+					selectedStudies.Add(item);
+
+				return selectedStudies.AsReadOnly();
+			}
 		}
 
 		public ActionModelRoot ToolbarModel
@@ -482,5 +498,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             return "";
         }
-    }
+	}
 }

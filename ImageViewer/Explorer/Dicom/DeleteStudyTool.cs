@@ -29,6 +29,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void DeleteStudy()
 		{
+			BlockingOperation.Run(this.DeleteStudyInternal);
+		}
+
+		private void DeleteStudyInternal()
+		{
 			if (this.Context.SelectedStudy == null)
 				return;
 
@@ -48,8 +53,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e, LogLevel.Error);
-					Platform.ShowMessageBox(SR.MessageUnableToDeleteStudy);
+					ExceptionHandler.Report(e, SR.MessageUnableToDeleteStudy, this.Context.DesktopWindow);
 				}
 			}
 

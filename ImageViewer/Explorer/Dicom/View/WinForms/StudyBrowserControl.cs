@@ -9,6 +9,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -50,10 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		void OnStudyTableViewDoubleClick(object sender, EventArgs e)
 		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_studyBrowserComponent.ItemDoubleClick();
-			}
+			_studyBrowserComponent.ItemDoubleClick();
 		}
 	}
 }

@@ -33,6 +33,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OpenStudy()
 		{
+			BlockingOperation.Run(this.OpenStudyInternal);
+		}
+		
+		private void OpenStudyInternal()
+		{
 			if (this.Context.SelectedStudies == null)
 				return;
 

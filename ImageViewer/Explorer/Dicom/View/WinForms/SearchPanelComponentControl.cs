@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -52,55 +53,43 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		private void OnSearchButtonClicked(object sender, EventArgs e)
 		{
-			using (new CursorManager(this, Cursors.WaitCursor))
+			try
 			{
-				try
-				{
-					_component.Search();
-				}
-				catch
-				{
-					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
-				}
+				_component.Search();
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, SR.MessageUnableToQueryServer, _component.DesktopWindow);
 			}
 		}
 
 		private void OnSearchLastWeekButtonClick(object sender, EventArgs e)
 		{
-			using (new CursorManager(this, Cursors.WaitCursor))
+			try
 			{
-				try
-				{
-					_component.SearchLastWeek();
-				}
-				catch
-				{
-					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
-				}
+				_component.SearchLastWeek();
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, SR.MessageUnableToQueryServer, _component.DesktopWindow);
 			}
 		}
 
 		private void OnSearchTodayButtonClicked(object sender, EventArgs e)
 		{
-			using (new CursorManager(this, Cursors.WaitCursor))
+			try
 			{
-				try
-				{
-					_component.SearchToday();
-				}
-				catch
-				{
-					Platform.ShowMessageBox(SR.MessageUnableToQueryServer);
-				}
+				_component.SearchToday();
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, SR.MessageUnableToQueryServer, _component.DesktopWindow);
 			}
 		}
 
 		private void OnClearButonClicked(object sender, EventArgs e)
 		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Clear();
-			}
+			_component.Clear();
 		}
     }
 }

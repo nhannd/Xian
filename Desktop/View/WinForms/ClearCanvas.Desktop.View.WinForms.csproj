@@ -61,6 +61,7 @@
     <Compile Include="BindingTreeView.Designer.cs">
       <DependentUpon>BindingTreeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="BlockingOperationView.cs" />
     <Compile Include="CursorFactory.cs" />
     <Compile Include="DataGridViewWithDragSupport.cs">
       <SubType>Component</SubType>
