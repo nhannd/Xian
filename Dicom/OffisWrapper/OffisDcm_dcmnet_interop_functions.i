@@ -201,7 +201,7 @@ static void StoreScpCallback(
     DIC_UI sopInstance;
 
 	StoreCallbackData *cbdata = (StoreCallbackData*) callbackData;
-	const char* fileName = cbdata->imageFileName;
+	char* fileName = cbdata->imageFileName;
 
 	if (*statusDetail == NULL)
 		*statusDetail = new DcmDataset();

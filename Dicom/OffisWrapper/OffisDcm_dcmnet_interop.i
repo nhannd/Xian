@@ -6,7 +6,7 @@
 //-------------------------------------------
 struct InteropStoreScpCallbackInfo
 {
-	const char* FileName;
+	char* FileName;
 	DcmDataset* ImageDataset;
     T_DIMSE_StoreProgress *Progress;
     T_DIMSE_C_StoreRQ *Request;

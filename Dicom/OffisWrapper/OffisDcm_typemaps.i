@@ -214,7 +214,7 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 %typemap(cstype) std::string& "StringBuilder" 
 %typemap(csin) std::string& "$csinput.Remove(0, $csinput.Length)"
 
-%typemap(in) std::string&
+%typemap(in, canthrow=1) std::string&
 %{ 
 	if (!$input) 
 		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null string", 0);
@@ -254,6 +254,24 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 %rename(__parameters__) params;
 %rename(__baseClass__) base;
 %rename(__outStream__) out;
+
+//
+// TODO: 
+// dcmtk v3.5.4 has header file for DcmMetaInfo that includes an
+// assignment operator, but implementation file does not implement it.
+// Since SWIG references the header file, I suspect that the signature
+// it expects can't be matched with the compiler-generated assignment
+// operator, and that's why the linker balks (unresolved reference).
+// For now, I'll ignore the DcmMetaInfo assignment operator
+%ignore DcmMetaInfo::operator=;
+%rename(AssignToMe) operator=; 
+%rename(CompareIsEqualTo) operator==;
+%rename(CompareIsNotEqualTo) operator!=;
+%rename(CompareIsLessThan) operator<;
+%rename(CompareIsGreaterThan) operator>;
+%rename(CompareIsLessThanOrEqualTo) operator<=;
+%rename(CompareIsGreaterThanOrEqualTo) operator>=;
+%rename(ReceiveAsInput) operator<<;
 
 %pragma(csharp) moduleimports=%{
 using System;
