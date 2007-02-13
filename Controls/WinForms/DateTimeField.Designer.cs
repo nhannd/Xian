@@ -74,6 +74,7 @@ namespace ClearCanvas.Controls.WinForms
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "DateTimeField";
             this.Size = new System.Drawing.Size(150, 41);
+            this.Load += new System.EventHandler(this.DateTimeField_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -19,8 +19,8 @@ namespace ClearCanvas.Controls.WinForms
         {
             InitializeComponent();
 
-            _dateTimePicker.Format = DateTimePickerFormat.Custom;
-            _dateTimePicker.CustomFormat = Format.DateFormat;
+            if (this.DesignMode)
+                return;
 
             _checkBox.CheckedChanged += new EventHandler(CheckBoxCheckedChangedEventHandler);
             _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);
@@ -63,8 +63,11 @@ namespace ClearCanvas.Controls.WinForms
             set 
             { 
                 _showTime = value;
-                _dateTimePicker.Format = DateTimePickerFormat.Custom;
-                _dateTimePicker.CustomFormat = _showTime == true ? Format.DateTimeFormat : Format.DateFormat;
+                if (!this.DesignMode)
+                {
+                    _dateTimePicker.Format = DateTimePickerFormat.Custom;
+                    _dateTimePicker.CustomFormat = _showTime == true ? Format.DateTimeFormat : Format.DateFormat;
+                }
             }
         }
 
@@ -110,6 +113,15 @@ namespace ClearCanvas.Controls.WinForms
 		private static bool TestNull(object value)
         {
             return value == null || value == System.DBNull.Value;
+        }
+
+        private void DateTimeField_Load(object sender, EventArgs e)
+        {
+            if (this.DesignMode)
+                return;
+
+            _dateTimePicker.Format = DateTimePickerFormat.Custom;
+            _dateTimePicker.CustomFormat = Format.DateFormat;
         }
     }
 }
