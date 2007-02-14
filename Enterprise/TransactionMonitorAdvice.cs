@@ -12,8 +12,7 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     public class TransactionMonitorAdvice : ServiceOperationAdvice, IAfterReturningAdvice
     {
-        internal TransactionMonitorAdvice(Session session)
-            : base(session)
+        internal TransactionMonitorAdvice()
         {
         }
 

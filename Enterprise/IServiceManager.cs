@@ -16,5 +16,10 @@ namespace ClearCanvas.Enterprise
         /// <typeparam name="TServiceInterface"></typeparam>
         /// <returns></returns>
         TServiceInterface GetService<TServiceInterface>();
+
+        IServiceLayer GetService(Type serviceContract);
+
+
+        ICollection<Type> ListServices();
     }
 }

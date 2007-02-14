@@ -246,4 +246,7 @@
   <data name="ExceptionBackgroundTaskAlreadyRunning" xml:space="preserve">
     <value>The background task is already running</value>
   </data>
+  <data name="ExceptionExtensionPointMustSubclassExtensionPoint" xml:space="preserve">
+    <value>The extension point {0} is invalid because it is not a direct subclass of ExtensionPoint&lt;&gt;</value>
+  </data>
 </root>

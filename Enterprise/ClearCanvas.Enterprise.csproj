@@ -42,12 +42,21 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="DirtyState.cs" />
     <Compile Include="ConcurrencyException.cs" />
+    <Compile Include="Support\AssociateDomainClassAttribute.cs" />
+    <Compile Include="Support\CollectionFieldExchange.cs" />
+    <Compile Include="Support\DomainObjectInfoExchange.cs" />
+    <Compile Include="Support\DomainObjectExchangeBuilder.cs" />
+    <Compile Include="Support\DomainObjectInfo.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
     <Compile Include="EntityRef.cs" />
@@ -56,23 +65,31 @@
     <Compile Include="EntityUtils.cs" />
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="IServiceManager.cs" />
-    <Compile Include="ISession.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="ITimeBroker.cs" />
     <Compile Include="PersistenceException.cs" />
     <Compile Include="PersistenceScope.cs" />
+    <Compile Include="DomainObject.cs" />
     <Compile Include="SearchResultPage.cs" />
-    <Compile Include="SessionManager.cs" />
+    <Compile Include="ServiceImplementationAttribute.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Core.cs" />
+    <Compile Include="Support\EntityFieldExchange.cs" />
+    <Compile Include="Support\EntityInfo.cs" />
+    <Compile Include="Support\FieldExchange.cs" />
+    <Compile Include="Support\IFieldExchange.cs" />
+    <Compile Include="Support\IInfoExchange.cs" />
+    <Compile Include="Support\PrimitiveTypeInfoExchange.cs" />
+    <Compile Include="Support\ValueFieldExchange.cs" />
+    <Compile Include="Support\ValueObjectInfo.cs" />
     <Compile Include="Tests\ServiceLayerTestHelper.cs" />
     <Compile Include="TimeService.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="ITransactionNotifier.cs" />
-    <Compile Include="Session.cs" />
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="IServiceLayer.cs" />
     <Compile Include="ReadContextAdvice.cs" />

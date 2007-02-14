@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
@@ -34,6 +35,26 @@ namespace ClearCanvas.Enterprise
         /// <param name="entity"></param>
         /// <param name="state"></param>
         void Lock(Entity entity, DirtyState state);
+
+        /// <summary>
+        /// Loads the specified entity into this context
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <returns></returns>
+        Entity Load(EntityRefBase entityRef);
+
+        /// <summary>
+        /// Loads the specified entity into this context
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        Entity Load(EntityRefBase entityRef, EntityLoadFlags flags);
+
+        bool IsProxyLoaded(Entity entity);
+
+        bool IsCollectionLoaded(IEnumerable collection);
+
 
         /// <summary>
         /// Suspends this context.  Releases all connections and resources, but maintains the state

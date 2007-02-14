@@ -18,7 +18,11 @@ class EntityDef < ClassDef
   end
   
   def supportClassName
-    className + "Support"
+    className + "Info"
+  end
+  
+  def supportSuperClassName
+    @superClassName + "Info"
   end
   
   def searchCriteriaClassName

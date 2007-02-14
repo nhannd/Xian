@@ -86,7 +86,7 @@ namespace <%= model.namespace %> {
 			get { return <%= f.fieldName %>; }
 			<% end %>
 			<% if(f.hasSetter) %>
-			set { <%= f.fieldName %> = value; }
+			<%= f.setterAccess %> set { <%= f.fieldName %> = value; }
 			<% end %>
 	  	}
 		<%	end %>

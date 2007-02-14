@@ -10,8 +10,7 @@ namespace ClearCanvas.Enterprise
 {
     public abstract class PersistenceContextAdvice : ServiceOperationAdvice, IMethodInterceptor
     {
-        internal PersistenceContextAdvice(Session session)
-            : base(session)
+        internal PersistenceContextAdvice()
         {
         }
 

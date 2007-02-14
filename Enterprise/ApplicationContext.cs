@@ -18,7 +18,7 @@ namespace ClearCanvas.Enterprise
         /// <returns>An object that implements the specified interface</returns>
         public static TServiceInterface GetService<TServiceInterface>()
         {
-            return Session.Current.ServiceManager.GetService<TServiceInterface>();
+            return Core.ServiceManager.GetService<TServiceInterface>();
         }
     }
 }

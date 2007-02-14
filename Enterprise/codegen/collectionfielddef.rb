@@ -8,6 +8,8 @@ class CollectionFieldDef < FieldDef
     super(model, fieldNode)
     @dataType = DATATYPE_MAPPINGS[fieldNode.name]
     @isLazy = (fieldNode.attributes['lazy'] == 'true')
+    elementNode = fieldNode.elements['composite-element'] || fieldNode.elements['one-to-many'] || fieldNode.elements['many-to-many']
+    @elementType = elementNode.attributes['class'] if elementNode
   end
   
   def kind
@@ -18,8 +20,20 @@ class CollectionFieldDef < FieldDef
     @dataType
   end
   
+  def elementType
+    @elementType
+  end
+  
+  def supportDataType
+    "List<"+collectionElementClassDef.supportClassName+">"
+  end
+  
   def initialValue
     CSHARP_INITIALIZERS[@dataType]
+  end
+  
+  def supportInitialValue
+    "new #{supportDataType}()"
   end
   
   # a collection field is never mandatory
@@ -29,7 +43,11 @@ class CollectionFieldDef < FieldDef
   
   # collection fields never have setters
   def hasSetter
-    false
+    true
+  end
+  
+  def setterAccess
+	  "private"
   end
   
   # true if this field is a lazy collection
@@ -41,4 +59,14 @@ class CollectionFieldDef < FieldDef
   def isSearchable
     false
   end
+  
+protected
+  def collectionElementClassDef
+     classDef = model.entityDefs.find {|entity| entity.className == @elementType}
+     if(classDef == nil)
+	classDef = model.componentDefs.find {|component| component.className == @elementType}
+     end
+     return classDef
+  end
+ 
 end

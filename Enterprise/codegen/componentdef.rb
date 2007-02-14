@@ -19,7 +19,7 @@ class ComponentDef < ClassDef
   end
   
   def supportClassName
-    className + "Support"
+    className + "Info"
   end
 
   def searchCriteriaClassName

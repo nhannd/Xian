@@ -17,6 +17,7 @@ class CodeGen
     Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true),
     Template.new("IEntityBroker.gen.ct", "Brokers/I<%=@className%>Broker.gen.cs", true),
     Template.new("EntityBroker.gen.ct", "Hibernate/Brokers/<%=@className%>Broker.gen.cs", true)
+    #Template.new("EntityInfo.gen.ct", "Support/<%=@className%>Info.gen.cs", true)
   ]
   
   # specifies a set of templates that will be applied to enum classes

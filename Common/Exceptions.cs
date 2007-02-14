@@ -18,6 +18,12 @@ namespace ClearCanvas.Common
         }
 	}
 
+    public class ExtensionPointException : Exception
+    {
+        public ExtensionPointException(string message) : base(message) { }
+        public ExtensionPointException(string message, Exception inner) : base(message, inner) { }
+    }
+
     public class ExtensionException : Exception
     {
 		public ExtensionException(string message) : base(message) {}

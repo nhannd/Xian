@@ -1,17 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Abstract base class for <see cref="EntityRef"/>
     /// </summary>
+    [DataContract]
     public abstract class EntityRefBase
     {
         private Type _entityClass;
         private object _entityOid;
         private int _version;
+
+        /// <summary>
+        /// Deserialization constructor
+        /// </summary>
+        protected EntityRefBase()
+        {
+
+        }
 
         /// <summary>
         /// Constructs an instance of this class
@@ -29,25 +39,31 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// Returns the class of the entity that this reference refers to
         /// </summary>
+        [DataMember]
         internal Type EntityClass
         {
             get { return _entityClass; }
+            private set { _entityClass = value; }
         }
 
         /// <summary>
         /// Returns the OID that this reference refers to
         /// </summary>
+        [DataMember]
         internal object EntityOID
         {
             get { return _entityOid; }
+            private set { _entityOid = value; }
         }
 
         /// <summary>
         /// Returns the version of the entity that this reference refers to
         /// </summary>
+        [DataMember]
         internal int Version
         {
             get { return _version; }
+            private set { _version = value; }
         }
 
         /// <summary>

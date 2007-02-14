@@ -8,16 +8,8 @@ namespace ClearCanvas.Enterprise
 {
     public abstract class ServiceOperationAdvice
     {
-        private Session _session;
-
-        internal ServiceOperationAdvice(Session session)
+        internal ServiceOperationAdvice()
         {
-            _session = session;
-        }
-
-        internal Session Session
-        {
-            get { return _session; }
         }
 
         protected ServiceOperationAttribute GetServiceOperationAttribute(MethodInfo method)

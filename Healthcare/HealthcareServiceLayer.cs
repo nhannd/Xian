@@ -9,8 +9,8 @@ namespace ClearCanvas.Healthcare
     {
         public event EventHandler<EntityChangeEventArgs> ModalityProcedureStepChanged
         {
-            add { this.Session.TransactionNotifier.Subscribe(typeof(ModalityProcedureStep), value); }
-            remove { this.Session.TransactionNotifier.Unsubscribe(typeof(ModalityProcedureStep), value); }
+            add { Core.TransactionNotifier.Subscribe(typeof(ModalityProcedureStep), value); }
+            remove { Core.TransactionNotifier.Unsubscribe(typeof(ModalityProcedureStep), value); }
         }
 
     }

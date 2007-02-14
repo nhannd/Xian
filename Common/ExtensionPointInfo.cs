@@ -15,15 +15,17 @@ namespace ClearCanvas.Common
     public class ExtensionPointInfo : IBrowsable
     {
         private Type _extensionPointClass;
+        private Type _extensionInterface;
         private string _name;
         private string _description;
 
         /// <summary>
         /// Internal constructor.
         /// </summary>
-        internal ExtensionPointInfo(Type extensionPointClass, string name, string description)
+        internal ExtensionPointInfo(Type extensionPointClass, Type extensionInterface, string name, string description)
         {
             _extensionPointClass = extensionPointClass;
+            _extensionInterface = extensionInterface;
             _name = name;
             _description = description;
         }
@@ -34,6 +36,14 @@ namespace ClearCanvas.Common
         public Type ExtensionPointClass
         {
             get { return _extensionPointClass; }
+        }
+
+        /// <summary>
+        /// The interface that an extension must implement
+        /// </summary>
+        public Type ExtensionInteface
+        {
+            get { return _extensionInterface; }
         }
 
         #region IBrowsable Members

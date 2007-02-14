@@ -155,8 +155,8 @@ namespace ClearCanvas.Enterprise
             {
                 // need to create a new context
                 return (contextType == PersistenceContextType.Update) ?
-                    (IPersistenceContext)Session.Current.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush) :
-                    (IPersistenceContext)Session.Current.DataStore.OpenReadContext();
+                    (IPersistenceContext)Core.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush) :
+                    (IPersistenceContext)Core.DataStore.OpenReadContext();
             }
             else 
             {
@@ -166,7 +166,7 @@ namespace ClearCanvas.Enterprise
                 {
                     // if no current context, create an update context
                     if (PersistenceScope.Current == null)
-                        return Session.Current.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush);
+                        return Core.DataStore.OpenUpdateContext(UpdateContextSyncMode.Flush);
 
                     // if the current context is an update context, inherit
                     if (PersistenceScope.Current is IUpdateContext)
@@ -179,7 +179,7 @@ namespace ClearCanvas.Enterprise
                 {
                     // if no current context, create a read context
                     if (PersistenceScope.Current == null)
-                        return Session.Current.DataStore.OpenReadContext();
+                        return Core.DataStore.OpenReadContext();
 
                     // otherwise return the current context, regardless of its type
                     // (read operations are allowed to execute in an update context)

@@ -178,6 +178,15 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The extension point {0} is invalid because it is not a direct subclass of ExtensionPoint&lt;&gt;.
+        /// </summary>
+        public static string ExceptionExtensionPointMustSubclassExtensionPoint {
+            get {
+                return ResourceManager.GetString("ExceptionExtensionPointMustSubclassExtensionPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to We&apos;re sorry, but an error has occurred that ClearCanvas Workstation cannot recover from.  Please check the log and restart..
         /// </summary>
         public static string ExceptionFatalApplicationError {

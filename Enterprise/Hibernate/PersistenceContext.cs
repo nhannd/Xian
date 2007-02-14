@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 
 using NHibernate;
 using System.Data;
+using System.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -135,7 +136,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        internal Entity Load(EntityRefBase entityRef)
+        public virtual Entity Load(EntityRefBase entityRef)
         {
             return this.Load(entityRef, this.DefaultEntityLoadFlags);
         }
@@ -146,7 +147,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="entityRef"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        internal Entity Load(EntityRefBase entityRef, EntityLoadFlags flags)
+        public virtual Entity Load(EntityRefBase entityRef, EntityLoadFlags flags)
         {
             Entity entity = null;
 
@@ -191,6 +192,17 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             return entity;
         }
+
+        public bool IsProxyLoaded(Entity entity)
+        {
+            return NHibernateUtil.IsInitialized(entity);
+        }
+
+        public bool IsCollectionLoaded(IEnumerable collection)
+        {
+            return NHibernateUtil.IsInitialized(collection);
+        }
+
 
         /// <summary>
         /// True if this context is read-only.

@@ -6,6 +6,5 @@ namespace ClearCanvas.Enterprise
 {
     public interface IServiceLayer
     {
-        void SetSession(ISession session);
     }
 }

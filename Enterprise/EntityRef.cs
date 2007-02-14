@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise
 {
@@ -28,9 +29,17 @@ namespace ClearCanvas.Enterprise
     /// <see cref="IPersistenceContext"/> or instance of <see cref="Entity"/>
     /// </summary>
     /// <typeparam name="TEntity">The class of entity this reference refers to</typeparam>
+    [DataContract(Name = "{0}EntityRef")]
     public class EntityRef<TEntity> : EntityRefBase
         where TEntity : Entity
     {
+
+        /// <summary>
+        /// Deserialization constructor
+        /// </summary>
+        protected EntityRef()
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -73,6 +82,27 @@ namespace ClearCanvas.Enterprise
             where TCast : Entity
         {
             return new EntityRef<TCast>(this.EntityOID, this.Version);
+        }
+
+        /// <summary>
+        /// Resolves this reference to an entity, given the specified context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public TEntity Resolve(IPersistenceContext context)
+        {
+            return (TEntity)context.Load(this);
+        }
+
+        /// <summary>
+        /// Resolves this reference to an entity, given the specified context and <see cref="EntityLoadFlags"/>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        public TEntity Resolve(IPersistenceContext context, EntityLoadFlags flags)
+        {
+            return (TEntity)context.Load(this, flags);
         }
 
         /// <summary>

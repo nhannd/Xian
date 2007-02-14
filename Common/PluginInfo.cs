@@ -41,13 +41,34 @@ namespace ClearCanvas.Common
             List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
             foreach (Type type in asm.GetTypes())
             {
-                object[] attrs = type.GetCustomAttributes(typeof(ExtensionPointAttribute), false);
-                foreach (ExtensionPointAttribute a in attrs)
+                try
                 {
-                    extensionPointList.Add(new ExtensionPointInfo(type, a.Name, a.Description));
+                    object[] attrs = type.GetCustomAttributes(typeof(ExtensionPointAttribute), false);
+                    if (attrs.Length > 0)
+                    {
+                        ValidateExtensionPointClass(type);
+
+                        ExtensionPointAttribute a = (ExtensionPointAttribute)attrs[0];
+                        Type extensionInterface = type.BaseType.GetGenericArguments()[0];
+
+                        extensionPointList.Add(new ExtensionPointInfo(type, extensionInterface, a.Name, a.Description));
+                    }
+                }
+                catch (ExtensionPointException e)
+                {
+                    // log and continue discovering extension points
+                    Platform.Log(e.Message, LogLevel.Error);
                 }
             }
             return extensionPointList.ToArray();
+        }
+
+        private static void ValidateExtensionPointClass(Type extensionPointClass)
+        {
+            Type baseType = extensionPointClass.BaseType;
+            if (!baseType.IsGenericType || !baseType.GetGenericTypeDefinition().Equals(typeof(ExtensionPoint<>)))
+                throw new ExtensionPointException(string.Format(
+                    SR.ExceptionExtensionPointMustSubclassExtensionPoint, extensionPointClass.FullName));
         }
 
         

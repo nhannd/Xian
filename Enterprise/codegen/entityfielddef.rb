@@ -21,17 +21,9 @@ class EntityFieldDef < FieldDef
   end
   
   def supportDataType
-    "EntityRef"
+    "EntityRef<"+@dataType+">"
   end
   
-#  def searchCriteriaDataType
- #   entityDef.searchCriteriaClassName
- # end
-  
-#  def searchCriteriaReturnType
-#    entityDef.searchCriteriaClassName
-#  end
-
 protected
   def entityDef
     model.entityDefs.find {|entity| entity.className == @dataType}

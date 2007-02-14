@@ -11,7 +11,7 @@ namespace ClearCanvas.Common
     /// Use this attribute to mark a class as defining an extension point.  This attribute must only be
     /// applied to subclasses of <see cref="ExtensionPoint" />.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
     public class ExtensionPointAttribute : Attribute
     {
         private string _name;

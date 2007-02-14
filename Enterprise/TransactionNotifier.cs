@@ -16,11 +16,9 @@ namespace ClearCanvas.Enterprise
     public class TransactionNotifier : ITransactionNotifier
     {
         private Dictionary<Type, EventHandler<EntityChangeEventArgs>> _eventMap;
-        private Session _session;
 
-        internal TransactionNotifier(Session session)
+        internal TransactionNotifier()
         {
-            _session = session;
             _eventMap = new Dictionary<Type, EventHandler<EntityChangeEventArgs>>();
         }
 
@@ -68,7 +66,7 @@ namespace ClearCanvas.Enterprise
                 {
                     // create an entity ref based on the eventKeyClass, regardless of the actual entity class
                     EntityRefBase entityRef = EntityRefFactory.CreateReference(eventKeyClass, change.EntityOID, change.Version);
-                    EventsHelper.Fire(_eventMap[change.EntityClass], _session, new EntityChangeEventArgs(entityRef, change.ChangeType));
+                    EventsHelper.Fire(_eventMap[change.EntityClass], null, new EntityChangeEventArgs(entityRef, change.ChangeType));
                 }
             }
         }
