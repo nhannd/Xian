@@ -75,7 +75,24 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else if (this.ContextBase is IRegistrationWorkflowFolderToolContext)
             {
-                Platform.ShowMessageBox("Do search");
+                IRegistrationWorkflowFolderToolContext context = (IRegistrationWorkflowFolderToolContext)this.ContextBase;
+
+                if (_searchComponent == null)
+                {
+                    _searchComponent = new PatientSearchComponent();
+                    _searchComponent.SearchRequested += SearchRequestedEventHandler;
+
+                    ApplicationComponent.LaunchAsShelf(
+                        context.DesktopWindow,
+                        _searchComponent,
+                        SR.TitleSearch,
+                        ShelfDisplayHint.DockFloat,
+                        delegate(IApplicationComponent c)
+                        {
+                            _searchComponent.SearchRequested -= SearchRequestedEventHandler;
+                            _searchComponent = null;
+                        });
+                }
             }
 
         }
@@ -90,7 +107,8 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else if (this.ContextBase is IRegistrationWorkflowFolderToolContext)
             {
-
+                IRegistrationWorkflowFolderToolContext context = (IRegistrationWorkflowFolderToolContext)this.ContextBase;
+                context.SearchCriteria = _searchComponent.SearchCriteria;
             }
         }
     }

@@ -31,9 +31,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FoldersComponentControl));
             this._folderTree = new System.Windows.Forms.TreeView();
+            this._folderTreeImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._toolbar = new System.Windows.Forms.ToolStrip();
-            this._folderTreeImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,13 +43,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._folderTree.HideSelection = false;
             this._folderTree.ImageIndex = 0;
             this._folderTree.ImageList = this._folderTreeImageList;
-            this._folderTree.Location = new System.Drawing.Point(3, 28);
+            this._folderTree.Location = new System.Drawing.Point(2, 27);
+            this._folderTree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._folderTree.Name = "_folderTree";
             this._folderTree.SelectedImageIndex = 1;
             this._folderTree.ShowRootLines = false;
-            this._folderTree.Size = new System.Drawing.Size(228, 472);
+            this._folderTree.Size = new System.Drawing.Size(172, 384);
             this._folderTree.TabIndex = 0;
             this._folderTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._folderTree_AfterSelect);
+            // 
+            // _folderTreeImageList
+            // 
+            this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
+            this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this._folderTreeImageList.Images.SetKeyName(0, "");
+            this._folderTreeImageList.Images.SetKeyName(1, "");
             // 
             // tableLayoutPanel1
             // 
@@ -59,35 +67,30 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._toolbar, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(234, 503);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(176, 409);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // _toolbar
             // 
             this._toolbar.Location = new System.Drawing.Point(0, 0);
             this._toolbar.Name = "_toolbar";
-            this._toolbar.Size = new System.Drawing.Size(234, 25);
+            this._toolbar.Size = new System.Drawing.Size(176, 25);
             this._toolbar.TabIndex = 1;
             this._toolbar.Text = "toolStrip1";
             // 
-            // _folderTreeImageList
-            // 
-            this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
-            this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this._folderTreeImageList.Images.SetKeyName(0, "FolderClosedMedium.png");
-            this._folderTreeImageList.Images.SetKeyName(1, "FolderOpenMedium.png");
-            // 
             // FoldersComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FoldersComponentControl";
-            this.Size = new System.Drawing.Size(234, 503);
+            this.Size = new System.Drawing.Size(176, 409);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

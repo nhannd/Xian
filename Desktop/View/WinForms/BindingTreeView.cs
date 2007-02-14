@@ -140,6 +140,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _treeCtrl.ShowRootLines = value;}
         }
 
+        public ImageList ImageList
+        {
+            get { return _treeCtrl.ImageList; }
+            set { _treeCtrl.ImageList = value; }
+        }
+
         public RightToLeft ToolStripRightToLeft
         {
             get { return _toolStrip.RightToLeft; }
@@ -182,7 +188,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
                 else
                 {
-                    return FindNodeRecursive(node.Nodes, criteria);
+                    BindingTreeNode nodeFound = FindNodeRecursive(node.Nodes, criteria);
+                    if (nodeFound != null)
+                        return nodeFound;
                 }
             }
             return null;

@@ -24,6 +24,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IRegistrationPreviewToolContext : IToolContext
     {
+        EntityRef<PatientProfile> PatientProfileRef { get; }
         IDesktopWindow DesktopWindow { get; }
     }
     
@@ -47,6 +48,11 @@ namespace ClearCanvas.Ris.Client.Adt
             public RegistrationPreviewToolContext(RegistrationPreviewComponent component)
             {
                 _component = component;
+            }
+
+            public EntityRef<PatientProfile> PatientProfileRef
+            {
+                get { return _component.PatientProfileRef; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -130,14 +136,17 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _patientProfile = _adtService.LoadPatientProfile(_worklistItem.PatientProfile, true);
 
-                int count = 0;
-                int maximumItemDisplay = 5;
-                foreach (RegistrationWorklistQueryResult queryResult in _worklistItem.QueryResults)
+                if (_worklistItem.QueryResults != null)
                 {
-                    _RIC.Items.Add(queryResult);
-                    count++;
-                    if (count > maximumItemDisplay)
-                        break;
+                    int count = 0;
+                    int maximumItemDisplay = 5;
+                    foreach (RegistrationWorklistQueryResult queryResult in _worklistItem.QueryResults)
+                    {
+                        _RIC.Items.Add(queryResult);
+                        count++;
+                        if (count > maximumItemDisplay)
+                            break;
+                    }
                 }
             }
 
@@ -202,6 +211,16 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 TelephoneNumber phone = _patientProfile.CurrentHomePhone;
                 return (phone == null) ? SR.TextUnknownValue : Format.Custom(phone);
+            }
+        }
+
+        public bool HasMoreBasicInfo
+        {
+            get 
+            {
+                int moreAddresses = _patientProfile.Addresses.Count - (_patientProfile.CurrentHomeAddress == null ? 0 : 1);
+                int morePhoneNumbers = _patientProfile.TelephoneNumbers.Count - (_patientProfile.CurrentHomePhone == null ? 0 : 1);
+                return (moreAddresses > 0 || morePhoneNumbers > 0); 
             }
         }
 

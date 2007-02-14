@@ -45,6 +45,12 @@ namespace ClearCanvas.Ris.Client.Common
             remove { _selectedFolderChanged -= value; }
         }
 
+        public IFolder SelectedFolder
+        {
+            get { return _folderExplorer.SelectedFolder; }
+            set { _folderExplorer.SelectedFolder = value; }
+        }
+
         public ICollection<TItem> SelectedItems
         {
             get

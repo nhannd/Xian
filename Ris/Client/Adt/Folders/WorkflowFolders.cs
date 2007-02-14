@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
             _menuActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             _optionAction = _menuActionModel.AddAction("ScheduledOption", "Option", "Edit.png", "Option",
-                delegate() { DisplayOption(); });
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
         }
 
         protected override IList<RegistrationWorklistItem> QueryItems()
@@ -48,9 +48,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             get { return _menuActionModel; }
         }
 
-        private void DisplayOption()
+        private void DisplayOption(IDesktopWindow desktopWindow)
         {
-            Platform.ShowMessageBox("Scheduled option not implemented");
+            ApplicationComponent.LaunchAsDialog(desktopWindow, new FolderOptionComponent(), "Scheduled Option");
         }
     }
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
             _menuActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             _optionAction = _menuActionModel.AddAction("CheckInOption", "Option", "Edit.png", "Option",
-                delegate() { DisplayOption(); });
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
         }
 
         protected override IList<RegistrationWorklistItem> QueryItems()
@@ -106,9 +106,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             get { return _menuActionModel; }
         }
 
-        private void DisplayOption()
+        private void DisplayOption(IDesktopWindow desktopWindow)
         {
-            Platform.ShowMessageBox("Check-In option not implemented");
+            ApplicationComponent.LaunchAsDialog(desktopWindow, new FolderOptionComponent(), "Check-In Option");
         }
     }
 
@@ -199,6 +199,40 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             // For Registration, we do not allow Clerks to change status to Cancel
             //return item.HasStatus(ActivityStatus.SC);
             return false;
+        }
+    }
+
+    public class SearchFolder : RegistrationWorkflowFolder
+    {
+        PatientProfileSearchCriteria _searchCriteria;
+
+        public SearchFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "Search")
+        {
+        }
+
+        public SearchCriteria SearchCriteria
+        {
+            get { return _searchCriteria; }
+            set 
+            { 
+                _searchCriteria = value as PatientProfileSearchCriteria;
+                this.Refresh();
+            }
+        }
+
+        protected override IList<RegistrationWorklistItem> QueryItems()
+        {
+            if (_searchCriteria == null)
+                return new List<RegistrationWorklistItem>();
+
+            IAdtService service = ApplicationContext.GetService<IAdtService>();
+            return ConvertToWorkListItem(service.ListPatientProfiles(_searchCriteria));
+        }
+
+        protected override bool IsMember(RegistrationWorklistItem item)
+        {
+            return true;
         }
     }
 }

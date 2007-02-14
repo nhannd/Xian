@@ -113,6 +113,13 @@
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="RegistrationPreviewComponentView.cs" />
+    <Compile Include="Folders\FolderOptionComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Folders\FolderOptionComponentControl.Designer.cs">
+      <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Folders\FolderOptionComponentView.cs" />
     <Compile Include="VisitDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -175,6 +182,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Folders\FolderOptionComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OrderEntryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OrderEntryComponentControl.cs</DependentUpon>

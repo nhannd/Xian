@@ -18,6 +18,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private IApplicationComponent _component;
         private ActiveTemplate _template;
         private string _cachedHtml;
+        private ActionModelRenderer _renderer;
 
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _component = component;
             _template = template;
-
+            _renderer = new ActionModelRenderer();
 #if DEBUG
             _webBrowser.IsWebBrowserContextMenuEnabled = true;
 #else
@@ -51,6 +52,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             Dictionary<string, object> context = new Dictionary<string, object>();
             context["Component"] = _component;
+            context["ActionModelRenderer"] = _renderer;
             _cachedHtml = _template.Evaluate(context);
 
             if (this.Visible)

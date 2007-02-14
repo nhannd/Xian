@@ -60,5 +60,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
             return worklist;
         }
+
+        protected IList<RegistrationWorklistItem> ConvertToWorkListItem(IList<PatientProfile> listProfile)
+        {
+            // Now add the worklist item 
+            IList<RegistrationWorklistItem> worklist = new List<RegistrationWorklistItem>();
+            foreach (PatientProfile profile in listProfile)
+            {
+                worklist.Add(new RegistrationWorklistItem(profile));
+            }
+
+            return worklist;
+        }
+
     }
 }

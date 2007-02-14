@@ -13,35 +13,6 @@ using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("show", "global-menus/Go/Registration Home")]
-    [ClickHandler("show", "Show")]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class RegistrationLaunchFolderExplorerTool : Tool<IDesktopToolContext>
-    {
-        public void Show()
-        {
-            FolderExplorerComponent folderComponent = new FolderExplorerComponent(new RegistrationFolderExplorerToolExtensionPoint());
-            RegistrationPreviewComponent previewComponent = new RegistrationPreviewComponent();
-
-            folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
-            {
-                RegistrationWorklistItem item = folderComponent.SelectedItems.Item as RegistrationWorklistItem;
-                previewComponent.WorklistItem = item;
-            };
-
-            SplitComponentContainer split = new SplitComponentContainer(
-                new SplitPane("Folders", folderComponent, 1.0f),
-                new SplitPane("Preview", previewComponent, 1.0f),
-                SplitOrientation.Vertical);
-
-            ApplicationComponent.LaunchAsWorkspace(
-                this.Context.DesktopWindow,
-                split,
-                "Registration Home",
-                null);
-        }
-    }
-
     [ExtensionPoint]
     public class RegistrationFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
     {

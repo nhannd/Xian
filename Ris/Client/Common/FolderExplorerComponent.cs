@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -274,7 +275,6 @@ namespace ClearCanvas.Ris.Client.Common
                         ExceptionHandler.Report(e, "Folder refresh failed", this.Host.DesktopWindow);
                     }
                 }
-
                 EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
             }
         }
@@ -307,16 +307,23 @@ namespace ClearCanvas.Ris.Client.Common
             {
                 IFolder folder = (IFolder)e.Item;
                 folder.TextChanged += FolderTextChangedEventHandler;
+                folder.IconChanged += FolderIconChangedEventHandler;
             }
 
             if (e.ChangeType == ItemChangeType.ItemRemoved)
             {
                 IFolder folder = (IFolder)e.Item;
                 folder.TextChanged -= FolderTextChangedEventHandler;
+                folder.IconChanged -= FolderIconChangedEventHandler;
             }
         }
 
         private void FolderTextChangedEventHandler(object sender, EventArgs e)
+        {
+            _folderTree.Items.NotifyItemUpdated((IFolder)sender);
+        }
+
+        private void FolderIconChangedEventHandler(object sender, EventArgs e)
         {
             _folderTree.Items.NotifyItemUpdated((IFolder)sender);
         }

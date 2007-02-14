@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("view2", "Open patient details")]
     [IconSet("view2", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
 
+    [MenuAction("view3", "RegistrationPreview-menu/Details")]
     [ButtonAction("view3", "folderexplorer-items-toolbar/Details")]
     [ClickHandler("view3", "View")]
     [EnabledStateObserver("view3", "Enabled", "EnabledChanged")]
@@ -33,6 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     public class PatientOverviewTool : Tool<IWorklistToolContext>
     {
         private bool _enabled;
@@ -57,6 +59,10 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                         && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
+            }
+            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            {
+                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).PatientProfileRef != null);
             }
 
         }
@@ -91,6 +97,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 OpenPatient(item.PatientProfile, context.DesktopWindow);
+            }
+            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            {
+                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
+                OpenPatient(context.PatientProfileRef, context.DesktopWindow);
             }
         }
 

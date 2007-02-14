@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Ris.Client.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -15,9 +16,54 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("launch", "Registration Home")]
     [IconSet("launch", IconScheme.Colour, "Icons.HomeToolSmall.png", "Icons.HomeToolMedium.png", "Icons.HomeToolLarge.png")]
     [ClickHandler("launch", "Launch")]
+    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+    public class HomeTool : Tool<IDesktopToolContext>
+    {
+        private IWorkspace _workspace;
+
+        public void Launch()
+        {
+            if (_workspace == null)
+            {
+                _workspace = ApplicationComponent.LaunchAsWorkspace(
+                    this.Context.DesktopWindow,
+                    BuildComponent(),
+                    SR.TitleRegistrationHome,
+                    delegate(IApplicationComponent c) { _workspace = null; });
+            }
+            else
+            {
+                _workspace.Activate();
+            }
+        }
+
+        private IApplicationComponent BuildComponent()
+        {
+            FolderExplorerComponent folderComponent = new FolderExplorerComponent(new RegistrationFolderExplorerToolExtensionPoint());
+            RegistrationPreviewComponent previewComponent = new RegistrationPreviewComponent();
+
+            folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
+            {
+                RegistrationWorklistItem item = folderComponent.SelectedItems.Item as RegistrationWorklistItem;
+                previewComponent.WorklistItem = item;
+            };
+
+            return new SplitComponentContainer(
+                new SplitPane("Folders", folderComponent, 1.0f),
+                new SplitPane("Preview", previewComponent, 1.0f),
+                SplitOrientation.Vertical);
+        }
+    }
+
+
+    [MenuAction("launch", "global-menus/MenuTools/Registration Home")]
+    //[ButtonAction("launch", "global-toolbars/MenuTools/Registration Home")]
+    [Tooltip("launch", "Registration Home")]
+    [IconSet("launch", IconScheme.Colour, "Icons.HomeToolSmall.png", "Icons.HomeToolMedium.png", "Icons.HomeToolLarge.png")]
+    [ClickHandler("launch", "Launch")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class HomeTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+    public class OldHomeTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
     {
 
         private IWorkspace _workspace;
@@ -25,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Default constructor
         /// </summary>
-        public HomeTool()
+        public OldHomeTool()
         {
         }
 

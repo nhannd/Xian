@@ -36,6 +36,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _queryResults.Add(queryResult);
         }
 
+        public RegistrationWorklistItem(PatientProfile profile)
+        {
+            _mrn = profile.Mrn;
+            _patientName = profile.Name;
+            _healthcardNumber = profile.Healthcard;
+            _dateOfBirth = profile.DateOfBirth;
+            _sex = profile.Sex;
+
+            _patientProfile = new EntityRef<PatientProfile>(profile);
+        }
+
         public void AddQueryResults(RegistrationWorklistQueryResult queryResult)
         {
             _queryResults.Add(queryResult);

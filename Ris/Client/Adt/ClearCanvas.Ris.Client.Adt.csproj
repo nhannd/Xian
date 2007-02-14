@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="OrderEntryComponent.cs" />
     <Compile Include="HL7QueueItemTableData.cs" />

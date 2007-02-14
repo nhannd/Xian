@@ -9,6 +9,7 @@
 <body>
 <% 
 var component = this.Component;
+var amr = this.ActionModelRenderer;
 if(component.PatientProfileRef != null)
 {%>
 <% if(component.ShowHeader) { %>
@@ -63,6 +64,11 @@ if(component.PatientProfileRef != null)
     <td class="propertyname">Home Address</td>
     <td colspan="3"><%= component.CurrentHomeAddress %></td>
   </tr>
+  <tr class="additionalentriescount">
+    <% if(component.HasMoreBasicInfo) { %>
+    <td colspan="4"><%= amr.GetHTML(component.MenuModel, "Details", "more...") %></td>
+    <% } %>
+  </tr>
 </table>
 <p>&nbsp;</p>
 <% if(component.RIC.Items.Count > 0) { %>
@@ -84,7 +90,7 @@ if(component.PatientProfileRef != null)
   <% } %>
     <% if(component.MoreRICCount > 0) { %>
     <tr class="additionalentriescount">
-        <td colspan="5">(<%= component.MoreRICCount %> more...)</td>
+        <td colspan="5"><%= amr.GetHTML(component.MenuModel, "NewOrders", "(" + component.MoreRICCount + " more...)") %></td>
     </tr>
     <% } %>
 </table>
@@ -97,8 +103,8 @@ if(component.PatientProfileRef != null)
   </tr>
   <tr>
     <td>
-        <img width=50 src="http://www.azcongresswatch.com/wp-content/uploads/medical_symbol_md.thumbnail.jpg" alt="Healthcare Alert" align="left" />
-        <img width=50 src="http://www3.sympatico.ca/robertblue/Nopeanuts.jpg" alt="Peanut Allergy" align="left" />
+        <img width="50" src="http://172.16.10.167/RisTemplates/medical_symbol_md.thumbnail.jpg" alt="Healthcare Alert" align="left" />
+        <img width="50" src="http://172.16.10.167/RisTemplates/Nopeanuts.jpg" alt="Peanut Allergy" align="left" />
     </td>
   </tr>
 </table>

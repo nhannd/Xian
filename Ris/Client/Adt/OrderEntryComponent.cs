@@ -16,20 +16,101 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
+    [MenuAction("neworder", "RegistrationPreview-menu/NewOrders")]
     [MenuAction("neworder", "global-menus/Orders/New")]
+    [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
     [ClickHandler("neworder", "NewOrder")]
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
+
     public class OrderEntryTool : Tool<IWorklistToolContext>
     {
+        private bool _enabled;
+        private event EventHandler _enabledChanged;
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            if (this.ContextBase is IWorklistToolContext)
+            {
+                _enabled = false;   // disable by default
+                ((IWorklistToolContext)this.ContextBase).SelectedPatientProfileChanged += delegate(object sender, EventArgs args)
+                {
+                    this.Enabled = ((IWorklistToolContext)this.ContextBase).SelectedPatientProfile != null;
+                };
+            }
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            {
+                _enabled = false;   // disable by default
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                {
+                    this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+                        && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+                };
+            }
+            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            {
+                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).PatientProfileRef != null);
+            }
+            else
+            {
+                _enabled = true;
+            }
+        }
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if (_enabled != value)
+                {
+                    _enabled = value;
+                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler EnabledChanged
+        {
+            add { _enabledChanged += value; }
+            remove { _enabledChanged -= value; }
+        }
+
         public void NewOrder()
         {
-            OrderEntryComponent component = new OrderEntryComponent(this.Context.SelectedPatientProfile);
-
-            ApplicationComponent.LaunchAsWorkspace(
-                this.Context.DesktopWindow,
-                component,
-                SR.TitleNewOrder,
-                null);
+            if (this.ContextBase is IWorklistToolContext)
+            {
+                IWorklistToolContext context = (IWorklistToolContext)this.ContextBase;
+                OrderEntryComponent component = new OrderEntryComponent(context.SelectedPatientProfile);
+                ApplicationComponent.LaunchAsWorkspace(
+                    context.DesktopWindow,
+                    component,
+                    SR.TitleNewOrder,
+                    null);
+            }
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            {
+                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                OrderEntryComponent component = new OrderEntryComponent(item.PatientProfile);
+                ApplicationComponent.LaunchAsWorkspace(
+                    context.DesktopWindow,
+                    component,
+                    SR.TitleNewOrder,
+                    null);
+            }
+            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            {
+                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
+                OrderEntryComponent component = new OrderEntryComponent(context.PatientProfileRef);
+                ApplicationComponent.LaunchAsWorkspace(
+                    context.DesktopWindow,
+                    component,
+                    SR.TitleNewOrder,
+                    null);
+            }
         }
     }
 

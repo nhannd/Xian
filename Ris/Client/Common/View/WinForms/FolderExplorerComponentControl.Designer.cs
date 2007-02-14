@@ -30,12 +30,12 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
         {
             this.components = new System.ComponentModel.Container();
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FolderExplorerComponentControl));
+            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._folderTreeView = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._folderTreeImageList = new System.Windows.Forms.ImageList(this.components);
+            this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -64,17 +64,26 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             // 
             this._folderTreeView.AllowDrop = true;
             this._folderTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._folderTreeView.ImageList = this._folderTreeImageList;
             this._folderTreeView.Location = new System.Drawing.Point(0, 0);
             this._folderTreeView.Margin = new System.Windows.Forms.Padding(2);
             this._folderTreeView.MenuModel = null;
             this._folderTreeView.Name = "_folderTreeView";
             this._folderTreeView.Selection = selection1;
+            this._folderTreeView.ShowLines = false;
             this._folderTreeView.Size = new System.Drawing.Size(176, 493);
             this._folderTreeView.TabIndex = 1;
             this._folderTreeView.ToolbarModel = null;
             this._folderTreeView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             this._folderTreeView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._folderTreeView.Tree = null;
+            // 
+            // _folderTreeImageList
+            // 
+            this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
+            this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this._folderTreeImageList.Images.SetKeyName(0, "FolderClosedMedium.png");
+            this._folderTreeImageList.Images.SetKeyName(1, "FolderOpenMedium.png");
             // 
             // _folderContentsTableView
             // 
@@ -91,13 +100,6 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             this._folderContentsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             this._folderContentsTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
-            // 
-            // _folderTreeImageList
-            // 
-            this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
-            this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this._folderTreeImageList.Images.SetKeyName(0, "FolderClosedMedium.png");
-            this._folderTreeImageList.Images.SetKeyName(1, "FolderOpenMedium.png");
             // 
             // FolderExplorerComponentControl
             // 
