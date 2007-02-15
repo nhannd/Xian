@@ -13,12 +13,10 @@ namespace ClearCanvas.Ris.Services
         HL7QueueItem LoadHL7QueueItem(EntityRef<HL7QueueItem> queueItemRef);
 
         IList<HL7QueueItem> GetNextInboundHL7QueueItemBatch();
-        IList<HL7QueueItem> GetAllHL7QueueItems();
-        IList<HL7QueueItem> GetFilteredHL7QueueItems(HL7QueueItemSearchCriteria criteria);
+        IList<HL7QueueItem> GetHL7QueueItems(HL7QueueItemSearchCriteria criteria, SearchResultPage page);
 
         void EnqueueHL7QueueItem(HL7QueueItem item);
-        void SyncExternalQueue();
-
+        
         IList<Patient> ProcessHL7QueueItem(HL7QueueItem item);
         PatientProfile GetReferencedPatient(EntityRef<HL7QueueItem> hl7QueueItemRef);
         

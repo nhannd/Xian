@@ -13,6 +13,7 @@ using ClearCanvas.HL7;
 
 using Iesi.Collections;
 using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Common.Utilities;
 
 
@@ -95,6 +96,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private HL7QueueItemTableData _queue;
         private IHL7QueueService _hl7QueueService;
 
+        private IPagingController<HL7QueueItem> _pagingController;
+        private PagingActionModel<HL7QueueItem> _pagingActionHandler;
+
         private ToolSet _toolSet;
         private ClickHandlerDelegate _defaultAction;
 
@@ -127,6 +131,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _hl7QueueService = ApplicationContext.GetService<IHL7QueueService>();
             _queue = new HL7QueueItemTableData(_hl7QueueService);
+
+            _pagingController = new PagingController<HL7QueueItem>(
+                delegate (SearchCriteria criteria, SearchResultPage page)
+                {
+                    return _hl7QueueService.GetHL7QueueItems((HL7QueueItemSearchCriteria)criteria, page); 
+                }
+            );
+            _pagingActionHandler = new PagingActionModel<HL7QueueItem>(_pagingController, _queue);
 
             _directionChoices = _hl7QueueService.GetHL7MessageDirectionEnumTable();
             _peerChoices = _hl7QueueService.GetHL7MessagePeerEnumTable();
@@ -273,7 +285,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "hl7Queue-toolbar", _toolSet.Actions);
+                ActionModelNode node = ActionModelRoot.CreateModel(this.GetType().FullName, "hl7Queue-toolbar", _toolSet.Actions);
+                node.Merge(_pagingActionHandler);
+                return node;
             }
         }
 
@@ -312,12 +326,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void ShowAllItems()
         {
-            IList<HL7QueueItem> items = _hl7QueueService.GetAllHL7QueueItems();
+            HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
+            criteria.Status.CreationDateTime.SortAsc(0);
 
-            _queue.Items.Clear();
-            _queue.Items.AddRange(items);
+            UpdateTableData(criteria);
         }
-
+        
         public void ShowFilteredItems()
         {
             HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
@@ -345,15 +359,15 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (_updatedOnEnd.HasValue)
                 criteria.Status.UpdateDateTime.LessThanOrEqualTo(_updatedOnEnd.Value);
 
-            IList<HL7QueueItem> items = _hl7QueueService.GetFilteredHL7QueueItems(criteria);
+            criteria.Status.CreationDateTime.SortAsc(0);
 
-            _queue.Items.Clear();
-            _queue.Items.AddRange(items);
+            UpdateTableData(criteria);
         }
 
-        public void SyncQueues()
+        private void UpdateTableData(HL7QueueItemSearchCriteria criteria)
         {
-            _hl7QueueService.SyncExternalQueue();
+            _queue.Items.Clear();
+            _queue.Items.AddRange(_pagingController.GetFirst(criteria));
         }
     }
 }

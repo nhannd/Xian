@@ -65,6 +65,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="IFolder.cs" />
+    <Compile Include="IPagingController.cs" />
+    <Compile Include="PagingActionModel.cs" />
+    <Compile Include="PagingController.cs" />
     <Compile Include="WorkflowFolderSystem.cs" />
     <Compile Include="ImportDiagnosticServicesApplication.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
@@ -146,6 +149,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ContactPersonEditorComponent.cfg.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Previous.png" />
+    <EmbeddedResource Include="Icons\Next.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

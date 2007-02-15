@@ -47,15 +47,9 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<HL7QueueItem> GetAllHL7QueueItems()
+        public IList<HL7QueueItem> GetHL7QueueItems(HL7QueueItemSearchCriteria criteria, SearchResultPage page)
         {
-            return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().FindAll();
-        }
-
-        [ReadOperation]
-        public IList<HL7QueueItem> GetFilteredHL7QueueItems(HL7QueueItemSearchCriteria criteria)
-        {
-            return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria);
+            return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, page);
         }
 
         [ReadOperation]
@@ -139,19 +133,6 @@ namespace ClearCanvas.Ris.Services
         public void EnqueueHL7QueueItem(ClearCanvas.HL7.HL7QueueItem item)
         {
             this.CurrentContext.Lock(item, DirtyState.New);
-        }
-
-        [UpdateOperation]
-        public void SyncExternalQueue()
-        {
-            IList<HL7ExternalQueueItem> toBeSynched = this.CurrentContext.GetBroker<IHL7ExternalQueueItemBroker>().GetUnsynchedItems();
-            foreach (HL7ExternalQueueItem externalQueueItem in toBeSynched)
-            {
-                HL7QueueItem queueItem = externalQueueItem.GetHL7QueueItem();
-                this.CurrentContext.Lock(queueItem, DirtyState.New);
-
-                this.CurrentContext.GetBroker<IHL7ExternalQueueItemBroker>().FlagItemAsSynched(externalQueueItem.Guid);
-            }
         }
 
         #endregion

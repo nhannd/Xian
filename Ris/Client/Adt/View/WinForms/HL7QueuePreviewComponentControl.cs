@@ -19,6 +19,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             InitializeComponent();
 
+            if (this.DesignMode)
+                return;
+
             _component = component;
 
             _queue.Table = _component.Queue;
@@ -65,14 +68,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             using (new CursorManager(this, Cursors.WaitCursor))
             {
                 _component.ShowAllItems();
-            }
-        }
-
-        private void _resync_Click(object sender, EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.SyncQueues();
             }
         }
 

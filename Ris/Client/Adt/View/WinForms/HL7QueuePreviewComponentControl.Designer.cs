@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -46,9 +47,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this._searchButton = new System.Windows.Forms.Button();
             this._showAll = new System.Windows.Forms.Button();
-            this._resync = new System.Windows.Forms.Button();
-            this._createdOnEnd = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._createdOnStart = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._createdOnEnd = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._message = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -128,6 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._queue.MultiSelect = false;
             this._queue.Name = "_queue";
             this._queue.ReadOnly = false;
+            this._queue.Selection = selection1;
             this._queue.Size = new System.Drawing.Size(584, 172);
             this._queue.TabIndex = 0;
             this._queue.Table = null;
@@ -179,6 +180,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._updatedOnStart.LabelText = "Processed - Start";
             this._updatedOnStart.Location = new System.Drawing.Point(171, 93);
             this._updatedOnStart.Margin = new System.Windows.Forms.Padding(2);
+            this._updatedOnStart.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._updatedOnStart.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._updatedOnStart.Name = "_updatedOnStart";
             this._updatedOnStart.Nullable = true;
             this._updatedOnStart.ShowTime = true;
@@ -192,6 +195,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._updatedOnEnd.LabelText = "Processed - End";
             this._updatedOnEnd.Location = new System.Drawing.Point(325, 93);
             this._updatedOnEnd.Margin = new System.Windows.Forms.Padding(2);
+            this._updatedOnEnd.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._updatedOnEnd.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._updatedOnEnd.Name = "_updatedOnEnd";
             this._updatedOnEnd.Nullable = true;
             this._updatedOnEnd.ShowTime = true;
@@ -246,6 +251,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._direction.AutoSize = true;
             this._direction.DataSource = null;
+            this._direction.DisplayMember = "";
+            this._direction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._direction.Enabled = false;
             this._direction.LabelText = "Direction";
             this._direction.Location = new System.Drawing.Point(23, 2);
@@ -262,6 +269,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._peer.AutoSize = true;
             this._peer.DataSource = null;
+            this._peer.DisplayMember = "";
+            this._peer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._peer.Enabled = false;
             this._peer.LabelText = "Peer";
             this._peer.Location = new System.Drawing.Point(23, 48);
@@ -278,6 +287,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._type.AutoSize = true;
             this._type.DataSource = null;
+            this._type.DisplayMember = "";
+            this._type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._type.Enabled = false;
             this._type.LabelText = "Type";
             this._type.Location = new System.Drawing.Point(23, 93);
@@ -294,6 +305,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._status.AutoSize = true;
             this._status.DataSource = null;
+            this._status.DisplayMember = "";
+            this._status.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._status.Enabled = false;
             this._status.LabelText = "Status";
             this._status.Location = new System.Drawing.Point(23, 139);
@@ -311,7 +324,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.Controls.Add(this._searchButton);
             this.flowLayoutPanel2.Controls.Add(this._showAll);
-            this.flowLayoutPanel2.Controls.Add(this._resync);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(500, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -339,15 +351,20 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._showAll.UseVisualStyleBackColor = true;
             this._showAll.Click += new System.EventHandler(this._showAll_Click);
             // 
-            // _resync
+            // _createdOnStart
             // 
-            this._resync.Location = new System.Drawing.Point(3, 61);
-            this._resync.Name = "_resync";
-            this._resync.Size = new System.Drawing.Size(75, 23);
-            this._resync.TabIndex = 3;
-            this._resync.Text = "Re-Synch";
-            this._resync.UseVisualStyleBackColor = true;
-            this._resync.Click += new System.EventHandler(this._resync_Click);
+            this._createdOnStart.AutoSize = true;
+            this._createdOnStart.LabelText = "Created - Start";
+            this._createdOnStart.Location = new System.Drawing.Point(171, 2);
+            this._createdOnStart.Margin = new System.Windows.Forms.Padding(2);
+            this._createdOnStart.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._createdOnStart.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._createdOnStart.Name = "_createdOnStart";
+            this._createdOnStart.Nullable = true;
+            this._createdOnStart.ShowTime = true;
+            this._createdOnStart.Size = new System.Drawing.Size(150, 42);
+            this._createdOnStart.TabIndex = 0;
+            this._createdOnStart.Value = null;
             // 
             // _createdOnEnd
             // 
@@ -355,25 +372,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._createdOnEnd.LabelText = "Created - End";
             this._createdOnEnd.Location = new System.Drawing.Point(325, 2);
             this._createdOnEnd.Margin = new System.Windows.Forms.Padding(2);
+            this._createdOnEnd.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._createdOnEnd.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._createdOnEnd.Name = "_createdOnEnd";
             this._createdOnEnd.Nullable = true;
             this._createdOnEnd.ShowTime = true;
             this._createdOnEnd.Size = new System.Drawing.Size(150, 42);
             this._createdOnEnd.TabIndex = 1;
             this._createdOnEnd.Value = null;
-            // 
-            // _createdOnStart
-            // 
-            this._createdOnStart.AutoSize = true;
-            this._createdOnStart.LabelText = "Created - Start";
-            this._createdOnStart.Location = new System.Drawing.Point(171, 2);
-            this._createdOnStart.Margin = new System.Windows.Forms.Padding(2);
-            this._createdOnStart.Name = "_createdOnStart";
-            this._createdOnStart.Nullable = true;
-            this._createdOnStart.ShowTime = true;
-            this._createdOnStart.Size = new System.Drawing.Size(150, 42);
-            this._createdOnStart.TabIndex = 0;
-            this._createdOnStart.Value = null;
             // 
             // _message
             // 
@@ -416,7 +422,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _queue;
         private System.Windows.Forms.Button _showAll;
         private System.Windows.Forms.TextBox _message;
-        private System.Windows.Forms.Button _resync;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;

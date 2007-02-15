@@ -592,6 +592,24 @@ namespace ClearCanvas.Ris.Client.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next Page.
+        /// </summary>
+        internal static string TitleNext {
+            get {
+                return ResourceManager.GetString("TitleNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Page.
+        /// </summary>
+        internal static string TitlePrevious {
+            get {
+                return ResourceManager.GetString("TitlePrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Address....
         /// </summary>
         internal static string TitleUpdateAddress {
