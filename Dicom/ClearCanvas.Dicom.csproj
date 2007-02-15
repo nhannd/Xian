@@ -97,7 +97,6 @@
     <Compile Include="ImageOrientationPatient.cs" />
     <Compile Include="ImagePositionPatient.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="MultilingualString.cs" />
     <Compile Include="Network\ApplicationEntity.cs" />
     <Compile Include="Network\DicomClient.cs" />
     <Compile Include="Network\DicomClientHelpers.cs" />
