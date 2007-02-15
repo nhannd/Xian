@@ -77,6 +77,21 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
+                return true;
+
+            DicomUri uri = obj as DicomUri;
+            if (null == uri)
+                return false; // null or not a sop
+
+            if (this.InternalUri == uri.InternalUri)
+                return true;
+
+            return false;
+        }
+
         public override string ToString()
         {
             return this.InternalUriObject.AbsoluteUri;

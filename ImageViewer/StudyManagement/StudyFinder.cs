@@ -1,11 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
+
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using ClearCanvas.Common;
-    using ClearCanvas.Dicom.Network;
-
 	public class StudyItemList : List<StudyItem>
 	{
 		public StudyItemList()
@@ -48,18 +49,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _patientID; }
 			set { _patientID = value; }
 		}
-		
-		public string LastName
-		{
-			get { return _lastName; }
-			set { _lastName = value; }
-		}
 
-		public string FirstName
-		{
-			get { return _firstName; }
-			set { _firstName = value; }
-		}
+        public PersonName PatientsName
+        {
+            get { return _patientsName; }
+            set { _patientsName = value; }
+        }
 
         public string ModalitiesInStudy
         {
@@ -85,6 +80,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             set { _numberOfStudyRelatedInstances = value; }
         }
 
+        public string SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set { _specificCharacterSet = value; }
+        }
+
         public ApplicationEntity Server
         {
             get { return _server; }
@@ -93,8 +94,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
         #region Private Members
         private string _patientID;
-        private string _lastName;
-        private string _firstName;
         private string _patientsBirthDate;
         private string _accessionNumber;
         private string _studyDescription;
@@ -103,9 +102,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         private string _studyLoaderName;
         private string _modalitiesInStudy;
         private uint _numberOfStudyRelatedInstances;
+        private string _specificCharacterSet;
         private ApplicationEntity _server;
+        private PersonName _patientsName;
         #endregion
-
 	}
 
 	public class QueryParameters : Dictionary<string,string>

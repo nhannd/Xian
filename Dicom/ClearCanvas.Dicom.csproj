@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="Accession.cs" />
     <Compile Include="AETitle.cs" />
+    <Compile Include="ComponentGroup.cs" />
     <Compile Include="DateParser.cs" />
     <Compile Include="DateRangeParser.cs" />
     <Compile Include="DateTimeParser.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="ImageOrientationPatient.cs" />
     <Compile Include="ImagePositionPatient.cs" />
     <Compile Include="Interfaces.cs" />
+    <Compile Include="MultilingualString.cs" />
     <Compile Include="Network\ApplicationEntity.cs" />
     <Compile Include="Network\DicomClient.cs" />
     <Compile Include="Network\DicomClientHelpers.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="DicomHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SpecificCharacterSetParser.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

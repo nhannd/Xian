@@ -416,14 +416,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingLastName,
-					delegate(StudyItem item) { return item.LastName; },
+					delegate(StudyItem item) { return item.PatientsName.LastName; },
                     1.5f
 					));
 			studyList.Columns.Add(
 				new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingFirstName,
-					delegate(StudyItem item) { return item.FirstName; }
+					delegate(StudyItem item) { return item.PatientsName.FirstName; },
+                    1.5f
 					));
+            studyList.Columns.Add(
+                new TableColumn<StudyItem, string>(
+                    SR.ColumnHeadingIdeographicName,
+                    delegate(StudyItem item) { return item.PatientsName.Ideographic; },
+                    1.5f
+                    ));
+            studyList.Columns.Add(
+                new TableColumn<StudyItem, string>(
+                    SR.ColumnHeadingPhoneticName,
+                    delegate(StudyItem item) { return item.PatientsName.Phonetic; },
+                    1.5f
+                    ));
             studyList.Columns.Add(
                 new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingDateOfBirth,

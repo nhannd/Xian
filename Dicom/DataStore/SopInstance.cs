@@ -50,6 +50,12 @@ namespace ClearCanvas.Dicom.DataStore
             set { _parentSeries = value; }
         }
 
+        public virtual string SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set { _specificCharacterSet = value; }
+        }
+
         #region Private members
         Guid _oid;
         string _sopInstanceUid;
@@ -57,6 +63,7 @@ namespace ClearCanvas.Dicom.DataStore
         DicomUri _locationUri;
         string _transferSyntaxUid;
         int _instanceNumber;
+        string _specificCharacterSet;
         Series _parentSeries;
         #endregion
         #endregion

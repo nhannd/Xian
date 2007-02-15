@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             this.AETitle = item.Server.AE;
             this.Host = item.Server.Host;
             this.Port = Convert.ToString(item.Server.Port);
-            this.Patient = item.FirstName + " " + item.LastName;
+            this.Patient = item.PatientsName.FirstName + " " + item.PatientsName.LastName;
             this.Description = item.StudyDescription;
             this.StudyDate = DicomHelper.GetDateStringFromDicomDA(item.StudyDate);
 

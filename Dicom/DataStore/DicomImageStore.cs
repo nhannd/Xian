@@ -166,6 +166,10 @@ namespace ClearCanvas.Dicom.DataStore
             if (cond.good())
                 study.PatientsBirthDate = stringValue.ToString();
 
+            cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
+            if (cond.good())
+                study.SpecificCharacterSet = stringValue.ToString();
+
             return study;
         }
 
@@ -194,6 +198,10 @@ namespace ClearCanvas.Dicom.DataStore
             cond = sopInstanceDataset.findAndGetSint32(Dcm.SeriesNumber, out integerValue);
             if (cond.good())
                 series.SeriesNumber = integerValue;
+
+            cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
+            if (cond.good())
+                series.SpecificCharacterSet = stringValue.ToString();
 
             return series;
         }
@@ -310,6 +318,10 @@ namespace ClearCanvas.Dicom.DataStore
                     }
                 }
             }
+
+            cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
+            if (cond.good())
+                image.SpecificCharacterSet = stringValue.ToString();
 
             if (!System.IO.Path.IsPathRooted(fileName))
                 fileName = System.IO.Path.GetFullPath(fileName);

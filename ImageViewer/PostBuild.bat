@@ -7,8 +7,8 @@ echo Executing ImageViewer post-build step
 IF NOT EXIST ".\datastore\viewer.sdf" copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" ".\datastore\viewer.sdf"
 
 :: Copy Hibernate configuration file
-copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" "."
-copy "..\..\..\..\Dicom\DataStore\Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" "ClearCanvas.Dicom.Services.cfg.xml"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" "."
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" "ClearCanvas.Dicom.Services.cfg.xml"
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresets.xml" "."
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresetKeyAssignments.xml" "."
 

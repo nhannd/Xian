@@ -216,6 +216,17 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        public string SpecificCharacterSet
+        {
+            get
+            {
+                if (this.ContainsTag(DicomTag.SpecificCharacterSet))
+                    return _internalDictionary[DicomTag.SpecificCharacterSet];
+                else
+                    return "";
+            }
+        }
+
         /// <summary>
         /// Gets the whole collection of DICOM tags in this query result.
         /// </summary>
@@ -239,7 +250,7 @@ namespace ClearCanvas.Dicom
                     return "";
             }
             set { (this as IDictionary<DicomTag, string>)[key] = value; }
-        }
+        }   
 
         /// <summary>
         /// Add a new tag into the collection.

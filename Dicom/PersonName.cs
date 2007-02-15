@@ -1,9 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace ClearCanvas.Dicom
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     /// <summary>
     /// Encapsulates the DICOM Person's Name.
     /// </summary>
@@ -16,37 +16,69 @@ namespace ClearCanvas.Dicom
         {
         }
 
+        /// <summary>
+        /// Mandatory constructor.
+        /// </summary>
+        /// <param name="personsName">The Person's Name as a string.</param>
+        public PersonName(string personsName)
+        {
+            // validate the input
+            if (null == personsName)
+                throw new System.ArgumentNullException("personsName", SR.ExceptionGeneralPersonsNameNull);
+
+            _personsName = personsName;
+        }
+
         protected virtual string InternalPersonName
         {
             get { return _personsName; }
             set
             {
                 _personsName = value;
-                BreakApartFirstAndLastName();
             }
-        }
-        /// <summary>
-        /// Mandatory constructor.
-        /// </summary>
-		/// <param name="personsName">The Person's Name as a string.</param>
-        public PersonName(string personsName)
-        {
-            // validate the input
-            if (null == personsName)
-				throw new System.ArgumentNullException("personsName", SR.ExceptionGeneralPersonsNameNull);
-
-            _personsName = personsName;
-            BreakApartFirstAndLastName();
         }
 
         public virtual String LastName
         {
-            get { return _lastName; }
+            get { return this.SingleByte.FamilyName; }
         }
 
         public virtual String FirstName
         {
-            get { return _firstName; }
+            get { return this.SingleByte.GivenName; }
+        }
+
+        public virtual ComponentGroup SingleByte
+        {
+            get 
+            {
+                if (_componentGroups.Length > 0)
+                    return _componentGroups[0];
+                else
+                    return ComponentGroup.GetEmptyComponentGroup();
+            }
+        }
+
+        public virtual ComponentGroup Ideographic
+        {
+            get
+            {
+                if (_componentGroups.Length > 1)
+                    return _componentGroups[1];
+                else
+                    return ComponentGroup.GetEmptyComponentGroup();
+            }
+        }
+
+        public virtual ComponentGroup Phonetic
+        {
+            get
+            {
+                if (_componentGroups.Length > 2)
+                    return _componentGroups[2];
+                else
+                    return ComponentGroup.GetEmptyComponentGroup();
+            }
         }
 
         /// <summary>
@@ -66,21 +98,47 @@ namespace ClearCanvas.Dicom
             return pn.ToString();
         }
 
-        protected void BreakApartFirstAndLastName()
+        protected void BreakApartIntoComponentGroups()
         {
-            // parse out the first and last names
-            string[] names = this.InternalPersonName.Split('^');
+            string decodedRawData = SpecificCharacterSetParser.Parse(_specificCharacterSet, this.InternalPersonName);
+            string[] componentGroupsStrings = decodedRawData.Split('=');
 
-            _lastName = (names.GetUpperBound(0) >= 0) ? (names[0]) : "";
-            _firstName = (names.GetUpperBound(0) >= 1) ? (names[1]) : "";
-		}
+            if (componentGroupsStrings.GetUpperBound(0) >= 0 && componentGroupsStrings[0] != string.Empty)
+                _componentGroups[0] = new ComponentGroup(componentGroupsStrings[0]);
+            else
+                _componentGroups[0] = ComponentGroup.GetEmptyComponentGroup();
 
-		#region Private Members
+            if (componentGroupsStrings.GetUpperBound(0) > 0 && componentGroupsStrings[1] != string.Empty)
+                _componentGroups[1] = new ComponentGroup(componentGroupsStrings[1]);
+            else
+                _componentGroups[1] = ComponentGroup.GetEmptyComponentGroup();
 
-		private string _personsName;
+            if (componentGroupsStrings.GetUpperBound(0) > 1 && componentGroupsStrings[2] != string.Empty)
+                _componentGroups[2] = new ComponentGroup(componentGroupsStrings[2]);
+            else
+                _componentGroups[2] = ComponentGroup.GetEmptyComponentGroup();
+        }
+
+        #region Properties
+        private string _specificCharacterSet = "ISO 2022 IR 6";     // this is the default
+
+        public string SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set 
+            { 
+                _specificCharacterSet = value;
+                BreakApartIntoComponentGroups();
+            }
+        }
+	
+        #endregion
+
+        #region Private fields
+        private string _personsName;
         private string _lastName;
         private string _firstName;
-
+        private ComponentGroup[] _componentGroups = new ComponentGroup[3];
 		#endregion
 	}
 }

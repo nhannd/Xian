@@ -97,6 +97,12 @@ namespace ClearCanvas.Dicom.DataStore
             set { _patientsBirthDate = value; }
         }
 
+        public virtual string SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set { _specificCharacterSet = value; }
+        }
+
         protected virtual ISet InternalSeries
         {
             get { return _internalSeries; }
@@ -121,12 +127,6 @@ namespace ClearCanvas.Dicom.DataStore
             Study study = obj as Study;
             if (null == study)
                 return false; // null or not a sop
-
-            if (this.StudyOid != null && study.StudyOid != null)
-            {
-                if (this.StudyOid != study.StudyOid)
-                    return false;
-            }
 
             if (this.StudyInstanceUid != study.StudyInstanceUid)
                 return false;
@@ -155,6 +155,7 @@ namespace ClearCanvas.Dicom.DataStore
         string _accessionNumber;
         string _studyInstanceUid;
         string _studyDescription;
+        string _specificCharacterSet;
         string _procedureCodeSequenceCodeValue;
         PatientId _patientId;
         PersonName _patientsName;

@@ -126,6 +126,9 @@
   <data name="ColumnHeadingFirstName" xml:space="preserve">
     <value>First Name</value>
   </data>
+  <data name="ColumnHeadingIdeographicName" xml:space="preserve">
+    <value>Ideographic Name</value>
+  </data>
   <data name="ColumnHeadingLastName" xml:space="preserve">
     <value>Last Name</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="ColumnHeadingPatientId" xml:space="preserve">
     <value>Patient ID</value>
+  </data>
+  <data name="ColumnHeadingPhoneticName" xml:space="preserve">
+    <value>Phonetic Name</value>
   </data>
   <data name="ColumnHeadingStudyDate" xml:space="preserve">
     <value>Study Date</value>

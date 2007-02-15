@@ -100,16 +100,18 @@ namespace ClearCanvas.Dicom.DataStore
             if (null == sop)
                 return false; // null or not a sop
 
-            if (this.Oid != null && sop.Oid != null)
-            {
-                if (this.Oid != sop.Oid)
-                    return false;
-            }
+            return Equals(sop);
+        }
 
-            if (this.SopInstanceUid != sop.SopInstanceUid)
-                return false;
+        public bool Equals(ImageSopInstance sop)
+        {
+            // if the base class Equals returns true AND
+            // my own values are equal, then we should return true
+            bool isInstanceUidIdentical = this.SopInstanceUid == sop.SopInstanceUid;
+            bool isLocationUriIdentical = this.LocationUri != null && sop.LocationUri != null &&
+                this.LocationUri.Equals(sop.LocationUri);
 
-            return true;
+            return base.Equals(sop) && isInstanceUidIdentical && isLocationUriIdentical;
         }
 
         public override int GetHashCode()

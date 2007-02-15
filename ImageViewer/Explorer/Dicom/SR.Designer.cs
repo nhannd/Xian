@@ -88,6 +88,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ideographic Name.
+        /// </summary>
+        internal static string ColumnHeadingIdeographicName {
+            get {
+                return ResourceManager.GetString("ColumnHeadingIdeographicName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last Name.
         /// </summary>
         internal static string ColumnHeadingLastName {
@@ -111,6 +120,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string ColumnHeadingPatientId {
             get {
                 return ResourceManager.GetString("ColumnHeadingPatientId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phonetic Name.
+        /// </summary>
+        internal static string ColumnHeadingPhoneticName {
+            get {
+                return ResourceManager.GetString("ColumnHeadingPhoneticName", resourceCulture);
             }
         }
         

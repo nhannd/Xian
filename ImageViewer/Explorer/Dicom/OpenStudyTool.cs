@@ -50,8 +50,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				string studyInstanceUid = item.StudyInstanceUID;
 				label = String.Format("{0}, {1}, {2}",
-					item.LastName,
-					item.FirstName,
+					item.PatientsName.LastName,
+					item.PatientsName.FirstName,
 					item.PatientId);
 
 				try

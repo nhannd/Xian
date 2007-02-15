@@ -5,39 +5,40 @@
       <generator class="guid.comb">
       </generator>
     </id>
-	<property name="TransferSyntaxUid" column="TransferSyntaxUid_" type="string" length="64" />
-	<property name="InstanceNumber" column="InstanceNumber_" type="Int32" />
-	<property name="SopInstanceUid" column="SopInstanceUid_" type="string" length="64" />
-	<property name="SopClassUid" column="SopClassUid_" type="string" length="64" />
-	<component name="LocationUri" class="DicomUri">
-		<property name="InternalUri" column="LocationUri_" type="string" length="256" />
-	</component>
-	<many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" />
-	<joined-subclass name="ImageSopInstance" table="ImageSopInstance_" proxy="ImageSopInstance">
-		<key column="Oid_" />
-		<property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int16" />
-		<property name="BitsStored" column="BitsStored_" type="Int16" />
-		<property name="RescaleSlope" column="RescaleSlope_" type="Double" />
-		<property name="Rows" column="Rows_" type="Int32" />
-		<property name="Columns" column="Columns_" type="Int32" />
-		<property name="PlanarConfiguration" column="PlanarConfiguration_" type="Int16" />
-		<property name="RescaleIntercept" column="RescaleIntercept_" type="Double" />
-		<property name="PixelRepresentation" column="PixelRepresentation_" type="Int16" />
-		<property name="BitsAllocated" column="BitsAllocated_" type="Int16" />
-		<property name="HighBit" column="HighBit_" type="Int16" />
-		<property name="PhotometricInterpretation" column="PhotometricInterpretation_" />
-		<component name="PixelSpacing" class="ClearCanvas.Dicom.PixelSpacing, ClearCanvas.Dicom">
-			<property name="Row" column="Row_" />
-			<property name="Column" column="Column_" />
-		</component>
-		<list name="WindowValues" table="WindowValues_" lazy="false" access="nosetter.camelcase-underscore">
-			<key column="Oid_" />
-			<index column="VM_" /> 
-			<composite-element class="ClearCanvas.Dicom.Window, ClearCanvas.Dicom">
-				<property name="Width" column="Width_" type="Double" />
-				<property name="Center" column="Center_" type="Double" />
-			</composite-element>
-		</list>
-	</joined-subclass>
+    <property name="TransferSyntaxUid" column="TransferSyntaxUid_" type="string" length="64" />
+    <property name="InstanceNumber" column="InstanceNumber_" type="Int32" />
+    <property name="SopInstanceUid" column="SopInstanceUid_" type="string" length="64" />
+    <property name="SopClassUid" column="SopClassUid_" type="string" length="64" />
+    <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
+    <component name="LocationUri" class="DicomUri">
+      <property name="InternalUri" column="LocationUri_" type="string" length="256" />
+    </component>
+    <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" />
+    <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" proxy="ImageSopInstance">
+      <key column="Oid_" />
+      <property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int16" />
+      <property name="BitsStored" column="BitsStored_" type="Int16" />
+      <property name="RescaleSlope" column="RescaleSlope_" type="Double" />
+      <property name="Rows" column="Rows_" type="Int32" />
+      <property name="Columns" column="Columns_" type="Int32" />
+      <property name="PlanarConfiguration" column="PlanarConfiguration_" type="Int16" />
+      <property name="RescaleIntercept" column="RescaleIntercept_" type="Double" />
+      <property name="PixelRepresentation" column="PixelRepresentation_" type="Int16" />
+      <property name="BitsAllocated" column="BitsAllocated_" type="Int16" />
+      <property name="HighBit" column="HighBit_" type="Int16" />
+      <property name="PhotometricInterpretation" column="PhotometricInterpretation_" />
+      <component name="PixelSpacing" class="ClearCanvas.Dicom.PixelSpacing, ClearCanvas.Dicom">
+        <property name="Row" column="Row_" />
+        <property name="Column" column="Column_" />
+      </component>
+      <list name="WindowValues" table="WindowValues_" lazy="false" access="nosetter.camelcase-underscore">
+        <key column="Oid_" />
+        <index column="VM_" /> 
+        <composite-element class="ClearCanvas.Dicom.Window, ClearCanvas.Dicom">
+          <property name="Width" column="Width_" type="Double" />
+          <property name="Center" column="Center_" type="Double" />
+        </composite-element>
+      </list>
+    </joined-subclass>
   </class>
 </hibernate-mapping>

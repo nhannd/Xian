@@ -55,6 +55,12 @@ namespace ClearCanvas.Dicom.DataStore
             set { _seriesDescription = value; }
         }
 
+        public virtual string SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set { _specificCharacterSet = value; }
+        }
+
         public virtual Study Study
         {
             get { return _parentStudy; }
@@ -86,12 +92,6 @@ namespace ClearCanvas.Dicom.DataStore
             if (null == series)
                 return false; // null or not a sop
 
-            if (this.SeriesOid != null && series.SeriesOid != null)
-            {
-                if (this.SeriesOid != series.SeriesOid)
-                    return false;
-            }
-
             if (this.SeriesInstanceUid != series.SeriesInstanceUid)
                 return false;
 
@@ -118,6 +118,7 @@ namespace ClearCanvas.Dicom.DataStore
         int _seriesNumber;
         string _laterality;
         string _seriesDescription;
+        string _specificCharacterSet;
         ISet _internalSopInstances;
         Study _parentStudy;
         #endregion
