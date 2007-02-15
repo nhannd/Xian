@@ -109,7 +109,7 @@ namespace ClearCanvas.Common
 		public void LoadPlugins()
 		{
             if (!RootPluginDirectoryExists())
-                throw new PluginException(SR.ExceptionPluginDirectoryNotFound + _pluginDir);
+                throw new PluginException(SR.ExceptionPluginDirectoryNotFound);
 
             string[] pluginFiles = FindPlugins(_pluginDir);
             Assembly[] assemblies = LoadFoundPlugins(pluginFiles);
@@ -217,7 +217,7 @@ namespace ClearCanvas.Common
 					AppDomain.Unload(domain);
 
                 if (pluginFiles == null || pluginFiles.Length == 0)
-					throw new PluginException(SR.ExceptionNoPluginsFound + path);
+					throw new PluginException(SR.ExceptionNoPluginsFound);
 			}
             return pluginFiles;
 		}
