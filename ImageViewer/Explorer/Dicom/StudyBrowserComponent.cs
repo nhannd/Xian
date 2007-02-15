@@ -360,7 +360,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Error);
 				throw;
 			}
 			finally
