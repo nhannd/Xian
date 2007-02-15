@@ -31,6 +31,14 @@ namespace ClearCanvas.Server.ShredHost
                 sed.ServiceHost.Description.Behaviors.Add(metadataBehavior);
             }
 
+            ServiceDebugBehavior debugBehavior = sed.ServiceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
+            if (null == debugBehavior)
+            {
+                debugBehavior = new ServiceDebugBehavior();
+                debugBehavior.IncludeExceptionDetailInFaults = true;
+                sed.ServiceHost.Description.Behaviors.Add(debugBehavior);
+            }
+
             sed.ServiceHost.AddServiceEndpoint(typeof(TServiceInterfaceType), sed.Binding, name);
             sed.ServiceHost.Open();
 

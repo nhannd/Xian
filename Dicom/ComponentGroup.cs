@@ -60,7 +60,7 @@ namespace ClearCanvas.Dicom
         }
 
         #region Private fields
-        private static ComponentGroup _emptyComponentGroup = new ComponentGroup("^^^^");
+        private static ComponentGroup _emptyComponentGroup = new ComponentGroup("");
         #endregion
         #region Properties
         private string _rawString;

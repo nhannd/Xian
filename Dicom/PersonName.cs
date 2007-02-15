@@ -52,10 +52,7 @@ namespace ClearCanvas.Dicom
         {
             get 
             {
-                if (_componentGroups.Length > 0)
-                    return _componentGroups[0];
-                else
-                    return ComponentGroup.GetEmptyComponentGroup();
+                return _componentGroups[0];
             }
         }
 
@@ -63,10 +60,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (_componentGroups.Length > 1)
-                    return _componentGroups[1];
-                else
-                    return ComponentGroup.GetEmptyComponentGroup();
+                return ComponentGroup.GetEmptyComponentGroup();
             }
         }
 
@@ -74,10 +68,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (_componentGroups.Length > 2)
-                    return _componentGroups[2];
-                else
-                    return ComponentGroup.GetEmptyComponentGroup();
+                return ComponentGroup.GetEmptyComponentGroup();
             }
         }
 
@@ -100,23 +91,21 @@ namespace ClearCanvas.Dicom
 
         protected void BreakApartIntoComponentGroups()
         {
+            // if there's no name, don't do anything
+            if (null == this.InternalPersonName || "" == this.InternalPersonName)
+                return;
+
             string decodedRawData = SpecificCharacterSetParser.Parse(_specificCharacterSet, this.InternalPersonName);
             string[] componentGroupsStrings = decodedRawData.Split('=');
 
             if (componentGroupsStrings.GetUpperBound(0) >= 0 && componentGroupsStrings[0] != string.Empty)
                 _componentGroups[0] = new ComponentGroup(componentGroupsStrings[0]);
-            else
-                _componentGroups[0] = ComponentGroup.GetEmptyComponentGroup();
 
             if (componentGroupsStrings.GetUpperBound(0) > 0 && componentGroupsStrings[1] != string.Empty)
                 _componentGroups[1] = new ComponentGroup(componentGroupsStrings[1]);
-            else
-                _componentGroups[1] = ComponentGroup.GetEmptyComponentGroup();
 
             if (componentGroupsStrings.GetUpperBound(0) > 1 && componentGroupsStrings[2] != string.Empty)
                 _componentGroups[2] = new ComponentGroup(componentGroupsStrings[2]);
-            else
-                _componentGroups[2] = ComponentGroup.GetEmptyComponentGroup();
         }
 
         #region Properties
@@ -138,7 +127,9 @@ namespace ClearCanvas.Dicom
         private string _personsName;
         private string _lastName;
         private string _firstName;
-        private ComponentGroup[] _componentGroups = new ComponentGroup[3];
+        private ComponentGroup[] _componentGroups = { ComponentGroup.GetEmptyComponentGroup(), 
+                                                        ComponentGroup.GetEmptyComponentGroup(),
+                                                        ComponentGroup.GetEmptyComponentGroup() };
 		#endregion
 	}
 }

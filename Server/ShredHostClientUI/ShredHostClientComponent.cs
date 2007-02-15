@@ -108,7 +108,7 @@ namespace ClearCanvas.Server.ShredHostClientUI
             {
                 while (true)
                 {
-                    System.Threading.Thread.Sleep(3000);
+                    System.Threading.Thread.Sleep(2000);
                     Refresh();
                 }
             },true
@@ -138,6 +138,7 @@ namespace ClearCanvas.Server.ShredHostClientUI
             {
                 case ServiceControllerStatus.Running:
                     controller.Stop();
+                    _shredCollection.Items.Clear();
                     return;
                 case ServiceControllerStatus.Stopped:
                     controller.Start();
@@ -151,7 +152,9 @@ namespace ClearCanvas.Server.ShredHostClientUI
         {
             // poll to see if ShredHost is running
             ServiceController controller = GetShredHostServiceController();
-            this.IsShredHostRunning = (controller.Status == ServiceControllerStatus.Running);
+            bool newStatus = (controller.Status == ServiceControllerStatus.Running);
+            if (this.IsShredHostRunning != newStatus)
+                this.IsShredHostRunning = newStatus;
 
             // if the shred host is not running, the WCF service will not be reachable.
             if (!this.IsShredHostRunning)
