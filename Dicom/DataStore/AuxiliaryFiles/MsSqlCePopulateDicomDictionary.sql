@@ -124,6 +124,7 @@ UPDATE temp_index SET next_index = next_index + 1;
 INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
 SELECT EntryOid_, 'TestName', '(0004,0004)', 0, 'UN', temp_index.next_index from DicomDictionaryContainer_, temp_index;
 UPDATE temp_index SET next_index = next_index + 1;
+INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
 SELECT EntryOid_, 'SpecificCharacterSet', '(0008,0005)', 0, 'CS', temp_index.next_index from DicomDictionaryContainer_, temp_index;
 UPDATE temp_index SET next_index = next_index + 1;
 DROP TABLE temp_index;
