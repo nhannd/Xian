@@ -49,6 +49,9 @@ namespace ClearCanvas.Enterprise.Hibernate
                 assemblies.Add(extension.ExtensionClass.Assembly);
             }
 
+            // add this assembly too, since we have some mapping files
+            assemblies.Add(this.GetType().Assembly);
+
             // add each assembly to the hibernate configuration
             // this tells NHibernate to look for .hbm.xml embedded resources in these assemblies
             foreach (Assembly asm in assemblies)

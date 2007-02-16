@@ -23,10 +23,12 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public abstract class PersistenceContext : IPersistenceContext
     {
+        private ISessionFactory _sessionFactory;
         private bool _readOnly;
         private DefaultInterceptor _interceptor;
         private NHibernate.ISession _session;
         private NHibernate.ITransaction _transaction;
+        private ITransactionRecorder _transactionRecorder;
 
         /// <summary>
         /// 
@@ -35,13 +37,20 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="readOnly"></param>
         internal PersistenceContext(ISessionFactory sessionFactory, bool readOnly)
         {
-            _session = sessionFactory.OpenSession(_interceptor = new DefaultInterceptor());
+            _sessionFactory = sessionFactory;
+            _session = _sessionFactory.OpenSession(_interceptor = new DefaultInterceptor());
             _readOnly = readOnly;
 
             BeginTransaction();
         }
 
         #region IPersistenceContext members
+
+        public ITransactionRecorder TransactionRecorder
+        {
+            get { return _transactionRecorder; }
+            set { _transactionRecorder = value; }
+        }
 
         public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
         {
@@ -165,7 +174,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 
                 // Session.Load with LockMode.Read will force the proxy to be resolved- this is necessary
                 // in order to read the Version property for version checking
-
                 entity = (Entity)this.Session.Load(EntityUtils.GetType(entityRef), EntityUtils.GetOID(entityRef),
                     (flags & EntityLoadFlags.CheckVersion) != 0 ? LockMode.Read : LockMode.None);
 
@@ -236,8 +244,47 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             System.Diagnostics.Debug.Assert(_transaction != null, "There is no transaction to commit");
 
+            if (_session.FlushMode != FlushMode.Never)
+            {
+                // do a final flush prior to commit, so that the DefaultInterceptor will capture the entire change set
+                // prior to auditing
+                _session.Flush();
+            }
+
+            // do auditing prior to commit
+            AuditTransaction();
+
             _transaction.Commit();
             _transaction = null;
+        }
+
+        /// <summary>
+        /// Creates and saves a <see cref="TransactionRecord"/> for the current transaction, assuming the
+        /// <see cref="TransactionRecorder"/> property is set.
+        /// </summary>
+        private void AuditTransaction()
+        {
+            if (_transactionRecorder != null)
+            {
+                //NB: for the time being, we cannot audit read-only contexts, because we are using the same session
+                //to audit, and the flush-mode is "never" for a read-only context.  We should use a separate session,
+                //but it does not work with NHibernate 1.0.3
+                if (this.ReadOnly)
+                    return;
+
+                TransactionRecord record = _transactionRecorder.CreateTransactionRecord(this.Interceptor.EntityChangeSet);
+/* NB. Does not work with NHibernate 1.0.3
+                // obtain an audit session, based on the same ADO connection and same DB transaction
+                using (ISession session = _sessionFactory.OpenSession(this.Session.Connection))
+                {
+                    session.Save(record);
+                    session.Flush();
+                }
+ */ 
+
+                // for now, use the same session
+                this.Session.Save(record);
+            }
         }
 
         /// <summary>

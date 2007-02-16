@@ -9,6 +9,8 @@ namespace ClearCanvas.Enterprise
     {
         public UpdateOperationAttribute()
         {
+            // update operations are auditable by default
+            this.Auditable = true;
         }
     }
 }

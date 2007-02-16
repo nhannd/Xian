@@ -99,6 +99,7 @@
     <Content Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Mappings\TransactionRecord.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

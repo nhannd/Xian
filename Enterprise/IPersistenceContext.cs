@@ -67,5 +67,7 @@ namespace ClearCanvas.Enterprise
         /// </summary>
         void Resume();
 
+        ITransactionRecorder TransactionRecorder { get; set; }
+
     }
 }

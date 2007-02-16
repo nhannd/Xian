@@ -53,6 +53,11 @@ namespace ClearCanvas.Enterprise
                 delegate(ExtensionInfo info) { return info.ExtensionClass; });
         }
 
+        public bool HasService(Type serviceContract)
+        {
+            return (new ServiceLayerExtensionPoint()).ListExtensions(new TypeExtensionFilter(serviceContract)).Length > 0;
+        }
+
 
         /// <summary>
         /// Helper method to construct a Spring.NET proxy factory for the specified service
@@ -74,15 +79,16 @@ namespace ClearCanvas.Enterprise
             ProxyFactory factory = new ProxyFactory(service);
 
             // transaction monitor advice should occur outside of audit advice
-            factory.AddAdvisor(transactionMonitorAdvisor);
-
-            // must add audit advice before context advice
-            factory.AddAdvisor(auditAdvisor);
+            // NB. not currently in use - notification is managed by the persistence context
+            //factory.AddAdvisor(transactionMonitorAdvisor);
 
             // order of read/update context advice does not matter, because they are mutually exclusive
             // (only one or the other will ever be invoked)
             factory.AddAdvisor(readContextAdvisor);
             factory.AddAdvisor(updateContextAdvisor);
+
+            // must add audit advice inside of context advice, because it requires a persistence context to work
+            factory.AddAdvisor(auditAdvisor);
 
             _proxyFactoryCache.Add(serviceContract, factory);
         }

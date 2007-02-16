@@ -32,7 +32,7 @@ namespace ClearCanvas.Enterprise
 
         public static Type GetType(EntityRefBase entityRef)
         {
-            return entityRef.EntityClass;
+            return Type.GetType(entityRef.EntityClass);
         }
     }
 }

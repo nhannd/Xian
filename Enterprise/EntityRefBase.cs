@@ -11,7 +11,7 @@ namespace ClearCanvas.Enterprise
     [DataContract]
     public abstract class EntityRefBase
     {
-        private Type _entityClass;
+        private string _entityClass;
         private object _entityOid;
         private int _version;
 
@@ -31,7 +31,7 @@ namespace ClearCanvas.Enterprise
         /// <param name="version"></param>
         protected EntityRefBase(Type entityType, object entityOid, int version)
         {
-            _entityClass = entityType;
+            _entityClass = entityType.AssemblyQualifiedName;
             _entityOid = entityOid;
             _version = version;
         }
@@ -40,7 +40,7 @@ namespace ClearCanvas.Enterprise
         /// Returns the class of the entity that this reference refers to
         /// </summary>
         [DataMember]
-        internal Type EntityClass
+        internal string EntityClass
         {
             get { return _entityClass; }
             private set { _entityClass = value; }

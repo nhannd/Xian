@@ -14,7 +14,7 @@ namespace ClearCanvas.Enterprise
     {
         #region ITimeService Members
 
-        [ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew)]
+        [ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew, Auditable=false)]
         public DateTime GetTime()
         {
             ITimeBroker broker = this.CurrentContext.GetBroker<ITimeBroker>();

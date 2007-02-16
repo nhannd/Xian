@@ -21,5 +21,7 @@ namespace ClearCanvas.Enterprise
 
 
         ICollection<Type> ListServices();
+
+        bool HasService(Type serviceContract);
     }
 }

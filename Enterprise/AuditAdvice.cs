@@ -19,28 +19,17 @@ namespace ClearCanvas.Enterprise
 
         public object Invoke(IMethodInvocation invocation)
         {
-            Exception error = null;
-            object retval = null;
-            try
+            ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
+            if (a.Auditable)
             {
-                retval = invocation.Proceed();
-            }
-            catch (Exception e)
-            {
-                error = e;
-            }
-            finally
-            {
-                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
-                if (a.Auditable)
+                // only install a TransactionRecorder if the current context does not already have one
+                if (PersistenceScope.Current != null && PersistenceScope.Current.TransactionRecorder == null)
                 {
-                    Console.WriteLine(string.Format("audit:  call to {0} {1}", invocation.Method.Name, error == null ? "Completed" : "Failed"));
+                    string transactionName = string.Format("{0}.{1}", invocation.This.GetType().FullName, invocation.Method.Name);
+                    PersistenceScope.Current.TransactionRecorder = new DefaultTransactionRecorder(transactionName);
                 }
-
-                if (error != null)
-                    throw error;
             }
-            return retval;
+            return invocation.Proceed();
         }
 
         #endregion

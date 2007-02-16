@@ -12,9 +12,6 @@ namespace ClearCanvas.Enterprise
         
         public ServiceOperationAttribute()
         {
-            // operation is auditable by default
-            _auditable = true;
-
             // a persistence context is required, by default
             _scopeOption = PersistenceScopeOption.Required;
         }
