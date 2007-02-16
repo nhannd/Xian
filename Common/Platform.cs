@@ -62,6 +62,17 @@ namespace ClearCanvas.Common
     {
     }
 
+    /// <summary>
+    /// Defines an extension point for service providers.  A service provider is a class that knows how
+    /// to provide a specific set of services to the application.  A given service should be provided
+    /// exclusively by one provider (i.e. no two providers should provide the same service).  The application obtains
+    /// services through the <see cref="Platform.GetService"/> method.
+    /// </summary>
+    [ExtensionPoint]
+    public class ServiceProviderExtensionPoint : ExtensionPoint<IServiceProvider>
+    {
+    }
+
 	/// <summary>
 	/// A collection of useful utility functions.
 	/// </summary>
@@ -270,6 +281,34 @@ namespace ClearCanvas.Common
 		{
             StartApp(null, new string[] { });
 		}
+
+        /// <summary>
+        /// Obtains an instance of the specified service for use by the application
+        /// </summary>
+        /// <typeparam name="TService">The type of service to obtain</typeparam>
+        /// <returns>An instance of the specified service</returns>
+        /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
+        public static TService GetService<TService>()
+        {
+            return (TService)GetService(typeof(TService));
+        }
+
+        /// <summary>
+        /// Obtains an instance of the specified service for use by the application
+        /// </summary>
+        /// <param name="service">The type of service to obtain</param>
+        /// <returns>An instance of the specified service</returns>
+        /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
+        public static object GetService(Type service)
+        {
+            foreach (IServiceProvider sp in (new ServiceProviderExtensionPoint()).CreateExtensions())
+            {
+                object impl = sp.GetService(service);
+                if (impl != null)
+                    return impl;
+            }
+            throw new UnknownServiceException(string.Format(SR.ExceptionNoServiceProviderCanProvide, service.FullName));
+        }
 
         /// <summary>
         /// Private method to get a session manager

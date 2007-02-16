@@ -367,5 +367,19 @@ namespace ClearCanvas.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Returns a list of the items in the target collection, sorted according to the specified comparison.
+        /// Does not modify the target collection, since it may not even be a sortable collection.
+        /// </summary>
+        /// <typeparam name="TItem"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="comparison"></param>
+        /// <returns></returns>
+        public static IList<TItem> Sort<TItem>(IEnumerable target, Comparison<TItem> comparison)
+        {
+            List<TItem> list = new List<TItem>(new TypeSafeEnumerableWrapper<TItem>(target));
+            list.Sort(comparison);
+            return list;
+        }
     }
 }

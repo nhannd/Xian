@@ -211,7 +211,7 @@
     <value>Expression must evaluate to String type.</value>
   </data>
   <data name="LogFailedToProcessPluginAssembly" xml:space="preserve">
-    <value>Failed to process plugin assembly {0} with the following exception:</value>
+    <value>Failed to process plugin assembly {0} with the following exception(s):</value>
   </data>
   <data name="FormatSeconds" xml:space="preserve">
     <value>{0} seconds</value>
@@ -248,5 +248,8 @@
   </data>
   <data name="ExceptionExtensionPointMustSubclassExtensionPoint" xml:space="preserve">
     <value>The extension point {0} is invalid because it is not a direct subclass of ExtensionPoint&lt;&gt;</value>
+  </data>
+  <data name="ExceptionNoServiceProviderCanProvide" xml:space="preserve">
+    <value>No service provider was found that can provide the service {0}</value>
   </data>
 </root>
