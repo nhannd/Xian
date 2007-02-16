@@ -26,6 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.OpenIconSet = new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png");
+            this.IconSet = this.OpenIconSet;
         }
 
         protected override IList<RegistrationWorklistItem> QueryItems()
@@ -195,6 +196,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public SearchFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Search")
         {
+            this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchToolSmall.png", "SearchToolMedium.png", "SearchToolLarge.png");
+            this.ClosedIconSet = this.OpenIconSet;
+            this.IconSet = this.OpenIconSet;
         }
 
         public SearchCriteria SearchCriteria

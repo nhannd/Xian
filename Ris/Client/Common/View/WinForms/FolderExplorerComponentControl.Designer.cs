@@ -71,6 +71,7 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             this._folderTreeView.Name = "_folderTreeView";
             this._folderTreeView.Selection = selection1;
             this._folderTreeView.ShowLines = false;
+            this._folderTreeView.ShowRootLines = false;
             this._folderTreeView.Size = new System.Drawing.Size(176, 493);
             this._folderTreeView.TabIndex = 1;
             this._folderTreeView.ToolbarModel = null;
