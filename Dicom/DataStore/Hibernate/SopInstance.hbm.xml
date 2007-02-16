@@ -11,7 +11,7 @@
     <property name="SopClassUid" column="SopClassUid_" type="string" length="64" />
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
     <component name="LocationUri" class="DicomUri">
-      <property name="InternalUri" column="LocationUri_" type="string" length="256" />
+      <property name="InternalUri" column="LocationUri_" type="string" length="1024" />
     </component>
     <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" />
     <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" proxy="ImageSopInstance">
