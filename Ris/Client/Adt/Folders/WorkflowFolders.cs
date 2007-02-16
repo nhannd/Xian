@@ -18,15 +18,14 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
-        private SimpleActionModel _menuActionModel;
-        private ClickAction _optionAction;
-        
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Scheduled")
         {
-            _menuActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _optionAction = _menuActionModel.AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.OpenIconSet = new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png");
         }
 
         protected override IList<RegistrationWorklistItem> QueryItems()
@@ -43,11 +42,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             return item.HasStatus(ActivityStatus.SC);
         }
 
-        public override ActionModelNode MenuModel
-        {
-            get { return _menuActionModel; }
-        }
-
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
             ApplicationComponent.LaunchAsDialog(desktopWindow, new FolderOptionComponent(), "Scheduled Option");
@@ -56,14 +50,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
-        private SimpleActionModel _menuActionModel;
-        private ClickAction _optionAction;
-
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Checked In")
         {
-            _menuActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _optionAction = _menuActionModel.AddAction("CheckInOption", "Option", "Edit.png", "Option",
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel) this.MenuModel).AddAction("CheckInOption", "Option", "Edit.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
         }
 
@@ -99,11 +90,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             IRegistrationWorkflowService service = ApplicationContext.GetService<IRegistrationWorkflowService>();
             //service.StartProcedureStep(item.ProcedureStep);
             return true;
-        }
-
-        public override ActionModelNode MenuModel
-        {
-            get { return _menuActionModel; }
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)

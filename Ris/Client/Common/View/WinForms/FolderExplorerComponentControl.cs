@@ -44,9 +44,7 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
 
         private void _component_SelectedFolderChanged(object sender, EventArgs e)
         {
-            if (_folderTreeView.Selection != _component.SelectedFolder)
-                _folderTreeView.Selection = _component.SelectedFolder;
-
+            _folderTreeView.Selection = _component.SelectedFolder;
             _folderContentsTableView.Table = _component.FolderContentsTable;
 
             // Update action model based on the folder selected

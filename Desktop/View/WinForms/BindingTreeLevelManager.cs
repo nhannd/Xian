@@ -91,7 +91,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _nodeCollection.Clear();
             foreach (object item in _tree.Items)
             {
-                _nodeCollection.Add(new BindingTreeNode(_tree, item));
+                BindingTreeNode node = new BindingTreeNode(_tree, item);
+                _nodeCollection.Add(node);
+                node.UpdateDisplay();
             }
         }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Desktop.Actions
+namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Defines possible icon schemes.

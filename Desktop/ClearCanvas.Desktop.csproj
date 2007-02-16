@@ -136,8 +136,8 @@
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\IActionBuildingContext.cs" />
     <Compile Include="Actions\IClickAction.cs" />
-    <Compile Include="Actions\IconScheme.cs" />
-    <Compile Include="Actions\IconSet.cs" />
+    <Compile Include="IconScheme.cs" />
+    <Compile Include="IconSet.cs" />
     <Compile Include="Actions\IconSetAttribute.cs" />
     <Compile Include="Actions\MenuAction.cs" />
     <Compile Include="Actions\MenuActionAttribute.cs" />

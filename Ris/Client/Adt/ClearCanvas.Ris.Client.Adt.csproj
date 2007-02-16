@@ -195,6 +195,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\FolderClosedMedium.png" />
+    <EmbeddedResource Include="Icons\FolderClosedSmall.png" />
+    <EmbeddedResource Include="Icons\FolderOpenMedium.png" />
+    <EmbeddedResource Include="Icons\FolderOpenSmall.png" />
     <EmbeddedResource Include="Icons\Edit.png" />
     <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.cfg.xml" />
     <EmbeddedResource Include="RegistrationPreview.html" />

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.Desktop.Trees
 {
     /// <summary>
@@ -24,6 +26,20 @@ namespace ClearCanvas.Desktop.Trees
         /// <param name="item"></param>
         /// <returns></returns>
         string GetTooltipText(object item);
+
+        /// <summary>
+        /// Gets the image iconset to display for the specified item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        IconSet GetIconSet(object item);
+
+        /// <summary>
+        /// Gets the resource resolver used to resolve the icon
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        IResourceResolver GetResourceResolver(object item);
 
         /// <summary>
         /// Asks if the item can have a subtree.  Note that this method should return true to inidicate that it

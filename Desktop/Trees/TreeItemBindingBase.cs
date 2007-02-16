@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.Desktop.Trees
 {
     /// <summary>
@@ -18,6 +20,16 @@ namespace ClearCanvas.Desktop.Trees
             return null;
         }
 
+        public virtual IconSet GetIconSet(object item)
+        {
+            return null;
+        }
+
+        public virtual IResourceResolver GetResourceResolver(object item)
+        {
+            return null;
+        }
+        
         public virtual bool CanHaveSubTree(object item)
         {
             return true;

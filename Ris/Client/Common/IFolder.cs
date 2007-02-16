@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using System.Collections;
 using ClearCanvas.Desktop;
@@ -23,9 +24,14 @@ namespace ClearCanvas.Ris.Client.Common
         event EventHandler TextChanged;
 
         /// <summary>
-        /// Gets the icon that should be displayed for the folder
+        /// Gets the iconset that should be displayed for the folder
         /// </summary>
-        Image Icon { get; }
+        IconSet IconSet { get; }
+
+        /// <summary>
+        /// Gets the resource resolver that is used to resolve the Icon
+        /// </summary>
+        IResourceResolver ResourceResolver { get; }
 
         /// <summary>
         /// Allows the folder to nofity that it's icon has changed
@@ -48,6 +54,8 @@ namespace ClearCanvas.Ris.Client.Common
         ActionModelNode MenuModel { get; }
 
         void Refresh();
+        void OpenFolder();
+        void CloseFolder();
 
         /// <summary>
         /// Asks the folder if it can accept a drop of the specified items

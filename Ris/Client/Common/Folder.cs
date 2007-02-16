@@ -16,6 +16,8 @@ namespace ClearCanvas.Ris.Client.Common
         private event EventHandler _tooltipChanged;
         private ActionModelNode _menuModel;
 
+        private IconSet _iconSet;
+        private IResourceResolver _resourceResolver;
 
         protected void NotifyTextChanged()
         {
@@ -26,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Common
 
         public abstract string Text { get; }
         public abstract void Refresh();
+        public virtual void OpenFolder() {}
+        public virtual void CloseFolder() {}
 
         public virtual event EventHandler TextChanged
         {
@@ -33,9 +37,20 @@ namespace ClearCanvas.Ris.Client.Common
             remove { _textChanged -= value; }
         }
 
-        public virtual Image Icon
+        public virtual IconSet IconSet
         {
-            get { return null; }
+            get { return _iconSet; }
+            set
+            {
+                _iconSet = value;
+                EventsHelper.Fire(_iconChanged, this, EventArgs.Empty);
+            }
+        }
+
+        public virtual IResourceResolver ResourceResolver
+        {
+            get { return _resourceResolver; }
+            set { _resourceResolver = value; }
         }
 
         public virtual event EventHandler IconChanged

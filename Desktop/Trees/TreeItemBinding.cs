@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.Desktop.Trees
 {
     public delegate string TextProviderDelegate<T>(T item);
+    public delegate IconSet IconSetProviderDelegate<T>(T item);
+    public delegate IResourceResolver ResourceResolverProviderDelegate<T>(T item);
     public delegate bool CanHaveSubTreeDelegate<T>(T item);
     public delegate ITree TreeProviderDelegate<T>(T item);
     public delegate DragDropKind CanAcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
@@ -18,6 +22,8 @@ namespace ClearCanvas.Desktop.Trees
     {
         private TextProviderDelegate<TItem> _nodeTextProvider;
         private TextProviderDelegate<TItem> _tooltipTextProvider;
+        private IconSetProviderDelegate<TItem> _iconSetIndexProvider;
+        private ResourceResolverProviderDelegate<TItem> _resourceResolverProvider;
         private CanHaveSubTreeDelegate<TItem> _canHaveSubTreeHandler;
         private TreeProviderDelegate<TItem> _subTreeProvider;
         private CanAcceptDropDelegate<TItem> _canAcceptDropHandler;
@@ -70,6 +76,24 @@ namespace ClearCanvas.Desktop.Trees
             set { _tooltipTextProvider = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the iconset provider for this binding
+        /// </summary>
+        public IconSetProviderDelegate<TItem> IconSetProvider
+        {
+            get { return _iconSetIndexProvider; }
+            set { _iconSetIndexProvider = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the resource resolver provider for this binding
+        /// </summary>
+        public ResourceResolverProviderDelegate<TItem> ResourceResolverProvider
+        {
+            get { return _resourceResolverProvider; }
+            set { _resourceResolverProvider = value; }
+        }
+
         public CanHaveSubTreeDelegate<TItem> CanHaveSubTreeHandler
         {
             get { return _canHaveSubTreeHandler; }
@@ -118,6 +142,16 @@ namespace ClearCanvas.Desktop.Trees
         public override string GetTooltipText(object item)
         {
             return _tooltipTextProvider == null ? base.GetTooltipText(item) : _tooltipTextProvider((TItem)item);
+        }
+
+        public override IconSet GetIconSet(object item)
+        {
+            return _iconSetIndexProvider == null ? base.GetIconSet(item) : _iconSetIndexProvider((TItem)item);
+        }
+
+        public override IResourceResolver GetResourceResolver(object item)
+        {
+            return _resourceResolverProvider == null ? base.GetResourceResolver(item) : _resourceResolverProvider((TItem)item);
         }
 
         public override DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind)

@@ -5,6 +5,9 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop.Trees;
 using System.Drawing;
 
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.Desktop.View.WinForms
 {
     /// <summary>
@@ -54,6 +57,36 @@ namespace ClearCanvas.Desktop.View.WinForms
             // update all displayable attributes from the binding
             this.Text = _parentTree.Binding.GetNodeText(_item);
             this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
+
+            if (this.TreeView != null)
+            {
+                IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);
+                IconSet iconSet = _parentTree.Binding.GetIconSet(_item);
+                ImageList.ImageCollection imageCollection = this.TreeView.ImageList.Images;
+                if (iconSet == null)
+                {
+                    this.ImageIndex = -1;
+                }
+                else if (imageCollection.ContainsKey(iconSet.MediumIcon))
+                {
+                    this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
+                }
+                else
+                {
+                    try
+                    {
+                        imageCollection.Add(iconSet.MediumIcon, IconFactory.CreateIcon(iconSet.MediumIcon, resolver));
+                        this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(e, LogLevel.Warn);
+                        this.ImageIndex = -1;
+                    }
+                }
+
+                this.SelectedImageIndex = this.ImageIndex;
+            }
 
             // if the subtree was already built, we need to rebuild it because it may no longer be valid
             if (_isSubTreeBuilt)

@@ -82,8 +82,8 @@ namespace ClearCanvas.Ris.Client.Common.View.WinForms
             // 
             this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
             this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this._folderTreeImageList.Images.SetKeyName(0, "FolderClosedMedium.png");
-            this._folderTreeImageList.Images.SetKeyName(1, "FolderOpenMedium.png");
+            this._folderTreeImageList.Images.SetKeyName(0, "FolderOpenMedium.png");
+            this._folderTreeImageList.Images.SetKeyName(1, "FolderClosedMedium.png");
             // 
             // _folderContentsTableView
             // 

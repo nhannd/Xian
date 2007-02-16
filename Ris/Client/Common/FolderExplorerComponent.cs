@@ -113,6 +113,7 @@ namespace ClearCanvas.Ris.Client.Common
         private Tree<IFolder> _folderTree;
         private IFolder _selectedFolder;
         private event EventHandler _selectedFolderChanged;
+        private event EventHandler _folderIconChanged;
 
         private ISelection _selectedItems = Selection.Empty;
         private event EventHandler _selectedItemsChanged;
@@ -129,6 +130,8 @@ namespace ClearCanvas.Ris.Client.Common
         {
             TreeItemBinding<IFolder> binding = new TreeItemBinding<IFolder>();
             binding.NodeTextProvider = delegate(IFolder folder) { return folder.Text; };
+            binding.IconSetProvider = delegate(IFolder folder) { return folder.IconSet; };
+            binding.ResourceResolverProvider = delegate(IFolder folder) { return folder.ResourceResolver; };
             binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return false; };     // for now, assume only one level of folders
             binding.CanAcceptDropHandler = CanFolderAcceptDrop;
             binding.AcceptDropHandler = FolderAcceptDrop;
@@ -217,6 +220,12 @@ namespace ClearCanvas.Ris.Client.Common
             remove { _selectedItemsChanged -= value; }
         }
 
+        public event EventHandler FolderIconChanged
+        {
+            add { _folderIconChanged += value; }
+            remove { _folderIconChanged -= value; }
+        }
+
         public ActionModelRoot ItemsContextMenuModel
         {
             get
@@ -263,11 +272,15 @@ namespace ClearCanvas.Ris.Client.Common
         {
             if (_selectedFolder != folder)
             {
+                if (_selectedFolder != null)
+                    _selectedFolder.CloseFolder();
+
                 _selectedFolder = folder;
                 if (_selectedFolder != null)
                 {
                     try
                     {
+                        _selectedFolder.OpenFolder();
                         _selectedFolder.Refresh();
                     }
                     catch (Exception e)
