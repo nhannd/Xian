@@ -30,8 +30,8 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void SetPixel8()
 		{
-			int width = 7;
-			int height = 19;
+			int columns = 7;
+			int rows = 19;
 			int bitsAllocated = 8;
 			int bitsStored = 8;
 			int highBit = 7;
@@ -39,12 +39,12 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
-			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelDataWrapper pixelDataWrapper = new PixelDataWrapper(
-				width,
-				height,
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			// Make sure it works with unsafe code too
 			fixed (byte* pPixelData = pixelData)
 			{
-				int i = y * width + x;
+				int i = y * columns + x;
 				actualValue = pPixelData[i];
 			}
 
@@ -75,8 +75,8 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void SetPixel16()
 		{
-			int width = 7;
-			int height = 19;
+			int columns = 7;
+			int rows = 19;
 			int bitsAllocated = 16;
 			int bitsStored = 16;
 			int highBit = 15;
@@ -84,12 +84,12 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
-			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelDataWrapper pixelDataWrapper = new PixelDataWrapper(
-				width,
-				height,
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			fixed (byte* pPixelData = pixelData)
 			{
 				ushort* pUShortPixelData = (ushort*)pPixelData;
-				int i = y * width + x;
+				int i = y * columns + x;
 				actualValue = pUShortPixelData[i];
 			}
 
@@ -122,8 +122,8 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void SetPixelRGBTriplet()
 		{
-			int width = 7;
-			int height = 19;
+			int rows = 19;
+			int columns = 7;
 			int bitsAllocated = 8;
 			int bitsStored = 8;
 			int highBit = 7;
@@ -131,12 +131,12 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int pixelRepresentation = 0;
 			int planarConfiguration = 0;
 			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
-			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
+			int imageSize = rows * columns * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelDataWrapper pixelDataWrapper = new PixelDataWrapper(
-				width,
-				height,
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			fixed (byte* pPixelData = pixelData)
 			{
 				int bytesPerPixel = 3;
-				int stride = width * bytesPerPixel;
+				int stride = columns * bytesPerPixel;
 				int i = (y * stride) + (x * bytesPerPixel);
 				actualValue = Color.FromArgb(pPixelData[i], pixelData[i + 1], pixelData[i + 2]);
 			}

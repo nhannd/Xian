@@ -40,6 +40,6 @@ extern "C"
             int dstRegionRectBottom,
 
 			BOOL swapXY,
-            BYTE* pLutData
+            int* pLutData
 	);
 }

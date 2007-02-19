@@ -42,9 +42,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CursorToken = new CursorToken("Icons.ZoomMedium.png", this.GetType().Assembly);
 		}
 
-		private void CaptureBeginState(ISpatialTransformProvider image)
+		private void CaptureBeginState()
 		{
-			_applicator = new SpatialTransformApplicator(image);
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedSpatialTransformProvider == null)
+				return;
+
+			_applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandZoom;
 			_command.BeginState = _applicator.CreateMemento();
@@ -52,6 +56,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureEndState()
 		{
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedSpatialTransformProvider == null)
+				return;
+
 			if (_command == null)
 				return;
 
@@ -72,51 +80,40 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomIn()
 		{
-			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
+			CaptureBeginState();
 
-			if (image == null)
-				return;
-
-			CaptureBeginState(image);
-
-			float increment = 0.1F * image.SpatialTransform.Scale;
-			IncrementZoom(image, increment);
+			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			IncrementZoom(increment);
 
 			CaptureEndState();
 		}
 
 		private void ZoomOut()
 		{
-			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
+			CaptureBeginState();
 
-			if (image == null)
-				return;
-
-			CaptureBeginState(image);
-
-			float increment = -0.1F * image.SpatialTransform.Scale;
-			IncrementZoom(image, increment);
+			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			IncrementZoom(increment);
 
 			CaptureEndState();
 		}
 
-		private void IncrementZoom(ISpatialTransformProvider image, float scaleIncrement)
+		private void IncrementZoom(float scaleIncrement)
 		{
-			image.SpatialTransform.ScaleToFit = false;
-			image.SpatialTransform.Scale += scaleIncrement;
-			image.Draw();
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedSpatialTransformProvider == null)
+				return;
+
+			this.SelectedSpatialTransformProvider.SpatialTransform.ScaleToFit = false;
+			this.SelectedSpatialTransformProvider.SpatialTransform.Scale += scaleIncrement;
+			this.SelectedSpatialTransformProvider.Draw();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
-			ISpatialTransformProvider image = mouseInformation.Tile.PresentationImage as ISpatialTransformProvider;
-
-			if (image == null)
-				return false;
-
-			CaptureBeginState(image);
+			CaptureBeginState();
 
 			return true;
 		}
@@ -125,12 +122,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			ISpatialTransformProvider image = mouseInformation.Tile.PresentationImage as ISpatialTransformProvider;
-
-			if (image == null)
-				return false;
-
-			IncrementZoom(image, (float)base.DeltaY * 0.025F);
+			IncrementZoom((float)base.DeltaY * 0.025F);
 
 			return true;
 		}

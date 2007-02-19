@@ -16,19 +16,6 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
 	class MockImageGraphic : ImageGraphic
 	{
-		int _width;
-		int _height;
-		int _bitsAllocated;
-		int _bitsStored;
-		int _highBit;
-		int _samplesPerPixel;
-		int _pixelRepresentation;
-		int _planarConfiguration;
-		PhotometricInterpretation _photometricInterpretation;
-		byte[] _pixelData;
-		PixelDataWrapper _pixelDataWrapper;
-		private GrayscaleLUTPipeline _grayscaleLUTPipeline;
-
 		public MockImageGraphic(
 			int width,
 			int height,
@@ -38,113 +25,23 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			int samplesPerPixel,
 			int pixelRepresentation,
 			int planarConfiguration,
-			PhotometricInterpretation photometricInterpretation)
+			PhotometricInterpretation photometricInterpretation,
+			byte[] pixelData)
+			: base(
+				height, 
+				width, 
+				bitsAllocated, 
+				bitsStored, 
+				highBit, 
+				samplesPerPixel, 
+				pixelRepresentation, 
+				planarConfiguration, 
+				photometricInterpretation,
+				pixelData)
 		{
-			_width = width;
-			_height = height;
-			_bitsAllocated = bitsAllocated;
-			_bitsStored = bitsStored;
-			_highBit = highBit;
-			_samplesPerPixel = samplesPerPixel;
-			_pixelRepresentation = pixelRepresentation;
-			_planarConfiguration = planarConfiguration;
-			_photometricInterpretation = photometricInterpretation;
-
-			int imageSize = width * height * bitsAllocated / 8 * samplesPerPixel;
-
-			_pixelData = new byte[imageSize];
-
-			_pixelDataWrapper = new PixelDataWrapper(
-				_width,
-				_height,
-				_bitsAllocated,
-				_bitsStored,
-				_highBit,
-				_samplesPerPixel,
-				_pixelRepresentation,
-				_planarConfiguration,
-				_photometricInterpretation,
-				_pixelData);
-
 			InstallLut();
 		}
 
-		public override int  Rows
-		{
-			get { return _height; }
-		}
-
-		public override int  Columns
-		{
-			get { return _width; }
-		}
-
-		public override int  BitsAllocated
-		{
-			get { return _bitsAllocated; }
-		}
-
-		public override int  BitsStored
-		{
-			get { return _bitsStored; }
-		}
-
-		public override int  HighBit
-		{
-			get { return _highBit; }
-		}
-
-		public override int  SamplesPerPixel
-		{
-			get { return _samplesPerPixel; }
-		}
-
-		public override int  PixelRepresentation
-		{
-			get { return _pixelRepresentation; }
-		}
-
-		public override int  PlanarConfiguration
-		{
-			get { return _planarConfiguration; }
-		}
-
-		public override PhotometricInterpretation PhotometricInterpretation
-		{
-			get { return _photometricInterpretation; }
-		}
-
-		public GrayscaleLUTPipeline GrayscaleLUTPipeline
-		{
-			get
-			{
-				if (this.IsColor)
-					return null;
-
-				if (_grayscaleLUTPipeline == null)
-					_grayscaleLUTPipeline = new GrayscaleLUTPipeline();
-
-				return _grayscaleLUTPipeline;
-			}
-		}
-
-		public override byte[]  GetPixelData()
-		{
-			return _pixelData;
-		}
-
-		public override byte[] GetGrayscaleLUT()
-		{
-			if (this.GrayscaleLUTPipeline == null)
-				throw new Exception(SR.ExceptionImageIsNotGrayscale);
-
-			return this.GrayscaleLUTPipeline.OutputLUT;
-		}
-
-		public PixelDataWrapper PixelDataWrapper
-		{
-			get { return _pixelDataWrapper; }
-		}
 
 		private void InstallLut()
 		{
@@ -161,12 +58,12 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				rescaleSlope,
 				rescaleIntercept);
 
-			this.GrayscaleLUTPipeline.ModalityLUT = modalityLUT;
-			VOILUTLinear linearLut = new VOILUTLinear(modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue);
-			linearLut.WindowWidth = 1 << this.BitsStored;
-			linearLut.WindowCenter = linearLut.WindowWidth / 2;
-			this.GrayscaleLUTPipeline.VoiLUT = linearLut;
-			this.GrayscaleLUTPipeline.Execute();
+			//this.GrayscaleLUTPipeline.ModalityLUT = modalityLUT;
+			//VOILUTLinear linearLut = new VOILUTLinear(modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue);
+			//linearLut.WindowWidth = 1 << this.BitsStored;
+			//linearLut.WindowCenter = linearLut.WindowWidth / 2;
+			//this.GrayscaleLUTPipeline.VoiLUT = linearLut;
+			//this.GrayscaleLUTPipeline.Execute();
 		}
 
 		public override bool HitTest(Point point)
@@ -202,7 +99,8 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel, 
 				pixelRepresentation, 
 				planarConfiguration, 
-				photometricInterpretation);
+				photometricInterpretation,
+				null);
 		}
 
 		public static MockImageGraphic CreateMonochrome16ImageLayer(int width, int height)
@@ -224,7 +122,8 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				photometricInterpretation);
+				photometricInterpretation,
+				null);
 		}
 
 		public static MockImageGraphic CreateRGBTripletImageLayer(int width, int height)
@@ -246,7 +145,8 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				photometricInterpretation);
+				photometricInterpretation,
+				null);
 		}
 
 		public static MockImageGraphic CreateRGBPlanarImageLayer(int width, int height)
@@ -268,7 +168,8 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				samplesPerPixel,
 				pixelRepresentation,
 				planarConfiguration,
-				photometricInterpretation);
+				photometricInterpretation,
+				null);
 		}
 	}
 

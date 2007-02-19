@@ -120,16 +120,23 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
+    <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
+    <Compile Include="Graphics\StandardColorImageGraphic.cs" />
+    <Compile Include="Graphics\IndexedImageGraphic.cs" />
+    <Compile Include="Graphics\StandardGrayscaleImageGraphic.cs" />
+    <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
+    <Compile Include="Imaging\IVOILUTLinear.cs" />
+    <Compile Include="Imaging\LUTCollection.cs" />
+    <Compile Include="Imaging\LUTEventArgs.cs" />
+    <Compile Include="Imaging\PresentationLUT.cs" />
     <Compile Include="InteractiveGraphics\CompassStretchIndicatorCursorProvider.cs" />
     <Compile Include="InteractiveGraphics\CreateGraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicStateManager.cs" />
     <Compile Include="IDrawable.cs" />
     <Compile Include="Imaging\ISpatialTransformProvider.cs" />
-    <Compile Include="Imaging\IVOILUTLinearProvider.cs" />
     <Compile Include="Imaging\ImageSpatialTransform.cs" />
     <Compile Include="Imaging\ISpatialTransform.cs" />
-    <Compile Include="Imaging\IVOILUTLinear.cs" />
-    <Compile Include="Graphics\GeneratedImageGraphic.cs" />
+    <Compile Include="Imaging\IVOILUTLinearProvider.cs" />
     <Compile Include="Graphics\GraphicSelectedEventArgs.cs" />
     <Compile Include="Graphics\IImageSopProvider.cs" />
     <Compile Include="Graphics\IOverlayGraphicsProvider.cs" />
@@ -280,7 +287,6 @@
     <Compile Include="ImageViewerComponent.cs" />
     <Compile Include="Imaging\CalculatedGrayscaleLUT.cs" />
     <Compile Include="Imaging\ColorSpaceConverter.cs" />
-    <Compile Include="Imaging\ColorMap.cs" />
     <Compile Include="Imaging\GrayscaleLUTPipeline.cs" />
     <Compile Include="Imaging\ImageValidationException.cs" />
     <Compile Include="Imaging\LUTComposer.cs" />
@@ -290,8 +296,8 @@
     <Compile Include="Imaging\Tests\SpatialTransformTest.cs" />
     <Compile Include="Imaging\WindowLevelApplicator.cs" />
     <Compile Include="StandardPresentationImage.cs" />
-    <Compile Include="Imaging\GrayscaleLUT.cs" />
-    <Compile Include="Imaging\IGrayscaleLUT.cs" />
+    <Compile Include="Imaging\ComposableLUT.cs" />
+    <Compile Include="Imaging\IComposableLUT.cs" />
     <Compile Include="Imaging\ILUT.cs" />
     <Compile Include="Imaging\ImageOperationApplicatorMemento.cs" />
     <Compile Include="Imaging\ImageValidator.cs" />
@@ -320,7 +326,6 @@
     <Compile Include="Graphics\PixelDataWrapper.cs" />
     <Compile Include="Graphics\PointChangedEventArgs.cs" />
     <Compile Include="Graphics\RectanglePrimitive.cs" />
-    <Compile Include="Graphics\StandardImageGraphic.cs" />
     <Compile Include="Graphics\Tests\PixelDataWrapperTest.cs" />
     <Compile Include="Graphics\Tests\ImageLayerTest.cs" />
     <Compile Include="Graphics\Tests\LayerGroupTest.cs" />
@@ -392,15 +397,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagrams\Annotations.cd" />
+    <None Include="ClassDiagrams\CompositeGraphics.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />
     <None Include="ClassDiagrams\DiagnosticImageViewerComponent.cd" />
     <None Include="ClassDiagrams\GraphicsCompositePattern.cd" />
     <None Include="ClassDiagrams\GraphicSpatialTransform.cd" />
+    <None Include="ClassDiagrams\ImageGraphics.cd" />
     <None Include="ClassDiagrams\ImageViewerComponent.cd" />
     <None Include="ClassDiagrams\InputManagement.cd" />
+    <None Include="ClassDiagrams\LUT.cd" />
     <None Include="ClassDiagrams\PresentationImage.cd" />
     <None Include="ClassDiagrams\Tools.cd" />
-    <None Include="Graphics\SceneGraph.cd" />
+    <None Include="ClassDiagrams\SceneGraph.cd" />
     <None Include="ClassDiagrams\GraphicStates.cd" />
     <None Include="ClassDiagrams\InteractiveGraphics.cd" />
     <None Include="ClassDiagrams\ROIGraphic.cd" />
@@ -414,6 +422,7 @@
       <LastGenOutput>DicomFilteredAnnotationLayoutStoreSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="ClassDiagrams\VectorGraphics.cd" />
     <None Include="PostBuild.bat" />
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

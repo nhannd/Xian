@@ -7,15 +7,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class SpatialTransformApplicator : ImageOperationApplicator
 	{
-		public SpatialTransformApplicator(ISpatialTransformProvider associatedSpatialTransform)
-			: base(associatedSpatialTransform as IPresentationImage)
+		public SpatialTransformApplicator(IPresentationImage image)
+			: base(image)
 		{
 
 		}
 
 		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
-			return (image as ISpatialTransformProvider).SpatialTransform;
+			ISpatialTransformProvider voiLutLinear = image as ISpatialTransformProvider;
+
+			if (voiLutLinear == null)
+				throw new Exception("PresentationImage does not support ISpatialTransformProvider");
+
+			return voiLutLinear.SpatialTransform as IMemorable;
 		}
 	}
 }

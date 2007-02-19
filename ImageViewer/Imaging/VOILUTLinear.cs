@@ -22,33 +22,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			_minInputValue = minInputValue;
 			_maxInputValue = maxInputValue;
-			_minOutputValue = byte.MinValue;
-			_maxOutputValue = byte.MaxValue;
+			_minOutputValue = minInputValue;
+			_maxOutputValue = maxInputValue;
 			_outputRange = _maxOutputValue - _minOutputValue;
-		}
-
-		public double WindowWidth
-		{
-			get { return _windowWidth;	}
-			set 
-			{
-				if (value < 1)
-					_windowWidth = 1;
-				else
-					_windowWidth = value;
-
-				_recalculate = true;
-			}
-		}
-
-		public double WindowCenter
-		{
-			get { return _windowCenter; }
-			set 
-			{ 
-				_windowCenter = value;
-				_recalculate = true;
-			}
 		}
 
 		public override int this[int index]
@@ -79,6 +55,33 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 			set
 			{
+				throw new InvalidOperationException("Cannot set elements in a calculated LUT");
+			}
+		}
+
+		#region IVOILUTLinear Members
+
+		public double WindowWidth
+		{
+			get { return _windowWidth; }
+			set
+			{
+				if (value < 1)
+					_windowWidth = 1;
+				else
+					_windowWidth = value;
+
+				_recalculate = true;
+			}
+		}
+
+		public double WindowCenter
+		{
+			get { return _windowCenter; }
+			set
+			{
+				_windowCenter = value;
+				_recalculate = true;
 			}
 		}
 
@@ -103,6 +106,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			this.WindowWidth = windowLevelMemento.WindowWidth;
 			this.WindowCenter = windowLevelMemento.WindowCenter;
 		}
+
+		#endregion
 
 		#endregion
 

@@ -1019,9 +1019,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override byte[] GetPixelData()
+		public override byte[] PixelData
 		{
-			return _dicomImage.GetPixelData();
+			get
+			{
+				return _dicomImage.GetPixelData();
+			}
 		}
 
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)

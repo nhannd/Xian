@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int dstWidth,
 			int dstBytesPerPixel,
 			bool swapXY,
-			byte* pLutData,
+			int* pLutData,
 			bool isRGB,
 			bool isPlanar,
 			bool IsSigned);

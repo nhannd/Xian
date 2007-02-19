@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private ImageGraphic GetImageGraphic()
 		{
-			return (GetDicomPresentationImage() as IImageGraphicProvider).Image;
+			return (GetDicomPresentationImage() as IImageGraphicProvider).ImageGraphic;
 		}
 
 		private bool IsDataUnsigned()
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 			foreach (IImageGraphicProvider slice in _displaySet.PresentationImages)
 			{
-				byte[] sliceData = slice.Image.GetPixelData();
+				byte[] sliceData = slice.ImageGraphic.PixelData.Raw;
 				int length = sliceData.Length / 2;
 
 				for (int i = 0; i < length; i+=2)
@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private void AddUnsignedSliceToVolume(ushort[] volumeData, IImageGraphicProvider slice, int imageIndex)
 		{
-			byte[] sliceData = slice.Image.GetPixelData();
+			byte[] sliceData = slice.ImageGraphic.PixelData.Raw;
 			int start = imageIndex * sliceData.Length / 2;
 			int end = start + sliceData.Length / 2;
 
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private void AddSignedSliceToVolume(ushort[] volumeData, IImageGraphicProvider slice, int imageIndex)
 		{
-			byte[] sliceData = slice.Image.GetPixelData();
+			byte[] sliceData = slice.ImageGraphic.PixelData.Raw;
 			int start = imageIndex * sliceData.Length / 2;
 			int end = start + sliceData.Length / 2;
 

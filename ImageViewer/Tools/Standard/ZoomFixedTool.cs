@@ -20,17 +20,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
         protected void ApplyZoom(float scale)
         {
-			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
-
-			if (image == null)
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedSpatialTransformProvider == null)
 				return;
 
-			SpatialTransformApplicator applicator = new SpatialTransformApplicator(image);
+			SpatialTransformApplicator applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
             UndoableCommand command = new UndoableCommand(applicator);
             command.Name = SR.CommandZoom;
             command.BeginState = applicator.CreateMemento();
 
-			image.SpatialTransform.Scale = scale;
+			this.SelectedSpatialTransformProvider.SpatialTransform.Scale = scale;
 
             command.EndState = applicator.CreateMemento();
 

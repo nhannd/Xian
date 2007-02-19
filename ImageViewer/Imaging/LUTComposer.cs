@@ -9,31 +9,30 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class LUTComposer
 	{
-		private IList<IGrayscaleLUT> _lutCollection = new List<IGrayscaleLUT>();
+		private LUTCollection _lutCollection;
 		private int _numEntries;
-		private byte[] _outputLUT;
+		private int[] _outputLUT;
 		private int _minInputValue;
 		private int _maxInputValue;
-		private bool _invert;
 
 		public LUTComposer()
 		{
 		}
 
-		public IList<IGrayscaleLUT> LUTCollection
+		public LUTCollection LUTCollection
 		{
-			get { return _lutCollection; }
+			get 
+			{ 
+				if (_lutCollection == null)
+					_lutCollection = new LUTCollection();
+
+				return _lutCollection; 
+			}
 		}
 
-		public byte[] OutputLUT
+		public int[] OutputLUT
 		{
 			get { return _outputLUT; }
-		}
-
-		public bool Invert
-		{
-			get { return _invert; }
-			set { _invert = value; }
 		}
 
 		public void Compose()
@@ -50,36 +49,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				val = i;
 
-				for (int j = 0; j < _lutCollection.Count; j++)
+				for (int j = 0; j < this.LUTCollection.Count; j++)
 				{
-					IGrayscaleLUT lut = _lutCollection[j];
+					IComposableLUT lut = this.LUTCollection[j];
 					val = lut[val];
 				}
 
 				if (i >= 0)
-				{
-					if (_invert)
-					{
-						_outputLUT[i] = byte.MaxValue;
-						_outputLUT[i] -= (byte)val;
-					}
-					else
-					{
-						_outputLUT[i] = (byte)val;
-					}
-				}
+					_outputLUT[i] = val;
 				else
-				{
-					if (_invert)
-					{
-						_outputLUT[i + _numEntries] = byte.MaxValue;
-						_outputLUT[i + _numEntries] -= (byte)val;
-					}
-					else
-					{
-						_outputLUT[i + _numEntries] = (byte)val;
-					}
-				}
+					_outputLUT[i + _numEntries] = val;
 			}
 
 			counter.Stop();
@@ -90,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void CreateLUT()
 		{
-			IGrayscaleLUT lut = _lutCollection[0];
+			IComposableLUT lut = this.LUTCollection[0];
 
 			// If the output LUT hasn't been created or the first LUT in the
 			// collection has changed, create a new output LUT
@@ -99,54 +78,44 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_minInputValue = lut.MinInputValue;
 				_maxInputValue = lut.MaxInputValue;
 				_numEntries = lut.NumEntries;
-				_outputLUT = new byte[_numEntries];
+				_outputLUT = new int[_numEntries];
 			}
-		}
-
-		private bool IsLastLUTOutputRangeCorrect()
-		{
-			int lastIndex = _lutCollection.Count - 1;
-			IGrayscaleLUT lastLUT = (IGrayscaleLUT)_lutCollection[lastIndex];
-
-			if (lastLUT.MinOutputValue >= byte.MinValue && lastLUT.MaxOutputValue <= byte.MaxValue)
-				return true;
-			else
-				return false;
 		}
 
 		private void ValidateLUTCollection()
 		{
 			// Make sure we have at least one LUT
-			if (_lutCollection.Count == 0)
+			if (this.LUTCollection.Count == 0)
 				throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
 
 			// Check for null LUTs
-			foreach (IGrayscaleLUT lut in _lutCollection)
+			foreach (IComposableLUT lut in this.LUTCollection)
 			{
 				if (lut == null)
 					throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
 			}
 
-			// Make sure output range of last LUT in pipeline is 8-bits
-			if (!IsLastLUTOutputRangeCorrect())
-				throw new InvalidOperationException(SR.ExceptionLUTLastOutputRange);
-
 			// If we only have one LUT then no further validation is required
-			if (_lutCollection.Count == 1)
+			if (this.LUTCollection.Count == 1)
 				return;
 
 			// Verify that the input range of the nth LUT is equal to the output
 			// range of the n-1th LUT.
-			for (int i = 1; i < _lutCollection.Count; i++)
+			for (int i = 1; i < this.LUTCollection.Count; i++)
 			{
-				IGrayscaleLUT curLUT = _lutCollection[i];
-				IGrayscaleLUT prevLUT = _lutCollection[i - 1];
+				IComposableLUT curLUT = this.LUTCollection[i];
+				IComposableLUT prevLUT = this.LUTCollection[i - 1];
 
 				if (prevLUT.MinOutputValue != curLUT.MinInputValue ||
 					prevLUT.MaxOutputValue != curLUT.MaxInputValue)
 					throw new InvalidOperationException(SR.ExceptionLUTInputOutputRange);
 			}
-		}
 
+			// Verify that the last LUT is a PresentationLUT
+			int lastLUT = this.LUTCollection.Count - 1;
+
+			if (!(this.LUTCollection[lastLUT] is PresentationLUT))
+				throw new InvalidOperationException("Last LUT in pipeline must be a PresentationLUT");
+		}
 	}
 }

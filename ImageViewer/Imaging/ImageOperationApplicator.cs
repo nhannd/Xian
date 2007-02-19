@@ -59,10 +59,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// Apply memento to all originators of linked images
 			foreach (ImageAndOriginator imageAndOriginator in applicatorMemento.LinkedImagesAndOriginators)
 			{
-				imageAndOriginator.Originator.SetMemento(applicatorMemento.Memento);
+				if (imageAndOriginator.Originator != null)
+				{
+					imageAndOriginator.Originator.SetMemento(applicatorMemento.Memento);
 
-				if (imageAndOriginator.PresentationImage.Visible)
-					imageAndOriginator.PresentationImage.Draw();
+					if (imageAndOriginator.PresentationImage.Visible)
+						imageAndOriginator.PresentationImage.Draw();
+				}
 			}
 		}
 

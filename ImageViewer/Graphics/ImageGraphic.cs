@@ -11,46 +11,117 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// Describes an image.
 	/// </summary>
-	public abstract class ImageGraphic : Graphic
+	public class ImageGraphic : Graphic
 	{
 		public enum InterpolationMethods { NearestNeighbour, FastBilinear, Bilinear };
-		
-		//default is Nearest Neighbours.
+
+		#region Private fields
+
+		private int _rows;
+		private int _columns;
+		private int _bitsAllocated;
+		private int _bitsStored;
+		private int _highBit;
+		private int _samplesPerPixel;
+		private int _pixelRepresentation;
+		private int _planarConfiguration;
+		private PhotometricInterpretation _photometricInterpretation;
+		private byte[] _pixelDataRaw;
+		private PixelData _pixelData;
+
+		private int _sizeInBytes = -1;
+		private int _sizeInPixels = -1;
+		private int _doubleWordAlignedColumns = -1;
+
 		private InterpolationMethods _normalInterpolationMethod = InterpolationMethods.Bilinear;
 		//private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.NearestNeighbour;
 		private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.FastBilinear;
 		private bool _fastRender = false;
-		
-		private int _sizeInBytes = -1;
-		private int _doubleWordAlignedColumns = -1;
-		private bool _mapGrayscaleToColor;
 
-		protected ImageGraphic()
+		#endregion
+
+		public ImageGraphic(ImageSop image)
+			: this(
+			image.Rows, 
+			image.Columns,
+			image.BitsAllocated,
+			image.BitsStored,
+			image.HighBit,
+			image.SamplesPerPixel,
+			image.PixelRepresentation,
+			image.PlanarConfiguration,
+			image.PhotometricInterpretation,
+			image.PixelData)
 		{
+		}
+
+		public ImageGraphic(
+			int rows,
+			int columns,
+			int bitsAllocated,
+			int bitsStored,
+			int highBit,
+			int samplesPerPixel,
+			int pixelRepresentation,
+			int planarConfiguration,
+			PhotometricInterpretation photometricInterpretation,
+			byte[] pixelData)
+		{
+			ImageValidator.ValidateRows(rows);
+			ImageValidator.ValidateColumns(columns);
+			ImageValidator.ValidateBitsAllocated(bitsAllocated);
+			ImageValidator.ValidateBitsStored(bitsStored);
+			ImageValidator.ValidateHighBit(highBit);
+			ImageValidator.ValidateSamplesPerPixel(samplesPerPixel);
+			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
+			ImageValidator.ValidatePhotometricInterpretation(photometricInterpretation);
+
+			_rows = rows;
+			_columns = columns;
+			_bitsAllocated = bitsAllocated;
+			_bitsStored = bitsStored;
+			_highBit = highBit;
+			_samplesPerPixel = samplesPerPixel;
+			_pixelRepresentation = pixelRepresentation;
+			_planarConfiguration = planarConfiguration;
+			_photometricInterpretation = photometricInterpretation;
+			_pixelDataRaw = pixelData;
 		}
 
 		/// <summary>
 		/// Gets the number of rows in the image.
 		/// </summary>
-		public abstract int Rows { get; }
+		public int Rows 
+		{ 
+			get { return _rows; } 
+		}
 
 		/// <summary>
 		/// Gets the number of columns in the image.
 		/// </summary>
-		public abstract int Columns { get; }
+		public int Columns 
+		{
+			get { return _columns; } 
+		}
 
 		/// <summary>
 		/// Gets the number of bits allocated in the image.
 		/// </summary>
 		/// <remarks>The number of bits allocated will always either be 8 or 16.</remarks>
-		public abstract int BitsAllocated { get; }
+		public int BitsAllocated 
+		{
+			get { return _bitsAllocated; }
+		}
 
 		/// <summary>
 		/// Gets the number of bits stored in the image.
 		/// </summary>
 		/// <remarks>The number of bits stored does not necessarily equal the number
 		/// of bits allocated. Values of 8, 10, 12 and 16 are typical.</remarks>
-		public abstract int BitsStored { get; }
+		public int BitsStored 
+		{
+			get { return _bitsStored; }
+		}
 
 		/// <summary>
 		/// Gets the high bit in the image.
@@ -58,7 +129,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>Theoretically, the high bit does not necessarily have to equal
 		/// bit stored - 1.  But in almost all cases this assumption is true; we
 		/// too make this assumption.</remarks>
-		public abstract int HighBit { get; }
+		public int HighBit 
+		{
+			get { return _highBit; }
+		}
 
 		/// <summary>
 		/// Gets the number of samples per pixel in the image.
@@ -66,14 +140,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>For monochrome images, this property can be ignored.  For colour
 		/// images, the value of this property is typically 3 or 4 depending
 		/// on the particular <see cref="PhotometricInterpretation"/>.</remarks>
-		public abstract int SamplesPerPixel { get; }
+		public int SamplesPerPixel 
+		{
+			get { return _samplesPerPixel; } 
+		}
 
 		/// <summary>
 		/// Gets the pixel representation of the image.
 		/// </summary>
 		/// <remarks>When the pixel data is unsigned the value of this property
 		/// is 0.  When it is signed, the value is 1.</remarks>
-		public abstract int PixelRepresentation { get; }
+		public int PixelRepresentation 
+		{
+			get { return _pixelRepresentation; }
+		}
 
 		/// <summary>
 		/// Gets the planar configuration of the image.
@@ -81,37 +161,54 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>When pixel colour components are interleaved (e.g., RGBRGBRGB)
 		/// the value of this property is 0.  When they organized in colour planes
 		/// (e.g., RRRGGGBBB), the value is 1.</remarks>
-		public abstract int PlanarConfiguration { get; }
+		public int PlanarConfiguration 
+		{
+			get { return _planarConfiguration; }
+		}
 		
 		/// <summary>
 		/// Gets the photometric interpretation of the image.
 		/// </summary>
-		public abstract PhotometricInterpretation PhotometricInterpretation { get; }
+		public virtual PhotometricInterpretation PhotometricInterpretation 
+		{
+			get { return _photometricInterpretation; }
+		}
 
 		/// <summary>
 		/// Gets the pixel data of the image.
 		/// </summary>
 		/// <returns></returns>
-		public abstract byte[] GetPixelData();
-
-		public abstract byte[] GetGrayscaleLUT();
-
-		// Make internal for now, since we don't really use this for anything yet
-		internal ColorMap ColorMap
+		protected virtual byte[] PixelDataRaw
 		{
-			get { return null; }
+			get
+			{
+				if (_pixelDataRaw == null)
+					_pixelDataRaw = new byte[this.SizeInBytes];
+
+				return _pixelDataRaw;
+			}
 		}
 
-		// Make internal for now, since we don't really use this for anything yet
-		internal bool MapGrayscaleToColor
+		public PixelData PixelData
 		{
-			get { return _mapGrayscaleToColor; }
-			set
+			get
 			{
-				if (this.IsColor)
-					throw new InvalidOperationException();
+				if (_pixelData == null)
+				{
+					_pixelData = new PixelData(
+						this.Rows,
+						this.Columns,
+						this.BitsAllocated,
+						this.BitsStored,
+						this.HighBit,
+						this.SamplesPerPixel,
+						this.PixelRepresentation,
+						this.PlanarConfiguration,
+						this.PhotometricInterpretation,
+						this.PixelDataRaw);
+				}
 
-				_mapGrayscaleToColor = value;
+				return _pixelData;
 			}
 		}
 
@@ -161,6 +258,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public int SizeInPixels
+		{
+			get
+			{
+				if (_sizeInPixels == -1)
+					_sizeInPixels = this.Rows * this.Columns;
+
+				return _sizeInPixels;
+			}
+		}
+
 		/// <summary>
 		/// Gets the size of the image in bytes.
 		/// </summary>
@@ -170,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				// Only calculate this once
 				if (_sizeInBytes == -1)
-					_sizeInBytes = this.Rows * this.Columns * this.SamplesPerPixel * this.BitsAllocated / 8;
+					_sizeInBytes = this.SizeInPixels * this.SamplesPerPixel * this.BitsAllocated / 8;
 
 				return _sizeInBytes;
 			}
@@ -232,6 +340,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				return _normalInterpolationMethod;
 			}
+		}
+
+		public override bool HitTest(Point point)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Move(SizeF delta)
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

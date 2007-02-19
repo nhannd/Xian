@@ -5,6 +5,7 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
 using System.Runtime.Serialization;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 {
@@ -37,22 +38,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 		{
 			Platform.CheckForNullReference(image, "image");
 
-			IVOILUTLinearProvider associatedWindowLevel = image as IVOILUTLinearProvider;
+			IVOILUTLinearProvider provider = image as IVOILUTLinearProvider;
 
-			if (associatedWindowLevel == null)
+			if (provider == null)
 				return false;
 
-			WindowLevelApplicator applicator = new WindowLevelApplicator(associatedWindowLevel);
+			WindowLevelApplicator applicator = new WindowLevelApplicator(image);
 
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevel;
 			command.BeginState = applicator.CreateMemento();
 
-			associatedWindowLevel.VoiLut.WindowWidth = this.WindowWidth;
-			associatedWindowLevel.VoiLut.WindowCenter = this.WindowCenter;
-			image.Draw();
+			provider.VoiLutLinear.WindowWidth = this.WindowWidth;
+			provider.VoiLutLinear.WindowCenter = this.WindowCenter;
+			provider.Draw();
 
 			command.EndState = applicator.CreateMemento();
+
 			if (!command.EndState.Equals(command.BeginState))
 			{
 				applicator.SetMemento(command.EndState);

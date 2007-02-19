@@ -37,30 +37,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private LutPresetSettings _settings;
 		private IActionSet _actionSet;
 
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-		
 		public LutPresetTool()
 		{
-		}
-
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
-		}
-
-		public bool Enabled
-		{
-			get { return _enabled; }
-			private set
-			{
-				if (_enabled == value)
-					return;
-
-				_enabled = value;
-				EventsHelper.Fire(_enabledChanged, this, new EventArgs());
-			}
 		}
 
 		public override IActionSet Actions
@@ -91,7 +69,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			this.Enabled = e.SelectedPresentationImage is StandardPresentationImage;
+			this.Enabled = 
+				(this.SelectedVOILUTLinearProvider != null &&
+				this.SelectedVOILUTLinearProvider.VoiLutLinear != null);
 		}
 		
 		private void AutoApplyLut()
@@ -99,25 +79,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!this.Enabled)
 				return;
 
-			IVOILUTLinearProvider associatedWindowLevel = this.SelectedVOILUTLinearProvider;
-			IImageSopProvider associatedDicom = this.SelectedImageSopProvider;
-
-			if (associatedWindowLevel == null || associatedDicom == null)
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedImageSopProvider == null ||
+				this.SelectedVOILUTLinearProvider == null ||
+				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
 				return;
 
-			Window[] windowCenterAndWidth = associatedDicom.ImageSop.WindowCenterAndWidth;
+			Window[] windowCenterAndWidth = this.SelectedImageSopProvider.ImageSop.WindowCenterAndWidth;
 
 			if (windowCenterAndWidth == null || windowCenterAndWidth.Length == 0)
 				return;
 
-			WindowLevelApplicator applicator = new WindowLevelApplicator(associatedWindowLevel);
+			WindowLevelApplicator applicator = new WindowLevelApplicator(this.SelectedPresentationImage);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevel;
 			command.BeginState = applicator.CreateMemento();
 
-			associatedWindowLevel.VoiLut.WindowWidth = windowCenterAndWidth[0].Width;
-			associatedWindowLevel.VoiLut.WindowCenter = windowCenterAndWidth[0].Center;
-			associatedWindowLevel.Draw();
+			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowWidth = windowCenterAndWidth[0].Width;
+			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowCenter = windowCenterAndWidth[0].Center;
+			this.SelectedVOILUTLinearProvider.Draw();
 
 			command.EndState = applicator.CreateMemento();
 			if (!command.EndState.Equals(command.BeginState))

@@ -32,19 +32,24 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (srcViewableRectangle.IsEmpty)
 				return;
 
-			byte[] srcPixelData = imageGraphic.GetPixelData();
+			byte[] srcPixelData = imageGraphic.PixelData.Raw;
 
-			byte[] lutData = null;
+			int[] lutData = null;
 			int srcBytesPerPixel = imageGraphic.BitsAllocated / 8;
 
-			if (imageGraphic.IsGrayscale)
-				lutData = imageGraphic.GetGrayscaleLUT();
+			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
+
+			if (grayscaleImage != null)
+			{
+				grayscaleImage.LUTComposer.Compose();
+				lutData = grayscaleImage.LUTComposer.OutputLUT;
+			}
 
 			bool swapXY = ImageRenderer.IsRotated(imageGraphic);
 
 			fixed (byte* pSrcPixelData = srcPixelData)
 			{
-				fixed (byte* pLutData = lutData)
+				fixed (int* pLutData = lutData)
 				{
 					//Use this loop code to quickly determine how well a particular interpolator will perform.
 

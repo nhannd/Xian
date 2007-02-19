@@ -95,7 +95,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			get
 			{
 				if (this.SelectedPresentationImage != null)
+				{
 					return this.SelectedPresentationImage as IVOILUTLinearProvider;
+				}
 				else
 					return null;
 			}

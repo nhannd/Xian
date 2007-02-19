@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract int BitsStored { get; set; }
 		public abstract int HighBit { get; set; }
 		public abstract int PixelRepresentation { get; set; }
-		public abstract byte[] GetPixelData();
+		public abstract byte[] PixelData { get; }
 		public abstract int PlanarConfiguration { get; set; }
 
 		// Modality LUT Module

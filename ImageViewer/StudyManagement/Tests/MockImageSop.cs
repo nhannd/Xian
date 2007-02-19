@@ -660,9 +660,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override byte[] GetPixelData()
+		public override byte[] PixelData
 		{
-			throw new Exception("The method or operation is not implemented.");
+			get
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
 		}
 
 		public override int PlanarConfiguration

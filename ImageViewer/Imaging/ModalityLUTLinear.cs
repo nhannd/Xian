@@ -17,30 +17,35 @@ namespace ClearCanvas.ImageViewer.Imaging
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
 
-			if (rescaleSlope == 0 || double.IsNaN(rescaleSlope))
-				_rescaleSlope = 1;
-			else
-				_rescaleSlope = rescaleSlope;
-
-			if (double.IsNaN(rescaleIntercept))
-				_rescaleIntercept = 0;
-			else
-				_rescaleIntercept = rescaleIntercept;
+			this.RescaleSlope = rescaleSlope;
+			this.RescaleIntercept = rescaleIntercept;
 
 			SetInputRange(bitsStored, pixelRepresentation);
-
-			_minOutputValue = this[_minInputValue];
-			_maxOutputValue = this[_maxInputValue];
+			SetOutputRange();
 		}
 
 		public double RescaleSlope
 		{
 			get { return _rescaleSlope; }
+			private set
+			{
+				if (value == 0 || double.IsNaN(value))
+					_rescaleSlope = 1;
+				else
+					_rescaleSlope = value;
+			}
 		}
 
 		public double RescaleIntercept
 		{
 			get { return _rescaleIntercept; }
+			private set
+			{
+				if (double.IsNaN(value))
+					_rescaleIntercept = 0;
+				else
+					_rescaleIntercept = value;
+			}
 		}
 
 		public override int this[int index]
@@ -48,10 +53,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				Platform.CheckIndexRange(index, _minInputValue, _maxInputValue, this);
+
 				return (int) (index * _rescaleSlope + _rescaleIntercept);
 			}
 			set
 			{
+				throw new InvalidOperationException("Cannot set elements in a calculated LUT");
 			}
 		}
 
@@ -68,6 +75,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_minInputValue = -(1 << (bitsStored - 1));
 				_maxInputValue =  (1 << (bitsStored - 1)) - 1;
 			}
+		}
+
+		private void SetOutputRange()
+		{
+			_minOutputValue = this[_minInputValue];
+			_maxOutputValue = this[_maxInputValue];
 		}
 	}
 }

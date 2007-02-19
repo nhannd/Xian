@@ -88,10 +88,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			StandardPresentationImage image = new StandardPresentationImage(imageSop);
 
 			//WindowLevelOperator.InstallVOILUTLinear(image);
-			IVOILUTLinear lut = image.VoiLut;
+			//IVOILUTLinear lut = image.VoiLut;
 			
-			Assert.AreEqual(lut.WindowWidth, expectedWindowWidth);
-			Assert.AreEqual(lut.WindowCenter, expectedWindowCenter);
+			//Assert.AreEqual(lut.WindowWidth, expectedWindowWidth);
+			//Assert.AreEqual(lut.WindowCenter, expectedWindowCenter);
 		}
 	}
 }

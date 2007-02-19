@@ -10,6 +10,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Tools.Standard;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -53,9 +54,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             base.Initialize();
 		}
 
-		private void CaptureBeginState(IVOILUTLinearProvider image)
+		private void CaptureBeginState()
 		{
-			_applicator = new WindowLevelApplicator(image);
+			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
+			// when image is not grayscale
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedVOILUTLinearProvider == null ||
+				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
+				return;
+
+			_applicator = new WindowLevelApplicator(this.SelectedPresentationImage);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandWindowLevel;
 			_command.BeginState = _applicator.CreateMemento();
@@ -63,6 +71,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureEndState()
 		{
+			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
+			// when image is not grayscale
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedVOILUTLinearProvider == null ||
+				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
+				return;
+
 			if (_command == null)
 				return;
 
@@ -83,45 +98,46 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementWindowWidth()
 		{
-			IncrementWindow(10, 0);
+			IncrementWindowWithUndo(10, 0);
 		}
 
 		private void DecrementWindowWidth()
 		{
-			IncrementWindow(-10, 0);
+			IncrementWindowWithUndo(-10, 0);
 		}
 
 		private void IncrementWindowCenter()
 		{
-			IncrementWindow(0, 10);
+			IncrementWindowWithUndo(0, 10);
 		}
 
 		private void DecrementWindowCenter()
 		{
-			IncrementWindow(0, -10);
+			IncrementWindowWithUndo(0, -10);
 		}
 
-		public void IncrementWindow(double windowIncrement, double levelIncrement)
+		public void IncrementWindowWithUndo(double windowIncrement, double levelIncrement)
 		{
-			IVOILUTLinearProvider image = this.SelectedVOILUTLinearProvider;
-
-			if (image == null)
-				return;
-
-			//InitImage(image);
-			this.CaptureBeginState(image);
-			this.IncrementWindow(image, windowIncrement, levelIncrement);
+			this.CaptureBeginState();
+			this.IncrementWindow(windowIncrement, levelIncrement);
 			this.CaptureEndState();
 		}
 
-		private void IncrementWindow(IVOILUTLinearProvider image, double windowIncrement, double levelIncrement)
+		private void IncrementWindow(double windowIncrement, double levelIncrement)
 		{
+			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
+			// when image is not grayscale
+			if (this.SelectedPresentationImage == null ||
+				this.SelectedVOILUTLinearProvider == null ||
+				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
+				return;
+
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			image.VoiLut.WindowWidth += windowIncrement;
-			image.VoiLut.WindowCenter += levelIncrement;
-			image.Draw();
+			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowWidth += windowIncrement;
+			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowCenter += levelIncrement;
+			this.SelectedVOILUTLinearProvider.Draw();
 
 			counter.Stop();
 
@@ -133,12 +149,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			IVOILUTLinearProvider image = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
-
-			if (image == null)
-				return false;
-
-			CaptureBeginState(image);
+			CaptureBeginState();
 
 			return true;
 		}
@@ -147,12 +158,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			IVOILUTLinearProvider image = this.Context.Viewer.SelectedPresentationImage as IVOILUTLinearProvider;
-
-			if (image == null)
-				return false;
-
-			IncrementWindow(image, this.DeltaX * 10, this.DeltaY * 10);
+			IncrementWindow(this.DeltaX * 10, this.DeltaY * 10);
 
 			return true;
 		}

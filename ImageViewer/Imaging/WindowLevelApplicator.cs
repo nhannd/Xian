@@ -2,20 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class WindowLevelApplicator : ImageOperationApplicator
 	{
-		public WindowLevelApplicator(IVOILUTLinearProvider associatedWindowLevel)
-			: base(associatedWindowLevel as IPresentationImage)
+		public WindowLevelApplicator(IPresentationImage image)
+			: base(image)
 		{
 
 		}
 
 		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
-			return (image as IVOILUTLinearProvider).VoiLut;
+			IVOILUTLinearProvider voiLutLinear = image as IVOILUTLinearProvider;
+
+			if (voiLutLinear == null)
+				throw new Exception("PresentationImage does not support IVOILUTLinear");
+
+			return voiLutLinear.VoiLutLinear as IMemorable;
 		}
 	}
 }

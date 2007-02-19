@@ -12,7 +12,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		// Constructors
 		public LUT(int numEntries)
 		{
-			CreateLUT(numEntries);
+			Platform.CheckPositive(numEntries, "numEntries");
+			_numEntries = numEntries;
 		}
 
 		// Properties
@@ -23,7 +24,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		protected int[] Table
 		{
-			get { return _table; }
+			get
+			{
+				if (_table == null)
+					_table = new int[_numEntries];
+
+				return _table;
+			}
 		}
 
 		// Indexer
@@ -32,24 +39,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				Platform.CheckIndexRange(index, 0, _numEntries - 1, this);
-				return _table[index];
+				return this.Table[index];
 			}
 			set
 			{
 				Platform.CheckIndexRange(index, 0, _numEntries - 1, this);
-				_table[index] = value;
-			}
-		}
-
-		// Private method
-		private void CreateLUT(int numEntries)
-		{
-			if (_table == null)
-			{
-				Platform.CheckPositive(numEntries, "numEntries");
-
-				_numEntries = numEntries;
-				_table = new int[_numEntries];
+				this.Table[index] = value;
 			}
 		}
 	}

@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int dstWidth,
 			int dstBytesPerPixel,
 			bool swapXY,
-			byte* pLutData,
+			int* pLutData,
 			bool isRGB,
 			bool isPlanar,
 			bool IsSigned)
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			for (int y = 0; y < dstRegionHeight; ++y)
 			{
-				byte* pRowDstPixelData = pDstPixelData;
+				int* pRowDstPixelData = (int*)pDstPixelData;
 
 				float ySrcPixelCoordinate = srcRegionRectangle.Top + ((float)y + 0.5F) * yRatio;
 
@@ -149,12 +149,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 								float yInterpolated1 = (float)(*pSrcPixel00) + (*pSrcPixel10 - *pSrcPixel00) * dy;
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
-								byte value = pLutData[(ushort)interpolated];
-
-								pRowDstPixelData[0] = value; //B
-								pRowDstPixelData[1] = value; //G
-								pRowDstPixelData[2] = value; //R
-								pRowDstPixelData[3] = 0xff;  //A
+								int value = pLutData[(ushort)interpolated];
+								*pRowDstPixelData = value;
 							}
 							else
 							{
@@ -167,12 +163,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 
 								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
-								byte value = pLutData[(ushort)interpolated];
-
-								pRowDstPixelData[0] = value; //B
-								pRowDstPixelData[1] = value; //G
-								pRowDstPixelData[2] = value; //R
-								pRowDstPixelData[3] = 0xff;  //A
+								int value = pLutData[(ushort)interpolated];
+								*pRowDstPixelData = value;
 							}
 						}
 						else
@@ -188,12 +180,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 
 								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
-								byte value = pLutData[(byte)interpolated];
-
-								pRowDstPixelData[0] = value; //B
-								pRowDstPixelData[1] = value; //G
-								pRowDstPixelData[2] = value; //R
-								pRowDstPixelData[3] = 0xff;  //A
+								int value = pLutData[(byte)interpolated];
+								*pRowDstPixelData = value;
 							}
 							else
 							{
@@ -206,12 +194,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 								float yInterpolated2 = (float)(*pSrcPixel01) + (*pSrcPixel11 - *pSrcPixel01) * dy;
 
 								float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dxValuesAtXSrcPixelCoordinates[x];
-								byte value = pLutData[(byte)interpolated];
-
-								pRowDstPixelData[0] = value; //B
-								pRowDstPixelData[1] = value; //G
-								pRowDstPixelData[2] = value; //R
-								pRowDstPixelData[3] = 0xff;  //A
+								int value = pLutData[(byte)interpolated];
+								*pRowDstPixelData = value;
 							}
 						}
 					}
@@ -239,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 						}
 					}
 
-					pRowDstPixelData += xDstIncrement;
+					pRowDstPixelData++;
 				}
 
 				pDstPixelData += yDstIncrement;

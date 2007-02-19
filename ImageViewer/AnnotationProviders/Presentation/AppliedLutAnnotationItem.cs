@@ -29,10 +29,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 				return string.Empty;
 
 			IVOILUTLinearProvider image = presentationImage as IVOILUTLinearProvider;
+
 			if (image == null)
 				return string.Empty;
 
-			return String.Format("{0}/{1}", image.VoiLut.WindowWidth, image.VoiLut.WindowCenter);
+			if (image.VoiLutLinear == null)
+				return string.Empty;
+
+			return String.Format("{0}/{1}", image.VoiLutLinear.WindowWidth, image.VoiLutLinear.WindowCenter);
 		}
 	}
 }

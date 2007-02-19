@@ -6,6 +6,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 {
 	public interface IImageGraphicProvider
 	{
-		ImageGraphic Image { get; }
+		ImageGraphic ImageGraphic { get; }
 	}
 }

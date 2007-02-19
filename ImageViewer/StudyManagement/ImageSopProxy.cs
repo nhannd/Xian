@@ -697,9 +697,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override byte[] GetPixelData()
+		public override byte[] PixelData
 		{
-			return _realImageSop.GetPixelData();
+			get
+			{
+				return _realImageSop.PixelData;
+			}
 		}
 
 		public override int PlanarConfiguration

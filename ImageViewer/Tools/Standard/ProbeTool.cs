@@ -34,12 +34,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ProbeTool : MouseImageViewerTool
 	{
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
 		private Tile _selectedTile;
 		private ImageGraphic _selectedImageGraphic;
-		private PixelDataWrapper _wrapper;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -47,7 +43,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		public ProbeTool()
 		{
-			_enabled = true;
 			this.CursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
 		}
 
@@ -59,34 +54,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Initialize();
 		}
 
-		/// <summary>
-		/// Called by the framework to determine whether this tool is enabled/disabled in the UI.
-		/// You may change the name of this property as desired, but be sure to change the
-		/// EnabledStateObserver attribute accordingly.
-		/// </summary>
-		public bool Enabled
-		{
-			get { return _enabled; }
-			protected set
-			{
-				if (_enabled != value)
-				{
-					_enabled = value;
-					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Notifies the framework that the Enabled state of this tool has changed.
-		/// You may change the name of this event as desired, but be sure to change the
-		/// EnabledStateObserver attribute accordingly.
-		/// </summary>
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
-		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
@@ -99,21 +66,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
-			_selectedImageGraphic = associatedImageGraphic.Image;
-
-			_wrapper = new PixelDataWrapper
-				(
-					_selectedImageGraphic.Columns,
-					_selectedImageGraphic.Rows,
-					_selectedImageGraphic.BitsAllocated,
-					_selectedImageGraphic.BitsStored,
-					_selectedImageGraphic.HighBit,
-					_selectedImageGraphic.SamplesPerPixel,
-					_selectedImageGraphic.PixelRepresentation,
-					_selectedImageGraphic.PlanarConfiguration,
-					_selectedImageGraphic.PhotometricInterpretation,
-					_selectedImageGraphic.GetPixelData()
-				);
+			_selectedImageGraphic = associatedImageGraphic.ImageGraphic;
 
 			Probe(mouseInformation.Location);
 
@@ -161,8 +114,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile.InformationBox.Visible = false;
 			_selectedTile.InformationBox = null;
 			_selectedTile = null;
-
-			_wrapper = null;
 		}
 
 		private void Probe(Point destinationPoint)
@@ -192,9 +143,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					string formatString = "{0}: {1}";
 
 					if (_selectedImageGraphic.BitsAllocated == 16)
-						pixelValue = _wrapper.GetPixel16(sourcePointRounded.X, sourcePointRounded.Y);
+						pixelValue = _selectedImageGraphic.PixelData.GetPixel16(sourcePointRounded.X, sourcePointRounded.Y);
 					else
-						pixelValue = _wrapper.GetPixel8(sourcePointRounded.X, sourcePointRounded.Y);
+						pixelValue = _selectedImageGraphic.PixelData.GetPixel8(sourcePointRounded.X, sourcePointRounded.Y);
 
 					if (_selectedImageGraphic.IsSigned)
 						pixelValue = (short)pixelValue;
@@ -229,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					showModalityValue = false;
 					showVoiValue = false;
 
-					Color color = _wrapper.GetPixelRGB(sourcePointRounded.X, sourcePointRounded.Y);
+					Color color = _selectedImageGraphic.PixelData.GetPixelRGB(sourcePointRounded.X, sourcePointRounded.Y);
 					string rgbFormatted = String.Format("RGB({0}, {1}, {2})", color.R, color.G, color.B);
 					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}

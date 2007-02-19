@@ -7,10 +7,12 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	public class PixelDataWrapper
+	public class PixelData
 	{
-		private int _height;
-		private int _width;
+		#region Private fields
+
+		private int _rows;
+		private int _columns;
 		private int _bitsAllocated;
 		private int _bitsStored;
 		private int _highBit;
@@ -22,9 +24,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bytesPerPixel;
 		private int _planeOffset;
 
-		public PixelDataWrapper(
-			int width,
-			int height,
+		#endregion
+
+		public PixelData(ImageGraphic imageGraphic) :
+			this(imageGraphic.Rows, 
+				imageGraphic.Columns,
+				imageGraphic.BitsAllocated,
+				imageGraphic.BitsStored,
+				imageGraphic.HighBit,
+				imageGraphic.SamplesPerPixel,
+				imageGraphic.PixelRepresentation,
+				imageGraphic.PlanarConfiguration,
+				imageGraphic.PhotometricInterpretation,
+				imageGraphic.PixelData.Raw)
+		{
+
+		}
+
+		public PixelData(
+			int rows,
+			int columns,
 			int bitsAllocated,
 			int bitsStored,
 			int highBit,
@@ -34,8 +53,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			PhotometricInterpretation photometricInterpretation,
 			byte[] pixelData)
 		{
-			_height = height;
-			_width = width;
+			_rows = rows;
+			_columns = columns;
 			_bitsAllocated = bitsAllocated;
 			_bitsStored = bitsStored;
 			_highBit = highBit;
@@ -58,12 +77,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (_planarConfiguration == 0)
 				_planeOffset = 1;
 			else
-				_planeOffset = _bytesPerPixel * _width * _height;
+				_planeOffset = _bytesPerPixel * _columns * _rows;
 		}
 
-		public byte[] GetPixelData()
+		public byte[] Raw
 		{
-			return _pixelData;
+			get { return _pixelData; }
 		}
 
 		public byte GetPixel8(int x, int y)
@@ -131,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private int GetIndex(int x, int y)
 		{
-			int stride = _width * _bytesPerPixel;
+			int stride = _columns * _bytesPerPixel;
 			int i = (y * stride) + (x * _bytesPerPixel);
 			return i;
 		}

@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int dstWidth,
 			int dstBytesPerPixel,
 			bool swapXY,
-			byte* pLutData,
+			int* pLutData,
 			bool isRGB,
 			bool isPlanar,
             bool isSigned)
@@ -146,25 +146,21 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private static void StretchRow8(
 			byte* pSrcPixelData,
 			byte* pDstPixelData,
-			byte* pLutData,
+			int* pLutData,
 			int srcRegionWidth,
 			int dstRegionWidth,
 			int xSrcIncrement,
 			int xDstIncrement)
 		{
 			byte* pRowSrcPixelData = pSrcPixelData;
-			byte* pRowDstPixelData = pDstPixelData;
+			int* pRowDstPixelData = (int*)pDstPixelData;
 
 			int ex = srcRegionWidth - dstRegionWidth;
 
 			for (int x = 0; x < dstRegionWidth; x++)
 			{
-				byte value = pLutData[*pRowSrcPixelData];
-
-				pRowDstPixelData[0] = value; //B
-				pRowDstPixelData[1] = value; //G
-				pRowDstPixelData[2] = value; //R
-				pRowDstPixelData[3] = 0xff;  //A
+				int value = pLutData[*pRowSrcPixelData];
+				*pRowDstPixelData = value;
 
 				while (ex >= 0)
 				{
@@ -172,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					ex -= dstRegionWidth;
 				}
 
-				pRowDstPixelData += xDstIncrement;
+				pRowDstPixelData++;
 				ex += srcRegionWidth;
 			}
 		}
@@ -180,24 +176,21 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private static void StretchRow16(
 			byte* pSrcPixelData, 
 			byte* pDstPixelData, 
-			byte* pLutData, 
+			int* pLutData, 
 			int srcRegionWidth,
 			int dstRegionWidth, 
 			int xSrcIncrement, 
 			int xDstIncrement)
 		{
 			byte* pRowSrcPixelData = pSrcPixelData;
-			byte* pRowDstPixelData = pDstPixelData;
+			int* pRowDstPixelData = (int*)pDstPixelData;
 
 			int ex = srcRegionWidth - dstRegionWidth;
 
 			for (int x = 0; x < dstRegionWidth; x++)
 			{
-                byte value = pLutData[*((ushort*)pRowSrcPixelData)];
-                pRowDstPixelData[0] = value; //B
-                pRowDstPixelData[1] = value; //G
-                pRowDstPixelData[2] = value; //R
-                pRowDstPixelData[3] = 0xff;  //A
+                int value = pLutData[*((ushort*)pRowSrcPixelData)];
+				*pRowDstPixelData = value;
 
 				while (ex >= 0)
 				{
@@ -205,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					ex -= dstRegionWidth;
 				}
 
-				pRowDstPixelData += xDstIncrement;
+				pRowDstPixelData ++;
 				ex += srcRegionWidth;
 			}
 		}
@@ -213,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private static void StretchRowRGB(
 			byte* pSrcPixelData, 
 			byte* pDstPixelData, 
-			byte* pLutData, 
+			int* pLutData, 
 			int srcRegionWidth, 
 			int dstRegionWidth, 
 			int xSrcIncrement, 

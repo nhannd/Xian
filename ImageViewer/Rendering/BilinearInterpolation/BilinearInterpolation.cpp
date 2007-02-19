@@ -135,7 +135,7 @@ void InterpolateBilinearT(
 
 		float xRatio,
 		float yRatio,
-		BYTE* pLutData,
+		int* pLutData,
 
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
@@ -159,7 +159,7 @@ void InterpolateBilinearT(
 		int ySrcPixel = (int)ySrcCoordinate;
 		int dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
 
-		BYTE* pRowDstPixelData = pDstPixelData;
+		int* pRowDstPixelData = (int*)pDstPixelData;
 		T* pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
 	    
 		int* pxPixel = spxSrcPixels.get();
@@ -177,14 +177,10 @@ void InterpolateBilinearT(
 			int yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 			int iFinal = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
 
-			BYTE value = *(pLutData + (U)iFinal);
+			int value = *(pLutData + (U)iFinal);
+			*pRowDstPixelData = value;
 
-			pRowDstPixelData[0] = value; //B
-			pRowDstPixelData[1] = value; //G
-			pRowDstPixelData[2] = value; //R
-			pRowDstPixelData[3] = 0xff;  //A
-
-			pRowDstPixelData += xDstIncrement;
+			pRowDstPixelData++;
 
 			++pxPixel;
 			++pdxFixed;
@@ -302,7 +298,7 @@ BOOL InterpolateBilinear
 	int dstRegionRectBottom,
 
 	BOOL swapXY,
-	BYTE* pLutData
+	int* pLutData
 )
 {
 	unsigned int dstRegionHeight, dstRegionWidth,

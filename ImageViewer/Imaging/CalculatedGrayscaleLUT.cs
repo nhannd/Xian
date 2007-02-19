@@ -2,7 +2,7 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public abstract class CalculatedGrayscaleLUT : IGrayscaleLUT
+	public abstract class CalculatedGrayscaleLUT : IComposableLUT
 	{
 		protected int _minInputValue;
 		protected int _maxInputValue;
