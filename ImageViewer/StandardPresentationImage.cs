@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region IImageGraphicProvider
 
-		public ImageGraphic ImageGraphic
+		public virtual ImageGraphic ImageGraphic
 		{
 			get { return _imageGraphic; }
 		}
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region IImageSopProvider members
 
-		public ImageSop ImageSop
+		public virtual ImageSop ImageSop
 		{
 			get { return _imageSop; }
 		}
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region ISpatialTransformProvider members
 
-		public ISpatialTransform SpatialTransform
+		public virtual ISpatialTransform SpatialTransform
 		{
 			get { return _compositeImageGraphic.SpatialTransform as ISpatialTransform; }
 		}
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region IVOILUTLinearProvider Members
 
-		public IVOILUTLinear VoiLutLinear
+		public virtual IVOILUTLinear VoiLutLinear
 		{
 			get 
 			{
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region IOverlayGraphicsProvider
 
-		public GraphicCollection OverlayGraphics
+		public virtual GraphicCollection OverlayGraphics
 		{
 			get { return _overlayGraphics.Graphics; }
 		}
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		private void InitializeSceneGraph()
+		protected virtual void InitializeSceneGraph()
 		{
 			_compositeImageGraphic = new CompositeImageGraphic(
 				_imageSop.Rows,
