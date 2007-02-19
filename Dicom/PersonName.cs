@@ -60,7 +60,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                return ComponentGroup.GetEmptyComponentGroup();
+                return _componentGroups[1];
             }
         }
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                return ComponentGroup.GetEmptyComponentGroup();
+                return _componentGroups[2];
             }
         }
 
