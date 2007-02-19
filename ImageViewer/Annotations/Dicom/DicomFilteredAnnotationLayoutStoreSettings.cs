@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
@@ -8,9 +9,14 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class DicomFilteredAnnotationLayoutStoreSettings
 	{
-
-		public DicomFilteredAnnotationLayoutStoreSettings()
+		private DicomFilteredAnnotationLayoutStoreSettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~DicomFilteredAnnotationLayoutStoreSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 	}
 }

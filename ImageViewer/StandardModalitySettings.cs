@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -10,8 +11,14 @@ namespace ClearCanvas.ImageViewer
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class StandardModalitySettings
 	{
-		public StandardModalitySettings()
+		private StandardModalitySettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~StandardModalitySettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 
 		public ICollection<string> ModalitiesAsArray

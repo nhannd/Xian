@@ -20,6 +20,11 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 		private DicomFilteredAnnotationLayoutStore()
 		{
+			DicomFilteredAnnotationLayoutStoreSettings.Default.PropertyChanged +=
+				delegate(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+				{
+					this.Initialize(true);
+				};
 		}
 
 		public static DicomFilteredAnnotationLayoutStore Instance

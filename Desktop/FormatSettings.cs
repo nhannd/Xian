@@ -12,8 +12,14 @@ namespace ClearCanvas.Desktop
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class FormatSettings
     {
-        public FormatSettings()
+        private FormatSettings()
         {
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
+
+		~FormatSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+		}
     }
 }

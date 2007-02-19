@@ -61,7 +61,28 @@ namespace ClearCanvas.Common.Configuration
                 delegate(PropertyInfo property) { return IsUserScoped(property) || IsAppScoped(property); });
         }
 
-        /// <summary>
+		/// <summary>
+		/// Obtains the default value of a setting from the <see cref="DefaultSettingValueAttribute"/>.
+		/// If translate is true, and the value is the name of an embedded resource, it is automatically translated.
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="translate"></param>
+		/// <returns></returns>
+		public static string GetDefaultValue(PropertyInfo property, bool translate)
+		{
+			DefaultSettingValueAttribute a = CollectionUtils.FirstElement<DefaultSettingValueAttribute>(
+				property.GetCustomAttributes(typeof(DefaultSettingValueAttribute), false));
+
+			if (a == null)
+				return "";
+
+			if (!translate)
+				return a.Value;
+
+			return TranslateDefaultValue(property.ReflectedType, a.Value);
+		}
+		
+		/// <summary>
         /// Obtains the default value of a setting from the <see cref="DefaultSettingValueAttribute"/>.
         /// If the value is the name of an embedded resource, it is automatically translated.
         /// </summary>
@@ -69,13 +90,7 @@ namespace ClearCanvas.Common.Configuration
         /// <returns></returns>
         public static string GetDefaultValue(PropertyInfo property)
         {
-            DefaultSettingValueAttribute a = CollectionUtils.FirstElement<DefaultSettingValueAttribute>(
-                property.GetCustomAttributes(typeof(DefaultSettingValueAttribute), false));
-
-            if (a == null)
-                return "";
-
-            return TranslateDefaultValue(property.ReflectedType, a.Value);
+			return GetDefaultValue(property, true);
         }
 
         /// <summary>

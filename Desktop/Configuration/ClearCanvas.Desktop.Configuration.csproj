@@ -40,6 +40,7 @@
     <Compile Include="ConfigurationPageManager.cs" />
     <Compile Include="IConfigurationPage.cs" />
     <Compile Include="IConfigurationPageProvider.cs" />
+    <Compile Include="LocalConfigurationStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingEditorComponent.cs" />
     <Compile Include="SettingsManagementComponent.cs" />
@@ -50,7 +51,9 @@
     </Compile>
     <Compile Include="Standard\CustomDateFormatSettings.cs" />
     <Compile Include="Standard\CustomDateFormatSettings.designer.cs">
-      <DependentUpon>CustomDateFormatSettings.cs</DependentUpon>
+      <DependentUpon>CustomDateFormatSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Standard\DateFormatApplicationComponent.cs" />
     <Compile Include="Tools\MenuOptions.cs" />
@@ -79,7 +82,11 @@
     <EmbeddedResource Include="Icons\MenuOptionsSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Standard\CustomDateFormatSettings.settings" />
+    <None Include="app.config" />
+    <None Include="Standard\CustomDateFormatSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>CustomDateFormatSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Standard\CustomDateFormatSettings.xml" />

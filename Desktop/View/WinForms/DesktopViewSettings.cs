@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -8,8 +9,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class DesktopViewSettings
 	{
-		public DesktopViewSettings()
+		private DesktopViewSettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~DesktopViewSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 	}
 }

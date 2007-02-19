@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Configuration.Standard
 {
@@ -11,8 +12,14 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class CustomDateFormatSettings
 	{
-		public CustomDateFormatSettings()
+		private CustomDateFormatSettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~CustomDateFormatSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 
 		public System.Collections.Specialized.StringCollection AvailableCustomFormats

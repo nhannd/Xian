@@ -5,6 +5,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -14,6 +15,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
 		private LayoutConfigurationSettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~LayoutConfigurationSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 
 		public StoredLayoutConfiguration GetLayoutConfiguration(string modality)

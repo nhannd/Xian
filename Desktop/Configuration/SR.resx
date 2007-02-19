@@ -117,6 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionOnlyDefaultProfileSupported" xml:space="preserve">
+    <value>Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options).</value>
+  </data>
+  <data name="ExceptionRemoveUserSettingNotSupported" xml:space="preserve">
+    <value>Removal of User Settings is not supported.</value>
+  </data>
+  <data name="ExceptionSectionIsNotAClientSection" xml:space="preserve">
+    <value>The specified ConfigurationSection must be of Type ClientSettingsSection (Type is {0}).</value>
+  </data>
+  <data name="ExceptionSettingsPropertyDoesNotExist" xml:space="preserve">
+    <value>The specified settings property does not exist ({0}).</value>
+  </data>
+  <data name="ExceptionUpgradeNotSupported" xml:space="preserve">
+    <value>Application configuration upgrades are performed by the LocalFileSettingsProvider included in the .NET framework.</value>
+  </data>
   <data name="InvalidCustomDateFormat" xml:space="preserve">
     <value>The custom date format must be from the available list.</value>
   </data>
@@ -134,6 +149,9 @@
   </data>
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
+  </data>
+  <data name="MessageSaveSettingFailed" xml:space="preserve">
+    <value>Failed to save the selected settings values.  Please ensure the values entered are properly formatted for the data type.</value>
   </data>
   <data name="TitleDateFormat" xml:space="preserve">
     <value>Date Format</value>

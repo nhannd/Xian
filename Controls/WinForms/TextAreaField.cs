@@ -55,6 +55,13 @@ namespace ClearCanvas.Controls.WinForms
             set { _textBox.ScrollBars = value; }
         }
 
+		[DefaultValue(32767)]
+		public int MaximumLength
+		{
+			get { return _textBox.MaxLength; }
+			set { _textBox.MaxLength = value; }
+		}
+
         private static string NullIfEmpty(string value)
         {
             return (value != null && value.Length == 0) ? null : value;

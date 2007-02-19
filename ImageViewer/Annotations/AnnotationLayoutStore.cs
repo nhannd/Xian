@@ -24,6 +24,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private AnnotationLayoutStore()
 		{
 			_layoutsInMemory = new Dictionary<string, StoredAnnotationLayout>();
+			AnnotationLayoutStoreSettings.Default.PropertyChanged += 
+			delegate(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+			{
+				this.Initialize(true);
+			};
 		}
 
 		public event EventHandler StoreChanged

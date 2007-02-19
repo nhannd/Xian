@@ -61,6 +61,51 @@ namespace ClearCanvas.Desktop.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options)..
+        /// </summary>
+        internal static string ExceptionOnlyDefaultProfileSupported {
+            get {
+                return ResourceManager.GetString("ExceptionOnlyDefaultProfileSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removal of User Settings is not supported..
+        /// </summary>
+        internal static string ExceptionRemoveUserSettingNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionRemoveUserSettingNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified ConfigurationSection must be of Type ClientSettingsSection (Type is {0})..
+        /// </summary>
+        internal static string ExceptionSectionIsNotAClientSection {
+            get {
+                return ResourceManager.GetString("ExceptionSectionIsNotAClientSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified settings property does not exist ({0})..
+        /// </summary>
+        internal static string ExceptionSettingsPropertyDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionSettingsPropertyDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application configuration upgrades are performed by the LocalFileSettingsProvider included in the .NET framework..
+        /// </summary>
+        internal static string ExceptionUpgradeNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionUpgradeNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The custom date format must be from the available list..
         /// </summary>
         internal static string InvalidCustomDateFormat {
@@ -111,6 +156,15 @@ namespace ClearCanvas.Desktop.Configuration {
         internal static string MessageNoConfigurationPagesExist {
             get {
                 return ResourceManager.GetString("MessageNoConfigurationPagesExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save the selected settings values.  Please ensure the values entered are properly formatted for the data type..
+        /// </summary>
+        internal static string MessageSaveSettingFailed {
+            get {
+                return ResourceManager.GetString("MessageSaveSettingFailed", resourceCulture);
             }
         }
         

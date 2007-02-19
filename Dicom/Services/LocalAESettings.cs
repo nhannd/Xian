@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Dicom.Services
 {
@@ -7,8 +8,14 @@ namespace ClearCanvas.Dicom.Services
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class LocalAESettings
 	{
-		public LocalAESettings()
+		private LocalAESettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~LocalAESettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 	}
 }

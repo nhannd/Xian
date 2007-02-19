@@ -26,22 +26,24 @@ namespace ClearCanvas.Desktop.Configuration
         {
             if (_workspace == null)
             {
-                try
+				IConfigurationStore store = null;
+				try
                 {
-                    // if this throws an exception, there is no point in launching the component
-                    IConfigurationStore store = (IConfigurationStore)(new ConfigurationStoreExtensionPoint()).CreateExtension();
-
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        new SettingsManagementComponent(store),
-                        "Settings Management",
-                        delegate(IApplicationComponent c) { _workspace = null; });
+                    // if this throws an exception, only the default LocalFileSettingsProvider can be used.
+                    store = (IConfigurationStore)(new ConfigurationStoreExtensionPoint()).CreateExtension();
                 }
                 catch (NotSupportedException)
                 {
-                    this.Context.DesktopWindow.ShowMessageBox("No configuration store extension found", MessageBoxActions.Ok);
+					//allow editing of the app.config file via the LocalConfigurationStore.
+					store = new LocalConfigurationStore();
                 }
-            }
+			
+				_workspace = ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow,
+					new SettingsManagementComponent(store),
+					"Settings Management",
+					delegate(IApplicationComponent c) { _workspace = null; });
+			}
             else
             {
                 _workspace.Activate();
@@ -339,9 +341,16 @@ namespace ClearCanvas.Desktop.Configuration
                     }
                 }
 
-                _configStore.SaveSettingsValues(_selectedSettingsGroup,
-                        null, null,    // save to the default profile
-                        values);
+				try
+				{
+					_configStore.SaveSettingsValues(_selectedSettingsGroup,
+						null, null,    // save to the default profile
+						values);
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, SR.MessageSaveSettingFailed, this.Host.DesktopWindow);
+				}
 
                 // refresh the table so that properties are no longer marked dirty
                 FillSettingsPropertiesTable(values);

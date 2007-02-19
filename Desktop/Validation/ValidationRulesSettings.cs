@@ -7,6 +7,7 @@ using System.Reflection;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Validation
 {
@@ -46,13 +47,23 @@ namespace ClearCanvas.Desktop.Validation
         private SettingsProvider _provider;
 
         public ValidationRulesSettings(string resourceName, Assembly asm)
+			: this()
         {
             _provider = new ClearCanvas.Common.Configuration.StandardSettingsProvider();
             _provider.Initialize(null, null);
             this.Providers.Add(_provider);
             ProcessXml(resourceName, asm);
-
         }
+
+		protected ValidationRulesSettings()
+		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~ValidationRulesSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+		}
 
         public void GetRules()
         {

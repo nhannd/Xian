@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -8,8 +9,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class AnnotationLayoutStoreSettings
 	{
-		public AnnotationLayoutStoreSettings()
+		private AnnotationLayoutStoreSettings()
 		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+		}
+
+		~AnnotationLayoutStoreSettings()
+		{
+			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
 		}
 	}
 }
