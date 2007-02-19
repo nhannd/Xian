@@ -12,6 +12,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public class MoveGraphicState : StandardGraphicState
 	{
 		private PointF _currentPoint = new Point(0,0);
+		private PointF _startPoint;
 
 		public MoveGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)
@@ -21,10 +22,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.LastPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
+			_startPoint = _currentPoint = base.LastPoint;
 
 			if (this.SupportUndo)
 			{
-				base.Command = new PositionGraphicCommand(base.StatefulGraphic, false);
+				base.Command = new PositionGraphicCommand(base.StatefulGraphic);
 				base.Command.Name = SR.CommandMoveGraphic;
 				base.Command.BeginState = (base.StatefulGraphic as IMemorable).CreateMemento();
 			}
@@ -55,7 +57,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override void Cancel()
 		{
-			if (this.SupportUndo)
+			if (this.SupportUndo && _startPoint != _currentPoint)
 			{
 				base.Command.EndState = (base.StatefulGraphic as IMemorable).CreateMemento();
 				this.StandardStatefulGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);

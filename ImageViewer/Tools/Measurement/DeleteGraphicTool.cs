@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -43,8 +44,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (image == null)
 				return;
 
-			image.OverlayGraphics.Remove(graphic);
-			image.Draw();
+			PositionGraphicCommand command = new PositionGraphicCommand(graphic, PositionGraphicCommand.CreateOperation.Delete);
+			command.Name = SR.NameDeleteGraphic;
+			this.Context.Graphic.ImageViewer.CommandHistory.AddCommand(command);
+			graphic.Visible = false;
+			graphic.Draw();
 		}
 	}
 }

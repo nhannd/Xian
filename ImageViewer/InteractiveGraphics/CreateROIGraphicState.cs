@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.ROIGraphic.State = this.ROIGraphic.CreateFocusSelectedState();
 
 				// We're done creating, so create a command
-				this.Command = new PositionGraphicCommand(this.ROIGraphic, true);
+				this.Command = new PositionGraphicCommand(this.ROIGraphic, PositionGraphicCommand.CreateOperation.Create);
 				this.Command.Name = SR.CommandCreateROIGraphic;
 				this.ROIGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 			}

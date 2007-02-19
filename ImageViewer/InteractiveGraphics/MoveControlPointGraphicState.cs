@@ -11,6 +11,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public class MoveControlPointGraphicState : StandardGraphicState
 	{
 		private PointF _currentPoint;
+		private PointF _startPoint;
 		private int _controlPointIndex;
 
 		// Edit an overlay object control point
@@ -32,10 +33,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
+			_startPoint = _currentPoint = base.LastPoint;
 
 			if (this.SupportUndo)
 			{
-				base.Command = new PositionGraphicCommand(this.InteractiveGraphic, false);
+				base.Command = new PositionGraphicCommand(this.InteractiveGraphic);
 				base.Command.Name = SR.CommandMoveControlPoint;
 				PositionGraphicCommand cmd = base.Command as PositionGraphicCommand;
 				cmd.BeginState = this.InteractiveGraphic.CreateMemento();
@@ -69,7 +71,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override void Cancel()
 		{
-			if (this.SupportUndo)
+			//only save undo info if the point moved
+			if (this.SupportUndo && _startPoint != _currentPoint)
 			{
 				PositionGraphicCommand cmd = base.Command as PositionGraphicCommand;
 				cmd.EndState = this.InteractiveGraphic.CreateMemento();

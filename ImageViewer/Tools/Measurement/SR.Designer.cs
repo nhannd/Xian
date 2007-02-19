@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DeleteGraphic.
+        /// </summary>
+        public static string NameDeleteGraphic {
+            get {
+                return ResourceManager.GetString("NameDeleteGraphic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to n/a.
         /// </summary>
         public static string NotApplicable {

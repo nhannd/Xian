@@ -9,23 +9,30 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	public class PositionGraphicCommand : UndoableCommand
 	{
-		private bool _create;
+		public enum CreateOperation { None, Create, Delete };
+
+		private CreateOperation _createOperation;
+
+		public PositionGraphicCommand(IGraphic graphic)
+			: this(graphic, CreateOperation.None)
+		{
+		}
 
 		public PositionGraphicCommand(
-			IGraphic graphic, bool create) 
+			IGraphic graphic, CreateOperation createOperation) 
 			: base(graphic as IMemorable)
 		{
 			Platform.CheckForNullReference(graphic, "graphic");
 
-			_create = create;
+			_createOperation = createOperation;
 		}
 
 		public override void Execute()
 		{
 			IGraphic graphic = base.Originator as IGraphic;
 
-			if (_create)
-				graphic.Visible = true;
+			if (_createOperation != CreateOperation.None)
+				graphic.Visible = _createOperation == CreateOperation.Create;
 			else
 				base.Execute();
 
@@ -44,8 +51,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// and thus would never be rendered
 			IGraphic graphic = base.Originator as IGraphic;
 
-			if (_create)
-				graphic.Visible = false;
+			if (_createOperation != CreateOperation.None)
+				graphic.Visible = _createOperation == CreateOperation.Delete;
 			else
 				base.Unexecute();
 

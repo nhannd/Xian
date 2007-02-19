@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				if (this.SupportUndo)
 				{
-					base.Command = new PositionGraphicCommand(this.InteractiveGraphic, true);
+					base.Command = new PositionGraphicCommand(this.InteractiveGraphic, PositionGraphicCommand.CreateOperation.Create);
 					base.Command.Name = SR.CommandCreateMultilineGraphic;
 					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 				}
