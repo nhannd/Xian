@@ -6,6 +6,7 @@ namespace ClearCanvas.Common.Utilities
 	public class CollectionEventArgs<TItem> : EventArgs
 	{
 		private TItem _item;
+		private int _index;
 
 		public CollectionEventArgs()
 		{
@@ -15,6 +16,12 @@ namespace ClearCanvas.Common.Utilities
 		{
 			get { return _item; }
 			set { _item = value; }
+		}
+
+		public int Index
+		{
+			get { return _index; }
+			set { _index = value; }
 		}
 	}
 }

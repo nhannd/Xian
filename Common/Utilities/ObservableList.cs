@@ -78,6 +78,7 @@ namespace ClearCanvas.Common.Utilities
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = item;
+			args.Index = index;
 			OnItemAdded(args);
 		}
 
@@ -124,6 +125,7 @@ namespace ClearCanvas.Common.Utilities
 
 			TItemEventArgs args = new TItemEventArgs();
 			args.Item = item;
+			args.Index = this.Count - 1;
 			OnItemAdded(args);
 		}
 
