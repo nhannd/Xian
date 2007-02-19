@@ -8,6 +8,14 @@ using System.Reflection;
 
 namespace ClearCanvas.Common.Configuration
 {
+	/// <summary>
+	/// This class provides a way to update existing instances of settings objects derived from
+	/// <see cref="ApplicationSettingsBase"/>.  The individual instances must register themselves
+	/// with this class in order to receive updates.  When a setting value is changed in the default
+	/// profile, the individual settings in memory are inspected to see if their values corresponded
+	/// to the values that were just changed.  If they do, then those values are changed to correspond
+	/// to the new values.  This class implements the Singleton design pattern.
+	/// </summary>
 	public class ApplicationSettingsRegister
 	{
 		private static ApplicationSettingsRegister _instance;
@@ -20,6 +28,9 @@ namespace ClearCanvas.Common.Configuration
 			_registeredSettingsInstances = new List<ApplicationSettingsBase>();
 		}
 		
+		/// <summary>
+		/// The single instance of this class that is publicly accessible.
+		/// </summary>
 		public static ApplicationSettingsRegister Instance
 		{
 			get
@@ -34,6 +45,10 @@ namespace ClearCanvas.Common.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Registers an instance of a settings class.
+		/// </summary>
+		/// <param name="settingsInstance">the instance</param>
 		public void RegisterInstance(ApplicationSettingsBase settingsInstance)
 		{ 
 			lock(_syncLock)
@@ -43,6 +58,10 @@ namespace ClearCanvas.Common.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Unregisters an instance of a settings class.
+		/// </summary>
+		/// <param name="settingsInstance">the instance</param>
 		public void UnregisterInstance(ApplicationSettingsBase settingsInstance)
 		{
 			lock (_syncLock)
@@ -52,6 +71,12 @@ namespace ClearCanvas.Common.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Synchronizes existing settings instances (in memory) of a given Type with the default profile.
+		/// </summary>
+		/// <param name="settingsType">the type of the settings class</param>
+		/// <param name="changedValues">the previous values for the properties that were changed in the default profile</param>
+		/// <param name="newValues">the new values that have already been stored in the default profile</param>
 		public void SynchronizeExistingSettings(Type settingsType, IDictionary<string, string> changedValues, IDictionary<string, string> newValues)
 		{
 			lock (_syncLock)
@@ -66,6 +91,12 @@ namespace ClearCanvas.Common.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Synchronizes an instance of a settings class with the default profile.
+		/// </summary>
+		/// <param name="settingsInstance">the instance to be synchronized</param>
+		/// <param name="changedValues">the previous values for the properties that were changed in the default profile</param>
+		/// <param name="newValues">the new values that have already been stored in the default profile</param>
 		private void SynchronizeExistingSetting(ApplicationSettingsBase settingsInstance, IDictionary<string, string> changedValues, IDictionary<string, string> newValues)
 		{
 			bool modified = false;
