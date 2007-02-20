@@ -100,6 +100,9 @@ namespace ClearCanvas.Ris.Services
             processor.Visits = LoadOrCreateVisitFromVisitNumber(
                 processor.ListReferencedVisitIdentifiers(),
                 processor.ReferencedVisitIdentifierAssigningAuthority());
+            processor.Orders = LoadOrCreateOrdersFromPlacerNumber(
+                processor.ListReferencedPlacerOrderNumbers(),
+                processor.ReferencedPlacerOrderNumberAssigningAuthority());
 
             processor.Process();
 
@@ -110,6 +113,10 @@ namespace ClearCanvas.Ris.Services
             foreach (EntityAccess<Visit> visitAccess in processor.Visits)
             {
                 this.CurrentContext.Lock(visitAccess.Entity, visitAccess.State);
+            }
+            foreach (EntityAccess<Order> orderAccess in processor.Orders)
+            {
+                this.CurrentContext.Lock(orderAccess.Entity, orderAccess.State);
             }
 
             return referencedPatients;
@@ -203,6 +210,33 @@ namespace ClearCanvas.Ris.Services
             }
 
             return loadedVisits;
+        }
+
+        private IList<EntityAccess<Order>> LoadOrCreateOrdersFromPlacerNumber(IList<string> placerNumbers, string assigningAuthority)
+        {
+            IList<EntityAccess<Order>> loadedOrders = new List<EntityAccess<Order>>();
+
+            if(placerNumbers.Count == 0) return loadedOrders;
+
+            foreach (string placerNumber in placerNumbers)
+            {
+                OrderSearchCriteria criteria = new OrderSearchCriteria();
+                criteria.PlacerNumber.EqualTo(placerNumber);
+                
+                IList<Order> orders = this.CurrentContext.GetBroker<IOrderBroker>().Find(criteria);
+                if(orders.Count > 0)
+                {
+                    loadedOrders.Add(new EntityAccess<Order>(orders[0], DirtyState.Dirty));
+                }
+                else
+                {
+                    Order order = new Order();
+                    order.PlacerNumber = placerNumber;
+                    loadedOrders.Add(new EntityAccess<Order>(order, DirtyState.New));
+                }
+            }
+
+            return loadedOrders;
         }
 
         #endregion    
