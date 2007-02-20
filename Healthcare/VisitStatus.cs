@@ -16,36 +16,36 @@ namespace ClearCanvas.Healthcare {
         /// Pre-Admit
         /// </summary>
         [EnumValue("Pre-Admit")]
-        PREADMITTED,
+        Preadmitted,
 
         /// <summary>
         /// Pending
         /// </summary>
         [EnumValue("Pending")]
-        PENDING,
+        Pending,
 
         /// <summary>
         /// Active/Admitted
         /// </summary>
         [EnumValue("Active/Admitted")]
-        ADMITTED,
+        Admitted,
 
         /// <summary>
         /// Discharged
         /// </summary>
         [EnumValue("Discharged")]
-        DISCHARGED,
+        Discharged,
 
         /// <summary>
         /// Discharged
         /// </summary>
         [EnumValue("Cancelled")]
-        CANCELLED,
+        Cancelled,
 
         /// <summary>
         /// Discharged
         /// </summary>
         [EnumValue("Pre-Admit - Cancelled")]
-        PREADMITCANCELLED
+        PreadmitCancelled
     }
 }
