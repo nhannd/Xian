@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer
 {
 	internal class ImageAndOriginator
 	{

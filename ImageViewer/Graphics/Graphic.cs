@@ -17,9 +17,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private IPresentationImage _parentPresentationImage;
 
 		private string _name;
-		private double _transparency = 1.0f;
 		private bool _visible = true;
-		private bool _redrawRequired = true;
 		private SpatialTransform _spatialTransform;
 		private Stack<CoordinateSystem> _coordinateSystemStack = new Stack<CoordinateSystem>();
 

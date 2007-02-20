@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer.Graphics
 {
 	public class SpatialTransformApplicator : ImageOperationApplicator
 	{

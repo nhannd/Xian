@@ -8,6 +8,7 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Annotations;
 using System.Drawing;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 {

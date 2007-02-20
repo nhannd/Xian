@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 				photometricInterpretation,
 				pixelData)
 		{
-			
 			InstallGrayscaleLUTs(rescaleSlope, rescaleIntercept, photometricInterpretation);
 		}
 

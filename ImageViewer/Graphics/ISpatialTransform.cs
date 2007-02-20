@@ -1,7 +1,7 @@
 ﻿using System;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer.Graphics
 {
 	public interface ISpatialTransform : IMemorable
 	{

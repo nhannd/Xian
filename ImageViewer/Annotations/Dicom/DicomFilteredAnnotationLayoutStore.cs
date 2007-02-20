@@ -6,7 +6,7 @@ using System.IO;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {

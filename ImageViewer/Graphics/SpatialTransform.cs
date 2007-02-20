@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// Implements a 2D affine transformation

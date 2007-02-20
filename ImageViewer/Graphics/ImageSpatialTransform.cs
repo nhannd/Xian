@@ -4,14 +4,12 @@ using System.Text;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer.Graphics
 {
 	public class ImageSpatialTransform : SpatialTransform
 	{
 		private int _sourceWidth;
 		private int _sourceHeight;
-		private int _destinationWidth;
-		private int _destinationHeight;
 
 		private double _pixelSpacingX;
 		private double _pixelSpacingY;

@@ -1,7 +1,6 @@
 ﻿using System;
-using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Graphics
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public interface IImageSopProvider
 	{

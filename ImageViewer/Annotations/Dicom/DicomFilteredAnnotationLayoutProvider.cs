@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
 using System.Diagnostics;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {

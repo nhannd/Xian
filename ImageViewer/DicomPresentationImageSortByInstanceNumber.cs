@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer
 {
 	//!! This code is subject to change.  In the future, we will likely enforce that each display
 	//!! set (PresentationImageCollection, actually) may only contain PresentationImages 

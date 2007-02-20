@@ -7,6 +7,7 @@ using ClearCanvas.Dicom;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
