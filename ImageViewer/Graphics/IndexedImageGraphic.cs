@@ -40,10 +40,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 		}
 
+		public int[] OutputLUT
+		{
+			get
+			{
+				_lutComposer.Compose();
+				return _lutComposer.OutputLUT;
+			}
+		}
+
 		/// <summary>
 		/// Gets the <see cref="LUTComposer"/> of the image.
 		/// </summary>
-		public LUTComposer LUTComposer
+		protected LUTComposer LUTComposer
 		{
 			get
 			{

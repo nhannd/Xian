@@ -40,10 +40,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
 
 			if (grayscaleImage != null)
-			{
-				grayscaleImage.LUTComposer.Compose();
-				lutData = grayscaleImage.LUTComposer.OutputLUT;
-			}
+				lutData = grayscaleImage.OutputLUT;
 
 			bool swapXY = ImageRenderer.IsRotated(imageGraphic);
 
