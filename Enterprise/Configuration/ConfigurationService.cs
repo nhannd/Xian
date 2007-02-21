@@ -17,10 +17,12 @@ namespace ClearCanvas.Enterprise.Configuration
         {
             try
             {
-                IConfigSettingsInstanceBroker broker = CurrentContext.GetBroker<IConfigSettingsInstanceBroker>();
-                ConfigSettingsInstanceSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
-                ConfigSettingsInstance settings = broker.FindOne(criteria);
-                settings.GetValues(values);
+                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
+                ConfigurationDocument settings = broker.FindOne(criteria);
+
+                SettingsParser parser = new SettingsParser();
+                parser.FromXml(settings.DocumentText, values);
             }
             catch (EntityNotFoundException)
             {
@@ -35,11 +37,11 @@ namespace ClearCanvas.Enterprise.Configuration
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public void SaveSettingsValues(string group, Version version, string user, string instanceKey, IDictionary<string, string> values)
         {
-            ConfigSettingsInstance settings = null;
+            ConfigurationDocument settings = null;
             try
             {
-                IConfigSettingsInstanceBroker broker = CurrentContext.GetBroker<IConfigSettingsInstanceBroker>();
-                ConfigSettingsInstanceSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
+                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
                 settings = broker.FindOne(criteria);
             }
             catch (EntityNotFoundException)
@@ -51,7 +53,8 @@ namespace ClearCanvas.Enterprise.Configuration
             }
 
             // save the values
-            settings.SetValues(values);
+            SettingsParser parser = new SettingsParser();
+            settings.DocumentText = parser.ToXml(values);
         }
 
         // because this service is invoked by the framework, rather than by the application,
@@ -59,22 +62,22 @@ namespace ClearCanvas.Enterprise.Configuration
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public void UpgradeFromPreviousVersion(string group, Version version, string user, string instanceKey, IDictionary<string, string> values)
         {
-            IConfigSettingsInstanceBroker broker = CurrentContext.GetBroker<IConfigSettingsInstanceBroker>();
-            ConfigSettingsInstanceSearchCriteria criteria = BuildCurrentAndPerviousVersionsCriteria(group, version, user, instanceKey);
+            IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+            ConfigurationDocumentSearchCriteria criteria = BuildCurrentAndPerviousVersionsCriteria(group, version, user, instanceKey);
 
             // query for up to 2 instances, the current version and the immediately previous version
             // need to sort by version, descending, to ensure that we in fact get the current and immediately previous version
-            criteria.GroupVersionString.SortDesc(0);    
-            IList<ConfigSettingsInstance> instances = broker.Find(criteria, new SearchResultPage(0, 2));
+            criteria.DocumentVersionString.SortDesc(0);    
+            IList<ConfigurationDocument> instances = broker.Find(criteria, new SearchResultPage(0, 2));
 
-            ConfigSettingsInstance previousVersion = CollectionUtils.SelectFirst<ConfigSettingsInstance>(instances,
-                delegate(ConfigSettingsInstance i) { return VersionUtils.FromPaddedVersionString(i.GroupVersionString) < version; });
+            ConfigurationDocument previousVersion = CollectionUtils.SelectFirst<ConfigurationDocument>(instances,
+                delegate(ConfigurationDocument i) { return VersionUtils.FromPaddedVersionString(i.DocumentVersionString) < version; });
 
             // if there is no previous version, then there is nothing to upgrade
             if (previousVersion != null)
             {
-                ConfigSettingsInstance currentVersion = CollectionUtils.SelectFirst<ConfigSettingsInstance>(instances,
-                    delegate(ConfigSettingsInstance i) { return VersionUtils.FromPaddedVersionString(i.GroupVersionString) == version; });
+                ConfigurationDocument currentVersion = CollectionUtils.SelectFirst<ConfigurationDocument>(instances,
+                    delegate(ConfigurationDocument i) { return VersionUtils.FromPaddedVersionString(i.DocumentVersionString) == version; });
 
                 // if the current version does not exist, create it
                 if (currentVersion == null)
@@ -83,11 +86,13 @@ namespace ClearCanvas.Enterprise.Configuration
                     CurrentContext.Lock(currentVersion, DirtyState.New);
                 }
 
+                SettingsParser parser = new SettingsParser();
+
                 // upgrade the current version from the previous
-                currentVersion.UpgradeFrom(previousVersion);
+                parser.UpgradeFromPrevious(currentVersion, previousVersion);
 
                 // place the latest values into the dictionary
-                currentVersion.GetValues(values);
+                parser.FromXml(currentVersion.DocumentText, values);
             }
         }
 
@@ -98,9 +103,9 @@ namespace ClearCanvas.Enterprise.Configuration
         {
             try
             {
-                IConfigSettingsInstanceBroker broker = CurrentContext.GetBroker<IConfigSettingsInstanceBroker>();
-                ConfigSettingsInstanceSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
-                ConfigSettingsInstance settings = broker.FindOne(criteria);
+                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
+                ConfigurationDocument settings = broker.FindOne(criteria);
                 settings.Clear();
             }
             catch (EntityNotFoundException)
@@ -111,33 +116,33 @@ namespace ClearCanvas.Enterprise.Configuration
 
         #endregion
 
-        private ConfigSettingsInstance NewSettingsInstance(string groupName, Version version, string user, string instanceKey)
+        private ConfigurationDocument NewSettingsInstance(string groupName, Version version, string user, string instanceKey)
         {
             // force an empty instanceKey to null
             if (instanceKey != null && instanceKey.Length == 0)
                 instanceKey = null;
 
-            return new ConfigSettingsInstance(groupName, VersionUtils.ToPaddedVersionString(version), user, instanceKey, null);
+            return new ConfigurationDocument(groupName, VersionUtils.ToPaddedVersionString(version), user, instanceKey, null);
         }
 
-        private ConfigSettingsInstanceSearchCriteria BuildCurrentVersionCriteria(string groupName, Version version, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string groupName, Version version, string user, string instanceKey)
         {
-            ConfigSettingsInstanceSearchCriteria criteria = BuildUnversionedCriteria(groupName, user, instanceKey);
-            criteria.GroupVersionString.EqualTo(VersionUtils.ToPaddedVersionString(version));
+            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(groupName, user, instanceKey);
+            criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(version));
             return criteria;
         }
 
-        private ConfigSettingsInstanceSearchCriteria BuildCurrentAndPerviousVersionsCriteria(string groupName, Version version, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(string groupName, Version version, string user, string instanceKey)
         {
-            ConfigSettingsInstanceSearchCriteria criteria = BuildUnversionedCriteria(groupName, user, instanceKey);
-            criteria.GroupVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(version));
+            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(groupName, user, instanceKey);
+            criteria.DocumentVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(version));
             return criteria;
         }
 
-        private ConfigSettingsInstanceSearchCriteria BuildUnversionedCriteria(string groupName, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(string groupName, string user, string instanceKey)
         {
-            ConfigSettingsInstanceSearchCriteria criteria = new ConfigSettingsInstanceSearchCriteria();
-            criteria.GroupName.EqualTo(groupName);
+            ConfigurationDocumentSearchCriteria criteria = new ConfigurationDocumentSearchCriteria();
+            criteria.DocumentName.EqualTo(groupName);
 
             if (instanceKey != null && instanceKey.Length > 0)
             {

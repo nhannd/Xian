@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Enterprise.Configuration" namespace="ClearCanvas.Enterprise.Configuration">
-  <class name="ConfigSettingsInstance" proxy="ConfigSettingsInstance" table="ConfigSettingsInstance_">
+  <class name="ConfigurationDocument" proxy="ConfigurationDocument" table="ConfigurationDocument_">
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>
     <version name="Version" column="Version_"/>
-    <property name="GroupName" column="GroupName_" type="String" length="1000" not-null="true"/>
-    <property name="GroupVersionString" column="GroupVersionString_" type="String" length="30" not-null="true"/>
+    <property name="DocumentName" column="DocumentName_" type="String" length="1000" not-null="true"/>
+    <property name="DocumentVersionString" column="DocumentVersionString_" type="String" length="30" not-null="true"/>
     <property name="User" column="User_" type="String" length="200" not-null="false"/>
     <property name="InstanceKey" column="InstanceKey_" type="String" length="1000" not-null="false"/>
-    <property name="SettingsValuesXml" column="SettingsValuesXml_" type="StringClob" length="65000" not-null="false"/>
+    <property name="DocumentText" column="DocumentText_" type="StringClob" length="65000" not-null="false"/>
   </class>
 </hibernate-mapping>
