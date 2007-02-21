@@ -381,5 +381,11 @@ namespace ClearCanvas.Common.Utilities
             list.Sort(comparison);
             return list;
         }
+
+        public static TItem[] ToArray<TItem>(IEnumerable target)
+        {
+            List<TItem> list = new List<TItem>(new TypeSafeEnumerableWrapper<TItem>(target));
+            return list.ToArray();
+        }
     }
 }
