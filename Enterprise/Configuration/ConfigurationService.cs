@@ -12,22 +12,16 @@ namespace ClearCanvas.Enterprise.Configuration
     {
         #region IConfigurationService Members
 
-        [ReadOperation]
-        public void LoadSettingsValues(string group, Version version, string user, string instanceKey, IDictionary<string, string> values)
+        // because this service is invoked by the framework, rather than by the application,
+        // it is safest to use a new persistence scope
+        [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
+        public string LoadDocument(string name, Version version, string user, string instanceKey)
         {
-            try
-            {
-                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
-                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
-                ConfigurationDocument settings = broker.FindOne(criteria);
+            IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+            ConfigurationDocument document = broker.FindOne(criteria);
 
-                SettingsParser parser = new SettingsParser();
-                parser.FromXml(settings.DocumentText, values);
-            }
-            catch (EntityNotFoundException)
-            {
-                // no saved values - nothing to do
-            }
+            return document.DocumentText;
         }
 
 
@@ -35,28 +29,27 @@ namespace ClearCanvas.Enterprise.Configuration
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void SaveSettingsValues(string group, Version version, string user, string instanceKey, IDictionary<string, string> values)
+        public void SaveDocument(string name, Version version, string user, string instanceKey, string documentText)
         {
-            ConfigurationDocument settings = null;
+            ConfigurationDocument document = null;
             try
             {
                 IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
-                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
-                settings = broker.FindOne(criteria);
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+                document = broker.FindOne(criteria);
             }
             catch (EntityNotFoundException)
             {
                 // no saved settings, create new
-                settings = NewSettingsInstance(group, version, user, instanceKey);
+                document = NewDocument(name, version, user, instanceKey);
 
-                CurrentContext.Lock(settings, DirtyState.New);
+                CurrentContext.Lock(document, DirtyState.New);
             }
 
-            // save the values
-            SettingsParser parser = new SettingsParser();
-            settings.DocumentText = parser.ToXml(values);
+            // save the text
+            document.DocumentText = documentText;
         }
-
+/*
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
@@ -82,7 +75,7 @@ namespace ClearCanvas.Enterprise.Configuration
                 // if the current version does not exist, create it
                 if (currentVersion == null)
                 {
-                    currentVersion = NewSettingsInstance(group, version, user, instanceKey);
+                    currentVersion = NewDocument(group, version, user, instanceKey);
                     CurrentContext.Lock(currentVersion, DirtyState.New);
                 }
 
@@ -95,54 +88,54 @@ namespace ClearCanvas.Enterprise.Configuration
                 parser.FromXml(currentVersion.DocumentText, values);
             }
         }
-
+*/
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void Clear(string group, Version version, string user, string instanceKey)
+        public void RemoveDocument(string name, Version version, string user, string instanceKey)
         {
             try
             {
                 IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
-                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(group, version, user, instanceKey);
-                ConfigurationDocument settings = broker.FindOne(criteria);
-                settings.Clear();
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+                ConfigurationDocument document = broker.FindOne(criteria);
+                broker.Delete(document);
             }
             catch (EntityNotFoundException)
             {
-                // no saved values - nothing to do
+                // no document
             }
         }
 
         #endregion
 
-        private ConfigurationDocument NewSettingsInstance(string groupName, Version version, string user, string instanceKey)
+        private ConfigurationDocument NewDocument(string name, Version version, string user, string instanceKey)
         {
             // force an empty instanceKey to null
             if (instanceKey != null && instanceKey.Length == 0)
                 instanceKey = null;
 
-            return new ConfigurationDocument(groupName, VersionUtils.ToPaddedVersionString(version), user, instanceKey, null);
+            return new ConfigurationDocument(name, VersionUtils.ToPaddedVersionString(version), user, instanceKey, null);
         }
 
-        private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string groupName, Version version, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string name, Version version, string user, string instanceKey)
         {
-            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(groupName, user, instanceKey);
+            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(name, user, instanceKey);
             criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(version));
             return criteria;
         }
 
-        private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(string groupName, Version version, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(string name, Version version, string user, string instanceKey)
         {
-            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(groupName, user, instanceKey);
+            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(name, user, instanceKey);
             criteria.DocumentVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(version));
             return criteria;
         }
 
-        private ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(string groupName, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(string name, string user, string instanceKey)
         {
             ConfigurationDocumentSearchCriteria criteria = new ConfigurationDocumentSearchCriteria();
-            criteria.DocumentName.EqualTo(groupName);
+            criteria.DocumentName.EqualTo(name);
 
             if (instanceKey != null && instanceKey.Length > 0)
             {

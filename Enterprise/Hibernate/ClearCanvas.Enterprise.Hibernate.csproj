@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Broker.cs" />
+    <Compile Include="CodedValueHbm.cs" />
     <Compile Include="CustomSqlDialect.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
     <Compile Include="Ddl\EnumValueInsertGenerator.cs" />

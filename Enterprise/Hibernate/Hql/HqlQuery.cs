@@ -145,7 +145,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             {
                 foreach (object val in c.Parameters)
                 {
-                    if (val is Enum)
+                    if (val is Enum || val is CodedValue)
                     {
                         // convert to string, since nhibernate doesn't know what to do with enums
                         q.SetParameter(i++, val.ToString());

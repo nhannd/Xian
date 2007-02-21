@@ -24,29 +24,51 @@ namespace ClearCanvas.Enterprise.Configuration
 
         #region IEnterpriseConfigurationStore Members
 
+        public string LoadDocument(string name, Version version, string user, string instanceKey)
+        {
+            return _service.LoadDocument(name, version, user, instanceKey);
+        }
+
+        public void SaveDocument(string name, Version version, string user, string instanceKey, string documentText)
+        {
+            _service.SaveDocument(name, version, user, instanceKey, documentText);
+        }
+
         public void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
         {
-            _service.LoadSettingsValues(
-                SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                SettingsClassMetaDataReader.GetVersion(settingsClass),
-                user,
-                instanceKey,
-                values);
+            try
+            {
+                string xml = LoadDocument(
+                    SettingsClassMetaDataReader.GetGroupName(settingsClass),
+                    SettingsClassMetaDataReader.GetVersion(settingsClass),
+                    user,
+                    instanceKey);
+
+                SettingsParser parser = new SettingsParser();
+                parser.FromXml(xml, values);
+            }
+            catch (EntityNotFoundException)
+            {
+                // no saved settings
+            }
         }
 
         public void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
         {
-            _service.SaveSettingsValues(
+            SettingsParser parser = new SettingsParser();
+            string xml = parser.ToXml(values);
+
+            SaveDocument(
                 SettingsClassMetaDataReader.GetGroupName(settingsClass),
                 SettingsClassMetaDataReader.GetVersion(settingsClass),
                 user,
                 instanceKey,
-                values);
+                xml);
         }
 
         public void RemoveUserSettings(Type settingsClass, string user, string instanceKey)
         {
-            _service.Clear(
+            _service.RemoveDocument(
                 SettingsClassMetaDataReader.GetGroupName(settingsClass),
                 SettingsClassMetaDataReader.GetVersion(settingsClass),
                 user,
@@ -55,14 +77,8 @@ namespace ClearCanvas.Enterprise.Configuration
 
         public void UpgradeUserSettings(Type settingsClass, string user, string instanceKey)
         {
-            Dictionary<string, string> values = new Dictionary<string, string>();
-
-            _service.UpgradeFromPreviousVersion(
-                SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                SettingsClassMetaDataReader.GetVersion(settingsClass),
-                user,
-                instanceKey,
-                values);
+            // TODO implement this later
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -50,7 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="CodedValue.cs" />
+    <Compile Include="CodedValueDictionary.cs" />
     <Compile Include="DefaultTransactionRecorder.cs" />
+    <Compile Include="IConfigurationService.cs" />
     <Compile Include="ITransactionRecorder.cs" />
     <Compile Include="TransactionRecord.cs" />
     <Compile Include="DirtyState.cs" />
