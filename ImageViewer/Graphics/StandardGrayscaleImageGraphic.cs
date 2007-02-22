@@ -35,6 +35,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			SetWindowLevel();
 		}
 
+		public ImageSop ImageSop
+		{
+			get { return _imageSop; }
+		}
+
 		protected override byte[] PixelDataRaw
 		{
 			get
