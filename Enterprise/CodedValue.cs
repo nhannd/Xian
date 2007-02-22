@@ -8,25 +8,30 @@ using System.Xml;
 
 namespace ClearCanvas.Enterprise
 {
-    public abstract class CodedValue
+    /// <summary>
+    /// Base class for coded-value types.  A coded-value is similar to enumeration.  The main difference is that,
+    /// whereas a C# enum declares a static set of values, a set of coded-values may be defined either statically
+    /// (via static instance members) or dynamically through an XML configuration.  Also, whereas an enum defines
+    /// a set of singular values, each value in a set of coded values has an associated code and an optional description.
+    /// The set of coded-values is accessed through the static Dictionary property of the coded-value class.
+    /// </summary>
+    public abstract class CodedValue : DomainObject, IEquatable<CodedValue>
     {
         private string _code;
         private string _value;
         private string _description;
+        private int _ordinal;
         private bool _active;
 
-        private bool _isStatic;
-
         /// <summary>
-        /// Constructor used by the framework to instantiate dynamic values
+        /// Constructor required by nHibernate
         /// </summary>
         public CodedValue()
         {
-            _isStatic = false;
         }
 
         /// <summary>
-        /// Constructor used to create static values
+        /// Protected constructor
         /// </summary>
         /// <param name="code"></param>
         /// <param name="value"></param>
@@ -36,120 +41,49 @@ namespace ClearCanvas.Enterprise
             _code = code;
             _value = value;
             _description = description;
-            _isStatic = true;   // any value created by this constructor is static
             _active = true;     // all static values are active
         }
 
         /// <summary>
         /// Gets the code
         /// </summary>
-        public string Code
+        public virtual string Code
         {
             get { return _code; }
-            internal set { _code = value; }
+            private set { _code = value; }
         }
 
         /// <summary>
         /// Gets the value
         /// </summary>
-        public string Value
+        public virtual string Value
         {
             get { return _value; }
-            internal set { _value = value; }
+            private set { _value = value; }
         }
 
         /// <summary>
         /// Gets a description of the value
         /// </summary>
-        public string Description
+        public virtual string Description
         {
             get { return _description; }
-            internal set { _description = value; }
+            private set { _description = value; }
+        }
+
+        public virtual int Ordinal
+        {
+            get { return _ordinal; }
+            private set { _ordinal = value; }
         }
 
         /// <summary>
         /// True if the value is considered "active"
         /// </summary>
-        public bool Active
+        public virtual bool Active
         {
             get { return _active; }
-            internal set { _active = value; }
-        }
-
-        /// <summary>
-        /// True if the value is a static instance
-        /// </summary>
-        public bool IsStatic
-        {
-            get { return _isStatic; }
-        }
-
-        /// <summary>
-        /// Deserializes this value from XML
-        /// </summary>
-        /// <param name="cvElement"></param>
-        internal void FromXml(XmlElement cvElement)
-        {
-            _code = cvElement.GetAttribute("code");
-            _value = cvElement.GetAttribute("value");
-
-            bool.TryParse(cvElement.GetAttribute("active"), out _active);
-
-            foreach (XmlNode node in cvElement.ChildNodes)
-            {
-                if (node.NodeType == XmlNodeType.Element)
-                {
-                    if (node.Name == "description")
-                        _description = node.Value;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Base class for coded-value types.  A coded-value is similar to enumeration.  The main difference is that,
-    /// whereas a C# enum declares a static set of values, a set of coded-values may be defined either statically
-    /// (via static instance members) or dynamically through an XML configuration.  Also, whereas an enum defines
-    /// a set of singular values, each value in a set of coded values has an associated code and an optional description.
-    /// The set of coded-values is accessed through the static Dictionary property of the coded-value class.
-    /// </summary>
-    /// <typeparam name="TCodedValue">The type of the coded-value, which must also be the subclass of this class</typeparam>
-    public abstract class CodedValue<TCodedValue> : CodedValue, IEquatable<TCodedValue>
-        where TCodedValue : CodedValue<TCodedValue>, new()
-    {
-        private static CodedValueDictionary<TCodedValue> _dictionary;
-
-        /// <summary>
-        /// Gets the dictionary containing the set of all coded-values for this class
-        /// </summary>
-        public static CodedValueDictionary<TCodedValue> Dictionary
-        {
-            get
-            {
-                if (_dictionary == null)
-                {
-                    _dictionary = new CodedValueDictionary<TCodedValue>();
-                }
-                return _dictionary;
-            }
-        }
-
-        /// <summary>
-        /// Constructor used by the framework to construct instance dynamically
-        /// </summary>
-        public CodedValue()
-        {
-        }
-
-        /// <summary>
-        /// Constructor used to define static instances
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="value"></param>
-        /// <param name="description"></param>
-        protected CodedValue(string code, string value, string description)
-            :base(code, value, description)
-        {
+            private set { _active = value; }
         }
 
         /// <summary>
@@ -177,7 +111,7 @@ namespace ClearCanvas.Enterprise
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as TCodedValue);
+            return this.Equals(obj as CodedValue);
         }
 
         /// <summary>
@@ -186,7 +120,7 @@ namespace ClearCanvas.Enterprise
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static bool operator ==(CodedValue<TCodedValue> x, CodedValue<TCodedValue> y)
+        public static bool operator ==(CodedValue x, CodedValue y)
         {
             if (object.ReferenceEquals(x, y))
                 return true;
@@ -203,17 +137,17 @@ namespace ClearCanvas.Enterprise
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static bool operator !=(CodedValue<TCodedValue> x, CodedValue<TCodedValue> y)
+        public static bool operator !=(CodedValue x, CodedValue y)
         {
             return !(x == y);
         }
 
 
-        #region IEquatable<TCodedValue> Members
+        #region IEquatable<CodedValue> Members
 
-        public bool Equals(TCodedValue other)
+        public bool Equals(CodedValue other)
         {
-            return other != null && other.Code == this.Code;
+            return other != null && this.GetType().Equals(other.GetType()) && other.Code == this.Code;
         }
 
         #endregion

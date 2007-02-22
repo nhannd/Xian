@@ -15,13 +15,13 @@ namespace ClearCanvas.Enterprise
     /// </summary>
     /// <typeparam name="TCodedValue">The class of coded-value that is contained in this dictionary</typeparam>
     public class CodedValueDictionary<TCodedValue>
-        where TCodedValue : CodedValue<TCodedValue>, new()
+        where TCodedValue : CodedValue
     {
-        private Set _values;
-        private object _syncLock = new object();
+        private IList<TCodedValue> _values;
 
-        internal CodedValueDictionary()
+        public CodedValueDictionary(IList<TCodedValue> values)
         {
+            _values = values;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace ClearCanvas.Enterprise
         /// <returns></returns>
         public TCodedValue LookupByCode(string code)
         {
-            TCodedValue instance = CollectionUtils.SelectFirst<TCodedValue>(this.ValueSet, delegate(TCodedValue v) { return v.Code.Equals(code); });
+            TCodedValue instance = CollectionUtils.SelectFirst<TCodedValue>(_values, delegate(TCodedValue v) { return v.Code.Equals(code); });
             if (instance == null)
                 throw new ArgumentOutOfRangeException(string.Format("{0} is not a valid code", code));
             return instance;
@@ -45,7 +45,7 @@ namespace ClearCanvas.Enterprise
         /// <returns></returns>
         public TCodedValue LookupByValue(string value)
         {
-            TCodedValue instance = CollectionUtils.SelectFirst<TCodedValue>(this.ValueSet, delegate(TCodedValue v) { return v.Value == value; });
+            TCodedValue instance = CollectionUtils.SelectFirst<TCodedValue>(_values, delegate(TCodedValue v) { return v.Value == value; });
             if (instance == null)
                 throw new ArgumentOutOfRangeException(string.Format("{0} is not a valid value", value));
             return instance;
@@ -99,100 +99,8 @@ namespace ClearCanvas.Enterprise
 
         private IEnumerable SelectValues(bool activeOnly)
         {
-            return activeOnly ? CollectionUtils.Select(this.ValueSet, delegate(object obj) { return (obj as TCodedValue).Active; }) : this.ValueSet;
-        }
-
-        private Set ValueSet
-        {
-            get
-            {
-                // access must be thread-safe, because the initialization process must never occur more than once
-                lock (_syncLock)
-                {
-                    if (_values == null)
-                    {
-                        Initialize();
-                    }
-                    return _values;
-                }
-            }
-        }
-
-        private void Initialize()
-        {
-            _values = new HybridSet();
-            ProcessStaticValues();
-            ProcessXml();
-        }
-
-        /// <summary>
-        /// Uses reflection to add any static member instances of the class to the dictionary
-        /// </summary>
-        private void ProcessStaticValues()
-        {
-            Type codeValueClass = typeof(TCodedValue);
-            FieldInfo[] fields = codeValueClass.GetFields(BindingFlags.Static | BindingFlags.Public);
-            foreach (FieldInfo field in fields)
-            {
-                if (field.FieldType.Equals(codeValueClass))
-                {
-                    TCodedValue cv = (TCodedValue)field.GetValue(null);
-                    if (cv.Code != field.Name)
-                    {
-                        throw new InvalidOperationException(
-                            string.Format("Member {0} of class {1} has code {2}. Code must match member name.",
-                            field.Name, codeValueClass.FullName, cv.Code));
-                    }
-                    _values.Add(cv);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Processes associated XML document to populate the dictionary
-        /// </summary>
-        private void ProcessXml()
-        {
-            Type clazz = typeof(TCodedValue);
-            string resourceName = string.Format("{0}.cv.xml", clazz.FullName);
-            Version version = clazz.Assembly.GetName().Version;
-
-            try
-            {
-                IConfigurationService configService = ApplicationContext.GetService<IConfigurationService>();
-                string xml = configService.LoadDocument(resourceName, version, null, null);
-                ReadXml(new StringReader(xml));
-            }
-            catch (EntityNotFoundException)
-            {
-                ResourceResolver rr = new ResourceResolver(typeof(TCodedValue).Assembly);
-                using (Stream s = rr.OpenResource(resourceName))
-                {
-                    ReadXml(new StreamReader(s));
-                }
-            }
-        }
-
-        private void ReadXml(TextReader reader)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(reader);
-            foreach (XmlElement cvElement in xmlDoc.GetElementsByTagName("coded-value"))
-            {
-                string code = cvElement.GetAttribute("code");
-
-                // does this value exist already?
-                TCodedValue codedValue = CollectionUtils.SelectFirst<TCodedValue>(_values, delegate(TCodedValue v) { return v.Code == code; });
-                if (codedValue == null)
-                {
-                    // if not, create it
-                    codedValue = new TCodedValue();
-                }
-
-                // intialize or update the value from xml
-                codedValue.FromXml(cvElement);
-                _values.Add(codedValue);
-            }
+            return activeOnly ? (IEnumerable)CollectionUtils.Select(_values, delegate(object obj) { return (obj as TCodedValue).Active; }) :
+                (IEnumerable)_values;
         }
 
         #endregion
