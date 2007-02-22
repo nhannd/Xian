@@ -147,6 +147,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 						DrawLinePrimitive(graphic as LinePrimitive);
 					else if (graphic is RectanglePrimitive)
 						DrawRectanglePrimitive(graphic as RectanglePrimitive);
+					else if (graphic is PointPrimitive)
+						DrawPointPrimitive(graphic as PointPrimitive);
 					else if (graphic is InvariantRectanglePrimitive)
 						DrawInvariantRectanglePrimitive(graphic as InvariantRectanglePrimitive);
 					else if (graphic is InvariantTextPrimitive)
@@ -154,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				}
 			}
 		}
-	
+
 		private void DrawImageGraphic(ImageGraphic imageGraphic, Rectangle clientArea)
 		{
 			if (imageGraphic == null)
@@ -262,6 +264,31 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_surface.FinalBuffer.Graphics.ResetTransform();
 		}
 
+		private void DrawPointPrimitive(PointPrimitive pointPrimitive)
+		{
+			_surface.FinalBuffer.Graphics.Transform = pointPrimitive.SpatialTransform.CumulativeTransform;
+			pointPrimitive.CoordinateSystem = CoordinateSystem.Source;
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = 1;
+
+			SetDashStyle(pointPrimitive);
+
+			// Draw rectangle
+			_pen.Color = pointPrimitive.Color;
+
+			_surface.FinalBuffer.Graphics.DrawRectangle(
+				_pen,
+				pointPrimitive.Point.X,
+				pointPrimitive.Point.Y,
+				1,
+				1);
+
+			pointPrimitive.ResetCoordinateSystem();
+			_surface.FinalBuffer.Graphics.ResetTransform();
+		}
+		
 		private void DrawInvariantRectanglePrimitive(InvariantRectanglePrimitive rect)
 		{
 			_surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;

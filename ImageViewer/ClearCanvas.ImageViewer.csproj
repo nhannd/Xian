@@ -121,6 +121,7 @@
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ContextMenuEventArgs.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
+    <Compile Include="Graphics\PointPrimitive.cs" />
     <Compile Include="Graphics\StandardColorImageGraphic.cs" />
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="Graphics\StandardGrayscaleImageGraphic.cs" />
@@ -150,9 +151,9 @@
     <Compile Include="ImageSet.cs" />
     <Compile Include="ImageSetEventArgs.cs" />
     <Compile Include="DiagnosticImageViewerComponent.cs" />
-    <Compile Include="InteractiveGraphics\FocusSelectedGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\FocusSelectedInteractiveGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\FocusSelectedROIGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocussedSelectedGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocussedSelectedInteractiveGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocussedSelectedROIGraphicState.cs" />
     <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
@@ -256,7 +257,7 @@
     <Compile Include="InteractiveGraphics\CreateMultiLineGraphicState.cs" />
     <Compile Include="InteractiveGraphics\CreateRectangleGraphicState.cs" />
     <Compile Include="InteractiveGraphics\CreateROIGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\FocusGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocussedGraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicStateChangedEventArgs.cs" />
     <Compile Include="InteractiveGraphics\InactiveGraphicState.cs" />
