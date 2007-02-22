@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Registration;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -88,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                WorklistItem item = CollectionUtils.FirstElement<WorklistItem>(context.SelectedItems);
                 ShowVisitSummaryDialog(item.PatientProfile, context.DesktopWindow);
             }
             else

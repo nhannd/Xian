@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
@@ -13,7 +14,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class RegistrationWorklistBroker : Broker, IRegistrationWorklistBroker
     {
-        public IList<RegistrationWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority)
+        public IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, PatientProfileSearchCriteria profileCriteria)
         {
             HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ModalityProcedureStep"));
             query.Joins.Add(new HqlJoin("spst", "sps.Type"));
@@ -44,26 +45,29 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("sps", criteria));
 
-            // add some criteria to filter the patient profiles
-            PatientProfileSearchCriteria profileCriteria = new PatientProfileSearchCriteria();
-            profileCriteria.Mrn.AssigningAuthority.EqualTo(patientProfileAuthority);
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", profileCriteria));
+            //// add some criteria to filter the patient profiles
+            //PatientProfileSearchCriteria profileCriteria = new PatientProfileSearchCriteria();
+            //profileCriteria.Mrn.AssigningAuthority.EqualTo(patientProfileAuthority);
+            if (profileCriteria != null)
+                query.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", profileCriteria));
 
-            List<RegistrationWorklistQueryResult> items = new List<RegistrationWorklistQueryResult>();
+            List<WorklistQueryResult> results = new List<WorklistQueryResult>();
             foreach (object[] tuple in ExecuteHql(query))
             {
-                items.Add( (RegistrationWorklistQueryResult)Activator.CreateInstance(typeof(RegistrationWorklistQueryResult), tuple) );
+                results.Add((WorklistQueryResult)Activator.CreateInstance(typeof(WorklistQueryResult), tuple));
             }
-            return items;
+            return results;
         }
 
-        public RegistrationWorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority)
+        public WorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority)
         {
             ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria(mpsRef);
-            IList<RegistrationWorklistQueryResult> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
+            PatientProfileSearchCriteria profileCriteria = new PatientProfileSearchCriteria();
+            profileCriteria.Mrn.AssigningAuthority.EqualTo(patientProfileAuthority);
+            IList<WorklistQueryResult> results = this.GetWorklist(mpsCriteria, profileCriteria);
 
             // expect exactly one result
-            return CollectionUtils.FirstElement<RegistrationWorklistQueryResult>(results);
+            return CollectionUtils.FirstElement<WorklistQueryResult>(results);
         }
 
     }

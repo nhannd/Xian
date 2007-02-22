@@ -13,9 +13,11 @@ namespace ClearCanvas.Ris.Client.Common
         private string _folderName;
         private Table<TItem> _itemsTable;
         private bool _isPopulated;
+        private WorkflowFolderSystem<TItem> _folderSystem;
 
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
         {
+            _folderSystem = folderSystem;
             _folderName = folderName;
             _itemsTable = itemsTable;
             _itemsTable.Items.ItemsChanged += delegate(object sender, ItemEventArgs args)
@@ -72,6 +74,11 @@ namespace ClearCanvas.Ris.Client.Common
             {
                 return _itemsTable;
             }
+        }
+
+        public WorkflowFolderSystem<TItem> WorkflowFolderSystem
+        {
+            get { return _folderSystem; }
         }
 
         public override void Refresh()

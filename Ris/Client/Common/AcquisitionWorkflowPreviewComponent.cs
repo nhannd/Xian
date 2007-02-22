@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Common.Utilities;
 
@@ -25,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Common
     [AssociateView(typeof(AcquisitionWorkflowPreviewComponentViewExtensionPoint))]
     public class AcquisitionWorkflowPreviewComponent : ApplicationComponent
     {
-        private ModalityWorklistQueryResult _worklistItem;
+        private WorklistQueryResult _worklistItem;
         private ModalityProcedureStep _scheduledProcStep;
         private PatientProfile _patientProfile;
 
@@ -40,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Common
         {
         }
 
-        public ModalityWorklistQueryResult WorklistItem
+        public WorklistQueryResult WorklistItem
         {
             get { return _worklistItem; }
             set

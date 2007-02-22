@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Healthcare.Workflow.Registration;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -44,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
             {
-                RegistrationWorklistItem item = folderComponent.SelectedItems.Item as RegistrationWorklistItem;
+                WorklistItem item = folderComponent.SelectedItems.Item as WorklistItem;
                 previewComponent.WorklistItem = item;
             };
 

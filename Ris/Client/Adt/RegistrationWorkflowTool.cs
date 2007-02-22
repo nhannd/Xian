@@ -47,10 +47,10 @@ namespace ClearCanvas.Ris.Client.Adt
         [ClickHandler("apply", "Apply")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-        public class StartTool : WorkflowItemTool
+        public class CheckInTool : WorkflowItemTool
         {
-            public StartTool()
-                : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+CheckIn")
+            public CheckInTool()
+                : base("ClearCanvas.Healthcare.Workflow.Operations+CheckIn")
             {
             }
         }
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public class CancelTool : WorkflowItemTool
         {
             public CancelTool()
-                : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+Cancel")
+                : base("ClearCanvas.Healthcare.Workflow.Operations+Cancel")
             {
             }
         }

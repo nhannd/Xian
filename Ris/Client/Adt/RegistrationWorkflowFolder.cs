@@ -5,13 +5,14 @@ using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
+    public abstract class RegistrationWorkflowFolder : WorkflowFolder<WorklistItem>
     {
         private RegistrationWorkflowFolderSystem _folderSystem;
         private IconSet _closedIconSet;
@@ -56,59 +57,24 @@ namespace ClearCanvas.Ris.Client.Adt
             base.CloseFolder();
         }
 
-        protected IRegistrationWorkflowService WorkflowService
+        protected IWorklistService WorkflowService
         {
             get { return _folderSystem.WorkflowService; }
         }
 
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
+        protected override bool CanAcceptDrop(WorklistItem item)
         {
             return false;
         }
 
-        protected override bool ConfirmAcceptDrop(ICollection<RegistrationWorklistItem> items)
+        protected override bool ConfirmAcceptDrop(ICollection<WorklistItem> items)
         {
             return false;
         }
 
-        protected override bool ProcessDrop(RegistrationWorklistItem item)
+        protected override bool ProcessDrop(WorklistItem item)
         {
             return false;
         }
-
-        protected IList<RegistrationWorklistItem> ConvertToWorkListItem(IList<RegistrationWorklistQueryResult> listQueryResult)
-        {
-            // Group the query results based on patient profile into a Registration Worklist item
-            IDictionary<EntityRef<PatientProfile>, RegistrationWorklistItem> worklistDictionary = new Dictionary<EntityRef<PatientProfile>, RegistrationWorklistItem>();
-            foreach (RegistrationWorklistQueryResult queryResult in listQueryResult)
-            {
-                if (worklistDictionary.ContainsKey(queryResult.PatientProfile))
-                    worklistDictionary[queryResult.PatientProfile].AddQueryResults(queryResult);
-                else
-                    worklistDictionary[queryResult.PatientProfile] = new RegistrationWorklistItem(queryResult);
-            }
-
-            // Now add the worklist item 
-            IList<RegistrationWorklistItem> worklist = new List<RegistrationWorklistItem>();
-            foreach (KeyValuePair<EntityRef<PatientProfile>, RegistrationWorklistItem> kvp in worklistDictionary)
-            {
-                worklist.Add(kvp.Value);
-            }
-
-            return worklist;
-        }
-
-        protected IList<RegistrationWorklistItem> ConvertToWorkListItem(IList<PatientProfile> listProfile)
-        {
-            // Now add the worklist item 
-            IList<RegistrationWorklistItem> worklist = new List<RegistrationWorklistItem>();
-            foreach (PatientProfile profile in listProfile)
-            {
-                worklist.Add(new RegistrationWorklistItem(profile));
-            }
-
-            return worklist;
-        }
-
     }
 }

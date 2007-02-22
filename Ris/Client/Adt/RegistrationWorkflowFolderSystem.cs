@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
@@ -28,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt
         bool GetWorkflowOperationEnablement(string operationClass);
         void ExecuteWorkflowOperation(string operationClass);
 
-        ICollection<RegistrationWorklistItem> SelectedItems { get; }
+        ICollection<WorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
 
         IDesktopWindow DesktopWindow { get; }
@@ -42,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public class RegistrationWorkflowFolderSystem : WorkflowFolderSystem<RegistrationWorklistItem>
+    public class RegistrationWorkflowFolderSystem : WorkflowFolderSystem<WorklistItem>
     {
         class RegistrationWorkflowItemToolContext : ToolContext, IRegistrationWorkflowItemToolContext
         {
@@ -60,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _owner.DesktopWindow; }
             }
 
-            public ICollection<RegistrationWorklistItem> SelectedItems
+            public ICollection<WorklistItem> SelectedItems
             {
                 get { return _owner.SelectedItems; }
             }
@@ -114,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private IRegistrationWorkflowService _workflowService;
+        private IWorklistService _workflowService;
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
@@ -134,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Adt
             :base(folderExplorer)
         {
             // important to initialize service before adding any folders, because folders may access service
-            _workflowService = ApplicationContext.GetService<IRegistrationWorkflowService>();
+            _workflowService = ApplicationContext.GetService<IWorklistService>();
             _workflowService.ModalityProcedureStepChanged += ModalityProcedureStepChangedEventHandler;
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
@@ -158,10 +159,11 @@ namespace ClearCanvas.Ris.Client.Adt
             //TODO:
 
             //// update workflow enablement
-            //RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.SelectedItems);
+            //WorklistItem selectedItem = CollectionUtils.FirstElement<WorklistItem>(this.SelectedItems);
             //if (selectedItem != null)
             //{
-            //    _workflowEnablment = _workflowService.GetOperationEnablement(selectedItem.ProcedureStep);
+            //    WorklistQueryResult result = CollectionUtils.FirstElement<WorklistQueryResult>(selectedItem.QueryResults);
+            //    _workflowEnablment = _workflowService.GetOperationEnablement(result.ProcedureStep);
             //}
             //else
             //{
@@ -180,7 +182,7 @@ namespace ClearCanvas.Ris.Client.Adt
             //EntityRef<ModalityProcedureStep> mpsRef = (EntityRef<ModalityProcedureStep>)e.EntityRef;
 
             //// retrieve the new or updated worklist item
-            //RegistrationWorklistItem worklistItem = _workflowService.GetWorklistItem(mpsRef);
+            //WorklistItem worklistItem = _workflowService.GetWorklistItem(mpsRef);
 
             //// force all folders to update this item
             //foreach (RegistrationWorkflowFolder folder in this.Folders)
@@ -193,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             //TODO:
 
-            //RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.SelectedItems);
+            //WorklistItem selectedItem = CollectionUtils.FirstElement<WorklistItem>(this.SelectedItems);
             //_workflowService.ExecuteOperation(selectedItem.ProcedureStep, operationName);
         }
 
@@ -202,7 +204,7 @@ namespace ClearCanvas.Ris.Client.Adt
             return _workflowEnablment == null ? false : _workflowEnablment[operationName];
         }
 
-        public IRegistrationWorkflowService WorkflowService
+        public IWorklistService WorkflowService
         {
             get { return _workflowService; }
         }

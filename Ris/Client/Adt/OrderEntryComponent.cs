@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Desktop.Tables;
 using System.Collections;
 using ClearCanvas.Desktop.Trees;
@@ -93,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                WorklistItem item = CollectionUtils.FirstElement<WorklistItem>(context.SelectedItems);
                 OrderEntryComponent component = new OrderEntryComponent(item.PatientProfile);
                 ApplicationComponent.LaunchAsWorkspace(
                     context.DesktopWindow,

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
+using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Healthcare.Workflow.Registration
+namespace ClearCanvas.Healthcare.Workflow
 {
     [ExtensionPoint]
     public class WorkflowOperationExtensionPoint : ExtensionPoint<IOperation>

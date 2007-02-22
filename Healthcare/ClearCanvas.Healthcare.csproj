@@ -43,7 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
-    <Compile Include="RegistrationWorklistQueryResult.cs" />
+    <Compile Include="CheckInProcedureStep.cs" />
+    <Compile Include="CheckInProcedureStepSearchCriteria.cs" />
+    <Compile Include="Workflow\Modality\WorklistItem.cs" />
+    <Compile Include="Workflow\Modality\Worklists.cs" />
+    <Compile Include="Workflow\Registration\WorklistQueryResult.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="AddressType.cs" />
@@ -123,12 +127,16 @@
     <Compile Include="VisitPractitioner.cs" />
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
-    <Compile Include="ModalityWorklistQueryResult.cs" />
+    <Compile Include="Workflow\Modality\WorklistQueryResult.cs" />
+    <Compile Include="Workflow\Registration\WorklistItem.cs" />
+    <Compile Include="Workflow\Registration\Worklists.cs" />
+    <Compile Include="Workflow\IWorklist.cs" />
     <Compile Include="Workflow\Registration\Operations.cs" />
     <Compile Include="Workflow\Modality\Operations.cs" />
     <Compile Include="Workflow\IOperation.cs" />
     <Compile Include="Workflow\Operation.cs" />
     <Compile Include="Workflow\Reporting\Operations.cs" />
+    <Compile Include="Workflow\Worklist.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

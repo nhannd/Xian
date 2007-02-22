@@ -4,9 +4,9 @@ using System.Text;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.Workflow.Registration
 {
-    public class RegistrationWorklistQueryResult
+    public class WorklistQueryResult : IWorklistQueryResult
     {
         private EntityRef<Patient> _patient;
         private EntityRef<PatientProfile> _patientProfile;
@@ -31,7 +31,7 @@ namespace ClearCanvas.Healthcare
         private Sex _sex;
         private ActivityStatus _status;
 
-        public RegistrationWorklistQueryResult(
+        public WorklistQueryResult(
             Patient patient,
             PatientProfile profile,
             Order order,
@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare
 
         public override bool Equals(object obj)
         {
-            RegistrationWorklistQueryResult that = (RegistrationWorklistQueryResult)obj;
+            WorklistQueryResult that = (WorklistQueryResult)obj;
             return that != null && this._procedureStep.Equals(that._procedureStep);
         }
 

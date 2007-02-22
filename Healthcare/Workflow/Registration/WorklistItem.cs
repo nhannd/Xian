@@ -7,14 +7,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Workflow;
-using ClearCanvas.Ris.Services;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Healthcare.Workflow.Registration
 {
-    public class RegistrationWorklistItem
+    public class WorklistItem : IWorklistItem
     {
         private EntityRef<PatientProfile> _patientProfile;
-        private ISet _queryResults;
+        private string _workClassName;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
@@ -22,10 +21,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private DateTime _dateOfBirth;
         private Sex _sex;
 
-        public RegistrationWorklistItem(RegistrationWorklistQueryResult queryResult)
+        public WorklistItem(string workClassName, WorklistQueryResult queryResult)
         {
-            _queryResults = new HybridSet();
-
+            _workClassName = workClassName;
             _mrn = queryResult.Mrn;
             _patientName = queryResult.PatientName;
             _healthcardNumber = queryResult.HealthcardNumber;
@@ -33,11 +31,12 @@ namespace ClearCanvas.Ris.Client.Adt
             _sex = queryResult.Sex;
 
             _patientProfile = queryResult.PatientProfile;
-            _queryResults.Add(queryResult);
         }
 
-        public RegistrationWorklistItem(PatientProfile profile)
+        public WorklistItem(string workClassName, PatientProfile profile)
         {
+            _workClassName = workClassName;
+
             _mrn = profile.Mrn;
             _patientName = profile.Name;
             _healthcardNumber = profile.Healthcard;
@@ -47,22 +46,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _patientProfile = new EntityRef<PatientProfile>(profile);
         }
 
-        public void AddQueryResults(RegistrationWorklistQueryResult queryResult)
-        {
-            _queryResults.Add(queryResult);
-        }
-
-        public bool HasStatus(ActivityStatus status)
-        {
-            foreach (RegistrationWorklistQueryResult queryResult in _queryResults)
-            {
-                if (queryResult.Status == status)
-                    return true;
-            }
-
-            return false;
-        }
-
         #region Public Properties
 
         public EntityRef<PatientProfile> PatientProfile
@@ -70,9 +53,10 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _patientProfile; }
         }
 
-        public ISet QueryResults
+        public string WorkClassName
         {
-            get { return _queryResults; }
+            get { return _workClassName; }
+            set { _workClassName = value; }
         }
 
         public CompositeIdentifier Mrn

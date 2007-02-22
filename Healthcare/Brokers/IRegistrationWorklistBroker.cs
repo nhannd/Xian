@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Healthcare.Workflow.Registration;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IRegistrationWorklistBroker : IPersistenceBroker
     {
-        IList<RegistrationWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority);
-        RegistrationWorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority);
+        IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, PatientProfileSearchCriteria profileCriteria);
+        WorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority);
     }
 }

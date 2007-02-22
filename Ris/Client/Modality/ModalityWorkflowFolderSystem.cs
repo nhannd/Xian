@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
@@ -17,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Modality
         bool GetWorkflowOperationEnablement(string operationClass);
         void ExecuteWorkflowOperation(string operationClass);
 
-        ICollection<ModalityWorklistQueryResult> SelectedItems { get; }
+        ICollection<WorklistQueryResult> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
     }
 
@@ -27,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Modality
     }
 
 
-    public class ModalityWorkflowFolderSystem : WorkflowFolderSystem<ModalityWorklistQueryResult>
+    public class ModalityWorkflowFolderSystem : WorkflowFolderSystem<WorklistQueryResult>
     {
         class ModalityWorkflowToolContext : ToolContext, IModalityWorkflowToolContext
         {
@@ -40,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Modality
 
             #region IModalityWorkflowToolContext Members
 
-            public ICollection<ModalityWorklistQueryResult> SelectedItems
+            public ICollection<WorklistQueryResult> SelectedItems
             {
                 get { return _owner.SelectedItems; }
             }
@@ -92,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Modality
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
             // update workflow enablement
-            ModalityWorklistQueryResult selectedItem = CollectionUtils.FirstElement<ModalityWorklistQueryResult>(this.SelectedItems);
+            WorklistQueryResult selectedItem = CollectionUtils.FirstElement<WorklistQueryResult>(this.SelectedItems);
             if (selectedItem != null)
             {
                 _workflowEnablment = _workflowService.GetOperationEnablement(selectedItem.ProcedureStep);
@@ -112,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Modality
             EntityRef<ModalityProcedureStep> mpsRef = (EntityRef<ModalityProcedureStep>)e.EntityRef;
 
             // retrieve the new or updated worklist item
-            ModalityWorklistQueryResult worklistItem = _workflowService.GetWorklistItem(mpsRef);
+            WorklistQueryResult worklistItem = _workflowService.GetWorklistItem(mpsRef);
 
             // force all folders to update this item
             foreach (ModalityWorkflowFolder folder in this.Folders)
@@ -123,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Modality
 
         private void ExecuteOperation(string operationName)
         {
-            ModalityWorklistQueryResult selectedItem = CollectionUtils.FirstElement<ModalityWorklistQueryResult>(this.SelectedItems);
+            WorklistQueryResult selectedItem = CollectionUtils.FirstElement<WorklistQueryResult>(this.SelectedItems);
             _workflowService.ExecuteOperation(selectedItem.ProcedureStep, operationName);
         }
 

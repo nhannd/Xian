@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Desktop.Tables;
@@ -20,7 +21,7 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         }
 
-        protected override IList<ModalityWorklistQueryResult> QueryItems()
+        protected override IList<WorklistQueryResult> QueryItems()
         {
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
             criteria.State.EqualTo(ActivityStatus.SC);
@@ -28,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
             return this.WorkflowService.GetWorklist(criteria);
         }
 
-        protected override bool IsMember(ModalityWorklistQueryResult item)
+        protected override bool IsMember(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.SC;
         }
@@ -42,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         }
 
-        protected override IList<ModalityWorklistQueryResult> QueryItems()
+        protected override IList<WorklistQueryResult> QueryItems()
         {
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
             criteria.State.EqualTo(ActivityStatus.IP);
@@ -50,23 +51,23 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
             return this.WorkflowService.GetWorklist(criteria);
         }
 
-        protected override bool IsMember(ModalityWorklistQueryResult item)
+        protected override bool IsMember(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.IP;
         }
 
-        protected override bool CanAcceptDrop(ModalityWorklistQueryResult item)
+        protected override bool CanAcceptDrop(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.SC;
         }
 
-        protected override bool ConfirmAcceptDrop(ICollection<ModalityWorklistQueryResult> items)
+        protected override bool ConfirmAcceptDrop(ICollection<WorklistQueryResult> items)
         {
             DialogBoxAction result = Platform.ShowMessageBox("Are you sure you want to start these procedures?", MessageBoxActions.YesNo);
             return (result == DialogBoxAction.Yes);
         }
 
-        protected override bool ProcessDrop(ModalityWorklistQueryResult item)
+        protected override bool ProcessDrop(WorklistQueryResult item)
         {
             IModalityWorkflowService service = ApplicationContext.GetService<IModalityWorkflowService>();
             //service.StartProcedureStep(item.ProcedureStep);
@@ -82,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         }
 
-        protected override IList<ModalityWorklistQueryResult> QueryItems()
+        protected override IList<WorklistQueryResult> QueryItems()
         {
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
             criteria.State.EqualTo(ActivityStatus.CM);
@@ -90,23 +91,23 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
             return this.WorkflowService.GetWorklist(criteria);
         }
 
-        protected override bool IsMember(ModalityWorklistQueryResult item)
+        protected override bool IsMember(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.CM;
         }
 
-        protected override bool CanAcceptDrop(ModalityWorklistQueryResult item)
+        protected override bool CanAcceptDrop(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.IP;
         }
 
-        protected override bool ConfirmAcceptDrop(ICollection<ModalityWorklistQueryResult> items)
+        protected override bool ConfirmAcceptDrop(ICollection<WorklistQueryResult> items)
         {
             DialogBoxAction result = Platform.ShowMessageBox("Are you sure you want to complete these procedures?", MessageBoxActions.YesNo);
             return (result == DialogBoxAction.Yes);
         }
 
-        protected override bool ProcessDrop(ModalityWorklistQueryResult item)
+        protected override bool ProcessDrop(WorklistQueryResult item)
         {
             IModalityWorkflowService service = ApplicationContext.GetService<IModalityWorkflowService>();
             //service.CompleteProcedureStep(item.ProcedureStep);
@@ -122,7 +123,7 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
 
         }
 
-        protected override IList<ModalityWorklistQueryResult> QueryItems()
+        protected override IList<WorklistQueryResult> QueryItems()
         {
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
             criteria.State.EqualTo(ActivityStatus.DC);
@@ -130,23 +131,23 @@ namespace ClearCanvas.Ris.Client.Modality.Folders
             return this.WorkflowService.GetWorklist(criteria);
         }
 
-        protected override bool IsMember(ModalityWorklistQueryResult item)
+        protected override bool IsMember(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.DC;
         }
 
-        protected override bool CanAcceptDrop(ModalityWorklistQueryResult item)
+        protected override bool CanAcceptDrop(WorklistQueryResult item)
         {
             return item.Status == ActivityStatus.IP || item.Status == ActivityStatus.SC;
         }
 
-        protected override bool ConfirmAcceptDrop(ICollection<ModalityWorklistQueryResult> items)
+        protected override bool ConfirmAcceptDrop(ICollection<WorklistQueryResult> items)
         {
             DialogBoxAction result = Platform.ShowMessageBox("Are you sure you want to cancel these procedures?", MessageBoxActions.YesNo);
             return (result == DialogBoxAction.Yes);
         }
 
-        protected override bool ProcessDrop(ModalityWorklistQueryResult item)
+        protected override bool ProcessDrop(WorklistQueryResult item)
         {
             IModalityWorkflowService service = ApplicationContext.GetService<IModalityWorkflowService>();
             //service.CancelProcedureStep(item.ProcedureStep);

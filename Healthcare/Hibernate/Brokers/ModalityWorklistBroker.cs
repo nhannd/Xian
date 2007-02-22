@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
@@ -13,7 +14,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class ModalityWorklistBroker : Broker, IModalityWorklistBroker
     {
-        public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority)
+        public IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority)
         {
             HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ModalityProcedureStep"));
             query.Joins.Add(new HqlJoin("spst", "sps.Type"));
@@ -49,21 +50,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             profileCriteria.Mrn.AssigningAuthority.EqualTo(patientProfileAuthority);
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", profileCriteria));
 
-            List<ModalityWorklistQueryResult> items = new List<ModalityWorklistQueryResult>();
+            List<WorklistQueryResult> items = new List<WorklistQueryResult>();
             foreach (object[] tuple in ExecuteHql(query))
             {
-                items.Add( (ModalityWorklistQueryResult)Activator.CreateInstance(typeof(ModalityWorklistQueryResult), tuple) );
+                items.Add( (WorklistQueryResult)Activator.CreateInstance(typeof(WorklistQueryResult), tuple) );
             }
             return items;
         }
 
-        public ModalityWorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority)
+        public WorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority)
         {
             ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria(mpsRef);
-            IList<ModalityWorklistQueryResult> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
+            IList<WorklistQueryResult> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
 
             // expect exactly one result
-            return CollectionUtils.FirstElement<ModalityWorklistQueryResult>(results);
+            return CollectionUtils.FirstElement<WorklistQueryResult>(results);
         }
 
     }

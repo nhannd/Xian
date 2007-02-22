@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Services
@@ -71,7 +72,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<ModalityWorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria)
+        public IList<WorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
             IModalityWorklistBroker broker = this.CurrentContext.GetBroker<IModalityWorklistBroker>();
             return broker.GetWorklist(criteria, "UHN");

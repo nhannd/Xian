@@ -11,6 +11,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Ris.Services;
@@ -64,10 +65,15 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _showHeader;
         private bool _showReconciliationAlert;
 
-        RegistrationWorklistItem _worklistItem;
+        private WorklistItem _worklistItem;
         private PatientProfile _patientProfile;
 
+        private IWorklistService _worklistService;
         private IAdtService _adtService;
+
+        private int _numberOfRIC;
+        private int _maxRICDisplay;
+
         private RICTable _RIC;
         private SexEnumTable _sexChoices;
 
@@ -88,9 +94,10 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _showHeader = showHeader;
             _showReconciliationAlert = showReconciliationAlert;
+            _maxRICDisplay = 5;
         }
 
-        public RegistrationWorklistItem WorklistItem
+        public WorklistItem WorklistItem
         {
             get { return _worklistItem; }
             set
@@ -103,6 +110,12 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public int MaxRIC
+        {
+            get { return _maxRICDisplay; }
+            set { _maxRICDisplay = value; } 
+        }
+
         public EntityRef<PatientProfile> PatientProfileRef
         {
             get { return (_worklistItem == null ? null : _worklistItem.PatientProfile); }
@@ -110,6 +123,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            _worklistService = ApplicationContext.GetService<IWorklistService>();
             _adtService = ApplicationContext.GetService<IAdtService>();
             _sexChoices = _adtService.GetSexEnumTable();
 
@@ -134,19 +148,19 @@ namespace ClearCanvas.Ris.Client.Adt
             
             if (_worklistItem != null && _worklistItem.PatientProfile != null)
             {
-                _patientProfile = _adtService.LoadPatientProfile(_worklistItem.PatientProfile, true);
+                int count = 0;
+                int maximumItemDisplay = 5;
 
-                if (_worklistItem.QueryResults != null)
+                _patientProfile = _adtService.LoadPatientProfile(_worklistItem.PatientProfile, true);
+                IList<WorklistQueryResult> listQueryResult = (IList<WorklistQueryResult>)_worklistService.GetQueryResultForWorklistItem(_worklistItem.WorkClassName, _worklistItem);
+                _numberOfRIC = listQueryResult.Count;
+                
+                foreach (WorklistQueryResult queryResult in listQueryResult)
                 {
-                    int count = 0;
-                    int maximumItemDisplay = 5;
-                    foreach (RegistrationWorklistQueryResult queryResult in _worklistItem.QueryResults)
-                    {
-                        _RIC.Items.Add(queryResult);
-                        count++;
-                        if (count > maximumItemDisplay)
-                            break;
-                    }
+                    _RIC.Items.Add(queryResult);
+                    count++;
+                    if (count > maximumItemDisplay)
+                        break;
                 }
             }
 
@@ -231,7 +245,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public int MoreRICCount
         {
-            get { return _worklistItem.QueryResults.Count - _RIC.Items.Count; }
+            get { return _numberOfRIC - _RIC.Items.Count; }
         }
 
         public bool HasAlert

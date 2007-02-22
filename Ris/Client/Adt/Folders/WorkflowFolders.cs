@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,6 +11,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Client.Common;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Workflow;
@@ -29,18 +31,15 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.IconSet = this.OpenIconSet;
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override IList<WorklistItem> QueryItems()
         {
-            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-            //criteria.Scheduling.StartTime.Between(DateTime.Today, DateTime.Today.AddDays(1));
-            criteria.State.EqualTo(ActivityStatus.SC);
-
-            return ConvertToWorkListItem(this.WorkflowService.GetWorklist(criteria));
+            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled");
         }
 
-        protected override bool IsMember(RegistrationWorklistItem item)
+        protected override bool IsMember(WorklistItem item)
         {
-            return item.HasStatus(ActivityStatus.SC);
+            //return item.HasStatus(ActivityStatus.SC);
+            return true;
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -59,37 +58,39 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override IList<WorklistItem> QueryItems()
         {
-            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-            
-            // TODO: We don't have a Check-in status yet... so we can't query the Activity Status
-            //criteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            //criteria.State.EqualTo(ActivityStatus.IP);
-
-            return ConvertToWorkListItem(this.WorkflowService.GetWorklist(criteria));
+            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn");
         }
 
-        protected override bool IsMember(RegistrationWorklistItem item)
+        protected override bool IsMember(WorklistItem item)
         {
-            return item.HasStatus(ActivityStatus.IP);
+            //return item.HasStatus(ActivityStatus.IP);
+            return true;
         }
 
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
+        protected override bool CanAcceptDrop(WorklistItem item)
         {
-            return item.HasStatus(ActivityStatus.SC);
+            //return item.HasStatus(ActivityStatus.SC);
+            return true;
         }
 
-        protected override bool ConfirmAcceptDrop(ICollection<RegistrationWorklistItem> items)
+        protected override bool ConfirmAcceptDrop(ICollection<WorklistItem> items)
         {
-            DialogBoxAction result = Platform.ShowMessageBox("Are you sure you want to check in these patients?", MessageBoxActions.YesNo);
-            return (result == DialogBoxAction.Yes);
+            //DialogBoxAction result = Platform.ShowMessageBox("Are you sure you want to check in these patients?", MessageBoxActions.YesNo);
+            //return (result == DialogBoxAction.Yes);
+
+            return true;
         }
 
-        protected override bool ProcessDrop(RegistrationWorklistItem item)
+        protected override bool ProcessDrop(WorklistItem item)
         {
-            IRegistrationWorkflowService service = ApplicationContext.GetService<IRegistrationWorkflowService>();
+            //Todo: Process drop
             //service.StartProcedureStep(item.ProcedureStep);
+            RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
+            ApplicationComponent.LaunchAsDialog(
+                this.WorkflowFolderSystem.DesktopWindow, checkInComponent, String.Format("Checking in {0}", item.PatientName.ToString()));
+                        
             return true;
         }
 
@@ -104,28 +105,17 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "In Progress")
         {
-
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override IList<WorklistItem> QueryItems()
         {
-            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-            //criteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            criteria.State.EqualTo(ActivityStatus.IP);
-
-            return ConvertToWorkListItem(this.WorkflowService.GetWorklist(criteria));
+            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress");
         }
 
-        protected override bool IsMember(RegistrationWorklistItem item)
+        protected override bool IsMember(WorklistItem item)
         {
-            return item.HasStatus(ActivityStatus.IP);
-        }
-
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
-        {
-            // For Registration, we do not allow Clerks to change status to InProgress
-            //return item.HasStatus(ActivityStatus.SC);
-            return false;
+            //return item.HasStatus(ActivityStatus.IP);
+            return true;
         }
     }
 
@@ -134,28 +124,17 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Completed")
         {
-
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override IList<WorklistItem> QueryItems()
         {
-            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-            //criteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            criteria.State.EqualTo(ActivityStatus.CM);
-
-            return ConvertToWorkListItem(this.WorkflowService.GetWorklist(criteria));
+            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed");
         }
 
-        protected override bool IsMember(RegistrationWorklistItem item)
+        protected override bool IsMember(WorklistItem item)
         {
-            return item.HasStatus(ActivityStatus.CM);
-        }
-
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
-        {
-            // For Registration, we do not allow Clerks to change status to Completed
-            //return item.HasStatus(ActivityStatus.IP);
-            return false;
+            //return item.HasStatus(ActivityStatus.CM);
+            return true;
         }
     }
 
@@ -164,28 +143,17 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Cancelled")
         {
-
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override IList<WorklistItem> QueryItems()
         {
-            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-            //criteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            criteria.State.EqualTo(ActivityStatus.DC);
-
-            return ConvertToWorkListItem(this.WorkflowService.GetWorklist(criteria));
+            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled");
         }
 
-        protected override bool IsMember(RegistrationWorklistItem item)
+        protected override bool IsMember(WorklistItem item)
         {
-            return item.HasStatus(ActivityStatus.DC);
-        }
-
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
-        {
-            // For Registration, we do not allow Clerks to change status to Cancel
-            //return item.HasStatus(ActivityStatus.SC);
-            return false;
+            //return item.HasStatus(ActivityStatus.DC);
+            return true;
         }
     }
 
@@ -211,16 +179,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             }
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override IList<WorklistItem> QueryItems()
         {
-            if (_searchCriteria == null)
-                return new List<RegistrationWorklistItem>();
-
-            IAdtService service = ApplicationContext.GetService<IAdtService>();
-            return ConvertToWorkListItem(service.ListPatientProfiles(_searchCriteria));
+            return (IList<WorklistItem>)this.WorkflowService.SearchPatient(_searchCriteria);
         }
 
-        protected override bool IsMember(RegistrationWorklistItem item)
+        protected override bool IsMember(WorklistItem item)
         {
             return true;
         }

@@ -4,9 +4,9 @@ using System.Text;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.Workflow.Modality
 {
-    public class ModalityWorklistQueryResult
+    public class WorklistQueryResult : IWorklistQueryResult
     {
         private EntityRef<Patient> _patient;
         private EntityRef<PatientProfile> _patientProfile;
@@ -25,7 +25,7 @@ namespace ClearCanvas.Healthcare
         private OrderPriority _priority;
         private ActivityStatus _status;
 
-        public ModalityWorklistQueryResult(
+        public WorklistQueryResult(
             Patient patient,
             PatientProfile profile,
             Order order,
@@ -62,7 +62,7 @@ namespace ClearCanvas.Healthcare
 
         public override bool Equals(object obj)
         {
-            ModalityWorklistQueryResult that = (ModalityWorklistQueryResult)obj;
+            WorklistQueryResult that = (WorklistQueryResult)obj;
             return that != null && this._procedureStep.Equals(that._procedureStep);
         }
 

@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="OrderEntryComponent.cs" />
@@ -75,8 +76,8 @@
     <Compile Include="RegistrationWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
-    <Compile Include="RegistrationWorklistItem.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
+    <Compile Include="RequestedProcedureCheckInComponent.cs" />
     <Compile Include="RICTable.cs" />
     <Compile Include="VisitEditorComponent.cs" />
     <Compile Include="VisitDetailsEditorComponent.cs" />

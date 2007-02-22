@@ -4,10 +4,10 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Common;
 using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare.Workflow.Modality;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -15,21 +15,21 @@ namespace ClearCanvas.Ris.Services
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
         [ReadOperation]
-        public IList<ModalityWorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
+        public IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
         {
             IModalityWorklistBroker broker = CurrentContext.GetBroker<IModalityWorklistBroker>();
             return broker.GetWorklist(criteria, "UHN");
         }
 
         [ReadOperation]
-        public ModalityWorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef)
+        public WorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef)
         {
             IModalityWorklistBroker broker = CurrentContext.GetBroker<IModalityWorklistBroker>();
             return broker.GetWorklistItem(mpsRef, "UHN");
         }
 
         [ReadOperation]
-        public ModalityProcedureStep LoadWorklistItemPreview(ModalityWorklistQueryResult item)
+        public ModalityProcedureStep LoadWorklistItemPreview(WorklistQueryResult item)
         {
             IModalityProcedureStepBroker spsBroker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
             IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();

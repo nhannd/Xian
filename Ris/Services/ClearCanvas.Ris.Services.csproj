@@ -45,8 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RegistrationWorkflowService.cs" />
-    <Compile Include="IRegistrationWorkflowService.cs" />
+    <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflowService.cs" />
     <Compile Include="AdtService.cs" />
     <Compile Include="DefaultPatientReconciliationStrategy.cs" />
@@ -83,6 +82,7 @@
     </Compile>
     <Compile Include="StaffAdminService.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
+    <Compile Include="WorklistService.cs" />
     <Compile Include="WorkflowServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>

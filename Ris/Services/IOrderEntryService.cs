@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Services
@@ -25,6 +26,6 @@ namespace ClearCanvas.Ris.Services
             Facility orderingFacility,
             DateTime schedulingRequestTime);
 
-        IList<ModalityWorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria);
+        IList<WorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria);
     }
 }

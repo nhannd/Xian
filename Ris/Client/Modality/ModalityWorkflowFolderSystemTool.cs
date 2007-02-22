@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -25,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Modality
 
             folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
             {
-                ModalityWorklistQueryResult item = folderComponent.SelectedItems.Item as ModalityWorklistQueryResult;
+                WorklistQueryResult item = folderComponent.SelectedItems.Item as WorklistQueryResult;
                 //previewComponent.WorklistItem = item;
             };
 
