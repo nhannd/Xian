@@ -58,7 +58,10 @@ namespace ClearCanvas.Ris.Services
             IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
             HL7QueueItem queueItem = broker.Load(hl7QueueItemRef);
 
-            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message);
+            IHL7PreProcessor preProcessor = new HL7PreProcessor();
+            HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
+
+            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
 
             IList<string> identifiers = processor.ListReferencedPatientIdentifiers();
             if (identifiers.Count == 0)
@@ -100,9 +103,10 @@ namespace ClearCanvas.Ris.Services
             processor.Visits = LoadOrCreateVisitFromVisitNumber(
                 processor.ListReferencedVisitIdentifiers(),
                 processor.ReferencedVisitIdentifierAssigningAuthority());
-            processor.Orders = LoadOrCreateOrdersFromPlacerNumber(
-                processor.ListReferencedPlacerOrderNumbers(),
-                processor.ReferencedPlacerOrderNumberAssigningAuthority());
+            processor.Orders = processor.HasOrders == false ? new List<EntityAccess<Order>>() : 
+                LoadOrCreateOrdersFromPlacerNumber(
+                    processor.ListReferencedPlacerOrderNumbers(),
+                    processor.ReferencedPlacerOrderNumberAssigningAuthority());
 
             processor.Process();
 
