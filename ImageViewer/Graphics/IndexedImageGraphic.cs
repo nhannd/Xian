@@ -44,8 +44,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
-				_lutComposer.Compose();
-				return _lutComposer.OutputLUT;
+				this.LUTComposer.Compose();
+				return this.LUTComposer.OutputLUT;
 			}
 		}
 
