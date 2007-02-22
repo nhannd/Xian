@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Modality.
+        ///   Looks up a localized string similar to MOD.
         /// </summary>
         public static string LabelModalityLut {
             get {
@@ -223,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pixel Value.
+        ///   Looks up a localized string similar to PIX.
         /// </summary>
         public static string LabelPixelValue {
             get {
@@ -232,7 +232,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Voi.
+        ///   Looks up a localized string similar to PRE.
+        /// </summary>
+        public static string LabelPresentationLut {
+            get {
+                return ResourceManager.GetString("LabelPresentationLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VOI.
         /// </summary>
         public static string LabelVOILut {
             get {

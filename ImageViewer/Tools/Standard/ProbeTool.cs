@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		public ProbeTool()
 		{
-			this.CursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
+			//this.CursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
 		}
 
 		/// <summary>
@@ -59,14 +59,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			//base.Start(mouseInformation);
 
-			IImageGraphicProvider associatedImageGraphic = mouseInformation.Tile.PresentationImage as IImageGraphicProvider;
-
-			if (associatedImageGraphic == null)
+			if (this.SelectedImageGraphicProvider == null)
 				return false;
 
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
-			_selectedImageGraphic = associatedImageGraphic.ImageGraphic;
+			_selectedImageGraphic = this.SelectedImageGraphicProvider.ImageGraphic;
 
 			Probe(mouseInformation.Location);
 
@@ -125,77 +123,124 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool showPixelValue = true;
 			bool showModalityValue = true;
 			bool showVoiValue = true;
+			bool showPresentationValue = true;
 
 			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);
 			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
+			string presentationLutString = String.Format("{0}: {1}", SR.LabelPresentationLut, SR.LabelNotApplicable);
 
 			Rectangle imageRectangle = new Rectangle(0, 0, _selectedImageGraphic.Columns, _selectedImageGraphic.Rows);
 
 			if (imageRectangle.Contains(sourcePointRounded))
 			{
-				if (!_selectedImageGraphic.IsColor)
+				if (_selectedImageGraphic.IsGrayscale)
 				{
-					int pixelValue = 0;
-					int modalityLutValue = 0;
-					int voiLutValue = 0;
+					GrayscaleImageGraphic grayscaleImage = _selectedImageGraphic as GrayscaleImageGraphic;
 
-					string formatString = "{0}: {1}";
+					if (grayscaleImage != null)
+					{
+						int pixelValue = 0;
+						int modalityLutValue = 0;
+						int voiLutValue = 0;
+						int presentationLutValue = 0;
 
-					if (_selectedImageGraphic.BitsAllocated == 16)
-						pixelValue = _selectedImageGraphic.PixelData.GetPixel16(sourcePointRounded.X, sourcePointRounded.Y);
-					else
-						pixelValue = _selectedImageGraphic.PixelData.GetPixel8(sourcePointRounded.X, sourcePointRounded.Y);
-
-					if (_selectedImageGraphic.IsSigned)
-						pixelValue = (short)pixelValue;
-
-					//GrayscaleLUTPipeline pipeline = _selectedImageGraphic.GrayscaleLUTPipeline;
-					//if (pipeline != null)
-					//{
-					//    if (pipeline.ModalityLUT != null)
-					//    {
-					//        modalityLutValue = pipeline.ModalityLUT[pixelValue];
-					//        modalityLutString = String.Format(formatString, SR.LabelModalityLut, modalityLutValue);
-
-					//        if (_selectedTile.PresentationImage is StandardPresentationImage)
-					//        { 
-					//            StandardPresentationImage image = _selectedTile.PresentationImage as StandardPresentationImage;
-					//            if (String.Compare(image.ImageSop.Modality, "CT", true) == 0)
-					//                modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
-					//        }
-					//    }
-
-					//    if (pipeline.VoiLUT != null)
-					//    {
-					//        voiLutValue = pipeline.VoiLUT[modalityLutValue];
-					//        voiLutString = String.Format(formatString, SR.LabelVOILut, voiLutValue);
-					//    }
-					//}
-
-					pixelValueString = String.Format(formatString, SR.LabelPixelValue, pixelValue);
+						GetPixelValue(grayscaleImage, sourcePointRounded, ref pixelValue, ref pixelValueString);
+						GetModalityLutValue(grayscaleImage, pixelValue, ref modalityLutValue, ref modalityLutString);
+						GetVoiLutValue(grayscaleImage, modalityLutValue, ref voiLutValue, ref voiLutString);
+						GetPresentationLutValue(grayscaleImage, voiLutValue, ref presentationLutValue, ref presentationLutString);
+					}
 				}
 				else
 				{
 					showModalityValue = false;
 					showVoiValue = false;
+					showPresentationValue = false;
 
 					Color color = _selectedImageGraphic.PixelData.GetPixelRGB(sourcePointRounded.X, sourcePointRounded.Y);
-					string rgbFormatted = String.Format("RGB({0}, {1}, {2})", color.R, color.G, color.B);
+					string rgbFormatted = String.Format("R={0}, G={1}, B={2})", color.R, color.G, color.B);
 					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}
 			}
 
-			string probeString = String.Format("x, y: {0}, {1}", sourcePointRounded.X, sourcePointRounded.Y);
+			string probeString = String.Format("LOC: x={0}, y={1}", sourcePointRounded.X, sourcePointRounded.Y);
 
 			if (showPixelValue)
-				probeString = probeString + "\n" + pixelValueString;
-			//if (showModalityValue)
-			//    probeString = probeString + "\n" + modalityLutString;
-			//if (showVoiValue)
-			//    probeString = probeString + "\n" + voiLutString;
+				probeString += "\n" + pixelValueString;
+			if (showModalityValue)
+				probeString += "\n" + modalityLutString;
+			if (showVoiValue)
+				probeString += "\n" + voiLutString;
+			if (showPresentationValue)
+				probeString += "\n" + presentationLutString;
 
 			_selectedTile.InformationBox.Update(probeString, destinationPoint);
+		}
+
+		private void GetPixelValue(
+			GrayscaleImageGraphic grayscaleImage, 
+			Point sourcePointRounded, 
+			ref int pixelValue,
+			ref string pixelValueString)
+		{
+			if (grayscaleImage.BitsAllocated == 16)
+				pixelValue = grayscaleImage.PixelData.GetPixel16(sourcePointRounded.X, sourcePointRounded.Y);
+			else
+				pixelValue = grayscaleImage.PixelData.GetPixel8(sourcePointRounded.X, sourcePointRounded.Y);
+
+			if (grayscaleImage.IsSigned)
+				pixelValue = (short)pixelValue;
+
+			pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, pixelValue);
+		}
+
+		private void GetModalityLutValue(
+			GrayscaleImageGraphic grayscaleImage, 
+			int pixelValue, 
+			ref int modalityLutValue,
+			ref string modalityLutString)
+		{
+			if (grayscaleImage.ModalityLUT != null)
+			{
+				modalityLutValue = grayscaleImage.ModalityLUT[pixelValue];
+				modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, modalityLutValue);
+
+				StandardGrayscaleImageGraphic standardImage = grayscaleImage as StandardGrayscaleImageGraphic;
+
+				if (standardImage != null)
+				{
+					if (String.Compare(standardImage.ImageSop.Modality, "CT", true) == 0)
+						modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
+				}
+			}
+		}
+
+		private void GetVoiLutValue(
+			GrayscaleImageGraphic grayscaleImage, 
+			int modalityLutValue, 
+			ref int voiLutValue, 
+			ref string voiLutString)
+		{
+			if (grayscaleImage.VoiLUT != null)
+			{
+				voiLutValue = grayscaleImage.VoiLUT[modalityLutValue];
+				voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, voiLutValue);
+			}
+		}
+
+
+		private void GetPresentationLutValue(
+			GrayscaleImageGraphic grayscaleImage, 
+			int voiLutValue, 
+			ref int presentationLutValue,
+			ref string presentationLutString)
+		{
+			if (grayscaleImage.PresentationLUT != null)
+			{
+				presentationLutValue = grayscaleImage.PresentationLUT[voiLutValue];
+				Color color = Color.FromArgb(presentationLutValue);
+				presentationLutString = String.Format("{0}: R={1}, G={2}, B={3}", SR.LabelPresentationLut, color.R, color.G, color.B);
+			}
 		}
 	}
 }

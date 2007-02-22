@@ -244,13 +244,13 @@
     <value>n/a</value>
   </data>
   <data name="LabelModalityLut" xml:space="preserve">
-    <value>Modality</value>
+    <value>MOD</value>
   </data>
   <data name="LabelPixelValue" xml:space="preserve">
-    <value>Pixel Value</value>
+    <value>PIX</value>
   </data>
   <data name="LabelVOILut" xml:space="preserve">
-    <value>Voi</value>
+    <value>VOI</value>
   </data>
   <data name="LabelHounsfieldUnitsAbbreviation" xml:space="preserve">
     <value>HU</value>
@@ -260,5 +260,8 @@
   </data>
   <data name="ToolsStandardLutPresets" xml:space="preserve">
     <value>Lut Presets</value>
+  </data>
+  <data name="LabelPresentationLut" xml:space="preserve">
+    <value>PRE</value>
   </data>
 </root>
