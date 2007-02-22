@@ -506,22 +506,22 @@ namespace ClearCanvas.Dicom.DataStore
 				//When a dicom date is specified with no '-', it is to be taken as an exact date.
 				if (!isRange)
 				{
-					dateRangeQueryBuilder.AppendFormat("( CAST({0} as DATE) = CAST('{1}' as DATE) )", columnName + "_", fromDate.ToString());
+					dateRangeQueryBuilder.AppendFormat("( CONVERT(datetime, {0}) = CONVERT(datetime, '{1}') )", columnName + "_", fromDate.ToString());
 				}
 				else
 				{
-					dateRangeQueryBuilder.AppendFormat("( CAST({0} AS DATE) IS NOT NULL AND CAST({0} as DATE) >= CAST('{1}' AS DATE) )", columnName + "_", fromDate);
+					dateRangeQueryBuilder.AppendFormat("( CONVERT(datetime, {0}) IS NOT NULL AND CONVERT(datetime, {0}) >= CONVERT(datetime, '{1}') )", columnName + "_", fromDate);
 				}
 			}
 
 			if (toDate != "")
 			{
 				if (fromDate == "")
-					dateRangeQueryBuilder.AppendFormat("( CAST({0} as DATE) IS NULL OR ", columnName + "_");
+					dateRangeQueryBuilder.AppendFormat("( CONVERT(datetime, {0}) IS NULL OR ", columnName + "_");
 				else
 					dateRangeQueryBuilder.AppendFormat(" AND (");
 
-				dateRangeQueryBuilder.AppendFormat("CAST({0} as DATE) <= CAST('{1}' AS DATE) )", columnName + "_", toDate);
+				dateRangeQueryBuilder.AppendFormat("CONVERT(datetime, {0}) <= CONVERT(datetime, '{1}') )", columnName + "_", toDate);
 			}
 
 			returnBuilder.AppendFormat("({0})", dateRangeQueryBuilder.ToString());
