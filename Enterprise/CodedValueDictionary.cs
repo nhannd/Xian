@@ -106,23 +106,23 @@ namespace ClearCanvas.Enterprise
         {
             get
             {
-                if (_values == null)
+                // access must be thread-safe, because the initialization process must never occur more than once
+                lock (_syncLock)
                 {
-                    Initialize();
+                    if (_values == null)
+                    {
+                        Initialize();
+                    }
+                    return _values;
                 }
-                return _values;
             }
         }
 
         private void Initialize()
         {
-            // initialization must be thread-safe
-            lock (_syncLock)
-            {
-                _values = new HybridSet();
-                ProcessStaticValues();
-                ProcessXml();
-            }
+            _values = new HybridSet();
+            ProcessStaticValues();
+            ProcessXml();
         }
 
         /// <summary>
