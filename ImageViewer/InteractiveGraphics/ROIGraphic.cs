@@ -115,14 +115,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return new CreateROIGraphicState(this);
 		}
 
-		public GraphicState CreateFocusSelectedState()
+		public GraphicState CreateFocussedSelectedState()
 		{
-			return new FocusSelectedROIGraphicState(this);
+			return new FocussedSelectedROIGraphicState(this);
 		}
 
-		public GraphicState CreateFocusState()
+		public GraphicState CreateFocussedState()
 		{
-			return new FocusGraphicState(this);
+			return new FocussedGraphicState(this);
 		}
 
 		public GraphicState CreateInactiveState()
@@ -157,9 +157,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					if (_focussed)
 					{
 						if (_selected)
-							this.State = CreateFocusSelectedState();
+							this.State = CreateFocussedSelectedState();
 						else
-							this.State = CreateFocusState();
+							this.State = CreateFocussedState();
 					}
 					else
 					{
@@ -194,9 +194,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 						this.ParentPresentationImage.FocussedGraphic = this;
 
 						if (this.Selected)
-							this.State = CreateFocusSelectedState();
+							this.State = CreateFocussedSelectedState();
 						else
-							this.State = CreateFocusState();
+							this.State = CreateFocussedState();
 					}
 					else
 					{
@@ -241,11 +241,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (typeof(InactiveGraphicState).IsAssignableFrom(e.NewState.GetType()))
 				EnterInactiveState(e.MouseInformation);
-			else if (typeof(FocusGraphicState).IsAssignableFrom(e.NewState.GetType()))
+			else if (typeof(FocussedGraphicState).IsAssignableFrom(e.NewState.GetType()))
 				EnterFocusState(e.MouseInformation);
 			else if (typeof(SelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
 				EnterSelectedState(e.MouseInformation);
-			else if (typeof(FocusSelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+			else if (typeof(FocussedSelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
 				EnterFocusSelectedState(e.MouseInformation);
 		}
 
@@ -279,8 +279,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			else
 				this.Roi.ControlPoints.Visible = false;
 
-			this.Roi.State = this.Roi.CreateFocusState();
-			this.Callout.State = this.Callout.CreateFocusState();
+			this.Roi.State = this.Roi.CreateFocussedState();
+			this.Callout.State = this.Callout.CreateFocussedState();
 
 			this.Color = Color.Orange;
 			Draw();
@@ -310,8 +310,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Focussed = true;
 
 			//synchronize the states of the child graphics on entering this state so that everything works correctly.
-			this.Roi.State = this.Roi.CreateFocusSelectedState();
-			this.Callout.State = this.Callout.CreateFocusSelectedState();
+			this.Roi.State = this.Roi.CreateFocussedSelectedState();
+			this.Callout.State = this.Callout.CreateFocussedSelectedState();
 
 			this.Roi.ControlPoints.Visible = true;
 			this.Color = Color.Red;

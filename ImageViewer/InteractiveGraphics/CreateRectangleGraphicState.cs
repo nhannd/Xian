@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 				}
 
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocusSelectedState();
+				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 			}
 
 			return true;

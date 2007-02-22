@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// If mouse is over object, transition to focused state
 			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocusState();
+				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedState();
 				return true;
 			}
 

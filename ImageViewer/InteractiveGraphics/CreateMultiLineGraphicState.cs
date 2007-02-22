@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 				}
 
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocusSelectedState();
+				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 			}
 			// We're in the middle of creating
 			else if (_numberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)

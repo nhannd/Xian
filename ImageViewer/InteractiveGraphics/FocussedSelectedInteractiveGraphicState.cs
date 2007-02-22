@@ -6,9 +6,9 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocusSelectedInteractiveGraphicState : FocusSelectedGraphicState
+	public class FocussedSelectedInteractiveGraphicState : FocussedSelectedGraphicState
 	{
-		public FocusSelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)
+		public FocussedSelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)
 			: base(interactiveGraphic)
 		{
 		}

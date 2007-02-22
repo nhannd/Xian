@@ -4,8 +4,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public interface IStandardStatefulGraphic : IStatefulGraphic
 	{
 		GraphicState CreateCreateState();
-		GraphicState CreateFocusSelectedState();
-		GraphicState CreateFocusState();
+		GraphicState CreateFocussedSelectedState();
+		GraphicState CreateFocussedState();
 		GraphicState CreateInactiveState();
 		GraphicState CreateSelectedState();
 	}

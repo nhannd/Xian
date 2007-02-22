@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocusSelectedState();
+				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 				return true;
 			}
 

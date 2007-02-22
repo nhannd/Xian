@@ -87,14 +87,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return new InactiveGraphicState(this);
 		}
 
-		public virtual GraphicState CreateFocusState()
+		public virtual GraphicState CreateFocussedState()
 		{
-			return new FocusGraphicState(this);
+			return new FocussedGraphicState(this);
 		}
 
-		public virtual GraphicState CreateFocusSelectedState()
+		public virtual GraphicState CreateFocussedSelectedState()
 		{
-			return new FocusSelectedGraphicState(this);
+			return new FocussedSelectedGraphicState(this);
 		}
 
 		public virtual GraphicState CreateSelectedState()

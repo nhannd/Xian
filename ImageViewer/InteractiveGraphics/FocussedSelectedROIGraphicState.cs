@@ -8,11 +8,11 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocusSelectedROIGraphicState : FocusSelectedGraphicState
+	public class FocussedSelectedROIGraphicState : FocussedSelectedGraphicState
 	{
 		private StatefulCompositeGraphic _currentChildGraphic;
 
-		public FocusSelectedROIGraphicState(ROIGraphic roiGraphic)
+		public FocussedSelectedROIGraphicState(ROIGraphic roiGraphic)
 			: base(roiGraphic)
 		{
 			_currentChildGraphic = null;

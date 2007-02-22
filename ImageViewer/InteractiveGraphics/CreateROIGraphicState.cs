@@ -81,12 +81,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			// When the child ROI graphic transitions to the focus selected state,
 			// it cause "this" to transition to selected state too.
-			if (e.NewState is FocusSelectedGraphicState)
+			if (e.NewState is FocussedSelectedGraphicState)
 			{
 				_childGraphic.StateChanged -= new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 				_childGraphic = null;
 
-				this.ROIGraphic.State = this.ROIGraphic.CreateFocusSelectedState();
+				this.ROIGraphic.State = this.ROIGraphic.CreateFocussedSelectedState();
 
 				// We're done creating, so create a command
 				this.Command = new PositionGraphicCommand(this.ROIGraphic, PositionGraphicCommand.CreateOperation.Create);

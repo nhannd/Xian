@@ -5,9 +5,9 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocusGraphicState : StandardGraphicState
+	public class FocussedGraphicState : StandardGraphicState
 	{
-		public FocusGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
+		public FocussedGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)
 		{
 		}
@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocusSelectedState();
+				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 				this.StandardStatefulGraphic.State.Start(mouseInformation);
 
 				return true;
