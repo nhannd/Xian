@@ -242,6 +242,19 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
        
 		}
 
+        public override PixelAspectRatio PixelAspectRatio
+        {
+            get
+            {
+                if (this.DataStoreImageSopInstance.PixelAspectRatio != null)
+                    return this.DataStoreImageSopInstance.PixelAspectRatio;
+                else
+                    return new PixelAspectRatio(1.0, 1.0);
+            }
+            set { throw new Exception("The method or operation is not implemented."); }
+
+        }
+
 		public override int SamplesPerPixel
 		{
             get 
@@ -439,5 +452,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				throw new Exception("The method or operation is not implemented.");
 			}
 		}
+
+
 	}
 }

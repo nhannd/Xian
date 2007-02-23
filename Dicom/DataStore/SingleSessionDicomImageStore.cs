@@ -282,6 +282,14 @@ namespace ClearCanvas.Dicom.DataStore
                 image.PixelSpacing = new PixelSpacing(Convert.ToDouble(components[0]), Convert.ToDouble(components[1]));
             }
 
+            cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.PixelAspectRatio, stringValue);
+            if (cond.good())
+            {
+                // parse out the string of two values
+                string[] components = stringValue.ToString().Split('\\');
+                image.PixelAspectRatio = new PixelAspectRatio(Convert.ToDouble(components[0]), Convert.ToDouble(components[1]));
+            }
+
             cond = sopInstanceDataset.findAndGetUint16(Dcm.PlanarConfiguration, out ushortValue);
             if (cond.good())
                 image.PlanarConfiguration = Convert.ToInt32(ushortValue);

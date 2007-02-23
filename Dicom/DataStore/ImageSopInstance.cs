@@ -86,6 +86,12 @@ namespace ClearCanvas.Dicom.DataStore
             set { _pixelSpacing = value; }
         }
 
+        public virtual PixelAspectRatio PixelAspectRatio
+        {
+            get { return _pixelAspectRatio; }
+            set { _pixelAspectRatio = value; }
+        }
+
         public virtual IList WindowValues
         {
             get { return _windowValues; }
@@ -132,6 +138,7 @@ namespace ClearCanvas.Dicom.DataStore
         private int _bitsStored;
         private double _rescaleSlope;
         private PixelSpacing _pixelSpacing;
+        private PixelAspectRatio _pixelAspectRatio;
         private int _rows;
         private int _columns;
         private PhotometricInterpretation _photometricInterpretation;
