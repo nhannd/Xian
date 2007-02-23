@@ -1,0 +1,3436 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ClearCanvas.Desktop</name>
+    </assembly>
+    <members>
+        <member name="T:ClearCanvas.Desktop.NavigatorComponentContainerViewExtensionPoint">
+            <summary>
+            Defines an extension point for views onto the <see cref="!:NavigatorComponent"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.NavigatorComponentContainer">
+            <summary>
+            An application component that acts as a container for other application components.
+            The child components are treated as "pages", where each page is a node in a tree.
+            Only one page is displayed at a time, however, a navigation tree is provided on the side
+            to aid the user in navigating the set of pages.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentContainer">
+            <summary>
+            Base class for application components that act as containers for other application components.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponent">
+            <summary>
+            Abstract base class for all application components.  Components should extend this class
+            rather than implement <see cref="T:ClearCanvas.Desktop.IApplicationComponent"/> directly, as it provides a default
+            implementation suitable for most situations.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IApplicationComponent">
+            <summary>
+            Defines the interface to an application component as seen by
+            the host.  All methods on this interface are intended solely
+            for use by the application component host.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponent.SetHost(ClearCanvas.Desktop.IApplicationComponentHost)">
+            <summary>
+            Called by the framework to initialize the component with a host.
+            </summary>
+            <param name="host"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponent.Start">
+            <summary>
+            Called by the framework to initialize the component.  This method
+            is guaranteed to be called before the component becomes visible
+            on the screen.  All significant initialization should be performed
+            here rather than in the constructor.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponent.Stop">
+            <summary>
+            Called by the framework to allow the component to perform any
+            clean-up.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponent.ShowValidation(System.Boolean)">
+            <summary>
+            Shows or hides validation errors.
+            </summary>
+            <param name="show">True to show errors, false to hide them</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponent.CanExit">
+            <summary>
+            Called by the framework to determine if this component in a state
+            such that it can be stopped.
+            </summary>
+            <remarks>
+            Within the implementation of this method,
+            the component is free to perform any necessary interaction with the 
+            user, such as the display of a confirmation dialog, to determine
+            whether it is appropriate to exit.  The component should also be sure to 
+            set the value of <see cref="P:ClearCanvas.Desktop.IApplicationComponent.ExitCode"/> before returning from this method.
+            
+            Note that if the component itself requests the exit (by calling
+            the <see cref="M:ClearCanvas.Desktop.IApplicationComponentHost.Exit"/> method), then this method
+            will not be called, since it is assumed that the component is in a suitable
+            state.
+            </remarks>
+            <returns>True if the component is ready to exit</returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponent.ExportedActions">
+            <summary>
+            Allows the component to export a set of actions to the host.
+            It is up to the host implementation to determine what, if anything,
+            is done with the actions.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponent.IsStarted">
+            <summary>
+            Returns true if the component is live.  A component is considered "live" after the Start()
+            method has been called, and before the Stop() method is called.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponent.Modified">
+            <summary>
+            Allows the host to determine whether this component holds modified
+            data that may need to be saved.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.IApplicationComponent.ModifiedChanged">
+            <summary>
+            Notifies that the value of the <see cref="P:ClearCanvas.Desktop.IApplicationComponent.Modified"/> property has changed.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.IApplicationComponent.AllPropertiesChanged">
+            <summary>
+            Notifies that the value of any or all properties may have changed, and the view
+            should re-synchronize itself with the component.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponent.HasValidationErrors">
+            <summary>
+            Returns true if there are any validation errors based on the current state of the component.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponent.ValidationVisible">
+            <summary>
+            Gets whether validation should be showing or hidden.  The view should use this property to determine
+            whether it should show or hide validation.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.IApplicationComponent.ValidationVisibleChanged">
+            <summary>
+            Notifies the view that the <see cref="P:ClearCanvas.Desktop.IApplicationComponent.ValidationVisible"/> property has changed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponent.ExitCode">
+            <summary>
+            A value that is returned to the caller after the component exits,
+            indicating the circumstances of the exit.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.LaunchAsWorkspace(ClearCanvas.Desktop.IDesktopWindow,ClearCanvas.Desktop.IApplicationComponent,System.String,ClearCanvas.Desktop.ApplicationComponentExitDelegate)">
+            <summary>
+            Executes the specified application component in a new workspace.  The exit callback will be invoked
+            when the workspace is closed.
+            </summary>
+            <param name="desktopWindow">The desktop window in which the workspace will run</param>
+            <param name="component">The application component to launch</param>
+            <param name="title">The title of the workspace</param>
+            <param name="exitCallback">The callback to invoke when the workspace is closed</param>
+            <returns>The workspace that is hosting the component</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.LaunchAsShelf(ClearCanvas.Desktop.IDesktopWindow,ClearCanvas.Desktop.IApplicationComponent,System.String,ClearCanvas.Desktop.ShelfDisplayHint,ClearCanvas.Desktop.ApplicationComponentExitDelegate)">
+            <summary>
+            Executes the specified application component in a new shelf.  The exit callback will be invoked
+            when the shelf is closed.
+            </summary>
+            <param name="desktopWindow">The desktop window in which the shelf will run</param>
+            <param name="component">The application component to launch</param>
+            <param name="title">The title of the shelf</param>
+            <param name="displayHint">A hint as to how the shelf should initially be displayed</param>
+            <param name="exitCallback">The callback to invoke when the shelf is closed</param>
+            <returns>The shelf that is hosting the component</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.LaunchAsDialog(ClearCanvas.Desktop.IDesktopWindow,ClearCanvas.Desktop.IApplicationComponent,System.String)">
+            <summary>
+            Executes the specified application component in a modal dialog box.  This call will block until
+            the dialog box is closed.
+            </summary>
+            <param name="desktopWindow">The desktop window in which the shelf will run</param>
+            <param name="component">The application component to launch</param>
+            <param name="title">The title of the shelf</param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.NotifyModifiedChanged">
+            <summary>
+            Convenience method to fire the <see cref="E:ClearCanvas.Desktop.ApplicationComponent.ModifiedChanged"/> event.
+            Note that it is not necessary to explicitly call this method if the 
+            default implementation of the <see cref="P:ClearCanvas.Desktop.ApplicationComponent.Modified"/> property is used,
+            since the event is fired automatically.
+            
+            This method is provided for situations where the subclass has chosen
+            to override the <see cref="P:ClearCanvas.Desktop.ApplicationComponent.Modified"/> property.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.NotifyPropertyChanged(System.String)">
+            <summary>
+            Notifies that the specified property has changed
+            </summary>
+            <param name="propertyName"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.NotifyAllPropertiesChanged">
+            <summary>
+            Notifies that all properties may have changed.  A view should respond to this event
+            by refreshing itself completely.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.SetHost(ClearCanvas.Desktop.IApplicationComponentHost)">
+            <summary>
+            Default implementation of <see cref="M:ClearCanvas.Desktop.IApplicationComponent.SetHost(ClearCanvas.Desktop.IApplicationComponentHost)"/>
+            Called by the framework to initialize this component with access to its host
+            </summary>
+            <param name="host">The host in which the component is running</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.Start">
+            <summary>
+            Default implementation of <see cref="M:ClearCanvas.Desktop.IApplicationComponent.Start"/>. Overrides should
+            be sure to call the base implementation.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.Stop">
+            <summary>
+            Default implementation of <see cref="M:ClearCanvas.Desktop.IApplicationComponent.Stop"/>.  Overrides should
+            be sure to call the base implementation.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponent.CanExit">
+            <summary>
+            Default implementation of <see cref="M:ClearCanvas.Desktop.IApplicationComponent.CanExit"/>.
+            Checks the <see cref="P:ClearCanvas.Desktop.ApplicationComponent.Modified"/> property, and if true, presents a standard
+            confirmation dialog to the user asking whether or not changes should be
+            retained.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponent.Host">
+            <summary>
+            Provides subclasses with access to the host
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponent.ExportedActions">
+            <summary>
+            Returns an empty set of actions.  Subclasses can override this to export
+            a desired set of actions.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponent.Modified">
+            <summary>
+            Default implementation of <see cref="P:ClearCanvas.Desktop.IApplicationComponent.Modified"/>
+            Set this property from within the subclass.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.ApplicationComponent.ModifiedChanged">
+            <summary>
+            Default implementation of <see cref="E:ClearCanvas.Desktop.IApplicationComponent.ModifiedChanged"/>
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponent.ExitCode">
+            <summary>
+            Default implementation of <see cref="P:ClearCanvas.Desktop.IApplicationComponent.ExitCode"/>
+            Set this property from within the subclass.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponentContainer.EnsureVisible(ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Ensures that the specified component is made visible to the user
+            </summary>
+            <param name="component"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponentContainer.EnsureStarted(ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Ensures that the specified component has been started.  A container may choose not to start
+            components until they are actually displayed for the first time.  This method ensures that a component
+            is started regardless of whether it has ever been displayed.  This is necessary, for instance, if
+            the component is to be validated
+            </summary>
+            <param name="component"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponentContainer.ContainedComponents">
+            <summary>
+            Enumerates all contained components
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponentContainer.VisibleComponents">
+            <summary>
+            Enumerates the contained components that are currently visible to the user
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponentContainer.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponentContainer.ShowValidation(System.Boolean)">
+            <summary>
+            The behaviour of this property depends on the <see cref="P:ClearCanvas.Desktop.ApplicationComponentContainer.ValidationStrategy"/> property
+            </summary>
+            <param name="show"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponentContainer.ValidationStrategy">
+            <summary>
+            Gets or sets the validation strategy that determines how this container responds
+            to validation requests.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponentContainer.HasValidationErrors">
+            <summary>
+            The behaviour of this property depends on the <see cref="P:ClearCanvas.Desktop.ApplicationComponentContainer.ValidationStrategy"/> property
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.PagedComponentContainer`1.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.PagedComponentContainer`1.MoveTo(System.Int32)">
+            <summary>
+            Moves to the page at the specified index
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.PagedComponentContainer`1.StopAll">
+            <summary>
+            Calls <see cref="M:ClearCanvas.Desktop.IApplicationComponent.Stop"/> on all child components.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.PagedComponentContainer`1.AnyPageModified">
+            <summary>
+            True if <see cref="!:IApplicatonComponent.Modified"/> returns true for any child component.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.PagedComponentContainer`1.Pages">
+            <summary>
+            Returns the current set of pages.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.PagedComponentContainer`1.CurrentPage">
+            <summary>
+            Gets or sets the current page.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.PagedComponentContainer`1.CurrentPageChanged">
+            <summary>
+            Notifies that the current page has changed.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.PagedComponentContainer`1.PageHost">
+            <summary>
+            Defines an application component host for one page.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IApplicationComponentHost">
+            <summary>
+            Defines the interface that an Application Component sees to it's host.  All methods on this interface
+            are intended to be called only by the hosted application component.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponentHost.Exit">
+            <summary>
+            Instructs the host to terminate, if for instance, the user has pressed an OK or Cancel button.
+            The host will subsequently call <see cref="M:ClearCanvas.Desktop.IApplicationComponent.Stop"/>.  Not all hosts
+            support this method.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponentHost.ShowMessageBox(System.String,ClearCanvas.Common.MessageBoxActions)">
+            <summary>
+            Asks the host to display a message box to the user.  It is preferable for application
+            components to use this method, rather than accessing the lower-level platform methods.
+            </summary>
+            <param name="message">The message to display</param>
+            <param name="buttons">The buttons to display</param>
+            <returns>A result indicating which button the user pressed</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponentHost.SetTitle(System.String)">
+            <summary>
+            Asks the host to set the title bar text for this component.  Not all hosts support this
+            method.
+            </summary>
+            <param name="title"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponentHost.CommandHistory">
+            <summary>
+            Provides component with access to the relevant <see cref="P:ClearCanvas.Desktop.IApplicationComponentHost.CommandHistory"/>.  Not all hosts
+            support this property.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IApplicationComponentHost.DesktopWindow">
+            <summary>
+            Provides component with access to the desktop window in which it is running.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponentHost.Exit">
+            <summary>
+            Not supported.  Override this method to add support.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponentHost.ShowMessageBox(System.String,ClearCanvas.Common.MessageBoxActions)">
+            <summary>
+            Shows a message box in the associated desktop window
+            </summary>
+            <param name="message"></param>
+            <param name="buttons"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ApplicationComponentHost.SetTitle(System.String)">
+            <summary>
+            Not supported. Override this method to add support.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponentHost.CommandHistory">
+            <summary>
+            Not supported. Override this method to add support.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponentHost.DesktopWindow">
+            <summary>
+            Returns the associated desktop window
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorComponentContainer.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorComponentContainer.Forward">
+            <summary>
+            Advances to the next page
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorComponentContainer.Back">
+            <summary>
+            Sets the current page back to the previous page.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorComponentContainer.Accept">
+            <summary>
+            Causes the component to exit, accepting any changes made by the user. Override this method
+            if desired.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorComponentContainer.Cancel">
+            <summary>
+            Causes the component to exit, discarding any changes made by the user.  Override this method
+            if desired.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorComponentContainer.MoveTo(System.Int32)">
+            <summary>
+            Moves to the page at the specified index
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.NavigatorComponentContainer.ForwardEnabled">
+            <summary>
+            Indicates whether it is possible to advance one page.  True unless the current
+            page is the last page.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.NavigatorComponentContainer.ForwardEnabledChanged">
+            <summary>
+            Notifies that the <see cref="P:ClearCanvas.Desktop.NavigatorComponentContainer.ForwardEnabled"/> property has changed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.NavigatorComponentContainer.BackEnabled">
+            <summary>
+            Indicates whether it is possible to go back one page.  True unless the current page
+            is the first page.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.NavigatorComponentContainer.BackEnabledChanged">
+            <summary>
+            Notifies that the <see cref="P:ClearCanvas.Desktop.NavigatorComponentContainer.BackEnabled"/> property has changed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.NavigatorComponentContainer.AcceptEnabled">
+            <summary>
+            Indicates whether the accept button should be enabled.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.NavigatorComponentContainer.AcceptEnabledChanged">
+            <summary>
+            Notifies that the <see cref="P:ClearCanvas.Desktop.NavigatorComponentContainer.AcceptEnabled"/> property has changed.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Trees.TreeItemBindingBase">
+            <summary>
+            Base implementation of <see cref="T:ClearCanvas.Desktop.Trees.ITreeItemBinding"/>.  Provides null default implementations of most methods.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Trees.ITreeItemBinding">
+            <summary>
+            Defines the interface to a tree-item binding, which describes how attributes of the visible tree are obtained
+            from the underlying item.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetNodeText(System.Object)">
+            <summary>
+            Gets the text to display for the node representing the specified item
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetTooltipText(System.Object)">
+            <summary>
+            Gets the tooltip to display for the specified item
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetIconSet(System.Object)">
+            <summary>
+            Gets the image iconset to display for the specified item
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetResourceResolver(System.Object)">
+            <summary>
+            Gets the resource resolver used to resolve the icon
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.CanHaveSubTree(System.Object)">
+            <summary>
+            Asks if the item can have a subtree.  Note that this method should return true to inidicate that it
+            is possible that the item might have a subtree.  This allows the view to determine whether to display
+            a "plus" sign next to the node, without having to actually call <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetSubTree(System.Object)"/>.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetSubTree(System.Object)">
+            <summary>
+            Gets the <see cref="T:ClearCanvas.Desktop.Trees.ITree"/> that represents the subtree for the specified item,
+            or null if the item does not have a subtree.  Note that <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.CanHaveSubTree(System.Object)"/> is called first,
+            and this method will be called only if <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.CanHaveSubTree(System.Object)"/> returns true.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.CanAcceptDrop(System.Object,System.Object,ClearCanvas.Desktop.DragDropKind)">
+            <summary>
+            Asks the specified item if it can accept the specified drop data in a drag-drop operation.
+            </summary>
+            <param name="item"></param>
+            <param name="dropData"></param>
+            <param name="kind"></param>
+            <returns>The drop kind that will be accepted</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.AcceptDrop(System.Object,System.Object,ClearCanvas.Desktop.DragDropKind)">
+            <summary>
+            Informs the specified item that it should accept a drop of the specified data, completing a drag-drop operation.
+            </summary>
+            <param name="item"></param>
+            <param name="dropData"></param>
+            <param name="kind"></param>
+            <returns>The drop kind that will be accepted</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.IconSetAttribute">
+            <summary>
+            Declares a set of icon resources to associate with an action.  The icon resources must
+            refer to different sized versions of the same icon.
+            </summary>
+            <remarks>
+            Icons should be supplied in several sizes so that different displays can be accomodated without
+            having to scale the images:
+            <list type="bullet">
+            <item>small: 16 x 16</item>
+            <item>medium: 32 x 32</item>
+            <item>large: 64 x 64</item>
+            </list>
+            The attribute may appear more than once for a given action ID, in order to specify 
+            a different scheme.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionDecoratorAttribute">
+            <summary>
+            Abstract base class for the set of attributes that are used to decorate an action
+            once it has been declared by an <see cref="T:ClearCanvas.Desktop.Actions.ActionInitiatorAttribute"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionAttribute">
+            <summary>
+            Abstract base class for the set of attributes that are used to specify actions declaratively 
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionAttribute.#ctor(System.String)">
+            <summary>
+            Attribute constructor.
+            </summary>
+            <param name="actionID">A logical action identifier</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionAttribute.QualifiedActionID(System.Object)">
+            <summary>
+            Returns the logical action ID qualified by the type name of the specified target object.
+            </summary>
+            <param name="target">The object whose type should be used to qualify the action ID.</param>
+            <returns>The qualified action ID</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionAttribute.Apply(ClearCanvas.Desktop.Actions.IActionBuildingContext)">
+            <summary>
+            Applies this attribute to the specified <see cref="!:IActionBuilder"/>.
+            </summary>
+            <param name="builder">The builder to which this attribute should be applied</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.IconSetAttribute.#ctor(System.String,ClearCanvas.Desktop.IconScheme,System.String,System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="scheme">The scheme of this icon set</param>
+            <param name="smallIcon">The resource name of the small icon</param>
+            <param name="mediumIcon">The resource name of the medium icon</param>
+            <param name="largeIcon">The resource name of the large icon</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IconSetAttribute.IconSet">
+            <summary>
+            The <see cref="P:ClearCanvas.Desktop.Actions.IconSetAttribute.IconSet"/> derived from this attribute.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.CheckedStateObserverAttribute">
+            <summary>
+            Declares an observer binding for the checked state of an action.
+            </summary>
+            <remarks>
+            This attribute causes the checked state of the action specified by the action ID to be
+            bound to the state of the specified property on the class to which this attribute applies.
+            The property name must refer to a public boolean property on the target class that has get access.
+            The change event name must refer to a public event on the class that will fire whenever the state of the property
+            changes.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.StateObserverAttribute">
+            <summary>
+            Abstract base class for action attributes that declare state observers.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.StateObserverAttribute.PropertyName">
+            <summary>
+            The name of the property to bind to.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.StateObserverAttribute.ChangeEventName">
+            <summary>
+            The name of the property change notification event to bind to.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.CheckedStateObserverAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="propertyName">The name of the property to bind to</param>
+            <param name="changeEventName">The name of the property change notification event to bind to</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.ITableColumnCollection">
+            <summary>
+            Defines the interface to the collection of columns in an <see cref="T:ClearCanvas.Desktop.Tables.ITable"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IItemCollection">
+            <summary>
+            Defines the interface to the collection of items.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IItemCollection.Count">
+            <summary>
+            Gets the number of items in the collection
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IItemCollection.Item(System.Int32)">
+            <summary>
+            Gets the item at the specified index
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ValueObserverAttribute">
+            <summary>
+            Abstract base class for action attributes that declare value observers.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ValueObserverAttribute.PropertyName">
+            <summary>
+            The name of the property to bind to.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ValueObserverAttribute.ChangeEventName">
+            <summary>
+            The name of the property change notification event to bind to.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.Action">
+            <summary>
+            Abstract base class providing a default implementation of <see cref="T:ClearCanvas.Desktop.Actions.IAction"/>.  Action classes should
+            inherit this class rather than implement <see cref="T:ClearCanvas.Desktop.Actions.IAction"/> directly.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.IAction">
+            <summary>
+            Models a user-interface action, such as a menu or toolbar item, in a GUI-toolkit independent way.
+            </summary>
+            <remarks>
+            Provides the base interface for a set of types that model user-interface actions
+            independent of any particular GUI-toolkit.
+            </remarks>
+        </member>
+        <member name="E:ClearCanvas.Desktop.Actions.IAction.EnabledChanged">
+            <summary>
+            Fired when the <see cref="P:ClearCanvas.Desktop.Actions.IAction.Enabled"/> property of this action changes.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.ActionID">
+            <summary>
+            The fully-qualified logical identifier for this action.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.Path">
+            <summary>
+            The menu or toolbar path for this action.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.GroupHint">
+            <summary>
+            The group hint for this action.  The GroupHint for an
+            action must not be null.  If an action has no groupHint,
+            the GroupHint should be "" (default).
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.Label">
+            <summary>
+            The label that the action should present in the UI.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.Tooltip">
+            <summary>
+            The tooltip that the action should present in the UI.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.IconSet">
+            <summary>
+            The icon that the action should present in the UI.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.Enabled">
+            <summary>
+            The enablement state that the action should present in the UI.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.Visible">
+            <summary>
+            The visibility state that the action should present in the UI.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.Persistent">
+            <summary>
+            Indicates whether or not the action is 'persistent'.  Actions created via the
+            Action Attributes are considered persistent and are committed to the actionmodels.xml,
+            otherwise they are considered generated and they are not committed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IAction.ResourceResolver">
+            <summary>
+            Gets the resource resolver associated with this action, that will be used to resolve
+            action path and icon resources when required.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.Action.#ctor(System.String,ClearCanvas.Desktop.Actions.ActionPath,ClearCanvas.Common.Utilities.IResourceResolver)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="actionID">The logical action ID</param>
+            <param name="path">The action path</param>
+            <param name="resourceResolver">A resource resolver that will be used to resolve icons associated with this action</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.MenuActionAttribute">
+            <summary>
+            Declares a button action with the specifed action identifier and path hint.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ClickActionAttribute">
+            <summary>
+            Abstract base class for the set of attributes that are used to declare "click" actions.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionInitiatorAttribute">
+            <summary>
+            Abstract base class for the set of attributes that are used to declare an action.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ClickActionAttribute.Flags">
+            <summary>
+            Flags that customize the behaviour of the action.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ClickActionAttribute.Path">
+            <summary>
+            The suggested location of the action in the action model.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.MenuActionAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to associate with this action</param>
+            <param name="pathHint">The suggested location of this action in the menu model</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IconScheme">
+            <summary>
+            Defines possible icon schemes.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.IconScheme.Colour">
+            <summary>
+            Colour icons
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.IconScheme.Monochrome">
+            <summary>
+            Monochrome icons
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumn`2">
+            <summary>
+            Implementation of <see cref="T:ClearCanvas.Desktop.Tables.ITableColumn"/> for use with the <see cref="!:Table"/> class.
+            </summary>
+            <typeparam name="TItem">The type of item on which the table is based</typeparam>
+            <typeparam name="TColumn">The type of value that this column holds</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumnBase`1">
+            <summary>
+            Abstract base implementation of <see cref="T:ClearCanvas.Desktop.Tables.ITableColumn"/> for use with the <see cref="P:ClearCanvas.Desktop.Tables.TableColumnBase`1.Table"/> class.
+            Application code should use the concrete <see cref="!:TableColumn"/> class.
+            </summary>
+            <typeparam name="TItem">The type of item on which the table is based</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.ITableColumn">
+            <summary>
+            Defines a column in an <see cref="T:ClearCanvas.Desktop.Tables.ITable"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.ITableColumn.GetValue(System.Object)">
+            <summary>
+            Gets the value of this column for the specified item
+            </summary>
+            <param name="item">The item from which the value is to be obtained</param>
+            <returns>The value</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.ITableColumn.SetValue(System.Object,System.Object)">
+            <summary>
+            Sets the value of this column on the specified item, assuming this is not a read-only column
+            </summary>
+            <param name="item">The item on which the value is to be set</param>
+            <param name="value">The value</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.ITableColumn.GetComparer(System.Boolean)">
+            <summary>
+            Get a comparer that can be used to sort items in the specified direction
+            </summary>
+            <param name="ascending"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableColumn.Name">
+            <summary>
+            The name or heading of the column
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableColumn.ColumnType">
+            <summary>
+            The type of data that the column holds
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableColumn.WidthFactor">
+            <summary>
+            A factor that influences the width of the column relative to other columns.
+            A value of 1.0 is default.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableColumn.WidthPercent">
+            <summary>
+            Gets the width of this column as a percentage of the overall table width.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableColumn.ReadOnly">
+            <summary>
+            Indicates whether this column is read-only
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumnBase`1.#ctor(System.String,System.Type,System.Single,System.Comparison{`0})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="columnName">The name of the column</param>
+            <param name="columnType">The type of value that the column holds</param>
+            <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+            <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumnBase`1.ValueComparsion(`0,`0)">
+            <summary>
+            Default comparison used when TColumn is IComparable
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumnBase`1.NopComparison(`0,`0)">
+            <summary>
+            Default comparison used when TColumn is not IComparable (in which case, sorting is not possible)
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableColumnBase`1.Comparison">
+            <summary>
+            Gets or sets the comparison delegate that will be used to sort the table according to this column.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableColumnBase`1.Table">
+            <summary>
+            Used by the framework to associate this column with a parent <see cref="P:ClearCanvas.Desktop.Tables.TableColumnBase`1.Table"/>
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableColumnBase`1.WidthFactor">
+            <summary>
+            Gets or sets a factor that determines the width of this column relative to other columns in the table.
+            The default value is 1.0.  
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumnBase`1.SortComparer">
+            <summary>
+            Comparer for sorting operations
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumn`2.#ctor(System.String,ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.GetColumnValueDelegate{`0,`1},ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.SetColumnValueDelegate{`0,`1},System.Single,System.Comparison{`0})">
+            <summary>
+            Constructs a table column
+            </summary>
+            <param name="columnName">The name of the column</param>
+            <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+            <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
+            <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+            <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumn`2.#ctor(System.String,ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.GetColumnValueDelegate{`0,`1},ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.SetColumnValueDelegate{`0,`1},System.Single)">
+            <summary>
+            Constructs a table column
+            </summary>
+            <param name="columnName">The name of the column</param>
+            <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+            <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
+            <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumn`2.#ctor(System.String,ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.GetColumnValueDelegate{`0,`1})">
+            <summary>
+            Constructs a read-only table column
+            </summary>
+            <param name="columnName">The name of the column</param>
+            <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumn`2.#ctor(System.String,ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.GetColumnValueDelegate{`0,`1},System.Single)">
+            <summary>
+            Constructs a read-only table column
+            </summary>
+            <param name="columnName">The name of the column</param>
+            <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+            <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumn`2.#ctor(System.String,ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.GetColumnValueDelegate{`0,`1},ClearCanvas.Desktop.Tables.TableColumn{`0,`1}.SetColumnValueDelegate{`0,`1})">
+            <summary>
+            Constructs a table column
+            </summary>
+            <param name="columnName">The name of the column</param>
+            <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+            <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumn`2.GetColumnValueDelegate`2">
+            <summary>
+            Delegate that is used to pull the value of a column from an object.
+            </summary>
+            <typeparam name="TObject">The type of the object</typeparam>
+            <typeparam name="TValue">The expected type of the value to pull</typeparam>
+            <param name="obj">The object from which to pull the value</param>
+            <returns>The value</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumn`2.SetColumnValueDelegate`2">
+            <summary>
+            Delegate that is used to push the value of a column to an object.
+            </summary>
+            <typeparam name="TObject">The type of the object</typeparam>
+            <typeparam name="TValue">The type of the value to push</typeparam>
+            <param name="obj">The object to which the value is pushed</param>
+            <param name="val">The value</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ProgressDialogComponentViewExtensionPoint">
+            <summary>
+            Extension point for views onto <see cref="T:ClearCanvas.Desktop.ProgressDialogComponent"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ProgressDialogComponent">
+            <summary>
+            ProgressDialogComponent class
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ProgressDialogComponent.#ctor(ClearCanvas.Desktop.BackgroundTask,System.Boolean,ClearCanvas.Desktop.ProgressBarStyle)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ProgressDialogComponent.CanExit">
+            <summary>
+            Override implementation of <see cref="M:ClearCanvas.Desktop.IApplicationComponent.CanExit"/>.
+            This is called when user click on the 'X' button to close the dialog
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BlockingOperationViewExtensionPoint">
+            <summary>
+            Extension point for views onto <see cref="T:ClearCanvas.Desktop.BlockingOperation"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BlockingOperation">
+            <summary>
+            The BlockingOperation class is a static class that allows application level code to
+            use a wait cursor without having to explicitly reference a particular Gui Toolkit's API.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionBuildingContext">
+            <summary>
+            Default implementation of <see cref="T:ClearCanvas.Desktop.Actions.IActionBuildingContext"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.IActionBuildingContext">
+            <summary>
+            Used by the action attribute mechanism to maintain context between attributes that co-operate to build the same action
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Shelf">
+            <summary>
+            Abstract class that provides the base implementation of <see cref="T:ClearCanvas.Desktop.IShelf"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IShelf">
+            <summary>
+            Defines the interface to a shelf as seen by the desktop.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IShelf.Initialize(ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Called by the framework when the shelf is added to a <see cref="T:ClearCanvas.Desktop.ShelfManager"/>
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IShelf.DesktopWindow">
+            <summary>
+            Gets or sets the desktop window that owns this shelf.  
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.IShelf.TitleChanged">
+            <summary>
+            Indicates that the <see cref="P:ClearCanvas.Desktop.IShelf.Title"/> property has changed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IShelf.Title">
+            <summary>
+            Returns the title that should be displayed for the shelf in the user-interface
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IShelf.DisplayHint">
+            <summary>
+            Returns a set of flags that provide hints as to how the shelf wishes to be displayed
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Shelf.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentExitDelegate">
+            <summary>
+            Provides a callback when an application component exits
+            </summary>
+            <param name="component">The component that exited</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.AllNodesContainerValidationStrategy">
+            <summary>
+            Implements a validation strategy that considers all contained nodes, regardless of whether the user
+            has visited them or not.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IApplicationComponentContainerValidationStrategy.HasValidationErrors(ClearCanvas.Desktop.IApplicationComponentContainer)">
+            <summary>
+            Determines whether the specified container has validation errors, according to this strategy.
+            </summary>
+            <param name="container"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IApplicationComponentContainerValidationStrategy.ShowValidation(ClearCanvas.Desktop.IApplicationComponentContainer,System.Boolean)">
+            <summary>
+            Displays validation errors for the specified container to the user, according to the logic
+            encapsulated in this strategy.
+            </summary>
+            <param name="container"></param>
+            <param name="show"></param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Path">
+            <summary>
+            Represents a path.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Path.#ctor(System.String,ClearCanvas.Common.Utilities.IResourceResolver)">
+            <summary>
+            Creates a new <see cref="T:ClearCanvas.Desktop.Path"/> from the specified path string, resolving
+            resource keys in the path string using the specified <see cref="T:ClearCanvas.Common.Utilities.ResourceResolver"/>.
+            </summary>
+            <remarks>
+            The path string may contain any combination of literals and resource keys.  Localization
+            will be attempted on each path segment by treating the segment as a resource key,
+            and path segments that fail as resource keys will be treated as literals.
+            </remarks>
+            <param name="pathString">The path string to parse</param>
+            <param name="resolver">The <see cref="T:ClearCanvas.Common.Utilities.ResourceResolver"/> to use for localization</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Path.#ctor(ClearCanvas.Desktop.PathSegment[])">
+            <summary>
+            Internal constructor
+            </summary>
+            <param name="segments"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Path.ToString">
+            <summary>
+            Converts this path back to the original string from which it was created.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Path.Segments">
+            <summary>
+            The set of individual segments contained in this path.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Path.LastSegment">
+            <summary>
+            The final segment in this path, or null if this path is empty
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.ITable">
+            <summary>
+            Defines the interface to a table, which provides a presentation model for viewing data in a tabular form.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.ITable.Sort">
+            <summary>
+            Sorts this table according to the cached sort parameters, if any exist.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.ITable.Sort(ClearCanvas.Desktop.Tables.TableSortParams)">
+            <summary>
+            Sorts this table according to the specified sort parameters.
+            </summary>
+            <param name="sortParams"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITable.ItemType">
+            <summary>
+            Returns the <see cref="T:System.Type"/> of the items in this table.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITable.Items">
+            <summary>
+            Gets the collection of items
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITable.Columns">
+            <summary>
+            Get the collection of columns
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITable.SortParams">
+            <summary>
+            Gets the cached sort parameters, or returns null if this table has not been sorted.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITable.BaseColumnWidthChars">
+            <summary>
+            Gets the base column width for this table, in units that correspond roughly to the
+            width of one character.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.ToolSet">
+            <summary>
+            Default implementation of <see cref="T:ClearCanvas.Desktop.Tools.IToolSet"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.IToolSet">
+            <summary>
+            Defines the external interface to a tool set, which manages a set of tools
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tools.IToolSet.Tools">
+            <summary>
+            Gets the tools contained in this tool set
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tools.IToolSet.Actions">
+            <summary>
+            Returns the union of all actions defined by all tools in this tool set
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ToolSet.#ctor">
+            <summary>
+            Constructs a toolset that is initially empty
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ToolSet.#ctor(ClearCanvas.Common.IExtensionPoint,ClearCanvas.Desktop.Tools.IToolContext)">
+            <summary>
+            Constructs a toolset based on the specified extension point and context. The toolset will
+            attempt to instantiate and initialize all extensions of the specified tool extension point.
+            </summary>
+            <param name="toolExtensionPoint">The tool extension point that provides the tools</param>
+            <param name="context">The tool context to pass to each tool</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ToolSet.AddTools(ClearCanvas.Common.IExtensionPoint,ClearCanvas.Desktop.Tools.IToolContext)">
+            <summary>
+            Adds tools to the toolset based on the specified extension point and context. The toolset will
+            attempt to instantiate and initialize all extensions of the specified tool extension point.
+            </summary>
+            <param name="toolExtensionPoint">The tool extension point that provides the tools</param>
+            <param name="context">The tool context to pass to each tool</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ToolSet.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ShelfCollection">
+            <summary>
+            A collection of <see cref="T:ClearCanvas.Desktop.IShelf"/> objects, used by <see cref="T:ClearCanvas.Desktop.ShelfManager"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IWorkspace">
+            <summary>
+            Defines the interface to a workspace as seen by the desktop.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IWorkspace.Initialize(ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Called by the framework when the workspace is added to a <see cref="T:ClearCanvas.Desktop.WorkspaceManager"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IWorkspace.Activate">
+            <summary>
+            Attempts to make this workspace the active workspace.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IWorkspace.CanClose">
+            <summary>
+            Asks the if it can be closed at this time.  This method should take any necessary action,
+            such as asking the user if changes should be saved or discarded, in order to answer
+            the question.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.IWorkspace.TitleChanged">
+            <summary>
+            Indicates that the <see cref="P:ClearCanvas.Desktop.IWorkspace.Title"/> property has changed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IWorkspace.DesktopWindow">
+            <summary>
+            Gets the desktop window with which the workspace is associated.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IWorkspace.CommandHistory">
+            <summary>
+            Returns the command history for this workspace
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IWorkspace.Active">
+            <summary>
+            Returns true if this workspace is currently the active workspace.  Only one workspace
+            can be active at a given time.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IWorkspace.Title">
+            <summary>
+            Returns the title that should be displayed for the workspace in the user-interface
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IWorkspace.Actions">
+            <summary>
+            Returns the current action set for this workspace.  These actions
+            will be integrated into the main menu and toolbars.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.IValidationRule">
+            <summary>
+            Defines the interface to a validation rule that is applied to a <see cref="T:ClearCanvas.Desktop.IApplicationComponent"/>.
+            The <see cref="P:ClearCanvas.Desktop.Validation.IValidationRule.PropertyName"/> property specifies a property of the application component
+            that the rule applies to.  Any validation error message will be displayed next to the GUI object
+            that is bound to this property.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IValidationRule.GetResult(ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Obtains the current result of evaluating this rule based on the current runtime state.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Validation.IValidationRule.PropertyName">
+            <summary>
+            The name of the property on the application component that this rule applies to.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IconSet">
+            <summary>
+            Represents a set of icon resources that specify the same logical icon in different sizes.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IconSet.#ctor(ClearCanvas.Desktop.IconScheme,System.String,System.String,System.String)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="scheme">The scheme of this icon set</param>
+            <param name="smallIcon">The resource name of the small icon</param>
+            <param name="mediumIcon">The resource name of the medium icon</param>
+            <param name="largeIcon">The resource name of the large icon</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IconSet.Scheme">
+            <summary>
+            The scheme of this icon set.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IconSet.SmallIcon">
+            <summary>
+            The resource name of the small icon
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IconSet.MediumIcon">
+            <summary>
+            The resource name of the medium icon
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IconSet.LargeIcon">
+            <summary>
+            The resource name of the large icon
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ProgressBarStyle">
+            <summary>
+            Copied from System.Windows.Forms.ProgressBarStyle so we don't need dependency from System.Windows.Forms.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ProgressDialog">
+            <summary>
+            Contains static methods used to show progress dialog box
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ProgressDialog.Show(ClearCanvas.Desktop.BackgroundTask,ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Show the progress dialog to to the user
+            </summary>
+            <param name="task">The <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> to execute</param>
+            <param name="desktopWindow">Desktop window that parents the progress dialog</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ProgressDialog.Show(ClearCanvas.Desktop.BackgroundTask,System.Boolean,ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Show the progress dialog to to the user
+            </summary>
+            <param name="task">The <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> to execute</param>
+            <param name="autoClose">Close the progress dialog after task completion</param>
+            <param name="desktopWindow">Desktop window that parents the progress dialog</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ProgressDialog.Show(ClearCanvas.Desktop.BackgroundTask,System.Boolean,ClearCanvas.Desktop.ProgressBarStyle,ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Show the progress dialog to to the user
+            </summary>
+            <param name="task">The <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> to execute</param>
+            <param name="autoClose">Close the progress dialog after task completion</param>
+            <param name="progressBarStyle">Show the progressbar using Marquee style</param>
+            <param name="desktopWindow">Desktop window that parents the progress dialog</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionModelStore">
+            <summary>
+            Provides services for storing an action model to an XML file, and
+            rebuilding that action model from the file.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.#ctor(System.String)">
+            <summary>
+            Constructs an object on the specified filename.
+            </summary>
+            <param name="filename">The file that acts as a store.</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.BuildAndSynchronize(System.String,System.String,ClearCanvas.Desktop.Actions.IActionSet)">
+            <summary>
+            Builds an in-memory action model from the specified XML model and the specified set of actions.
+            The actions will be ordered according to the XML model.  Any actions that are not a part of the
+            XML model will be added to the memory model and inserted into the XML model based on a 'group hint'.
+            The XML model is automatically persisted, and new models that have never before been persisted
+            will be added to the store.
+            </summary>
+            <param name="namespaze">A namespace to qualify the site</param>
+            <param name="site">The site</param>
+            <param name="actions">The set of actions to include</param>
+            <returns>an <see cref="T:ClearCanvas.Desktop.Actions.ActionModelNode"/> representing the root of the action model</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.BuildActionMap(ClearCanvas.Desktop.Actions.IActionSet)">
+            <summary>
+            Builds a map of action IDs to actions.
+            </summary>
+            <param name="actions">the set of actions from which to build a map</param>
+            <returns>a map of action IDs to actions</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.CreateXmlActionModel(System.String)">
+            <summary>
+            Creates the specified action model, but *does not* immediately append it to the xmlDoc.
+            Since not all actions are persistent (e.g. some could be generated), we need to figure
+            out how many actions (if any) belonging to the node will be persisted in the store
+            before adding the action to the store.
+            </summary>
+            <param name="id">the id of the "action-model" to create</param>
+            <returns>An "action-model" element</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.CreateXmlAction(ClearCanvas.Desktop.Actions.IAction)">
+            <summary>
+            Creates an "action" node for insertion into an "action-model" node in the Xml store.
+            </summary>
+            <param name="action">the action whose relevant properties are to be used to create the node</param>
+            <returns>an "action" element</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.FindXmlAction(System.String,System.Xml.XmlElement)">
+            <summary>
+            Finds an action with the specified id in the specified "action-model" node.
+            </summary>
+            <param name="id">the id of the action to find</param>
+            <param name="xmlActionModel">the "action-model" node to search in</param>
+            <returns>the XmlElement of the action if found, otherwise null</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.Synchronize(System.String,System.Collections.Generic.IDictionary{System.String,ClearCanvas.Desktop.Actions.IAction})">
+            <summary>
+            Synchronizes persistent actions with the xml store.
+            Refer to <see cref="M:ClearCanvas.Desktop.Actions.ActionModelStore.BuildAndSynchronize(System.String,System.String,ClearCanvas.Desktop.Actions.IActionSet)"/> for more details.
+            </summary>
+            <param name="actionModelID">the ID of the action model</param>
+            <param name="actionMap">the actions that are to be synchronized/added to the store</param>
+            <returns>the "action-model" node with the specified actionModelID</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.ValidateXmlActionModel(System.Xml.XmlElement,System.Collections.Generic.IDictionary{System.String,ClearCanvas.Desktop.Actions.IAction})">
+            <summary>
+            Validates the entries in the xmlActionModel against the input set of actions.  If an entry
+            in the xml model does not have a 'group-hint' attribute, the default one from the corresponding
+            action is automatically inserted.
+            </summary>
+            <param name="xmlActionModel">the "action-model" to validate</param>
+            <param name="actionMap">the set of actions against which to validate the "action-model"</param>
+            <returns>a boolean indicating whether anything was modified</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.Build(System.String,System.Xml.XmlElement,System.Collections.Generic.IDictionary{System.String,ClearCanvas.Desktop.Actions.IAction})">
+            <summary>
+            Builds an in-memory action model from the specified XML model and the specified set of actions.
+            The actions will be ordered according to the XML model.
+            </summary>
+            <param name="site">the action model site</param>
+            <param name="xmlActionModel">an XML "action-model" node</param>
+            <param name="actions">the set of actions that the model should contain</param>
+            <returns>an <see cref="T:ClearCanvas.Desktop.Actions.ActionModelNode"/> representing the root of the action model</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelStore.AppendActionToXmlModel(System.Xml.XmlElement,ClearCanvas.Desktop.Actions.IAction)">
+            <summary>
+            Appends the specified action to the specified XML action model.  The "group-hint"
+            attribute of the action to be inserted is compared with the "group-hint" of the
+            actions in the xml model and an appropriate place to insert the action is determined
+            based on the MatchScore method of the <see cref="T:ClearCanvas.Desktop.Actions.GroupHint"/>.
+            </summary>
+            <param name="xmlActionModel">the "action-model" node to insert an action into</param>
+            <param name="action">the action to be inserted</param>
+            <returns>a boolean indicating whether anything was added/removed/modified</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionAttributeProcessor">
+            <summary>
+            Provides methods for processing the set of action attributes declared on a given target
+            object, which is typically a tool.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionAttributeProcessor.Process(System.Object)">
+            <summary>
+            Processes the set of action attributes declared on a given target object to generate the
+            corresponding set of <see cref="T:ClearCanvas.Desktop.Actions.IAction"/> objects.
+            </summary>
+            <param name="actionTarget">The target object on which the attributes are declared, typically a tool.</param>
+            <returns>The resulting set of actions, where each action is bound to the target object.</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.WorkspaceManager">
+            <summary>
+            Manages a collection of <see cref="T:ClearCanvas.Desktop.IWorkspace"/> objects.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.WorkspaceManager.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.WorkspaceManager.Workspaces">
+            <summary>
+            The collection of <see cref="T:ClearCanvas.Desktop.IShelf"/> objects that are currently being managed
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.WorkspaceManager.ActiveWorkspace">
+            <summary>
+            Gets or sets the currently active <see cref="T:ClearCanvas.Desktop.IWorkspace"/>.
+            </summary>
+            <remarks>
+            This property may return <b>null</b> in the case where there are no workspaces.  However,
+            attempting to set it to <b>null</b> will throw an exception; there must always be an active workspace.
+            When a new workspace is added, that workspace is set as active.
+            </remarks>
+            <value>The currently active workspace or <b>null</b> if
+            there are no workspaces in the <see cref="T:ClearCanvas.Desktop.WorkspaceManager"/>.</value>
+            <exception cref="T:System.ArgumentNullException"><paramref name="ActiveWorkspace"/> is set to <b>null</b>.</exception>
+        </member>
+        <member name="E:ClearCanvas.Desktop.WorkspaceManager.ActiveWorkspaceChanged">
+            <summary>
+            Occurs when the value of the <see cref="P:ClearCanvas.Desktop.WorkspaceManager.ActiveWorkspace"/> property changes.
+            </summary>
+            <remarks>The event handler receives an argument of type <see cref="T:ClearCanvas.Desktop.WorkspaceActivationChangedEventArgs"/>.</remarks>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.IValidationRuleSet">
+            <summary>
+            Defines the interface to a set of <see cref="T:ClearCanvas.Desktop.Validation.IValidationRule"/> objects.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IValidationRuleSet.Add(ClearCanvas.Desktop.Validation.IValidationRule)">
+            <summary>
+            Adds a rule to the set
+            </summary>
+            <param name="rule"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IValidationRuleSet.Remove(ClearCanvas.Desktop.Validation.IValidationRule)">
+            <summary>
+            Removes a rule from the set
+            </summary>
+            <param name="rule"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IValidationRuleSet.GetResults(ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Evaluates every rule in the set against the specified component.
+            </summary>
+            <param name="component">Component to validate</param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.IValidationRuleSet.GetResults(ClearCanvas.Desktop.IApplicationComponent,System.String)">
+            <summary>
+            Evaluates all rules in the set that apply to the specified property against the specified component.
+            </summary>
+            <param name="component">Component to validate</param>
+            <param name="propertyName">Property to validate</param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumnEventArgs">
+            <summary>
+            Event args used when a table column changes
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableColumnEventArgs.#ctor(ClearCanvas.Desktop.Tables.TableColumnChangeType,ClearCanvas.Desktop.Tables.ITableColumn)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="changeType"></param>
+            <param name="column"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableColumnEventArgs.ChangeType">
+            <summary>
+            The type of change that occured
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableColumnEventArgs.Column">
+            <summary>
+            The column that changed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentHostShelfViewExtensionPoint">
+            <summary>
+            Define an extension point for a view onto this shelf
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentHostShelf">
+            <summary>
+            Hosts an application component in a shelf.  See <see cref="M:ClearCanvas.Desktop.ApplicationComponent.LaunchAsShelf(ClearCanvas.Desktop.IDesktopWindow,ClearCanvas.Desktop.IApplicationComponent,System.String,ClearCanvas.Desktop.ShelfDisplayHint,ClearCanvas.Desktop.ApplicationComponentExitDelegate)"/>.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponentHostShelf.Component">
+            <summary>
+            Gets the hosted component
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ClickAction">
+            <summary>
+            Default implementation of <see cref="T:ClearCanvas.Desktop.Actions.IClickAction"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.IClickAction">
+            <summary>
+            Extends the <see cref="T:ClearCanvas.Desktop.Actions.IAction"/> interface for actions that have single-click
+            behaviour, such as menu items and toolbar buttons.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.IClickAction.Click">
+            <summary>
+            Called by the UI when the user clicks on the action.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.Actions.IClickAction.CheckedChanged">
+            <summary>
+            Fired when the <see cref="P:ClearCanvas.Desktop.Actions.IClickAction.Checked"/> property of this action changes.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IClickAction.IsCheckAction">
+            <summary>
+            Reports whether this action is a "check" action, that is, an action that behaves as a toggle.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IClickAction.Checked">
+            <summary>
+            The checked state that the action should present in the UI, if this is a "check" action.
+            </summary>
+            <remarks>
+            This property has no meaning if <see cref="P:ClearCanvas.Desktop.Actions.IClickAction.IsCheckAction"/> returns false.
+            </remarks>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IClickAction.KeyStroke">
+            <summary>
+            The keystroke that the UI should attempt to intercept and invoke the action.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ClickAction.#ctor(System.String,ClearCanvas.Desktop.Actions.ActionPath,ClearCanvas.Desktop.Actions.ClickActionFlags,ClearCanvas.Common.Utilities.IResourceResolver)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="actionID">The fully qualified action ID</param>
+            <param name="path">The action path</param>
+            <param name="flags">Flags that control the style of the action</param>
+            <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ClickAction.SetClickHandler(ClearCanvas.Desktop.Actions.ClickHandlerDelegate)">
+            <summary>
+            Sets the delegate that will respond when this action is clicked.
+            </summary>
+            <param name="clickHandler"></param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.DialogBoxExtensionPoint">
+            <summary>
+            Defines an extension point for a general dialog box
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Application">
+            <summary>
+            Singleton class that represents the desktop application as a whole.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Application.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ClearCanvas.Desktop.Application"/> class.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Application.RunApplication(System.String[])">
+            <summary>
+            Runs the application by running the view's message pump.  Typically this method will
+            block until the message pump terminates.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Application.CleanUp">
+            <summary>
+            Clean up any disposable objects
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Application.CreateDialogBox">
+            <summary>
+            Factory method to create a dialog box using the GUI toolkit of the main window
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Application.Quit">
+            <summary>
+            Quits the application
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Application.ApplicationName">
+            <summary>
+            The name of the application
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Application.ApplicationVersion">
+            <summary>
+            The current version of the application
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Application.GuiToolkit">
+            <summary>
+            The <see cref="T:ClearCanvas.Common.GuiToolkitID"/> of the GUI toolkit that is currently in use
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.ValidationRuleSet">
+            <summary>
+            Implemenation of <see cref="T:ClearCanvas.Desktop.Validation.IValidationRuleSet"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.ValidationRuleSet.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ClickHandlerAttribute">
+            <summary>
+            Declares a click handler binding for a click action.
+            </summary>
+            <remarks>
+            This attribute binds the click handler of the action specified by the action ID to
+            the specified method on the target class.  The method name must
+            refer to a public void method on the target class that takes no parameters.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IDialogBox">
+            <summary>
+            Defines a general interface for a dialog box that is independent of the windowing toolkit that is used
+            to display it.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDialogBox.Initialize(System.String,ClearCanvas.Desktop.IView)">
+            <summary>
+            Initializes the dialog box.
+            </summary>
+            <param name="title">The title to be displayed in the title bar</param>
+            <param name="view">The view that supplies the content for the dialog</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDialogBox.RunModal">
+            <summary>
+            Displays the dialog and blocks until the dialog is closed by the user.
+            </summary>
+            <returns>A result representing the action taken by the user</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDialogBox.EndModal(ClearCanvas.Common.DialogBoxAction)">
+            <summary>
+            Terminates the modal loop with the specified action.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="E:ClearCanvas.Desktop.IDialogBox.DialogClosing">
+            <summary>
+            Notifies that the dialog is about to close
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDialogBox.Title">
+            <summary>
+            Gets or sets the dialog box title
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.TabPage">
+            <summary>
+            Represents a single page in a <see cref="!:TabComponent"/>.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.TabPage.#ctor(System.String,ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableSortParams">
+            <summary>
+            Sort parameters that can be applied to a table
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.TableSortParams.#ctor(ClearCanvas.Desktop.Tables.ITableColumn,System.Boolean)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="column">The column to sort by</param>
+            <param name="ascending">True if the items should be sorted in ascending orders</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableSortParams.Column">
+            <summary>
+            Gets or sets the column to sort by
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.TableSortParams.Ascending">
+            <summary>
+            Gets or sets whether the items should be sorted in ascending or descending order
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionModelRoot">
+            <summary>
+            Represents the root node of an action model.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionModelNode">
+            <summary>
+            Represents a node in an action model.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelNode.#ctor(ClearCanvas.Desktop.PathSegment)">
+            <summary>
+            Protected constructor
+            </summary>
+            <param name="pathSegment">The segment of the action path to which this node corresponds</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelNode.CreateNode(ClearCanvas.Desktop.PathSegment)">
+            <summary>
+            Derived classes must override this method to return a new node of their own type.
+            </summary>
+            <param name="pathSegment">The path segment which this node represents</param>
+            <returns>A new node of this type.</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelNode.Merge(ClearCanvas.Desktop.Actions.ActionModelNode)">
+            <summary>
+            Merges the specified model into this model.
+            </summary>
+            <param name="other">The other model</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelNode.GetActionsInOrder">
+            <summary>
+            Performs an in-order traversal of this model and returns the set of actions as an array.
+            </summary>
+            <returns>An array of <see cref="T:ClearCanvas.Desktop.Actions.IAction"/> objects</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelNode.CloneTree">
+            <summary>
+            Creates a copy of the subtree beginning at this node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ActionModelNode.PathSegment">
+            <summary>
+            The action path segment represented by this node.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ActionModelNode.Action">
+            <summary>
+            The action associated with this node, or null if this node is not a leaf node.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ActionModelNode.IsLeaf">
+            <summary>
+            Reports whether this node is a leaf node.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ActionModelNode.ChildNodes">
+            <summary>
+            The set of child nodes of this node.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelRoot.CreateModel(System.String,System.String,ClearCanvas.Desktop.Actions.IActionSet)">
+            <summary>
+            Creates the action model with the specified namespace and site, using the specified
+            set of actions as input.  If an action model specification for the namespace/site
+            does not exist, it will be created.  If it does it exist, it will be used as guidance
+            in constructing the action model tree.
+            </summary>
+            <param name="namespaze">A namespace to qualify the site, typically the class name of the calling class is a good choice</param>
+            <param name="site">The site (<see cref="P:ClearCanvas.Desktop.Actions.ActionPath.Site"/>)</param>
+            <param name="actions">The set of actions from which to construct the model</param>
+            <returns>An action model tree</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelRoot.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelRoot.#ctor(System.String)">
+            <summary>
+            Protected constructor
+            </summary>
+            <param name="site">The site to which this model corresponds</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelRoot.InsertActions(ClearCanvas.Desktop.Actions.IAction[])">
+            <summary>
+            Inserts the specified actions into this model in the specified order.
+            </summary>
+            <param name="actions">The actions to insert</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionModelRoot.InsertAction(ClearCanvas.Desktop.Actions.IAction)">
+            <summary>
+            Insert the specified action into this model.
+            </summary>
+            <param name="action">The action to insert</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.LabelValueObserverAttribute">
+            <summary>
+            Declares an observer binding for the Label value of an action.
+            </summary>
+            <remarks>
+            This attribute causes the Label value of the action specified by the action ID to be
+            bound to the state of the specified property on the class to which this attribute applies.
+            The property name must refer to a public string property on the target class that has get access.
+            The change event name must refer to a public event on the class that will fire whenever the value of the property
+            changes.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.LabelValueObserverAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="propertyName">The name of the property to bind to</param>
+            <param name="changeEventName">The name of the property change notification event to bind to</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionSet">
+            <summary>
+            Default implementation of <see cref="T:ClearCanvas.Desktop.Actions.IActionSet"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.IActionSet">
+            <summary>
+            Represents an unordered set of actions.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.IActionSet.Select(System.Predicate{ClearCanvas.Desktop.Actions.IAction})">
+            <summary>
+            Returns a subset of this set containing only the elements for which the predicate is true.
+            </summary>
+            <param name="predicate">The predicate to test</param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.IActionSet.Union(ClearCanvas.Desktop.Actions.IActionSet)">
+            <summary>
+            Returns a set that corresponds to the union of this set with another set.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.IActionSet.Count">
+            <summary>
+            Returns the number of actions in the set
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionSet.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionSet.#ctor(System.Collections.Generic.IEnumerable{ClearCanvas.Desktop.Actions.IAction})">
+            <summary>
+            Constructs an action set containing all actions in the specified <see cref="!:IEnumerable"/>.
+            </summary>
+            <param name="actions"></param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.VisitedNodesContainerValidationStrategy">
+            <summary>
+            Implements a validation strategy that considers only the contained nodes that have been visited.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.ValidationRulesSettings">
+            <summary>
+            Supports management of mapping of validation rules from an embedded xml document to a settings class.
+            Derive from this class to create a settings class that is populated dynamically with rules
+            obtained from an xml doc. NOTE: this is just experimental code, not actually in use right now.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Trees.Tree`1">
+            <summary>
+            A useful generic implementation of <see cref="T:ClearCanvas.Desktop.Trees.ITree"/>
+            </summary>
+            <typeparam name="TItem"></typeparam>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Trees.ITree">
+            <summary>
+            Defines the interface to a tree, which provides a presentation model for viewing hierarchical data
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.ITree.Binding">
+            <summary>
+            Obtains the <see cref="T:ClearCanvas.Desktop.Trees.ITreeItemBinding"/> that defines how items in this tree are mapped to the view.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.ITree.Items">
+            <summary>
+            Obtains a reference to the collection of items in this tree.  Note that this collection contains
+            only the immediate items.  Each item may provide a sub-tree, which can be obtained via the
+            <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetSubTree(System.Object)"/> method.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.Tree`1.#ctor(ClearCanvas.Desktop.Trees.ITreeItemBinding)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="binding"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.Tree`1.#ctor(ClearCanvas.Desktop.Trees.ITreeItemBinding,System.Collections.IEnumerable)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="binding"></param>
+            <param name="items">The set of items that are initially contained in this tree</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.Tree`1.Items">
+            <summary>
+            Gets the item collection associated with this tree
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.Tree`1.Binding">
+            <summary>
+            Gets or sets the item binding associated with this tree
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IDesktopWindowView">
+            <summary>
+            Defines the interface for a view onto a <see cref="T:ClearCanvas.Desktop.IDesktopWindow"/>, as seen by the <see cref="T:ClearCanvas.Desktop.Application"/>.
+            This interface is preliminary and subject to change.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IView">
+            <summary>
+            A base interface for all classes that represent UI "views".  A view is any class that implements
+            some GUI functionality for the purpose of displaying the state of an underlying model to the user, and
+            allowing the user to interact with the model.  The purpose of a view class is to shield the model from
+            the specific implementation details of the GUI, thereby allowing the model to work with different
+            GUI toolkits.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IView.GuiToolkitID">
+            <summary>
+            Gets the toolkitID of the GUI tookit upon which this view is based.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IView.GuiElement">
+            <summary>
+            Exposes the underlying UI component that provides this view.  The type of the object
+            is dependent upon the GUI toolkit.  A parent view will know how to cast
+            this object appropriately.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDesktopWindowView.SetDesktopWindow(ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Set the window which this view looks at.
+            </summary>
+            <param name="window"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDesktopWindowView.RunMessagePump">
+            <summary>
+            Starts the message pump of the underlying GUI toolkit.  Typically this method is expected to
+            block for the duration of the application's execution.
+            </summary>
+            <remarks>
+            The method assumes that the view relies on an underlying message pump, as most 
+            desktop GUI toolkits do.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDesktopWindowView.QuitMessagePump">
+            <summary>
+            Terminates the message pump of the underlying GUI toolkit, typically resulting
+            in the termination of the application.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.TabComponentContainerViewExtensionPoint">
+            <summary>
+            Defines an extension point for views onto the <see cref="!:TabComponent"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.TabComponentContainer">
+            <summary>
+            An application component that acts as a container for other application components.
+            The child components are treated as "pages", where each page is a node in a tree.
+            Only one page is displayed at a time, however, a navigation tree is provided on the side
+            to aid the user in navigating the set of pages.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.TabComponentContainer.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ExceptionHandler">
+            <summary>
+            Contains static methods used to report exceptions to the user
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ExceptionHandler.Report(System.Exception,ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Reports the specified exception to the user, using the <see cref="P:System.Exception.Message"/> property value as the
+            message.  Also logs the exception.
+            </summary>
+            <param name="e">Exception to report</param>
+            <param name="desktopWindow">Desktop window that parents the exception dialog</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ExceptionHandler.Report(System.Exception,System.String,ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Reports the specified exception to the user, displaying the specified user message first.
+            Also logs the exception.
+            </summary>
+            <param name="e">Exception to report</param>
+            <param name="userMessage">User-friendly message to display, instead of the message contained in the exception</param>
+            <param name="desktopWindow">Desktop window that parents the exception dialog</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentHostDialog">
+            <summary>
+            Hosts an application component in a modal dialog.  See <see cref="M:ClearCanvas.Desktop.ApplicationComponent.LaunchAsDialog(ClearCanvas.Desktop.IDesktopWindow,ClearCanvas.Desktop.IApplicationComponent,System.String)"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IDesktopWindow">
+            <summary>
+            Defines the interface to a desktop window, as seen by the <see cref="T:ClearCanvas.Desktop.Application"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDesktopWindow.CanClose">
+            <summary>
+            Asks the desktop window if it is in a closable state.  The desktop window may take any actions
+            in this method that are necessary to decide whether or not it can be closed, including prompting
+            the user to save data, etc.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IDesktopWindow.ShowMessageBox(System.String,ClearCanvas.Common.MessageBoxActions)">
+            <summary>
+            Shows a message box in this desktop window
+            </summary>
+            <param name="message"></param>
+            <param name="buttons"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDesktopWindow.ActiveWorkspace">
+            <summary>
+            Gets the active workspace, or null if there are no workspaces
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDesktopWindow.MenuModel">
+            <summary>
+            Gets the current menu model
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDesktopWindow.ToolbarModel">
+            <summary>
+            Gets the current toolbar model
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDesktopWindow.ShelfManager">
+            <summary>
+            Gets the associated shelf manager
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDesktopWindow.WorkspaceManager">
+            <summary>
+            Gets the associated workspace manager
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ItemChangeType">
+            <summary>
+            Enumerates the types of item changes
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ItemChangeType.ItemAdded">
+            <summary>
+            An item was added to the table
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ItemChangeType.ItemChanged">
+            <summary>
+            An item in the table was changed
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ItemChangeType.ItemRemoved">
+            <summary>
+            An item was removed from the table
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ItemChangeType.Reset">
+            <summary>
+            All items in the table may have changed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ItemEventArgs">
+            <summary>
+            Event args used when an item changes
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ItemEventArgs.ChangeType">
+            <summary>
+            The type of change that occured
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ItemEventArgs.ItemIndex">
+            <summary>
+            The index of the item that changed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.DialogComponentContainerViewExtensionPoint">
+            <summary>
+            Defines an extension point for views onto the <see cref="!:TabComponent"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DialogComponentContainer.#ctor(ClearCanvas.Desktop.DialogContent)">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.WorkspaceCollection">
+            <summary>
+            A collection of <see cref="T:ClearCanvas.Desktop.IWorkspace"/> objects, used by <see cref="T:ClearCanvas.Desktop.WorkspaceManager"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.WorkspaceCollection.Remove(ClearCanvas.Desktop.IWorkspace)">
+            <summary>
+            Overridden to check if the workspace can be closed before removing it.  This method
+            calls <see cref="M:ClearCanvas.Desktop.IWorkspace.CanClose"/> to see if the workspace can be closed.
+            </summary>
+            <param name="item"></param>
+            <returns>True if the workspace was successfully closed and removed, otherwise false</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.SR">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ApplicationName">
+            <summary>
+              Looks up a localized string similar to ClearCanvas Workstation.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ApplicationVersion">
+            <summary>
+              Looks up a localized string similar to 0.9.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionActionBuilderEventDoesNotExist">
+            <summary>
+              Looks up a localized string similar to The event {0} does not exist for class {1}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionActionBuilderMethodDoesNotExist">
+            <summary>
+              Looks up a localized string similar to The method {0} does not exist for class {1}, or it does not have the correct signature..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionActionBuilderPropertyDoesNotExist">
+            <summary>
+              Looks up a localized string similar to The property {0} does not exist for class {1}, or it does not have the correct return type..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionActionBuilderPropertyDoesNotHavePublicGetMethod">
+            <summary>
+              Looks up a localized string similar to The property {0} on class {1} does not have a public get method..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionActiveWorkspaceCannotBeNull">
+            <summary>
+              Looks up a localized string similar to Cannot set the active workspace to null..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionAssociateViewAttributeNotSpecified">
+            <summary>
+              Looks up a localized string similar to An AssociateViewAttribute must be specified for the input Type in order to create the Associated View..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionCannotSetPaneAfterContainerStarted">
+            <summary>
+              Looks up a localized string similar to Cannot set pane after container has been started..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionComponentAlreadyStarted">
+            <summary>
+              Looks up a localized string similar to Component has already been started..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionComponentNeverStarted">
+            <summary>
+              Looks up a localized string similar to Component was never started, or has already been stopped..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionContainerAlreadyStarted">
+            <summary>
+              Looks up a localized string similar to Container has already been started.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionContainerNeverStarted">
+            <summary>
+              Looks up a localized string similar to Container was never started, or has already been stopped..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionDesktopViewNotCreated">
+            <summary>
+              Looks up a localized string similar to The main desktop view has not been created..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionInvalidActionPath">
+            <summary>
+              Looks up a localized string similar to Invalid action path.  Path must have 2 or more segments..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionStackComponentCannotExit">
+            <summary>
+              Looks up a localized string similar to Component cannot exit because it is not at the top of the component stack..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionStackComponentCannotPop">
+            <summary>
+              Looks up a localized string similar to Cannot pop - component stack is empty..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionTableColumnMustBeAddedToDetermineWidth">
+            <summary>
+              Looks up a localized string similar to This column must be added to a table to determine its percentage width..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.ExceptionTableItemNotFoundInCollection">
+            <summary>
+              Looks up a localized string similar to Table item not found in collection..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.InvalidCustomDateFormat">
+            <summary>
+              Looks up a localized string similar to The custom date format must be from the available list..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuEdit">
+            <summary>
+              Looks up a localized string similar to &amp;Edit.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuFile">
+            <summary>
+              Looks up a localized string similar to &amp;File.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuFileCloseWorkspace">
+            <summary>
+              Looks up a localized string similar to Close Workspace.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuFileExitApplication">
+            <summary>
+              Looks up a localized string similar to Exit Application.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuFileSearch">
+            <summary>
+              Looks up a localized string similar to Search.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuHelp">
+            <summary>
+              Looks up a localized string similar to &amp;Help.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuHelpAbout">
+            <summary>
+              Looks up a localized string similar to About.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuHelpContents">
+            <summary>
+              Looks up a localized string similar to Contents.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuHelpIndex">
+            <summary>
+              Looks up a localized string similar to Index.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuOptions">
+            <summary>
+              Looks up a localized string similar to Options.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MenuTools">
+            <summary>
+              Looks up a localized string similar to &amp;Tools.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MessageConfirmCancelTask">
+            <summary>
+              Looks up a localized string similar to The background task is still running.  Are you sure you want to cancel?.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MessageConfirmSaveChangesBeforeClosing">
+            <summary>
+              Looks up a localized string similar to Save changes before closing?.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.MessageNoConfigurationPagesExist">
+            <summary>
+              Looks up a localized string similar to No configuration pages exist..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.TitleDateFormat">
+            <summary>
+              Looks up a localized string similar to Date Format.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SR.TitleMenuOptions">
+            <summary>
+              Looks up a localized string similar to Options.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.AssociateViewAttribute">
+            <summary>
+            Associates a view extension point with a "model" class.  The model class may be
+            any class that participates in a model-view relationship and defines an associated
+            view extension point.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.AssociateViewAttribute.#ctor(System.Type)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="viewExtensionPointType">The view extension point class</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.AssociateViewAttribute.ViewExtensionPointType">
+            <summary>
+            Gets the view extension point class
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Trees.TreeItemBinding`1">
+            <summary>
+            A useful generic implementation of <see cref="T:ClearCanvas.Desktop.Trees.ITreeItemBinding"/>
+            </summary>
+            <typeparam name="TItem"></typeparam>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.TreeItemBinding`1.#ctor(ClearCanvas.Desktop.Trees.TextProviderDelegate{`0},ClearCanvas.Desktop.Trees.TreeProviderDelegate{`0})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="nodeTextProvider"></param>
+            <param name="subTreeProvider"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.TreeItemBinding`1.#ctor(ClearCanvas.Desktop.Trees.TextProviderDelegate{`0})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="nodeTextProvider"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Trees.TreeItemBinding`1.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.TreeItemBinding`1.NodeTextProvider">
+            <summary>
+            Gets or sets the node text provider for this binding
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.TreeItemBinding`1.TooltipTextProvider">
+            <summary>
+            Gets or sets the tooltip text provider for this binding
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.TreeItemBinding`1.IconSetProvider">
+            <summary>
+            Gets or sets the iconset provider for this binding
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.TreeItemBinding`1.ResourceResolverProvider">
+            <summary>
+            Gets or sets the resource resolver provider for this binding
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.TreeItemBinding`1.SubTreeProvider">
+            <summary>
+            Gets or sets the subtree provider for this binding
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ButtonAction">
+            <summary>
+            Models a toolbar button action.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ButtonAction.#ctor(System.String,ClearCanvas.Desktop.Actions.ActionPath,ClearCanvas.Desktop.Actions.ClickActionFlags,ClearCanvas.Common.Utilities.IResourceResolver)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="actionID">The fully qualified action ID</param>
+            <param name="path">The action path</param>
+            <param name="flags">Flags that control the style of the action</param>
+            <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumnCollection`1">
+            <summary>
+            Implementation of <see cref="T:ClearCanvas.Desktop.Tables.ITableColumnCollection"/> for use with the <see cref="!:Table"/> class.
+            </summary>
+            <typeparam name="TItem">The type of item that the table holds</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ItemCollection`1">
+            <summary>
+            Implementation of <see cref="T:ClearCanvas.Desktop.IItemCollection"/>.
+            </summary>
+            <typeparam name="TItem">The type of item that the table holds</typeparam>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ItemCollection`1.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ItemCollection`1.FindIndex(System.Predicate{`0})">
+            <summary>
+            Searches the collection for an item that satisfies the specified constraint and returns
+            the index of the first such item.
+            </summary>
+            <returns>The index of the first matching item, or -1 if no matching items are found</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ItemCollection`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds all items in the specified enumerable
+            </summary>
+            <param name="enumerable"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ItemCollection`1.AddRange(System.Collections.IEnumerable)">
+            <summary>
+            Adds all items in the specified enumerable
+            </summary>
+            <param name="enumerable"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ItemCollection`1.NotifyItemUpdated(System.Int32)">
+            <summary>
+            Notifies the table that the item at the specified index has changed in some way.  Use this method
+            to cause the view to update itself to reflect the changed item.
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ItemCollection`1.NotifyItemUpdated(`0)">
+            <summary>
+            Notifies the table that the specified item has changed in some way.  Use this method
+            to cause the view to update itself to reflect the changed item.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Selection">
+            <summary>
+            Default implementation of <see cref="T:ClearCanvas.Desktop.ISelection"/>.  
+            Note: It is important that this class retain immutable semantics.  Do not add mutator methods/properties to this class.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ISelection">
+            <summary>
+            Represents a single or multiple selection
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ISelection.Items">
+            <summary>
+            Returns the set of items that are currently selected
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ISelection.Item">
+            <summary>
+            Convenience method to obtain the currently selected item in a single-select scenario.
+            If no rows are selected, the method returns null.  If more than one row is selected,
+            it is undefined which item will be returned.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.GroupHint">
+            <summary>
+            The GroupHint is used to determine a reasonably appropriate point in the 
+            <see cref="T:ClearCanvas.Desktop.Actions.ActionModelStore"/> to put an action that does not yet exist in
+            the store.
+            
+            The action (call it Left-Hand Action) whose position in the store is to be 
+            determined is compared with each action in the store (Right-Hand Action).
+            The comparison of the Left-Hand Action to the Right-Hand Action is given
+            a score.  The score is based on the GroupHint and the algorithm works 
+            as follows:
+            
+            	LHS										RHS										Score
+            	-----------------------------------------------------------------------------------------
+            1.	Tools.Image.Manipulation.Zoom			""										1
+            2.	Tools.Image.Manipulation.Zoom			Tools.Image.Manipulation.Pan			4
+            3.	Tools.Image.Manipulation.Zoom			DisplaySets								0
+            4.  ""										""										1
+            5.  ""										DisplaySets								0
+            
+            A brief explanation of the logic:
+            1. For backward compatibility, actions with a non-empty GroupHint, when compared to an 
+               existing action in the store whose GroupHint="", the score is 1 because it is considered
+               a better match than 2 actions whose GroupHints are non-empty and are completely different.
+            2. Actions with GroupHints that have similar components (separated by '.') are given a score
+               equal to the number of (consecutive) matching components + 1.  The +1 accounts for the fact 
+               that any number of equal components is a better score than the first example, whose score is 1.
+            3. Actions with completely different components are given an automatic score of zero (0).
+            4. Two actions with GroupHints = "" are considered equal, so a score of 1 is given.
+            5. In this case, an existing action with an empty GroupHint is being matched to a non-empty
+               GroupHint.  So, the LHS cannot be considered at all similar to RHS and the 
+               score is automatically zero (0).
+            
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionModelNodeList">
+            <summary>
+            Used by <see cref="T:ClearCanvas.Desktop.Actions.ActionModelNode"/> to hold the list of child nodes.
+            Supports indexing by name, where the name corresponds to the
+            <see cref="!:ActionModelNode.PathSegment.LocalizedText"/> property.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ActionModelNodeList.Item(System.String)">
+            <summary>
+            Returns the child node whose <see cref="!:ActionModelNode.PathSegment.LocalizedText"/> property
+            is equal to the specified value.
+            </summary>
+            <param name="name">The name of the node to retrieve</param>
+            <returns>The corresponding child node, or null if no such node exists</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.ITool">
+            <summary>
+            Defines a tool.  Developers are encouraged to
+            subclass <see cref="!:Tool"/> or one of its subclasses rather than implement this interface
+            directly.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ITool.SetContext(ClearCanvas.Desktop.Tools.IToolContext)">
+            <summary>
+            Called by the framework to set the tool context.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ITool.Initialize">
+            <summary>
+            Called by the framework to allow the tool to initialize itself.  This method will
+            be called after <see cref="M:ClearCanvas.Desktop.Tools.ITool.SetContext(ClearCanvas.Desktop.Tools.IToolContext)"/> has been called, which guarantees that 
+            the tool will have access to its context when this method is called.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tools.ITool.Actions">
+            <summary>
+            Gets the set of actions that act on this tool.  This property should not be considered
+            a dynamic property - that is, there is no point having this property return a different
+            set of actions depending on the internal state of the tool.  The framework may choose to
+            call this property only once during the lifetime of the tool.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ShelfDisplayHint">
+            <summary>
+            Flags that indicate how a shelf should be displayed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ButtonActionAttribute">
+            <summary>
+            Declares a button action with the specifed action identifier and path hint.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ButtonActionAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to associate with this action</param>
+            <param name="pathHint">The suggested location of this action in the toolbar model</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.NavigatorPage">
+            <summary>
+            Represents a single page in a <see cref="T:ClearCanvas.Desktop.NavigatorComponentContainer"/>.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.NavigatorPage.#ctor(System.String,ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="path">The path to this page in the navigation tree</param>
+            <param name="component">The application component to be displayed by this page</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.NavigatorPage.Path">
+            <summary>
+            Gets the path to this page.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IShelfView">
+            <summary>
+            Defines the interface for a view onto a shelf, as seen by the desktop.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IShelfView.SetShelf(ClearCanvas.Desktop.IShelf)">
+            <summary>
+            Sets the shelf that this view looks at
+            </summary>
+            <param name="shelf">The shelf to look at</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.FormatSettings.DateFormat">
+            <summary>
+            Date format string
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.FormatSettings.TimeFormat">
+            <summary>
+            Time format string
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.FormatSettings.DateTimeFormat">
+            <summary>
+            Date and time format string
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DialogContent.#ctor(ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DialogContent.Component">
+            <summary>
+            Gets the component that is displayed on this page.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.ToolContext">
+            <summary>
+            Base class for all tool contexts.  Implementations of <see cref="T:ClearCanvas.Desktop.Tools.IToolContext"/> are encouraged to
+            inherit this class rather than implement the interface directly.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.IToolContext">
+            <summary>
+            Base interface for all tool context interfaces.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Workspace">
+            <summary>
+            Abstract class that provides the base implementation of <see cref="T:ClearCanvas.Desktop.IWorkspace"/>.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Workspace.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ClearCanvas.Desktop.Workspace"/> class.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Workspace.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Workspace.Title">
+            <summary>
+            Gets or sets the title of this workspace.  The title will be displayed in the user-interface
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Workspace.CommandHistory">
+            <summary>
+            Gets the workspace's <see cref="P:ClearCanvas.Desktop.Workspace.CommandHistory"/>.
+            </summary>
+            <value>The workspace's <see cref="P:ClearCanvas.Desktop.Workspace.CommandHistory"/>.</value>
+        </member>
+        <member name="E:ClearCanvas.Desktop.Workspace.TitleChanged">
+            <summary>
+            Fired when the title of the workspace is changed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IWorkspaceView">
+            <summary>
+            Defines the interface for a view onto a workspace, as seen by the desktop.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IWorkspaceView.SetWorkspace(ClearCanvas.Desktop.IWorkspace)">
+            <summary>
+            Sets the workspace which the view looks at.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentHostWorkspaceViewExtensionPoint">
+            <summary>
+            Define an extension point for a view onto this workspace
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentHostWorkspace">
+            <summary>
+            Hosts an application component in a workspace.  See <see cref="M:ClearCanvas.Desktop.ApplicationComponent.LaunchAsWorkspace(ClearCanvas.Desktop.IDesktopWindow,ClearCanvas.Desktop.IApplicationComponent,System.String,ClearCanvas.Desktop.ApplicationComponentExitDelegate)"/>.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ApplicationComponentHostWorkspace.Component">
+            <summary>
+            Gets the hosted component
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.ValidationRule">
+            <summary>
+            Implementation of <see cref="T:ClearCanvas.Desktop.Validation.IValidationRule"/>.
+            This class accepts an instance of <see cref="T:ClearCanvas.Common.Specifications.ISpecification"/> which provides the specification which must be satisfied.
+            An application component instance will be passed to the <see cref="M:ClearCanvas.Common.Specifications.ISpecification.Test(System.Object)"/> method, so the specification
+            must be written to expect the application component as the root object.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.ValidationRule.#ctor(System.String,ClearCanvas.Common.Specifications.ISpecification)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="propertyName">The property to which this rule applies</param>
+            <param name="spec">The specification which must be satisfied for this validation rule to succeed</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Trees.ITreeItemCollection">
+            <summary>
+            Defines the interface to the collection of items maintained by a tree.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.ITreeItemCollection.Count">
+            <summary>
+            Gets the number of items in the collection
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Trees.ITreeItemCollection.Item(System.Int32)">
+            <summary>
+            Gets the item at the specified index
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.ToolBase">
+            <summary>
+            Abstract base class providing a default implementation of <see cref="T:ClearCanvas.Desktop.Tools.ITool"/>.  Tool classes may inherit
+            this class, but inheriting from <see cref="!:Tool"/> is recommended.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ToolBase.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.ToolBase.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tools.ToolBase.ContextBase">
+            <summary>
+            Provides an untyped reference to the context in which the tool is operating. Attempting to access this property
+            before <see cref="M:ClearCanvas.Desktop.Tools.ToolBase.SetContext(ClearCanvas.Desktop.Tools.IToolContext)"/> has been called (e.g in the constructor of this tool) will return null.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.TooltipAttribute">
+            <summary>
+            Declares a tooltip message to associate with an action.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.TooltipAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="tooltip">The tooltip message to associate with the action</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.TooltipAttribute.TooltipText">
+            <summary>
+            The tooltip message
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.EnabledStateObserverAttribute">
+            <summary>
+            Declares an observer binding for the enabled state of an action.
+            </summary>
+            <remarks>
+            This attribute causes the enabled state of the action specified by the action ID to be
+            bound to the state of the specified property on the class to which this attribute applies.
+            The property name must refer to a public boolean property on the target class that has get access.
+            The change event name must refer to a public event on the class that will fire whenever the state of the property
+            changes.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.EnabledStateObserverAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="propertyName">The name of the property to bind to</param>
+            <param name="changeEventName">The name of the property change notification event to bind to</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ClickHandlerDelegate">
+            <summary>
+            Used by <see cref="T:ClearCanvas.Desktop.Actions.ClickAction"/> objects to establish a handler for a click.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.PathSegment">
+            <summary>
+            Represents a single segment of a <see cref="T:ClearCanvas.Desktop.Path"/>.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.PathSegment.#ctor(System.String,System.String)">
+            <summary>
+            Internal constructor.
+            </summary>
+            <param name="key">The resource key or unlocalized path segment string</param>
+            <param name="localized">The localized path segment string</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.PathSegment.ResourceKey">
+            <summary>
+            The resource key or unlocalized text
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.PathSegment.LocalizedText">
+            <summary>
+            The localized text
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.TableColumnChangeType">
+            <summary>
+            Enumerates the types of column changes
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.Tables.TableColumnChangeType.ColumnAdded">
+            <summary>
+            A column was added to the table
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.Tables.TableColumnChangeType.ColumnChanged">
+            <summary>
+            An existing column was changed
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.Tables.TableColumnChangeType.ColumnRemoved">
+            <summary>
+            An existing column was removed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Format">
+            <summary>
+            Utility class that assists with formatting objects for display.  This class is configurable through
+            the <see cref="T:ClearCanvas.Desktop.FormatSettings"/> class.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.Date(System.DateTime)">
+            <summary>
+            Formats the specified date-time as a date
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.Date(System.Nullable{System.DateTime})">
+            <summary>
+            Formats the specified date-time as a date, returning an empty string if null
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.Time(System.DateTime)">
+            <summary>
+            Formats the specified date-time as a time
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.Time(System.Nullable{System.DateTime})">
+            <summary>
+            Formats the specified date-time as a time, returning an empty string if null
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.DateTime(System.DateTime)">
+            <summary>
+            Formats the specified date-time as a date + time
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.DateTime(System.Nullable{System.DateTime})">
+            <summary>
+            Formats the specified date-time as a date + time
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Format.Custom(System.Object)">
+            <summary>
+            Formats the specified object.  For now, this method just calls the object's ToString() method.
+            In future, we may want to add the ability to hook in formatting overrides via extension points.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Format.DateFormat">
+            <summary>
+            Gets the default date format string
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Format.TimeFormat">
+            <summary>
+            Gets the default time format string
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Format.DateTimeFormat">
+            <summary>
+            Gets the default date-time format string
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ViewFactory">
+            <summary>
+            Provides a convenient set of methods for instantiating view extensions.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ViewFactory.CreateView(ClearCanvas.Common.IExtensionPoint,ClearCanvas.Common.GuiToolkitID)">
+            <summary>
+            Creates a view extension that matches the specified GUI toolkit.
+            </summary>
+            <param name="extensionPoint">The view extension point.</param>
+            <param name="toolkitID">The desired GUI toolkit</param>
+            <returns>The view object that was created.</returns>
+            <exception cref="T:System.NotSupportedException">A view extension matching the specified GUI toolkit does not exist.</exception>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ViewFactory.CreateView(ClearCanvas.Common.IExtensionPoint)">
+            <summary>
+            Creates a view extension that matches GUI toolkit currently in use.
+            </summary>
+            <param name="extensionPoint">The view extension point.</param>
+            <returns>The view object that was created.</returns>
+            <exception cref="T:System.NotSupportedException">A view extension matching the GUI toolkit of the main view not exist.</exception>
+            <exception cref="T:System.InvalidOperationException">The main workstation view has not yet been created.</exception>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ViewFactory.CreateAssociatedView(System.Type)">
+            <summary>
+            Creates a view extension based on the view extension point that is associated with the specified
+            model type.  The model type is any class that has a <see cref="T:ClearCanvas.Desktop.AssociateViewAttribute"/> attribute
+            specified.
+            </summary>
+            <param name="modelType"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tools.Tool`1">
+            <summary>
+            Abstract base class providing a default implementation of <see cref="T:ClearCanvas.Desktop.Tools.ITool"/>.  Tool classes should
+            inherit this class rather than implement <see cref="T:ClearCanvas.Desktop.Tools.ITool"/> directly.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tools.Tool`1.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tools.Tool`1.Context">
+            <summary>
+            Provides a typed reference to the context in which the tool is operating. Attempting to access this property
+            before <see cref="!:SetContext"/> has been called (e.g in the constructor of this tool) will return null.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.ValidationResult">
+            <summary>
+            Represents the result of an <see cref="T:ClearCanvas.Desktop.Validation.IValidationRule"/> evaluation.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.ValidationResult.#ctor(System.Boolean,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="success">Indicates whether the validation succeeded</param>
+            <param name="message">When validation fails, a message indicating why the validation failed</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.ValidationResult.#ctor(System.Boolean,System.String[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="success">Indicates whether the validation succeeded</param>
+            <param name="messages">When validation fails, a set of messages indicating why the validation failed</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Validation.ValidationResult.GetMessageString(System.String)">
+            <summary>
+            Concatenates the elements of the <see cref="P:ClearCanvas.Desktop.Validation.ValidationResult.Messages"/> property into a single message using the specified separator
+            </summary>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Validation.ValidationResult.Success">
+            <summary>
+            True if the validation was successful
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Validation.ValidationResult.Messages">
+            <summary>
+            Messages that describe why validation was not successful.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.WorkspaceActivationChangedEventArgs">
+            <summary>
+            Provides information about a change in workspace activation.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.WorkspaceActivationChangedEventArgs.ActivatedWorkspace">
+            <summary>
+            Gets the workspace that was activated
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.WorkspaceActivationChangedEventArgs.DeactivatedWorkspace">
+            <summary>
+            Gets the workspace that was deactivated (the previously active workspace)
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ClickActionFlags">
+            <summary>
+            Set of flags that customize the behaviour of objects of type <see cref="T:ClearCanvas.Desktop.Actions.IClickAction"/>.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.Actions.ClickActionFlags.None">
+            <summary>
+            Default value
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.Actions.ClickActionFlags.CheckAction">
+            <summary>
+            Specifies that the action is a "check" action (e.g. that it has toggle behaviour)
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionResourceResolver">
+            <summary>
+            A specialization of the <see cref="T:ClearCanvas.Common.Utilities.ResourceResolver"/> class for use in resolving resources
+            related to actions.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionResourceResolver.#ctor(System.Object)">
+            <summary>
+            Constructs an instance of this object for the specified action target. The class of the target
+            object determines the primary assembly that will be used to resolve resources.
+            </summary>
+            <param name="actionTarget">The action target for which resources will be resolved</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.Table`1">
+            <summary>
+            A useful generic implementation of <see cref="T:ClearCanvas.Desktop.Tables.ITable"/>
+            </summary>
+            <typeparam name="TItem">The type of item that this table holds</typeparam>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Tables.Table`1.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.Table`1.Columns">
+            <summary>
+            Gets the collection of columns for the table.  Use this property to add <see cref="!:TableColumn"/> objects.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.Table`1.Items">
+            <summary>
+            Gets the collection of items in the table.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Tables.ITableItemCollection">
+            <summary>
+            Defines the interface to the collection of items in a <see cref="T:ClearCanvas.Desktop.Tables.ITable"/>
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableItemCollection.Count">
+            <summary>
+            Gets the number of items in the collection.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Tables.ITableItemCollection.Item(System.Int32)">
+            <summary>
+            Gets the item in the collection at the specified index.
+            </summary>
+            <param name="index">The index of the item to get</param>
+            <returns>The item in the collection at the specified index</returns>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ApplicationComponentExitCode">
+            <summary>
+            Indicates the exit status of an application component.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ApplicationComponentExitCode.Normal">
+            <summary>
+            The component exited normally.  If the component allows editing,
+            this typically means that the user accepted the changes.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ApplicationComponentExitCode.Cancelled">
+            <summary>
+            The component was cancelled.  If the component allows editing,
+            this typically means that the user cancelled the changes.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.ApplicationComponentExitCode.Error">
+            <summary>
+            The component encountered an error.  If the component allows editing
+            and is responsible for committing its own changes, this code typically
+            indicates that the changes did not commit.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.SplitComponentContainerViewExtensionPoint">
+            <summary>
+            Defines an extension point for views onto the <see cref="!:TabComponent"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.SplitComponentContainer.#ctor(ClearCanvas.Desktop.SplitPane,ClearCanvas.Desktop.SplitPane,ClearCanvas.Desktop.SplitOrientation)">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.SplitComponentContainer.#ctor(ClearCanvas.Desktop.SplitOrientation)">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.VisibleStateObserverAttribute">
+            <summary>
+            Declares an observer binding for the visible state of an action.
+            </summary>
+            <remarks>
+            This attribute causes the visible state of the action specified by the action ID to be
+            bound to the state of the specified property on the class to which this attribute applies.
+            The property name must refer to a public boolean property on the target class that has get access.
+            The change event name must refer to a public event on the class that will fire whenever the state of the property
+            changes.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.VisibleStateObserverAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="propertyName">The name of the property to bind to</param>
+            <param name="changeEventName">The name of the property change notification event to bind to</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ShelfManager">
+            <summary>
+            Manages a collection of <see cref="T:ClearCanvas.Desktop.IShelf"/> objects.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ShelfManager.#ctor(ClearCanvas.Desktop.IDesktopWindow)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ShelfManager.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ShelfManager.Shelves">
+            <summary>
+            The collection of <see cref="T:ClearCanvas.Desktop.IShelf"/> objects that are currently being managed
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ExceptionHandlerComponentViewExtensionPoint">
+            <summary>
+            Extension point for views onto <see cref="T:ClearCanvas.Desktop.ExceptionHandlerComponent"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ExceptionHandlerComponent">
+            <summary>
+            ExceptionHandlerComponent class
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.ExceptionHandlerComponent.#ctor(System.Exception,System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Validation.NoNodesContainerValidationStrategy">
+            <summary>
+            Implements a validation strategy that does not consider any nodes.  This is effectively equivalent
+            to having no validation at all.  The container is always considered valid, regardless of the validity
+            of contained nodes.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.MenuAction">
+            <summary>
+            Models a menu item action.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.MenuAction.#ctor(System.String,ClearCanvas.Desktop.Actions.ActionPath,ClearCanvas.Desktop.Actions.ClickActionFlags,ClearCanvas.Common.Utilities.IResourceResolver)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="actionID">The fully qualified action ID</param>
+            <param name="path">The action path</param>
+            <param name="flags">Flags that control the style of the action</param>
+            <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.TooltipValueObserverAttribute">
+            <summary>
+            Declares an observer binding for the Tooltip value of an action.
+            </summary>
+            <remarks>
+            This attribute causes the Tooltip value of the action specified by the action ID to be
+            bound to the state of the specified property on the class to which this attribute applies.
+            The property name must refer to a public string property on the target class that has get access.
+            The change event name must refer to a public event on the class that will fire whenever the value of the property
+            changes.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.TooltipValueObserverAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="actionID">The logical action identifier to which this attribute applies</param>
+            <param name="propertyName">The name of the property to bind to</param>
+            <param name="changeEventName">The name of the property change notification event to bind to</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.ActionPath">
+            <summary>
+            A subclass of <see cref="T:ClearCanvas.Desktop.Path"/> that is used by <see cref="T:ClearCanvas.Desktop.Actions.IAction"/> to represent an action path.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.Actions.ActionPath.#ctor(System.String,ClearCanvas.Common.Utilities.IResourceResolver)">
+            <summary>
+            Constructs an action path from the specified path string, using the specified resource resolver.
+            If the resource resolver is null, the path segments will be treated as localized text.
+            </summary>
+            <param name="pathString">A string respresenting the path</param>
+            <param name="resolver">A resource resolver used to localize each path segment. May be null.</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.Actions.ActionPath.Site">
+            <summary>
+            The action "site", which is the first segment of the action path.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IApplicationComponentView">
+            <summary>
+            Defines the interface to an application component view as seen by
+            the host.  All methods on this interface are intended solely
+            for use by the application component host.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IApplicationComponentView.SetComponent(ClearCanvas.Desktop.IApplicationComponent)">
+            <summary>
+            Called by the host to assign this view to a component.
+            </summary>
+            <param name="component">The component that this view should look at</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.DesktopWindowViewExtensionPoint">
+            <summary>
+            Defines an extension point for views onto a desktop window
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.DesktopToolExtensionPoint">
+            <summary>
+            Defines an extension point for tools that are applicable to the desktop as a whole.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IDesktopToolContext">
+            <summary>
+            Tool context interface provided to tools that extend <see cref="T:ClearCanvas.Desktop.DesktopToolExtensionPoint"/>
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IDesktopToolContext.DesktopWindow">
+            <summary>
+            Gets the desktop window that the tool acts on
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.DesktopWindow">
+            <summary>
+            Implementation of <see cref="T:ClearCanvas.Desktop.IDesktopWindow"/>
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DesktopWindow.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DesktopWindow.Dispose(System.Boolean)">
+            <summary>
+            Implementation of the <see cref="T:System.IDisposable"/> pattern
+            </summary>
+            <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DesktopWindow.CanClose">
+            <summary>
+            Calls the <see cref="M:ClearCanvas.Desktop.IWorkspace.CanClose"/> method on all existing workspaces. If any workspace
+            returns false, this method returns false.
+            </summary>
+            <returns>True if all workspaces indicate they are in a closable state, otherwise false</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DesktopWindow.ShowMessageBox(System.String,ClearCanvas.Common.MessageBoxActions)">
+            <summary>
+            Shows a message box in this desktop window
+            </summary>
+            <param name="message"></param>
+            <param name="buttons"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.DesktopWindow.GetActionModel(System.String)">
+            <summary>
+            Builds the action model for the specified action site.
+            </summary>
+            <param name="site"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DesktopWindow.WorkspaceManager">
+            <summary>
+            Gets the workspace manager associated with this desktop window
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DesktopWindow.ShelfManager">
+            <summary>
+            Gets the shelf manager associated with this desktop window
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DesktopWindow.MenuModel">
+            <summary>
+            Gets the current menu model for this desktop window.  Note that the menu
+            model changes depending on the currently active workspace.  Therefore
+            the return value of this property should not be cached.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DesktopWindow.ToolbarModel">
+            <summary>
+            Gets the current menu model for this desktop window.  Note that the menu
+            model changes depending on the currently active workspace.  Therefore
+            the return value of this property should not be cached.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DesktopWindow.ActiveWorkspace">
+            <summary>
+            Gets the currently active <see cref="T:ClearCanvas.Desktop.IWorkspace"/>.
+            </summary>
+            <value>The currently active <see cref="T:ClearCanvas.Desktop.IWorkspace"/>, or <b>null</b> if there are
+            no workspaces in the <see cref="P:ClearCanvas.Desktop.DesktopWindow.WorkspaceManager"/>.</value>
+        </member>
+        <member name="P:ClearCanvas.Desktop.DesktopWindow.DesktopTools">
+            <summary>
+            Gets the collection of desktop tools.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.SplitPane.#ctor(System.String,ClearCanvas.Desktop.IApplicationComponent,System.Single)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="name">Name of the pane</param>
+            <param name="component">Component that the pane will host</param>
+            <param name="initialWeight">Initial weight of the pane, relative to other panes</param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SplitPane.Component">
+            <summary>
+            Gets the component that is displayed on this pane.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SplitPane.Weight">
+            <summary>
+            Gets the weight that was assigned to this pane
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.SplitPane.ComponentHost">
+            <summary>
+            Gets the component host for this pane.  For internal use only.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.ClosingEventArgs">
+            <summary>
+            Event args used for "closing" events, where the request may need to be cancelled
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.ClosingEventArgs.Cancel">
+            <summary>
+            Flag that controls whether the close request should be cancelled
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.Actions.GroupHintAttribute">
+            <summary>
+            Declares a 'group hint' for an action.  Group Hints are used to determine
+            as appropriate a place as possible to place an action in the <see cref="T:ClearCanvas.Desktop.Actions.ActionModelStore"/>.
+            </summary>
+        </member>
+    </members>
+</doc>

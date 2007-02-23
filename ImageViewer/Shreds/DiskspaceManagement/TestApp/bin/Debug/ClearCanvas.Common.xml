@@ -1,0 +1,2302 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ClearCanvas.Common</name>
+    </assembly>
+    <members>
+        <member name="T:ClearCanvas.Common.PluginManager">
+            <summary>
+            Loads and keeps track of all plugins.
+            </summary>
+            <remarks>
+            The PluginManager class is at the heart of the ClearCanvas framework.
+            It provides <I>all</I> the functionality required for loading binary components known
+            as <i>plugins</i> at runtime.  A plugin is the basic building block for extending the
+            functionality of the application.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.PluginManager.LoadPlugins">
+            <summary>
+            Loads all plugins in current plugin directory.
+            </summary>
+            <remarks>
+            This method will traverse the plugin directory and all its subdirectories loading
+            all valid plugin assemblies.  A valid plugin is an assembly that contains a class
+            derived from <see cref="!:Plugin"/>.  Plugins are loaded only the first time this
+            method is called; subsequent calls are ignored.
+            </remarks>
+            <exception cref="T:ClearCanvas.Common.PluginException">Specified plugin directory does not exist or 
+            a problem with the loading of a plugin.</exception>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginManager.Plugins">
+            <summary>
+            The set of installed plugins.  If plugins have not yet been loaded into memory,
+            querying this property will cause them to be loaded.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginManager.Extensions">
+            <summary>
+            The set of extensions defined across all installed plugins.  If plugins have not yet been loaded
+            into memory, querying this property will cause them to be loaded.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginManager.ExtensionPoints">
+            <summary>
+            The set of extension points defined across all installed plugins.  If plugins have not yet been loaded
+            into memory, querying this property will cause them to be loaded.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Common.PluginManager.PluginLoaded">
+            <summary>
+            Occurs when a plugin is loaded.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.GuiToolkitAttribute">
+            <summary>
+            Attribute used to mark a class as using a specific GUI toolkit.  Typically this attribute
+            is used on an extension class (in addition to the <see cref="T:ClearCanvas.Common.ExtensionOfAttribute"/>) to allow
+            plugin code to determine at runtime if the given extension is compatible with the GUI toolkit
+            that is currently in use by the main window.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.TypeSafeEnumeratorWrapper`1">
+            <summary>
+            Utility class used to wrap an untyped <see cref="T:System.Collections.IEnumerator"/> as a type-safe one.
+            </summary>
+            <typeparam name="T">The type of the items to be enumerated</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.DynamicObservablePropertyBinding`1">
+            <summary>
+            Provides a dynamic implementation of <see cref="!:IObservablePropertyBinding"/>.  The implementation
+            is dynamic in the sense that it uses reflection to bind to the target object at runtime.
+            </summary>
+            <typeparam name="T">The type of the underlying property</typeparam>
+            <remarks>
+            This class can be used for runtime binding to an arbitrary property and corresponding change
+            notification event of a target object.  Binding is accomplished using reflection, which means
+            that compile-time knowledge of the type of the target object is not needed.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.IObservablePropertyBinding`1">
+            <summary>
+            Defines a generic mechanism for binding to an arbitrary observable property of an object.
+            An observable property is any property which has a corresponding change notification event.
+            </summary>
+            <typeparam name="T">The type of the property</typeparam>
+        </member>
+        <member name="E:ClearCanvas.Common.Utilities.IObservablePropertyBinding`1.PropertyChanged">
+            <summary>
+            The event that provides notification of when the property value has changed.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.Utilities.IObservablePropertyBinding`1.PropertyValue">
+            <summary>
+            Access to the underlying property value.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.DynamicObservablePropertyBinding`1.#ctor(System.Object,System.String,System.String)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="target">The target object to bind to</param>
+            <param name="propertyName">The name of the property to bind to on the target object</param>
+            <param name="propertyChangedEventName">The name of a change notification event on the target object</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.DynamicObservablePropertyBinding`1.CreatePropertyGetDelegate(System.Object,System.String)">
+            <summary>
+            Creates a delegate that can get the specified property on the specified target object.
+            </summary>
+            <param name="target">The target object</param>
+            <param name="propertyName">The name of the property to bind</param>
+            <returns>A delegate that can be used to get the property</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.DynamicObservablePropertyBinding`1.CreatePropertySetDelegate(System.Object,System.String)">
+            <summary>
+            Creates a delegate that can set the specified property on the specified target object.
+            </summary>
+            <param name="target">The target object</param>
+            <param name="propertyName">The name of the property to bind</param>
+            <returns>A delegate that can be used to set the property</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.DynamicObservablePropertyBinding`1.AddEventHandler(System.EventHandler,System.Object,System.String)">
+            <summary>
+            Adds the specified handler to the specified event on the target object.
+            </summary>
+            <param name="handler">An event handler</param>
+            <param name="target">The target object</param>
+            <param name="eventName">The name of the event to add the handler to</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.DynamicObservablePropertyBinding`1.RemoveEventHandler(System.EventHandler,System.Object,System.String)">
+            <summary>
+            Removes the specified handler from the specified event on the target object.
+            </summary>
+            <param name="handler">An event handler</param>
+            <param name="target">The target object</param>
+            <param name="eventName">The name of the event to remove the handler from</param>
+        </member>
+        <member name="T:ClearCanvas.Common.Scripting.IScriptEngine">
+            <summary>
+            Defines the interface to a script engine.  
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.IScriptEngine.Run(System.String,System.Collections.IDictionary)">
+            <summary>
+            Asks the script engine to run the specified script given the specified context information.
+            The context is a dictionary of named objects that the engine must make available to the script.
+            It is left up to the implementation of the engine to decide how these objects are made available to the script.
+            </summary>
+            <param name="script">The script to run</param>
+            <param name="context">A set of objects which the script can access</param>
+            <returns>The return value of the script</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.IScriptEngine.CreateScript(System.String)">
+            <summary>
+            Asks the script engine to create an instance of a <see cref="T:ClearCanvas.Common.Scripting.IExecutableScript"/> object based on the 
+            specified string.  This may offer better performance than calling <see cref="M:ClearCanvas.Common.Scripting.IScriptEngine.Run(System.String,System.Collections.IDictionary)"/> in the case
+            where the same script is to be run multiple times, as the script engine may be able to compile portions of 
+            the script.  This is entirely dependent on the implementation of the script engine, and there are no guarantees
+            of improved performance.
+            </summary>
+            <param name="script">The script to create</param>
+            <returns>A script object that can be run multiple times</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.ISessionManager.InitiateSession">
+            <summary>
+            Called by the framework at start-up to initiate a session.  Any exception thrown 
+            from this method will effectively prevent the establishment of a session, causing
+            execution to terminate.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.ISessionManager.TerminateSession">
+            <summary>
+            Called by the framework at shutdown to terminate an existing session.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionSettings">
+            <summary>
+            Currently empty, but in the future, methods may be added that, for example
+            switches SettingsProviders.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Auditing.AuditorExtensionPoint">
+            <summary>
+            The Auditor extension point (extensions implement <see cref="T:ClearCanvas.Common.Auditing.IAuditor"/>).
+            </summary>
+            <remarks>
+            Although there would normally only be a single auditor present in a running application,
+            it is possible for there to be more than one.  For example, you might have a local auditor
+            that logs to a text file, and a remote auditor that logs to a .NET remoting service.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionPoint`1">
+            <summary>
+            Base class for all extension points.
+            </summary>
+            <typeparam name="TInterface">The interface that extensions are expected to implement.</typeparam>
+            <remarks>
+            <para>
+            To define an extension point, create a dedicated subclass of this class, specifying the interface
+            that extensions are expected to implement.  The name of the subclass should be chosen
+            with care, as the name effectively acts as a unique identifier which all extensions
+            will reference.  Once chosen, the name should not be changed, as doing so will break all
+            existing extensions to this extension point.  There is no need to add any methods to the subclass,
+            and it is recommended that the class be left empty, such that it serves as a dedicated
+            factory for creating extensions of this extension point.
+            </para>
+            <para>The subclass must also be marked with the <see cref="T:ClearCanvas.Common.ExtensionPointAttribute"/> in order
+            for the framework to discover it at runtime.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Common.IExtensionPoint">
+            <summary>
+            Extension point interface.
+            </summary>
+            <remarks>
+            This interface provides a means for a client of an extension point to reference
+            the extension point and call methods on it without knowing the type of the extension point class.
+            
+            Extension point classes should never implement this interface directly.
+            Instead, subclass <see cref="!:ExtensionPoint"/>.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.IExtensionPoint.ListExtensions">
+            <summary>
+            Lists the available extensions.
+            </summary>
+            <returns>An array of <see cref="T:ClearCanvas.Common.ExtensionInfo"/> objects describing the available extensions.</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.IExtensionPoint.ListExtensions(ClearCanvas.Common.ExtensionFilter)">
+            <summary>
+            Lists the available extensions, that also match the specified <see cref="T:ClearCanvas.Common.ExtensionFilter"/>.
+            </summary>
+            <returns>An array of <see cref="T:ClearCanvas.Common.ExtensionInfo"/> objects describing the available extensions.</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.IExtensionPoint.CreateExtension">
+            <summary>
+            Instantiates one extension.
+            </summary>
+            <remarks>
+            If more than one extension exists, then the type of the extension that is
+            returned is non-deterministic.  If no extensions exist that can be successfully
+            instantiated, an exception is thrown.
+            </remarks>
+            <returns>A reference to the extension.</returns>
+            <exception cref="T:System.NotSupportedException">Failed to instantiate an extension</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.IExtensionPoint.CreateExtension(ClearCanvas.Common.ExtensionFilter)">
+            <summary>
+            Instantiates an extension that also matches the specified <see cref="T:ClearCanvas.Common.ExtensionFilter"/>.
+            </summary>
+            <remarks>
+            If more than one extension exists, then the type of the extension that is
+            returned is non-deterministic.  If no extensions exist that can be successfully
+            instantiated, an exception is thrown.
+            </remarks>
+            <returns>A reference to the extension.</returns>
+            <exception cref="T:System.NotSupportedException">Failed to instantiate an extension</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.IExtensionPoint.CreateExtensions">
+            <summary>
+            Instantiates each available extension.
+            </summary>
+            <remarks>
+            Attempts to instantiate each available extension.  If an extension fails to instantiate
+            for any reason, the failure is logged and it is ignored.
+            </remarks>
+            <returns>An array of references to the created extensions.  If no extensions were created
+            the array will be empty.</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.IExtensionPoint.CreateExtensions(ClearCanvas.Common.ExtensionFilter)">
+            <summary>
+            Instantiates each available extension that also matches the specified <see cref="T:ClearCanvas.Common.ExtensionFilter"/>.
+            </summary>
+            <remarks>
+            Attempts to instantiate each matching extension.  If an extension fails to instantiate
+            for any reason, the failure is logged and it is ignored.
+            </remarks>
+            <returns>An array of references to the created extensions.  If no extensions were created
+            the array will be empty.</returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Auditing.AuditManager">
+            <summary>
+            The AuditManager is responsible for loading all Auditors (<see cref="T:ClearCanvas.Common.Auditing.AuditorExtensionPoint"/>) 
+            as well as passing each <see cref="T:ClearCanvas.Common.Auditing.IAuditMessage"/> that has been generated to the Auditors.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.BasicExtensionPointManager`1">
+            <summary>
+            This class serves as a basic container for a collection of unknown extensions.
+            The class itself helps to decouple the extension point interface (<see cref="T:ClearCanvas.Common.IExtensionPoint"/>
+            from the extension point class that gets used to generate the actual
+            extensions from the plugins.  This is useful, for example, for testing the <see cref="!:Auditor"/>
+            extension points/interfaces that currently have no real implementation to test.
+            </summary>
+            <typeparam name="TInterface">The interface that the extensions are expected to implement.</typeparam>
+        </member>
+        <member name="M:ClearCanvas.Common.Auditing.AuditManager.Audit(ClearCanvas.Common.Auditing.IAuditMessage)">
+            <summary>
+            Audits an <see cref="T:ClearCanvas.Common.Auditing.IAuditMessage"/> to all existing auditors (<see cref="T:ClearCanvas.Common.Auditing.AuditorExtensionPoint"/>).
+            </summary>
+            <param name="auditMessage">Interface to an <see cref="T:ClearCanvas.Common.Auditing.IAuditMessage"/>.</param>
+            <seealso cref="!:BasicExtensionPointManager.LoadExtensions"/>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.Win32PerformanceCounter">
+            <summary>
+            A wrapping of the Win32 high resolution performance counter
+            that can be used to profile code.  Taken from an MSDN article.
+            
+            Do not use this class directly - use <see cref="T:ClearCanvas.Common.Utilities.CodeClock"/> instead.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Scripting.ScriptEngineExtensionPoint">
+            <summary>
+            Extension point that defines a script engine for a given language
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Scripting.ScriptEngineFactory">
+            <summary>
+            Factory for creating instances of script engines that support a given language  
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.ScriptEngineFactory.CreateEngine(System.String)">
+            <summary>
+            Attempts to instantiate a script engine for the specified language. Internally,
+            this class looks for an extension of <see cref="T:ClearCanvas.Common.Scripting.ScriptEngineExtensionPoint"/> that is capable of running scripts in the specified
+            language.  In theory, any scripting language is supported, as long as a script engine extension exists for that language.
+            </summary>
+            <param name="language">The script language - case insensitive, so jscript is equivalent to JScript</param>
+        </member>
+        <member name="T:ClearCanvas.Common.AttributeExtensionFilter">
+            <summary>
+            Implements an extension filter that performs matching on attributes.
+            </summary>
+            <remarks>
+            For each attribute that is supplied to the constructor of this filter, the filter
+            will check if the extension is marked with at least one matching attribute.  A matching attribute is an
+            attribute for which the <see cref="M:System.Attribute.Match(System.Object)"/> method returns true.  This allows
+            for quite sophisticated matching capabilities, as the attribute itself decides what constitutes
+            a match.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionFilter">
+            <summary>
+            An abstract base class for extension filters.  Extension filters are used to filter the
+            extension points returned by <see cref="M:ClearCanvas.Common.IExtensionPoint.CreateExtensions"/>.  Subclasses of this
+            class implement specific types of filters.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.ExtensionFilter.Test(ClearCanvas.Common.ExtensionInfo)">
+            <summary>
+            Tests the specified extension against the criteria of this filter.
+            </summary>
+            <param name="extension">The extension to test</param>
+            <returns>true if the extension meets the criteria, false otherwise</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.AttributeExtensionFilter.#ctor(System.Attribute[])">
+            <summary>
+            Creates a filter to match on multiple attributes.  The extension must test true on each attribute.
+            </summary>
+            <param name="attributes">The attributes to be used as test criteria</param>
+        </member>
+        <member name="M:ClearCanvas.Common.AttributeExtensionFilter.#ctor(System.Attribute)">
+            <summary>
+            Creates a filter to match on a single attribute.
+            </summary>
+            <param name="attribute">The attribute to be used as test criteria</param>
+        </member>
+        <member name="M:ClearCanvas.Common.AttributeExtensionFilter.Test(ClearCanvas.Common.ExtensionInfo)">
+            <summary>
+            Checks whether the specified extension is marked with attributes that 
+            match every test attribute supplied as criteria to this filter.
+            </summary>
+            <param name="extension">The extension to test</param>
+            <returns>true if the test succeeds</returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Configuration.ApplicationSettingsRegister">
+            <summary>
+            This class provides a way to update existing instances of settings objects derived from
+            <see cref="T:System.Configuration.ApplicationSettingsBase"/>.  The individual instances must register themselves
+            with this class in order to receive updates.  When a setting value is changed in the default
+            profile, the individual settings in memory are inspected to see if their values corresponded
+            to the values that were just changed.  If they do, then those values are changed to correspond
+            to the new values.  This class implements the Singleton design pattern.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ApplicationSettingsRegister.RegisterInstance(System.Configuration.ApplicationSettingsBase)">
+            <summary>
+            Registers an instance of a settings class.
+            </summary>
+            <param name="settingsInstance">the instance</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ApplicationSettingsRegister.UnregisterInstance(System.Configuration.ApplicationSettingsBase)">
+            <summary>
+            Unregisters an instance of a settings class.
+            </summary>
+            <param name="settingsInstance">the instance</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ApplicationSettingsRegister.SynchronizeExistingSettings(System.Type,System.Collections.Generic.IDictionary{System.String,System.String},System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Synchronizes existing settings instances (in memory) of a given Type with the default profile.
+            </summary>
+            <param name="settingsType">the type of the settings class</param>
+            <param name="changedValues">the previous values for the properties that were changed in the default profile</param>
+            <param name="newValues">the new values that have already been stored in the default profile</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ApplicationSettingsRegister.SynchronizeExistingSetting(System.Configuration.ApplicationSettingsBase,System.Collections.Generic.IDictionary{System.String,System.String},System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Synchronizes an instance of a settings class with the default profile.
+            </summary>
+            <param name="settingsInstance">the instance to be synchronized</param>
+            <param name="changedValues">the previous values for the properties that were changed in the default profile</param>
+            <param name="newValues">the new values that have already been stored in the default profile</param>
+        </member>
+        <member name="P:ClearCanvas.Common.Configuration.ApplicationSettingsRegister.Instance">
+            <summary>
+            The single instance of this class that is publicly accessible.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Configuration.ConfigurationStoreSettingsProvider">
+            <summary>
+            Communicates with an <see cref="T:ClearCanvas.Common.Configuration.IConfigurationStore"/> to manage loading and saving of
+            settings from the store.  Supports the framework and is not intended for use by application code.
+            Use <see cref="T:ClearCanvas.Common.Configuration.StandardSettingsProvider"/> instead.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ConfigurationStoreSettingsProvider.GetPreviousVersion(System.Configuration.SettingsContext,System.Configuration.SettingsProperty)">
+            <summary>
+            Not implemented
+            </summary>
+            <param name="context"></param>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ConfigurationStoreSettingsProvider.Reset(System.Configuration.SettingsContext)">
+            <summary>
+            Note that this implementation resets the user-scoped settings only.  It does not touch application-scoped settings.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.ConfigurationStoreSettingsProvider.Upgrade(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)">
+            <summary>
+            Note that this implementation upgrades user-scoped settings only, and it upgrades all settings in the group,
+            regardless of the contents of the specified properties collection.  It does not touch application-scoped settings.
+            </summary>
+            <param name="context"></param>
+            <param name="properties"></param>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionPointInfo">
+            <summary>
+            Describes an extension point.  
+            </summary>
+            <remarks>
+            Instances of this class are constructed by the framework when it processes
+            plugins looking for extension points.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Common.IBrowsable">
+            <summary>
+            Used by framework to provide a consistent interface for browsable meta-data objects.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.IBrowsable.FormalName">
+            <summary>
+            Formal name of this object, typically the type name or assembly name.  Cannot be null.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.IBrowsable.Name">
+            <summary>
+            Friendly name of the object, if one exists, otherwise null.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.IBrowsable.Description">
+            <summary>
+            A friendly description of this object, if one exists, otherwise null.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.ExtensionPointInfo.#ctor(System.Type,System.Type,System.String,System.String)">
+            <summary>
+            Internal constructor.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointInfo.ExtensionPointClass">
+            <summary>
+            The class that defines the extension point.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointInfo.ExtensionInteface">
+            <summary>
+            The interface that an extension must implement
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointInfo.Name">
+            <summary>
+            Friendly name of this extension point, if one exists, otherwise null.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointInfo.Description">
+            <summary>
+            A friendly description of this extension point, if one exists, otherwise null.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointInfo.FormalName">
+            <summary>
+            Formal name of this extension, which is the fully qualified name of the extension point class.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.IFunctionalList`1">
+            <summary>
+            Extends the IList generic interface with a set of functional-style operations.
+            </summary>
+            <typeparam name="T">List element type</typeparam>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.Select(System.Predicate{`0})">
+            <summary>
+            Returns a new list containing the elements of this list that satisfy the specified predicate.
+            </summary>
+            <param name="predicate"></param>
+            <returns>A new list</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.Reject(System.Predicate{`0})">
+            <summary>
+            Returns a new list that contains only the elements of this list that do not satisfy the specified predicate.
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.SelectFirst(System.Predicate{`0})">
+            <summary>
+            Returns the first element in this list that satisfies the specified predicate.
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.Contains(System.Predicate{`0})">
+            <summary>
+            Returns true if this list contains an element that satisfies the specified predicate.
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.TrueForAll(System.Predicate{`0})">
+            <summary>
+            Returns true if all elements in this list satisfy the specified predicate.
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.Map``1(System.Converter{`0,``0})">
+            <summary>
+            Maps this list into a new list of the specified type, using the specified map function.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="mapFunction"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IFunctionalList`1.ForEach(System.Action{`0})">
+            <summary>
+            Does the specified action for each item in the list.
+            </summary>
+            <param name="doFunction"></param>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.BlockingQueue`1">
+            <summary>
+            Basic producer-consumer queue, taken from here:
+            http://blogs.msdn.com/toub/archive/2006/04/12/575103.aspx
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.BlockingQueue`1.Dequeue">
+            <summary>
+            Removes the item at the head of the queue.  If no items are available, this call
+            will block until an item becomes available.
+            </summary>
+            <returns>The item removed from the queue</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.BlockingQueue`1.Enqueue(`0)">
+            <summary>
+            Adds the specified item to the end of the queue.
+            </summary>
+            <param name="data">The item to enqueue</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.BlockingQueue`1.System#Collections#Generic#IEnumerable{T}#GetEnumerator">
+            <summary>
+            Blocking enumerator.  This enumerator will execute indefinitely, dequeuing items
+            or blocking when no items are available.
+            </summary>
+            <returns>A blocking enumerator that enumerates indefinitely over this queue</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.BlockingQueue`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Blocking enumerator.  This enumerator will execute indefinitely, dequeuing items
+            or blocking when no items are available.
+            </summary>
+            <returns>A blocking enumerator that enumerates indefinitely over this queue</returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.Scope`1">
+            <summary>
+            Taken and modified from the following MSDN article by Stephen Toub:
+            http://msdn.microsoft.com/msdnmag/issues/06/09/NETMatters/default.aspx
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.IResourceResolver">
+            <summary>
+            Defines an interface that provides resource resolution services.  Resource resolution in this context
+            involves accepting an unqualified or partially qualified resource name as input and attempting to fully
+            qualify the name so as to resolve the resource.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IResourceResolver.LocalizeString(System.String)">
+            <summary>
+            Attempts to localize the specified unqualified string resource key.
+            </summary>
+            <remarks>
+            Searches for a string resource entry that matches the specified key.
+            </remarks>
+            <param name="unqualifiedStringKey">The string resource key to search for.  Must not be qualified.</param>
+            <returns>The localized string, or the argument unchanged if the key could not be found</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IResourceResolver.OpenResource(System.String)">
+            <summary>
+            Attempts to return a fully qualified resource name from the specified name, which may be partially
+            qualified or entirely unqualified.
+            </summary>
+            <param name="resourceName">A partially qualified or unqualified resource name</param>
+            <returns>A qualified resource name, if found, otherwise an exception is thrown</returns>
+            <exception cref="!:MissingManifestResourceException">if the resource name could not be resolved</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.IResourceResolver.ResolveResource(System.String)">
+            <summary>
+            Attempts to resolve and open a resource from the specified name, which may be partially
+            qualified or entirely unqualified.
+            </summary>
+            <param name="resourceName">A partially qualified or unqualified resource name</param>
+            <returns>A qualified resource name, if found, otherwise an exception is thrown</returns>
+            <exception cref="!:MissingManifestResourceException">if the resource name could not be resolved</exception>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.TypeSafeEnumerableWrapper`1">
+            <summary>
+            Utility class used to wrap an untyped <see cref="T:System.Collections.IEnumerable"/> as a type-safe one.
+            </summary>
+            <typeparam name="T">The type of the items to be enumerated</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Common.Configuration.StandardSettingsProvider">
+            <summary>
+            This class is the standard settings provider that should be used by all settings classes that operate
+            within the ClearCanvas framework.  Internally, this class will delegate the storage of settings between
+            the local file system and an implemetation of <see cref="!:EnterpriseConfigurationStoreExtensionPoint"/>,
+            if an extension is found.  All methods on this class are thread-safe, as per MSDN guidelines.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.SR">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionArgumentNegative">
+            <summary>
+              Looks up a localized string similar to Value must be non-negative..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionArgumentNotPositive">
+            <summary>
+              Looks up a localized string similar to Value must be greater than zero..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionArgumentOutOfRange">
+            <summary>
+              Looks up a localized string similar to {3} = {0} is invalid. {3} must be &gt;= {1} and &lt;= {2}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionBackgroundTaskAlreadyRunning">
+            <summary>
+              Looks up a localized string similar to The background task is already running.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionCastExpressionArrayCollectionEnumerable">
+            <summary>
+              Looks up a localized string similar to Expression must evaluate to Array, ICollection, or IEnumerable type..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionCastExpressionBoolean">
+            <summary>
+              Looks up a localized string similar to Expression must evaluate to Boolean type..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionCastExpressionEnumerable">
+            <summary>
+              Looks up a localized string similar to Expression must evaluate to IEnumerable type..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionCastExpressionString">
+            <summary>
+              Looks up a localized string similar to Expression must evaluate to String type..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionDuplicatePluginFound">
+            <summary>
+              Looks up a localized string similar to Duplicate plugin {0} found..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionEmptyString">
+            <summary>
+              Looks up a localized string similar to {0} cannot be empty..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionExpectedType">
+            <summary>
+              Looks up a localized string similar to Expected type {0}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionExtensionDoesNotImplementRequiredInterface">
+            <summary>
+              Looks up a localized string similar to Extension class {0} does not implement required interface {1}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionExtensionMustBeConcreteClass">
+            <summary>
+              Looks up a localized string similar to Extension class {0} must be a concrete class..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionExtensionPointMustSubclassExtensionPoint">
+            <summary>
+              Looks up a localized string similar to The extension point {0} is invalid because it is not a direct subclass of ExtensionPoint&lt;&gt;.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionFatalApplicationError">
+            <summary>
+              Looks up a localized string similar to We&apos;re sorry, but an error has occurred that ClearCanvas Workstation cannot recover from.  Please check the log and restart..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionIndexOutOfRange">
+            <summary>
+              Looks up a localized string similar to {3}[{0}] is invalid.  Index must be &gt;= {1} and &lt;= {2}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionInvalidCast">
+            <summary>
+              Looks up a localized string similar to {0} must be of type {1}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionInvalidSpecificationId">
+            <summary>
+              Looks up a localized string similar to {0} is not a valid specification id..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionJScriptEvaluation">
+            <summary>
+              Looks up a localized string similar to JScript evaluation error on: {0}.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionMemberNotSet">
+            <summary>
+              Looks up a localized string similar to {0} has not been set.  Object state is invalid..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionMemberNotSetVerbose">
+            <summary>
+              Looks up a localized string similar to {0} has not been set.  {1}.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionMoreThanOneModelPluginFound">
+            <summary>
+              Looks up a localized string similar to More than one model plugin found..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionNoExtensionsCreated">
+            <summary>
+              Looks up a localized string similar to No extensions found for extension point {0}, or the extensions could not be instantiated.  Please see the log for more information..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionNoPluginsFound">
+            <summary>
+              Looks up a localized string similar to No plugins could be found..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionNoPluginsLoaded">
+            <summary>
+              Looks up a localized string similar to No plugins have been loaded..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionNoServiceProviderCanProvide">
+            <summary>
+              Looks up a localized string similar to No service provider was found that can provide the service {0}.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionNotAPlugin">
+            <summary>
+              Looks up a localized string similar to Assembly {0} is not a plugin..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionPathDoesNotExist">
+            <summary>
+              Looks up a localized string similar to {0} does not exist..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionPluginCouldNotBeFound">
+            <summary>
+              Looks up a localized string similar to Plugin {0} could not be found.  Unable to start plugin..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionPluginDirectoryNotFound">
+            <summary>
+              Looks up a localized string similar to Plugin directory could not be found..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionPluginWarning">
+            <summary>
+              Looks up a localized string similar to There was a problem loading one or more plugins. Please see the log for more information..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionResourceNotFound">
+            <summary>
+              Looks up a localized string similar to Resource not found..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionScriptEngineLanguage">
+            <summary>
+              Looks up a localized string similar to No script engine available for language {0}..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionTemplateEvaluation">
+            <summary>
+              Looks up a localized string similar to Template evaluation generated an exception..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionThrown">
+            <summary>
+              Looks up a localized string similar to Exception thrown.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.ExceptionUnableToLoadPlugins">
+            <summary>
+              Looks up a localized string similar to Unable to load any plugins.  Please see the log for more information..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.FormatLoadingPlugin">
+            <summary>
+              Looks up a localized string similar to Loading plugin: {0}.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.FormatSeconds">
+            <summary>
+              Looks up a localized string similar to {0} seconds.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.LogConfigurationStoreNotFound">
+            <summary>
+              Looks up a localized string similar to Configuration store not found - defaulting to LocalFileSettingsProvider.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.LogFailedToProcessPluginAssembly">
+            <summary>
+              Looks up a localized string similar to Failed to process plugin assembly {0} with the following exception(s):.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.LogFoundUnmanagedDLL">
+            <summary>
+              Looks up a localized string similar to Found unmanaged DLL: {0}.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.LogLocalConfigurationStoreNotFound">
+            <summary>
+              Looks up a localized string similar to Local configuration store not found - defaulting to LocalFileSettingsProvider.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.LogPluginLoaded">
+            <summary>
+              Looks up a localized string similar to Loaded plugin: {0}.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.LogTimeProviderNotFound">
+            <summary>
+              Looks up a localized string similar to Time provider not found - defaulting to local machine time..
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.SR.MessageFindingPlugins">
+            <summary>
+              Looks up a localized string similar to Finding plugins....
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.PluginAttribute">
+            <summary>
+            Attribute used to mark an assembly as being a ClearCanvas Plugin.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginAttribute.Name">
+            <summary>
+            A friendly name for the plugin.  This is optional and may be supplied as a named parameter.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginAttribute.Description">
+            <summary>
+            A friendly description for the plugin.  This is optional and may be supplied as a named parameter.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Scripting.ActiveTemplate">
+            <summary>
+            Represents an instance of an active template.  An active template is equivalent to a classic ASP page: that is,
+            it is a template that contains snippets of script code that can callback into the context in which the script
+            is being evaluated.  Currently only the Jscript language is supported.
+            
+            Initialize the template context via the constructor.  The template
+            can then be evaluated within a given context by calling the <see cref="!:Template.Evaluate"/> method.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.ActiveTemplate.#ctor(System.IO.TextReader)">
+            <summary>
+            Constructs a template from the specified content.
+            </summary>
+            <param name="content"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.ActiveTemplate.Evaluate(System.Collections.IDictionary,System.IO.TextWriter)">
+            <summary>
+            Overload that allows the output of the template evaluation to be written directly to a <see cref="T:System.IO.TextWriter"/>.
+            </summary>
+            <param name="context">A dictionary of objects to pass into the script</param>
+            <param name="output">A text writer to which the output should be written</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.ActiveTemplate.Evaluate(System.Collections.IDictionary)">
+            <summary>
+            Evaluates this template in the specified context.  The context parameter allows a set of
+            named objects to be passed into the scripting environment.  Within the scripting environment
+            these objects can be referenced directly as properties of "this".  For example,
+            <code>
+                Hashtable scriptingContext = new Hashtable();
+                scriptingContext["Patient"] = patient;  // add a reference to an existing instance of a patient object
+            
+                Template template = new Template(...);
+                template.Evaluate(scriptingContext);
+            
+                // now, in the template, the script would access the object as shown
+                &lt;%= this.Patient.Name %&gt;
+                
+            </code>
+            </summary>
+            <param name="context">A dictionary of objects to pass into the script</param>
+            <returns>The result of the template evaluation as a string</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.ActiveTemplate.ComputeInversion(System.IO.TextReader)">
+            <summary>
+            Inverts the template content, returning a Jscript script that, when evaluated, will return
+            the full result of the template.
+            </summary>
+            <param name="template"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Scripting.ActiveTemplate.ProcessLine(System.String,System.Boolean,System.Text.StringBuilder)">
+            <summary>
+            Helper method
+            </summary>
+            <param name="line"></param>
+            <param name="inCode"></param>
+            <param name="inversion"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.DefaultPerformanceCounter">
+            <summary>
+            Default performance counter that works on all platforms.  Accuracy not guaranteed.
+            
+            Do not use this class directly - use <see cref="T:ClearCanvas.Common.Utilities.CodeClock"/> instead.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.IApplicationRoot">
+            <summary>
+            Defines an application entry point.
+            </summary>
+            <seealso cref="T:ClearCanvas.Common.ApplicationRootExtensionPoint"/>
+        </member>
+        <member name="M:ClearCanvas.Common.IApplicationRoot.RunApplication(System.String[])">
+            <summary>
+            Called by the platform to run the application.
+            </summary>
+            <remarks>
+            It is expected that this method may block for the duration of the application's execution, if
+            for instance, a GUI event message pump is started.
+            </remarks>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.InvokeDelegate">
+            <summary>
+            Delegate used to queue events for marshaling.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.InterthreadMarshaler">
+            <summary>
+            This class allows any block of code, in the form of a delegate, to be passed from an abitrary
+            thread over to the application's main thread for execution. 
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.InterthreadMarshaler.#ctor">
+            <summary>
+            Constructor.  The object must be constructed on the thread that events should be marshaled to.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.InterthreadMarshaler.QueueInvoke(ClearCanvas.Common.Utilities.InvokeDelegate)">
+            <summary>
+            Queues the specified delegate for invocation on this object's thread, regardless of which
+            thread this method is called from.  Note that this method simply queues the delegate and
+            returns.  There is no guarantee as to when the delegate will actually be invoked.
+            </summary>
+            <param name="del"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.InterthreadMarshaler.QueueProgressEventHandler(System.Object,System.ComponentModel.ProgressChangedEventArgs)">
+            <summary>
+            Handles progress events from the queue processing thread
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.InterthreadMarshaler.ProcessQueueAsync(System.Object,System.ComponentModel.DoWorkEventArgs)">
+            <summary>
+            Defines the worker process for the queue processing thread
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.InterthreadMarshaler.Dispose(System.Boolean)">
+            <summary>
+            Supports the implementation of the <see cref="T:System.IDisposable"/> pattern.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.CollectionUtils">
+            <summary>
+            Provides a set of methods for performing functional-style operations on collections.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Select``2(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Selects all items in the target collection that match the specified predicate, returning
+            them as a new collection of the specified type.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <typeparam name="TResultCollection">The type of collection to return</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>A collection containing the subset of matching items from the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Select``1(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Selects all items in the target collection that match the specified predicate.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>A collection containing the subset of matching items from the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Select(System.Collections.IEnumerable,System.Predicate{System.Object})">
+            <summary>
+            Selects all items in the target collection that match the specified predicate. This overload
+            accepts an untyped collection, and returns an untyped collection.
+            </summary>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>A collection containing the subset of matching items from the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Reject``2(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Excludes all items in the target collection that match the specified predicate, returning
+            the rest of the items as a new collection of the specified type.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <typeparam name="TResultCollection">The type of collection to return</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>A collection containing the subset of matching items from the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Reject``1(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Excludes all items in the target collection that match the specified predicate, returning
+            the rest of the items as a new collection.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>A collection containing the subset of matching items from the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Reject(System.Collections.IEnumerable,System.Predicate{System.Object})">
+            <summary>
+            Excludes all items in the target collection that match the specified predicate, returning
+            the rest of the items as a new collection.  This overload accepts an untyped collection,
+            and returns an untyped collection.
+            </summary>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>A collection containing the subset of matching items from the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.SelectFirst``1(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Returns the first item in the target collection that matches the specified predicate, or
+            the default of TItem if no match is found.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>The first matching item, or default(TItem) if no matches are found</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.SelectFirst(System.Collections.IEnumerable,System.Predicate{System.Object})">
+            <summary>
+            Returns the first item in the target collection that matches the specified predicate, or
+            null if no match is found.  This overload accepts an untyped collection.
+            </summary>
+            <param name="target">The collection to operate on</param>
+            <param name="predicate">The predicate to test</param>
+            <returns>The first matching item, or null if no matches are found</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Map``3(System.Collections.IEnumerable,System.Converter{``0,``1})">
+            <summary>
+            Maps the specified collection onto a new collection according to the specified map function.
+            Allows the type of the return collection to be specified.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <typeparam name="TResultItem">The type of item returned by the map function</typeparam>
+            <typeparam name="TResultCollection">The type of collection to return</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="mapFunction">A delegate that performs the mapping</param>
+            <returns>A new collection of the specified type, containing a mapped entry for each entry in the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Map``2(System.Collections.IEnumerable,System.Converter{``0,``1})">
+            <summary>
+            Maps the specified collection onto a new collection according to the specified map function.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <typeparam name="TResultItem">The type of item returned by the map function</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="mapFunction">A delegate that performs the mapping</param>
+            <returns>A new collection containing a mapped entry for each entry in the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Map(System.Collections.IEnumerable,System.Converter{System.Object,System.Object})">
+            <summary>
+            Maps the specified collection onto a new collection according to the specified map function.
+            This overload operates on an untyped collection and returns an untyped collection.
+            </summary>
+            <param name="target">The collection to operate on</param>
+            <param name="mapFunction">A delegate that performs the mapping</param>
+            <returns>A new collection containing a mapped entry for each entry in the target collection</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.ForEach``1(System.Collections.IEnumerable,System.Action{``0})">
+            <summary>
+            Performs the specified action for each item in the target collection.
+            </summary>
+            <typeparam name="TItem">The type of items in the target collection</typeparam>
+            <param name="target">The collection to operate on</param>
+            <param name="action">The action to perform</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.ForEach(System.Collections.IEnumerable,System.Action{System.Object})">
+            <summary>
+            Performs the specified action for each item in the target collection.
+            This overload operates on an untyped collection.
+            </summary>
+            <param name="target">The collection to operate on</param>
+            <param name="action">The action to perform</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Contains``1(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Returns true if any item in the target collection satisfies the specified predicate.
+            </summary>
+            <typeparam name="TItem"></typeparam>
+            <param name="target"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Contains(System.Collections.IEnumerable,System.Predicate{System.Object})">
+            <summary>
+            Returns true if any item in the target collection satisfies the specified predicate.
+            </summary>
+            <param name="target"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.TrueForAll``1(System.Collections.IEnumerable,System.Predicate{``0})">
+            <summary>
+            Returns true if all items in the target collection satisfy the specified predicate.
+            </summary>
+            <param name="target"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.TrueForAll(System.Collections.IEnumerable,System.Predicate{System.Object})">
+            <summary>
+            Returns true if all items in the target collection satisfy the specified predicate.
+            </summary>
+            <param name="target"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.FirstElement(System.Collections.IEnumerable)">
+            <summary>
+            Returns the first element in the target collection, or null if the collection is empty
+            </summary>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.FirstElement``1(System.Collections.IEnumerable)">
+            <summary>
+            Returns the first element in the target collection, or null if the collection is empty
+            </summary>
+            <typeparam name="TItem"></typeparam>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Remove``1(System.Collections.Generic.ICollection{``0},System.Predicate{``0})">
+            <summary>
+            Removes all items in the target collection that match the specified predicate.  Unlike
+            <see cref="M:ClearCanvas.Common.Utilities.CollectionUtils.Reject(System.Collections.IEnumerable,System.Predicate{System.Object})"/>, this method modifies the target collection itself.
+            </summary>
+            <param name="target"></param>
+            <param name="predicate"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Remove(System.Collections.IList,System.Predicate{System.Object})">
+            <summary>
+            Removes all items in the target collection that match the specified predicate.  Unlike
+            <see cref="M:ClearCanvas.Common.Utilities.CollectionUtils.Reject(System.Collections.IEnumerable,System.Predicate{System.Object})"/>, this method modifies the target collection itself.
+            </summary>
+            <param name="target"></param>
+            <param name="predicate"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CollectionUtils.Sort``1(System.Collections.IEnumerable,System.Comparison{``0})">
+            <summary>
+            Returns a list of the items in the target collection, sorted according to the specified comparison.
+            Does not modify the target collection, since it may not even be a sortable collection.
+            </summary>
+            <typeparam name="TItem"></typeparam>
+            <param name="target"></param>
+            <param name="comparison"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionInfo">
+            <summary>
+            Describes an extension.  
+            </summary>
+            <remarks>
+            Instances of this class are constructed by the framework when it processes
+            plugins looking for extensions.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.ExtensionInfo.#ctor(System.Type,System.Type,System.String,System.String)">
+            <summary>
+            Internal constructor.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionInfo.ExtensionClass">
+            <summary>
+            The class that implements the extension.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionInfo.PointExtended">
+            <summary>
+            The class that defines the extension point which this extension extends.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionInfo.Name">
+            <summary>
+            Friendly name of this extension, if one exists, otherwise null.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionInfo.Description">
+            <summary>
+            A friendly description of this extension, if one exists, otherwise null.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionInfo.FormalName">
+            <summary>
+            Formal name of this extension, which is the fully qualified name of the extension class.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.TypeSafeListWrapper`1">
+            <summary>
+            Utility class used to wrap an untyped <see cref="T:System.Collections.IList"/> as a type-safe one.
+            </summary>
+            <typeparam name="T">The type of the items in the list</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.ObservablePropertyCoupler`1">
+            <summary>
+            Couples two instances of <see cref="!:IObservablePropertyBinding"/> such that a change to the primary property
+            will be propagated to the secondary property.  A bi-directional mode is also possible, where changes to the secondary
+            property are also propagated back to the primary property.  In this case, infinite mutual
+            recursion is prevented by only propagating the change if the values are actually different.
+            To remove the coupling, call <see cref="M:ClearCanvas.Common.Utilities.ObservablePropertyCoupler`1.Dispose(System.Boolean)"/> on this object.
+            </summary>
+            <typeparam name="T">The type of the bound property</typeparam>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ObservablePropertyCoupler`1.Couple(ClearCanvas.Common.Utilities.IObservablePropertyBinding{`0},ClearCanvas.Common.Utilities.IObservablePropertyBinding{`0})">
+            <summary>
+            Establishes the coupling between the specified primary and secondary properties.  The value of the secondary
+            property will be initialized to the value of the primary property, and will continue to be synchronized for the duration
+            of the lifetime of this object.  To remove the coupling at any point in the future, retain
+            the returned object, and call Dispose() on it to remove the coupling.
+            </summary>
+            <param name="primary">The primary property, which serves as the subject</param>
+            <param name="secondary">The secondary property, which observes the subject and tracks its value</param>
+            <returns>A property coupler object, which can optionally be retained for eventual disposal.</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ObservablePropertyCoupler`1.Couple(ClearCanvas.Common.Utilities.IObservablePropertyBinding{`0},ClearCanvas.Common.Utilities.IObservablePropertyBinding{`0},System.Boolean)">
+            <summary>
+            Establishes the coupling between the specified primary and secondary properties.  The value of the secondary
+            property will be initialized to the value of the primary property, and will continue to be synchronized for the duration
+            of the lifetime of this object.  The coupling is optionally bi-directional, in which case changes made to the secondary
+            property are also propagated back to the primary property.  To remove the coupling at any point in the future, retain
+            the returned object, and call Dispose() on it to remove the coupling.
+            </summary>
+            <param name="primary">The primary property, which serves as the subject</param>
+            <param name="secondary">The secondary property, which observes the subject and tracks its value</param>
+            <param name="bidirectional">If true, the primary property will also track the value of the secondary property</param>
+            <returns>A property coupler object, which can optionally be retained for eventual disposal.</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ObservablePropertyCoupler`1.#ctor(ClearCanvas.Common.Utilities.IObservablePropertyBinding{`0},ClearCanvas.Common.Utilities.IObservablePropertyBinding{`0},System.Boolean)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="primary">The primary property, which serves as the subject</param>
+            <param name="secondary">The secondary property, which observes the subject and tracks its value</param>
+            <param name="bidirectional">If true, the primary property will also track the value of the secondary property</param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.IBackgroundTaskContext">
+            <summary>
+            Allows the background thread to communicate with the <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> object.
+            Note that the background thread should not directly access the <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> object.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IBackgroundTaskContext.ReportProgress(ClearCanvas.Desktop.BackgroundTaskProgress)">
+            <summary>
+            Allows the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> to report progress to the foreground thread.  The progress object
+            may be an instance of <see cref="T:ClearCanvas.Desktop.BackgroundTaskProgress"/> or a derived class.
+            </summary>
+            <param name="progress"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IBackgroundTaskContext.Complete(System.Object)">
+            <summary>
+            Allows the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> to inform that it has completed successfully, and return the result object
+            to the foreground thread.  After calling this method, the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> should simply exit.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IBackgroundTaskContext.Cancel">
+            <summary>
+            Allows the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> to inform that it has successfully cancelled,
+            in response to querying the <see cref="P:ClearCanvas.Desktop.IBackgroundTaskContext.CancelRequested"/> flag, and return the result object
+            to the foreground thread.  After calling this method, the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> should simply exit.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.IBackgroundTaskContext.Error(System.Exception)">
+            <summary>
+            Allows the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> to inform that it cannot complete due to an exception,
+            and return the exception to the foreground thread.  After calling this method,
+            the <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> should simply exit.  Note that it is technically ok for the background
+            method to allow an exception to go unhandled, an the unhandled exception will still be reported to the foreground
+            thread as an error.  However, the VS debugger will break in this case, which may not be desirable.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IBackgroundTaskContext.UserState">
+            <summary>
+            Provides access to the user state object.  Note that the user state object is available
+            to both threads, and therefore it should either be immutable or thread-safe.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.IBackgroundTaskContext.CancelRequested">
+            <summary>
+            Allows the background thread to ask whether cancellation has been requested.  If possible, the
+            <see cref="T:ClearCanvas.Desktop.BackgroundTaskMethod"/> should periodically poll this flag, and if true, terminate as quickly as possible
+            without completing its work.  It should call <see cref="M:ClearCanvas.Desktop.IBackgroundTaskContext.Cancel"/> to confirm cancellation.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BackgroundTaskMethod">
+            <summary>
+            Defines the signature for a method that is to be executed as a background task.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BackgroundTaskProgress">
+            <summary>
+            Encapsulates information about the progress of the task.  This class may be subclassed in order
+            to add additional information, or override the existing methods.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTaskProgress.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTaskProgress.#ctor(System.Int32,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="percent"></param>
+            <param name="message"></param>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskProgress.Percent">
+            <summary>
+            Gets the percent completion, as an integer between 0..100
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskProgress.Message">
+            <summary>
+            Gets a status message describing the current state of the task
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BackgroundTaskProgressEventArgs">
+            <summary>
+            Conveys progress information about a <see cref="T:ClearCanvas.Desktop.BackgroundTask"/>
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskProgressEventArgs.Progress">
+            <summary>
+            Gets the progress object passed from the background thread.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskProgressEventArgs.UserState">
+            <summary>
+            Gets the user state object associated with the task.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BackgroundTaskTerminatedReason">
+            <summary>
+            Defines the possible reasons a <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> has terminated.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.BackgroundTaskTerminatedReason.Completed">
+            <summary>
+            The task completed
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.BackgroundTaskTerminatedReason.Cancelled">
+            <summary>
+            The task was cancelled
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Desktop.BackgroundTaskTerminatedReason.Exception">
+            <summary>
+            The task encountered an exception and could not complete
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs">
+            <summary>
+            Conveys information about the termination of a <see cref="T:ClearCanvas.Desktop.BackgroundTask"/>.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs.Reason">
+            <summary>
+            Gets the reason for termination
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs.Result">
+            <summary>
+            Gets the result of the background task
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs.Exception">
+            <summary>
+            Gets the exception that occured, if <see cref="P:ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs.Reason"/> is <see cref="F:ClearCanvas.Desktop.BackgroundTaskTerminatedReason.Exception"/>
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Desktop.BackgroundTask">
+            <summary>
+            Encapsulates a background task, allowing the task to run asynchronously on a background thread
+            and report progress and completion events to the foreground thread.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTask.CreateAndRun(ClearCanvas.Desktop.BackgroundTaskMethod,System.Boolean,System.EventHandler{ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs},System.EventHandler{ClearCanvas.Desktop.BackgroundTaskProgressEventArgs},System.Object)">
+            <summary>
+            Creates and executes a new <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> based on the specified arguments.
+            </summary>
+            <param name="method">The method to run in the background</param>
+            <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
+            <param name="terminateHandler">Method that will be called when the task terminates</param>
+            <param name="progressHandler">Optional method to handle progress updates, may be null</param>
+            <param name="userState">Optional state to be passed to the background task, may be null</param>
+            <returns>A running <see cref="T:ClearCanvas.Desktop.BackgroundTask"/> object.</returns>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTask.#ctor(ClearCanvas.Desktop.BackgroundTaskMethod,System.Boolean,System.Object)">
+            <summary>
+            Constructs a new background task based on the specified method and optional state object.  The task
+            is not executed until the <see cref="M:ClearCanvas.Desktop.BackgroundTask.Run"/> method is called.
+            </summary>
+            <param name="method">The method to run in the background</param>
+            <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
+            <param name="userState">Optional state to be passed to the background method</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTask.#ctor(ClearCanvas.Desktop.BackgroundTaskMethod,System.Boolean)">
+            <summary>
+            Constructs a new background task based on the specified method.  The task
+            is not executed until the <see cref="M:ClearCanvas.Desktop.BackgroundTask.Run"/> method is called.
+            </summary>
+            <param name="method">The method to run in the background</param>
+            <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTask.Run">
+            <summary>
+            Runs the background task
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Desktop.BackgroundTask.RequestCancel">
+            <summary>
+            Requests that the background task be cancelled.  The does not actually stop running until
+            the <see cref="E:ClearCanvas.Desktop.BackgroundTask.Terminated"/> event is fired.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTask.IsRunning">
+            <summary>
+            True if the task is currently running
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTask.SupportsCancel">
+            <summary>
+            True if the task supports cancellation
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Desktop.BackgroundTask.CancelRequestPending">
+            <summary>
+            True if the <see cref="M:ClearCanvas.Desktop.BackgroundTask.RequestCancel"/> method has been called, and the request is pending.
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.BackgroundTask.ProgressUpdated">
+            <summary>
+            Notifies that the progress of the task has been updated
+            </summary>
+        </member>
+        <member name="E:ClearCanvas.Desktop.BackgroundTask.Terminated">
+            <summary>
+            Notifies that the task has terminated.  Check the <see cref="T:ClearCanvas.Desktop.BackgroundTaskTerminatedEventArgs"/>
+            to determine the reason for termination, and obtain results.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Auditing.IAuditor">
+            <summary>
+            The IAuditor interface that all auditor extensions must implement.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Auditing.IAuditor.Audit(ClearCanvas.Common.Auditing.IAuditMessage)">
+            <summary>
+            Audits an <see cref="T:ClearCanvas.Common.Auditing.IAuditMessage"/>.
+            </summary>
+            <param name="auditMessage">The message to be audited.</param>
+        </member>
+        <member name="T:ClearCanvas.Common.GuiToolkitID">
+            <summary>
+            Defines a set of identifiers representing different GUI toolkits.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader">
+            <summary>
+            Utility class for reading meta-data associated with a settings class
+            (a subclass of <see cref="T:System.Configuration.SettingsBase"/>)
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetVersion(System.Type)">
+            <summary>
+            Obtains the version of the settings class, which is always the version of the assembly
+            in which the class is contained.
+            </summary>
+            <param name="settingsClass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetGroupName(System.Type)">
+            <summary>
+            Obtains the name of the settings group, which is always the full name of the settings class.
+            </summary>
+            <param name="settingsClass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetGroupDescription(System.Type)">
+            <summary>
+            Obtains the settings group description from the <see cref="T:System.Configuration.SettingsGroupDescriptionAttribute"/>
+            </summary>
+            <param name="settingsClass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetSettingsProperties(System.Type)">
+            <summary>
+            Obtains the collection of properties that represent settings.
+            </summary>
+            <param name="settingsClass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetDefaultValue(System.Reflection.PropertyInfo,System.Boolean)">
+            <summary>
+            Obtains the default value of a setting from the <see cref="T:System.Configuration.DefaultSettingValueAttribute"/>.
+            If translate is true, and the value is the name of an embedded resource, it is automatically translated.
+            </summary>
+            <param name="property"></param>
+            <param name="translate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetDefaultValue(System.Reflection.PropertyInfo)">
+            <summary>
+            Obtains the default value of a setting from the <see cref="T:System.Configuration.DefaultSettingValueAttribute"/>.
+            If the value is the name of an embedded resource, it is automatically translated.
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.TranslateDefaultValue(System.Type,System.String)">
+            <summary>
+            If the specified raw value is the name of an embedded resource (embedded in the same
+            assembly as the specified settings class), the contents of the resource are returned.
+            Otherwise, the raw value is simply returned.
+            </summary>
+            <param name="settingsClass"></param>
+            <param name="rawValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.GetDescription(System.Reflection.PropertyInfo)">
+            <summary>
+            Obtains the setting description from the <see cref="T:System.Configuration.SettingsDescriptionAttribute"/>
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.IsUserScoped(System.Reflection.PropertyInfo)">
+            <summary>
+            Returns true if the property is decorated with a <see cref="T:System.Configuration.UserScopedSettingAttribute"/>
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.SettingsClassMetaDataReader.IsAppScoped(System.Reflection.PropertyInfo)">
+            <summary>
+            Returns true if the property is decorated with a <see cref="T:System.Configuration.ApplicationScopedSettingAttribute"/>
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Auditing.IAuditMessage">
+            <summary>
+            IAuditMessage is a base interface for any message that is sent to an auditor.
+            </summary>
+            
+            <remarks>
+            The following assumptions are made about audit messages:
+            
+            1. Audit messages are text-based.
+            2. The GetMessage method is used to retrieve the message text.  The message text
+               is formatted/created by the implementation of IAuditMessage.
+            3. It is up to the implementor, but it is recommended that the implementation of
+               IAuditMessage be responsible (and therefore have access to all necessary information)
+               for constructing the message text.  The Auditor can then simply use the GetMessage method
+               to log the message to the appropriate Audit Repository.  In this scenario, the
+               auditor is only responsible for ensuring that the audit messages are reliably stored
+               to the Audit Repository (whatever that may be: text file, logging service, etc).  The implementation
+               of IAuditMessage is responsible for gathering the required information to format the
+               message appropriately.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.Auditing.IAuditMessage.GetMessage">
+            <summary>
+            Get the text of the Audit Message.
+            </summary>
+            <returns>The message text.</returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.TypeSafeComparerWrapper`1">
+            <summary>
+            Utility class used to wrap an untyped <see cref="T:System.Collections.IComparer"/> as a type-safe one.
+            </summary>
+            <typeparam name="T">The type of the items to be compared</typeparam>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.CodeClock">
+             <summary>
+             A simple stopwatch class that can be used to profile code.  To ensure portability, use this
+             class instead of the <see cref="T:System.Diagnostics.Stopwatch"/> class which has not yet been
+             implemented in Mono.
+             </summary>
+             <remarks>
+             On Windows, this class will internally use the Win32 high resolution performance counter.
+             On other platforms, a default portable clock is used.
+             </remarks>
+             <example>
+             <code>
+             CodeClock clock = new CodeClock();
+             clock.Start();
+            
+             // Code to be timed
+            
+             clock.Stop();
+             Trace.Write(clock.ToString());
+             </code>
+             </example>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CodeClock.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ClearCanvas.Common.Utilities.CodeClock"/> class.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CodeClock.Start">
+            <summary>
+            Starts the clock
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CodeClock.Stop">
+            <summary>
+            Stops the clock
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CodeClock.Clear">
+            <summary>
+            Clears (resets) the clock
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.CodeClock.ToString">
+            <summary>
+            Number of seconds elapsed between start and stop.
+            </summary>
+            <returns>Formatted string containing number of seconds elapsed.</returns>
+        </member>
+        <member name="P:ClearCanvas.Common.Utilities.CodeClock.Seconds">
+            <summary>
+            Gets the number of seconds elapsed between start and stop.
+            </summary>
+            <value>The number of seconds elapsed between start and stop.</value>
+        </member>
+        <member name="T:ClearCanvas.Common.MessageBoxExtensionPoint">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.ApplicationRootExtensionPoint">
+            <summary>
+            Defines the Application Root extension point.  When <see cref="M:ClearCanvas.Common.Platform.StartApp(ClearCanvas.Common.ExtensionFilter,System.String[])"/> is called,
+            the platform creates an application root extension and executes it by calling
+            <see cref="M:ClearCanvas.Common.IApplicationRoot.RunApplication(System.String[])"/>.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.SessionManagerExtensionPoint">
+            <summary>
+            Defines a general mechanism for establishing a session.  When <see cref="M:ClearCanvas.Common.Platform.StartApp(ClearCanvas.Common.ExtensionFilter,System.String[])"/>
+            is called, the framework will look for a session manager extension.  If one is found, the
+            framework will attempt to establish a session by calling <see cref="M:ClearCanvas.Common.ISessionManager.InitiateSession"/>.
+            If no session manager extensions are found, the application will proceed to execute in standalone
+            (i.e no authentication) mode.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.ServiceProviderExtensionPoint">
+            <summary>
+            Defines an extension point for service providers.  A service provider is a class that knows how
+            to provide a specific set of services to the application.  A given service should be provided
+            exclusively by one provider (i.e. no two providers should provide the same service).  The application obtains
+            services through the <see cref="M:ClearCanvas.Common.Platform.GetService(System.Type)"/> method.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Platform">
+            <summary>
+            A collection of useful utility functions.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.StartApp(ClearCanvas.Common.ExtensionFilter,System.String[])">
+            <summary>
+            Starts the application.
+            </summary>
+            <param name="applicationRootFilter">An extension filter that selects the application root extension to execute</param>
+            <param name="args">The set of arguments passed from the command line</param>
+            <remarks>
+            A ClearCanvas based application is started by calling this convenience method from
+            a bootstrap executable of some kind.  Calling this method results in the loading
+            of all plugins and creation of an IApplicationRoot extension.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.StartApp">
+            <summary>
+            Starts the application.
+            </summary>
+            <remarks>
+            A ClearCanvas based application is started by calling this convenience method from
+            a bootstrap executable of some kind.  Calling this method results in the loading
+            of all plugins and creation of an IApplicationRoot extension.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.GetService``1">
+            <summary>
+            Obtains an instance of the specified service for use by the application
+            </summary>
+            <typeparam name="TService">The type of service to obtain</typeparam>
+            <returns>An instance of the specified service</returns>
+            <exception cref="T:ClearCanvas.Common.UnknownServiceException">The requested service cannot be provided</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.GetService(System.Type)">
+            <summary>
+            Obtains an instance of the specified service for use by the application
+            </summary>
+            <param name="service">The type of service to obtain</param>
+            <returns>An instance of the specified service</returns>
+            <exception cref="T:ClearCanvas.Common.UnknownServiceException">The requested service cannot be provided</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.GetSessionManager">
+            <summary>
+            Private method to get a session manager
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.Log(System.Object)">
+            <summary>
+            Writes a message to the default log.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckForEmptyString(System.String,System.String)">
+            <summary>
+            Checks if a string is empty.
+            </summary>
+            <param name="variable">The string to check.</param>
+            <param name="variableName">The variable name of the string to checked.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variable"/> or or <paramref name="variableName"/>
+            is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="variable"/> is zero length.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckForNullReference(System.Object,System.String)">
+            <summary>
+            Checks if an object reference is null.
+            </summary>
+            <param name="variable">The object reference to check.</param>
+            <param name="variableName">The variable name of the object reference to check.</param>
+            <remarks>Use for checking if an input argument is <b>null</b>.  To check if a member variable
+            is <b>null</b> (i.e., to see if an object is in a valid state), use <see cref="M:ClearCanvas.Common.Platform.CheckMemberIsSet(System.Object,System.String)"/> instead.</remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variable"/> or <paramref name="variableName"/>
+            is <b>null</b>.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckExpectedType(System.Object,System.Type)">
+            <summary>
+            Checks if an object is of the expected type.
+            </summary>
+            <param name="variable">The object to check.</param>
+            <param name="type">The variable name of the object to check.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variable"/> or <paramref name="type"/>
+            is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="type"/> is not the expected type.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckForInvalidCast(System.Object,System.String,System.String)">
+             <summary>
+             Checks if a cast is valid.
+             </summary>
+             <param name="castOutput">The object resulting from the cast.</param>
+             <param name="castInputName">The variable name of the object that was cast.</param>
+             <param name="castTypeName">The name of the type the object was cast to.</param>
+             <remarks>To use this method, casts have to be done using the <b>as</b> operator.  The
+             method depends on failed casts resulting in <b>null</b>.</remarks>
+             <example>
+             <code>
+             [C#]
+             layer = new GraphicLayer();
+             GraphicLayer graphicLayer = layer as GraphicLayer;
+             // No exception thrown
+             Platform.CheckForInvalidCast(graphicLayer, "layer", "GraphicLayer");
+            
+             ImageLayer image = layer as ImageLayer;
+             // InvalidCastException thrown
+             Platform.CheckForInvalidCast(image, "layer", "ImageLayer");
+             </code>
+             </example>
+             <exception cref="T:System.ArgumentNullException"><paramref name="castOutput"/>,
+             <paramref name="castInputName"/>, <paramref name="castTypeName"/> is <b>null</b></exception>
+             <exception cref="T:System.InvalidCastException">Cast is invalid.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckPositive(System.Int32,System.String)">
+            <summary>
+            Checks if a value is positive.
+            </summary>
+            <param name="n">The value to check.</param>
+            <param name="variableName">The variable name of the value to check.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="n"/> &lt;= 0.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckPositive(System.Single,System.String)">
+            <summary>
+            Checks if a value is positive.
+            </summary>
+            <param name="x">The value to check.</param>
+            <param name="variableName">The variable name of the value to check.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="x"/> &lt;= 0.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckPositive(System.Double,System.String)">
+            <summary>
+            Checks if a value is positive.
+            </summary>
+            <param name="x">The value to check.</param>
+            <param name="variableName">The variable name of the value to check.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="x"/> &lt;= 0.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckNonNegative(System.Int32,System.String)">
+            <summary>
+            Checks if a value is non-negative.
+            </summary>
+            <param name="n">The value to check.</param>
+            <param name="variableName">The variable name of the value to check.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="n"/> &lt; 0.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckArgumentRange(System.Int32,System.Int32,System.Int32,System.String)">
+            <summary>
+            Checks if a value is within a specified range.
+            </summary>
+            <param name="argumentValue">Value to be checked.</param>
+            <param name="min">Minimum value.</param>
+            <param name="max">Maximum value.</param>
+            <param name="variableName">Variable name of value to be checked.</param>
+            <remarks>Checks if <paramref name="min"/> &lt;= <paramref name="argumentValue"/> &lt;= <paramref name="max"/></remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="argumentValue"/> is not within the
+            specified range.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckIndexRange(System.Int32,System.Int32,System.Int32,System.Object)">
+            <summary>
+            Checks if an index is within a specified range.
+            </summary>
+            <param name="index">Index to be checked</param>
+            <param name="min">Minimum value.</param>
+            <param name="max">Maximum value.</param>
+            <param name="obj">Object being indexed.</param>
+            <remarks>Checks if <paramref name="min"/> &lt;= <paramref name="index"/> &lt;= <paramref name="max"/></remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="T:System.IndexOutOfRangeException"><paramref name="index"/> is not within the
+            specified range.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckMemberIsSet(System.Object,System.String)">
+            <summary>
+            Checks if a field or property is null.
+            </summary>
+            <param name="variable">Field or property to be checked.</param>
+            <param name="variableName">Name of field or property to be checked.</param>
+            <remarks>Use this method in your classes to verify that the object
+            is not in an invalid state by checking that various fields and/or properties
+            have been set, i.e., are not null.</remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="!:InvalidOperatonException"><paramref name="variable"/> is <b>null</b>.</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Platform.CheckMemberIsSet(System.Object,System.String,System.String)">
+            <summary>
+            Checks if a field or property is null.
+            </summary>
+            <param name="variable">Field or property to be checked.</param>
+            <param name="variableName">Name of field or property to be checked.</param>
+            <param name="detailedMessage">A more detailed and informative message describing
+            why the object is in an invalid state.</param>
+            <remarks>Use this method in your classes to verify that the object
+            is not in an invalid state by checking that various fields and/or properties
+            have been set, i.e., are not null.</remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+            <exception cref="!:InvalidOperatonException"><paramref name="variable"/> is <b>null</b>.</exception>
+        </member>
+        <member name="P:ClearCanvas.Common.Platform.PluginManager">
+            <summary>
+            Gets the one and only <see cref="P:ClearCanvas.Common.Platform.PluginManager"/>.
+            </summary>
+            <value>The <see cref="P:ClearCanvas.Common.Platform.PluginManager"/>.</value>
+        </member>
+        <member name="P:ClearCanvas.Common.Platform.InstallDir">
+            <summary>
+            Gets or sets ClearCanvas' installation directory.
+            </summary>
+            <value>ClearCanvas' fully qualified installation directory.</value>
+        </member>
+        <member name="P:ClearCanvas.Common.Platform.PluginDir">
+            <summary>
+            Gets or sets the plugin directory.
+            </summary>
+            <value>The fully qualified plugin directory.</value>
+        </member>
+        <member name="P:ClearCanvas.Common.Platform.LogDir">
+            <summary>
+            Gets or sets the log directory.
+            </summary>
+            <value>The fully qualified log directory.</value>
+        </member>
+        <member name="T:ClearCanvas.Common.TypeExtensionFilter">
+            <summary>
+            Implements an extension filter that performs matching on types.
+            </summary>
+            <remarks>
+            The filter will test true if the extension in question implements all of the
+            types supplied as criteria to this filter.  Typically these types are interfaces, however, a
+            single class may be supplied, in which case the extension must be a subclass of that class.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.TypeExtensionFilter.#ctor(System.Type[])">
+            <summary>
+            Creates a filter that matches on multiple types.
+            </summary>
+            <param name="types">The types used as criteria to match</param>
+        </member>
+        <member name="M:ClearCanvas.Common.TypeExtensionFilter.#ctor(System.Type)">
+            <summary>
+            Creates a filter that matches on a single type.
+            </summary>
+            <param name="type">The type used as criteria to match</param>
+        </member>
+        <member name="M:ClearCanvas.Common.TypeExtensionFilter.Test(ClearCanvas.Common.ExtensionInfo)">
+            <summary>
+            Checks whether the specified extension implements/subclasses all of the criteria types.
+            </summary>
+            <param name="extension">The extension to test</param>
+            <returns>True if the test succeeds</returns>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionPointAttribute">
+            <summary>
+            Attribute used to mark a class as defining an extension point.
+            </summary>
+            <remarks>
+            Use this attribute to mark a class as defining an extension point.  This attribute must only be
+            applied to subclasses of <see cref="!:ExtensionPoint"/>.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.ExtensionPointAttribute.#ctor">
+            <summary>
+            Attribute constructor.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointAttribute.Name">
+            <summary>
+            A friendly name for the extension point.  This is optional and may be supplied as a named parameter.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionPointAttribute.Description">
+            <summary>
+            A friendly description for the extension point.  This is optional and may be supplied as a named parameter.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.ExtensionOfAttribute">
+            <summary>
+            Attribute used to mark a class as being an extension of the specified extension point class.
+            </summary>
+            <remarks>
+            Use this attribute to mark a class as being an extension of the specified extension point,
+            specified by the <see cref="T:System.Type"/> of the extension point class.
+            </remarks>
+        </member>
+        <member name="M:ClearCanvas.Common.ExtensionOfAttribute.#ctor(System.Type)">
+            <summary>
+            Attribute constructor.
+            </summary>
+            <param name="extensionPointClass">The type of the extension point class which the target class extends</param>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionOfAttribute.ExtensionPointClass">
+            <summary>
+            The class that defines the extension point which this extension extends.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionOfAttribute.Name">
+            <summary>
+            A friendly name for the extension.  This is optional and may be supplied as a named parameter.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.ExtensionOfAttribute.Description">
+            <summary>
+            A friendly description for the extension.  This is optional and may be supplied as a named parameter.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.EventsHelper">
+            <summary>
+            Helps clients raise events safely.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.EventsHelper.Fire(System.Delegate,System.Object[])">
+            <summary>
+            Raises events safely.
+            </summary>
+            <param name="del">Delegate.</param>
+            <param name="args">Parameters to be passed to the delegate.</param>
+            <remarks>Use this method to safely invoke user code via delegates.
+            Because there is no guarantee that user code will not throw
+            exceptions, it has to be executed safely.  That is, any exceptions thrown
+            must be handled.  This method will log any exceptions thrown in user code.
+            Whether the exception is rethrown depends on how the exception policy
+            has been configured.  The typical usage is shown below.</remarks>
+            <example>
+            <code>
+            [C#]
+            public class PresentationImage
+            {
+               private event EventHandler _imageDrawingEvent;
+               
+               public void Draw()
+               {
+                  EventsHelper.Fire(_imageDrawingEvent, this, new DrawImageEventArgs());
+               }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="T:ClearCanvas.Common.PluginException">
+            <summary>
+            Summary description for PluginException.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.ResourceResolver">
+            <summary>
+            Default implementation of <see cref="T:ClearCanvas.Common.Utilities.IResourceResolver"/>.  Resolves resources by searching the set of
+            assemblies (specified in the constructor) in order for a matching resource.
+            </summary>
+        </member>
+        <member name="F:ClearCanvas.Common.Utilities.ResourceResolver._mapStringResourceManagers">
+            <summary>
+            Cache of string resource managers for each assembly
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.#ctor(System.Reflection.Assembly[])">
+            <summary>
+            Constructs an object that will search the specified set of assemblies.
+            </summary>
+            <param name="assemblies">The set of assemblies to search</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.#ctor(System.Reflection.Assembly)">
+            <summary>
+            Constructs an object that will search the specified assembly.
+            </summary>
+            <param name="assembly">The set of assemblies to search</param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.LocalizeString(System.String)">
+            <summary>
+            Attempts to localize the specified unqualified string resource key
+            by searching the set of assemblies associated with this <see cref="T:ClearCanvas.Common.Utilities.ResourceResolver"/> in order.
+            </summary>
+            <remarks>
+            Searches the assemblies for resources ending in "SR.resources", and searches those resources
+            for a string whose matching the specified key.
+            </remarks>
+            <param name="unqualifiedStringKey">The string resource key to search for.  Must not be qualified.</param>
+            <returns>The localized string, or the argument unchanged if the key could not be found</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.ResolveResource(System.String)">
+            <summary>
+            Attempts to return a fully qualified resource name from the specified name, which may be partially
+            qualified or entirely unqualified, by searching the assemblies associated with this <see cref="T:ClearCanvas.Common.Utilities.ResourceResolver"/> in order.
+            </summary>
+            <param name="resourceName">A partially qualified or unqualified resource name</param>
+            <returns>A qualified resource name, if found, otherwise an exception is thrown</returns>
+            <exception cref="T:System.Resources.MissingManifestResourceException">if the resource name could not be resolved</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.OpenResource(System.String)">
+            <summary>
+            Attempts to resolve and open a resource from the specified name, which may be partially
+            qualified or entirely unqualified, by searching the assemblies associated with this <see cref="T:ClearCanvas.Common.Utilities.ResourceResolver"/> in order.
+            </summary>
+            <param name="resourceName">A partially qualified or unqualified resource name</param>
+            <returns>A qualified resource name, if found, otherwise an exception is thrown</returns>
+            <exception cref="T:System.Resources.MissingManifestResourceException">if the resource name could not be resolved</exception>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.LocalizeString(System.String,System.Reflection.Assembly)">
+            <summary>
+            Attempts to localize the specified string table key from the specified assembly, checking all
+            string resource file in arbitrary order.  The first match is returned, or null if no matches
+            are found.
+            </summary>
+            <param name="stringTableKey">The string table key to localize</param>
+            <param name="asm">The assembly to look in</param>
+            <returns>The first string table entry that matches the specified key, or null if no matches are found</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.GetStringResourceManagers(System.Reflection.Assembly)">
+            <summary>
+            Returns a list of <see cref="T:System.Resources.ResourceManager"/>, one for each string resource file that is present
+            in the specified assembly.  The resource manager can then be used to localize strings.
+            </summary>
+            <param name="asm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.ResourceResolver.GetResourcesEndingWith(System.Reflection.Assembly,System.String)">
+            <summary>
+            Searches the specified assembly for resource files whose names end with the specified string.
+            </summary>
+            <param name="asm">The assembly to search</param>
+            <param name="endingWith">The string to match the end of the resource name with</param>
+            <returns></returns>
+        </member>
+        <member name="T:ClearCanvas.Common.Utilities.FunctionalList`1">
+            <summary>
+            Utility implementation of <see cref="!:IFunctionalList"/>
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.FunctionalList`1.#ctor">
+            <summary>
+            Constructs an empty list
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.FunctionalList`1.#ctor(System.Collections.Generic.IList{`0})">
+            <summary>
+            Constructs a list that wraps the specified inner list.  This constructor does not copy
+            the argument, so all methods called on this list operate on the inner list.
+            </summary>
+            <param name="inner"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.FunctionalList`1.#ctor(System.Collections.IList)">
+            <summary>
+            Constructs a list that wraps the specified inner list.  This constructor does not copy
+            the argument, so all methods called on this list operate on the inner list.
+            </summary>
+            <param name="inner"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.FunctionalList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Constructs a list that initially contains the specified source items.  The source items
+            are copied to this list.
+            </summary>
+            <param name="source"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Utilities.FunctionalList`1.#ctor(System.Collections.IEnumerable)">
+            <summary>
+            Constructs a list that initially contains the specified source items.  The source items
+            are copied to this list.
+            </summary>
+            <param name="source"></param>
+        </member>
+        <member name="T:ClearCanvas.Common.PluginInfo">
+            <summary>
+            Describes a plugin, and provides properties for querying the extension points and extensions defined
+            in the plugin.
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.PluginInfo.DiscoverExtensions(System.Reflection.Assembly)">
+            <summary>
+            Internal method used by the framework to discover the extensions declared in a plugin.
+            </summary>
+            <param name="asm">The plugin assembly to inspect</param>
+            <returns>An array of <see cref="T:ClearCanvas.Common.ExtensionInfo"/>objects describing the extensions</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.PluginInfo.DiscoverExtensionPoints(System.Reflection.Assembly)">
+            <summary>
+            Internal method used by the framework to discover the extension points declared in a plugin.
+            </summary>
+            <param name="asm">The plugin assembly to inspect</param>
+            <returns>An array of <see cref="T:ClearCanvas.Common.ExtensionPointInfo"/>objects describing the extension points</returns>
+        </member>
+        <member name="M:ClearCanvas.Common.PluginInfo.#ctor(System.Reflection.Assembly,System.String,System.String)">
+            <summary>
+            Internal constructor.
+            </summary>
+            <param name="assembly"></param>
+            <param name="name"></param>
+            <param name="description"></param>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginInfo.Extensions">
+            <summary>
+            The set of extensions defined in this plugin.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginInfo.ExtensionPoints">
+            <summary>
+            The set of extension points defined in this plugin.
+            </summary>
+        </member>
+        <member name="P:ClearCanvas.Common.PluginInfo.Assembly">
+            <summary>
+            The assembly that implements this plugin.
+            </summary>
+        </member>
+        <member name="T:ClearCanvas.Common.Configuration.IConfigurationStore">
+            <summary>
+            Defines the interface to a mechanism for the storage of configuration data
+            </summary>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.IConfigurationStore.LoadSettingsValues(System.Type,System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Obtains the settings values for the specified settings class, user and instance key.
+            Places the values into the specified dictionary.  Only adds values for settings
+            that differ from the default value as specified by the settings class.
+            </summary>
+            <param name="settingsClass"></param>
+            <param name="user"></param>
+            <param name="instanceKey"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.IConfigurationStore.SaveSettingsValues(System.Type,System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Store the settings values for the specified settings class, for the current user and
+            specified instance key.  The dictionary contains only values that differ from the default
+            values as specified by the settings class.  Only these values should be stored.  Any previously
+            stored settings values that are not contained in the dictionary should be removed from the store.
+            </summary>
+            <param name="settingsClass"></param>
+            <param name="user"></param>
+            <param name="instanceKey"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.IConfigurationStore.RemoveUserSettings(System.Type,System.String,System.String)">
+            <summary>
+            Removes user settings from this group, effectively causing them to be reset to their shared default
+            values.  Application-scoped settings are unaffected.
+            </summary>
+            <param name="settingsClass"></param>
+            <param name="user"></param>
+            <param name="instanceKey"></param>
+        </member>
+        <member name="M:ClearCanvas.Common.Configuration.IConfigurationStore.UpgradeUserSettings(System.Type,System.String,System.String)">
+            <summary>
+            Upgrades user settings in the group, effectively importing any settings saved in a previous version
+            of the application into the current version.  Application-scoped settings are unaffected.
+            </summary>
+            <param name="settingsClass"></param>
+            <param name="user"></param>
+            <param name="instanceKey"></param>
+        </member>
+    </members>
+</doc>
