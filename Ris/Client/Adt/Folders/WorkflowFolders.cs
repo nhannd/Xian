@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
         protected override IList<WorklistItem> QueryItems()
         {
-            return (IList<WorklistItem>)this.WorkflowService.SearchPatient(_searchCriteria);
+            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search", _searchCriteria);
         }
 
         protected override bool IsMember(WorklistItem item)

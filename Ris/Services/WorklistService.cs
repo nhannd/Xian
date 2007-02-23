@@ -15,20 +15,8 @@ namespace ClearCanvas.Ris.Services
     public class WorklistService : WorkflowServiceBase, IWorklistService
     {
         [ReadOperation]
-        public IList SearchPatient(PatientProfileSearchCriteria criteria)
-        {
-            IExtensionPoint worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
-            IWorklist worklist = (IWorklist)worklistExtPoint.CreateExtension(new ClassNameExtensionFilter("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search"));
-            worklist.SearchCriteria = criteria;
-            return worklist.GetWorklist(this.CurrentContext);
-        }
-
-        [ReadOperation]
         public IList GetWorklist(string worklistClassName)
         {
-            //IExtensionPoint worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
-            //IWorklist worklist = (IWorklist)worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
-            //return worklist.GetWorklist(this.CurrentContext);
             return GetWorklist(worklistClassName, null);
         }
 

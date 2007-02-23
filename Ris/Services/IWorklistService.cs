@@ -11,7 +11,6 @@ namespace ClearCanvas.Ris.Services
 {
     public interface IWorklistService : IHealthcareServiceLayer
     {
-        IList SearchPatient(PatientProfileSearchCriteria criteria);
         IList GetWorklist(string worklistClassName);
         IList GetWorklist(string worklistClassName, SearchCriteria additionalCriteria);
         IList GetQueryResultForWorklistItem(string worklistClassName, IWorklistItem item);

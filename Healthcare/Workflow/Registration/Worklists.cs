@@ -123,7 +123,6 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             public Search() 
                 : base()
             {
-                this.SearchCriteria = new PatientProfileSearchCriteria();
             }
 
             public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
