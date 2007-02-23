@@ -54,13 +54,16 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(
                new TableColumn<RequestedProcedureCheckInTableEntry, bool>("Check-In",
                    delegate(RequestedProcedureCheckInTableEntry item) { return item.Checked; },
-                   delegate(RequestedProcedureCheckInTableEntry item, bool value) { item.Checked = value; }, 0.35f));
+                   delegate(RequestedProcedureCheckInTableEntry item, bool value) { item.Checked = value; }, 0.30f));
             this.Columns.Add(
                 new TableColumn<RequestedProcedureCheckInTableEntry, string>("Requested Procedures",
-                    delegate(RequestedProcedureCheckInTableEntry item) { return item.RequestedProcedure.Type.Name; }, 1.0f));
+                    delegate(RequestedProcedureCheckInTableEntry item) { return Format.Custom(item.RequestedProcedure.Type.Name); }, 1.0f));
             this.Columns.Add(
-                new TableColumn<RequestedProcedureCheckInTableEntry, DateTime>("Scheduling Time",
-                delegate(RequestedProcedureCheckInTableEntry item) { return item.RequestedProcedure.Order.SchedulingRequestDateTime; }, 0.7f));
+                new TableColumn<RequestedProcedureCheckInTableEntry, string>("Scheduling Date",
+                delegate(RequestedProcedureCheckInTableEntry item) { return Format.Date(item.RequestedProcedure.Order.SchedulingRequestDateTime); }, 0.5f));
+            this.Columns.Add(
+                new TableColumn<RequestedProcedureCheckInTableEntry, string>("Ordering Facility",
+                delegate(RequestedProcedureCheckInTableEntry item) { return Format.Custom(item.RequestedProcedure.Order.OrderingFacility); }, 0.5f));
         }
     }
 }

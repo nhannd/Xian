@@ -61,6 +61,8 @@ namespace ClearCanvas.Ris.Services
                 rpBroker.LoadCheckInProcedureStepsForRequestedProcedure(rp);
                 rpBroker.LoadModalityProcedureStepsForRequestedProcedure(rp);
                 rpBroker.LoadOrderForRequestedProcedure(rp);
+                orderBroker.LoadOrderingFacilityForOrder(rp.Order);
+                orderBroker.LoadOrderingPractitionerForOrder(rp.Order);
                 rpBroker.LoadTypeForRequestedProcedure(rp);
             }
 

@@ -11,7 +11,7 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
-    public class Worklist : IWorklist
+    public abstract class Worklist : IWorklist
     {
         private SearchCriteria _criteria;
 

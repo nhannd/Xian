@@ -148,18 +148,16 @@ namespace ClearCanvas.Ris.Client.Adt
             
             if (_worklistItem != null && _worklistItem.PatientProfile != null)
             {
-                int count = 0;
-                int maximumItemDisplay = 5;
-
                 _patientProfile = _adtService.LoadPatientProfile(_worklistItem.PatientProfile, true);
                 IList<WorklistQueryResult> listQueryResult = (IList<WorklistQueryResult>)_worklistService.GetQueryResultForWorklistItem(_worklistItem.WorkClassName, _worklistItem);
                 _numberOfRIC = listQueryResult.Count;
-                
+
+                int count = 0;
                 foreach (WorklistQueryResult queryResult in listQueryResult)
                 {
                     _RIC.Items.Add(queryResult);
                     count++;
-                    if (count > maximumItemDisplay)
+                    if (count >= this._maxRICDisplay)
                         break;
                 }
             }

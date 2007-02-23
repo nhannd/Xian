@@ -61,14 +61,25 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             }
 
+            // Special case for 0 or 1 Requested Procedure.  No need to show the dialog box
+            if (_requestedProcedureCheckInTable.Items.Count == 0)
+            {
+                this.ExitCode = ApplicationComponentExitCode.Normal;
+                Host.Exit();
+            }
+            else if (_requestedProcedureCheckInTable.Items.Count == 1)
+            {
+                _requestedProcedureCheckInTable.Items[0].Checked = true;
+                SaveChanges();
+                this.ExitCode = ApplicationComponentExitCode.Normal;
+                Host.Exit();
+            }
 
             base.Start();
         }
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
@@ -104,11 +115,23 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SaveChanges()
         {
+            // TODO: Need to get the real current staff that is using the system
+            IStaffAdminService staffAdminService = ApplicationContext.GetService<IStaffAdminService>();
+            Staff staff = new Staff(new PersonName("Clerk", "Registration"));
+            IList<Staff> listStaff = staffAdminService.FindStaffs(staff.Name.FamilyName, staff.Name.GivenName);
+            if (listStaff.Count == 0)
+                staffAdminService.AddStaff(staff);
+            else
+                staff = CollectionUtils.FirstElement(listStaff) as Staff;
+
             foreach (RequestedProcedureCheckInTableEntry entry in _requestedProcedureCheckInTable.Items)
             {
                 if (entry.Checked)
                 {
-                    entry.RequestedProcedure.CheckInProcedureSteps.Add(new CheckInProcedureStep(entry.RequestedProcedure));
+                    CheckInProcedureStep cps = new CheckInProcedureStep(entry.RequestedProcedure);
+                    cps.Start(staff);
+                    cps.Complete(staff);
+                    entry.RequestedProcedure.CheckInProcedureSteps.Add(cps);
                     _worklistService.UpdateRequestedProcedure(entry.RequestedProcedure);
                 }
             }      

@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private EntityRef<PatientProfile> _patientProfile;
         private EntityRef<Order> _order;
         private EntityRef<RequestedProcedure> _requestedProcedure;
-        private EntityRef<ModalityProcedureStep> _procedureStep;
+        private EntityRef<ProcedureStep> _procedureStep;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
@@ -30,6 +30,54 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private DateTime _dateOfBirth;
         private Sex _sex;
         private ActivityStatus _status;
+
+        public WorklistQueryResult(PatientProfile profile)
+        {
+            _patientProfile = new EntityRef<PatientProfile>(profile);
+
+            _mrn = profile.Mrn;
+            _patientName = profile.Name;
+            _healthcardNumber = profile.Healthcard;
+            _dateOfBirth = profile.DateOfBirth;
+            _sex = profile.Sex;
+        }
+
+        public WorklistQueryResult(
+            Patient patient,
+            PatientProfile profile,
+            Order order,
+            RequestedProcedure requestedProcedure,
+            ProcedureStep procedureStep,
+            CompositeIdentifier mrn,
+            PersonName patientName,
+            CompositeIdentifier visitNumber,
+            string accessionNumber,
+            string diagnosticService,
+            string requestedProcedureName,
+            OrderPriority priority,
+            ActivityStatus status)
+        {
+            _patient = new EntityRef<Patient>(patient);
+            _patientProfile = new EntityRef<PatientProfile>(profile);
+            _order = new EntityRef<Order>(order);
+            _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
+            _procedureStep = new EntityRef<ProcedureStep>(procedureStep);
+
+            _mrn = mrn;
+            _patientName = patientName;
+            _visitNumber = visitNumber;
+            _accessionNumber = accessionNumber;
+            _diagnosticServiceName = diagnosticService;
+            _requestedProcedureName = requestedProcedureName;
+            _priority = priority;
+            _status = status;
+
+            _procedureStepScheduledStartTime = (procedureStep.Scheduling == null ? null : procedureStep.Scheduling.StartTime);
+            _orderingPractitioner = order.OrderingPractitioner.Name;
+            _healthcardNumber = profile.Healthcard;
+            _dateOfBirth = profile.DateOfBirth;
+            _sex = profile.Sex;
+        }
 
         public WorklistQueryResult(
             Patient patient,
@@ -52,7 +100,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _patientProfile = new EntityRef<PatientProfile>(profile);
             _order = new EntityRef<Order>(order);
             _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
-            _procedureStep = new EntityRef<ModalityProcedureStep>(procedureStep);
+            _procedureStep = new EntityRef<ProcedureStep>(procedureStep);
 
             _mrn = mrn;
             _patientName = patientName;
@@ -83,7 +131,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             return _procedureStep.GetHashCode();
         }
 
-        public EntityRef<ModalityProcedureStep> ProcedureStep
+        public EntityRef<ProcedureStep> ProcedureStep
         {
             get { return _procedureStep; }
         }

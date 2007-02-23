@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._requestedProcedureTableView.ReadOnly = false;
             this._requestedProcedureTableView.Selection = selection1;
             this._requestedProcedureTableView.ShowToolbar = false;
-            this._requestedProcedureTableView.Size = new System.Drawing.Size(341, 219);
+            this._requestedProcedureTableView.Size = new System.Drawing.Size(469, 219);
             this._requestedProcedureTableView.TabIndex = 0;
             this._requestedProcedureTableView.Table = null;
             this._requestedProcedureTableView.ToolbarModel = null;
@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _okButton
             // 
-            this._okButton.Location = new System.Drawing.Point(192, 241);
+            this._okButton.Location = new System.Drawing.Point(320, 241);
             this._okButton.Name = "_okButton";
             this._okButton.Size = new System.Drawing.Size(75, 23);
             this._okButton.TabIndex = 2;
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(273, 241);
+            this._cancelButton.Location = new System.Drawing.Point(401, 241);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 3;
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this._okButton);
             this.Controls.Add(this._requestedProcedureTableView);
             this.Name = "RequestedProcedureCheckInComponentControl";
-            this.Size = new System.Drawing.Size(356, 267);
+            this.Size = new System.Drawing.Size(484, 272);
             this.ResumeLayout(false);
 
         }

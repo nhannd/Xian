@@ -19,72 +19,70 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
     public class Worklists
     {
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Scheduled : Worklist
+        public abstract class RegistrationWorklist : Worklist
         {
-            private CheckInProcedureStepSearchCriteria checkInCriteria;
-            
+            public override IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria)
+            {
+                return (IList)Worklists.ConvertQueryResultsToWorkLists(this.GetType().ToString(), GetQueryResultsHelper(context, additionalCriteria as PatientProfileSearchCriteria));
+            }
+
+            public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
+            {
+                return (IList)GetQueryResultsHelper(context, new PatientProfileSearchCriteria((item as WorklistItem).PatientProfile));
+            }
+
+            public virtual IList<WorklistQueryResult> GetQueryResultsHelper(IPersistenceContext context, PatientProfileSearchCriteria profileCriteria)
+            {
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return broker.GetWorklist(SearchCriteria, profileCriteria);
+            }        
+        }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class Scheduled : RegistrationWorklist
+        {
             public Scheduled() 
                 : base()
             {
                 this.SearchCriteria = new ModalityProcedureStepSearchCriteria();
                 //this.SearchCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
                 ((ModalityProcedureStepSearchCriteria)SearchCriteria).State.EqualTo(ActivityStatus.SC);
-
-                checkInCriteria = new CheckInProcedureStepSearchCriteria();
-                checkInCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));            
             }
 
             public override IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                IList<WorklistQueryResult> queryResults = broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, additionalCriteria as PatientProfileSearchCriteria);
-                IList<WorklistQueryResult> filteredResults = Worklists.KeepScheduledAndNotCheckIn(queryResults, checkInCriteria, context);
-                return (IList)Worklists.ConvertQueryResultToWorkList(this.GetType().ToString(), filteredResults);
+                CheckIn checkInWorklist = new CheckIn();
+                PatientProfileSearchCriteria profileCriteria = additionalCriteria as PatientProfileSearchCriteria;
 
+                return (IList) Worklists.ConvertQueryResultsToWorkLists(this.GetType().ToString(), Worklists.FilterOutCheckInResults(
+                    GetQueryResultsHelper(context, profileCriteria),
+                    checkInWorklist.GetQueryResultsHelper(context, profileCriteria)));
             }
 
             public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                IList<WorklistQueryResult> queryResults = broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, new PatientProfileSearchCriteria((item as WorklistItem).PatientProfile));
-                return (IList)Worklists.KeepScheduledAndNotCheckIn(queryResults, checkInCriteria, context);
+                CheckIn checkInWorklist = new CheckIn();
+                PatientProfileSearchCriteria profileCriteria = new PatientProfileSearchCriteria((item as WorklistItem).PatientProfile);
+
+                return (IList) Worklists.FilterOutCheckInResults(
+                    GetQueryResultsHelper(context, profileCriteria), 
+                    checkInWorklist.GetQueryResultsHelper(context, profileCriteria));
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class CheckIn : Worklist
+        public class CheckIn : RegistrationWorklist
         {
-            private CheckInProcedureStepSearchCriteria checkInCriteria;
-
             public CheckIn() 
                 : base()
             {
-                this.SearchCriteria = new ModalityProcedureStepSearchCriteria();
-                //this.SearchCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-
-                checkInCriteria = new CheckInProcedureStepSearchCriteria();
-                checkInCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            }
-
-            public override IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                IList<WorklistQueryResult> queryResults = broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, additionalCriteria as PatientProfileSearchCriteria);
-                IList<WorklistQueryResult> filteredResults = Worklists.KeepScheduledAndCheckIn(queryResults, checkInCriteria, context);
-                return (IList)Worklists.ConvertQueryResultToWorkList(this.GetType().ToString(), filteredResults);
-            }
-
-            public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                IList<WorklistQueryResult> queryResults = broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, new PatientProfileSearchCriteria((item as WorklistItem).PatientProfile));
-                return (IList)Worklists.KeepScheduledAndCheckIn(queryResults, checkInCriteria, context);
+                this.SearchCriteria = new CheckInProcedureStepSearchCriteria();
+                //(this.SearchCriteria as CheckInProcedureStepSearchCriteria).Procedure.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class InProgress : Worklist
+        public class InProgress : RegistrationWorklist
         {
             public InProgress() 
                 : base()
@@ -93,22 +91,10 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 //SearchCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
                 ((ModalityProcedureStepSearchCriteria)SearchCriteria).State.EqualTo(ActivityStatus.IP);
             }
-
-            public override IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)Worklists.ConvertQueryResultToWorkList(this.GetType().ToString(), broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, additionalCriteria as PatientProfileSearchCriteria));
-            }
-
-            public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, new PatientProfileSearchCriteria((item as WorklistItem).PatientProfile));
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Completed : Worklist
+        public class Completed : RegistrationWorklist
         {
             public Completed() 
                 : base()
@@ -117,22 +103,10 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 //SearchCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
                 ((ModalityProcedureStepSearchCriteria)SearchCriteria).State.EqualTo(ActivityStatus.CM);
             }
-
-            public override IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)Worklists.ConvertQueryResultToWorkList(this.GetType().ToString(), broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, additionalCriteria as PatientProfileSearchCriteria));
-            }
-
-            public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList) broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, new PatientProfileSearchCriteria( (item as WorklistItem).PatientProfile ));
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Cancelled : Worklist
+        public class Cancelled : RegistrationWorklist
         {
             public Cancelled() 
                 : base()
@@ -141,22 +115,10 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 //SearchCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
                 ((ModalityProcedureStepSearchCriteria)SearchCriteria).State.EqualTo(ActivityStatus.DC);
             }
-
-            public override IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)Worklists.ConvertQueryResultToWorkList(this.GetType().ToString(), broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, additionalCriteria as PatientProfileSearchCriteria));
-            }
-
-            public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
-            {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetWorklist(SearchCriteria as ModalityProcedureStepSearchCriteria, new PatientProfileSearchCriteria((item as WorklistItem).PatientProfile));
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Search : Worklist
+        public class Search : RegistrationWorklist
         {
             public Search() 
                 : base()
@@ -164,58 +126,48 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 this.SearchCriteria = new PatientProfileSearchCriteria();
             }
 
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item)
             {
-                // We don't want to do a wide search, so return nothing if there is no patient search criteria
-                if (SearchCriteria == null)
-                    return (IList)(new List<WorklistItem>());
+                Scheduled scheduledWorklist = new Scheduled();
+                return scheduledWorklist.GetQueryResultForWorklistItem(context, item);
+            }
+
+            public override IList<WorklistQueryResult> GetQueryResultsHelper(IPersistenceContext context, PatientProfileSearchCriteria profileCriteria)
+            {
+                if (profileCriteria != null)
+                    this.SearchCriteria = profileCriteria;
+
+                if (this.SearchCriteria == null)
+                    return new List<WorklistQueryResult>();
 
                 IPatientProfileBroker broker = context.GetBroker<IPatientProfileBroker>();
-                return (IList)Worklists.ConvertToWorkListItem(this.GetType().ToString(), broker.Find(SearchCriteria as PatientProfileSearchCriteria));
+                return Worklists.ConvertProfilesToQueryResults(broker.Find(this.SearchCriteria as PatientProfileSearchCriteria));            
             }
         }
-
 
         #region WorklistItem filtering & conversion functions
 
-        public static IList<WorklistQueryResult> KeepScheduledAndCheckIn(IList<WorklistQueryResult> unFilteredList, CheckInProcedureStepSearchCriteria checkInCriteria, IPersistenceContext context)
+        public static IList<WorklistQueryResult> FilterOutCheckInResults(IList<WorklistQueryResult> queryResults, IList<WorklistQueryResult> checkInQueryResult)
         {
-            return FilterCheckInItem(unFilteredList, checkInCriteria, context, true);
-        }
+            IList<WorklistQueryResult> finalList = new List<WorklistQueryResult>();
 
-        public static IList<WorklistQueryResult> KeepScheduledAndNotCheckIn(IList<WorklistQueryResult> unFilteredList, CheckInProcedureStepSearchCriteria checkInCriteria, IPersistenceContext context)
-        {
-            return FilterCheckInItem(unFilteredList, checkInCriteria, context, false);
-        }
-
-        private static IList<WorklistQueryResult> FilterCheckInItem(IList<WorklistQueryResult> unFilteredList, CheckInProcedureStepSearchCriteria checkInCriteria, IPersistenceContext context, bool keepCheckIn)
-          {
-            IList<WorklistQueryResult> filteredList = new List<WorklistQueryResult>();
-            IDictionary<EntityRef<RequestedProcedure>, WorklistQueryResult> dictionary = new Dictionary<EntityRef<RequestedProcedure>, WorklistQueryResult>();
-            IRequestedProcedureBroker rpBroker = context.GetBroker<IRequestedProcedureBroker>();
-
-            foreach (WorklistQueryResult queryResult in unFilteredList)
+            IDictionary<EntityRef<RequestedProcedure>, WorklistQueryResult> checkInDictionary = new Dictionary<EntityRef<RequestedProcedure>, WorklistQueryResult>();
+            foreach (WorklistQueryResult queryResult in checkInQueryResult)
             {
-                if (dictionary.ContainsKey(queryResult.RequestedProcedure) == false)
-                    dictionary[queryResult.RequestedProcedure] = queryResult;
+                if (checkInDictionary.ContainsKey(queryResult.RequestedProcedure) == false)
+                    checkInDictionary[queryResult.RequestedProcedure] = queryResult;
             }
 
-            foreach (KeyValuePair<EntityRef<RequestedProcedure>, WorklistQueryResult> kvp in dictionary)
+            foreach (WorklistQueryResult queryResult in queryResults)
             {
-                RequestedProcedure rp = rpBroker.Load(kvp.Key);
-                rpBroker.LoadCheckInProcedureStepsForRequestedProcedure(rp);
-
-                if (rp.CheckInProcedureSteps.Count > 0 && keepCheckIn == true
-                    || rp.CheckInProcedureSteps.Count == 0 && keepCheckIn == false)
-                {
-                    filteredList.Add(kvp.Value);
-                }
+                if (checkInDictionary.ContainsKey(queryResult.RequestedProcedure) == false)
+                    finalList.Add(queryResult);
             }
-
-            return filteredList;
+            
+            return finalList;
         }
 
-        public static IList<WorklistItem> ConvertQueryResultToWorkList(string workClassName, IList<WorklistQueryResult> listQueryResult)
+        public static IList<WorklistItem> ConvertQueryResultsToWorkLists(string workClassName, IList<WorklistQueryResult> listQueryResult)
         {
             // Group the query results based on patient profile into a Registration Worklist item
             IDictionary<EntityRef<PatientProfile>, WorklistItem> worklistDictionary = new Dictionary<EntityRef<PatientProfile>, WorklistItem>();
@@ -235,13 +187,13 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             return listItems;
         }
 
-        public static IList<WorklistItem> ConvertToWorkListItem(string workClassName, IList<PatientProfile> listProfile)
+        public static IList<WorklistQueryResult> ConvertProfilesToQueryResults(IList<PatientProfile> listProfile)
         {
             // Now add the worklist item 
-            IList<WorklistItem> items = new List<WorklistItem>();
+            IList<WorklistQueryResult> items = new List<WorklistQueryResult>();
             foreach (PatientProfile profile in listProfile)
             {
-                items.Add(new WorklistItem(workClassName, profile));
+                items.Add(new WorklistQueryResult(profile));
             }
 
             return items;
