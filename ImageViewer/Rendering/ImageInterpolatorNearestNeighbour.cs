@@ -152,6 +152,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int xSrcIncrement,
 			int xDstIncrement)
 		{
+			// Bug #295: When we changed the StretchRowXX methods so that
+			// int pointers are used instead of byte pointers, we simply
+			// incremented the pointer by 1 to go to the next pixel.  That obviously
+			// doesn't work when the image has been rotated 90 deg.  And so we need
+			// to use xDstIncrement when incrementing the pointer.  Problem is though,
+			// xDstIncrement is in bytes.  So to compensate, we divide xDstIncrement
+			// by 4 (i.e. right shift 2 bits) to get the increment in ints.
+			xDstIncrement = xDstIncrement >> 2;
+
 			byte* pRowSrcPixelData = pSrcPixelData;
 			int* pRowDstPixelData = (int*)pDstPixelData;
 
@@ -168,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					ex -= dstRegionWidth;
 				}
 
-				pRowDstPixelData++;
+				pRowDstPixelData += xDstIncrement;
 				ex += srcRegionWidth;
 			}
 		}
@@ -182,6 +191,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int xSrcIncrement, 
 			int xDstIncrement)
 		{
+			xDstIncrement = xDstIncrement >> 2;
+
 			byte* pRowSrcPixelData = pSrcPixelData;
 			int* pRowDstPixelData = (int*)pDstPixelData;
 
@@ -198,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					ex -= dstRegionWidth;
 				}
 
-				pRowDstPixelData ++;
+				pRowDstPixelData += xDstIncrement;
 				ex += srcRegionWidth;
 			}
 		}

@@ -140,6 +140,14 @@ void InterpolateBilinearT(
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
 {
+	// NY: Bug #295: When I originally changed this method so that
+	// int pointers are used instead of byte pointers, I simply
+	// incremented the pointer by 1 to go to the next pixel.  That obviously
+	// doesn't work when the image has been rotated 90 deg.  And so we need
+	// to use xDstIncrement when incrementing the pointer.  Problem is though,
+	// xDstIncrement is in bytes.  So to compensate, we divide xDstIncrement
+	// by 4 (i.e. right shift 2 bits) to get the increment in ints.
+	xDstIncrement = xDstIncrement >> 2;
 
 	float floatDstRegionHeight = (float)dstRegionHeight;
 	float floatsrcRegionOriginY = (float)srcRegionOriginY;
@@ -180,7 +188,7 @@ void InterpolateBilinearT(
 			int value = *(pLutData + (U)iFinal);
 			*pRowDstPixelData = value;
 
-			pRowDstPixelData++;
+			pRowDstPixelData += xDstIncrement;
 
 			++pxPixel;
 			++pdxFixed;

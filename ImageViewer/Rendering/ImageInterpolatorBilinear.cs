@@ -198,10 +198,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 								*pRowDstPixelData = value;
 							}
 						}
+						
+						pRowDstPixelData += (xDstIncrement >> 2);
 					}
 					else
 					{
-						pRowDstPixelData[3] = 0xff;  //A
+						// In the interest of not changing too much code, we're just going to cast
+						// pRowDstPixelData back to a byte* to deal with the RGB case.
+						byte* pByteRowDstPixelData = (byte*)pRowDstPixelData;
+						pByteRowDstPixelData[3] = 0xff;  //A
 
 						byte* pSrcPixel00 = pRowSrcPixelData + xSrcPixelCoordinates[x] * xSrcStride;
 						float dx = dxValuesAtXSrcPixelCoordinates[x];
@@ -217,13 +222,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 							float interpolated = yInterpolated1 + (yInterpolated2 - yInterpolated1) * dx;
 
 							//2-i because the destination pixel data goes BGRA and the source goes RGB
-							pRowDstPixelData[2 - i] = (byte)interpolated;
+							pByteRowDstPixelData[2 - i] = (byte)interpolated;
 
 							pSrcPixel00 += srcNextChannelOffset;
 						}
-					}
 
-					pRowDstPixelData++;
+						pRowDstPixelData += (xDstIncrement >> 2);
+					}
 				}
 
 				pDstPixelData += yDstIncrement;
