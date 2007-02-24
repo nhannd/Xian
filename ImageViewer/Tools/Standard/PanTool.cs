@@ -124,8 +124,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			float scale = this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 			Platform.CheckPositive(scale, "standardImage.SpatialTransform.Scale");
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX += xIncrement / scale;
-			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY += yIncrement / scale;
+			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX += xIncrement;
+			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY += yIncrement;
 			this.SelectedSpatialTransformProvider.Draw();
 		}
 
