@@ -5,11 +5,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class ComposableLUT : LUT, IComposableLUT
 	{
-		// Protected attributes
-		protected int _minInputValue;
-		protected int _maxInputValue;
-		protected int _minOutputValue;
-		protected int _maxOutputValue;
+		private int _minInputValue;
+		private int _maxInputValue;
+		private int _minOutputValue;
+		private int _maxOutputValue;
 
 		// Constructor
 		public ComposableLUT(
@@ -25,21 +24,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public int MinInputValue
 		{
 			get { return _minInputValue; }
+			protected set { _minInputValue = value; }
 		}
 
 		public int MaxInputValue
 		{
 			get { return _maxInputValue; }
+			protected set { _maxInputValue = value; }
 		}
 
-		public int MinOutputValue
+		public virtual int MinOutputValue
 		{
 			get { return _minOutputValue; }
+			protected set { _minOutputValue = value; }
 		}
 
-		public int MaxOutputValue
+		public virtual int MaxOutputValue
 		{
 			get { return _maxOutputValue; }
+			protected set { _maxOutputValue = value; }
 		}
 
 		#endregion

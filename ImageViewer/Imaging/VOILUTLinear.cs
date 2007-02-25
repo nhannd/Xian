@@ -20,18 +20,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (minInputValue >= maxInputValue)
 				throw new ArgumentException(SR.ExceptionLUTMinGreaterThanEqualToMax);
 
-			_minInputValue = minInputValue;
-			_maxInputValue = maxInputValue;
-			_minOutputValue = minInputValue;
-			_maxOutputValue = maxInputValue;
-			_outputRange = _maxOutputValue - _minOutputValue;
+			this.MinInputValue = minInputValue;
+			this.MaxInputValue = maxInputValue;
+			this.MinOutputValue = minInputValue;
+			this.MaxOutputValue = maxInputValue;
+			_outputRange = this.MaxOutputValue - this.MinOutputValue;
 		}
 
 		public override int this[int index]
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, _minInputValue, _maxInputValue, this);
+				Platform.CheckIndexRange(index, this.MinInputValue, this.MaxInputValue, this);
 
 				if (_recalculate)
 				{
@@ -41,16 +41,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 				if (index <= _windowRegionStart)
 				{
-					return _minOutputValue;
+					return this.MinOutputValue;
 				}
 				else if (index > _windowRegionEnd)
 				{
-					return _maxOutputValue;
+					return this.MaxOutputValue;
 				}
 				else
 				{
 					double scale = ((index - (_windowCenter - 0.5)) / (_windowWidth - 1)) + 0.5;
-					return (int)((scale * _outputRange) + _minOutputValue);
+					return (int)((scale * _outputRange) + this.MinOutputValue);
 				}
 			}
 			set

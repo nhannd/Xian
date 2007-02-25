@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, _minInputValue, _maxInputValue, this);
+				Platform.CheckIndexRange(index, this.MinInputValue, this.MaxInputValue, this);
 
 				return (int) (index * _rescaleSlope + _rescaleIntercept);
 			}
@@ -67,20 +67,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// Determine input value range
 			if (pixelRepresentation == 0)
 			{
-				_minInputValue = 0;
-				_maxInputValue = (1 << bitsStored) - 1;
+				this.MinInputValue = 0;
+				this.MaxInputValue = (1 << bitsStored) - 1;
 			}
 			else
 			{
-				_minInputValue = -(1 << (bitsStored - 1));
-				_maxInputValue =  (1 << (bitsStored - 1)) - 1;
+				this.MinInputValue = -(1 << (bitsStored - 1));
+				this.MaxInputValue =  (1 << (bitsStored - 1)) - 1;
 			}
 		}
 
 		private void SetOutputRange()
 		{
-			_minOutputValue = this[_minInputValue];
-			_maxOutputValue = this[_maxInputValue];
+			this.MinOutputValue = this[this.MinInputValue];
+			this.MaxOutputValue = this[this.MaxInputValue];
 		}
 	}
 }

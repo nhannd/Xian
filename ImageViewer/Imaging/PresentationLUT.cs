@@ -24,6 +24,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_minPlusMax = this.MinInputValue + this.MaxInputValue;
 		}
 
+		public override int MinOutputValue
+		{
+			get
+			{
+				throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. ");
+			}
+		}
+
+		public override int MaxOutputValue
+		{
+			get
+			{
+				throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. ");
+			}
+		}
+
 		public bool Invert
 		{
 			get { return _invert; }
@@ -89,10 +105,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Color color;
 
 			int j = 0;
+			int maxGrayLevel = this.NumEntries - 1;
 
 			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{
-				float scale = (float)j / (float)this.NumEntries;
+				float scale = (float)j / (float)maxGrayLevel;
 				j++;
 
 				int value = (int)(byte.MaxValue * scale);

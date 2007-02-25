@@ -183,14 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ref int pixelValue,
 			ref string pixelValueString)
 		{
-			if (grayscaleImage.BitsAllocated == 16)
-				pixelValue = grayscaleImage.PixelData.GetPixel16(sourcePointRounded.X, sourcePointRounded.Y);
-			else
-				pixelValue = grayscaleImage.PixelData.GetPixel8(sourcePointRounded.X, sourcePointRounded.Y);
-
-			if (grayscaleImage.IsSigned)
-				pixelValue = (short)pixelValue;
-
+			pixelValue = grayscaleImage.PixelData.GetPixel(sourcePointRounded.X, sourcePointRounded.Y);
 			pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, pixelValue);
 		}
 

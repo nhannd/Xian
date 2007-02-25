@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		}
 
 		[Test]
-		public void SetPixel8()
+		public void SetPixelUnsigned8()
 		{
 			int columns = 7;
 			int rows = 19;
@@ -57,13 +57,13 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int x = 3;
 			int y = 4;
 
-			byte testValue = 0xab;
-			pixelDataWrapper.SetPixel8(x, y, testValue);
-			byte actualValue = pixelDataWrapper.GetPixel8(x, y);
+			int testValue = 0xab;
+			pixelDataWrapper.SetPixel(x, y, testValue);
+			int actualValue = pixelDataWrapper.GetPixel(x, y);
 			Assert.AreEqual(testValue, actualValue);
 
 			// Make sure it works with unsafe code too
-			fixed (byte* pPixelData = pixelData)
+			fixed (byte* pPixelData = pixelDataWrapper.Raw)
 			{
 				int i = y * columns + x;
 				actualValue = pPixelData[i];
@@ -71,9 +71,55 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 
 			Assert.AreEqual(testValue, actualValue);
 		}
-		
+
 		[Test]
-		public void SetPixel16()
+		public void SetPixelSigned8()
+		{
+			int columns = 7;
+			int rows = 19;
+			int bitsAllocated = 8;
+			int bitsStored = 8;
+			int highBit = 7;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+			int x = 3;
+			int y = 4;
+
+			int testValue = -22;
+			pixelDataWrapper.SetPixel(x, y, testValue);
+			int actualValue = pixelDataWrapper.GetPixel(x, y);
+			Assert.AreEqual(testValue, actualValue);
+
+			// Make sure it works with unsafe code too
+			fixed (byte* pPixelData = pixelDataWrapper.Raw)
+			{
+				sbyte* pSBytePixelData = (sbyte*)pPixelData;
+				int i = y * columns + x;
+				actualValue = pSBytePixelData[i];
+			}
+
+			Assert.AreEqual(testValue, actualValue);
+		}
+
+		[Test]
+		public void SetPixelUnsigned16()
 		{
 			int columns = 7;
 			int rows = 19;
@@ -103,17 +149,64 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int y = 4;
 
 			// Test the API
-			ushort testValue = 0xabcd;
-			pixelDataWrapper.SetPixel16(x, y, testValue);
-			ushort actualValue = pixelDataWrapper.GetPixel16(x, y);
+			int testValue = 0xabcd;
+			pixelDataWrapper.SetPixel(x, y, testValue);
+			int actualValue = pixelDataWrapper.GetPixel(x, y);
 			Assert.AreEqual(testValue, actualValue);
 
 			// Make sure it works with unsafe code too
-			fixed (byte* pPixelData = pixelData)
+			fixed (byte* pPixelData = pixelDataWrapper.Raw)
 			{
 				ushort* pUShortPixelData = (ushort*)pPixelData;
 				int i = y * columns + x;
 				actualValue = pUShortPixelData[i];
+			}
+
+			Assert.AreEqual(testValue, actualValue);
+		}
+
+		[Test]
+		public void SetPixelSigned16()
+		{
+			int columns = 7;
+			int rows = 19;
+			int bitsAllocated = 16;
+			int bitsStored = 16;
+			int highBit = 15;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+			int x = 3;
+			int y = 4;
+
+			// Test the API
+			int testValue = -1234;
+			pixelDataWrapper.SetPixel(x, y, testValue);
+			int actualValue = pixelDataWrapper.GetPixel(x, y);
+			Assert.AreEqual(testValue, actualValue);
+
+			// Make sure it works with unsafe code too
+			fixed (byte* pPixelData = pixelDataWrapper.Raw)
+			{
+				short* pShortPixelData = (short*)pPixelData;
+				int i = y * columns + x;
+				actualValue = pShortPixelData[i];
 			}
 
 			Assert.AreEqual(testValue, actualValue);
@@ -154,8 +247,16 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			Color actualValue = pixelDataWrapper.GetPixelRGB(x, y);
 			Assert.AreEqual(testValue, actualValue);
 
+			pixelDataWrapper.SetPixel(x, y, testValue.ToArgb());
+			actualValue = pixelDataWrapper.GetPixelRGB(x, y);
+			Assert.AreEqual(testValue, actualValue);
+
+			pixelDataWrapper.SetPixel(x, y, testValue.ToArgb());
+			actualValue = Color.FromArgb(pixelDataWrapper.GetPixel(x, y));
+			Assert.AreEqual(testValue, actualValue);
+
 			// Make sure it works with unsafe code too
-			fixed (byte* pPixelData = pixelData)
+			fixed (byte* pPixelData = pixelDataWrapper.Raw)
 			{
 				int bytesPerPixel = 3;
 				int stride = columns * bytesPerPixel;
