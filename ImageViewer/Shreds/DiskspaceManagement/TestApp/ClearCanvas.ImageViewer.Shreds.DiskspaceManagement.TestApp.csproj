@@ -82,8 +82,18 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy "..\..\..\bin\Debug\ClearCanvas.ImageViewer.Shreds.DiskspaceManagement.dll" ".\plugins"
-copy "..\..\..\bin\Debug\Castle.DynamicProxy.dll" "."
+    <PostBuildEvent>del /Q ".\plugins\*.*"
+md "plugins"
+md "logs"
+copy "..\..\ClearCanvas.Dicom.DataStore.cfg.xml" "."
+copy "..\..\Logging.config" "."
+copy "..\..\..\bin\Debug\ClearCanvas.ImageViewer.Shreds.DiskspaceManagement.dll" ".\plugins"
+copy "..\..\..\..\..\..\Desktop\Executable\bin\Debug\common\System.Data.SqlServerCe.dll" "."
+copy "..\..\..\..\..\..\Desktop\Executable\bin\Debug\common\sql*.dll" "."
+copy "..\..\..\..\..\..\Common\bin\Debug\log4net.dll" "."
+copy "..\..\..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" "."
+copy "..\..\..\..\..\..\ReferencedAssemblies\Nhibernate.dll" "."
+copy "..\..\..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" "."
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
