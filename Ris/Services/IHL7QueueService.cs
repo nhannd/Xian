@@ -21,6 +21,10 @@ namespace ClearCanvas.Ris.Services
         PatientProfile GetReferencedPatient(EntityRef<HL7QueueItem> hl7QueueItemRef);
         
         void SetHL7QueueItemComplete(HL7QueueItem item);
-        void SetHL7QueueItemError(HL7QueueItem item, string errorMessage);        
+        void SetHL7QueueItemError(HL7QueueItem item, string errorMessage);
+
+        string GetAccessionNumber();
+
+        Practitioner FindPractitioner(string id);
     }
 }

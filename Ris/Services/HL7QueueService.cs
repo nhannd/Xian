@@ -146,6 +146,36 @@ namespace ClearCanvas.Ris.Services
             this.CurrentContext.Lock(item, DirtyState.New);
         }
 
+        //[UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.Required)]
+        public string GetAccessionNumber()
+        {
+            IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
+            return broker.GetNextAccessionNumber();
+        }
+
+        //[ReadOperation(PersistenceScopeOption = PersistenceScopeOption.Required)]
+        public Practitioner FindPractitioner(string id)
+        {
+            IPractitionerBroker broker = this.CurrentContext.GetBroker<IPractitionerBroker>();
+
+            PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
+            criteria.LicenseNumber.EqualTo(id);
+
+            IList<Practitioner> results = broker.Find(criteria);
+            if (results.Count == 0)
+            {
+                return null;
+            }
+            else if (results.Count == 1)
+            {
+                return results[0];
+            }
+            else
+            {
+                throw new Exception("Multiple practioners");
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -234,9 +264,10 @@ namespace ClearCanvas.Ris.Services
                 }
                 else
                 {
-                    Order order = new Order();
-                    order.PlacerNumber = placerNumber;
-                    loadedOrders.Add(new EntityAccess<Order>(order, DirtyState.New));
+                    //Order order = new Order();
+                    //order.PlacerNumber = placerNumber;
+                    //loadedOrders.Add(new EntityAccess<Order>(order, DirtyState.New));
+                    loadedOrders.Add(new EntityAccess<Order>(null, DirtyState.New));
                 }
             }
 
