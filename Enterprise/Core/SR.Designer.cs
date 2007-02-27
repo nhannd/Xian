@@ -59,5 +59,14 @@ namespace ClearCanvas.Enterprise.Core {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot inherit read-context as an update-context.
+        /// </summary>
+        internal static string ExceptionIncompatiblePersistenceContext {
+            get {
+                return ResourceManager.GetString("ExceptionIncompatiblePersistenceContext", resourceCulture);
+            }
+        }
     }
 }

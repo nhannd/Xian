@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
     /// Base class for <see cref="Entity"/> and <see cref="ValueObject"/>

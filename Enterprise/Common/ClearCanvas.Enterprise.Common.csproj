@@ -40,6 +40,7 @@
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
     <Compile Include="EntityRef.cs" />
+    <Compile Include="EntityRefUtils.cs" />
     <Compile Include="IConfigurationService.cs" />
     <Compile Include="ITimeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
