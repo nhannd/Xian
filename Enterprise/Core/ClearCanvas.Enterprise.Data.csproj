@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{431E9444-9915-4D49-B92D-9B7EC086622A}</ProjectGuid>
+    <ProjectGuid>{76FC3D2A-9C72-4B10-9AFA-A7B1600ECBD9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Enterprise.Core</RootNamespace>
-    <AssemblyName>ClearCanvas.Enterprise.Core</AssemblyName>
+    <RootNamespace>ClearCanvas.Enterprise.Data</RootNamespace>
+    <AssemblyName>ClearCanvas.Enterprise.Data</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,79 +28,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Spring.Aop, Version=2.1.0.2, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Spring.Aop.dll</HintPath>
-    </Reference>
-    <Reference Include="Spring.Core, Version=2.1.0.2, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Spring.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuditAdvice.cs" />
-    <Compile Include="CodedValue.cs" />
-    <Compile Include="CodedValueDictionary.cs" />
-    <Compile Include="ConcurrencyException.cs" />
-    <Compile Include="Core.cs" />
-    <Compile Include="DefaultTransactionRecorder.cs" />
-    <Compile Include="DirtyState.cs" />
-    <Compile Include="DomainObject.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="EntityLoadFlags.cs" />
-    <Compile Include="EntityNotFoundException.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="EntitySearchCriteria.cs" />
-    <Compile Include="EnumTable.cs" />
-    <Compile Include="EnumValue.cs" />
-    <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="ICodedValueBroker.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
-    <Compile Include="IPersistenceBroker.cs" />
-    <Compile Include="IPersistenceContext.cs" />
-    <Compile Include="IPersistentStore.cs" />
-    <Compile Include="IReadContext.cs" />
     <Compile Include="ISearchCondition.cs" />
-    <Compile Include="IServiceLayer.cs" />
-    <Compile Include="IServiceManager.cs" />
-    <Compile Include="ITransactionNotifier.cs" />
-    <Compile Include="ITransactionRecorder.cs" />
-    <Compile Include="IUpdateContext.cs" />
-    <Compile Include="PersistenceContextAdvice.cs" />
     <Compile Include="PersistenceException.cs" />
-    <Compile Include="PersistenceScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadContextAdvice.cs" />
-    <Compile Include="ReadOperationAttribute.cs" />
     <Compile Include="SearchCondition.cs" />
     <Compile Include="SearchConditionBase.cs" />
     <Compile Include="SearchCriteria.cs" />
-    <Compile Include="ServiceImplementationAttribute.cs" />
-    <Compile Include="ServiceLayer.cs" />
-    <Compile Include="ServiceManager.cs" />
-    <Compile Include="ServiceOperationAdvice.cs" />
-    <Compile Include="ServiceOperationAttribute.cs" />
-    <Compile Include="ServiceProvider.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="TransactionNotifier.cs" />
-    <Compile Include="TransactionRecord.cs" />
-    <Compile Include="UpdateContextAdvice.cs" />
-    <Compile Include="UpdateContextSyncMode.cs" />
-    <Compile Include="UpdateOperationAttribute.cs" />
-    <Compile Include="ValueObject.cs" />
     <Compile Include="ValueObjectSearchCriteria.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +65,10 @@
     <ProjectReference Include="..\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
