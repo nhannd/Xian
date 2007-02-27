@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// Used by <see cref="ITransactionNotifier"/> to publish notifications about changes to entities.
     /// </summary>
     public class EntityChangeEventArgs : EventArgs
     {
-        private EntityRefBase _entityRef;
+        private EntityRef _entityRef;
         private EntityChangeType _changeType;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace ClearCanvas.Enterprise
         /// </summary>
         /// <param name="entityRef"></param>
         /// <param name="changeType"></param>
-        internal EntityChangeEventArgs(EntityRefBase entityRef, EntityChangeType changeType)
+        internal EntityChangeEventArgs(EntityRef entityRef, EntityChangeType changeType)
         {
             _entityRef = entityRef;
             _changeType = changeType;
@@ -34,7 +34,7 @@ namespace ClearCanvas.Enterprise
         /// <summary>
         /// Reference to the changed entity
         /// </summary>
-        public EntityRefBase EntityRef
+        public EntityRef EntityRef
         {
             get { return _entityRef; }
         }

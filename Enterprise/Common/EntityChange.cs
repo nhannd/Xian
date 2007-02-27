@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// Used by class <see cref="EntityChange"/> to record the type of change made to an entity.

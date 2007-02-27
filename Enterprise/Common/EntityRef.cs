@@ -1,109 +1,131 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
-    /// This helper class is used internally to aid in creation of generic entity refs
+    /// Abstract base class for <see cref="EntityRef"/>
     /// </summary>
-    internal static class EntityRefFactory
+    [DataContract]
+    public abstract class EntityRef
     {
-        public static EntityRefBase CreateReference(Type entityClass, object oid, int version)
-        {
-            Type typedEntityRef = typeof(EntityRef<>).MakeGenericType(new Type[] { entityClass });
-
-            return (EntityRefBase)Activator.CreateInstance(
-                typedEntityRef,
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-                null,
-                new object[] { oid, version },
-                null);
-        }
-    }
-
-    /// <summary>
-    /// Provides a mechanism to refer to an entity at the enterprise level, independent of any 
-    /// <see cref="IPersistenceContext"/> or instance of <see cref="Entity"/>
-    /// </summary>
-    /// <typeparam name="TEntity">The class of entity this reference refers to</typeparam>
-    [DataContract(Name = "{0}EntityRef")]
-    public class EntityRef<TEntity> : EntityRefBase
-        where TEntity : Entity
-    {
+        private string _entityClass;
+        private object _entityOid;
+        private int _version;
 
         /// <summary>
         /// Deserialization constructor
         /// </summary>
         protected EntityRef()
         {
+
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructs an instance of this class
+        /// </summary>
+        /// <param name="entityType"></param>
+        /// <param name="entityOid"></param>
+        /// <param name="version"></param>
+        protected EntityRef(Type entityType, object entityOid, int version)
+        {
+            _entityClass = entityType.AssemblyQualifiedName;
+            _entityOid = entityOid;
+            _version = version;
+        }
+
+        /// <summary>
+        /// Returns the class of the entity that this reference refers to
+        /// </summary>
+        [DataMember]
+        internal string EntityClass
+        {
+            get { return _entityClass; }
+            private set { _entityClass = value; }
+        }
+
+        /// <summary>
+        /// Returns the OID that this reference refers to
+        /// </summary>
+        [DataMember]
+        internal object EntityOID
+        {
+            get { return _entityOid; }
+            private set { _entityOid = value; }
+        }
+
+        /// <summary>
+        /// Returns the version of the entity that this reference refers to
+        /// </summary>
+        [DataMember]
+        internal int Version
+        {
+            get { return _version; }
+            private set { _version = value; }
+        }
+/*
+        /// <summary>
+        /// Checks whether this reference refers to the specified entity.  The type of the entity is not considered
+        /// in the comparison, but this should not pose a problem assuming OIDs are unique across all entities.
+        /// Note as well that the version is not considered in the comparison.
         /// </summary>
         /// <param name="entity"></param>
-        public EntityRef(TEntity entity)
-            :this(entity.OID, entity.Version)
+        /// <returns>True if this reference refers to the specified entity</returns>
+        public bool RefersTo(Entity entity)
         {
-        }
+            // cannot include the Type in this comparison, because the entity in question may just be a proxy
+            // rather than the real entity, however that shouldn't matter because the parameter is strongly typed
 
-        /// <summary>
-        /// Constructor - internal use
-        /// </summary>
-        /// <param name="oid"></param>
-        /// <param name="version"></param>
-        internal EntityRef(object oid, int version)
-            : base(typeof(TEntity), oid, version)
-        {
+            // also cannot check version here, because if the entity is a proxy, the Version property will not
+            // be initialized
+            return entity != null && entity.OID.Equals(this.EntityOID);
         }
-
+*/        
         /// <summary>
-        /// Cast this entity reference to a reference based on the specified entity class.  The assumption
-        /// is that the specified class is either a superclass or a subclass of the entity class that this reference
-        /// is based on.
+        /// Compares two instances of this class for value-based equality.  If versionStrict is true, the
+        /// version will be considered in the comparison, otherwise it will be ignored.
         /// </summary>
-        /// <param name="entityClass"></param>
+        /// <param name="obj"></param>
+        /// <param name="versionStrict"></param>
         /// <returns></returns>
-        public EntityRefBase Cast(Type entityClass)
+        public bool Equals(object obj, bool versionStrict)
         {
-            return EntityRefFactory.CreateReference(entityClass, this.EntityOID, this.Version);
+            // if null then they can't be equal
+            EntityRef that = obj as EntityRef;
+            if (that == null)
+                return false;
+
+            // compare fields
+            return this._entityOid.Equals(that._entityOid)
+                && this._entityClass.Equals(that._entityClass)
+                && (!versionStrict || this._version.Equals(that._version));
         }
 
         /// <summary>
-        /// Cast this entity reference to a reference based on the specified entity class.  The assumption
-        /// is that the specified class is either a superclass or a subclass of the entity class that this reference
-        /// is based on.
+        /// Compares two instances of this class for value-based equality.  Note that by default,
+        /// the version is not considered in the comparison.  To include version in the comparison,
+        /// call the <see cref="Equals"/> overload that accepts a flag indicating whether to include
+        /// version in the comparison.
         /// </summary>
+        /// <param name="obj"></param>
         /// <returns></returns>
-        public EntityRef<TCast> Cast<TCast>()
-            where TCast : Entity
+        public override bool Equals(object obj)
         {
-            return new EntityRef<TCast>(this.EntityOID, this.Version);
+            return this.Equals(obj, false);
         }
 
         /// <summary>
-        /// Resolves this reference to an entity, given the specified context
+        /// Overridden comply with <see cref="Equals"/>.  Note that the version is not considered
+        /// in the hash-code computation.
         /// </summary>
-        /// <param name="context"></param>
         /// <returns></returns>
-        public TEntity Resolve(IPersistenceContext context)
+        public override int GetHashCode()
         {
-            return (TEntity)context.Load(this);
+            return _entityOid.GetHashCode() ^ _entityClass.GetHashCode();
         }
 
-        /// <summary>
-        /// Resolves this reference to an entity, given the specified context and <see cref="EntityLoadFlags"/>
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
-        public TEntity Resolve(IPersistenceContext context, EntityLoadFlags flags)
-        {
-            return (TEntity)context.Load(this, flags);
-        }
 
         /// <summary>
         /// Provide a string representation of the reference
@@ -112,6 +134,39 @@ namespace ClearCanvas.Enterprise
         public override string ToString()
         {
             return String.Format("Class: {0}, OID: {1}", this.EntityClass.ToString(), this.EntityOID.ToString());
+        }
+        
+        /// <summary>
+        /// Compares instances of this class based on value. Entity type and OID are considered,
+        /// but version is ignored.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static bool operator ==(EntityRef x, EntityRef y)
+        {
+            // check if they are the same instance, or both null
+            if (Object.ReferenceEquals(x, y))
+                return true;
+
+            // if either one is null then they can't be equal
+            if ((x as object) == null || (y as object) == null)
+                return false;
+
+            // compare fields
+            return x.Equals(y);
+        }
+
+        /// <summary>
+        /// Compares instances of this class based on value. Entity type and OID are considered,
+        /// but version is ignored.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static bool operator !=(EntityRef x, EntityRef y)
+        {
+            return !(x == y);
         }
     }
 }
