@@ -44,6 +44,96 @@ namespace ClearCanvas.Dicom
             _characterSetInfo.Add("GB18030", new CharacterSetInfo("GB18030", 54936, "", "", "Chinese (Simplified) Extended"));
         }
 
+        public static string Unparse(string specificCharacterSet, string dataInUnicode)
+        {
+            if ("" == specificCharacterSet)
+                return dataInUnicode;
+
+            // TODO:
+            // Specific Character Set may have up to n values if 
+            // Code Extensions are used. We accomodate for that here
+            // by parsing out all the different possible defined terms.
+            // At this point, however, we're not going to handle escaping
+            // between character sets from different code pages within
+            // a single string. For example, DICOM implies that you should
+            // be able to have JIS-encoded Japanese, ISO European characters,
+            // Thai characters and Korean characters on the same line, using
+            // Code Extensions (escape sequences). (Chinese is not included
+            // since the only support for Chinese is through GB18030 and
+            // UTF-8, both of which do not support Code Extensions.)
+            string[] specificCharacterSetValues = specificCharacterSet.Split('\\');
+            CharacterSetInfo defaultRepertoire = null;
+
+            // set the default repertoire from Value 1 
+            if (specificCharacterSetValues.GetUpperBound(0) >= 0)
+            {
+                if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(specificCharacterSetValues[0]))
+                {
+                    // if the repertoire is either of these special cases, just parse
+                    // and return the result
+                    if ("GB18030" == specificCharacterSetValues[0] || "ISO_IR 192" == specificCharacterSetValues[0])
+                    {
+                        return Encode(dataInUnicode, SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]]);
+                    }
+
+                    defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]];
+                }
+                else
+                {
+                    // we put in the default repertoire. Technically, it may
+                    // not be ISO 2022 IR 6, but ISO_IR 6, but the information
+                    // we want to use is the same
+                    defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"];
+                }
+            }
+
+            // parse out the extension repertoires
+            Dictionary<string, CharacterSetInfo> extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
+            for (int i = 1; i < specificCharacterSetValues.Length; ++i)
+            {
+                string value = specificCharacterSetValues[i];
+
+                if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(value) && !extensionRepertoires.ContainsKey(value))
+                {
+                    // special robustness handling of GB18030 and UTF-8
+                    if ("GB18030" == value || "ISO_IR 192" == value)
+                    {
+                        // these two character sets can't use code extensions, so there should really only be 1
+                        // character set in the repertoire
+                        extensionRepertoires.Clear();
+                        extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase[value]);
+                        break;
+                    }
+
+                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase[value]);
+                }
+                else if (!extensionRepertoires.ContainsKey("ISO 2022 IR 6"))
+                {
+                    // we put in the default repertoire. Technically, it may
+                    // not be ISO 2022 IR 6, but ISO_IR 6, but the information
+                    // we want to use is the same
+                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
+                }
+            }
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Encode(dataInUnicode, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Encode(dataInUnicode, defaultRepertoire);
+            }
+            else
+            {
+                return dataInUnicode;
+            }
+        }
+
         public static string Parse(string specificCharacterSet, string rawData)
         {
             if ("" == specificCharacterSet)
@@ -133,6 +223,13 @@ namespace ClearCanvas.Dicom
                 return rawData;
             }
             
+        }
+
+        private static string Encode(string unicodeData, CharacterSetInfo repertoire)
+        {
+            byte[] rawBytes = Encoding.GetEncoding(repertoire.MicrosoftCodePage).GetBytes(unicodeData);
+            char[] rawCharacters = Encoding.GetEncoding("Windows-1252").GetChars(rawBytes);
+            return new string(rawCharacters);
         }
 
         private static string Decode(string rawData, CharacterSetInfo repertoire)
