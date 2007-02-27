@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Shreds
         void SetComponent(DiskspaceManagementComponent component);
         DMStudyItemList OrderedStudyList { get; set;}
         bool IsProcessing { get; set;}
-        event EventHandler OrderedStudyListReadyEvent;
+        event EventHandler DeleteStudyInDBRequiredEvent;
         event EventHandler OrderedStudyListRequiredEvent;
 
     }
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Shreds
             _dataStoreDrives = new string[] { "C:" };
             _highWatermark = 40;
             _lowWatermark = 30;
-            _markDifference = 5;
+            _watermarkMinDifference = 5;
         }
 
         public override void Start()
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Shreds
         private DMStudyItemList _orderedStudyList;
         private string [] _dataStoreDrives;
         private bool _isProcessing;
-        private readonly long _markDifference;
+        private readonly long _watermarkMinDifference;
         private decimal _highWatermark;
         private decimal _lowWatermark;
         private long _usedSpace;
@@ -70,6 +70,8 @@ namespace ClearCanvas.ImageViewer.Shreds
 
         private event EventHandler _orderedStudyListReadyEvent;
         private event EventHandler _orderedStudyListRequiredEvent;
+        private event EventHandler _deleteStudyInDBCompletedEvent;
+        private event EventHandler _deleteStudyInDBRequiredEvent;
 
         public DMStudyItemList OrderedStudyList
         {
@@ -92,13 +94,13 @@ namespace ClearCanvas.ImageViewer.Shreds
         public decimal HighWatermark
         {
             get { return _highWatermark; }
-            set { _highWatermark = value >= _lowWatermark + _markDifference ? value : _lowWatermark + _markDifference; }
+            set { _highWatermark = value >= _lowWatermark + _watermarkMinDifference ? value : _lowWatermark + _watermarkMinDifference; }
         }
 
         public decimal LowWatermark
         {
             get { return _lowWatermark; }
-            set { _lowWatermark = value <= _highWatermark - _markDifference ? value : _highWatermark - _markDifference; }
+            set { _lowWatermark = value <= _highWatermark - _watermarkMinDifference ? value : _highWatermark - _watermarkMinDifference; }
         }
 
         public long UsedSpace
@@ -127,6 +129,18 @@ namespace ClearCanvas.ImageViewer.Shreds
             remove { _orderedStudyListRequiredEvent -= value; }
         }
 
+        public event EventHandler DeleteStudyInDBCompletedEvent
+        {
+            add { _deleteStudyInDBCompletedEvent += value; }
+            remove { _deleteStudyInDBCompletedEvent -= value; }
+        }
+
+        public event EventHandler DeleteStudyInDBRequiredEvent
+        {
+            add { _deleteStudyInDBRequiredEvent += value; }
+            remove { _deleteStudyInDBRequiredEvent -= value; }
+        }
+
         public void FireOrderedStudyListReady()
         {
             EventsHelper.Fire(_orderedStudyListReadyEvent, this, EventArgs.Empty);
@@ -136,6 +150,17 @@ namespace ClearCanvas.ImageViewer.Shreds
         {
             EventsHelper.Fire(_orderedStudyListRequiredEvent, this, EventArgs.Empty);
         }
+
+        public void FireDeleteStudyInDBCompleted()
+        {
+            EventsHelper.Fire(_deleteStudyInDBCompletedEvent, this, EventArgs.Empty);
+        }
+
+        public void FireDeleteStudyInDBRequired()
+        {
+            EventsHelper.Fire(_deleteStudyInDBRequiredEvent, this, EventArgs.Empty);
+        }
+
     }
 
     public class DMStudyItemList : List<DMStudyItem>

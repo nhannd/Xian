@@ -17,7 +17,7 @@ using NHibernate.Expression;
 namespace ClearCanvas.ImageViewer.Shreds
 {
     [ExtensionPoint]
-    public class RetrieveStudyListExtensionPoint : ExtensionPoint<IDiskspaceManagement>
+    public class StudyDataAccessExtensionPoint : ExtensionPoint<IDiskspaceManagement>
     {
     }
 
@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Shreds
         {
             _component = component;
             OrderedStudyListRequiredEvent += RetrieveStudyHandler;
+            DeleteStudyInDBRequiredEvent += DeleteStudyInDBHandler;
         }
 
         public DMStudyItemList OrderedStudyList
@@ -53,10 +54,10 @@ namespace ClearCanvas.ImageViewer.Shreds
             set { _component.IsProcessing = value; }
         }
 
-        public event EventHandler OrderedStudyListReadyEvent
+        public event EventHandler DeleteStudyInDBRequiredEvent
         {
-            add { _component.OrderedStudyListReadyEvent += value; }
-            remove { _component.OrderedStudyListReadyEvent -= value; }
+            add { _component.DeleteStudyInDBRequiredEvent += value; }
+            remove { _component.DeleteStudyInDBRequiredEvent -= value; }
         }
 
         public event EventHandler OrderedStudyListRequiredEvent
@@ -65,9 +66,8 @@ namespace ClearCanvas.ImageViewer.Shreds
             remove { _component.OrderedStudyListRequiredEvent -= value; }
         }
 
-        public void FireOrderedStudyListReady()
+        public virtual void DeleteStudyInDBHandler(object sender, EventArgs args)
         {
-            _component.FireOrderedStudyListReady();
         }
 
         public virtual void RetrieveStudyHandler(object sender, EventArgs args)
@@ -77,25 +77,61 @@ namespace ClearCanvas.ImageViewer.Shreds
         #endregion
     }
 
-    [ExtensionOf(typeof(RetrieveStudyListExtensionPoint))]
-    public class RetrieveStudyList : DiskspaceManagement
+    [ExtensionOf(typeof(StudyDataAccessExtensionPoint))]
+    public class StudyDataAccess : DiskspaceManagement
     {
-        public RetrieveStudyList() 
+        public StudyDataAccess() 
         {
+        }
+
+        public override void DeleteStudyInDBHandler(object sender, EventArgs args)
+        {
+            DeleteStudyInDB();
+            _component.FireDeleteStudyInDBCompleted();
+        }
+
+        public void DeleteStudyInDB()
+        {
+            int deletedNumber = 0;
+            foreach (DMStudyItem studyItem in _component.OrderedStudyList)
+            {
+                if (!studyItem.Status.Equals(DiskspaceManagementStatus.ExistsOnLocalDrive))
+                    continue;
+                IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyItem.StudyInstanceUID));
+                try
+                {
+                    DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
+                    deletedNumber += 1;
+                    studyItem.Status = DiskspaceManagementStatus.DeletedFromDatabase;
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(e, LogLevel.Error);
+                }
+            }
+            Platform.Log("    Studies deleted in DB: " + deletedNumber);
+            return;
         }
 
         public override void RetrieveStudyHandler(object sender, EventArgs args)
         {
-            RetrieveOrderedStudy();
-            FireOrderedStudyListReady();
+            if(RetrieveOrderedStudy())
+                _component.FireOrderedStudyListReady();
         }
 
-        public void RetrieveOrderedStudy()
+        public bool RetrieveOrderedStudy()
         {
             _component.OrderedStudyList = new DMStudyItemList();
 
             ReadOnlyQueryResultCollection studyResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(new QueryKey());
-            
+
+            if (studyResults == null || studyResults.Count <= 0)
+            {
+                Platform.Log("    There is not any study in DataStore.");
+                _component.IsProcessing = false;
+                return false;
+            }
+
             foreach (QueryResult studyResult in studyResults)
             {
                 DMStudyItem studyItem = new DMStudyItem();
@@ -108,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Shreds
                 {
                     DMSopItem sopItem = new DMSopItem();
                     sopItem.SopInstanceUID = sop.GetSopInstanceUid();
-                    sopItem.LocationUri = sop.GetLocationUri();
+                    sopItem.LocationUri = sop.GetLocationUri().LocalDiskPath;
                     studyItem.SopItemList.Add(sopItem);
                 }
                 studyItem.Status = DiskspaceManagementStatus.ExistsInDatabase;
@@ -117,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Shreds
             _component.OrderedStudyList.Sort(delegate(DMStudyItem s1, DMStudyItem s2)
             { return s1.CreatedTimeStamp.CompareTo(s2.CreatedTimeStamp); });
             
-            return;
+            return true;
         }
 
         #region Fields

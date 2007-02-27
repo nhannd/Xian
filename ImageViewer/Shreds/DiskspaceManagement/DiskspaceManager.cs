@@ -15,16 +15,13 @@ namespace ClearCanvas.ImageViewer.Shreds
         public DiskspaceManager()
         {
             _className = this.GetType().ToString();
-            _serviceEndPointName = "DiskspaceManager";
-            _deletedFileSpace = 0;
-
         }
 
         public override void Start()
         {
             _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
             _component = new DiskspaceManagementComponent();
-            if (!FindRetrieveStudyListExtensionPoint())
+            if (!FindStudyDataAccessExtensionPoint())
                 return;
 
             Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
@@ -46,7 +43,8 @@ namespace ClearCanvas.ImageViewer.Shreds
 
         public override void Stop()
         {
-            _component.OrderedStudyListReadyEvent -= DeleteStudyHandler;
+            _component.DeleteStudyInDBCompletedEvent -= DeleteStudyHandler;
+            _component.OrderedStudyListReadyEvent -= ValidateStudyHandler;
             _stopSignal.Set();
             Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: ... Stop invoked");
         }
@@ -63,7 +61,8 @@ namespace ClearCanvas.ImageViewer.Shreds
 
         private void StartDiskspaceManager()
         {
-            _component.OrderedStudyListReadyEvent += DeleteStudyHandler;
+            _component.OrderedStudyListReadyEvent += ValidateStudyHandler;
+            _component.DeleteStudyInDBCompletedEvent += DeleteStudyHandler;
             while (!_stopSignal.WaitOne(6000, true))
             {
                 if (_component.IsProcessing)
@@ -71,6 +70,8 @@ namespace ClearCanvas.ImageViewer.Shreds
                 GetDiskSpace();
                 if (ReachHighWaterMark)
                 {
+                    _deletedFileSpace = 0;
+                    _deletedStudyNumber = 0;
                     _component.IsProcessing = true;
                     _component.FireOrderedStudyListRequired();
                 }
@@ -88,27 +89,81 @@ namespace ClearCanvas.ImageViewer.Shreds
             _component.DriveSize = long.Parse(drive["Size"].ToString());
             _component.UsedSpace = _component.DriveSize - long.Parse(drive["FreeSpace"].ToString());
             Platform.Log("==========================================");
-            Platform.Log("        " + DateTime.Now.ToString() + " > Drive (" + DriveName + ") : " + _component.UsedSpace + "/" + _component.DriveSize
-                + " (" + UsedSpacePercentage + "%)");
+            Platform.Log("    Checking diskspace on drive (" + DriveName + ") : " + _component.UsedSpace + "/" + _component.DriveSize
+                + " (" + UsedSpacePercentage + "%) (Watermark: " + _component.LowWatermark + " ~ " + _component.HighWatermark + ")");
 
         }
 
         private void DeleteStudyHandler(object sender, EventArgs args)
         {
-
-            ValidateOrderedStudyList();
+            DeleteStudyOnLocalDrive();
             _component.IsProcessing = false;
+        }
+
+        private void ValidateStudyHandler(object sender, EventArgs args)
+        {
+            ValidateOrderedStudyList();
+            _component.FireDeleteStudyInDBRequired();
+        }
+
+        private void DeleteStudyOnLocalDrive()
+        {
+            int deletedNumber = 0;
+            long deletedSpace = 0;
+            string fileName = "";
+            foreach (DMStudyItem studyItem in _component.OrderedStudyList)
+            {
+                if (!studyItem.Status.Equals(DiskspaceManagementStatus.DeletedFromDatabase))
+                    continue;
+                bool isSuccessful = true;
+                foreach (DMSopItem sopItem in studyItem.SopItemList)
+                {
+                    try
+                    {
+                        fileName = sopItem.LocationUri;
+                        if (!File.Exists(fileName))
+                        {
+                            Platform.Log("    Studies deleted on disk warning: file does not exist (" + fileName + ")");
+                        }
+                        else 
+                            File.Delete(fileName);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(e, LogLevel.Error);
+                        isSuccessful = false;
+                    }
+                }
+                if (isSuccessful)
+                {
+                    string studyFolder = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
+                    if (Directory.Exists(studyFolder))
+                    {
+                        DirectoryInfo dinfo = new DirectoryInfo(studyFolder);
+                        if (dinfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
+                            Directory.Delete(studyFolder, true);
+                    }
+                    deletedNumber += 1;
+                    deletedSpace += studyItem.UsedSpace;
+                    studyItem.Status = DiskspaceManagementStatus.DeletedFromLocalDrive;
+                    Platform.Log("    Studies deleted on disk " + deletedNumber + ") DicomFiles: " + studyItem.SopItemList.Count + "; UsedSpace: " + studyItem.UsedSpace + "; A#: " + studyItem.AccessionNumber + "; StudyUID: " + studyItem.StudyInstanceUID);
+                }
+            }
+            Platform.Log("    Total studies deleted on disk: " + deletedNumber + "; Deleted Space: " + deletedSpace);
         }
 
         private void ValidateOrderedStudyList()
         {
-
             foreach (DMStudyItem studyItem in _component.OrderedStudyList)
             {
                 CheckStudyItem(studyItem);
                 Platform.Log("    A#: " + studyItem.AccessionNumber + "; UsedSpace: " + studyItem.UsedSpace + "; CreatedTimeStamp: " + studyItem.CreatedTimeStamp
-                    + "; Status: " + studyItem.Status + "; DICOMFiles: " + studyItem.SopItemList.Count + "; StudyInstanceUID: " + studyItem.StudyInstanceUID);
+                    + "; DICOMFiles: " + studyItem.SopItemList.Count + "; StudyInstanceUID: " + studyItem.StudyInstanceUID);
+                if (EnoughDeletedFiles)
+                    break;
             }
+            Platform.Log("    Validation for DeletedSpace: " + _deletedFileSpace + "; DeletedStudies: " + _deletedStudyNumber);
+            return;
         }
 
         private void CheckStudyItem(DMStudyItem studyItem)
@@ -116,28 +171,29 @@ namespace ClearCanvas.ImageViewer.Shreds
             long usedspace = 0;
             foreach (DMSopItem sopItem in studyItem.SopItemList)
             {
-                string locationUri = sopItem.LocationUri.Replace("file://localhost/", "");
-                if (!locationUri.StartsWith(_component.DataStoreDrives[0]) || !File.Exists(locationUri))
+                if (!sopItem.LocationUri.StartsWith(_component.DataStoreDrives[0]) || !File.Exists(sopItem.LocationUri))
                     return;
-                FileInfo dfile = new FileInfo(locationUri);
+                FileInfo dfile = new FileInfo(sopItem.LocationUri);
                 usedspace += dfile.Length;
                 //Platform.Log("        " + sopItem.LocationUri + " (" + dfile.Length + " bytes, " + sopItem.SopInstanceUID + ")");
             }
             studyItem.UsedSpace = usedspace;
+            _deletedFileSpace += usedspace;
+            _deletedStudyNumber += 1;
             studyItem.Status = DiskspaceManagementStatus.ExistsOnLocalDrive;
             return;
         }
 
-        private bool FindRetrieveStudyListExtensionPoint()
+        private bool FindStudyDataAccessExtensionPoint()
         {
-            RetrieveStudyListExtensionPoint xp = new RetrieveStudyListExtensionPoint();
+            StudyDataAccessExtensionPoint xp = new StudyDataAccessExtensionPoint();
             object[] dmObjects = xp.CreateExtensions(); // ListExtensions(); // .CreateExtensions();
             foreach (object dmObject in dmObjects)
             {
-                if (dmObject is RetrieveStudyList)
+                if (dmObject is StudyDataAccess)
                 {
-                    RetrieveStudyList retrieveStudyList = (RetrieveStudyList)dmObject;
-                    retrieveStudyList.SetComponent(_component);
+                    StudyDataAccess studyDataAccess = (StudyDataAccess)dmObject;
+                    studyDataAccess.SetComponent(_component);
                     return true;
                 }
             }
@@ -149,9 +205,9 @@ namespace ClearCanvas.ImageViewer.Shreds
         private EventWaitHandle _stopSignal;
         private DiskspaceManagementComponent _component;
         private readonly string _className;
-        private readonly string _serviceEndPointName;
         private string _driveName;
         private long _deletedFileSpace;
+        private int _deletedStudyNumber;
 
         public string DriveName
         {
