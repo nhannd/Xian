@@ -5,7 +5,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public abstract class WorkflowFolderSystem<TItem> : IDisposable
     {

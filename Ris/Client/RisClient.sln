@@ -15,10 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Extensi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.View.WinForms", "..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj", "{BB434EC3-A580-4744-A635-A2B4029C66DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Common", "Common\ClearCanvas.Ris.Client.Common.csproj", "{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Common.View.WinForms", "Common\View\WinForms\ClearCanvas.Ris.Client.Common.View.WinForms.csproj", "{7932D8CA-34CF-47E6-A425-9B8DA4F60341}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Admin", "Admin\ClearCanvas.Ris.Client.Admin.csproj", "{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Admin.View.WinForms", "Admin\View\WinForms\ClearCanvas.Ris.Client.Admin.View.WinForms.csproj", "{B15108DE-ED83-4385-9E79-01D3DC8B0AE6}"
@@ -34,6 +30,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Reporting", "Reporting\ClearCanvas.Ris.Client.Reporting.csproj", "{EB579705-2821-45B8-AE5E-EE397BE73ED9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Reporting.View.WinForms", "Reporting\View\WinForms\ClearCanvas.Ris.Client.Reporting.View.WinForms.csproj", "{5F4CE71B-C674-415C-BD56-7A955E40F309}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client", "ClearCanvas.Ris.Client.csproj", "{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.View.WinForms", "View\WinForms\ClearCanvas.Ris.Client.View.WinForms.csproj", "{7932D8CA-34CF-47E6-A425-9B8DA4F60341}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,14 +69,6 @@ Global
 		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB434EC3-A580-4744-A635-A2B4029C66DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -109,6 +101,14 @@ Global
 		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7932D8CA-34CF-47E6-A425-9B8DA4F60341}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,7 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="ContactPersonEditorComponent"/>

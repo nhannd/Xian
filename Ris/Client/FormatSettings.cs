@@ -1,7 +1,7 @@
 using System;
 using System.Configuration;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
 
     [SettingsGroupDescriptionAttribute("Settings that control the client display format of data entry fields")]

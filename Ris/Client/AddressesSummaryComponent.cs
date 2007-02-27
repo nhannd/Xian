@@ -12,7 +12,7 @@ using ClearCanvas.Ris.Services;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public class AddressesSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {

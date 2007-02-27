@@ -1,4 +1,4 @@
-namespace ClearCanvas.Ris.Client.Common.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     partial class PhoneNumberEditorControl
     {

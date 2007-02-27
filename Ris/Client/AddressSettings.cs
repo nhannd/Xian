@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// TODO this stuff should be moved into dictionaries, not settings

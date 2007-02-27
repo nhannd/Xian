@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public delegate IList<U> PageSearchDelegate<U>(SearchCriteria criteria, SearchResultPage page);
 

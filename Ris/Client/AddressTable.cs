@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Services;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public class AddressTable : Table<Address>
     {

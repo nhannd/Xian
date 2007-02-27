@@ -9,7 +9,7 @@ using System.Collections;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public interface IFolder
     {

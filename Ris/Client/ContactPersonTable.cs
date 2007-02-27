@@ -6,7 +6,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Enterprise;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     class ContactPersonTable : Table<ContactPerson>
     {

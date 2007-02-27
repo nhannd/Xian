@@ -3,7 +3,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Provides a consistent time to the application from the enterprise datasource specified in the nHibernate configuration

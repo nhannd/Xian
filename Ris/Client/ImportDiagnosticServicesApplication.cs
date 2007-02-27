@@ -7,7 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Services;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class ImportDiagnosticServicesApplication : IApplicationRoot

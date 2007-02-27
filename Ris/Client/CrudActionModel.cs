@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public class CrudActionModel : SimpleActionModel
     {

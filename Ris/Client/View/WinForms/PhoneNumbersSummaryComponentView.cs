@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Common.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     [ExtensionOf(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
     public class PhoneNumbersSummaryComponentView : WinFormsView, IApplicationComponentView

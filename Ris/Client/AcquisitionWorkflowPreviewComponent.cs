@@ -10,7 +10,7 @@ using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Services;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="AcquisitionWorkflowPreviewComponent"/>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using ClearCanvas.Enterprise;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public delegate void QueryEventHandler();
 

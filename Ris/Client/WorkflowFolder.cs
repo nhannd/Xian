@@ -6,7 +6,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Common
+namespace ClearCanvas.Ris.Client
 {
     public abstract class WorkflowFolder<TItem> : Folder
     {
