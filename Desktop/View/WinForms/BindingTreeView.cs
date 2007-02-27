@@ -316,6 +316,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             base.OnDragDrop(e);
         }
 
+        protected override void OnDragLeave(EventArgs e)
+        {
+            // is there a current drop-target node?
+            if (_dropTargetNode != null)
+            {
+                // remove highlighting from drop target node
+                HighlightNode(_dropTargetNode, false);
+            }
+
+            // clear the drop target node
+            _dropTargetNode = null;
+            _dropEffect = DragDropEffects.None;
+
+            base.OnDragLeave(e);
+        }
+
         /// <summary>
         /// Highlights or un-highlights the specified node, without altering the current selection
         /// </summary>
