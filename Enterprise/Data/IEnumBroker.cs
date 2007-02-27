@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     /// <summary>
     /// Defines the interface for a broker that returns a list of <see cref="EnumValue"/> that contain
