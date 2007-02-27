@@ -14,6 +14,7 @@
     <property name="StudyDescription" column="StudyDescription_" type="string" length="64" />
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
     <property name="ProcedureCodeSequenceCodeValue" column="ProcedureCodeSequenceCodeValue_" type="string" length="16" />
+    <property name="StoreTime" column="StoreTime_" type="DateTime" />
     <component name="PatientsName" class="ClearCanvas.Dicom.PersonName, ClearCanvas.Dicom"> <!-- class attribute optional -->
       <property name="InternalPersonName" column="PatientsName_" type="string" length="256" />
     </component>

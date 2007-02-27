@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -151,6 +152,8 @@ namespace ClearCanvas.Dicom.DataStore
             cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
             if (cond.good())
                 study.SpecificCharacterSet = stringValue.ToString();
+
+            study.StoreTime = Platform.Time;
 
             return study;
         }

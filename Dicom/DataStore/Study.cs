@@ -103,6 +103,12 @@ namespace ClearCanvas.Dicom.DataStore
             set { _specificCharacterSet = value; }
         }
 
+        public virtual DateTime StoreTime
+        {
+            get { return _storeTime; }
+            set { _storeTime = value; }
+        }
+
         protected virtual ISet InternalSeries
         {
             get { return _internalSeries; }
@@ -156,6 +162,7 @@ namespace ClearCanvas.Dicom.DataStore
         string _studyInstanceUid;
         string _studyDescription;
         string _specificCharacterSet;
+        DateTime _storeTime;
         string _procedureCodeSequenceCodeValue;
         PatientId _patientId;
         PersonName _patientsName;
