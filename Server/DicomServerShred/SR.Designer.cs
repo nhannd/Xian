@@ -59,5 +59,18 @@ namespace ClearCanvas.Server.DicomServerShred {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Name: {0}
+        ///AE Title: {1}
+        ///Host: {2}
+        ///Listening Port: {3}
+        ///Location: {4}.
+        /// </summary>
+        internal static string FormatTooltipServerDetails {
+            get {
+                return ResourceManager.GetString("FormatTooltipServerDetails", resourceCulture);
+            }
+        }
     }
 }

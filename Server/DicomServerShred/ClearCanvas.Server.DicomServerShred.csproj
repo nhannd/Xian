@@ -44,17 +44,40 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dicom\bin\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="ClearCanvas.Dicom.Services, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dicom\Services\bin\Debug\ClearCanvas.Dicom.Services.dll</HintPath>
+    </Reference>
     <Reference Include="ClearCanvas.Server.ShredHost, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ShredHost\bin\Debug\ClearCanvas.Server.ShredHost.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate, Version=1.0.3.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomServer.cs" />
+    <Compile Include="DicomServerBase.cs" />
+    <Compile Include="DicomServerGroup.cs" />
+    <Compile Include="DicomServerSetting.cs" />
+    <Compile Include="DicomServerTree.cs" />
+    <Compile Include="IDicomServerShredInterface.cs" />
+    <Compile Include="DicomServerShredServiceType.cs" />
+    <Compile Include="DicomSessionObjects.cs" />
+    <Compile Include="DicomServerEventManager.cs" />
     <Compile Include="DicomServerShredExtension.cs" />
+    <Compile Include="Parcel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SendParcel.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
