@@ -3,8 +3,8 @@ using System.Collections;
 using System.Text;
 
 using Iesi.Collections;
-using ClearCanvas.Enterprise;
-using <%= @namespace %>.Brokers;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Data;
 
 
 namespace <%= @namespace %> {
@@ -13,36 +13,11 @@ namespace <%= @namespace %> {
     /// Abstract base class for service layers that make use of this domain model.
     /// This file is machine generated - changes will be lost.
     /// </summary>
-	public abstract partial class <%= shortName %>ServiceLayer : ServiceLayer
+	public abstract partial class <%= shortName %>ServiceLayer : I<%= shortName %>ServiceLayer
 	{
-	
-		<% @entityDefs.each do |e| %>
-		/// <summary>
-		/// Provides notification when a <see cref="<%= e.className %>"/> entity changes.  This
-		/// is actually just a convenience method that allows a client to hook into notifications
-		/// from the transaction monitor associated with the session.  If you subscribe to this event,
-		/// it is extremely important to explicitly unsubscribe.
-		/// </summary>
-		public event EventHandler<EntityChangeEventArgs> <%= e.className %>Changed
+		protected IPersistenceContext CurrentContext
 		{
-			add { Core.TransactionNotifier.Subscribe(typeof(<%= e.className %>), value); }
-			remove { Core.TransactionNotifier.Unsubscribe(typeof(<%= e.className %>), value); }
-		}
-	  	<% end %>
-	
-	
-		<% @enumDefs.each do |e| %>
-		/// <summary>
-		/// Returns the <see cref="<%= e.enumName %>"/> enum table
-		/// </summary>
-        [ReadOperation]
-        public <%= e.className %>Table Get<%= e.className %>Table()
-        {
-            return new <%= e.className %>Table( /*this.CurrentContext.GetBroker<I<%= e.className %>Broker>().Load()*/ );
-        }
-	  	<% end %>
-	  	
-	  	
-	  	
+			get { return PersistenceScope.Current; }
+		}	  	
 	}
 }

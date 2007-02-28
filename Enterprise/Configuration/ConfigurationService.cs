@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Configuration.Brokers;
+using ClearCanvas.Enterprise.Data;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Configuration
 {

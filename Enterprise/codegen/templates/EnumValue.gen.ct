@@ -1,14 +1,14 @@
+// This file is machine generated - changes will be lost.
 using System;
 using System.Collections;
 using System.Text;
 
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 
 
 namespace <%= @model.namespace %> {
     /// <summary>
     /// <%= @className %> wrapper for <see cref="<%= enumName %>"/>
-    /// This file is machine generated - changes will be lost.
     /// </summary>
     public class <%= @className %> : EnumValue<<%= @enumName %>>
     {

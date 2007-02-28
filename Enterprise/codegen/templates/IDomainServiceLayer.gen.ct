@@ -3,8 +3,8 @@ using System.Collections;
 using System.Text;
 
 using Iesi.Collections;
-using ClearCanvas.Enterprise;
-using <%= @namespace %>.Brokers;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Data;
 
 
 namespace <%= @namespace %> {
@@ -15,22 +15,6 @@ namespace <%= @namespace %> {
     /// </summary>
 	public partial interface I<%= shortName %>ServiceLayer : IServiceLayer
 	{
-		<% @entityDefs.each do |e| %>
-		/// <summary>
-		/// Provides notification when a <see cref="<%= e.className %>"/> entity changes.  This
-		/// is actually just a convenience method that allows a client to hook into notifications
-		/// from the transaction monitor associated with the session.  If you subscribe to this event,
-		/// it is extremely important to explicitly unsubscribe.
-		/// </summary>
-		event EventHandler<EntityChangeEventArgs> <%= e.className %>Changed;
-	  	<% end %>
-	
-		<% @enumDefs.each do |e| %>
-		/// <summary>
-		/// Returns the <see cref="<%= e.enumName %>"/> enum table
-		/// </summary>
-	        <%= e.className %>Table Get<%= e.className %>Table();
-	  	<% end %>
-  	
+ 	
 	}
 }

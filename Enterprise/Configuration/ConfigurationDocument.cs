@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Iesi.Collections;
-using ClearCanvas.Enterprise;
-using System.Xml;
-using System.IO;
+using ClearCanvas.Enterprise.Core;
 
 
 namespace ClearCanvas.Enterprise.Configuration {

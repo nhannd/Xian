@@ -1,14 +1,15 @@
+// This file is machine generated - changes will be lost.
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Data;
 
 namespace <%= model.namespace %> {
 
     /// <summary>
     /// Search criteria for <see cref="<%= className %>"/> entity
-    /// This file is machine generated - changes will be lost.
     /// </summary>
 	public partial class <%= searchCriteriaClassName %> : <%= superClass  ? superClass.searchCriteriaClassName : superClassName + "SearchCriteria" %>
 	{
@@ -31,10 +32,10 @@ namespace <%= model.namespace %> {
 		/// <summary>
 		/// Constructor to search by EntityRef
 		/// </summary>
-		public <%= searchCriteriaClassName %>(EntityRef<<%= className %>> entityRef)
+		public <%= searchCriteriaClassName %>(EntityRef entityRef)
 		{
 			this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-			((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityUtils.GetOID(entityRef));
+			((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityRefUtils.GetOID(entityRef));
 		}
 		<% end %>
 	

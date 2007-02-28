@@ -5,6 +5,8 @@ using System.Text;
 using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Data;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
@@ -19,7 +21,7 @@ namespace ClearCanvas.Enterprise.Configuration
 
         public ConfigurationStore()
         {
-            _service = ApplicationContext.GetService<IConfigurationService>();
+            _service = Platform.GetService<IConfigurationService>();
         }
 
         #region IEnterpriseConfigurationStore Members
