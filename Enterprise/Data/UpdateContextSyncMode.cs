@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     /// <summary>
     /// Specifies possible synchronization modes for a <see cref="IUpdateContext"/>

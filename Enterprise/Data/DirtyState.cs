@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     /// <summary>
     /// Used by <see cref="IUpdateContext.Lock"/> to indicate whether an entity should be considered clean or dirty.

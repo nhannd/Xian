@@ -5,7 +5,7 @@ using System.Text;
 using Spring.Aop;
 using Spring.Aop.Advice;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     /// <summary>
     /// Advises the session's transaction monitor to post the pending entity change notifications

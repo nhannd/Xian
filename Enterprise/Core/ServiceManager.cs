@@ -8,7 +8,7 @@ using Spring.Aop.Framework;
 using Spring.Aop.Support;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
     /// Defines the extension point for all service layer implementations
@@ -68,27 +68,9 @@ namespace ClearCanvas.Enterprise
             ServiceLayerExtensionPoint xp = new ServiceLayerExtensionPoint();
             object service = xp.CreateExtension(new TypeExtensionFilter(serviceContract));
 
-            // TODO this should all be optimized - we probably don't need to be creating all of these Spring.NET
-            // objects from scratch each time, but need to look into that
-            // in any case I don't think they are very expensive to create
-            IAdvisor auditAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ServiceOperationAttribute), true), new AuditAdvice());
-            IAdvisor readContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ReadOperationAttribute), true), new ReadContextAdvice());
-            IAdvisor updateContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new UpdateContextAdvice());
-            IAdvisor transactionMonitorAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new TransactionMonitorAdvice());
-
             ProxyFactory factory = new ProxyFactory(service);
 
-            // transaction monitor advice should occur outside of audit advice
-            // NB. not currently in use - notification is managed by the persistence context
-            //factory.AddAdvisor(transactionMonitorAdvisor);
-
-            // order of read/update context advice does not matter, because they are mutually exclusive
-            // (only one or the other will ever be invoked)
-            factory.AddAdvisor(readContextAdvisor);
-            factory.AddAdvisor(updateContextAdvisor);
-
-            // must add audit advice inside of context advice, because it requires a persistence context to work
-            factory.AddAdvisor(auditAdvisor);
+            // TODO add advisors
 
             _proxyFactoryCache.Add(serviceContract, factory);
         }

@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 using AopAlliance.Intercept;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     public abstract class PersistenceContextAdvice : ServiceOperationAdvice, IMethodInterceptor
     {

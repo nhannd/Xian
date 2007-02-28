@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     public class DefaultTransactionRecorder : ITransactionRecorder
     {

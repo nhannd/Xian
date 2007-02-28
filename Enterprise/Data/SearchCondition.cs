@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     /// <summary>
     /// Provides a basic implementation of <see cref="ISearchCondition"/>.  See <see cref="SearchCriteria"/> for 

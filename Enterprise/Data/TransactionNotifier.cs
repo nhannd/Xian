@@ -4,8 +4,9 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     /// <summary>
     /// A simple implementation of ITransactionMonitor.  In reality, ITransactionMonitor should be implemented
@@ -65,8 +66,8 @@ namespace ClearCanvas.Enterprise
                 if (eventKeyClass.IsAssignableFrom(change.EntityClass))
                 {
                     // create an entity ref based on the eventKeyClass, regardless of the actual entity class
-                    EntityRefBase entityRef = EntityRefFactory.CreateReference(eventKeyClass, change.EntityOID, change.Version);
-                    EventsHelper.Fire(_eventMap[change.EntityClass], null, new EntityChangeEventArgs(entityRef, change.ChangeType));
+                    //EntityRefBase entityRef = EntityRefFactory.CreateReference(eventKeyClass, change.EntityOID, change.Version);
+                    //EventsHelper.Fire(_eventMap[change.EntityClass], null, new EntityChangeEventArgs(entityRef, change.ChangeType));
                 }
             }
         }

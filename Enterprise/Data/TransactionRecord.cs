@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Data
 {
     public class TransactionRecord : Entity
     {

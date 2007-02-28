@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
     /// Allows meta-data to be specified for each member of a C# enum.

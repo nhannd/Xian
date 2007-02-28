@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
     /// Abstract base class for all entities in the domain model.
@@ -20,7 +20,6 @@ namespace ClearCanvas.Enterprise
         /// object in the database.  This property is public for compatibility with NHibernate proxies.  It should
         /// not be used by application code.
         /// </summary>
-        [DataMember]
         public virtual object OID
         {
             get { return _oid; }
@@ -31,7 +30,6 @@ namespace ClearCanvas.Enterprise
         /// Keeps track of the object version for optimistic concurrency.  This property is public for compatibility
         /// with NHibernate proxies.  It should not be used by application code.
         /// </summary>
-        [DataMember]
         public virtual int Version
         {
             get { return _version; }
