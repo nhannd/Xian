@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Holds meta-data for a domain enumeration.  The table holds a set of <see cref="EnumValue"/> instances

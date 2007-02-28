@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Base interface for all persistence broker interfaces.  This interface is not implemented directly.

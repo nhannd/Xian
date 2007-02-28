@@ -5,37 +5,30 @@ using System.Text;
 using Spring.Aop;
 using AopAlliance.Intercept;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
-    public class UpdateContextAdvice : PersistenceContextAdvice
+    public class ReadContextAdvice : PersistenceContextAdvice
     {
-        internal UpdateContextAdvice()
+        internal ReadContextAdvice()
         {
         }
 
         public override object Invoke(IMethodInvocation invocation)
         {
             ServiceLayer serviceLayer = (ServiceLayer)invocation.This;
-            object retval = null;
-
             try
             {
                 ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
-                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, a.PersistenceScopeOption))
+                using (new PersistenceScope(PersistenceContextType.Read, a.PersistenceScopeOption))
                 {
-                    // set the current context of the service layer
+                    // set the read context as the current context of the service layer
                     serviceLayer.CurrentContext = PersistenceScope.Current;
-                    retval = invocation.Proceed();
-                    
-                    // auto-commit transaction
-                    scope.Complete();
+                    return invocation.Proceed();
                 }
-
-                return retval;
             }
             finally
             {
-                // be sure to remove the context from the service layer
+                // be sure to remove the current context from the service layer
                 serviceLayer.CurrentContext = null;
             }
         }

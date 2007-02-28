@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
-using ClearCanvas.Enterprise.Common;
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Base interface for a persistence context.  A persistence context is an implementation of the unit-of-work
@@ -42,7 +41,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        Entity Load(EntityRef entityRef);
+        Entity Load(EntityRefBase entityRef);
 
         /// <summary>
         /// Loads the specified entity into this context
@@ -50,7 +49,7 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="entityRef"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        Entity Load(EntityRef entityRef, EntityLoadFlags flags);
+        Entity Load(EntityRefBase entityRef, EntityLoadFlags flags);
 
         bool IsProxyLoaded(Entity entity);
 

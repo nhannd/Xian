@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Defines the interface to a read-context.  A read-context allows the application to perform read-only

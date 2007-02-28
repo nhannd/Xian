@@ -59,32 +59,5 @@ namespace ClearCanvas.Enterprise.Data {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The version does not match the version in the database.
-        /// </summary>
-        internal static string ExceptionConcurrency {
-            get {
-                return ResourceManager.GetString("ExceptionConcurrency", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The entity was not found.
-        /// </summary>
-        internal static string ExceptionEntityNotFound {
-            get {
-                return ResourceManager.GetString("ExceptionEntityNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot inherit read-context as an update-context.
-        /// </summary>
-        internal static string ExceptionIncompatiblePersistenceContext {
-            get {
-                return ResourceManager.GetString("ExceptionIncompatiblePersistenceContext", resourceCulture);
-            }
-        }
     }
 }

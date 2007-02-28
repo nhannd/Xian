@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Data
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Defines the public inteface for a search condition.  Note that not all methods

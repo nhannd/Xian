@@ -4,7 +4,7 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     public abstract class ServiceOperationAdvice
     {

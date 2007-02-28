@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 using System.Reflection;
 using System.Xml;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Base class for coded-value types.  A coded-value is similar to enumeration.  The main difference is that,

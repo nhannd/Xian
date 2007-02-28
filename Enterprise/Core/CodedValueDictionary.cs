@@ -8,7 +8,7 @@ using System.Reflection;
 using Iesi.Collections;
 using System.Collections;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Represents a set of coded-values

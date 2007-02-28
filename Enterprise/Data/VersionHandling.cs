@@ -4,7 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise
 {
-    public interface IServiceLayer
+    public enum VersionHandling
     {
+        IgnoreVersion,
+        ThrowOnIncompatibleVersion
     }
 }

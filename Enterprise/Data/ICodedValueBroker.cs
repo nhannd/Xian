@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Data
+namespace ClearCanvas.Enterprise
 {
     public interface ICodedValueBroker<TCodedValue> : IPersistenceBroker
         where TCodedValue : CodedValue

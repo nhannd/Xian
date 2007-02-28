@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     public class TransactionRecord : Entity
     {

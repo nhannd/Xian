@@ -6,7 +6,7 @@ using Spring.Aop;
 using AopAlliance.Intercept;
 
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     public class AuditAdvice : ServiceOperationAdvice, IMethodInterceptor
     {

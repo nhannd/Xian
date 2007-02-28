@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Data
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Abstract base class for all search criteria classes.

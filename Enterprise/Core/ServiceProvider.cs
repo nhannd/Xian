@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     [ExtensionOf(typeof(ClearCanvas.Common.ServiceProviderExtensionPoint))]
     public class ServiceProvider : IServiceProvider

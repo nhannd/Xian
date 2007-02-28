@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
     public class ServiceImplementationAttribute : Attribute

@@ -2,10 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Enterprise.Data
+namespace ClearCanvas.Enterprise
 {
     /// <summary>
     /// Used by <see cref="IEntityBroker.Load"/> to provide fine control over the loading of entities.
@@ -48,7 +46,7 @@ namespace ClearCanvas.Enterprise.Data
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        TEntity Load(EntityRef entityRef);
+        TEntity Load(EntityRef<TEntity> entityRef);
 
         /// <summary>
         /// Loades the entity referred to by the specified reference, obeying the specified flags
@@ -57,7 +55,7 @@ namespace ClearCanvas.Enterprise.Data
         /// <param name="entityRef"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        TEntity Load(EntityRef entityRef, EntityLoadFlags flags);
+        TEntity Load(EntityRef<TEntity> entityRef, EntityLoadFlags flags);
 
         /// <summary>
         /// Retrieves all entities matching the specified criteria.  Caution: this method may return an arbitrarily large

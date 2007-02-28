@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise.Common;
-
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise
 {
     public interface ITransactionRecorder
     {
