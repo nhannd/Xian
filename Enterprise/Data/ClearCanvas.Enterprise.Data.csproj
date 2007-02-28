@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
+    <Compile Include="ConcurrencyException.cs" />
     <Compile Include="DefaultTransactionRecorder.cs" />
     <Compile Include="DirtyState.cs" />
     <Compile Include="EntityNotFoundException.cs" />

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Enterprise.Hibernate {
+namespace ClearCanvas.Enterprise.Data.Hibernate {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Enterprise.Hibernate {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Enterprise.Hibernate.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Enterprise.Data.Hibernate.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -7,8 +7,8 @@
     <ProjectGuid>{4CED35C2-4659-492D-8F85-F560E469BE11}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Enterprise.Hibernate</RootNamespace>
-    <AssemblyName>ClearCanvas.Enterprise.Hibernate</AssemblyName>
+    <RootNamespace>ClearCanvas.Enterprise.Data.Hibernate</RootNamespace>
+    <AssemblyName>ClearCanvas.Enterprise.Data.Hibernate</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,11 +30,11 @@
   <ItemGroup>
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+    <Reference Include="NHibernate, Version=1.0.3.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -74,17 +74,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="TimeBroker.cs" />
     <Compile Include="UpdateContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClearCanvas.Enterprise.csproj">
-      <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
-      <Name>ClearCanvas.Enterprise</Name>
+    <ProjectReference Include="..\..\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClearCanvas.Enterprise.Data.csproj">
+      <Project>{76FC3D2A-9C72-4B10-9AFA-A7B1600ECBD9}</Project>
+      <Name>ClearCanvas.Enterprise.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

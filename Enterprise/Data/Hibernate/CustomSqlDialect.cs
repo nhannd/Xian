@@ -5,7 +5,7 @@ using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Dialect;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     public class CustomSqlDialect : NHibernate.Dialect.MsSql2000Dialect
     {

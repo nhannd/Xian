@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 using NHibernate;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Hibernate.Hql
+namespace ClearCanvas.Enterprise.Data.Hibernate.Hql
 {
     /// <summary>
     /// Provides support for building HQL queries dynamically.

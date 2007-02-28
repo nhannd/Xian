@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Hibernate.Hql
+namespace ClearCanvas.Enterprise.Data.Hibernate.Hql
 {
     public class HqlJoin : HqlElement
     {

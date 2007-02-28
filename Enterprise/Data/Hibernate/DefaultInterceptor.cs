@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 using NHibernate;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// Implementation of NHibernate IInterceptor, used to record entity change-set for a transaction.

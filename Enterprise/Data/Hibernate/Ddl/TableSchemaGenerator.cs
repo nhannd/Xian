@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NHibernate.Dialect;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl
+namespace ClearCanvas.Enterprise.Data.Hibernate.Ddl
 {
     /// <summary>
     /// Generates scripts to create/drop the table schemas.

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Enterprise.Hibernate.Hql
+namespace ClearCanvas.Enterprise.Data.Hibernate.Hql
 {
     public class HqlReportQuery : HqlQuery
     {

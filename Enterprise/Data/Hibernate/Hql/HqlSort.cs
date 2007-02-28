@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 
-namespace ClearCanvas.Enterprise.Hibernate.Hql
+namespace ClearCanvas.Enterprise.Data.Hibernate.Hql
 {
     /// <summary>
     /// Provides support for building HQL queries dynamically from <see cref="SearchCriteria"/> objects.

@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Enterprise.Data.Hibernate.Hql;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// NHibernate implementation of <see cref="IEnumBroker"/>.

@@ -4,10 +4,10 @@ using System.Text;
 using System.Reflection;
 
 using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Hibernate;
 using NHibernate.Metadata;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl
+namespace ClearCanvas.Enterprise.Data.Hibernate.Ddl
 {
     /// <summary>
     /// Generates scripts to insert enumeration values into tables  

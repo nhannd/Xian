@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Text;
 
-using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Enterprise.Data.Hibernate.Hql;
 using NHibernate;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// Abstract base class for all NHibernate broker implementations.

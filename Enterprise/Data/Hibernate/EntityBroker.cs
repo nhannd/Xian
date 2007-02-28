@@ -5,11 +5,13 @@ using System.Text;
 
 using NHibernate;
 using NHibernate.Expression;
-using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Enterprise.Data.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// Abstract base class for NHibernate implemenations of <see cref="IEntityBroker"/>.
@@ -54,12 +56,12 @@ namespace ClearCanvas.Enterprise.Hibernate
         }
 
 
-        public TEntity Load(EntityRef<TEntity> entityRef)
+        public TEntity Load(EntityRef entityRef)
         {
             return (TEntity)this.Context.Load(entityRef);
         }
 
-        public TEntity Load(EntityRef<TEntity> entityRef, EntityLoadFlags flags)
+        public TEntity Load(EntityRef entityRef, EntityLoadFlags flags)
         {
             return (TEntity)this.Context.Load(entityRef, flags);
         }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using NHibernate;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// NHibernate implemenation of <see cref="IUpdateContext"/>.

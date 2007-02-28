@@ -3,10 +3,10 @@ using System.Windows.Forms;
 using System.IO;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Hibernate.Ddl;
+using ClearCanvas.Enterprise.Data.Hibernate.Ddl;
 using NHibernate.Dialect;
 
-namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
+namespace ClearCanvas.Enterprise.Data.Hibernate.DdlWriter
 {
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class DdlWriterApplication : IApplicationRoot

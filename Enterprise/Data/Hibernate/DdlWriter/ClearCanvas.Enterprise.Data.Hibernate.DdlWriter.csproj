@@ -28,9 +28,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+    <Reference Include="NHibernate, Version=1.0.3.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -43,17 +43,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.Enterprise.csproj">
-      <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
-      <Name>ClearCanvas.Enterprise</Name>
+    <ProjectReference Include="..\..\..\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClearCanvas.Enterprise.Hibernate.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.Enterprise.Data.csproj">
+      <Project>{76FC3D2A-9C72-4B10-9AFA-A7B1600ECBD9}</Project>
+      <Name>ClearCanvas.Enterprise.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClearCanvas.Enterprise.Data.Hibernate.csproj">
       <Project>{4CED35C2-4659-492D-8F85-F560E469BE11}</Project>
-      <Name>ClearCanvas.Enterprise.Hibernate</Name>
+      <Name>ClearCanvas.Enterprise.Data.Hibernate</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

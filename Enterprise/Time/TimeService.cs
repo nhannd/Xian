@@ -1,15 +1,13 @@
 using System;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Data;
 
 namespace ClearCanvas.Enterprise
 {
-    public interface ITimeService
-    {
-        DateTime GetTime();
-    }
-
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ServiceLayerExtensionPoint))]
     class TimeService : ServiceLayer, ITimeService
     {
         #region ITimeService Members
@@ -17,7 +15,7 @@ namespace ClearCanvas.Enterprise
         [ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew, Auditable=false)]
         public DateTime GetTime()
         {
-            ITimeBroker broker = this.CurrentContext.GetBroker<ITimeBroker>();
+            ITimeBroker broker = PersistenceScope.Current.GetBroker<ITimeBroker>();
             return broker.GetTime();
         }
 

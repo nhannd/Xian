@@ -12,12 +12,11 @@ using NHibernate.Metadata;
 using NHibernate.Mapping;
 using Iesi.Collections;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// NHibernate implemenation of <see cref="IPersistentStore"/>.
     /// </summary>
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.PersistentStoreExtensionPoint))]
     public class PersistentStore : IPersistentStore
     {
         private ISessionFactory _sessionFactory;

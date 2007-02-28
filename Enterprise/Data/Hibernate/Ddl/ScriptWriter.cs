@@ -6,7 +6,7 @@ using NHibernate.Cfg;
 using ClearCanvas.Common;
 using NHibernate.Dialect;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl
+namespace ClearCanvas.Enterprise.Data.Hibernate.Ddl
 {
     /// <summary>
     /// Defines an extension point for contributing DDL script generators to the database definition.

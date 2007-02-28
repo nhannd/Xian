@@ -7,8 +7,10 @@ using ClearCanvas.Common;
 using NHibernate;
 using System.Data;
 using System.Collections;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Enterprise.Hibernate
+namespace ClearCanvas.Enterprise.Data.Hibernate
 {
     /// <summary>
     /// Defines the extension point for all NHibernate broker classes.
@@ -145,7 +147,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        public virtual Entity Load(EntityRefBase entityRef)
+        public virtual Entity Load(EntityRef entityRef)
         {
             return this.Load(entityRef, this.DefaultEntityLoadFlags);
         }
@@ -156,7 +158,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="entityRef"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public virtual Entity Load(EntityRefBase entityRef, EntityLoadFlags flags)
+        public virtual Entity Load(EntityRef entityRef, EntityLoadFlags flags)
         {
             Entity entity = null;
 
@@ -174,7 +176,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
                 // Session.Load with LockMode.Read will force the proxy to be resolved- this is necessary
                 // in order to read the Version property for version checking
-                entity = (Entity)this.Session.Load(EntityUtils.GetType(entityRef), EntityUtils.GetOID(entityRef),
+                entity = (Entity)this.Session.Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef),
                     (flags & EntityLoadFlags.CheckVersion) != 0 ? LockMode.Read : LockMode.None);
 
                 // if the Proxy flag was not specified, then initialize the full object
@@ -193,7 +195,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
 
             // check version if necessary
-            if ((flags & EntityLoadFlags.CheckVersion) != 0 && !EntityUtils.CheckVersion(entityRef, entity))
+            if ((flags & EntityLoadFlags.CheckVersion) != 0 && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
                 throw new ConcurrencyException(null);
 
             System.Diagnostics.Debug.Assert(entity != null);
