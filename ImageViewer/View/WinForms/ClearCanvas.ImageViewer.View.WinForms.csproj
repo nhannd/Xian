@@ -166,6 +166,7 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagrams\ModelView.cd" />
     <None Include="ClassDiagrams\Rendering.cd" />
   </ItemGroup>
   <ItemGroup>

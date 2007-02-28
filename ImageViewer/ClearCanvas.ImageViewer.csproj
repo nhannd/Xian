@@ -119,7 +119,6 @@
     <Compile Include="Annotations\IAnnotationLayout.cs" />
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
-    <Compile Include="ContextMenuEventArgs.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />
     <Compile Include="Graphics\StandardColorImageGraphic.cs" />
@@ -273,7 +272,6 @@
     <Compile Include="InteractiveGraphics\RectangleMemento.cs" />
     <Compile Include="InteractiveGraphics\ROIGraphic.cs" />
     <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
-    <Compile Include="Enumerations.cs" />
     <Compile Include="EventBroker.cs" />
     <Compile Include="Annotations\IAnnotationItem.cs" />
     <Compile Include="Annotations\IAnnotationItemProvider.cs" />

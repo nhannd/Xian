@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {

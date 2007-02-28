@@ -8,6 +8,9 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A central place from where image viewer events are raised.
+	/// </summary>
 	public class EventBroker
 	{
 		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
@@ -27,6 +30,9 @@ namespace ClearCanvas.ImageViewer
 
 		}
 
+		/// <summary>
+		/// Occurs when a <see cref="PresentationImage"/> is about to be drawn.
+		/// </summary>
 		public event EventHandler<ImageDrawingEventArgs> ImageDrawing
 		{
 			add { _imageDrawingEvent += value; }
@@ -38,6 +44,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_imageDrawingEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="IImageBox"/> is selected.
+		/// </summary>
 		public event EventHandler<ImageBoxSelectedEventArgs> ImageBoxSelected
 		{
 			add { _imageBoxSelectedEvent += value; }
@@ -49,6 +58,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_imageBoxSelectedEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="IDisplaySet"/> is selected.
+		/// </summary>
 		public event EventHandler<DisplaySetSelectedEventArgs> DisplaySetSelected
 		{
 			add { _displaySetSelectedEvent += value; }
@@ -60,6 +72,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_displaySetSelectedEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="ITile"/> is selected.
+		/// </summary>
 		public event EventHandler<TileSelectedEventArgs> TileSelected
 		{
 			add { _tileSelectedEvent += value; }
@@ -82,6 +97,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_tileActivatedEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="IPresentationImage"/> is selected.
+		/// </summary>
 		public event EventHandler<PresentationImageSelectedEventArgs> PresentationImageSelected
 		{
 			add { _presentationImageSelectedEvent += value; }
@@ -93,6 +111,10 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_presentationImageSelectedEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when a <see cref="Graphic"/> in the currently selected
+		/// <see cref="PresentationImage"/>'s scene graph is selected.
+		/// </summary>
 		public event EventHandler<GraphicSelectedEventArgs> GraphicSelected
 		{
 			add { _graphicSelectedEvent += value; }
@@ -104,6 +126,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_graphicSelectedEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when a DICOM study is loaded.
+		/// </summary>
 		public event EventHandler<StudyEventArgs> StudyLoaded
 		{
 			add { _studyLoadedEvent += value; }
@@ -115,6 +140,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_studyLoadedEvent, this, studyEventArgs);
 		}
 
+		/// <summary>
+		/// Occurs when a DICOM image is loaded.
+		/// </summary>
 		public event EventHandler<SopEventArgs> ImageLoaded
 		{
 			add { _imageLoadedEvent += value; }

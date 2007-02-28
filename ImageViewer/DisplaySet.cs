@@ -6,6 +6,9 @@ using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A container for <see cref="IPresentationImage"/> objects.
+	/// </summary>
 	public class DisplaySet : IDisplaySet
 	{
 		#region Private Fields
@@ -23,6 +26,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DisplaySet"/>.
+		/// </summary>
 		public DisplaySet()
 		{
 			this.PresentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
@@ -32,7 +38,8 @@ namespace ClearCanvas.ImageViewer
 		#region Properties
 		
 		/// <summary>
-		/// Gets a collection of presentation images.
+		/// Gets the collection of <see cref="IPresentationImage"/> objects that belong
+		/// to this <see cref="DisplaySet"/>.
 		/// </summary>
 		public PresentationImageCollection PresentationImages
 		{
@@ -46,19 +53,18 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets a collection of linked <see cref="PresentationImages"/>
+		/// Gets a collection of linked <see cref="IPresentationImage"/> objects.
 		/// </summary>
-		/// <value>A collection of linked <see cref="PresentationImages"/></value>
 		public ReadOnlyCollection<IPresentationImage> LinkedPresentationImages
 		{
 			get { return _linkedPresentationImages.AsReadOnly(); }
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="IImageViewer"/>.
+		/// Gets the associated <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
-		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
+		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> is not
+		/// yet part of the <see cref="LogicalWorkspace"/> yet.</value>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
@@ -75,16 +81,21 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="LogicalWorkspace"/>
+		/// Gets the parent <see cref="ImageSet"/>
 		/// </summary>
 		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
-		/// been added to a <see cref="LogicalWorkspace"/> yet.</value>
+		/// been added to an <see cref="ImageSet"/> yet.</value>
 		public IImageSet ParentImageSet
 		{
 			get { return _parentImageSet as IImageSet; }
 			internal set { _parentImageSet = value as ImageSet; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IImageBox"/> associated with this <see cref="DisplaySet"/>.
+		/// </summary>
+		/// If the <see cref="DisplaySet"/> is not currently visible, no <see cref="ImageBox"/>
+		/// is associated with it, and <b>null</b> is returned.
 		public IImageBox ImageBox
 		{
 			get { return _imageBox as IImageBox; }
@@ -109,7 +120,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the <see cref="DisplaySet"/> is selected.
+		/// Gets a value indicating whether the <see cref="DisplaySet"/> is selected.
 		/// </summary>
 		public bool Selected
 		{
@@ -161,6 +172,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a user defined object.
+		/// </summary>
 		public object Tag
 		{
 			get { return _tag; }
@@ -212,6 +226,10 @@ namespace ClearCanvas.ImageViewer
 			_presentationImages = null;
 		}
 
+		/// <summary>
+		/// Creates a clone of the <see cref="DisplaySet"/>.
+		/// </summary>
+		/// <returns>The cloned <see cref="DisplaySet"/>.</returns>
 		public IDisplaySet Clone()
 		{
 			DisplaySet displaySet = new DisplaySet();
@@ -230,6 +248,11 @@ namespace ClearCanvas.ImageViewer
 			return this.Name;
 		}
 
+		/// <summary>
+		/// Draw the <see cref="DisplaySet"/>.
+		/// </summary>
+		/// <remarks>The <see cref="DisplaySet"/> will only be drawn
+		/// if it is currently visible.</remarks>
 		public void Draw()
 		{
 			if (this.Visible)

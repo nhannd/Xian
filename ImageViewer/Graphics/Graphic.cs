@@ -7,6 +7,12 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	public enum CoordinateSystem
+	{
+		Source = 0,
+		Destination = 1
+	}
+
 	/// <summary>
 	/// The base layer object.
 	/// </summary>

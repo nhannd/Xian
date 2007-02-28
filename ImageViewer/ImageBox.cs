@@ -9,7 +9,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="TileComponent"/>
+	/// An extension point for views onto <see cref="ImageBox"/>.
 	/// </summary>
 	[ExtensionPoint]
 	public class ImageBoxViewExtensionPoint : ExtensionPoint<IView>
@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	/// <summary>
-	/// TileComponent class
+	/// A container for <see cref="ITile"/> objects.
 	/// </summary>
 	[AssociateView(typeof(ImageBoxViewExtensionPoint))]
 	public class ImageBox : IImageBox
@@ -45,7 +45,10 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _layoutCompletedEvent;
 
 		#endregion
-		
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageBox"/>.
+		/// </summary>
 		public ImageBox()
 		{
 			this.Tiles.ItemAdded += new EventHandler<TileEventArgs>(OnTileAdded);
@@ -54,6 +57,10 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public properties
 
+		/// <summary>
+		/// Gets the collection of <see cref="ITile"/> objects that belong
+		/// to this <see cref="ImageBox"/>.
+		/// </summary>
 		public TileCollection Tiles
 		{
 			get 
@@ -65,6 +72,11 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the associated <see cref="IImageViewer"/>.
+		/// </summary>
+		/// <value>Can be <b>null</b> if the <see cref="ImageBox"/> is not
+		/// yet part of the <see cref="PhysicalWorkspace"/> yet.</value>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
@@ -84,19 +96,28 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets this image box's parent <see cref="PhysicalWorkspace"/>.
+		/// Gets the parent <see cref="IPhysicalWorkspace"/>
 		/// </summary>
-		/// <value>this image box's parent <see cref="PhysicalWorkspace"/>.</value>
+		/// <value>Can be <b>null</b> if the <see cref="ImageBox"/> has not
+		/// been added to the <see cref="IPhysicalWorkspace"/> yet.</value>
 		public IPhysicalWorkspace ParentPhysicalWorkspace
 		{
 			get { return _parentPhysicalWorkspace as IPhysicalWorkspace; }
 			internal set { _parentPhysicalWorkspace = value as PhysicalWorkspace; }
 		}
 
+		/// <summary>
+		/// Gets or sets this <see cref="ImageBox"/>'s normalized rectangle.
+		/// </summary>
+		/// <remarks>Normalized coordinates </remarks>
 		public RectangleF NormalizedRectangle
 		{
 			get { return _normalizedRectangle; }
-			set { _normalizedRectangle = value; }
+			set 
+			{
+				// TODO: validate this 
+				_normalizedRectangle = value; 
+			}
 		}
 
 		/// <summary>
@@ -165,11 +186,9 @@ namespace ClearCanvas.ImageViewer
 		/// Gets a value indicating whether this <see cref="ImageBox"/> is
 		/// selected.
 		/// </summary>
-		/// <value><b>true</b> if selected; <b>false</b> otherwise.</value>
 		/// <remarks>
-		/// An <see cref="ImageBox"/> is selected when 
-		/// <see cref="ImageBox"/> selection is mutually exclusive, i.e., only one
-		/// <see cref="ImageBox"/> is ever selected at a given time.  
+		/// <see cref="ImageBox"/> is selection is mutually exclusive.  That is,
+		/// only one <see cref="ImageBox"/> is ever selected at a given time.  
 		/// </remarks>
 		public bool Selected
 		{
@@ -187,7 +206,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the currently selected <see cref="Tile"/>.
 		/// </summary>
-		/// <value>The currently selected <see cref="Tile"/>.</value>
 		public ITile SelectedTile
 		{
 			get { return _selectedTile; }
@@ -207,6 +225,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the array index of the currently selected <see cref="ITile"/>.
+		/// </summary>
 		public int IndexOfSelectedTile
 		{
 			get
@@ -218,18 +239,29 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the colour of the border when the image box
+		/// is selected.
+		/// </summary>
 		public static Color SelectedColor
 		{
 			get { return _selectedColor; }
 			set { _selectedColor = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the colour of the border when the image box
+		/// is not selected.
+		/// </summary>
 		public static Color UnselectedColor
 		{
 			get { return _unselectedColor; }
 			set { _unselectedColor = value; }
 		}
 
+		/// <summary>
+		/// Gets the current border colour.
+		/// </summary>
 		public Color BorderColor
 		{
 			get
@@ -241,12 +273,18 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the width of the border in pixels.
+		/// </summary>
 		public static int BorderWidth
 		{
 			get { return _borderWidth; }
 			set { _borderWidth = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the inset width of the border in pixels.
+		/// </summary>
 		public static int InsetWidth
 		{
 			get { return _insetWidth; }
@@ -256,7 +294,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the number of rows of tiles in this <see cref="ImageBox"/>.
 		/// </summary>
-		/// <value>The number of rows of tiles in this <see cref="ImageBox"/>.</value>
 		public int Rows
 		{
 			get { return _rows; }
@@ -265,7 +302,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the number of columns of tiles in this <see cref="ImageBox"/>.
 		/// </summary>
-		/// <value>The number of columns of tiles in this <see cref="ImageBox"/>.</value>
 		public int Columns
 		{
 			get { return _columns; }
@@ -275,8 +311,6 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets the <see cref="PresentationImage"/> in the top-left 
 		/// <see cref="Tile"/> of this <see cref="ImageBox"/>.
 		/// </summary>
-		/// <value>The <see cref="PresentationImage"/> in the top-left 
-		/// <see cref="Tile"/> of this <see cref="ImageBox"/>.</value>
 		/// <remarks>
 		/// Because a <see cref="DisplaySet"/> is an <i>ordered</i> set of 
 		/// presentation images, setting this property to a specified
@@ -315,10 +349,6 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets the index of the <see cref="PresentationImage"/> that is
 		/// to be placed in the top-left <see cref="Tile"/> of this <see cref="ImageBox"/>.
 		/// </summary>
-		/// <value>
-		/// The index of the <see cref="PresentationImage"/> that is 
-		/// to be placed in the top-left <see cref="Tile"/> of this <see cref="ImageBox"/>.
-		/// </value>
 		/// <remarks>
 		/// The index is the index of the <see cref="PresentationImage"/> in the
 		/// <see cref="DisplaySet"/>.  Because a <see cref="DisplaySet"/> is an 
@@ -360,7 +390,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the <see cref="Tile"/> at the specified row and column.
 		/// </summary>
-		/// <value>The <see cref="Tile"/> at the specified row and column.</value>
 		/// <exception cref="IndexOutOfRangeException"><pararef name="row"/> or
 		/// <pararef name="column"/> is less than 0 or is greater than or equal to 
 		/// the <see cref="ImageBox.Rows"/> or <see cref="ImageBox.Columns"/> respectively.
@@ -381,30 +410,46 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public events
 
+		/// <summary>
+		/// Occurs when the <see cref="ImageBox"/> is about to be drawn.
+		/// </summary>
 		public event EventHandler Drawing
 		{
 			add { _drawingEvent += value; }
 			remove { _drawingEvent -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when the <b>Selected</b> property has changed.
+		/// </summary>
 		public event EventHandler<ImageBoxEventArgs> SelectionChanged
 		{
 			add { _selectionChangedEvent += value; }
 			remove { _selectionChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="ITile"/> has been added.
+		/// </summary>
 		public event EventHandler<TileEventArgs> TileAdded
 		{
 			add { _tileAddedEvent += value; }
 			remove { _tileAddedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="ITile"/> has been removed.
+		/// </summary>
 		public event EventHandler<TileEventArgs> TileRemoved
 		{
 			add { _tileRemovedEvent += value; }
 			remove { _tileRemovedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Occurs after all <see cref="Tile"/> objects have been added
+		/// in the <see cref="SetTileGrid"/> method.
+		/// </summary>
 		public event EventHandler LayoutCompleted
 		{
 			add { _layoutCompletedEvent += value; }
@@ -461,7 +506,7 @@ namespace ClearCanvas.ImageViewer
 		#region Public methods
 
 		/// <summary>
-		/// Creates an rectangular grid of tiles.
+		/// Creates a rectangular grid of tiles.
 		/// </summary>
 		/// <remarks>
 		/// Each time this method is called, existing tiles in the <see cref="ImageBox"/>
@@ -508,11 +553,17 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Draw the <see cref="ImageBox"/>.
+		/// </summary>
 		public void Draw()
 		{
 			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Selects the top left tile.
+		/// </summary>
 		public void SelectDefaultTile()
 		{
 			ITile topLeftTile = this.Tiles[0];

@@ -4,6 +4,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+
 	public interface IImageBox : IMemorable, IDisposable
 	{
 		IImageViewer ImageViewer { get; }

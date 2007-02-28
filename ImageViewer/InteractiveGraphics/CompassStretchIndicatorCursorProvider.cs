@@ -6,6 +6,7 @@ using ClearCanvas.Desktop;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
