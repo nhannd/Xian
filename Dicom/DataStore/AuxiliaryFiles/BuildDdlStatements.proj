@@ -16,6 +16,9 @@
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Utilities\Hibernate2DdlGenerator\bin\$(Configuration)\hbm2ddl.exe" />
 		<InputFiles Include="ClearCanvas.Dicom.DataStore.dll" />
 		<InputFiles Include="ClearCanvas.Dicom.Services.dll" />
+		<CombineInputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />
+		<CombineInputFiles Include="CreateIndices.sql" />
+		<CombineInputFiles Include="MsSqlCePopulateDicomDictionary.sql" />
 		<OutputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />
 		<OutputFiles Include="DropTables.clearcanvas.dicom.datastore.ddl" />
 	</ItemGroup> 
@@ -25,5 +28,11 @@
 	<Target Name="CreateDDL" DependsOnTargets="Preparation" Inputs="@(InputFiles)" Outputs="@(OutputFiles)">
 		<Exec Command="hbm2ddl ClearCanvas.Dicom.DataStore ClearCanvas.Dicom.Services" />
 	</Target>
-	<Target Name="BuildAll" DependsOnTargets="CreateDDL" />
+	<Target Name="CombineStatementFiles" DependsOnTargets="CreateDDL" Inputs="@(CombineInputFiles)" Outputs="Combined.Sql">
+		<ReadLinesFromFile File="%(CombineInputFiles.Identity)">
+			<Output TaskParameter="Lines" ItemName="lines"/>
+		</ReadLinesFromFile>
+		<WriteLinesToFile File="Combined.Sql" Lines="@(Lines)" Overwrite="true" />
+	</Target>
+	<Target Name="BuildAll" DependsOnTargets="CombineStatementFiles" />
 </Project>
