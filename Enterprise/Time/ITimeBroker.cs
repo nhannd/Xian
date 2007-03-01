@@ -3,7 +3,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Data;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Time
 {
     public interface ITimeBroker : IPersistenceBroker
     {

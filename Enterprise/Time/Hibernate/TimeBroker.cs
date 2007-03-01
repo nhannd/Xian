@@ -3,8 +3,9 @@ using System.Data;
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Data.Hibernate;
 
-namespace ClearCanvas.Enterprise.Data.Hibernate
+namespace ClearCanvas.Enterprise.Time.Hibernate
 {
     [ClearCanvas.Common.ExtensionOf(typeof(BrokerExtensionPoint))]
     public class TimeBroker : Broker, ITimeBroker

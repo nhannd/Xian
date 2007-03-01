@@ -5,7 +5,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Data;
 
-namespace ClearCanvas.Enterprise
+namespace ClearCanvas.Enterprise.Time
 {
     [ExtensionOf(typeof(ServiceLayerExtensionPoint))]
     class TimeService : ServiceLayer, ITimeService
