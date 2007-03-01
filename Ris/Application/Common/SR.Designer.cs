@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Application.Services {
+namespace ClearCanvas.Ris.Application.Common {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Services {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Ris.Application.Services.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Ris.Application.Common.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,15 +57,6 @@ namespace ClearCanvas.Ris.Application.Services {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Attempt to import entities with the same Id but different names.
-        /// </summary>
-        internal static string ExceptionImportEntityNameIdMismatch {
-            get {
-                return ResourceManager.GetString("ExceptionImportEntityNameIdMismatch", resourceCulture);
             }
         }
     }

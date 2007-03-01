@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public interface IStaffAdminService : IHealthcareServiceLayer
+    public interface IStaffAdminService
     {
         /// <summary>
         /// Search for a staff by name

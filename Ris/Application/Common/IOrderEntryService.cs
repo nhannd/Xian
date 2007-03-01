@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public interface IOrderEntryService : IHealthcareServiceLayer
+    public interface IOrderEntryService
     {
         PatientProfile LoadPatientProfile(EntityRef profileRef);
         IList<Visit> ListActiveVisits(EntityRef patientRef);

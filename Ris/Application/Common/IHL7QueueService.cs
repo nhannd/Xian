@@ -2,14 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.HL7;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public interface IHL7QueueService : IHL7ServiceLayer
+    public interface IHL7QueueService
     {
         HL7QueueItem LoadHL7QueueItem(EntityRef queueItemRef);
 

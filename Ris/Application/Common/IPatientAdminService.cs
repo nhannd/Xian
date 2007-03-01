@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public interface IPatientAdminService : IHealthcareServiceLayer
+    public interface IPatientAdminService
     {
         /// <summary>
         /// List all patients matching the specified criteria

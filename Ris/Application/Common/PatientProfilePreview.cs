@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
-using ClearCanvas.Healthcare;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
     public class PatientProfilePreview

@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public interface IReportingWorkflowService : IHealthcareServiceLayer
+    public interface IReportingWorkflowService
     {
         IList<ReportingWorklistQueryResult> GetWorklist(Type stepClass, ReportingProcedureStepSearchCriteria criteria);
 

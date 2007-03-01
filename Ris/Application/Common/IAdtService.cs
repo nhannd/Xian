@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
     /// <summary>
     /// Provides ADT (Admit-Discharge-Transfer) services 
     /// </summary>
-    public interface IAdtService : IHealthcareServiceLayer
+    public interface IAdtService
     {
         /// <summary>
         /// List patient profiles matching the specified criteria

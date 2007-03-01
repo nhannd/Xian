@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
     [ServiceContract]
-    public interface ITestService : IHealthcareServiceLayer
+    public interface ITestService
     {
         [OperationContract]
         PatientProfilePreview GetPatientProfilePreview(EntityRef profileRef);

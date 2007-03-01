@@ -7,8 +7,8 @@
     <ProjectGuid>{11548867-F0DC-4142-82E8-59EBC36B8980}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Ris.Services</RootNamespace>
-    <AssemblyName>ClearCanvas.Ris.Services</AssemblyName>
+    <RootNamespace>ClearCanvas.Ris.Application.Services</RootNamespace>
+    <AssemblyName>ClearCanvas.Ris.Application.Services</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -101,27 +101,27 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+    <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Healthcare\ClearCanvas.Healthcare.csproj">
+    <ProjectReference Include="..\..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\HL7\ClearCanvas.HL7.csproj">
+    <ProjectReference Include="..\..\..\HL7\ClearCanvas.HL7.csproj">
       <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
       <Name>ClearCanvas.HL7</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Workflow\ClearCanvas.Workflow.csproj">
+    <ProjectReference Include="..\..\..\Workflow\ClearCanvas.Workflow.csproj">
       <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
       <Name>ClearCanvas.Workflow</Name>
     </ProjectReference>

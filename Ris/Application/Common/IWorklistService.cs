@@ -3,14 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public interface IWorklistService : IHealthcareServiceLayer
+    public interface IWorklistService
     {
         IList GetWorklist(string worklistClassName);
         IList GetWorklist(string worklistClassName, SearchCriteria additionalCriteria);
