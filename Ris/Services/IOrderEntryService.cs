@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
     public interface IOrderEntryService : IHealthcareServiceLayer
     {
-        PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef);
-        IList<Visit> ListActiveVisits(EntityRef<Patient> patientRef);
+        PatientProfile LoadPatientProfile(EntityRef profileRef);
+        IList<Visit> ListActiveVisits(EntityRef patientRef);
         IList<DiagnosticService> ListDiagnosticServiceChoices();
         IList<Facility> ListOrderingFacilityChoices();
         IList<Practitioner> ListOrderingPhysicianChoices();
-        DiagnosticService LoadDiagnosticServiceBreakdown(EntityRef<DiagnosticService> diagnosticServiceRef);
+        DiagnosticService LoadDiagnosticServiceBreakdown(EntityRef diagnosticServiceRef);
 
         //string GenerateNewAccessionNumber();
         void PlaceOrder(

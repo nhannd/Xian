@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class StaffAdminService : HealthcareServiceLayer, IStaffAdminService
     {
         [ReadOperation]
@@ -53,7 +54,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Staff LoadStaff(EntityRef<Staff> staffRef, bool withDetails)
+        public Staff LoadStaff(EntityRef staffRef, bool withDetails)
         {
             IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
             Staff staff = staffBroker.Load(staffRef);

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 
 using Iesi.Collections;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class PatientAdminService : HealthcareServiceLayer, IPatientAdminService
     {
         public PatientAdminService()
@@ -28,7 +29,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef)
+        public PatientProfile LoadPatientProfile(EntityRef profileRef)
         {
             IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile patient = profileBroker.Load(profileRef);
@@ -37,7 +38,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public PatientProfile LoadPatientProfileDetails(EntityRef<PatientProfile> profileRef)
+        public PatientProfile LoadPatientProfileDetails(EntityRef profileRef)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile patient = broker.Load(profileRef);

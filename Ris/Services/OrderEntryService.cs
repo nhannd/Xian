@@ -2,20 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class OrderEntryService : HealthcareServiceLayer, IOrderEntryService
     {
         #region IOrderEntryService Members
 
         [ReadOperation]
-        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef)
+        public PatientProfile LoadPatientProfile(EntityRef profileRef)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = broker.Load(profileRef);
@@ -24,7 +25,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<Visit> ListActiveVisits(EntityRef<Patient> patientRef)
+        public IList<Visit> ListActiveVisits(EntityRef patientRef)
         {
             // ensure that the profiles collection is loaded
             IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
@@ -45,7 +46,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public DiagnosticService LoadDiagnosticServiceBreakdown(EntityRef<DiagnosticService> diagnosticServiceRef)
+        public DiagnosticService LoadDiagnosticServiceBreakdown(EntityRef diagnosticServiceRef)
         {
             IDiagnosticServiceBroker dsBroker = this.CurrentContext.GetBroker<IDiagnosticServiceBroker>();
             IRequestedProcedureTypeBroker rptBroker = this.CurrentContext.GetBroker<IRequestedProcedureTypeBroker>();

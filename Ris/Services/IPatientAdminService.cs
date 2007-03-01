@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -22,14 +23,14 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="oid"></param>
         /// <returns></returns>
-        PatientProfile LoadPatientProfileDetails(EntityRef<PatientProfile> profileRef);
+        PatientProfile LoadPatientProfileDetails(EntityRef profileRef);
 
         /// <summary>
         /// Loads the specified patient.
         /// </summary>
         /// <param name="oid"></param>
         /// <returns></returns>
-        PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef);
+        PatientProfile LoadPatientProfile(EntityRef profileRef);
 
         /// <summary>
         /// Add a new patient to the system

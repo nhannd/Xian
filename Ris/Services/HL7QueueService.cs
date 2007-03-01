@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.HL7;
 using ClearCanvas.HL7.Brokers;
 using ClearCanvas.HL7.PreProcessing;
 using ClearCanvas.HL7.Processing;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class HL7QueueService : HL7ServiceLayer, IHL7QueueService
     {
         private readonly int numResults = 50;
@@ -25,7 +26,7 @@ namespace ClearCanvas.Ris.Services
         #region IHL7QueueService Members
 
         [ReadOperation]
-        public HL7QueueItem LoadHL7QueueItem(EntityRef<HL7QueueItem> queueItemRef)
+        public HL7QueueItem LoadHL7QueueItem(EntityRef queueItemRef)
         {
             IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
             return broker.Load(queueItemRef);
@@ -53,7 +54,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public PatientProfile GetReferencedPatient(EntityRef<HL7QueueItem> hl7QueueItemRef)
+        public PatientProfile GetReferencedPatient(EntityRef hl7QueueItemRef)
         {
             IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
             HL7QueueItem queueItem = broker.Load(hl7QueueItemRef);

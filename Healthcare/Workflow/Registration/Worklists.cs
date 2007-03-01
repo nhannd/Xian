@@ -5,10 +5,11 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
@@ -150,7 +151,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         {
             IList<WorklistQueryResult> finalList = new List<WorklistQueryResult>();
 
-            IDictionary<EntityRef<RequestedProcedure>, WorklistQueryResult> checkInDictionary = new Dictionary<EntityRef<RequestedProcedure>, WorklistQueryResult>();
+            IDictionary<EntityRef, WorklistQueryResult> checkInDictionary = new Dictionary<EntityRef, WorklistQueryResult>();
             foreach (WorklistQueryResult queryResult in checkInQueryResult)
             {
                 if (checkInDictionary.ContainsKey(queryResult.RequestedProcedure) == false)
@@ -169,7 +170,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public static IList<WorklistItem> ConvertQueryResultsToWorkLists(string workClassName, IList<WorklistQueryResult> listQueryResult)
         {
             // Group the query results based on patient profile into a Registration Worklist item
-            IDictionary<EntityRef<PatientProfile>, WorklistItem> worklistDictionary = new Dictionary<EntityRef<PatientProfile>, WorklistItem>();
+            IDictionary<EntityRef, WorklistItem> worklistDictionary = new Dictionary<EntityRef, WorklistItem>();
             foreach (WorklistQueryResult queryResult in listQueryResult)
             {
                 if (worklistDictionary.ContainsKey(queryResult.PatientProfile) == false)
@@ -178,7 +179,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
             // Now convert to worklist
             IList<WorklistItem> listItems = new List<WorklistItem>();
-            foreach (KeyValuePair<EntityRef<PatientProfile>, WorklistItem> kvp in worklistDictionary)
+            foreach (KeyValuePair<EntityRef, WorklistItem> kvp in worklistDictionary)
             {
                 listItems.Add(kvp.Value);
             }

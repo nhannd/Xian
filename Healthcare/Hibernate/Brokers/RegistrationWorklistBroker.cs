@@ -8,6 +8,7 @@ using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {

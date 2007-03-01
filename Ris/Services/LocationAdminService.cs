@@ -4,11 +4,12 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class LocationAdminService : HealthcareServiceLayer, ILocationAdminService
     {
         [ReadOperation]
@@ -18,7 +19,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<Location> GetLocations(EntityRef<Facility> facility)
+        public IList<Location> GetLocations(EntityRef facility)
         {
             throw new Exception("The method or operation is not implemented.");
         }
@@ -36,7 +37,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Location LoadLocation(EntityRef<Location> locationRef)
+        public Location LoadLocation(EntityRef locationRef)
         {
             ILocationBroker locationBroker = CurrentContext.GetBroker<ILocationBroker>();
             Location location = locationBroker.Load(locationRef);

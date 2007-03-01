@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService
     {
-
+/*
         private InterpretationStep LoadStep(EntityRef<InterpretationStep> stepRef)
         {
             IInterpretationStepBroker broker = CurrentContext.GetBroker<IInterpretationStepBroker>();
@@ -31,8 +32,8 @@ namespace ClearCanvas.Ris.Services
             IVerificationStepBroker broker = CurrentContext.GetBroker<IVerificationStepBroker>();
             return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
         }
-
-        private ReportingProcedureStep LoadStep(EntityRef<ReportingProcedureStep> stepRef)
+*/
+        private ReportingProcedureStep LoadStep(EntityRef stepRef)
         {
             IReportingProcedureStepBroker broker = CurrentContext.GetBroker<IReportingProcedureStepBroker>();
 
@@ -52,7 +53,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void ScheduleInterpretation(EntityRef<RequestedProcedure> procedure)
+        public void ScheduleInterpretation(EntityRef procedure)
         {
             IRequestedProcedureBroker broker = CurrentContext.GetBroker<IRequestedProcedureBroker>();
             RequestedProcedure rp = broker.Load(procedure, EntityLoadFlags.Proxy);
@@ -61,49 +62,49 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void ClaimInterpretation(EntityRef<InterpretationStep> step)
+        public void ClaimInterpretation(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.ClaimInterpretation());
         }
 
         [UpdateOperation]
-        public void StartInterpretation(EntityRef<InterpretationStep> step)
+        public void StartInterpretation(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.StartInterpretation());
         }
 
         [UpdateOperation]
-        public void CompleteInterpretationForTranscription(EntityRef<InterpretationStep> step)
+        public void CompleteInterpretationForTranscription(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.CompleteInterpretationForTranscription());
         }
 
         [UpdateOperation]
-        public void CompleteInterpretationForVerification(EntityRef<InterpretationStep> step)
+        public void CompleteInterpretationForVerification(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.CompleteInterpretationForVerification());
         }
 
         [UpdateOperation]
-        public void CompleteInterpretationAndVerify(EntityRef<InterpretationStep> step)
+        public void CompleteInterpretationAndVerify(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.CompleteInterpretationAndVerify());
         }
 
         [UpdateOperation]
-        public void CancelPendingTranscription(EntityRef<TranscriptionStep> step)
+        public void CancelPendingTranscription(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.CancelPendingTranscription());
         }
 
         [UpdateOperation]
-        public void StartVerification(EntityRef<VerificationStep> step)
+        public void StartVerification(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.StartVerification());
         }
 
         [UpdateOperation]
-        public void CompleteVerification(EntityRef<VerificationStep> step)
+        public void CompleteVerification(EntityRef step)
         {
             ExecuteOperation(LoadStep(step), new Operations.CompleteVerification());
         }

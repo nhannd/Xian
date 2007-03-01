@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
     public class WorklistQueryResult : IWorklistQueryResult
     {
-        private EntityRef<Patient> _patient;
-        private EntityRef<PatientProfile> _patientProfile;
-        private EntityRef<Order> _order;
-        private EntityRef<RequestedProcedure> _requestedProcedure;
-        private EntityRef<ProcedureStep> _procedureStep;
+        private EntityRef _patient;
+        private EntityRef _patientProfile;
+        private EntityRef _order;
+        private EntityRef _requestedProcedure;
+        private EntityRef _procedureStep;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
@@ -33,7 +34,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
         public WorklistQueryResult(PatientProfile profile)
         {
-            _patientProfile = new EntityRef<PatientProfile>(profile);
+            _patientProfile = profile.GetRef();
 
             _mrn = profile.Mrn;
             _patientName = profile.Name;
@@ -57,11 +58,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             OrderPriority priority,
             ActivityStatus status)
         {
-            _patient = new EntityRef<Patient>(patient);
-            _patientProfile = new EntityRef<PatientProfile>(profile);
-            _order = new EntityRef<Order>(order);
-            _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
-            _procedureStep = new EntityRef<ProcedureStep>(procedureStep);
+            _patient = patient.GetRef();
+            _patientProfile = profile.GetRef();
+            _order = order.GetRef();
+            _requestedProcedure = requestedProcedure.GetRef();
+            _procedureStep = procedureStep.GetRef();
 
             _mrn = mrn;
             _patientName = patientName;
@@ -96,11 +97,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             OrderPriority priority,
             ActivityStatus status)
         {
-            _patient = new EntityRef<Patient>(patient);
-            _patientProfile = new EntityRef<PatientProfile>(profile);
-            _order = new EntityRef<Order>(order);
-            _requestedProcedure = new EntityRef<RequestedProcedure>(requestedProcedure);
-            _procedureStep = new EntityRef<ProcedureStep>(procedureStep);
+            _patient = patient.GetRef();
+            _patientProfile = profile.GetRef();
+            _order = order.GetRef();
+            _requestedProcedure = requestedProcedure.GetRef();
+            _procedureStep = procedureStep.GetRef();
 
             _mrn = mrn;
             _patientName = patientName;
@@ -131,27 +132,27 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             return _procedureStep.GetHashCode();
         }
 
-        public EntityRef<ProcedureStep> ProcedureStep
+        public EntityRef ProcedureStep
         {
             get { return _procedureStep; }
         }
 
-        public EntityRef<Patient> Patient
+        public EntityRef Patient
         {
             get { return _patient; }
         }
 
-        public EntityRef<PatientProfile> PatientProfile
+        public EntityRef PatientProfile
         {
             get { return _patientProfile; }
         }
 
-        public EntityRef<Order> Order
+        public EntityRef Order
         {
             get { return _order; }
         }
 
-        public EntityRef<RequestedProcedure> RequestedProcedure
+        public EntityRef RequestedProcedure
         {
             get { return _requestedProcedure; }
         }

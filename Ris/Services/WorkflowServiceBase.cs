@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Healthcare;
 using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Workflow;

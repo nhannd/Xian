@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
@@ -32,10 +33,10 @@ namespace ClearCanvas.Healthcare {
 		/// <summary>
 		/// Constructor to search by EntityRef
 		/// </summary>
-		public PerformedProcedureStepSearchCriteria(EntityRef<PerformedProcedureStep> entityRef)
+		public PerformedProcedureStepSearchCriteria(EntityRef entityRef)
 		{
             this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityUtils.GetOID(entityRef));
+            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityRefUtils.GetOID(entityRef));
 		}
 		
 	  	public ProcedureStepPerformerSearchCriteria Performer

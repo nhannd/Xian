@@ -4,6 +4,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -14,6 +15,12 @@ namespace ClearCanvas.Enterprise.Core
     {
         private object _oid;
         private int _version;
+        private Type _entityClass;
+
+        public Entity()
+        {
+            _entityClass = this.GetType();
+        }
 
         /// <summary>
         /// OID is short for object identifier, and is used to store the surrogate key that uniquely identifies the 
@@ -34,6 +41,16 @@ namespace ClearCanvas.Enterprise.Core
         {
             get { return _version; }
             private set { _version = value; }
+        }
+
+        public virtual Type GetClass()
+        {
+            return _entityClass;
+        }
+
+        public virtual EntityRef GetRef()
+        {
+            return new EntityRef(_entityClass, _oid, _version);
         }
     }
 }

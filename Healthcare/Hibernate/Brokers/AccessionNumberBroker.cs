@@ -8,6 +8,7 @@ using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {

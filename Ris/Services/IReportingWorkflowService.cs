@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -10,17 +11,17 @@ namespace ClearCanvas.Ris.Services
     {
         IList<ReportingWorklistQueryResult> GetWorklist(Type stepClass, ReportingProcedureStepSearchCriteria criteria);
 
-        void ScheduleInterpretation(EntityRef<RequestedProcedure> procedure);
+        void ScheduleInterpretation(EntityRef procedure);
 
-        void ClaimInterpretation(EntityRef<InterpretationStep> step);
-        void StartInterpretation(EntityRef<InterpretationStep> step);
-        void CompleteInterpretationForTranscription(EntityRef<InterpretationStep> step);
-        void CompleteInterpretationForVerification(EntityRef<InterpretationStep> step);
-        void CompleteInterpretationAndVerify(EntityRef<InterpretationStep> step);
+        void ClaimInterpretation(EntityRef step);
+        void StartInterpretation(EntityRef step);
+        void CompleteInterpretationForTranscription(EntityRef step);
+        void CompleteInterpretationForVerification(EntityRef step);
+        void CompleteInterpretationAndVerify(EntityRef step);
 
-        void CancelPendingTranscription(EntityRef<TranscriptionStep> step);
+        void CancelPendingTranscription(EntityRef step);
 
-        void StartVerification(EntityRef<VerificationStep> step);
-        void CompleteVerification(EntityRef<VerificationStep> step);
+        void StartVerification(EntityRef step);
+        void CompleteVerification(EntityRef step);
     }
 }

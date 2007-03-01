@@ -8,8 +8,7 @@ using NMock2;
 
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Tests;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using System.Reflection;
 
@@ -42,7 +41,7 @@ namespace ClearCanvas.Ris.Services.Tests
             _mockReconciliationStrategyXP = _mocks.NewMock<IExtensionPoint>();
 
             _adtService = new AdtService(_mockReconciliationStrategyXP);
-            ServiceLayerTestHelper.SetServiceLayerPersistenceContext((AdtService)_adtService, _mockPersistanceContext);
+            //ServiceLayerTestHelper.SetServiceLayerPersistenceContext((AdtService)_adtService, _mockPersistanceContext);
             _mocks.VerifyAllExpectationsHaveBeenMet();
         }
 

@@ -26,7 +26,7 @@ namespace ClearCanvas.Enterprise.Core
     {
         private Dictionary<Type, ProxyFactory> _proxyFactoryCache;
 
-        internal ServiceManager()
+        public ServiceManager()
         {
             _proxyFactoryCache = new Dictionary<Type, ProxyFactory>();
         }

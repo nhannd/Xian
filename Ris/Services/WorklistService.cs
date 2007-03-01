@@ -5,13 +5,14 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class WorklistService : WorkflowServiceBase, IWorklistService
     {
         [ReadOperation]
@@ -37,7 +38,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public RequestedProcedure LoadRequestedProcedure(EntityRef<RequestedProcedure> rpRef, bool loadDetail)
+        public RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail)
         {
             IRequestedProcedureBroker rpBroker = CurrentContext.GetBroker<IRequestedProcedureBroker>();
             IOrderBroker orderBroker = CurrentContext.GetBroker<IOrderBroker>();
@@ -96,20 +97,20 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void ExecuteOperation(EntityRef<ModalityProcedureStep> stepRef, string operationClassName)
+        public void ExecuteOperation(EntityRef stepRef, string operationClassName)
         {
             ExecuteOperation(LoadStep(stepRef),
                 new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint(), operationClassName);
         }
 
         [ReadOperation]
-        public IDictionary<string, bool> GetOperationEnablement(EntityRef<ModalityProcedureStep> stepRef)
+        public IDictionary<string, bool> GetOperationEnablement(EntityRef stepRef)
         {
             return GetOperationEnablement(LoadStep(stepRef),
                 new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint());
         }
 
-        private ModalityProcedureStep LoadStep(EntityRef<ModalityProcedureStep> stepRef)
+        private ModalityProcedureStep LoadStep(EntityRef stepRef)
         {
             IModalityProcedureStepBroker broker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
             return broker.Load(stepRef, EntityLoadFlags.CheckVersion);

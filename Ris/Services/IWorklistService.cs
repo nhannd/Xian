@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -17,14 +18,14 @@ namespace ClearCanvas.Ris.Services
         //void Subscribe(string worklistClassName, string callback);
 
 
-        RequestedProcedure LoadRequestedProcedure(EntityRef<RequestedProcedure> rpRef, bool loadDetail);
+        RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);
         void UpdateRequestedProcedure(RequestedProcedure rp);
         void AddCheckInProcedureStep(CheckInProcedureStep cps);
 
         IWorklistItem LoadWorklistItemPreview(IWorklistQueryResult queryResult);
 
-        IDictionary<string, bool> GetOperationEnablement(EntityRef<ModalityProcedureStep> stepRef);
-        void ExecuteOperation(EntityRef<ModalityProcedureStep> stepRef, string operationClassName);
+        IDictionary<string, bool> GetOperationEnablement(EntityRef stepRef);
+        void ExecuteOperation(EntityRef stepRef, string operationClassName);
     
     }
 }

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare 
 {
@@ -12,8 +13,8 @@ namespace ClearCanvas.Healthcare
 
 		}
 	
-        public CheckInProcedureStepSearchCriteria(EntityRef<CheckInProcedureStep> cpsRef)
-            : base(cpsRef.Cast<ProcedureStep>())
+        public CheckInProcedureStepSearchCriteria(EntityRef cpsRef)
+            : base(cpsRef)
         {
 
         }

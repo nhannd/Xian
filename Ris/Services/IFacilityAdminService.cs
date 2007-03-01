@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -37,6 +38,6 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="facilityRef"></param>
         /// <returns></returns>
-        Facility LoadFacility(EntityRef<Facility> facilityRef);
+        Facility LoadFacility(EntityRef facilityRef);
     }
 }

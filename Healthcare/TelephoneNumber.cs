@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 
 using Iesi.Collections;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 
 

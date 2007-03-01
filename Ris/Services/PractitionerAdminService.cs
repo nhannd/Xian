@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -37,7 +38,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Practitioner LoadPractitioner(EntityRef<Practitioner> practitionerRef)
+        public Practitioner LoadPractitioner(EntityRef practitionerRef)
         {
             IPractitionerBroker broker = this.CurrentContext.GetBroker<IPractitionerBroker>();
             return broker.Load(practitionerRef);
@@ -62,7 +63,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Practitioner LoadPractitioner(EntityRef<Practitioner> practitionerRef, bool withDetails)
+        public Practitioner LoadPractitioner(EntityRef practitionerRef, bool withDetails)
         {
             IPractitionerBroker practitionerBroker = CurrentContext.GetBroker<IPractitionerBroker>();
             Practitioner practitioner = practitionerBroker.Load(practitionerRef);

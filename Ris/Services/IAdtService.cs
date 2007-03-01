@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -22,27 +23,27 @@ namespace ClearCanvas.Ris.Services
         /// Loads the details collections for the specified patient profile, if not already loaded.
         /// </summary>
         /// <param name="profile"></param>
-        Patient LoadPatientAndAllProfiles(EntityRef<PatientProfile> profileRef);
+        Patient LoadPatientAndAllProfiles(EntityRef profileRef);
 
         /// <summary>
         /// Loads a patient from the specified patient entity reference
         /// </summary>
         /// <param name="patientRef"></param>
         /// <returns></returns>
-        Patient LoadPatient(EntityRef<Patient> patientRef);
+        Patient LoadPatient(EntityRef patientRef);
 
         /// <summary>
         /// Loads the <see cref="Patient.Visits"/> collection, if it is not already loaded.
         /// </summary>
         /// <param name="patient">The patient to load profiles for</param>
-        IList<Visit> ListPatientVisits(EntityRef<Patient> patientRef);
+        IList<Visit> ListPatientVisits(EntityRef patientRef);
 
         /// <summary>
         /// Loads the Visit for the specified Visit reference
         /// </summary>
         /// <param name="visitRef"></param>
         /// <returns></returns>
-        Visit LoadVisit(EntityRef<Visit> visitRef, bool withDetails);
+        Visit LoadVisit(EntityRef visitRef, bool withDetails);
 
         /// <summary>
         /// Loads the patient profile with the specified OID, and optionally with details.
@@ -50,14 +51,14 @@ namespace ClearCanvas.Ris.Services
         /// <param name="profileRef">A reference to the patient profile to load</param>
         /// <param name="withDetails">If true, will also load the related detail collections</param>
         /// <returns></returns>
-        PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef, bool withDetails);
+        PatientProfile LoadPatientProfile(EntityRef profileRef, bool withDetails);
 
         /// <summary>
         /// Searches for reconciliation candidates for the specified patient profile.
         /// </summary>
         /// <param name="patientProfile"></param>
         /// <returns>A list of matches</returns>
-        IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef);
+        IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef patientProfileRef);
 
         /// <summary>
         /// Loads specified profiles, with details, and computes the discrepancy according to the specified set
@@ -66,7 +67,7 @@ namespace ClearCanvas.Ris.Services
         /// <param name="profileRefs"></param>
         /// <param name="testables"></param>
         /// <returns></returns>
-        PatientProfileDiff LoadPatientProfileDiff(EntityRef<PatientProfile>[] profileRefs, PatientProfileDiscrepancy testables);
+        PatientProfileDiff LoadPatientProfileDiff(EntityRef[] profileRefs, PatientProfileDiscrepancy testables);
  
             
         /// <summary>
@@ -93,7 +94,7 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="visit"></param>
         /// <param name="patientRef"></param>
-        void SaveNewVisit(Visit visit, EntityRef<Patient> patientRef);
+        void SaveNewVisit(Visit visit, EntityRef patientRef);
 
         /// <summary>
         /// Updates the specified visit

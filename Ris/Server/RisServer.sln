@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise", "..\..\Enterprise\ClearCanvas.Enterprise.csproj", "{3AC2BCC0-2549-49AF-97D3-4A403556C097}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate", "..\..\Enterprise\Hibernate\ClearCanvas.Enterprise.Hibernate.csproj", "{4CED35C2-4659-492D-8F85-F560E469BE11}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate.DdlWriter", "..\..\Enterprise\Hibernate\DdlWriter\ClearCanvas.Enterprise.Hibernate.DdlWriter.csproj", "{298A5358-EF8F-4D27-A935-5E0E2BEF754F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare", "..\..\Healthcare\ClearCanvas.Healthcare.csproj", "{748C08F1-FD6E-49F6-90BB-90C3A323C714}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Hibernate", "..\..\Healthcare\Hibernate\ClearCanvas.Healthcare.Hibernate.csproj", "{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}"
@@ -34,7 +28,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Server.Exec
 		{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD} = {487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}
 		{11548867-F0DC-4142-82E8-59EBC36B8980} = {11548867-F0DC-4142-82E8-59EBC36B8980}
 		{32C097AB-931A-44B0-9ED2-B6F343C3F588} = {32C097AB-931A-44B0-9ED2-B6F343C3F588}
-		{3AC2BCC0-2549-49AF-97D3-4A403556C097} = {3AC2BCC0-2549-49AF-97D3-4A403556C097}
 		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E} = {401164C1-D492-4E0F-88B8-2A86BD2D6B0E}
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1} = {FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}
 		{4CED35C2-4659-492D-8F85-F560E469BE11} = {4CED35C2-4659-492D-8F85-F560E469BE11}
@@ -44,6 +37,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Server.Exec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSClient", "..\WSClient\WSClient.csproj", "{3E87D49F-FA93-48D2-AF37-D78DD39D8627}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Core", "..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj", "{431E9444-9915-4D49-B92D-9B7EC086622A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication", "..\..\Enterprise\Authentication\ClearCanvas.Enterprise.Authentication.csproj", "{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication.Hibernate", "..\..\Enterprise\Authentication\Hibernate\ClearCanvas.Enterprise.Authentication.Hibernate.csproj", "{E2266084-462A-446F-9CEA-9D132BC36851}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate", "..\..\Enterprise\Hibernate\ClearCanvas.Enterprise.Hibernate.csproj", "{4CED35C2-4659-492D-8F85-F560E469BE11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate.DdlWriter", "..\..\Enterprise\Hibernate\DdlWriter\ClearCanvas.Enterprise.Hibernate.DdlWriter.csproj", "{298A5358-EF8F-4D27-A935-5E0E2BEF754F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,18 +60,6 @@ Global
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3AC2BCC0-2549-49AF-97D3-4A403556C097}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3AC2BCC0-2549-49AF-97D3-4A403556C097}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3AC2BCC0-2549-49AF-97D3-4A403556C097}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3AC2BCC0-2549-49AF-97D3-4A403556C097}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CED35C2-4659-492D-8F85-F560E469BE11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CED35C2-4659-492D-8F85-F560E469BE11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4CED35C2-4659-492D-8F85-F560E469BE11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4CED35C2-4659-492D-8F85-F560E469BE11}.Release|Any CPU.Build.0 = Release|Any CPU
-		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{748C08F1-FD6E-49F6-90BB-90C3A323C714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{748C08F1-FD6E-49F6-90BB-90C3A323C714}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{748C08F1-FD6E-49F6-90BB-90C3A323C714}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -111,6 +104,30 @@ Global
 		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2266084-462A-446F-9CEA-9D132BC36851}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CED35C2-4659-492D-8F85-F560E469BE11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CED35C2-4659-492D-8F85-F560E469BE11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CED35C2-4659-492D-8F85-F560E469BE11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CED35C2-4659-492D-8F85-F560E469BE11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

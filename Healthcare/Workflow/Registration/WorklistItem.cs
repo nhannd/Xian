@@ -5,14 +5,15 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
     public class WorklistItem : IWorklistItem
     {
-        private EntityRef<PatientProfile> _patientProfile;
+        private EntityRef _patientProfile;
         private string _workClassName;
 
         private CompositeIdentifier _mrn;
@@ -43,12 +44,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _dateOfBirth = profile.DateOfBirth;
             _sex = profile.Sex;
 
-            _patientProfile = new EntityRef<PatientProfile>(profile);
+            _patientProfile = profile.GetRef();
         }
 
         #region Public Properties
 
-        public EntityRef<PatientProfile> PatientProfile
+        public EntityRef PatientProfile
         {
             get { return _patientProfile; }
         }

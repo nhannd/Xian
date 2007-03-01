@@ -9,7 +9,7 @@ namespace ClearCanvas.Enterprise.Common
     /// Abstract base class for <see cref="EntityRef"/>
     /// </summary>
     [DataContract]
-    public abstract class EntityRef
+    public class EntityRef
     {
         private string _entityClass;
         private object _entityOid;
@@ -18,7 +18,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// Deserialization constructor
         /// </summary>
-        protected EntityRef()
+        private EntityRef()
         {
 
         }
@@ -26,12 +26,12 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// Constructs an instance of this class
         /// </summary>
-        /// <param name="entityType"></param>
+        /// <param name="entityClass"></param>
         /// <param name="entityOid"></param>
         /// <param name="version"></param>
-        protected EntityRef(Type entityType, object entityOid, int version)
+        public EntityRef(Type entityClass, object entityOid, int version)
         {
-            _entityClass = entityType.AssemblyQualifiedName;
+            _entityClass = entityClass.AssemblyQualifiedName;
             _entityOid = entityOid;
             _version = version;
         }

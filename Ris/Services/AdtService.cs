@@ -4,7 +4,8 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -14,7 +15,7 @@ namespace ClearCanvas.Ris.Services
     {
     }
 
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class AdtService : HealthcareServiceLayer, IAdtService
     {
         private IExtensionPoint _strategyExtensionPoint;
@@ -32,14 +33,14 @@ namespace ClearCanvas.Ris.Services
         #region IAdtService Members
 
         [ReadOperation]
-        public Patient LoadPatient(EntityRef<Patient> patientRef)
+        public Patient LoadPatient(EntityRef patientRef)
         {
             IPatientBroker patientBroker = CurrentContext.GetBroker<IPatientBroker>();
             return patientBroker.Load(patientRef);
         }
 
         [ReadOperation]
-        public Patient LoadPatientAndAllProfiles(EntityRef<PatientProfile> profileRef)
+        public Patient LoadPatientAndAllProfiles(EntityRef profileRef)
         {
             IPatientProfileBroker profileBroker = CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(profileRef, EntityLoadFlags.Proxy);
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public PatientProfile LoadPatientProfile(EntityRef<PatientProfile> profileRef, bool withDetails)
+        public PatientProfile LoadPatientProfile(EntityRef profileRef, bool withDetails)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = broker.Load(profileRef);
@@ -72,7 +73,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Visit LoadVisit(EntityRef<Visit> visitRef, bool withDetails)
+        public Visit LoadVisit(EntityRef visitRef, bool withDetails)
         {
             IVisitBroker visitBroker = CurrentContext.GetBroker<IVisitBroker>();
             Visit visit = visitBroker.Load(visitRef);
@@ -86,7 +87,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<Visit> ListPatientVisits(EntityRef<Patient> patientRef)
+        public IList<Visit> ListPatientVisits(EntityRef patientRef)
         {
             // ensure that the profiles collection is loaded
             IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
@@ -100,7 +101,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef<PatientProfile> patientProfileRef)
+        public IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef patientProfileRef)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             PatientProfile patientProfile = broker.Load(patientProfileRef);
@@ -110,13 +111,13 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public PatientProfileDiff LoadPatientProfileDiff(EntityRef<PatientProfile>[] profileRefs, PatientProfileDiscrepancy testables)
+        public PatientProfileDiff LoadPatientProfileDiff(EntityRef[] profileRefs, PatientProfileDiscrepancy testables)
         {
             IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
             List<PatientProfile> profiles = new List<PatientProfile>();
 
             // load each profile, and load its details
-            foreach (EntityRef<PatientProfile> profileRef in profileRefs)
+            foreach (EntityRef profileRef in profileRefs)
             {
                 PatientProfile profile = broker.Load(profileRef);
                 broker.LoadAddressesForPatientProfile(profile);
@@ -170,7 +171,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [UpdateOperation]
-        public void SaveNewVisit(Visit visit, EntityRef<Patient> patientRef)
+        public void SaveNewVisit(Visit visit, EntityRef patientRef)
         {
             IPatientBroker broker = this.CurrentContext.GetBroker<IPatientBroker>();
             visit.Patient = broker.Load(patientRef);

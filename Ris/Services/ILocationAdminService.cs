@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -19,7 +20,7 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="facility"></param>
         /// <returns></returns>
-        IList<Location> GetLocations(EntityRef<Facility> facility);
+        IList<Location> GetLocations(EntityRef facility);
 
         /// <summary>
         /// Add the specified location
@@ -38,6 +39,6 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="locationRef"></param>
         /// <returns></returns>
-        Location LoadLocation(EntityRef<Location> locationRef);
+        Location LoadLocation(EntityRef locationRef);
     }
 }

@@ -4,11 +4,12 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ModalityAdminService : HealthcareServiceLayer, IModalityAdminService
     {
         [ReadOperation]
@@ -30,7 +31,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Modality LoadModality(EntityRef<Modality> modalityRef)
+        public Modality LoadModality(EntityRef modalityRef)
         {
             IModalityBroker modalityBroker = CurrentContext.GetBroker<IModalityBroker>();
             return modalityBroker.Load(modalityRef);

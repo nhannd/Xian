@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -42,6 +43,6 @@ namespace ClearCanvas.Ris.Services
         /// <param name="practitionerRef"></param>
         /// <param name="withDetails">If true, will also load the related detail collections</param>
         /// <returns></returns>
-        Practitioner LoadPractitioner(EntityRef<Practitioner> practitionerRef, bool withDetails);
+        Practitioner LoadPractitioner(EntityRef practitionerRef, bool withDetails);
     }
 }

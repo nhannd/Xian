@@ -7,6 +7,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using System.Collections.ObjectModel;
 using System.ServiceModel.Dispatcher;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -16,10 +17,12 @@ namespace ClearCanvas.Ris.Server
     class InstanceManagementServiceBehavior : IServiceBehavior
     {
         private Type _serviceContract;
+        private IServiceManager _serviceManager;
 
-        public InstanceManagementServiceBehavior(Type serviceContract)
+        public InstanceManagementServiceBehavior(Type serviceContract, IServiceManager serviceManager)
         {
             _serviceContract = serviceContract;
+            _serviceManager = serviceManager;
         }
 
 
@@ -39,7 +42,7 @@ namespace ClearCanvas.Ris.Server
                     foreach (EndpointDispatcher ed in cd.Endpoints)
                     {
                         ed.DispatchRuntime.InstanceProvider =
-                            new ProxiedServiceInstanceProvider(_serviceContract);
+                            new ProxiedServiceInstanceProvider(_serviceContract, _serviceManager);
                     }
                 }
             }

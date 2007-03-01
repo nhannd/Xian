@@ -4,11 +4,12 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ClearCanvas.Enterprise.ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class FacilityAdminService : HealthcareServiceLayer, IFacilityAdminService
     {
         [ReadOperation]
@@ -38,7 +39,7 @@ namespace ClearCanvas.Ris.Services
         }
 
         [ReadOperation]
-        public Facility LoadFacility(EntityRef<Facility> facilityRef)
+        public Facility LoadFacility(EntityRef facilityRef)
         {
             IFacilityBroker facilityBroker = CurrentContext.GetBroker<IFacilityBroker>();
             return facilityBroker.Load(facilityRef);

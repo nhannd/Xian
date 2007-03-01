@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
@@ -31,6 +32,6 @@ namespace ClearCanvas.Ris.Services
         /// </summary>
         /// <param name="modalityRef"></param>
         /// <returns></returns>
-        Modality LoadModality(EntityRef<Modality> modalityRef);
+        Modality LoadModality(EntityRef modalityRef);
     }
 }

@@ -67,9 +67,13 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\ClearCanvas.Enterprise.csproj">
-      <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
-      <Name>ClearCanvas.Enterprise</Name>
+    <ProjectReference Include="..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\Hibernate\ClearCanvas.Enterprise.Hibernate.csproj">
       <Project>{4CED35C2-4659-492D-8F85-F560E469BE11}</Project>

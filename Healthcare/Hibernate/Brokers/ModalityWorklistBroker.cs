@@ -8,6 +8,7 @@ using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -58,7 +59,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return items;
         }
 
-        public WorklistQueryResult GetWorklistItem(EntityRef<ModalityProcedureStep> mpsRef, string patientProfileAuthority)
+        public WorklistQueryResult GetWorklistItem(EntityRef mpsRef, string patientProfileAuthority)
         {
             ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria(mpsRef);
             IList<WorklistQueryResult> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
