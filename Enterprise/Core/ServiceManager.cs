@@ -11,23 +11,17 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Defines the extension point for all service layer implementations
-    /// </summary>
-    [ExtensionPoint()]
-    public class ServiceLayerExtensionPoint : ExtensionPoint<IServiceLayer>
-    {
-    }
-
-    /// <summary>
     /// Default implementation of <see cref="IServiceManager"/>, which allows an application to obtain
     /// a service that implements a specified interface.
     /// </summary>
     public class ServiceManager : IServiceManager
     {
         private Dictionary<Type, ProxyFactory> _proxyFactoryCache;
+        private ExtensionPoint<IServiceLayer> _serviceExtensionPoint;
 
-        public ServiceManager()
+        public ServiceManager(ExtensionPoint<IServiceLayer> serviceExtensionPoint)
         {
+            _serviceExtensionPoint = serviceExtensionPoint;
             _proxyFactoryCache = new Dictionary<Type, ProxyFactory>();
         }
 
@@ -49,13 +43,13 @@ namespace ClearCanvas.Enterprise.Core
 
         public ICollection<Type> ListServices()
         {
-            return CollectionUtils.Map<ExtensionInfo, Type>(new ServiceLayerExtensionPoint().ListExtensions(),
+            return CollectionUtils.Map<ExtensionInfo, Type>(_serviceExtensionPoint.ListExtensions(),
                 delegate(ExtensionInfo info) { return info.ExtensionClass; });
         }
 
         public bool HasService(Type serviceContract)
         {
-            return (new ServiceLayerExtensionPoint()).ListExtensions(new TypeExtensionFilter(serviceContract)).Length > 0;
+            return _serviceExtensionPoint.ListExtensions(new TypeExtensionFilter(serviceContract)).Length > 0;
         }
 
 
@@ -65,8 +59,7 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="serviceContract"></param>
         private void CreateProxyFactory(Type serviceContract)
         {
-            ServiceLayerExtensionPoint xp = new ServiceLayerExtensionPoint();
-            object service = xp.CreateExtension(new TypeExtensionFilter(serviceContract));
+            object service = _serviceExtensionPoint.CreateExtension(new TypeExtensionFilter(serviceContract));
 
             ProxyFactory factory = new ProxyFactory(service);
 

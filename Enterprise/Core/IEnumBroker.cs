@@ -9,12 +9,12 @@ namespace ClearCanvas.Enterprise.Core
     /// meta-data about a C# enum.
     /// </summary>
     /// <typeparam name="E">The <see cref="EnumValue"/> class that this broker returns</typeparam>
-    public interface IEnumBroker<E> : IPersistenceBroker
+    public interface IEnumBroker<E, ETable> : IPersistenceBroker
     {
         /// <summary>
         /// Loads the domain enumeration from a persistent store.
         /// </summary>
         /// <returns></returns>
-        IList<E> Load();
+        ETable Load();
     }
 }

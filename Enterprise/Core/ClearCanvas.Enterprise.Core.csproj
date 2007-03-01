@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
+    <Compile Include="BaseServiceExtensionPoint.cs" />
     <Compile Include="CodedValue.cs" />
     <Compile Include="CodedValueDictionary.cs" />
     <Compile Include="ConcurrencyException.cs" />

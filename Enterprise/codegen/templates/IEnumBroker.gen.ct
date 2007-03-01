@@ -10,7 +10,7 @@ namespace <%= @model.namespace %>.Brokers {
     /// <summary>
     /// Defines the interface for a <see cref="<%= @className %>"/> broker
     /// </summary>
-	public partial interface I<%= @className %>Broker : IEnumBroker<<%= @className %>>
+	public partial interface I<%= @className %>Broker : IEnumBroker<<%= @className %>, <%= @className %>Table>
 	{
 	}
 }
