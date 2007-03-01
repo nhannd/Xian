@@ -10,7 +10,7 @@ using ClearCanvas.Enterprise.Core;
 namespace ClearCanvas.Enterprise.Configuration
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    public class ConfigurationService : ConfigurationServiceLayer, IConfigurationService
+    public class ConfigurationService : CoreServiceLayer, IConfigurationService
     {
         #region IConfigurationService Members
 

@@ -8,7 +8,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -28,7 +27,7 @@ namespace ClearCanvas.Ris.Server
             _serviceHosts = new List<ServiceHost>();
 
             _serviceHosts.AddRange(MountServices(new CoreServiceExtensionPoint(), baseAddress));
-            _serviceHosts.AddRange(MountServices(new ApplicationServiceExtensionPoint(), baseAddress));
+            //_serviceHosts.AddRange(MountServices(new ApplicationServiceExtensionPoint(), baseAddress));
 
             Console.WriteLine("Starting services...");
             foreach (ServiceHost host in _serviceHosts)
@@ -49,7 +48,7 @@ namespace ClearCanvas.Ris.Server
 
         #endregion
 
-        private List<ServiceHost> MountServices(ExtensionPoint<IServiceLayer> serviceLayer, Uri baseAddress)
+        private List<ServiceHost> MountServices(IExtensionPoint serviceLayer, Uri baseAddress)
         {
             Binding binding = new BasicHttpBinding();
             List<ServiceHost> hostedServices = new List<ServiceHost>();

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    public interface ITimeService
+    public interface ITimeService : ICoreServiceLayer
     {
         DateTime GetTime();
     }

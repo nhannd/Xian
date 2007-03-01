@@ -6,8 +6,8 @@ class CodeGen
 
   # set of templates that apply to the model as a whole
   @@modelTemplates = [
-    Template.new("IDomainServiceLayer.gen.ct", "I<%=shortName%>ServiceLayer.gen.cs", true),
-    Template.new("DomainServiceLayer.gen.ct", "<%=shortName%>ServiceLayer.gen.cs", true)
+    #Template.new("IDomainServiceLayer.gen.ct", "I<%=shortName%>ServiceLayer.gen.cs", true),
+    #Template.new("DomainServiceLayer.gen.ct", "<%=shortName%>ServiceLayer.gen.cs", true)
   ]
 
   # specifies a set of templates that will be applied to entity classes

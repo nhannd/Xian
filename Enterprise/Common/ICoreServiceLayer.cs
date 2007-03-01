@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise.Common
 {
-    public interface IServiceLayer
+    public interface ICoreServiceLayer
     {
     }
 }

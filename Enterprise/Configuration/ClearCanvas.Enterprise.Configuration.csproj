@@ -39,14 +39,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\*.gen.cs" />
+    <Compile Include="*.gen.cs" />
     <Compile Include="ConfigurationDocument.cs" />
-    <Compile Include="ConfigurationDocumentSearchCriteria.gen.cs" />
-    <Compile Include="ConfigurationDocument.gen.cs" />
     <Compile Include="ConfigurationException.cs" />
     <Compile Include="ConfigurationService.cs" />
-    <Compile Include="ConfigurationServiceLayer.gen.cs" />
     <Compile Include="ConfigurationStore.cs" />
-    <Compile Include="IConfigurationServiceLayer.gen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsParser.cs" />
     <Compile Include="SR.Designer.cs">

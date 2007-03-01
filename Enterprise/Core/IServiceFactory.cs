@@ -17,7 +17,7 @@ namespace ClearCanvas.Enterprise.Core
         /// <returns></returns>
         TServiceInterface GetService<TServiceInterface>();
 
-        IServiceLayer GetService(Type serviceContract);
+        object GetService(Type serviceContract);
 
 
         ICollection<Type> ListServices();

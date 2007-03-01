@@ -16,10 +16,10 @@ namespace ClearCanvas.Enterprise.Core
     public class ServiceFactory : IServiceFactory
     {
         private Dictionary<Type, ProxyFactory> _proxyFactoryCache;
-        private ExtensionPoint<IServiceLayer> _serviceExtensionPoint;
+        private IExtensionPoint _serviceExtensionPoint;
         private object _syncLock = new object();
 
-        public ServiceFactory(ExtensionPoint<IServiceLayer> serviceExtensionPoint)
+        public ServiceFactory(IExtensionPoint serviceExtensionPoint)
         {
             _serviceExtensionPoint = serviceExtensionPoint;
             _proxyFactoryCache = new Dictionary<Type, ProxyFactory>();
@@ -30,7 +30,7 @@ namespace ClearCanvas.Enterprise.Core
             return (TServiceContract)GetService(typeof(TServiceContract));
         }
 
-        public IServiceLayer GetService(Type serviceContract)
+        public object GetService(Type serviceContract)
         {
             lock (_syncLock)
             {
@@ -40,7 +40,7 @@ namespace ClearCanvas.Enterprise.Core
                 }
 
                 ProxyFactory factory = _proxyFactoryCache[serviceContract];
-                return (IServiceLayer)factory.GetProxy();
+                return factory.GetProxy();
             }
         }
 

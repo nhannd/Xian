@@ -43,6 +43,7 @@
     <Compile Include="EntityRef.cs" />
     <Compile Include="EntityRefUtils.cs" />
     <Compile Include="IConfigurationService.cs" />
+    <Compile Include="ICoreServiceLayer.cs" />
     <Compile Include="ITimeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchResultPage.cs" />

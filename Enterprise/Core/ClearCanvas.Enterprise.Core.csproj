@@ -50,6 +50,7 @@
     <Compile Include="CodedValue.cs" />
     <Compile Include="CodedValueDictionary.cs" />
     <Compile Include="ConcurrencyException.cs" />
+    <Compile Include="CoreServiceLayer.cs" />
     <Compile Include="DefaultTransactionRecorder.cs" />
     <Compile Include="DirtyState.cs" />
     <Compile Include="DomainObject.cs" />
@@ -69,7 +70,6 @@
     <Compile Include="IPersistentStore.cs" />
     <Compile Include="IReadContext.cs" />
     <Compile Include="ISearchCondition.cs" />
-    <Compile Include="IServiceLayer.cs" />
     <Compile Include="IServiceFactory.cs" />
     <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
@@ -86,7 +86,6 @@
     <Compile Include="SearchConditionBase.cs" />
     <Compile Include="SearchCriteria.cs" />
     <Compile Include="ServiceImplementsContractAttribute.cs" />
-    <Compile Include="ServiceLayer.cs" />
     <Compile Include="ServiceFactory.cs" />
     <Compile Include="ServiceOperationAdvice.cs">
       <SubType>Code</SubType>

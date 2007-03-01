@@ -7,7 +7,7 @@ namespace ClearCanvas.Enterprise.Common
     /// <summary>
     /// Defines a service for saving/retrieving configuration data to/from a persistent store.
     /// </summary>
-    public interface IConfigurationService
+    public interface IConfigurationService : ICoreServiceLayer
     {
         /// <summary>
         /// Loads the document specified by the name, version, user and instance key, returning the document text as a string.
