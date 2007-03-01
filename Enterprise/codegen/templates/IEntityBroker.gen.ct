@@ -4,7 +4,6 @@ using System.Collections;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Data;
 
 namespace <%= model.namespace %>.Brokers {
 

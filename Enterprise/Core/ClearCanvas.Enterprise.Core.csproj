@@ -70,6 +70,7 @@
     <Compile Include="ISearchCondition.cs" />
     <Compile Include="IServiceLayer.cs" />
     <Compile Include="IServiceManager.cs" />
+    <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="ITransactionRecorder.cs" />
     <Compile Include="IUpdateContext.cs" />
@@ -97,6 +98,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TimeService.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="TransactionNotifier.cs">
       <SubType>Code</SubType>

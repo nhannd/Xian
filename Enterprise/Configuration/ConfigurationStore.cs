@@ -6,7 +6,7 @@ using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Data;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Configuration
 {

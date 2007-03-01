@@ -5,7 +5,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Configuration.Brokers;
-using ClearCanvas.Enterprise.Data;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Configuration

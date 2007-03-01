@@ -69,10 +69,6 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Data\ClearCanvas.Enterprise.Data.csproj">
-      <Project>{76FC3D2A-9C72-4B10-9AFA-A7B1600ECBD9}</Project>
-      <Name>ClearCanvas.Enterprise.Data</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Enterprise.Data.Hibernate;
+using ClearCanvas.Enterprise.Hibernate;
 using <%= @model.namespace %>.Brokers;
 
 namespace <%= @model.namespace %>.Hibernate.Brokers
