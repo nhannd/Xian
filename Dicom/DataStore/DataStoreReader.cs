@@ -376,7 +376,52 @@ namespace ClearCanvas.Dicom.DataStore
 			return CompileResults(queryKey, studiesFound);
 		}
 
-		private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
+        public IList<IStudy> GetStudies()
+        {
+            IList<IStudy> studiesList = new List<IStudy>();
+
+            //
+            // prepare the HQL query string
+            //
+            StringBuilder selectCommandString = new StringBuilder(1024);
+            selectCommandString.AppendFormat("FROM Study ORDER BY StoreTime_ ");
+
+            //
+            // submit the HQL query
+            //
+            IList studiesFound = null;
+            ISession session = null;
+            ITransaction transaction = null;
+            try
+            {
+                session = this.SessionFactory.OpenSession();
+                transaction = session.BeginTransaction();
+
+                IQuery query = session.CreateQuery(selectCommandString.ToString());
+                studiesFound = query.List();
+            }
+            catch (Exception ex)
+            {
+                if (null != transaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (null != session)
+                    session.Close();
+            }
+
+            foreach (object element in studiesFound)
+            {
+                Study study = element as Study;
+                studiesList.Add(study);
+            }
+
+            return studiesList;
+        }
+
+        private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
 		{
 			List<string> modalitiesInStudyFilterValues = new List<string>();
 			bool processModalitiesInStudy = queryKey.ContainsTag(DicomTag.ModalitiesInStudy);

@@ -281,6 +281,12 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
+        public IList<IStudy> GetStudies()
+        {
+            // TO DO
+            return null;
+        }
+
         #endregion
     }
 }

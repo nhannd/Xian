@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Shreds
             foreach (DMStudyItem studyItem in _component.OrderedStudyList)
             {
                 CheckStudyItem(studyItem);
-                Platform.Log("    A#: " + studyItem.AccessionNumber + "; UsedSpace: " + studyItem.UsedSpace + "; CreatedTimeStamp: " + studyItem.CreatedTimeStamp
+                Platform.Log("    A#: " + studyItem.AccessionNumber + "; UsedSpace: " + studyItem.UsedSpace + "; StoreTime: " + studyItem.StoreTime
                     + "; DICOMFiles: " + studyItem.SopItemList.Count + "; StudyInstanceUID: " + studyItem.StudyInstanceUID);
                 if (EnoughDeletedFiles)
                     break;

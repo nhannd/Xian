@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -38,10 +39,10 @@ namespace ClearCanvas.ImageViewer.Shreds
         {
             _orderedStudyList = new DMStudyItemList();
             _isProcessing = false;
-            _dataStoreDrives = new string[] { "C:" };
             _highWatermark = 40;
             _lowWatermark = 30;
             _watermarkMinDifference = 5;
+            _dataStoreDrives = new string[] { "C:" };
         }
 
         public override void Start()
@@ -188,10 +189,10 @@ namespace ClearCanvas.ImageViewer.Shreds
             set { _accessionNumber = value; }
         }
 
-        public DateTime CreatedTimeStamp
+        public DateTime StoreTime
         {
-            get { return _createdTimeStamp; }
-            set { _createdTimeStamp = value; }
+            get { return _storeTime; }
+            set { _storeTime = value; }
         }
 
         public long UsedSpace
@@ -216,7 +217,7 @@ namespace ClearCanvas.ImageViewer.Shreds
 
         private string _studyInstanceUID;
         private string _accessionNumber;
-        private DateTime _createdTimeStamp;
+        private DateTime _storeTime;
         private long _usedSpace;
         private DiskspaceManagementStatus _status;
         private List<DMSopItem> _sopItemList;

@@ -123,21 +123,21 @@ namespace ClearCanvas.ImageViewer.Shreds
         {
             _component.OrderedStudyList = new DMStudyItemList();
 
-            ReadOnlyQueryResultCollection studyResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(new QueryKey());
+            IList<IStudy> studiesFound = DataAccessLayer.GetIDataStoreReader().GetStudies();
 
-            if (studyResults == null || studyResults.Count <= 0)
+            if (studiesFound == null || studiesFound.Count <= 0)
             {
                 Platform.Log("    There is not any study in DataStore.");
                 _component.IsProcessing = false;
                 return false;
             }
 
-            foreach (QueryResult studyResult in studyResults)
+            foreach (Study studyFound in studiesFound)
             {
                 DMStudyItem studyItem = new DMStudyItem();
-                studyItem.AccessionNumber = studyResult.AccessionNumber;
-                studyItem.StudyInstanceUID = studyResult.StudyInstanceUid;
-                studyItem.CreatedTimeStamp = studyResult.CreatedTimeStamp;
+                studyItem.AccessionNumber = studyFound.AccessionNumber;
+                studyItem.StudyInstanceUID = studyFound.StudyInstanceUid;
+                studyItem.StoreTime = studyFound.StoreTime;
                 studyItem.SopItemList = new List<DMSopItem>();
                 IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyItem.StudyInstanceUID));
                 foreach (ISopInstance sop in study.GetSopInstances())
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Shreds
                 _component.OrderedStudyList.Add(studyItem);
             }
             _component.OrderedStudyList.Sort(delegate(DMStudyItem s1, DMStudyItem s2)
-            { return s1.CreatedTimeStamp.CompareTo(s2.CreatedTimeStamp); });
+            { return s1.StoreTime.CompareTo(s2.StoreTime); });
             
             return true;
         }
