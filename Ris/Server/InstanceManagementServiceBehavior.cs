@@ -17,9 +17,9 @@ namespace ClearCanvas.Ris.Server
     class InstanceManagementServiceBehavior : IServiceBehavior
     {
         private Type _serviceContract;
-        private IServiceManager _serviceManager;
+        private IServiceFactory _serviceManager;
 
-        public InstanceManagementServiceBehavior(Type serviceContract, IServiceManager serviceManager)
+        public InstanceManagementServiceBehavior(Type serviceContract, IServiceFactory serviceManager)
         {
             _serviceContract = serviceContract;
             _serviceManager = serviceManager;

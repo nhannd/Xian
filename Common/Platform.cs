@@ -7,6 +7,8 @@ using log4net;
 using log4net.Config;
 
 using ClearCanvas.Common.Auditing;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
@@ -88,6 +90,7 @@ namespace ClearCanvas.Common
 		private static IMessageBox _messageBox;
 		private static AuditManager _auditManager;
         private static ITimeProvider _timeProvider;
+        private static IServiceProvider[] _serviceProviders;
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
@@ -294,18 +297,35 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Obtains an instance of the specified service for use by the application
+        /// Obtains an instance of the specified service for use by the application. This operation is thread-safe.
         /// </summary>
         /// <param name="service">The type of service to obtain</param>
         /// <returns>An instance of the specified service</returns>
         /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
         public static object GetService(Type service)
         {
-            foreach (IServiceProvider sp in (new ServiceProviderExtensionPoint()).CreateExtensions())
+            // load all service providers if not yet loaded
+            lock (_syncRoot)
             {
-                object impl = sp.GetService(service);
-                if (impl != null)
-                    return impl;
+                if (_serviceProviders == null)
+                {
+                    _serviceProviders = Array.ConvertAll<object, IServiceProvider>(
+                                            (new ServiceProviderExtensionPoint()).CreateExtensions(),
+                                                delegate(object sp) { return (IServiceProvider)sp; });
+                }
+            }
+
+            // attempt to instantiate the requested service
+            foreach (IServiceProvider sp in _serviceProviders)
+            {
+                // the service provider itself may not be thread-safe, so we need to ensure only one thread will access it
+                // at a time
+                lock (sp)
+                {
+                    object impl = sp.GetService(service);
+                    if (impl != null)
+                        return impl;
+                }
             }
             throw new UnknownServiceException(string.Format(SR.ExceptionNoServiceProviderCanProvide, service.FullName));
         }

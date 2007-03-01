@@ -11,15 +11,15 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Default implementation of <see cref="IServiceManager"/>, which allows an application to obtain
-    /// a service that implements a specified interface.
+    /// Default implementation of <see cref="IServiceFactory"/>.  This implementation is thread-safe.
     /// </summary>
-    public class ServiceManager : IServiceManager
+    public class ServiceFactory : IServiceFactory
     {
         private Dictionary<Type, ProxyFactory> _proxyFactoryCache;
         private ExtensionPoint<IServiceLayer> _serviceExtensionPoint;
+        private object _syncLock = new object();
 
-        public ServiceManager(ExtensionPoint<IServiceLayer> serviceExtensionPoint)
+        public ServiceFactory(ExtensionPoint<IServiceLayer> serviceExtensionPoint)
         {
             _serviceExtensionPoint = serviceExtensionPoint;
             _proxyFactoryCache = new Dictionary<Type, ProxyFactory>();
@@ -32,13 +32,16 @@ namespace ClearCanvas.Enterprise.Core
 
         public IServiceLayer GetService(Type serviceContract)
         {
-            if (!_proxyFactoryCache.ContainsKey(serviceContract))
+            lock (_syncLock)
             {
-                CreateProxyFactory(serviceContract);
-            }
+                if (!_proxyFactoryCache.ContainsKey(serviceContract))
+                {
+                    CreateProxyFactory(serviceContract);
+                }
 
-            ProxyFactory factory = _proxyFactoryCache[serviceContract];
-            return (IServiceLayer)factory.GetProxy();
+                ProxyFactory factory = _proxyFactoryCache[serviceContract];
+                return (IServiceLayer)factory.GetProxy();
+            }
         }
 
         public ICollection<Type> ListServices()
@@ -63,7 +66,18 @@ namespace ClearCanvas.Enterprise.Core
 
             ProxyFactory factory = new ProxyFactory(service);
 
-            // TODO add advisors
+            IAdvisor auditAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ServiceOperationAttribute), true), new AuditAdvice());
+            IAdvisor readContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ReadOperationAttribute), true), new ReadContextAdvice());
+            IAdvisor updateContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new UpdateContextAdvice());
+//            IAdvisor transactionMonitorAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new TransactionMonitorAdvice());
+
+            // order of read/update context advice does not matter, because they are mutually exclusive
+            // (only one or the other will ever be invoked)
+            factory.AddAdvisor(readContextAdvisor);
+            factory.AddAdvisor(updateContextAdvisor);
+
+            // must add audit advice inside of context advice, because it requires a persistence context to work
+            factory.AddAdvisor(auditAdvisor);
 
             _proxyFactoryCache.Add(serviceContract, factory);
         }

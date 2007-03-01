@@ -10,7 +10,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Services
 {
-    [ExtensionOf(typeof(ServiceLayerExtensionPoint))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class PractitionerAdminService : HealthcareServiceLayer, IPractitionerAdminService
     {
         #region IPractitionerAdminService Members

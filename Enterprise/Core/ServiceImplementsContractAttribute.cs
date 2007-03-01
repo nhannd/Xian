@@ -5,11 +5,11 @@ using System.Text;
 namespace ClearCanvas.Enterprise.Core
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
-    public class ServiceImplementationAttribute : Attribute
+    public class ServiceImplementsContractAttribute : Attribute
     {
         private Type _serviceContract;
 
-        public ServiceImplementationAttribute(Type serviceContract)
+        public ServiceImplementsContractAttribute(Type serviceContract)
         {
             _serviceContract = serviceContract;
         }

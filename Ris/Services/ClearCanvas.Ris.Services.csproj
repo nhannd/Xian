@@ -42,10 +42,19 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
+    <Compile Include="ITestService.cs" />
     <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflowService.cs" />
     <Compile Include="AdtService.cs" />
@@ -73,6 +82,7 @@
     <Compile Include="OrderEntryService.cs" />
     <Compile Include="PatientAdminService.cs" />
     <Compile Include="PatientProfileDiff.cs" />
+    <Compile Include="PatientProfilePreview.cs" />
     <Compile Include="PractitionerAdminService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportingWorkflowService.cs" />
@@ -82,6 +92,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StaffAdminService.cs" />
+    <Compile Include="TestService.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
     <Compile Include="WorklistService.cs" />
     <Compile Include="WorkflowServiceBase.cs" />

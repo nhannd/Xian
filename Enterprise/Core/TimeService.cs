@@ -5,7 +5,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    [ExtensionOf(typeof(BaseServiceExtensionPoint))]
+    [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     public class TimeService : ServiceLayer, ITimeService
     {
         #region ITimeService Members

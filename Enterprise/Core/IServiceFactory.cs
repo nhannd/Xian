@@ -5,10 +5,10 @@ using System.Text;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Defines the interface to a service manager, which allows the application to obtain
-    /// the service that implements a specified interface.
+    /// Defines the interface to a service factory, which instantiates a service based on a specified
+    /// contract.
     /// </summary>
-    public interface IServiceManager
+    public interface IServiceFactory
     {
         /// <summary>
         /// Obtains an instance of the service that implements the specified interface.

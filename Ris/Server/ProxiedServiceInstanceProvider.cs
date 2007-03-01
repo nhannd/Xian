@@ -11,9 +11,9 @@ namespace ClearCanvas.Ris.Server
     class ProxiedServiceInstanceProvider : IInstanceProvider
     {
         private Type _serviceContract;
-        private IServiceManager _serviceManager;
+        private IServiceFactory _serviceManager;
 
-        public ProxiedServiceInstanceProvider(Type serviceContract, IServiceManager serviceManager)
+        public ProxiedServiceInstanceProvider(Type serviceContract, IServiceFactory serviceManager)
         {
             _serviceContract = serviceContract;
             _serviceManager = serviceManager;

@@ -8,6 +8,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Services;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -23,18 +24,45 @@ namespace ClearCanvas.Ris.Server
             Console.WriteLine("Starting application root " + this.GetType().FullName);
  
             Uri baseAddress = new Uri("http://localhost:8000/");
+
+            _serviceHosts = new List<ServiceHost>();
+
+            _serviceHosts.AddRange(MountServices(new CoreServiceExtensionPoint(), baseAddress));
+            _serviceHosts.AddRange(MountServices(new ApplicationServiceExtensionPoint(), baseAddress));
+
+            Console.WriteLine("Starting services...");
+            foreach (ServiceHost host in _serviceHosts)
+            {
+                host.Open();
+            }
+            Console.WriteLine("Services started.");
+            Console.WriteLine("PRESS ANY KEY TO EXIT");
+
+            Console.Read();
+
+            Console.WriteLine("Stopping services...");
+            foreach (ServiceHost host in _serviceHosts)
+            {
+                host.Close();
+            }
+        }
+
+        #endregion
+
+        private List<ServiceHost> MountServices(ExtensionPoint<IServiceLayer> serviceLayer, Uri baseAddress)
+        {
             Binding binding = new BasicHttpBinding();
+            List<ServiceHost> hostedServices = new List<ServiceHost>();
 
-            IServiceManager serviceManager = new ServiceManager();
-
+            IServiceFactory serviceManager = new ServiceFactory(serviceLayer);
             ICollection<Type> serviceClasses = serviceManager.ListServices();
             foreach (Type serviceClass in serviceClasses)
             {
-                ServiceImplementationAttribute a = CollectionUtils.FirstElement<ServiceImplementationAttribute>(
-                    serviceClass.GetCustomAttributes(typeof(ServiceImplementationAttribute), false));
+                ServiceImplementsContractAttribute a = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(
+                    serviceClass.GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
                 if (a != null)
                 {
-                    Console.WriteLine("Starting service " + serviceClass.FullName);
+                    Console.WriteLine("Mounting service " + serviceClass.FullName);
 
                     // create service host
                     ServiceHost host = new ServiceHost(serviceClass, baseAddress);
@@ -58,28 +86,14 @@ namespace ClearCanvas.Ris.Server
                     host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
                     host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new UserValidator();
 
-
-                    host.Open();
-
-                    _serviceHosts.Add(host);
+                    hostedServices.Add(host);
                 }
                 else
                 {
                     Console.WriteLine("Unknown contract for service " + serviceClass.FullName);
                 }
             }
-
-            //Can do blocking calls: Application.Run(new MyForm());
-            Console.Read();
-
-            Console.WriteLine("Stopping services...");
-
-            foreach (ServiceHost host in _serviceHosts)
-            {
-                host.Close();
-            }
+            return hostedServices;
         }
-
-        #endregion
     }
 }

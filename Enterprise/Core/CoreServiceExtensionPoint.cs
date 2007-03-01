@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Enterprise.Core
 {
     [ExtensionPoint]
-    public class BaseServiceExtensionPoint : ExtensionPoint<IServiceLayer>
+    public class CoreServiceExtensionPoint : ExtensionPoint<IServiceLayer>
     {
     }
 }

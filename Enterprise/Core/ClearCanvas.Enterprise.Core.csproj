@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
-    <Compile Include="BaseServiceExtensionPoint.cs" />
+    <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="CodedValue.cs" />
     <Compile Include="CodedValueDictionary.cs" />
     <Compile Include="ConcurrencyException.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="IReadContext.cs" />
     <Compile Include="ISearchCondition.cs" />
     <Compile Include="IServiceLayer.cs" />
-    <Compile Include="IServiceManager.cs" />
+    <Compile Include="IServiceFactory.cs" />
     <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="ITransactionRecorder.cs" />
@@ -85,9 +85,9 @@
     <Compile Include="SearchCondition.cs" />
     <Compile Include="SearchConditionBase.cs" />
     <Compile Include="SearchCriteria.cs" />
-    <Compile Include="ServiceImplementationAttribute.cs" />
+    <Compile Include="ServiceImplementsContractAttribute.cs" />
     <Compile Include="ServiceLayer.cs" />
-    <Compile Include="ServiceManager.cs" />
+    <Compile Include="ServiceFactory.cs" />
     <Compile Include="ServiceOperationAdvice.cs">
       <SubType>Code</SubType>
     </Compile>

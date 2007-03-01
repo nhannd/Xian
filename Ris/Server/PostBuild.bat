@@ -7,7 +7,8 @@ copy "..\..\..\..\Ris\Client\Adt\actionmodels.xml "."
 
 
 :: Copy Enterprise	
-copy "..\..\..\..\..\Enterprise\bin\%1\ClearCanvas.Enterprise.dll" .\plugins
+copy "..\..\..\..\..\Enterprise\Common\bin\%1\ClearCanvas.Enterprise.Common.dll" .\plugins
+copy "..\..\..\..\..\Enterprise\Core\bin\%1\ClearCanvas.Enterprise.Core.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\Spring.Core.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\Spring.Aop.dll" .\plugins
