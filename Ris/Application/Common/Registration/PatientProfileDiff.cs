@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Application.Common.Registration
 {
     public class PatientProfileDiff
     {

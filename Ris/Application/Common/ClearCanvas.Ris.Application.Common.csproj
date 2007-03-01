@@ -41,25 +41,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IAdtService.cs" />
-    <Compile Include="IDiagnosticServiceAdminService.cs" />
-    <Compile Include="IFacilityAdminService.cs" />
-    <Compile Include="IHL7QueueService.cs" />
-    <Compile Include="ILocationAdminService.cs" />
-    <Compile Include="IModalityAdminService.cs" />
-    <Compile Include="IModalityWorkflowService.cs" />
+    <Compile Include="Admin\IDiagnosticServiceAdminService.cs" />
+    <Compile Include="Admin\IFacilityAdminService.cs" />
+    <Compile Include="Admin\IHL7QueueService.cs" />
+    <Compile Include="Admin\ILocationAdminService.cs" />
+    <Compile Include="Admin\IModalityAdminService.cs" />
+    <Compile Include="Admin\IPatientAdminService.cs" />
+    <Compile Include="Admin\IPractitionerAdminService.cs" />
+    <Compile Include="Admin\IStaffAdminService.cs" />
     <Compile Include="ImportException.cs" />
-    <Compile Include="IOrderEntryService.cs" />
-    <Compile Include="IPatientAdminService.cs" />
-    <Compile Include="IPatientReconciliationStrategy.cs" />
-    <Compile Include="IPractitionerAdminService.cs" />
-    <Compile Include="IReportingWorkflowService.cs" />
-    <Compile Include="IStaffAdminService.cs" />
     <Compile Include="ITestService.cs" />
     <Compile Include="IWorklistService.cs" />
-    <Compile Include="PatientProfileDiff.cs" />
+    <Compile Include="Modality\IModalityWorkflowService.cs" />
     <Compile Include="PatientProfilePreview.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registration\IAdtService.cs" />
+    <Compile Include="Registration\IOrderEntryService.cs" />
+    <Compile Include="Registration\PatientProfileDiff.cs" />
+    <Compile Include="Reporting\IReportingWorkflowService.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

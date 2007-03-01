@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Hibernate", "..\..\Healthcare\Hibernate\ClearCanvas.Healthcare.Hibernate.csproj", "{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Services", "..\Services\ClearCanvas.Ris.Services.csproj", "{11548867-F0DC-4142-82E8-59EBC36B8980}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Workflow", "..\..\Workflow\ClearCanvas.Workflow.csproj", "{576C4A35-B314-49D0-BF53-4BD43D8D1F31}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Workflow.Hibernate", "..\..\Workflow\Hibernate\ClearCanvas.Workflow.Hibernate.csproj", "{8B6F26E3-F067-414E-BEAA-F27481E0EFE0}"
@@ -50,6 +48,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate.DdlWriter", "..\..\Enterprise\Hibernate\DdlWriter\ClearCanvas.Enterprise.Hibernate.DdlWriter.csproj", "{298A5358-EF8F-4D27-A935-5E0E2BEF754F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Services", "..\Application\Services\ClearCanvas.Ris.Application.Services.csproj", "{11548867-F0DC-4142-82E8-59EBC36B8980}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Common", "..\Application\Common\ClearCanvas.Ris.Application.Common.csproj", "{09F49217-CD98-4773-8CFB-594F189EEE3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,10 +70,6 @@ Global
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11548867-F0DC-4142-82E8-59EBC36B8980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11548867-F0DC-4142-82E8-59EBC36B8980}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11548867-F0DC-4142-82E8-59EBC36B8980}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11548867-F0DC-4142-82E8-59EBC36B8980}.Release|Any CPU.Build.0 = Release|Any CPU
 		{576C4A35-B314-49D0-BF53-4BD43D8D1F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{576C4A35-B314-49D0-BF53-4BD43D8D1F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{576C4A35-B314-49D0-BF53-4BD43D8D1F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -128,6 +126,14 @@ Global
 		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{298A5358-EF8F-4D27-A935-5E0E2BEF754F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11548867-F0DC-4142-82E8-59EBC36B8980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11548867-F0DC-4142-82E8-59EBC36B8980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11548867-F0DC-4142-82E8-59EBC36B8980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11548867-F0DC-4142-82E8-59EBC36B8980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09F49217-CD98-4773-8CFB-594F189EEE3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09F49217-CD98-4773-8CFB-594F189EEE3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09F49217-CD98-4773-8CFB-594F189EEE3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09F49217-CD98-4773-8CFB-594F189EEE3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
