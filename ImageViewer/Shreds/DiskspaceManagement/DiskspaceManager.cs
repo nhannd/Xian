@@ -67,36 +67,39 @@ namespace ClearCanvas.ImageViewer.Shreds
             {
                 if (_component.IsProcessing)
                     continue;
-                GetDiskSpace();
-                if (ReachHighWaterMark)
+                CheckDiskspace();
+                if (_component.ReachHighWaterMark)
                 {
-                    _deletedFileSpace = 0;
-                    _deletedStudyNumber = 0;
+                    //_deletedFileSpace = 0;
+                    //_deletedStudyNumber = 0;
                     _component.IsProcessing = true;
                     _component.FireOrderedStudyListRequired();
                 }
             }
         }
 
-        private void GetDiskSpace()
+        private void CheckDiskspace()
         {
-            if (_component == null || _component.DataStoreDrives == null || _component.DataStoreDrives.Length <= 0)
+            if (_component == null || _component.DriveInfoList == null || _component.DriveInfoList.Count <= 0)
                 return;
 
-            _driveName = _component.DataStoreDrives[0];
-            ManagementObject drive = new ManagementObject("win32_logicaldisk.deviceid='" + _driveName + "'");
-            drive.Get();
-            _component.DriveSize = long.Parse(drive["Size"].ToString());
-            _component.UsedSpace = _component.DriveSize - long.Parse(drive["FreeSpace"].ToString());
             Platform.Log("==========================================");
-            Platform.Log("    Checking diskspace on drive (" + DriveName + ") : " + _component.UsedSpace + "/" + _component.DriveSize
-                + " (" + UsedSpacePercentage + "%) (Watermark: " + _component.LowWatermark + " ~ " + _component.HighWatermark + ")");
+            foreach (DMDriveInfo dmDriveInfo in _component.DriveInfoList)
+            {
+                dmDriveInfo.init();
+                ManagementObject drive = new ManagementObject("win32_logicaldisk.deviceid='" + dmDriveInfo.DriveName + "'");
+                drive.Get();
+                dmDriveInfo.DriveSize = long.Parse(drive["Size"].ToString());
+                dmDriveInfo.UsedSpace = dmDriveInfo.DriveSize - long.Parse(drive["FreeSpace"].ToString());
+                Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
+                    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
+            }
 
         }
 
         private void DeleteStudyHandler(object sender, EventArgs args)
         {
-            DeleteStudyOnLocalDrive();
+            DeleteStudyOnDrive();
             _component.IsProcessing = false;
         }
 
@@ -106,63 +109,75 @@ namespace ClearCanvas.ImageViewer.Shreds
             _component.FireDeleteStudyInDBRequired();
         }
 
-        private void DeleteStudyOnLocalDrive()
+        private void DeleteStudyOnDrive()
         {
-            int deletedNumber = 0;
-            long deletedSpace = 0;
-            string fileName = "";
-            foreach (DMStudyItem studyItem in _component.OrderedStudyList)
+            for (int i = 0; i < _component.DriveInfoList.Count; i++)
             {
-                if (!studyItem.Status.Equals(DiskspaceManagementStatus.DeletedFromDatabase))
+                if (_component.DriveInfoList[i].ReachLowWaterMark)
                     continue;
-                bool isSuccessful = true;
-                foreach (DMSopItem sopItem in studyItem.SopItemList)
+                int deletedNumber = 0;
+                long deletedSpace = 0;
+                string fileName = "";
+                foreach (DMStudyItem studyItem in _component.OrderedStudyList)
                 {
-                    try
+                    if (studyItem.DriveID != i || !studyItem.Status.Equals(DiskspaceManagementStatus.DeletedFromDatabase))
+                        continue;
+                    bool isSuccessful = true;
+                    foreach (DMSopItem sopItem in studyItem.SopItemList)
                     {
-                        fileName = sopItem.LocationUri;
-                        if (!File.Exists(fileName))
+                        try
                         {
-                            Platform.Log("    Studies deleted on disk warning: file does not exist (" + fileName + ")");
+                            fileName = sopItem.LocationUri;
+                            if (!File.Exists(fileName))
+                            {
+                                Platform.Log("    Studies deleted on disk warning: file does not exist (" + fileName + ")");
+                            }
+                            else
+                                File.Delete(fileName);
                         }
-                        else 
-                            File.Delete(fileName);
+                        catch (Exception e)
+                        {
+                            Platform.Log(e, LogLevel.Error);
+                            isSuccessful = false;
+                        }
                     }
-                    catch (Exception e)
+                    if (isSuccessful)
                     {
-                        Platform.Log(e, LogLevel.Error);
-                        isSuccessful = false;
+                        string studyFolder = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
+                        if (Directory.Exists(studyFolder))
+                        {
+                            DirectoryInfo dinfo = new DirectoryInfo(studyFolder);
+                            if (dinfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
+                                Directory.Delete(studyFolder, true);
+                        }
+                        deletedNumber += 1;
+                        deletedSpace += studyItem.UsedSpace;
+                        studyItem.Status = DiskspaceManagementStatus.DeletedFromDrive;
+                        Platform.Log("    Studies deleted on drive " + _component.DriveInfoList[i].DriveName + " " + deletedNumber + ") DicomFiles: " + studyItem.SopItemList.Count + "; UsedSpace: " + studyItem.UsedSpace + "; A#: " + studyItem.AccessionNumber + "; StudyUID: " + studyItem.StudyInstanceUID);
                     }
                 }
-                if (isSuccessful)
-                {
-                    string studyFolder = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
-                    if (Directory.Exists(studyFolder))
-                    {
-                        DirectoryInfo dinfo = new DirectoryInfo(studyFolder);
-                        if (dinfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
-                            Directory.Delete(studyFolder, true);
-                    }
-                    deletedNumber += 1;
-                    deletedSpace += studyItem.UsedSpace;
-                    studyItem.Status = DiskspaceManagementStatus.DeletedFromLocalDrive;
-                    Platform.Log("    Studies deleted on disk " + deletedNumber + ") DicomFiles: " + studyItem.SopItemList.Count + "; UsedSpace: " + studyItem.UsedSpace + "; A#: " + studyItem.AccessionNumber + "; StudyUID: " + studyItem.StudyInstanceUID);
-                }
+                _component.DriveInfoList[i].UsedSpace -= deletedSpace;
+                Platform.Log("    Total studies deleted on drive " + _component.DriveInfoList[i].DriveName + ": " + deletedNumber + "; Deleted Space: " + deletedSpace
+                    + " (" + _component.DriveInfoList[i].UsedSpacePercentage + "%) (Watermark: " + _component.DriveInfoList[i].LowWatermark + " ~ " + _component.DriveInfoList[i].HighWatermark + ")");
             }
-            Platform.Log("    Total studies deleted on disk: " + deletedNumber + "; Deleted Space: " + deletedSpace);
         }
 
         private void ValidateOrderedStudyList()
         {
+            Platform.Log("    Validation for DICOM files on drive:");
             foreach (DMStudyItem studyItem in _component.OrderedStudyList)
             {
                 CheckStudyItem(studyItem);
-                Platform.Log("    A#: " + studyItem.AccessionNumber + "; UsedSpace: " + studyItem.UsedSpace + "; StoreTime: " + studyItem.StoreTime
-                    + "; DICOMFiles: " + studyItem.SopItemList.Count + "; StudyInstanceUID: " + studyItem.StudyInstanceUID);
-                if (EnoughDeletedFiles)
+                if (_component.EnoughDeletedFiles)
                     break;
             }
-            Platform.Log("    Validation for DeletedSpace: " + _deletedFileSpace + "; DeletedStudies: " + _deletedStudyNumber);
+            foreach (DMDriveInfo dmDriveInfo in _component.DriveInfoList)
+            {
+                if (!dmDriveInfo.ReachHighWaterMark)
+                    continue;
+                Platform.Log("    Validation for drive " + dmDriveInfo.DriveName + " Studies found: " + dmDriveInfo.DeletedStudyNumber + "; Used Space: " + dmDriveInfo.DeletedFileSpace
+                    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
+            }
             return;
         }
 
@@ -171,23 +186,39 @@ namespace ClearCanvas.ImageViewer.Shreds
             long usedspace = 0;
             foreach (DMSopItem sopItem in studyItem.SopItemList)
             {
-                if (!sopItem.LocationUri.StartsWith(_component.DataStoreDrives[0]) || !File.Exists(sopItem.LocationUri))
+                if (usedspace <= 0)
+                {
+                    studyItem.DriveID = -1;
+                    for (int i = 0; i < _component.DriveInfoList.Count; i++)
+                    {
+                        if (sopItem.LocationUri.StartsWith(_component.DriveInfoList[i].DriveName))
+                        {
+                            if (_component.DriveInfoList[i].ReachHighWaterMark)
+                                studyItem.DriveID = i;
+                            break;
+                        }
+                    }
+                    if (studyItem.DriveID == -1)
+                        return;
+                }
+                if (!File.Exists(sopItem.LocationUri))
                     return;
                 FileInfo dfile = new FileInfo(sopItem.LocationUri);
                 usedspace += dfile.Length;
-                //Platform.Log("        " + sopItem.LocationUri + " (" + dfile.Length + " bytes, " + sopItem.SopInstanceUID + ")");
             }
             studyItem.UsedSpace = usedspace;
-            _deletedFileSpace += usedspace;
-            _deletedStudyNumber += 1;
-            studyItem.Status = DiskspaceManagementStatus.ExistsOnLocalDrive;
+            _component.DriveInfoList[studyItem.DriveID].DeletedFileSpace += usedspace;
+            _component.DriveInfoList[studyItem.DriveID].DeletedStudyNumber += 1;
+            studyItem.Status = DiskspaceManagementStatus.ExistsOnDrive;
+            Platform.Log("    A#: " + studyItem.AccessionNumber + "; UsedSpace: " + studyItem.UsedSpace + "; StoreTime: " + studyItem.StoreTime
+                + "; DICOMFiles: " + studyItem.SopItemList.Count + "; StudyInstanceUID: " + studyItem.StudyInstanceUID);
             return;
         }
 
         private bool FindStudyDataAccessExtensionPoint()
         {
             StudyDataAccessExtensionPoint xp = new StudyDataAccessExtensionPoint();
-            object[] dmObjects = xp.CreateExtensions(); // ListExtensions(); // .CreateExtensions();
+            object[] dmObjects = xp.CreateExtensions(); 
             foreach (object dmObject in dmObjects)
             {
                 if (dmObject is StudyDataAccess)
@@ -205,41 +236,6 @@ namespace ClearCanvas.ImageViewer.Shreds
         private EventWaitHandle _stopSignal;
         private DiskspaceManagementComponent _component;
         private readonly string _className;
-        private string _driveName;
-        private long _deletedFileSpace;
-        private int _deletedStudyNumber;
-
-        public string DriveName
-        {
-            get { return _driveName; }
-            set { _driveName = value; }
-        }
-
-        public long DeletedFileSpace
-        {
-            get { return _deletedFileSpace; }
-            set { _deletedFileSpace = value; }
-        }
-
-        public bool EnoughDeletedFiles
-        {
-            get { return (100 * (_component.UsedSpace - _deletedFileSpace) / _component.DriveSize) <= _component.LowWatermark ? true : false; }
-        }
-
-        public decimal UsedSpacePercentage
-        {
-            get { return new decimal(100 * _component.UsedSpace / _component.DriveSize); }
-        }
-
-        public bool ReachHighWaterMark
-        {
-            get { return UsedSpacePercentage >= _component.HighWatermark ? true : false; }
-        }
-
-        public bool ReachLowWaterMark
-        {
-            get { return UsedSpacePercentage <= _component.LowWatermark ? true : false; }
-        }
 
         #endregion
 

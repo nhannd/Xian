@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Shreds
             int deletedNumber = 0;
             foreach (DMStudyItem studyItem in _component.OrderedStudyList)
             {
-                if (!studyItem.Status.Equals(DiskspaceManagementStatus.ExistsOnLocalDrive))
+                if (!studyItem.Status.Equals(DiskspaceManagementStatus.ExistsOnDrive))
                     continue;
                 IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyItem.StudyInstanceUID));
                 try
@@ -103,13 +103,14 @@ namespace ClearCanvas.ImageViewer.Shreds
                     DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
                     deletedNumber += 1;
                     studyItem.Status = DiskspaceManagementStatus.DeletedFromDatabase;
+                    Platform.Log("    Study deleted in DB " + deletedNumber + ") A#: " + studyItem.AccessionNumber + "; InstanceUid: " + studyItem.StudyInstanceUID);
                 }
                 catch (Exception e)
                 {
                     Platform.Log(e, LogLevel.Error);
                 }
             }
-            Platform.Log("    Studies deleted in DB: " + deletedNumber);
+            Platform.Log("    Total studies deleted in DB: " + deletedNumber);
             return;
         }
 

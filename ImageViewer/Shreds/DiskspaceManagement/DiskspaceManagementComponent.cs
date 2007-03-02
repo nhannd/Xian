@@ -39,10 +39,16 @@ namespace ClearCanvas.ImageViewer.Shreds
         {
             _orderedStudyList = new DMStudyItemList();
             _isProcessing = false;
-            _highWatermark = 40;
-            _lowWatermark = 30;
-            _watermarkMinDifference = 5;
-            _dataStoreDrives = new string[] { "C:" };
+            _driveInfoList = new DMDriveInfoList();
+            DriveInfo[] driveinfos = DriveInfo.GetDrives();
+            foreach (DriveInfo driveInfo in driveinfos)
+            {
+                if (!driveInfo.DriveType.Equals(DriveType.Fixed) && !driveInfo.DriveType.Equals(DriveType.Network))
+                    continue;
+                DMDriveInfo dmDriveInfo = new DMDriveInfo();
+                dmDriveInfo.DriveName = driveInfo.RootDirectory.ToString().Replace("\\", "");
+                _driveInfoList.Add(dmDriveInfo);
+            }
         }
 
         public override void Start()
@@ -61,13 +67,8 @@ namespace ClearCanvas.ImageViewer.Shreds
         #region Fields
 
         private DMStudyItemList _orderedStudyList;
-        private string [] _dataStoreDrives;
+        private DMDriveInfoList _driveInfoList;
         private bool _isProcessing;
-        private readonly long _watermarkMinDifference;
-        private decimal _highWatermark;
-        private decimal _lowWatermark;
-        private long _usedSpace;
-        private long _driveSize;
 
         private event EventHandler _orderedStudyListReadyEvent;
         private event EventHandler _orderedStudyListRequiredEvent;
@@ -80,10 +81,10 @@ namespace ClearCanvas.ImageViewer.Shreds
             set { _orderedStudyList = value; }
         }
 
-        public string[] DataStoreDrives
+        public DMDriveInfoList DriveInfoList
         {
-            get { return _dataStoreDrives; }
-            set { _dataStoreDrives = value; }
+            get { return _driveInfoList; }
+            set { _driveInfoList = value; }
         }
 
         public bool IsProcessing
@@ -92,31 +93,31 @@ namespace ClearCanvas.ImageViewer.Shreds
             set { _isProcessing = value; }
         }
 
-        public decimal HighWatermark
-        {
-            get { return _highWatermark; }
-            set { _highWatermark = value >= _lowWatermark + _watermarkMinDifference ? value : _lowWatermark + _watermarkMinDifference; }
-        }
-
-        public decimal LowWatermark
-        {
-            get { return _lowWatermark; }
-            set { _lowWatermark = value <= _highWatermark - _watermarkMinDifference ? value : _highWatermark - _watermarkMinDifference; }
-        }
-
-        public long UsedSpace
-        {
-            get { return _usedSpace; }
-            set { _usedSpace = value; }
-        }
-
-        public long DriveSize
-        {
-            get { return _driveSize; }
-            set { _driveSize = value; }
-        }
-
         #endregion
+
+        public bool EnoughDeletedFiles
+        {
+            get {
+                foreach (DMDriveInfo dmDriveInfo in _driveInfoList)
+                {
+                    if (!dmDriveInfo.EnoughDeletedFiles)
+                        return false;
+                }
+                return true; 
+            }
+        }
+
+        public bool ReachHighWaterMark
+        {
+            get {
+                foreach (DMDriveInfo dmDriveInfo in _driveInfoList)
+                {
+                    if (dmDriveInfo.ReachHighWaterMark)
+                        return true;
+                }
+                return false; 
+            }
+        }
 
         public event EventHandler OrderedStudyListReadyEvent
         {
@@ -195,6 +196,12 @@ namespace ClearCanvas.ImageViewer.Shreds
             set { _storeTime = value; }
         }
 
+        public int DriveID
+        {
+            get { return _driveID; }
+            set { _driveID = value; }
+        }
+
         public long UsedSpace
         {
             get { return _usedSpace; }
@@ -218,6 +225,7 @@ namespace ClearCanvas.ImageViewer.Shreds
         private string _studyInstanceUID;
         private string _accessionNumber;
         private DateTime _storeTime;
+        private int _driveID;
         private long _usedSpace;
         private DiskspaceManagementStatus _status;
         private List<DMSopItem> _sopItemList;
@@ -251,11 +259,118 @@ namespace ClearCanvas.ImageViewer.Shreds
 
     }
 
+    public class DMDriveInfoList : List<DMDriveInfo>
+    {
+        public DMDriveInfoList()
+        {
+        }
+    }
+
+    public class DMDriveInfo
+    {
+        public DMDriveInfo()
+        {
+            _highWatermark = 60;
+            _lowWatermark = 40;
+            _watermarkMinDifference = 5;
+            init();
+        }
+
+        public void init()
+        {
+            _usedSpace = 0;
+            _driveSize = 1;
+            _deletedFileSpace = 0;
+            _deletedStudyNumber = 0;
+        }
+
+        public string DriveName
+        {
+            get { return _driveName; }
+            set { _driveName = value; }
+        }
+
+        public decimal HighWatermark
+        {
+            get { return _highWatermark; }
+            set { _highWatermark = value >= _lowWatermark + _watermarkMinDifference ? value : _lowWatermark + _watermarkMinDifference; }
+        }
+
+        public decimal LowWatermark
+        {
+            get { return _lowWatermark; }
+            set { _lowWatermark = value <= _highWatermark - _watermarkMinDifference ? value : _highWatermark - _watermarkMinDifference; }
+        }
+
+        public decimal WatermarkMinDifference
+        {
+            get { return _watermarkMinDifference; }
+            set { _watermarkMinDifference = value; }
+        }
+
+        public long UsedSpace
+        {
+            get { return _usedSpace; }
+            set { _usedSpace = value; }
+        }
+
+        public long DriveSize
+        {
+            get { return _driveSize; }
+            set { _driveSize = value; }
+        }
+
+        public long DeletedFileSpace
+        {
+            get { return _deletedFileSpace; }
+            set { _deletedFileSpace = value; }
+        }
+
+        public int DeletedStudyNumber
+        {
+            get { return _deletedStudyNumber; }
+            set { _deletedStudyNumber = value; }
+        }
+
+        public bool EnoughDeletedFiles
+        {
+            get { return (100 * (_usedSpace - _deletedFileSpace) / _driveSize) <= _lowWatermark ? true : false; }
+        }
+
+        public decimal UsedSpacePercentage
+        {
+            get { return new decimal(100 * _usedSpace / _driveSize); }
+        }
+
+        public bool ReachHighWaterMark
+        {
+            get { return UsedSpacePercentage >= _highWatermark ? true : false; }
+        }
+
+        public bool ReachLowWaterMark
+        {
+            get { return UsedSpacePercentage <= _lowWatermark ? true : false; }
+        }
+
+        #region Private Members
+
+        private string _driveName;
+        private decimal _highWatermark;
+        private decimal _lowWatermark;
+        private decimal _watermarkMinDifference;
+        private long _usedSpace;
+        private long _driveSize;
+        private long _deletedFileSpace;
+        private int _deletedStudyNumber;
+
+        #endregion
+    }
+
     public enum DiskspaceManagementStatus
     {
         ExistsInDatabase,
-        ExistsOnLocalDrive,
+        ExistsOnDrive,
         DeletedFromDatabase,
-        DeletedFromLocalDrive
+        DeletedFromDrive
     }
 }
