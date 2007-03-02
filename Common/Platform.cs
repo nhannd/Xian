@@ -296,6 +296,35 @@ namespace ClearCanvas.Common
             return (TService)GetService(typeof(TService));
         }
 
+        public delegate void WithServiceDelegate<T>(T service);
+
+        /// <summary>
+        /// Obtains an instance of the specified service for use by the application.  Instead of returning the
+        /// service directly, this overload passes the service to the specified delegate for use.  When the delegate returns,
+        /// this method automatically takes care of determing whether the service implements <see cref="IDisposable"/>
+        /// and calling <see cref="IDisposable.Dispose"/> if it does.  The delegate must not cache the returned service
+        /// because it may be disposed as soon as the delegate returns.  For the single-use scenario, this overload is preferred
+        /// to the other overloads because it automatically manages the lifecycle of the service object.
+        /// </summary>
+        /// <typeparam name="TService">The service to obtain</typeparam>
+        /// <param name="proc">A delegate that will receive the service for one-time use</param>
+        public static void GetService<TService>(WithServiceDelegate<TService> proc)
+        {
+            TService service = Platform.GetService<TService>();
+
+            try
+            {
+                proc(service);
+            }
+            finally
+            {
+                if (service is IDisposable)
+                {
+                    (service as IDisposable).Dispose();
+                }
+            }
+        }
+
         /// <summary>
         /// Obtains an instance of the specified service for use by the application. This operation is thread-safe.
         /// </summary>
