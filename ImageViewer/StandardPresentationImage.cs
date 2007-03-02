@@ -14,6 +14,9 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A <see cref="PresentationImage"/> that encapsulates a DICOM image.
+	/// </summary>
 	public class StandardPresentationImage :
 		PresentationImage, 
 		IImageGraphicProvider,
@@ -33,6 +36,10 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="StandardPresentationImage"/>.
+		/// </summary>
+		/// <param name="imageSop"></param>
 		public StandardPresentationImage(ImageSop imageSop)
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
@@ -47,6 +54,15 @@ namespace ClearCanvas.ImageViewer
 
 		#region IImageGraphicProvider
 
+		/// <summary>
+		/// Gets this presentation image's <see cref="ImageGraphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="ImageGraphic"/> is the graphical representation of 
+		/// the associated the DICOM image.
+		/// <see cref="ImageGraphic"/> is the first <see cref="IGraphic"/>
+		/// added to the <see cref="SceneGraph"/> and thus is rendered first.
+		/// </remarks>
 		public virtual ImageGraphic ImageGraphic
 		{
 			get { return _imageGraphic; }
@@ -56,6 +72,12 @@ namespace ClearCanvas.ImageViewer
 
 		#region IImageSopProvider members
 
+		/// <summary>
+		/// Gets this presentation image's associated <see cref="ImageSop"/>.
+		/// </summary>
+		/// <remarks>
+		/// Use <see cref="ImageSop"/> to access DICOM tags.
+		/// </remarks>
 		public virtual ImageSop ImageSop
 		{
 			get { return _imageSop; }
@@ -65,6 +87,15 @@ namespace ClearCanvas.ImageViewer
 
 		#region ISpatialTransformProvider members
 
+		/// <summary>
+		/// Gets this presentation image's spatial transform.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="ImageGraphic"/> and graphics added to the 
+		/// <see cref="OverlayGraphics"/> collection are subject to this
+		/// spatial transform.  Thus, the effect is that overlay graphics
+		/// appear to be anchored to the underlying image.
+		/// </remarks>
 		public virtual ISpatialTransform SpatialTransform
 		{
 			get { return _compositeImageGraphic.SpatialTransform as ISpatialTransform; }
@@ -74,6 +105,14 @@ namespace ClearCanvas.ImageViewer
 
 		#region IVOILUTLinearProvider Members
 
+		/// <summary>
+		/// Gets this presentation image's linear VOI LUT.
+		/// </summary>
+		/// <value>An <see cref="IVOILUTLinear"/> or <b>null</b> if the image
+		/// is not grayscale, or if the VOILUT currently installed is not linear.</value>
+		/// <remarks>
+		/// Use <see cref="VoiLutLinear"/> to manipulate window and level.
+		/// </remarks>
 		public virtual IVOILUTLinear VoiLutLinear
 		{
 			get 
@@ -91,6 +130,13 @@ namespace ClearCanvas.ImageViewer
 
 		#region IOverlayGraphicsProvider
 
+		/// <summary>
+		/// Gets this presentation image's collection of overlay graphics.
+		/// </summary>
+		/// <remarks>
+		/// Use <see cref="OverlayGraphics"/> to add graphics that you want to
+		/// overlay the image.
+		/// </remarks>
 		public virtual GraphicCollection OverlayGraphics
 		{
 			get { return _overlayGraphics.Graphics; }
@@ -119,6 +165,13 @@ namespace ClearCanvas.ImageViewer
 			protected set { _annotationLayoutProvider = value; }
 		}
 
+		/// <summary>
+		/// Gets a <see cref="StandardPresentationImageRenderer"/>.
+		/// </summary>
+		/// <remarks>
+		/// In general, <see cref="ImageRenderer"/> should be considered an internal
+		/// Framework property and should not be used.
+		/// </remarks>
 		public override IRenderer ImageRenderer
 		{
 			get
@@ -147,6 +200,10 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public methods
 
+		/// <summary>
+		/// Creates a clone of the <see cref="StandardPresentationImage"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override IPresentationImage Clone()
 		{
 			return new StandardPresentationImage(_imageSop);
@@ -159,6 +216,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Initializes the <see cref="SceneGraph"/>.
+		/// </summary>
 		protected virtual void InitializeSceneGraph()
 		{
 			_compositeImageGraphic = new CompositeImageGraphic(
@@ -175,6 +235,20 @@ namespace ClearCanvas.ImageViewer
 			this.SceneGraph.Graphics.Add(_compositeImageGraphic);
 		}
 
+		/// <summary>
+		/// Creates the <see cref="ImageGraphic"/>.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// <para>
+		/// The appropriate <see cref="ImageGraphic"/> subclass is created
+		/// depending on the image's photometric interpretation.
+		/// </para>
+		/// <para>
+		/// Override <see cref="CreateImageGraphic"/> if you want a different type
+		/// of <see cref="ImageGraphic"/>.
+		/// </para>
+		/// </remarks>
 		protected virtual ImageGraphic CreateImageGraphic()
 		{
 			if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||

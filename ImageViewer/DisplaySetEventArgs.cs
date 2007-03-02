@@ -11,13 +11,16 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DisplaySetEventArgs : CollectionEventArgs<IDisplaySet>
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="DisplaySetEventArgs"/>.
+		/// </summary>
 		public DisplaySetEventArgs()
 		{
 		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DisplaySetEventArgs"/> with
-		/// a specified <see cref="IDisplaySet"/>
+		/// a specified <see cref="IDisplaySet"/>.
 		/// </summary>
 		/// <param name="displaySet"></param>
 		public DisplaySetEventArgs(IDisplaySet displaySet)

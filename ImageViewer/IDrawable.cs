@@ -9,6 +9,9 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public interface IDrawable
 	{
+		/// <summary>
+		/// Draw the object.
+		/// </summary>
 		void Draw();
 	}
 }

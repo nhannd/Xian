@@ -63,8 +63,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> is not
-		/// yet part of the <see cref="LogicalWorkspace"/> yet.</value>
+		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b> if the 
+		/// <see cref="DisplaySet"/> is not part of the 
+		/// logical workspace yet.</value>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
@@ -83,8 +84,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the parent <see cref="ImageSet"/>
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="DisplaySet"/> has not
-		/// been added to an <see cref="ImageSet"/> yet.</value>
+		/// <value>The parent <see cref="ImageSet"/> or <b>null</b> if the 
+		/// <see cref="DisplaySet"/> has not been added to an 
+		/// <see cref="ImageSet"/> yet.</value>
 		public IImageSet ParentImageSet
 		{
 			get { return _parentImageSet as IImageSet; }
@@ -94,8 +96,8 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the <see cref="IImageBox"/> associated with this <see cref="DisplaySet"/>.
 		/// </summary>
-		/// If the <see cref="DisplaySet"/> is not currently visible, no <see cref="ImageBox"/>
-		/// is associated with it, and <b>null</b> is returned.
+		/// <value>The associated <see cref="IImageBox "/> or <b>null</b> if the
+		/// <see cref="DisplaySet"/> is not currently visible.</value>
 		public IImageBox ImageBox
 		{
 			get { return _imageBox as IImageBox; }
@@ -173,7 +175,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a user defined object.
+		/// Gets or sets a user-defined object.
 		/// </summary>
 		public object Tag
 		{
@@ -249,7 +251,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Draw the <see cref="DisplaySet"/>.
+		/// Draws the <see cref="DisplaySet"/>.
 		/// </summary>
 		/// <remarks>The <see cref="DisplaySet"/> will only be drawn
 		/// if it is currently visible.</remarks>

@@ -32,7 +32,8 @@
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -286,7 +287,6 @@
     <Compile Include="ImageViewerComponent.cs" />
     <Compile Include="Imaging\CalculatedGrayscaleLUT.cs" />
     <Compile Include="Imaging\ColorSpaceConverter.cs" />
-    <Compile Include="Imaging\GrayscaleLUTPipeline.cs" />
     <Compile Include="Imaging\ImageValidationException.cs" />
     <Compile Include="Imaging\LUTComposer.cs" />
     <Compile Include="Graphics\SpatialTransform.cs" />

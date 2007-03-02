@@ -10,37 +10,23 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A container of image boxes.
+	/// A container for image boxes.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// <b>PhysicalWorkspace</b> and its related classes <see cref="ImageBox"/> and
+	/// <see cref="PhysicalWorkspace"/> and its related classes <see cref="ImageBox"/> and
 	/// <see cref="Tile"/> collectively describe how images are positioned and sized
-	/// on the screen.  A <b>PhysicalWorkspace</b> contains zero or more image boxes, which
-	/// in turn each contain zero or more tiles.  Image boxes can be arranged arbitrarily
-	/// in a workspace whereas tiles in an image box must be laid out as a rectangular
-	/// grid. A tile contains an image, specifically a <see cref="PresentationImage"/>.
+	/// on the screen.  A <see cref="PhysicalWorkspace"/> contains zero or more image 
+	/// boxes, which in turn each contain zero or more tiles.  Image boxes can be 
+	/// arranged arbitrarily in a workspace whereas tiles in an image box must be laid 
+	/// out as a rectangular grid. A tile contains a <see cref="PresentationImage"/>.
 	/// </para>
 	/// <para>
-	/// Workspace layouts are described in normalized coordinates.
+	/// Physical workspace layouts are described in normalized coordinates.
 	/// The top left corner of the workspace corresponds to (0,0) and the bottom right
-	/// to (1,1).  When an <see cref="ImageBox"/> is defined and added to a workspace, 
-	/// it is done using that coordinate system.  Thus, for example, an <see cref="ImageBox"/> 
-	/// that occupies the lower right quadrant of the workspace is described by the 
-	/// rectangle (0.5, 0.5, 1.0, 1.0).  
-	/// </para>
-	/// <para>
-	/// In general, a <b>PhysicalWorkspace</b> is associated with
-	/// a <see cref="System.Windows.Forms.Control"/> of some kind in the View plugin.
-	/// (In the standard implementation of ClearCanvas, <b>PhysicalWorkspace</b> is 
-	/// associated with <see cref="WorkspaceForm"/> in ClearCanvas.Workstation.View.dll.)	
-	/// In that control, images are rendered according to the layout described
-	/// by <b>PhysicalWorkspace</b>.  When the control is resized, the
-	/// <see cref="PhysicalWorkspace.ClientRectangle"/> property should be set so that
-	/// the physical workspace's image boxes and tiles are also resized accordingly.
-	/// </para>
-	/// <para>
-	/// By default, when constructed, <b>PhysicalWorkspace</b> contains zero image boxes.
+	/// (1,1).  When an <see cref="IImageBox"/> is defined and added to a workspace, 
+	/// it is done using that coordinate system.  See 
+	/// <see cref="IImageBox.NormalizedRectangle"/> for an example.
 	/// </para>
 	/// </remarks>
 	public class PhysicalWorkspace : IPhysicalWorkspace
@@ -52,19 +38,15 @@ namespace ClearCanvas.ImageViewer
 		private ImageBox _selectedImageBox;
 		private int _rows;
 		private int _columns;
-		private bool _isRectangularImageBoxGrid;
-		private bool _layoutRefreshRequired;
 
 		private event EventHandler _drawingEvent;
-		private event EventHandler<ImageBoxEventArgs> _imageBoxAddedEvent;
-		private event EventHandler<ImageBoxEventArgs> _imageBoxRemovedEvent;
 		private event EventHandler _layoutCompletedEvent;
 
 		#endregion
 
 		internal PhysicalWorkspace(IImageViewer imageViewer)
 		{
-            Platform.CheckForNullReference(imageViewer, "parentWorkspace");
+			Platform.CheckForNullReference(imageViewer, "imageViewer");
 
             _imageViewer = imageViewer;
 			this.ImageBoxes.ItemAdded += new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
@@ -73,6 +55,12 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public properties
 
+		/// <summary>
+		/// Gets the collection of <see cref="IImageBox"/> objects that belong
+		/// to this <see cref="PhysicalWorkspace"/>.
+		/// </summary>
+		/// <remarks>When a <see cref="PhysicalWorkspace "/> is first instantiated,
+		/// <see cref="ImageBoxes"/> is empty.</remarks>
 		public ImageBoxCollection ImageBoxes
 		{
 			get 
@@ -84,57 +72,53 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the number of rows of <see cref="IImageBox"/> objects in the
+		/// <see cref="PhysicalWorkspace"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="Rows"/> is <i>only</i> valid if <see cref="SetImageBoxGrid"/> has
+		/// been called.  Otherwise, the value is meaningless.
+		/// </remarks>
 		public int Rows
 		{
 			get { return _rows; }
 		}
 
+		/// <summary>
+		/// Gets the number of columns of <see cref="IImageBox"/> objects in the
+		/// <see cref="PhysicalWorkspace"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="Columns"/> is <i>only</i> valid if <see cref="SetImageBoxGrid"/> has
+		/// been called.  Otherwise, the value is meaningless.
+		/// </remarks>
 		public int Columns
 		{
 			get { return _columns; }
 		}
 
-		public bool IsRectangularImageBoxGrid
-		{
-			get { return _isRectangularImageBoxGrid; }
-
-			// This is temporary.  Ideally, given a number of rectangles,
-			// this class should be able to determine whether rectangles
-			// form a rectangular grid.  Until we implement that, we'll have
-			// to rely on the client of this class to set this property to 
-			// false if it's not a rectangular gride of image boxes.
-			set { _isRectangularImageBoxGrid = value; }
-		}
-
-		public bool LayoutRefreshRequired
-		{
-			get { return _layoutRefreshRequired; }
-			set { _layoutRefreshRequired = value; }
-		}
-		
+		/// <summary>
+		/// Gets the associated <see cref="IImageViewer"/>.
+		/// </summary>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
 		}
 
 		/// <summary>
-		/// Gets the associated <see cref="LogicalWorkspace"/>.
+		/// Gets the associated <see cref="ILogicalWorkspace"/>.
 		/// </summary>
-		/// <value>The associated <see cref="LogicalWorkspace"/></value>
 		public ILogicalWorkspace LogicalWorkspace
 		{
-			get 
-			{
-				Platform.CheckMemberIsSet(this.ImageViewer, "PhysicalWorkspace.ImageViewer");
-
-                return this.ImageViewer.LogicalWorkspace; 
-			}
+			get { return this.ImageViewer.LogicalWorkspace; }
 		}
 
 		/// <summary>
-		/// Gets the currently selected <see cref="ImageBox"/>
+		/// Gets the selected <see cref="IImageBox"/>.
 		/// </summary>
-		/// <value>The currently selected <see cref="ImageBox"/></value>
+		/// <value>The currently selected <see cref="IImageBox"/>, or <b>null</b> if
+		/// no <see cref="IImageBox"/> is currently selected.</value>
 		public IImageBox SelectedImageBox
 		{
 			get { return _selectedImageBox as IImageBox; }
@@ -151,24 +135,27 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public events
 
+		/// <summary>
+		/// Occurs when the <see cref="PhysicalWorkspace"/> is drawn.
+		/// </summary>
 		public event EventHandler Drawing
 		{
 			add { _drawingEvent += value; }
 			remove { _drawingEvent -= value; }
 		}
 
-		public event EventHandler<ImageBoxEventArgs> ImageBoxAdded
-		{
-			add { _imageBoxAddedEvent += value; }
-			remove { _imageBoxAddedEvent -= value; }
-		}
-
-		public event EventHandler<ImageBoxEventArgs> ImageBoxRemoved
-		{
-			add { _imageBoxRemovedEvent += value; }
-			remove { _imageBoxRemovedEvent -= value; }
-		}
-
+		/// <summary>
+		/// Occurs when all changes to image box collection are complete.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="LayoutCompleted"/> is raised by the Framework when
+		/// <see cref="SetImageBoxGrid"/> has been called.  If you are adding/removing
+		/// <see cref="IImageBox"/> objects manually, you should raise this event when
+		/// you're done by calling <see cref="OnLayoutCompleted"/>.  This event is
+		/// consumed by the view to reduce flicker when layouts are changed.  
+		/// In that way, it is similar to the WinForms methods <b>SuspendLayout</b>
+		/// and <b>ResumeLayout</b>.
+		/// </remarks>
 		public event EventHandler LayoutCompleted
 		{
 			add { _layoutCompletedEvent += value; }
@@ -225,22 +212,17 @@ namespace ClearCanvas.ImageViewer
 		#region Public methods
 
 		/// <summary>
-		/// Creates a rectangular grid of image boxes.
+		/// Creates a rectangular <see cref="IImageBox"/> grid.
 		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
 		/// <remarks>
-		/// This is a convenience method that creates a rectangular grid
-		/// of image boxes.  Each time this method is called, any existing image boxes
-		/// are removed from the workspace and new ones added, even if the number of rows
-		/// and columns has not changed from the previous call.
-		/// Arbitrary, non-rectangular <see cref="ImageBox"/> grids can be
-		/// created by manually instantiating <see cref="ImageBox"/> objects, setting their
-		/// normalized coordinates then adding them to the <see cref="PhysicalWorkspace"/>
-		/// using <see cref="AddImageBox"/>.
+		/// <see cref="SetImageBoxGrid"/> is a convenience method that adds
+		/// <see cref="IImageBox"/> objects to the <see cref="IPhysicalWorkspace"/>
+		/// in a rectangular grid.
 		/// </remarks>
-		/// <param name="rows">Number of <see cref="ImageBox"/> rows.</param>
-		/// <param name="columns">Number of <see cref="ImageBox"/> columns.</param>
-		/// <exception cref="ArgumentException"><paramref name="numberOfRows"/> or 
-		/// <paramref name="numberOfColumns"/> is less than 1.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rows"/> or 
+		/// <paramref name="columns"/> is less than 1.</exception>
 		public void SetImageBoxGrid(int rows, int columns)
 		{
 			Platform.CheckPositive(rows, "rows");
@@ -251,7 +233,6 @@ namespace ClearCanvas.ImageViewer
 
 			_rows = rows;
 			_columns = columns;
-			_isRectangularImageBoxGrid = true;
 
 			this.ImageBoxes.Clear();
 
@@ -272,14 +253,33 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			CompleteLayout();
+			OnLayoutCompleted();
 		}
 
-		public void CompleteLayout()
+		/// <summary>
+		/// Raises the <see cref="LayoutCompleted"/> event.
+		/// </summary>
+		/// <remarks>
+		/// If you are adding/removing <see cref="IImageBox"/> objects manually 
+		/// (i.e., instead of using <see cref="SetImageBoxGrid"/>), you should call
+		/// <see cref="OnLayoutCompleted"/> to raise the <see cref="LayoutCompleted"/> event.  
+		/// This event is consumed by the view to reduce flicker when layouts are changed.  
+		/// In that way, it is similar to the WinForms methods <b>SuspendLayout</b>
+		/// and <b>ResumeLayout</b>.
+		/// </remarks>
+		public void OnLayoutCompleted()
 		{
 			EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Selects the first <see cref="IImageBox"/> in the image box collection.
+		/// </summary>
+		/// <remarks>
+		/// When <see cref="SetImageBoxGrid"/> has been used to setup the 
+		/// <see cref="IPhysicalWorkspace"/>, the first <see cref="IImageBox"/> in the
+		/// image box collection will be the top-left <see cref="IImageBox"/>.
+		/// </remarks>
 		public void SelectDefaultImageBox()
 		{
 			if (this.ImageBoxes.Count > 0)
@@ -291,10 +291,12 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Draws the <see cref="IPhysicalWorkspace"/>.
+		/// </summary>
 		public void Draw()
 		{
 			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
-			_layoutRefreshRequired = false;
 		}
 
 		#region IMemorable Members
@@ -307,7 +309,7 @@ namespace ClearCanvas.ImageViewer
 		/// This method is used to remember the current state of a
 		/// <see cref="PhysicalWorkspace"/>.  The memento remembers the actual <see cref="ImageBox"/>
 		/// <i>instances</i> contained in the <see cref="PhysicalWorkspace"/>.  Calling
-		/// <see cref="PhysicalWorkspace.SetMemento"/> at a later time restores 
+		/// <see cref="SetMemento"/> at a later time restores 
 		/// those instances.
 		/// </remarks>
 		public IMemento CreateMemento()
@@ -320,7 +322,6 @@ namespace ClearCanvas.ImageViewer
 			PhysicalWorkspaceMemento workspaceMemento =
 				new PhysicalWorkspaceMemento(new ImageBoxCollection(this.ImageBoxes),
 											 imageBoxMementos, 
-											 this.IsRectangularImageBoxGrid,
 											 this.Rows,
 											 this.Columns);
 
@@ -333,7 +334,7 @@ namespace ClearCanvas.ImageViewer
 		/// <param name="memento">Memento to set.</param>
 		/// <remarks>
 		/// This method restores the state of a <see cref="PhysicalWorkspace"/> with
-		/// a memento previously created by <see cref="PhysicalWorkspace.CreateMemento"/>.
+		/// a memento previously created by <see cref="CreateMemento"/>.
 		/// </remarks>
 		public void SetMemento(IMemento memento)
 		{
@@ -346,7 +347,6 @@ namespace ClearCanvas.ImageViewer
 
 			_rows = workspaceMemento.Rows;
 			_columns = workspaceMemento.Columns;
-			_isRectangularImageBoxGrid = workspaceMemento.IsRectangularImageBoxGrid;
 
 			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
 			{
@@ -357,7 +357,7 @@ namespace ClearCanvas.ImageViewer
 				this.ImageBoxes.Add(imageBox);
 			}
 
-			CompleteLayout();
+			OnLayoutCompleted();
 
 			Draw();
 		}
@@ -370,24 +370,17 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnImageBoxAdded(object sender, ImageBoxEventArgs e)
 		{
-			_layoutRefreshRequired = true;
-
 			ImageBox imageBox = e.ImageBox as ImageBox;
 			imageBox.ImageViewer = this.ImageViewer;
 			imageBox.ParentPhysicalWorkspace = this;
-			EventsHelper.Fire(_imageBoxAddedEvent, this, e);
 		}
 
 		private void OnImageBoxRemoved(object sender, ImageBoxEventArgs e)
 		{
-			_layoutRefreshRequired = true;
-
 			if (e.ImageBox.Selected)
 				this.SelectedImageBox = null;
 
 			e.ImageBox.DisplaySet = null;
-
-			EventsHelper.Fire(_imageBoxRemovedEvent, this, e);
 		}
 
 		#endregion

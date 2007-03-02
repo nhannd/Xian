@@ -11,6 +11,9 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DisplaySetCollection : ObservableList<IDisplaySet, DisplaySetEventArgs>
 	{
+		/// <summary>
+		/// Instantiates a new instance of <see cref="DisplaySetCollection"/>.
+		/// </summary>
 		public DisplaySetCollection()
 		{
 

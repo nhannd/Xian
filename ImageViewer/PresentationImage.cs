@@ -8,6 +8,14 @@ using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// The final image that is presented to the user in a <see cref="Tile"/>.
+	/// </summary>
+	/// <remarks>
+	/// An <see cref="IPresentationImage"/> can be thought of as a “scene” 
+	/// composed of many parts, be they images, lines, text, etc.  It is the
+	/// image that is presented to the user in a <see cref="Tile"/>.
+	/// </remarks>
 	public abstract class PresentationImage : IPresentationImage
 	{
 		#region Private Fields
@@ -48,6 +56,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Instantiates a new instance of <see cref="PresentationImage"/>.
+		/// </summary>
 		protected PresentationImage()
 		{
 		}
@@ -57,8 +68,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the parent <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value><b>null</b> if <see cref="PresentationImage"/> has not been
-		/// added to a <see cref="DisplaySet"/>.</value>
+		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b> if the 
+		/// <see cref="PresentationImage"/> is not part of the 
+		/// logical workspace yet.</value>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer as IImageViewer; }
@@ -70,10 +82,11 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the parent <see cref="DisplaySet"/>.
+		/// Gets the parent <see cref="IDisplaySet"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if <see cref="PresentationImage"/> has not been
-		/// added to a <see cref="DisplaySet"/>.</value>
+		/// <value>The parent <see cref="IDisplaySet"/> or <b>null</b> if the 
+		/// <see cref="PresentationImage"/> has not
+		/// been added to the <see cref="IDisplaySet"/> yet.</value>
 		public IDisplaySet ParentDisplaySet
 		{
 			get { return _parentDisplaySet as IDisplaySet; }
@@ -81,10 +94,11 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the associated <see cref="TileComponent"/>.
+		/// Gets the associated <see cref="ITile"/>.
 		/// </summary>
-		/// <value><b>null</b> if <see cref="PresentationImage"/>
-		/// is not currently visible.</value>
+		/// <value>The <see cref="ITile"/> that currently contains the
+		/// <see cref="PresentationImage"/> or <b>null</b> if the 
+		/// <see cref="PresentationImage"/> is not currently visible.</value>
 		public ITile Tile
 		{
 			get { return _tile as ITile; }
@@ -109,7 +123,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the <see cref="PresentationImage"/> is selected.
+		/// Gets a value indicating whether the <see cref="PresentationImage"/> is selected.
 		/// </summary>
 		public bool Selected
 		{
@@ -152,12 +166,26 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a user-defined object.
+		/// </summary>
 		public object Tag
 		{
 			get { return _tag; }
 			set { _tag = value; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="SceneGraph"/>.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="SceneGraph"/> is a tree of <see cref="IGraphic"/> objects
+		/// that represents what the user sees in a <see cref="Tile"/>.  If you're writing
+		/// tools, you should avoid accessing the <see cref="SceneGraph"/> directly as it 
+		/// is intended only for the renderer to traverse.  Instead, add and remove
+		/// from the <see cref="SceneGraph"/> through interfaces on <see cref="PresentationImage"/>
+		/// subclasses.
+		/// </remarks>
 		public SceneGraph SceneGraph
 		{
 			get 
@@ -172,6 +200,15 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the currently selected <see cref="IGraphic"/>.
+		/// </summary>
+		/// <value>The currently selected <see cref="IGraphic"/> or <b>null</b>
+		/// if no <see cref="IGraphic"/> is currently selected.</value>
+		/// <remarks>
+		/// It is possible for an <see cref="IGraphic"/> to be selected,
+		/// focussed or selected and focussed.
+		/// </remarks>
 		public virtual ISelectableGraphic SelectedGraphic
 		{
 			get { return _selectedGraphic; }
@@ -191,6 +228,15 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the currently focussed <see cref="IGraphic"/>.
+		/// </summary>
+		/// <value>The currently selected <see cref="IGraphic"/> or <b>null</b>
+		/// if no <see cref="IGraphic"/> is currently focussed.</value>
+		/// <remarks>
+		/// It is possible for an <see cref="IGraphic"/> to be selected,
+		/// focussed or selected and focussed.
+		/// </remarks>
 		public virtual IFocussableGraphic FocussedGraphic
 		{
 			get { return _focussedGraphic; }
@@ -206,6 +252,21 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets this <see cref="PresentationImage"/>'s image renderer.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The creation of the image renderer is left to the subclass.
+		/// This allows the greatest flexibility, since it is sometimes the case
+		/// that a subclass of <see cref="PresentationImage"/> needs 
+		/// a specialized <see cref="IRenderer"/>.
+		/// </para>
+		/// <para>
+		/// In general, <see cref="ImageRenderer"/> should be considered an internal
+		/// Framework property and should not be used.
+		/// </para>
+		/// </remarks>
 		public abstract IRenderer ImageRenderer { get; }
 
 		#endregion
@@ -255,14 +316,29 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public methods
 
+		/// <summary>
+		/// Creates a clone of the <see cref="IPresentationImage"/>.
+		/// </summary>
+		/// <returns></returns>
 		public abstract IPresentationImage Clone();
 
+		/// <summary>
+		/// Draws the <see cref="PresentationImage"/>.
+		/// </summary>
 		public void Draw()
 		{
 			if (this.Visible)
 				this.Tile.Draw();
 		}
 
+		/// <summary>
+		/// Raises the <see cref="EventBroker.ImageDrawing"/> event and
+		/// renders the <see cref="PresentationImage"/>.
+		/// </summary>
+		/// <param name="drawArgs"></param>
+		/// <remarks>
+		/// For internal Framework use only.
+		/// </remarks>
 		public virtual void OnDraw(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
@@ -279,6 +355,5 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
-
 	}
 }

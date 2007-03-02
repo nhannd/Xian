@@ -75,8 +75,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="ImageBox"/> is not
-		/// yet part of the <see cref="PhysicalWorkspace"/> yet.</value>
+		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b> if the 
+		/// <see cref="ImageBox"/> is not part of the 
+		/// physical workspace yet.</value>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
@@ -98,7 +99,8 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the parent <see cref="IPhysicalWorkspace"/>
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="ImageBox"/> has not
+		/// <value>The parent <see cref="IPhysicalWorkspace"/> or <b>null</b> if the 
+		/// <see cref="ImageBox"/> has not
 		/// been added to the <see cref="IPhysicalWorkspace"/> yet.</value>
 		public IPhysicalWorkspace ParentPhysicalWorkspace
 		{
@@ -109,7 +111,14 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets or sets this <see cref="ImageBox"/>'s normalized rectangle.
 		/// </summary>
-		/// <remarks>Normalized coordinates </remarks>
+		/// <remarks>
+		/// Normalized coordinates specify the top-left corner,
+		/// width and height of the <see cref="ImageBox"/> as a 
+		/// fraction of the physical workspace.  For example, if the
+		/// <see cref="NormalizedRectangle"/> is (left=0.25, top=0.0, width=0.5, height=0.5) 
+		/// and the physical workspace has dimensions of (width=1000, height=800), the 
+		/// <see cref="ImageBox"/> rectangle would be (left=250, top=0, width=500, height=400)
+		/// </remarks>
 		public RectangleF NormalizedRectangle
 		{
 			get { return _normalizedRectangle; }
@@ -187,7 +196,7 @@ namespace ClearCanvas.ImageViewer
 		/// selected.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="ImageBox"/> is selection is mutually exclusive.  That is,
+		/// <see cref="ImageBox"/> selection is mutually exclusive.  That is,
 		/// only one <see cref="ImageBox"/> is ever selected at a given time.  
 		/// </remarks>
 		public bool Selected
@@ -204,7 +213,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the currently selected <see cref="Tile"/>.
+		/// Gets the currently selected <see cref="ITile"/>.
 		/// </summary>
 		public ITile SelectedTile
 		{
@@ -308,18 +317,18 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets the <see cref="PresentationImage"/> in the top-left 
+		/// Gets or sets the <see cref="IPresentationImage"/> in the top-left 
 		/// <see cref="Tile"/> of this <see cref="ImageBox"/>.
 		/// </summary>
 		/// <remarks>
-		/// Because a <see cref="DisplaySet"/> is an <i>ordered</i> set of 
+		/// Because a <see cref="IDisplaySet"/> is an <i>ordered</i> set of 
 		/// presentation images, setting this property to a specified
-		/// <see cref="PresentationImage"/> image results in the images that follow 
+		/// <see cref="IPresentationImage"/> image results in the images that follow 
 		/// to "flow" into the other tiles from left to right, top to bottom so that
 		/// order is preserved.
 		/// </remarks>
 		/// <exception cref="ArgumentException"><b>TopLeftPresentationImage</b>
-		/// is not found this image box's <see cref="DisplaySet"/></exception>
+		/// is not found this image box's <see cref="IDisplaySet"/></exception>
 		public IPresentationImage TopLeftPresentationImage
 		{
 			get
@@ -357,9 +366,10 @@ namespace ClearCanvas.ImageViewer
 		/// to "flow" into the other tiles from left to right, top to bottom so that
 		/// order is preserved.
 		/// </remarks>
-		/// <exception cref="ArgumentOutOfRangeException"><b>TopLeftPresentationImageIndex</b> is
-		/// less than 0 or greater than or equal to the number of presentation images in this
-		/// image box's <see cref="DisplaySet"/></exception>
+		/// <exception cref="ArgumentOutOfRangeException">
+		/// <see cref="TopLeftPresentationImageIndex"/> is less than 0 or greater 
+		/// than or equal to the number of presentation images in this
+		/// image box's <see cref="IDisplaySet"/></exception>
 		public int TopLeftPresentationImageIndex
 		{
 			get
@@ -420,7 +430,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Occurs when the <b>Selected</b> property has changed.
+		/// Occurs when the <see cref="Selected"/> property has changed.
 		/// </summary>
 		public event EventHandler<ImageBoxEventArgs> SelectionChanged
 		{
@@ -554,7 +564,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Draw the <see cref="ImageBox"/>.
+		/// Draws the <see cref="ImageBox"/>.
 		/// </summary>
 		public void Draw()
 		{

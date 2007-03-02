@@ -6,20 +6,38 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A base class for image viewer related application components.
+	/// </summary>
+	/// <remarks>
+	/// There is often a need for an <see cref="ApplicationComponent"/> that will
+	/// listen for changes in <see cref="ITile"/> selection and
+	/// <see cref="ImageViewerComponent"/>activation.  For example, the shelf that
+	/// appears when the image layout tool activated has UI elements which should
+	/// be enabled/disabled depending on whether a <see cref="Tile"/> has been selected
+	/// or whether the active workspace contains an <see cref="ImageViewerComponent"/>.
+	/// This base class, in conjunction with <see cref="DeesktopImageViwerTool"/>,
+	/// encapsulates that functionality.  If you are developing an 
+	/// <see cref="ApplicationComponent"/> that requires that kind of functionality,
+	/// use this as your base class.
+	/// </remarks>
 	public abstract class ImageViewerToolComponent : ApplicationComponent
 	{
 		private IImageViewer _imageViewer;
 		private event EventHandler _subjectChanged;
 
-		public ImageViewerToolComponent()
+		protected ImageViewerToolComponent()
 		{
 
 		}
 
 		/// <summary>
-		/// Gets/sets the subject <see cref="IImageViewer"/> that this component is associated with.  Note that
-		/// null is a valid value.  Setting this property to null dissociates it from any image viewer.
+		/// Gets/sets the subject <see cref="IImageViewer"/> that this component is associated with.
 		/// </summary>
+		/// <remarks>
+		/// Note that <b>null</b> is a valid value.  Setting this property to null dissociates 
+		/// it from any <see cref="IImageViewer"/>.
+		/// </remarks>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
@@ -30,7 +48,7 @@ namespace ClearCanvas.ImageViewer
 					// stop listening to the old image viewer, if one was set
 					if (_imageViewer != null)
 					{
-						_imageViewer.EventBroker.DisplaySetSelected -= OnTileSelected;
+						_imageViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
 					}
 
 					_imageViewer = value;
@@ -38,17 +56,21 @@ namespace ClearCanvas.ImageViewer
 					// start listening to the new image viewer, if one has been set
 					if (_imageViewer != null)
 					{
-						_imageViewer.EventBroker.DisplaySetSelected += OnTileSelected;
+						_imageViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
 					}
-					UpdateFromImageViewer();
+					OnSubjectChanged();
 				}
 			}
 		}
 
 		/// <summary>
-		/// Notifies the view that the layout subject has changed.  The view should
-		/// refresh itself entirely to reflect the state of this component.
+		/// Occurs when either the selected <see cref="ITile"/> or active
+		/// <see cref="ImageViewerComponent"/> has changed.
 		/// </summary>
+		/// <remarks>
+		/// The view should subscribe to this event.  When this event is raised,
+		/// the view should refresh itself entirely to reflect the state of the component.		
+		/// </remarks>
 		public event EventHandler SubjectChanged
 		{
 			add { _subjectChanged += value; }
@@ -60,16 +82,22 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Override of <see cref="ApplicationComponent.Start"/>
 		/// </summary>
+		/// <remarks>
+		/// For internal Framework use only.
+		/// </remarks>
 		public override void Start()
 		{
 			base.Start();
 
-			UpdateFromImageViewer();
+			OnSubjectChanged();
 		}
 
 		/// <summary>
 		/// Override of <see cref="ApplicationComponent.Stop"/>
 		/// </summary>
+		/// <remarks>
+		/// For internal Framework use only.
+		/// </remarks>
 		public override void Stop()
 		{
 			base.Stop();
@@ -78,22 +106,16 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		/// <summary>
-		/// Updates this component to reflect the state of the currently selected
-		/// image box in the subject image viewer.
+		/// Raises the <see cref="SubjectChanged"/> event.
 		/// </summary>
-		protected virtual void UpdateFromImageViewer()
+		protected virtual void OnSubjectChanged()
 		{
-			EventsHelper.Fire(_subjectChanged, this, new EventArgs());
+			EventsHelper.Fire(_subjectChanged, this, EventArgs.Empty);
 		}
 
-		/// <summary>
-		/// Updates the component in response to a change in the selected image box
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnTileSelected(object sender, DisplaySetSelectedEventArgs e)
+		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
 		{
-			UpdateFromImageViewer();
+			OnSubjectChanged();
 		}
 	}
 }

@@ -6,8 +6,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A collection of <see cref="IImageBox"/> objects.
+	/// </summary>
 	public class ImageBoxCollection : ObservableList<IImageBox, ImageBoxEventArgs>
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageBoxCollection"/>.
+		/// </summary>
 		public ImageBoxCollection()
 		{
 

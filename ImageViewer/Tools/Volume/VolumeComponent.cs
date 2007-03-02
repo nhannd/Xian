@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			imageBox.Draw();
 			imageBox[0, 0].Select();
 
-			UpdateFromImageViewer();
+			OnSubjectChanged();
 		}
 
 		private void AddTissueLayers(VolumePresentationImage image)

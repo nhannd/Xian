@@ -73,14 +73,24 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region Private methods
-
-		protected override void CreateLayoutManager()
+		/// <summary>
+		/// Creates an <see cref="ILayoutManager"/>.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// <see cref="CreateLayoutManager"/> creates the first extension that
+		/// extends the <see cref="LayoutManagerExtensionPoint"/>.
+		/// </remarks>
+		/// <exception cref="NotSupportedException">An extension that extends
+		/// the <see cref="LayoutManagerExtensionPoint"/> could not be found.
+		/// </exception>
+		protected override ILayoutManager CreateLayoutManager()
 		{
 			try
 			{
 				LayoutManagerExtensionPoint xp = new LayoutManagerExtensionPoint();
-				this.LayoutManager = (ILayoutManager)xp.CreateExtension();
+				ILayoutManager layoutManager = (ILayoutManager)xp.CreateExtension();
+				return layoutManager;
 			}
 			catch (NotSupportedException e)
 			{
@@ -88,7 +98,5 @@ namespace ClearCanvas.ImageViewer
 				throw e;
 			}
 		}
-
-		#endregion
 	}
 }

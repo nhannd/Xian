@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
 
-            UpdateFromImageViewer();
+            OnSubjectChanged();
         }
 
         /// <summary>
@@ -187,12 +187,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
 
-            UpdateFromImageViewer();
+            OnSubjectChanged();
         }
 
         #endregion
 
-		protected override void UpdateFromImageViewer()
+		protected override void OnSubjectChanged()
 		{
 			if (this.ImageViewer != null)
 			{
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				}
 			}
 
-			base.UpdateFromImageViewer();
+			base.OnSubjectChanged();
 		}
     }
 }

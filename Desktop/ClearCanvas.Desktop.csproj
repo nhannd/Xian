@@ -227,6 +227,7 @@
     <None Include="Actions\Actions.cd" />
     <None Include="app.config" />
     <None Include="ApplicationComponents.cd" />
+    <None Include="ClassDiagrams\UndoRedo.cd" />
     <None Include="Desktop.cd" />
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

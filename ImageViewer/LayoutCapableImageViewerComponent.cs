@@ -5,26 +5,38 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// An <see cref="ImageViewerComponent"/> with image layout capability.
+	/// </summary>
 	public abstract class LayoutCapableImageViewerComponent : ImageViewerComponent
 	{
 		private ILayoutManager _layoutManager;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="LayoutCapableImageViewerComponent"/>.
+		/// </summary>
 		protected LayoutCapableImageViewerComponent()
 		{
-			CreateLayoutManager();
+			_layoutManager = CreateLayoutManager();
 			this.LayoutManager.SetImageViewer(this);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="LayoutCapableImageViewerComponent"/>
+		/// with the specified <see cref="ILayoutManager"/>.
+		/// </summary>
 		protected LayoutCapableImageViewerComponent(ILayoutManager layoutManager)
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
 			_layoutManager = layoutManager;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="ILayoutManager"/>
+		/// </summary>
 		protected ILayoutManager LayoutManager
 		{
 			get { return _layoutManager; }
-			set { _layoutManager = value; }
 		}
 
 		#region Disposal
@@ -42,7 +54,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		protected abstract void CreateLayoutManager();
-
+		/// <summary>
+		/// Creates an <see cref="ILayoutManager"/>.
+		/// </summary>
+		protected abstract ILayoutManager CreateLayoutManager();
 	}
 }

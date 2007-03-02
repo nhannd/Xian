@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private GraphicCollection _graphics;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LayerGroup"/> class.
+		/// Initializes a new instance of the <see cref="CompositeGraphic"/> class.
 		/// </summary>
 		public CompositeGraphic()
 		{
@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets a collection of this <see cref="LayerGroup"/>'s child layers.
+		/// Gets a collection of this <see cref="CompositeGraphic"/>'s child layers.
 		/// </summary>
 		public GraphicCollection Graphics
 		{

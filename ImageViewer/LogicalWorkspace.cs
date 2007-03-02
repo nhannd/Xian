@@ -9,7 +9,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer 
 {
 	/// <summary>
-	/// Describes a logical workspace.
+	/// A container for <see cref="IImageSet"/> objects.
 	/// </summary>
 	public class LogicalWorkspace : ILogicalWorkspace
 	{
@@ -20,24 +20,26 @@ namespace ClearCanvas.ImageViewer
 		{
             _imageViewer = imageViewer;
 			_imageSets.ItemAdded += new EventHandler<ImageSetEventArgs>(OnImageSetAdded);
-			_imageSets.ItemRemoved += new EventHandler<ImageSetEventArgs>(OnImageSetRemoved);
 		}
 
 		/// <summary>
-        /// Gets the parent <see cref="ImageViewerComponent"/>
+		/// Gets the associated <see cref="IImageViewer"/>.
 		/// </summary>
-        public IImageViewer ImageViewer
+		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
 		}
 
 		/// <summary>
-		/// Gets a collection of image sets.
+		/// Gets a collection of <see cref="IImageSet"/> objects that belong to
+		/// this <see cref="ILogicalWorkspace"/>
 		/// </summary>
 		public ImageSetCollection ImageSets
 		{
 			get { return _imageSets; }
 		}
+
+		#region Disposal
 
 		#region IDisposable Members
 
@@ -78,10 +80,14 @@ namespace ClearCanvas.ImageViewer
 				imageSet.Dispose();
 
 			_imageSets.ItemAdded -= new EventHandler<ImageSetEventArgs>(OnImageSetAdded);
-			_imageSets.ItemRemoved -= new EventHandler<ImageSetEventArgs>(OnImageSetRemoved);
 			_imageSets = null;
 		}
 
+		#endregion
+
+		/// <summary>
+		/// Draws the <see cref="LogicalWorkspace"/>.
+		/// </summary>
 		public void Draw()
 		{
 			foreach (ImageSet imageSet in this.ImageSets)
@@ -94,10 +100,6 @@ namespace ClearCanvas.ImageViewer
 
 			imageSet.ParentLogicalWorkspace = this;
 			imageSet.ImageViewer = this.ImageViewer;
-		}
-
-		private void OnImageSetRemoved(object sender, ImageSetEventArgs e)
-		{
 		}
 	}
 }

@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// The change in the x position of the mouse pointer since the previous call to <see cref="OnMouseMove"/>.
+		/// The change in the x position of the mouse pointer since the previous call to <see cref="Track"/>.
 		/// </summary>
 		protected int DeltaX
 		{
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// The change in the y position of the mouse pointer since the previous call to <see cref="OnMouseMove"/>.
+		/// The change in the y position of the mouse pointer since the previous call to <see cref="Track"/>.
 		/// </summary>
 		protected int DeltaY
 		{

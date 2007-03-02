@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Occurs when <see cref="DestinationRectangle"/> has changed.
+		/// Occurs when <see cref="ClientRectangle"/> has changed.
 		/// </summary>
 		public event EventHandler<RectangleChangedEventArgs> ClientRectangleChanged
 		{

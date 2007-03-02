@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
 	/// This class implements a simple algorithm for determining which cursor on an 8 point compass to show
-	/// for a particular control point in a <see cref="ControlPointsGraphic"/>.  The class assumes that the
+	/// for a particular control point in a <see cref="ControlPointGroup"/>.  The class assumes that the
 	/// purpose of the control points is to stretch the graphic that owns the control points (as will be
 	/// the case with most ROI graphic implementations).
 	/// </summary>

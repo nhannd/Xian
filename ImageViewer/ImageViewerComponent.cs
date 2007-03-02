@@ -26,6 +26,16 @@ namespace ClearCanvas.ImageViewer
     {
     }
 
+	/// <summary>
+	/// An <see cref="ApplicationComponent"/> capable of image display.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="ImageViewerComponent"/> (IVC) is an <see cref="ApplicationComponent"/> 
+	/// whose purpose is to display images and to allow users to interact with those images.
+	/// It provides a number of core services, such as image loading, layout, selection,
+	/// rendering, etc.  An API and a number of extension points allow plugin developers
+	/// to extend the functionality of the IVC.
+	/// </remarks>
 	public abstract class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
     {
         internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
@@ -68,6 +78,12 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Override of <see cref="ApplicationComponent.Start"/>
+		/// </summary>
+		/// <remarks>
+		/// For internal Framework use only.
+		/// </remarks>
 		public override void Start()
         {
             base.Start();
@@ -77,7 +93,13 @@ namespace ClearCanvas.ImageViewer
 			RegisterShortcuts();
         }
 
-        public override void Stop()
+		/// <summary>
+		/// Override of <see cref="ApplicationComponent.Stop"/>
+		/// </summary>
+		/// <remarks>
+		/// For internal Framework use only.
+		/// </remarks>
+		public override void Stop()
         {
 			EventsHelper.Fire(_closingEvent, this, EventArgs.Empty);
 
@@ -86,6 +108,10 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets actions associated with the <see cref="ImageViewerComponent"/>'s
+		/// <see cref="ToolSet"/>.
+		/// </summary>
 		public override IActionSet ExportedActions
         {
             get
@@ -97,17 +123,20 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the command history for this image viewer.
+        /// Gets the command history.
         /// </summary>
+		/// <remarks>
+		/// Each <see cref="ImageViewerComponent"/> (IVC) maintains its own 
+		/// <see cref="CommandHistory"/>.
+		/// </remarks>
         public CommandHistory CommandHistory
         {
             get { return this.Host.CommandHistory; }
         }
 
         /// <summary>
-        /// Gets the <see cref="PhysicalWorkspace"/>.
+        /// Gets the <see cref="IPhysicalWorkspace"/>.
         /// </summary>
-        /// <value>The <see cref="PhysicalWorkspace"/>.</value>
         public IPhysicalWorkspace PhysicalWorkspace
         {
             get
@@ -120,9 +149,8 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the <see cref="LogicalWorkspace"/>.
+        /// Gets the <see cref="ILogicalWorkspace"/>.
         /// </summary>
-        /// <value>The <see cref="LogicalWorkspace"/>.</value>
         public ILogicalWorkspace LogicalWorkspace
         {
             get 
@@ -134,6 +162,9 @@ namespace ClearCanvas.ImageViewer
 			}
         }
 
+		/// <summary>
+		/// Gets the <see cref="EventBroker"/>.
+		/// </summary>
         public EventBroker EventBroker
         {
             get
@@ -146,12 +177,11 @@ namespace ClearCanvas.ImageViewer
         }
 
         /// <summary>
-        /// Gets the currently selected <see cref="ImageBox"/>
+        /// Gets the currently selected <see cref="IImageBox"/>
         /// </summary>
-        /// <value>The currently selected <see cref="ImageBox"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
-        public IImageBox SelectedImageBox
+		/// <value>The currently selected <see cref="IImageBox"/>, or <b>null</b> if
+		/// no <see cref="IImageBox"/> is currently selected.</value>
+		public IImageBox SelectedImageBox
         {
             get
             {
@@ -165,10 +195,9 @@ namespace ClearCanvas.ImageViewer
         /// <summary>
         /// Gets the currently selected <see cref="Tile"/>
         /// </summary>
-        /// <value>The currently selected <see cref="Tile"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
-        public ITile SelectedTile
+		/// <value>The currently selected <see cref="ITile"/>, or <b>null</b> if
+		/// no <see cref="ITile"/> is currently selected.</value>
+		public ITile SelectedTile
         {
             get
             {
@@ -182,10 +211,9 @@ namespace ClearCanvas.ImageViewer
         /// <summary>
         /// Gets the currently selected <see cref="PresentationImage"/>
         /// </summary>
-        /// <value>The currently selected <see cref="PresentationImage"/>, or <b>null</b> if there are
-        /// no workspaces in the <see cref="WorkspaceManager"/> or if the
-        /// currently active <see cref="Workspace"/> is not an <see cref="ImageWorkspace"/>.</value>
-        public IPresentationImage SelectedPresentationImage
+		/// <value>The currently selected <see cref="IPresentationImage"/>, or <b>null</b> if
+		/// no <see cref="IPresentationImage"/> is currently selected.</value>
+		public IPresentationImage SelectedPresentationImage
         {
             get
             {
@@ -196,6 +224,12 @@ namespace ClearCanvas.ImageViewer
             }
         }
 
+		/// <summary>
+		/// Gets the <see cref="IViewerShortcutManager"/>.
+		/// </summary>
+		/// <remarks>
+		/// It is unlikely you will ever need to use this property.
+		/// </remarks>
 		public IViewerShortcutManager ShortcutManager
         {
             get 
@@ -207,6 +241,14 @@ namespace ClearCanvas.ImageViewer
 			}
         }
 
+		/// <summary>
+		/// Gets the <see cref="StudyTree"/>.
+		/// </summary>
+		/// <remarks>
+		/// Although each <see cref="ImageViewerComponent"/> (IVC) maintains its own
+		/// <see cref="StudyTree"/>, actual <see cref="ImageSop"/> objects are shared
+		/// between IVCs for efficient memory usage.
+		/// </remarks>
 		public StudyTree StudyTree
 		{
 			get
@@ -218,6 +260,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets a map of <see cref="IStudyFinder"/> objects.
+		/// </summary>
 		public static StudyFinderMap StudyFinders
 		{
 			get
@@ -233,6 +278,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region Events
 
+		/// <summary>
+		/// Occurs when the <see cref="ImageViewerComponent"/> is about to close.
+		/// </summary>
 		public event EventHandler Closing
 		{
 			add { _closingEvent += value; }
@@ -243,6 +291,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region Protected properties
 
+		/// <summary>
+		/// Gets the <see cref="ToolSet"/>.
+		/// </summary>
 		protected ToolSet ToolSet
 		{
 			get { return _toolSet; }
@@ -283,6 +334,23 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public methods
 
+		/// <summary>
+		/// Loads a study with a specific Study Instance UID from a specific source.
+		/// </summary>
+		/// <param name="studyInstanceUID">The Study Instance UID of the study to be loaded.</param>
+		/// <param name="source">The name of the <see cref="IStudyLoader"/> to use, which is specified
+		/// by <see cref="IStudyLoader.Name"/>.</param>
+		/// <remarks>After this method is executed, the image viewer's <see cref="StudyTree"/>
+		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
+		/// and <see cref="ImageSop"/> objects.
+		/// 
+		/// By default, the Framework provides an implementation of 
+		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader"</b> which loads
+		/// studies from the local database.  If you have implemented your own 
+		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
+		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
+		/// </remarks>
+		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
 		public void LoadStudy(string studyInstanceUID, string source)
 		{
 			IStudyLoader studyLoader = this.StudyLoaders[source];
@@ -334,6 +402,11 @@ namespace ClearCanvas.ImageViewer
 			VerifyLoad(totalImages, failedImages);
 		}
 
+		/// <summary>
+		/// Loads an image from a specified file path.
+		/// </summary>
+		/// <param name="path">The file path of the image.</param>
+		/// <exception cref="OpenStudyException">The image could not be opened.</exception>
 		public void LoadImage(string path)
 		{
 			LocalImageLoader loader = new LocalImageLoader(this);
@@ -419,6 +492,16 @@ namespace ClearCanvas.ImageViewer
 
 		#region IContextMenuProvider Members
 
+		/// <summary>
+		/// Gets the context menu model for the <see cref="ImageViewerComponent"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns>An <see cref="ActionModelNode"/></returns>
+		/// <remarks>
+		/// This method is used by the tile's view class to generate the 
+		/// <see cref="ImageViewerComponent"/> context menu when a user right-clicks
+		/// on a tile.  It is unlikely that you will ever need to use this method.
+		/// </remarks>
 		public virtual ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
 			return this.ContextMenuModel;

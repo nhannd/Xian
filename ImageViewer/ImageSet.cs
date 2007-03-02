@@ -18,7 +18,10 @@ namespace ClearCanvas.ImageViewer
 		private object _tag;
 
 		#endregion
-
+		
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageSet"/>.
+		/// </summary>
 		public ImageSet()
 		{
 			_displaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
@@ -27,6 +30,12 @@ namespace ClearCanvas.ImageViewer
 
 		#region IImageSet Members
 
+		/// <summary>
+		/// Gets the associated <see cref="IImageViewer"/>.
+		/// </summary>
+		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b> if the 
+		/// <see cref="ImageSet"/> is not part of the 
+		/// logical workspace yet.</value>
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
@@ -42,34 +51,56 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the parent <see cref="LogicalWorkspace"/>
+		/// </summary>
+		/// <value>The parent <see cref="ILogicalWorkspace"/> or <b>null</b> if the 
+		/// <see cref="ImageSet"/> has not been added to an 
+		/// <see cref="ILogicalWorkspace"/> yet.</value>
 		public ILogicalWorkspace ParentLogicalWorkspace
 		{
 			get { return _parentLogicalWorkspace as ILogicalWorkspace; }
 			internal set { _parentLogicalWorkspace = value as LogicalWorkspace; }
 		}
 
+		/// <summary>
+		/// Gets the collection of <see cref="IDisplaySet"/> objects that belong
+		/// to this <see cref="ImageSet"/>.
+		/// </summary>
 		public DisplaySetCollection DisplaySets
 		{
 			get { return _displaySets; }
 		}
 
+		/// <summary>
+		/// Gets a collection of linked <see cref="IDisplaySet"/> objects.
+		/// </summary>
 		public ReadOnlyCollection<IDisplaySet> LinkedDisplaySets
 		{
 			get { return _linkedDisplaySets.AsReadOnly(); }
 		}
 
+		/// <summary>
+		/// Gets or sets the name of the image set.
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
 			set { _name = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a user defined object.
+		/// </summary>
 		public object Tag
 		{
 			get { return _tag; }
 			set { _tag = value; }
 		}
 
+		/// <summary>
+		/// Draws the <see cref="ImageSet"/>.
+		/// </summary>
 		public void Draw()
 		{
 			foreach (DisplaySet displaySet in this.DisplaySets)

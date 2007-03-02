@@ -11,15 +11,17 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="IDisplaySet"/> is not
-		/// yet part of the <see cref="ILogicalWorkspace"/> yet.</value>
+		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b> if the 
+		/// <see cref="IDisplaySet"/> is not part of the 
+		/// logical workspace yet.</value>
 		IImageViewer ImageViewer { get; }
 
 		/// <summary>
 		/// Gets the parent <see cref="IImageSet"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the <see cref="IDisplaySet"/> has not
-		/// been added to an <see cref="IImageSet"/> yet.</value>
+		/// <value>The parent <see cref="ImageSet"/> or <b>null</b> if the 
+		/// <see cref="IDisplaySet"/> has not been added to an 
+		/// <see cref="IImageSet"/> yet.</value>
 		IImageSet ParentImageSet { get; }
 
 		/// <summary>
@@ -36,8 +38,8 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the <see cref="IImageBox"/> associated with this <see cref="IDisplaySet"/>.
 		/// </summary>
-		/// If the <see cref="IDisplaySet"/> is not currently visible, no <see cref="IImageBox"/>
-		/// is associated with it, and <b>null</b> is returned.
+		/// <value>The associated <see cref="IImageBox "/> or <b>null</b> if the
+		/// <see cref="IDisplaySet"/> is not currently visible.</value>
 		IImageBox ImageBox { get; }
 
 		/// <summary>

@@ -3,20 +3,23 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Provides data for the <see cref="EventBroker.ImageDrawing"/> event.
+	/// </summary>
 	public class ImageDrawingEventArgs : EventArgs
 	{
-		// Private attributes
 		private IPresentationImage _presentationImage;
 
-		// Constructor
-		public ImageDrawingEventArgs(IPresentationImage presentationImage)
+		internal ImageDrawingEventArgs(IPresentationImage presentationImage)
 		{
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
 
 			_presentationImage = presentationImage;
 		}
 
-		// Properties
+		/// <summary>
+		/// Gets the selected <see cref="IPresentationImage"/>.
+		/// </summary>
 		public IPresentationImage PresentationImage 
 		{ 
 			get { return _presentationImage; } 

@@ -9,14 +9,12 @@ namespace ClearCanvas.ImageViewer
 	{
 		private ImageBoxCollection _imageBoxes;
 		private MementoList _imageBoxMementos;
-		private bool _isRectangularImageBoxGrid;
 		private int _rows;
 		private int _columns;
 
 		public PhysicalWorkspaceMemento(
 			ImageBoxCollection imageBoxes,
 			MementoList imageBoxMementos,
-			bool isRectangularImageBoxGrid,
 			int rows,
 			int columns)
 		{
@@ -25,7 +23,6 @@ namespace ClearCanvas.ImageViewer
 
 			_imageBoxes = imageBoxes;
 			_imageBoxMementos = imageBoxMementos;
-			_isRectangularImageBoxGrid = IsRectangularImageBoxGrid;
 			_rows = rows;
 			_columns = columns;
 		}
@@ -38,11 +35,6 @@ namespace ClearCanvas.ImageViewer
 		public MementoList ImageBoxMementos
 		{
 			get { return _imageBoxMementos; }
-		}
-
-		public bool IsRectangularImageBoxGrid
-		{
-			get { return _isRectangularImageBoxGrid; }
 		}
 
 		public int Rows

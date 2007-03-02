@@ -2,18 +2,21 @@ using System;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class LinkageChangedEventArgs : EventArgs
 	{
-		// Private attributes
 		private bool _isLinked;
 
-		// Constructor
-		public LinkageChangedEventArgs(bool isLinked)
+		internal LinkageChangedEventArgs(bool isLinked)
 		{
 			_isLinked = isLinked;
 		}
 
-		// Properties
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool IsLinked { get { return _isLinked; } }
 	}
 }

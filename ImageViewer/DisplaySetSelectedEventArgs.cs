@@ -6,18 +6,13 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Provides data for the <see cref="DisplaySetSelected"/> event.
+	/// Provides data for the <see cref="EventBroker.DisplaySetSelected"/> event.
 	/// </summary>
 	public class DisplaySetSelectedEventArgs : EventArgs
 	{
 		private IDisplaySet _selectedDisplaySet;
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="DisplaySetSelectedEventArgs"/> with
-		/// a specified <see cref="IDisplaySet"/>
-		/// </summary>
-		/// <param name="selectedDisplaySet"></param>
-		public DisplaySetSelectedEventArgs(
+		internal DisplaySetSelectedEventArgs(
 			IDisplaySet selectedDisplaySet)
 		{
 			Platform.CheckForNullReference(selectedDisplaySet, "selectedDisplaySet");
@@ -25,7 +20,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the selected display set.
+		/// Gets the selected <see cref="IDisplaySet"/>.
 		/// </summary>
 		public IDisplaySet SelectedDisplaySet
 		{
