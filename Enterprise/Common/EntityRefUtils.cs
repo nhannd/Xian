@@ -13,12 +13,12 @@ namespace ClearCanvas.Enterprise.Common
 
         public static object GetOID(EntityRef entityRef)
         {
-            return entityRef.EntityOID;
+            return entityRef.OID;
         }
 
         public static Type GetClass(EntityRef entityRef)
         {
-            return Type.GetType(entityRef.EntityClass);
+            return Type.GetType(entityRef.Class);
         }
     }
 }

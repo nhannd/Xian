@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// Defines a service for saving/retrieving configuration data to/from a persistent store.
     /// </summary>
+    [ServiceContract]
     public interface IConfigurationService : ICoreServiceLayer
     {
         /// <summary>
@@ -19,6 +21,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
         /// <returns></returns>
+        [OperationContract]
         string LoadDocument(string name, Version version, string user, string instanceKey);
 
         /// <summary>
@@ -30,6 +33,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
         /// <param name="documentText"></param>
+        [OperationContract]
         void SaveDocument(string name, Version version, string user, string instanceKey, string documentText);
 
         /// <summary>
@@ -39,6 +43,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="version"></param>
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
+        [OperationContract]
         void RemoveDocument(string name, Version version, string user, string instanceKey);
 
     }

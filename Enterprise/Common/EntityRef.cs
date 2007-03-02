@@ -40,7 +40,7 @@ namespace ClearCanvas.Enterprise.Common
         /// Returns the class of the entity that this reference refers to
         /// </summary>
         [DataMember]
-        internal string EntityClass
+        internal string Class
         {
             get { return _entityClass; }
             private set { _entityClass = value; }
@@ -50,7 +50,7 @@ namespace ClearCanvas.Enterprise.Common
         /// Returns the OID that this reference refers to
         /// </summary>
         [DataMember]
-        internal object EntityOID
+        internal object OID
         {
             get { return _entityOid; }
             private set { _entityOid = value; }
@@ -133,7 +133,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <returns>Formatted string containing the type and OID of the referenced object</returns>
         public override string ToString()
         {
-            return String.Format("Class: {0}, OID: {1}", this.EntityClass.ToString(), this.EntityOID.ToString());
+            return String.Format("Class: {0}, OID: {1}", this.Class.ToString(), this.OID.ToString());
         }
         
         /// <summary>
