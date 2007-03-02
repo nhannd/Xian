@@ -14,13 +14,6 @@ namespace ClearCanvas.Desktop.Tools
     public abstract class Tool<TContextInterface> : ToolBase
         where TContextInterface: IToolContext
 	{
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public Tool()
-        {
-        }
-
 
         /// <summary>
         /// Provides a typed reference to the context in which the tool is operating. Attempting to access this property

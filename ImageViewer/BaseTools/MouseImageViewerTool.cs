@@ -10,19 +10,20 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.BaseTools
 {
     /// <summary>
-    /// Extends the <see cref="Tool"/> class to provide functionality that is common to mouse tools
+    /// Extends the <see cref="Tool"/> class to provide functionality that is common to mouse tools.
     /// </summary>
     /// <remarks>
     /// A mouse tool is a tool that, when activated, is assigned to a specific mouse button 
     /// and is given the opportunity to respond to mouse events for that button.  Developers 
-    /// implementing mouse tools should subclass this class rather than <see cref="Tool"/>.
+    /// implementing mouse tools should subclass this class.
     /// </remarks>
-
 	public abstract class MouseImageViewerTool :
 		ImageViewerTool, 
 		IMouseButtonHandler, 
 		ICursorTokenProvider
 	{
+		#region Private fields
+
 		private int _lastX;
 		private int _lastY;
 		private int _deltaX;
@@ -33,14 +34,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		private bool _requiresCapture;
 		private CursorToken _cursorToken;
-		
-        /// <summary>
-        /// Constructs a mouse tool.
-        /// Subclasses must initialize this constructor with the preferred mouse button
-        /// and a preference for being the initially active tool.  There is no guarantee
-        /// that this tool will actuall be initially active.
-        /// </summary>
-        public MouseImageViewerTool()
+
+		#endregion
+
+		protected MouseImageViewerTool()
         {
 			_requiresCapture = true;
         }
@@ -51,6 +48,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			protected set { _requiresCapture = value; }
 		}
 
+		/// <summary>
+		/// Gets the cursor associated with this mouse tool.
+		/// </summary>
 		public CursorToken CursorToken
 		{
 			get { return _cursorToken; }
@@ -58,10 +58,12 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-        /// Reports whether this tool is currently active or not.  Any number of mouse tools
-        /// may be assigned to a given mouse button, but only one such tool can be active
-        /// at any given time.
+        /// Gets or sets a value indicating whether this tool is currently active or not.  
         /// </summary>
+		/// <remarks>
+		/// Any number of mouse tools may be assigned to a given mouse button, but 
+		/// only one such tool can be active at any given time.
+		/// </remarks>
         public bool Active
         {
             get { return _active; }
@@ -76,7 +78,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
         }
 
 		/// <summary>
-		/// The previous x coordinate of the mouse pointer.
+		/// Gets the previous x coordinate of the mouse pointer.
 		/// </summary>
 		protected int LastX
 		{
@@ -84,7 +86,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// The previous y coordinate of the mouse pointer.
+		/// Gets the previous y coordinate of the mouse pointer.
 		/// </summary>
 		protected int LastY
 		{
@@ -92,7 +94,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// The change in the x position of the mouse pointer since the previous call to <see cref="Track"/>.
+		/// Gets the change in the x position of the mouse pointer since the previous 
+		/// call to <see cref="Track"/>.
 		/// </summary>
 		protected int DeltaX
 		{
@@ -100,7 +103,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// The change in the y position of the mouse pointer since the previous call to <see cref="Track"/>.
+		/// Gets the change in the y position of the mouse pointer since the previous 
+		/// call to <see cref="Track"/>.
 		/// </summary>
 		protected int DeltaY
 		{
@@ -108,7 +112,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Notifies that the value of the <see cref="Active"/> property has changed.
+		/// Occurs when the <see cref="Active"/> property has changed.
 		/// </summary>
 		public event EventHandler ActivationChanged
 		{
@@ -117,9 +121,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Initializes the mouse tool.  If this method is overridden by the subclass,
-		/// the override must be sure to call the base class method, and should do so
-		/// prior to doing its own initialization.
+		/// Overrides <see cref="ToolBase.Initialize"/>.
 		/// </summary>
 		public override void Initialize()
 		{
@@ -127,7 +129,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
         /// <summary>
-        /// Requests that this mouse tool to be the active tool for the mouse button to which it
+        /// Requests that this mouse tool be the active tool for the mouse button to which it
         /// is assigned.
         /// </summary>
 		public void Select()
@@ -137,6 +139,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		#region IMouseButtonHandler
 
+		/// <summary>
+		/// Handles a "start mouse" message from the Framework.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns>A value indicating whether the start message was handled.</returns>
+		/// <remarks>
+		/// <para>
+		/// In most cases, <see cref="Start"/> corresponds to "mouse down".
+		/// </para>
+		/// <para>
+		/// As a developer, you need to override this method in your 
+		/// <see cref="MouseImageViewerTool"/> subclass to add your custom functionality, 
+		/// but you should never have to call it; it should only ever have to be 
+		/// called by the Framework.
+		/// </para>
+		/// </remarks>
 		public virtual bool Start(IMouseInformation mouseInformation)
 		{
 			_lastX = mouseInformation.Location.X;
@@ -145,6 +163,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			return false;
 		}
 
+		/// <summary>
+		/// Handles a "track mouse" message from the Framework.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns>A value indicating whether the track message was handled.</returns>
+		/// <remarks>
+		/// <para>
+		/// In most cases, <see cref="Track"/> corresponds to "mouse move".
+		/// </para>
+		/// <para>
+		/// As a developer, you need to override this method in your 
+		/// <see cref="MouseImageViewerTool"/> subclass to add your custom functionality, 
+		/// but you should never have to call it; it should only ever have to be 
+		/// called by the Framework.
+		/// </para>
+		/// </remarks>
 		public virtual bool Track(IMouseInformation mouseInformation)
 		{
 			_deltaX = mouseInformation.Location.X - _lastX;
@@ -156,6 +190,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			return false;
 		}
 
+		/// <summary>
+		/// Handles a "stop mouse" message from the Framework.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns>A value indicating whether the stop message was handled.</returns>
+		/// <remarks>
+		/// <para>
+		/// In most cases, <see cref="Stop"/> corresponds to "mouse up".
+		/// </para>
+		/// <para>
+		/// As a developer, you need to override this method in your 
+		/// <see cref="MouseImageViewerTool"/> subclass to add your custom functionality, 
+		/// but you should never have to call it; it should only ever have to be 
+		/// called by the Framework.
+		/// </para>
+		/// </remarks>
 		public virtual bool Stop(IMouseInformation mouseInformation)
 		{
 			_lastX = 0;
@@ -174,14 +224,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		#endregion
-
-		protected virtual bool IsImageValid(IPresentationImage image)
-		{
-			if (image == null)
-				return false;
-			else
-				return true;
-		}
 
 		#region ICursorTokenProvider Members
 

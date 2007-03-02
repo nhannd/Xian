@@ -16,13 +16,6 @@ namespace ClearCanvas.Desktop.Tools
         private IActionSet _actions;
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public ToolBase()
-        {
-        }
-
-        /// <summary>
         /// Implementation of the <see cref="IDisposable"/> pattern
         /// </summary>
         /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>

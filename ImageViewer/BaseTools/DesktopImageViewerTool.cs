@@ -6,32 +6,32 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
-	public class DesktopImageViewerTool : Tool<IDesktopToolContext>
+	/// <summary>
+	/// A base class image viewer tool that can notify its associated application
+	/// component when the active workspace changes.
+	/// </summary>
+	public abstract class DesktopImageViewerTool : Tool<IDesktopToolContext>
 	{
 		private ImageViewerToolComponent _imageViewerToolComponent;
 
-		public DesktopImageViewerTool()
-		{
-
-		}
-
+		/// <summary>
+		/// Gets or sets the associated <see cref="ImageViewerToolComponent"/>.
+		/// </summary>
 		public ImageViewerToolComponent ImageViewerToolComponent
 		{
 			get { return _imageViewerToolComponent; }
 			set { _imageViewerToolComponent = value; }
 		}
 
+		/// <summary>
+		/// Overrides <see cref="ToolBase.Initialize"/>.
+		/// </summary>
 		public override void Initialize()
 		{
 			this.Context.DesktopWindow.WorkspaceManager.ActiveWorkspaceChanged += OnWorkspaceActivated;
 			base.Initialize();
 		}
 
-		/// <summary>
-		/// Associate the layout component with the active workspace
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
 		{
 			if (_imageViewerToolComponent != null)
@@ -41,10 +41,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Gets a reference to the <see cref="IImageViewer"/> hosted by the active workspace,
-		/// if it exists, otherwise null.
+		/// Gets a reference to the <see cref="IImageViewer"/> hosted by the active workspace.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The active <see cref="IImageViewer"/> or <b>null</b> if 
+		/// the active workspace does not host an <see cref="IImageViewer"/>.</returns>
 		protected IImageViewer GetSubjectImageViewer()
 		{
 			IWorkspace workspace = this.Context.DesktopWindow.ActiveWorkspace;

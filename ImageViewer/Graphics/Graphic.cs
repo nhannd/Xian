@@ -7,17 +7,51 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// Coordinate system enumeration.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Consider a 512x512 image that has anchored to it a line
+	/// defined by points P1(0,0) and P2(10,10), where those points are
+	/// in the coordinate system of the image.  In that case, the line is said
+	/// to be in <i>source</i> coordinates.  Now consider if the image 
+	/// is zoomed by 2x where the center of expansion is (0,0).
+	/// In that case, the line's source coordinates are still the same, but 
+	/// its <i>destination</i> or Tile coordinates are now P1'(0,0), P2'(20,20).
+	/// </para>
+	/// <para>
+	/// In general, the source coordinates of a particular <see cref="Graphic"/>
+	/// are coordinates in the coordinate system of its immediate parent.
+	/// Destination coordinates are coordinates in the coordinate system
+	/// of the root of the scene graph, i.e., the Tile.  Put another way,
+	/// destination coordinates = T(source coordinates), where T represents
+	/// the a graphic's cumulative transformation.
+	/// </para>
+	/// </remarks>
 	public enum CoordinateSystem
 	{
+		/// <summary>
+		/// Represent a <see cref="Graphic"/> object's coordinates in
+		/// its immediate parent's, or <i>source</i> coordinate system.
+		/// </summary>
 		Source = 0,
+
+		/// <summary>
+		/// Represent a <see cref="Graphic"/> object's coordinates in
+		/// the coordinate system of the root of the scene graph, that is,
+		/// in Tile or <i>destination</i> coordinates.
+		/// </summary>
 		Destination = 1
 	}
 
 	/// <summary>
-	/// The base layer object.
+	/// An graphical object that can be rendered.
 	/// </summary>
 	public abstract class Graphic : IGraphic
 	{
+		#region Private fields
+
 		private IGraphic _parentGraphic;
 		private IImageViewer _parentImageViewer;
 		private IPresentationImage _parentPresentationImage;
@@ -27,13 +61,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private SpatialTransform _spatialTransform;
 		private Stack<CoordinateSystem> _coordinateSystemStack = new Stack<CoordinateSystem>();
 
+		#endregion
+
 		protected Graphic()
 		{
 			_coordinateSystemStack.Push(CoordinateSystem.Source);
 		}
 
 		/// <summary>
-		/// Gets this layer's parent <see cref="Layer"/>.
+		/// Gets this <see cref="Graphic"/> object's parent <see cref="Graphic"/>.
 		/// </summary>
 		public IGraphic ParentGraphic
 		{
@@ -46,10 +82,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets this layer's parent <see cref="PresentationImage"/>.
+		/// Gets this <see cref="Graphic"/> object's associated 
+		/// <see cref="IPresentationImage"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the layer has not been added
-		/// to the layer tree  (For example, right after construction.)</value>
+		/// <value>The associated <see cref="IPresentationImage"/> or <b>null</b>
+		/// if the <see cref="Graphic"/> is not yet part of the scene graph.
 		public virtual IPresentationImage ParentPresentationImage
 		{
 			get { return _parentPresentationImage; }
@@ -61,10 +98,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets this layer's parent <see cref="IImageViewer"/>.
+		/// Gets this <see cref="Graphic"/> object's associated 
+		/// <see cref="IImageViewer"/>.
 		/// </summary>
-		/// <value>Can be <b>null</b> if the layer has not been added
-		/// to the layer tree  (For example, right after construction.)</value>
+		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b>
+		/// if the <see cref="Graphic"/> is not yet associated with
+		/// an <see cref="IImageViewer"/>.
 		public virtual IImageViewer ImageViewer
 		{
 			get { return _parentImageViewer; }
@@ -76,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the name of this layer.
+		/// Gets or sets the name of this <see cref="Graphic"/>.
 		/// </summary>
 		public string Name
 		{
@@ -85,13 +124,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this layer is visible.
+		/// Gets or sets a value indicating whether this <see cref="Graphic"/> is visible.
 		/// </summary>
-		/// <remarks>The effect of this property will be seen when 
-		/// <see cref="Draw"/> is called. This property is recursive.  That is, 
-		/// when set, the new value is applied to all child layers, right 
-		/// down to the leaves.
-		/// </remarks>
 		public virtual bool Visible
 		{
 			get { return _visible; }
@@ -99,17 +133,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the coordinate system the layer is using.
+		/// Gets or sets the <see cref="CoordinateSystem"/>.
 		/// </summary>
 		/// <remarks>
-		/// It is often desirable for a client to be able to work in both original
-		/// image (source) coordinates, or in screen (destination) coordinates.
-		/// By setting this property, all coordinates will be interpreted in that
-		/// coordinate system for this layer and all its child layers as well.
-		/// The proper practice is to call <see cref="ResetCoordinateSystem"/> after
-		/// having set this property.
-		/// This property is recursive.  That is, when set, the
-		/// new value is applied to all child layers, right down to the leaves.		
+		/// After the <see cref="CoordinateSystem"/> has been set and the
+		/// desired operations have been performed on the <see cref="Graphic"/>,
+		/// it is proper practice to call <see cref="ResetCoordinateSystem"/>
+		/// to restore the previous coordinate system.
 		/// </remarks>
 		public virtual CoordinateSystem CoordinateSystem
 		{
@@ -122,8 +152,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the <see cref="SpatialTransform"/> associated with this
-		/// layer's parent <see cref="LayerGroup"/>
+		/// Gets this <see cref="Graphic"/> object's <see cref="SpatialTransform"/>.
 		/// </summary>
 		public virtual SpatialTransform SpatialTransform
 		{
@@ -138,24 +167,38 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Returns a value indicating whether the mouse is over the <see cref="Graphic"/>.
+		/// Performs a hit test on the <see cref="Graphic"/> at a given point.
 		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
+		/// <param name="point">The mouse position in destination coordinates.</param>
+		/// <returns>
+		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="Graphic"/>,
+		/// <b>false</b> otherwise.
+		/// <remarks>
+		/// It is up to the <see cref="Graphic"/> to define what a "hit" is.
+		/// </remarks>
+		/// </returns>
 		public abstract bool HitTest(Point point);
 
 		/// <summary>
-		/// Moves the <see cref="Graphic"/> by a specified distance.
+		/// Moves the <see cref="Graphic"/> by a specified delta.
 		/// </summary>
-		/// <param name="delta"></param>
-		/// <remarks>Depending on the value of <see cref="CoordinateSystem"/>,
-		/// <i>delta</i> will be interpreted in either source
-		/// or destination coordinates.</remarks>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public abstract void Move(SizeF delta);
 
 		/// <summary>
-		/// Resets the <see cref="CoordinateSystem"/> to its old value.
+		/// Resets the <see cref="CoordinateSystem"/>.
 		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// <see cref="ResetCoordinateSystem"/> will reset the <see cref="CoordinateSystem"/>
+		/// to what it was before the <see cref="CoordinateSystem"/> was last set.
+		/// </para>
+		/// </remarks>
 		public virtual void ResetCoordinateSystem()
 		{
 			if (_coordinateSystemStack.Count == 1)
@@ -165,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Draw the layer.
+		/// Draws the <see cref="Graphic"/>.
 		/// </summary>
 		public virtual void Draw()
 		{
@@ -173,10 +216,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.ParentPresentationImage.Draw();
 		}
 
+		/// <summary>
+		/// Creates the <see cref="SpatialTransform"/> for this <see cref="Graphic"/>.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// Override this if the default <see cref="SpatialTransform"/> created
+		/// is not appropriate.
+		/// </remarks>
 		protected virtual SpatialTransform CreateSpatialTransform()
 		{
 			return new SpatialTransform(this);
 		}
-
 	}
 }

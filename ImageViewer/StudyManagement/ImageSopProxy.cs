@@ -7,7 +7,7 @@ using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	public class ImageSopProxy : ImageSop
+	internal class ImageSopProxy : ImageSop
 	{
 		private ImageSop _realImageSop;
 

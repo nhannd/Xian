@@ -1,3 +1,5 @@
+#pragma warning disable 1591,0419,1574,1587
+
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;

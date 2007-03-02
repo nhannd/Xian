@@ -7,7 +7,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// An extension point for image layout management.
+	/// Defines an extension point for image layout management.
 	/// </summary>
 	[ExtensionPoint()]
 	public class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
