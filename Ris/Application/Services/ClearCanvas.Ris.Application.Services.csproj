@@ -75,7 +75,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StaffAdminService.cs" />
-    <Compile Include="TestService.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
     <Compile Include="WorklistService.cs" />
     <Compile Include="WorkflowServiceBase.cs" />

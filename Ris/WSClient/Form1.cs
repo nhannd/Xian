@@ -6,33 +6,54 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using ClearCanvas.Ris.Services.Client;
 using System.ServiceModel;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Test.Common;
 
 namespace WSClient
 {
     public partial class Form1 : Form
     {
-        TestServiceClient _testService;
+        ChannelFactory<ITestService> _testServiceFactory;
+
         public Form1()
         {
             InitializeComponent();
 
-            EndpointAddress endpoint = new EndpointAddress("http://localhost:8000/ClearCanvas.Ris.Services.ITestService/");
-            BasicHttpBinding binding = new BasicHttpBinding();
-
-            _testService = new TestServiceClient(binding, endpoint);
+            _testServiceFactory = new ChannelFactory<ITestService>(
+                new BasicHttpBinding(),
+                new EndpointAddress("http://localhost:8000/ClearCanvas.Ris.Test.Common.ITestService/"));
         }
 
         private void _sendButton_Click(object sender, EventArgs e)
         {
             try
             {
-                _result.Text = _testService.GetPatientDetails(_number.Text).Mrn;
+                ITestService testService = _testServiceFactory.CreateChannel();
+                using (testService as IDisposable)
+                {
+                    _result.Text = testService.GetName(0);
+                }
             }
-            catch (Exception ex)
+            catch (TimeoutException timeProblem)
             {
-                MessageBox.Show(ex.Message);
+                Console.WriteLine("The service operation timed out. " + timeProblem.Message);
+            }
+            catch (ItsMondayException realMonday)
+            {
+                Console.WriteLine(realMonday.Message);
+            }
+            catch (FaultException<ItsMondayException> mondayException)
+            {
+                Console.WriteLine(mondayException.Detail.Message);
+            }
+            catch (FaultException unknownFault)
+            {
+                Console.WriteLine("An unknown exception was received. " + unknownFault.Message);
+            }
+            catch (CommunicationException commProblem)
+            {
+                Console.WriteLine("There was a communication problem. " + commProblem.Message + commProblem.StackTrace);
             }
         }
     }

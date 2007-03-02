@@ -8,21 +8,30 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Services.Client
+namespace ClearCanvas.Enterprise.Common
 {
     using System.Runtime.Serialization;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Ris.Services")]
-    public partial struct PatientDetails : System.Runtime.Serialization.IExtensibleDataObject
+    [System.Runtime.Serialization.DataContractAttribute()]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Exception))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.Ris.Test.Common.PatientProfilePreview))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.Ris.Test.Common.AddressInfo[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.Ris.Test.Common.AddressInfo))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.Ris.Test.Common.TelephoneNumberInfo[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.Ris.Test.Common.TelephoneNumberInfo))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.Ris.Test.Common.ItsMondayException))]
+    public partial class EntityRef : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private string MrnField;
+        private string ClassField;
         
-        private string NameField;
+        private object OIDField;
+        
+        private int VersionField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -33,6 +42,124 @@ namespace ClearCanvas.Ris.Services.Client
             set
             {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Class
+        {
+            get
+            {
+                return this.ClassField;
+            }
+            set
+            {
+                this.ClassField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public object OID
+        {
+            get
+            {
+                return this.OIDField;
+            }
+            set
+            {
+                this.OIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Version
+        {
+            get
+            {
+                return this.VersionField;
+            }
+            set
+            {
+                this.VersionField = value;
+            }
+        }
+    }
+}
+namespace ClearCanvas.Ris.Test.Common
+{
+    using System;
+    using System.Runtime.Serialization;
+    
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class PatientProfilePreview : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private ClearCanvas.Ris.Test.Common.AddressInfo[] AddressesField;
+        
+        private string DateOfBirthField;
+        
+        private string HealthcardField;
+        
+        private string MrnField;
+        
+        private string NameField;
+        
+        private ClearCanvas.Ris.Test.Common.TelephoneNumberInfo[] PhoneNumbersField;
+        
+        private string SexField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ClearCanvas.Ris.Test.Common.AddressInfo[] Addresses
+        {
+            get
+            {
+                return this.AddressesField;
+            }
+            set
+            {
+                this.AddressesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DateOfBirth
+        {
+            get
+            {
+                return this.DateOfBirthField;
+            }
+            set
+            {
+                this.DateOfBirthField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Healthcard
+        {
+            get
+            {
+                return this.HealthcardField;
+            }
+            set
+            {
+                this.HealthcardField = value;
             }
         }
         
@@ -61,54 +188,277 @@ namespace ClearCanvas.Ris.Services.Client
                 this.NameField = value;
             }
         }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ClearCanvas.Ris.Test.Common.TelephoneNumberInfo[] PhoneNumbers
+        {
+            get
+            {
+                return this.PhoneNumbersField;
+            }
+            set
+            {
+                this.PhoneNumbersField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Sex
+        {
+            get
+            {
+                return this.SexField;
+            }
+            set
+            {
+                this.SexField = value;
+            }
+        }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="www.clearcanvas.ca", ConfigurationName="ClearCanvas.Ris.Services.Client.ITestService")]
-    public interface ITestService
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class AddressInfo : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="www.clearcanvas.ca/ITestService/GetPatientDetails", ReplyAction="www.clearcanvas.ca/ITestService/GetPatientDetailsResponse")]
-        ClearCanvas.Ris.Services.Client.PatientDetails GetPatientDetails(string lastname);
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string DisplayValueField;
+        
+        private System.Nullable<System.DateTime> ExpiryDateField;
+        
+        private bool IsCurrentField;
+        
+        private string TypeField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DisplayValue
+        {
+            get
+            {
+                return this.DisplayValueField;
+            }
+            set
+            {
+                this.DisplayValueField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> ExpiryDate
+        {
+            get
+            {
+                return this.ExpiryDateField;
+            }
+            set
+            {
+                this.ExpiryDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsCurrent
+        {
+            get
+            {
+                return this.IsCurrentField;
+            }
+            set
+            {
+                this.IsCurrentField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Type
+        {
+            get
+            {
+                return this.TypeField;
+            }
+            set
+            {
+                this.TypeField = value;
+            }
+        }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    public interface ITestServiceChannel : ClearCanvas.Ris.Services.Client.ITestService, System.ServiceModel.IClientChannel
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class TelephoneNumberInfo : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string DisplayValueField;
+        
+        private System.Nullable<System.DateTime> ExpiryDateField;
+        
+        private bool IsCurrentField;
+        
+        private string TypeField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DisplayValue
+        {
+            get
+            {
+                return this.DisplayValueField;
+            }
+            set
+            {
+                this.DisplayValueField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> ExpiryDate
+        {
+            get
+            {
+                return this.ExpiryDateField;
+            }
+            set
+            {
+                this.ExpiryDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsCurrent
+        {
+            get
+            {
+                return this.IsCurrentField;
+            }
+            set
+            {
+                this.IsCurrentField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Type
+        {
+            get
+            {
+                return this.TypeField;
+            }
+            set
+            {
+                this.TypeField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.SerializableAttribute()]
+    public partial class ItsMondayException : System.Exception
+    {
+        
+        public ItsMondayException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
+                base(info, context)
+        {
+        }
+    }
+}
+
+
+[System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+[System.ServiceModel.ServiceContractAttribute(ConfigurationName="ITestService")]
+public interface ITestService
+{
+    
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ITestService/GetPatientProfilePreview", ReplyAction="http://tempuri.org/ITestService/GetPatientProfilePreviewResponse")]
+    ClearCanvas.Ris.Test.Common.PatientProfilePreview GetPatientProfilePreview(ClearCanvas.Enterprise.Common.EntityRef profileRef);
+    
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ITestService/GetName", ReplyAction="http://tempuri.org/ITestService/GetNameResponse")]
+    [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.Ris.Test.Common.ItsMondayException), Action="http://tempuri.org/ITestService/GetNameItsMondayExceptionFault", Name="ItsMondayException", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Ris.Test.Common")]
+    string GetName(int i);
+    
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ITestService/Echo", ReplyAction="http://tempuri.org/ITestService/EchoResponse")]
+    ClearCanvas.Enterprise.Common.EntityRef Echo(ClearCanvas.Enterprise.Common.EntityRef profileRef);
+    
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ITestService/GetAddresses", ReplyAction="http://tempuri.org/ITestService/GetAddressesResponse")]
+    ClearCanvas.Ris.Test.Common.AddressInfo[] GetAddresses(ClearCanvas.Enterprise.Common.EntityRef profileRef);
+}
+
+[System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+public interface ITestServiceChannel : ITestService, System.ServiceModel.IClientChannel
+{
+}
+
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+public partial class TestServiceClient : System.ServiceModel.ClientBase<ITestService>, ITestService
+{
+    
+    public TestServiceClient()
     {
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    public partial class TestServiceClient : System.ServiceModel.ClientBase<ClearCanvas.Ris.Services.Client.ITestService>, ClearCanvas.Ris.Services.Client.ITestService
+    public TestServiceClient(string endpointConfigurationName) : 
+            base(endpointConfigurationName)
     {
-        
-        public TestServiceClient()
-        {
-        }
-        
-        public TestServiceClient(string endpointConfigurationName) : 
-                base(endpointConfigurationName)
-        {
-        }
-        
-        public TestServiceClient(string endpointConfigurationName, string remoteAddress) : 
-                base(endpointConfigurationName, remoteAddress)
-        {
-        }
-        
-        public TestServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(endpointConfigurationName, remoteAddress)
-        {
-        }
-        
-        public TestServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(binding, remoteAddress)
-        {
-        }
-        
-        public ClearCanvas.Ris.Services.Client.PatientDetails GetPatientDetails(string lastname)
-        {
-            return base.Channel.GetPatientDetails(lastname);
-        }
+    }
+    
+    public TestServiceClient(string endpointConfigurationName, string remoteAddress) : 
+            base(endpointConfigurationName, remoteAddress)
+    {
+    }
+    
+    public TestServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+            base(endpointConfigurationName, remoteAddress)
+    {
+    }
+    
+    public TestServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+            base(binding, remoteAddress)
+    {
+    }
+    
+    public ClearCanvas.Ris.Test.Common.PatientProfilePreview GetPatientProfilePreview(ClearCanvas.Enterprise.Common.EntityRef profileRef)
+    {
+        return base.Channel.GetPatientProfilePreview(profileRef);
+    }
+    
+    public string GetName(int i)
+    {
+        return base.Channel.GetName(i);
+    }
+    
+    public ClearCanvas.Enterprise.Common.EntityRef Echo(ClearCanvas.Enterprise.Common.EntityRef profileRef)
+    {
+        return base.Channel.Echo(profileRef);
+    }
+    
+    public ClearCanvas.Ris.Test.Common.AddressInfo[] GetAddresses(ClearCanvas.Enterprise.Common.EntityRef profileRef)
+    {
+        return base.Channel.GetAddresses(profileRef);
     }
 }

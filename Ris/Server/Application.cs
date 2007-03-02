@@ -8,6 +8,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Test.Services;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -22,12 +23,12 @@ namespace ClearCanvas.Ris.Server
         {
             Console.WriteLine("Starting application root " + this.GetType().FullName);
  
-            Uri baseAddress = new Uri("http://localhost:8000/");
+            string baseAddress = "http://localhost:8000/";
 
             _serviceHosts = new List<ServiceHost>();
 
             _serviceHosts.AddRange(MountServices(new CoreServiceExtensionPoint(), baseAddress));
-            //_serviceHosts.AddRange(MountServices(new ApplicationServiceExtensionPoint(), baseAddress));
+            _serviceHosts.AddRange(MountServices(new TestServiceExtensionPoint(), baseAddress));
 
             Console.WriteLine("Starting services...");
             foreach (ServiceHost host in _serviceHosts)
@@ -48,7 +49,7 @@ namespace ClearCanvas.Ris.Server
 
         #endregion
 
-        private List<ServiceHost> MountServices(IExtensionPoint serviceLayer, Uri baseAddress)
+        private List<ServiceHost> MountServices(IExtensionPoint serviceLayer, string baseAddress)
         {
             Binding binding = new BasicHttpBinding();
             List<ServiceHost> hostedServices = new List<ServiceHost>();
@@ -64,13 +65,14 @@ namespace ClearCanvas.Ris.Server
                     Console.WriteLine("Mounting service " + serviceClass.FullName);
 
                     // create service host
-                    ServiceHost host = new ServiceHost(serviceClass, baseAddress);
+                    Uri uri = new Uri(string.Format("{0}/{1}", baseAddress, a.ServiceContract.FullName));
+                    ServiceHost host = new ServiceHost(serviceClass, uri);
 
                     // add behaviour to grab AOP proxied service instance
                     host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(a.ServiceContract, serviceManager));
 
                     // establish endpoint
-                    host.AddServiceEndpoint(a.ServiceContract, binding, a.ServiceContract.FullName);
+                    host.AddServiceEndpoint(a.ServiceContract, binding, "");
 
                     // expose meta-data via HTTP GET
                     ServiceMetadataBehavior metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
@@ -80,6 +82,11 @@ namespace ClearCanvas.Ris.Server
                         metadataBehavior.HttpGetEnabled = true;
                         host.Description.Behaviors.Add(metadataBehavior);
                     }
+#if DEBUG
+                    ServiceBehaviorAttribute debuggingBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
+                    debuggingBehavior.IncludeExceptionDetailInFaults = true;
+#endif
+
 
                     // set up authentication model
                     host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;

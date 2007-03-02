@@ -117,26 +117,6 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Enterprise\ClearCanvas.Enterprise.csproj">
-      <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
-      <Name>ClearCanvas.Enterprise</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Healthcare\ClearCanvas.Healthcare.csproj">
-      <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
-      <Name>ClearCanvas.Healthcare</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\HL7\ClearCanvas.HL7.csproj">
-      <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
-      <Name>ClearCanvas.HL7</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Workflow\ClearCanvas.Workflow.csproj">
-      <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
-      <Name>ClearCanvas.Workflow</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Services\ClearCanvas.Ris.Services.csproj">
-      <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>
-      <Name>ClearCanvas.Ris.Services</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PatientReconciliationToolLarge.png" />

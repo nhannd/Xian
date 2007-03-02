@@ -50,10 +50,8 @@
     <Compile Include="Admin\IPractitionerAdminService.cs" />
     <Compile Include="Admin\IStaffAdminService.cs" />
     <Compile Include="ImportException.cs" />
-    <Compile Include="ITestService.cs" />
     <Compile Include="IWorklistService.cs" />
     <Compile Include="Modality\IModalityWorkflowService.cs" />
-    <Compile Include="PatientProfilePreview.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registration\IAdtService.cs" />
     <Compile Include="Registration\IOrderEntryService.cs" />

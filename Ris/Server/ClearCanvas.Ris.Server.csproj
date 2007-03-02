@@ -73,6 +73,10 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Test\Services\ClearCanvas.Ris.Test.Services.csproj">
+      <Project>{79D359F8-585C-442E-9654-1294739D5841}</Project>
+      <Name>ClearCanvas.Ris.Test.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

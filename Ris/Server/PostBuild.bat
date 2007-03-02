@@ -9,6 +9,7 @@ copy "..\..\..\..\Ris\Client\Adt\actionmodels.xml "."
 :: Copy Enterprise	
 copy "..\..\..\..\..\Enterprise\Common\bin\%1\ClearCanvas.Enterprise.Common.dll" .\plugins
 copy "..\..\..\..\..\Enterprise\Core\bin\%1\ClearCanvas.Enterprise.Core.dll" .\plugins
+copy "..\..\..\..\..\Enterprise\Hibernate\bin\%1\ClearCanvas.Enterprise.Hibernate.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\Spring.Core.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\Spring.Aop.dll" .\plugins
@@ -34,7 +35,8 @@ copy "..\..\..\..\..\Healthcare\bin\%1\ClearCanvas.Healthcare.dll" .\plugins
 copy "..\..\..\..\..\Healthcare\Hibernate\bin\%1\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
 
 :: Ris
-copy "..\..\..\..\..\Ris\Services\bin\%1\ClearCanvas.Ris.Services.dll" .\plugins
+copy "..\..\..\..\..\Ris\Test\Common\bin\%1\ClearCanvas.Ris.Test.Common.dll" .\plugins
+copy "..\..\..\..\..\Ris\Test\Services\bin\%1\ClearCanvas.Ris.Test.Services.dll" .\plugins
 copy "..\..\..\..\..\Ris\Server\bin\%1\ClearCanvas.Ris.Server.dll" .\plugins
 
 copy "..\..\..\..\..\HL7\bin\%1\ClearCanvas.HL7.dll" .\plugins
