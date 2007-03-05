@@ -36,13 +36,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			command.Name = SR.CommandReset;
 			command.BeginState = applicator.CreateMemento();
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.Scale = 1.0f;
-			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX = 0.0f;
-			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY = 0.0f;
-			this.SelectedSpatialTransformProvider.SpatialTransform.FlipHorizontal = false;
-			this.SelectedSpatialTransformProvider.SpatialTransform.FlipVertical = false;
-			this.SelectedSpatialTransformProvider.SpatialTransform.Rotation = 0;
-			this.SelectedSpatialTransformProvider.SpatialTransform.ScaleToFit = true;
+			IImageSpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
+
+			transform.Scale = 1.0f;
+			transform.TranslationX = 0.0f;
+			transform.TranslationY = 0.0f;
+			transform.FlipY = false;
+			transform.FlipX = false;
+			transform.RotationXY = 0;
+			transform.ScaleToFit = true;
+			this.SelectedSpatialTransformProvider.Draw();
 
 			command.EndState = applicator.CreateMemento();
 

@@ -42,11 +42,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
 
 			// Do the transform
-			if (image.SpatialTransform.Rotation == 0 || image.SpatialTransform.Rotation == 180)
-				image.SpatialTransform.FlipHorizontal = !image.SpatialTransform.FlipHorizontal;
+			if (image.SpatialTransform.RotationXY == 0 || image.SpatialTransform.RotationXY == 180)
+				image.SpatialTransform.FlipY = !image.SpatialTransform.FlipY;
 			// If image is rotated 90 or 270, then a horizontal flip is really a vertical flip
 			else
-				image.SpatialTransform.FlipVertical = !image.SpatialTransform.FlipVertical;
+				image.SpatialTransform.FlipX = !image.SpatialTransform.FlipX;
 
 			// Save the new state
 			command.EndState = applicator.CreateMemento();

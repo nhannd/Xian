@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class RectangleMemento : IMemento
+	internal class RectangleMemento : IMemento
 	{
 		PointF _topLeft;
 		PointF _bottomRight;

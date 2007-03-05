@@ -9,7 +9,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Describes an image.
+	/// An image <see cref="Graphic"/>.
 	/// </summary>
 	public class ImageGraphic : Graphic
 	{
@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _sizeInBytes = -1;
 		private int _sizeInPixels = -1;
 		private int _doubleWordAlignedColumns = -1;
+		private RectangleF _imageRectangle;
 
 		private InterpolationMethods _normalInterpolationMethod = InterpolationMethods.Bilinear;
 		//private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.NearestNeighbour;
@@ -40,21 +41,47 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		public ImageGraphic(ImageSop image)
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageGraphic"/>
+		/// with the specified <see cref="ImageSop"/>.
+		/// </summary>
+		/// <param name="imageSop"></param>
+		/// <remarks>
+		/// This constructor is provided for convenience in the case where
+		/// the properties of <see cref="ImageGraphic"/> are the
+		/// same as that of an existing <see cref="ImageSop"/>.
+		/// Note that a reference to <paramref name="imageSop"/> is <i>not</i> held
+		/// by <see cref="ImageGraphic"/>.
+		/// </remarks>
+		public ImageGraphic(ImageSop imageSop)
 			: this(
-			image.Rows, 
-			image.Columns,
-			image.BitsAllocated,
-			image.BitsStored,
-			image.HighBit,
-			image.SamplesPerPixel,
-			image.PixelRepresentation,
-			image.PlanarConfiguration,
-			image.PhotometricInterpretation,
-			image.PixelData)
+			imageSop.Rows, 
+			imageSop.Columns,
+			imageSop.BitsAllocated,
+			imageSop.BitsStored,
+			imageSop.HighBit,
+			imageSop.SamplesPerPixel,
+			imageSop.PixelRepresentation,
+			imageSop.PlanarConfiguration,
+			imageSop.PhotometricInterpretation,
+			imageSop.PixelData)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageGraphic"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="samplesPerPixel"></param>
+		/// <param name="pixelRepresentation"></param>
+		/// <param name="planarConfiguration"></param>
+		/// <param name="photometricInterpretation"></param>
+		/// <param name="pixelData"></param>
 		public ImageGraphic(
 			int rows,
 			int columns,
@@ -86,6 +113,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_planarConfiguration = planarConfiguration;
 			_photometricInterpretation = photometricInterpretation;
 			_pixelDataRaw = pixelData;
+
+			_imageRectangle = new RectangleF(0, 0, _columns - 1, _rows - 1);
 		}
 
 		/// <summary>
@@ -127,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets the high bit in the image.
 		/// </summary>
 		/// <remarks>Theoretically, the high bit does not necessarily have to equal
-		/// bit stored - 1.  But in almost all cases this assumption is true; we
+		/// Bits Stored - 1.  But in almost all cases this assumption is true; we
 		/// too make this assumption.</remarks>
 		public int HighBit 
 		{
@@ -137,7 +166,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the number of samples per pixel in the image.
 		/// </summary>
-		/// <remarks>For monochrome images, this property can be ignored.  For colour
+		/// <remarks>For MONOCHROME1, MONOCHROME2 and PALETTE_COLOR images, this 
+		/// property can be ignored.  For other colour (e.g. RGB, YBR_FULL, etc.)
 		/// images, the value of this property is typically 3 or 4 depending
 		/// on the particular <see cref="PhotometricInterpretation"/>.</remarks>
 		public int SamplesPerPixel 
@@ -148,8 +178,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the pixel representation of the image.
 		/// </summary>
-		/// <remarks>When the pixel data is unsigned the value of this property
-		/// is 0.  When it is signed, the value is 1.</remarks>
+		/// <value>0 if the pixel data is unsigned or non-zero if the pixel data
+		/// is signed.</value>
 		public int PixelRepresentation 
 		{
 			get { return _pixelRepresentation; }
@@ -178,6 +208,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets the pixel data of the image.
 		/// </summary>
 		/// <returns></returns>
+		/// <remarks>
+		/// By default, <see cref="PixelDataRaw"/> returns an empty array of bytes
+		/// of size <see cref="SizeInBytes"/>.  Override this property if you want
+		/// the pixel data to be otherwise.  Note that this is what is returned
+		/// by <see cref="ClearCanvas.ImageViewer.Graphics.PixelData.Raw"/>.
+		/// </remarks>
 		protected virtual byte[] PixelDataRaw
 		{
 			get
@@ -189,6 +225,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="PixelData"/>.
+		/// </summary>
 		public PixelData PixelData
 		{
 			get
@@ -240,6 +279,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return this.PlanarConfiguration == 1; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the image's pixel data is signed.
+		/// </summary>
         public bool IsSigned
         {
             get { return this.PixelRepresentation != 0; }
@@ -258,6 +300,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the size of the image in pixels.
+		/// </summary>
 		public int SizeInPixels
 		{
 			get
@@ -306,7 +351,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-
+		/// <summary>
+		/// Gets or sets a value indicating whether the image should be rendered
+		/// using the <see cref="FastInterpolationMethod"/> or 
+		/// <see cref="NormalInterpolationMethod"/>.
+		/// </summary>
 		public bool FastRender
 		{
 			get 
@@ -319,18 +368,27 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the fast interpolation method.
+		/// </summary>
 		public InterpolationMethods FastInterpolationMethod
 		{
 			get { return _fastInterpolationMethod; }
 			set { _fastInterpolationMethod = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the normal interpolation method.
+		/// </summary>
 		public InterpolationMethods NormalInterpolationMethod
 		{
 			get { return _normalInterpolationMethod; }
 			set { _normalInterpolationMethod = value; }
 		}
 
+		/// <summary>
+		/// Gets the current interpolation method.
+		/// </summary>
 		public virtual InterpolationMethods InterpolationMethod
 		{
 			get
@@ -342,14 +400,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Performs a hit test on the <see cref="ImageGraphic"/> at a given point.
+		/// </summary>
+		/// <param name="point">The mouse position in destination coordinates.</param>
+		/// <returns><b>True</b> if <paramref name="point"/> is within the boundaries
+		/// of the image, <b>false</b> otherwise.</returns>
 		public override bool HitTest(Point point)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			PointF srcPoint = this.SpatialTransform.ConvertToSource(point);
+
+			if (srcPoint.X >= 0.0 &&
+				srcPoint.X <= _columns-1 &&
+				srcPoint.Y >= 0.0 &&
+				srcPoint.Y <= _rows-1)
+				return true;
+			else
+				return false;
 		}
 
 		public override void Move(SizeF delta)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			//this.SpatialTransform.
 		}
 	}
 }

@@ -8,24 +8,57 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// A local, file-based implementation of <see cref="ImageSop"/>.
+	/// </summary>
+	/// <remarks>
+	/// At present all the properties on this class are read-only.  Attempting
+	/// to set a property will result in a <see cref="NotImplementedException"/>.
+	/// </remarks>
 	public class LocalImageSop : ImageSop
 	{
 		private FileDicomImage _dicomImage;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="LocalImageSop"/> with
+		/// a specified filename.
+		/// </summary>
+		/// <param name="filename"></param>
 		public LocalImageSop(string filename)
 		{
 			_dicomImage = new FileDicomImage(filename);
 		}
 
+		/// <summary>
+		/// </summary>
 		protected LocalImageSop()
-		{ 
+		{
+
 		}
 
+		/// <summary>
+		/// Gets the underlying native DICOM object.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Because <see cref="NativeDicomObject"/> returns an <see cref="Object"/>, it
+		/// needs to be cast to a known class.  Note that if the interface to that
+		/// known class changes at some point in the future, client code may break.
+		/// For this reason, <see cref="NativeDicomObject"/> should be used
+		/// carefully and sparingly.
+		/// </para>
+		/// <para>
+		/// At present, the native DICOM object returned is a <see cref="FileDicomImage"/>.
+		/// </para>
+		/// </remarks>
         public override object NativeDicomObject
         {
             get { return _dicomImage; }
         }
 
+		/// <summary>
+		/// Gets or sets the patient's name.
+		/// </summary>
 		public override PersonName PatientsName
 		{
 			get
@@ -39,10 +72,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the patient ID.
+		/// </summary>
 		public override string PatientId
 		{
 			get
@@ -54,10 +90,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's birthdate.
+		/// </summary>
 		public override string PatientsBirthDate
 		{
 			get
@@ -69,10 +108,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's sex.
+		/// </summary>
 		public override string PatientsSex
 		{
 			get
@@ -84,10 +126,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the Study Instance UID.
+		/// </summary>
 		public override string StudyInstanceUID
 		{
 			get
@@ -99,10 +144,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the study date.
+		/// </summary>
 		public override string StudyDate
 		{
 			get
@@ -114,10 +162,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the study time.
+		/// </summary>
 		public override string StudyTime
 		{
 			get
@@ -129,10 +180,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the referring physician's name.
+		/// </summary>
 		public override PersonName ReferringPhysiciansName
 		{
 			get
@@ -146,10 +200,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the accession number.
+		/// </summary>
 		public override string AccessionNumber
 		{
 			get
@@ -161,10 +218,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the study description.
+		/// </summary>
 		public override string StudyDescription
 		{
 			get
@@ -176,10 +236,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the names of physicians reading the study.
+		/// </summary>
 		public override PersonName[] NameOfPhysiciansReadingStudy
 		{
 			get
@@ -191,10 +254,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the admitting diagnoses descriptions.
+		/// </summary>
 		public override string[] AdmittingDiagnosesDescription
 		{
 			get
@@ -206,10 +272,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's age.
+		/// </summary>
 		public override string PatientsAge
 		{
 			get
@@ -221,10 +290,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the additional patient's history.
+		/// </summary>
 		public override string AdditionalPatientsHistory
 		{
 			get
@@ -236,10 +308,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the modality.
+		/// </summary>
 		public override string Modality
 		{
 			get
@@ -251,10 +326,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the Series Instance UID.
+		/// </summary>
 		public override string SeriesInstanceUID
 		{
 			get
@@ -266,10 +344,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the series number.
+		/// </summary>
 		public override int SeriesNumber
 		{
 			get
@@ -281,10 +362,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the series description.
+		/// </summary>
 		public override string SeriesDescription
 		{
 			get
@@ -296,11 +380,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
-
+		/// <summary>
+		/// Gets or sets the laterality.
+		/// </summary>
 		public override string Laterality
 		{
 			get
@@ -312,10 +398,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the series date.
+		/// </summary>
 		public override string SeriesDate
 		{
 			get
@@ -327,10 +416,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the series time.
+		/// </summary>
 		public override string SeriesTime
 		{
 			get
@@ -342,10 +434,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the names of performing physicians.
+		/// </summary>
 		public override PersonName[] PerformingPhysiciansName
 		{
 			get
@@ -357,10 +452,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the names of operators.
+		/// </summary>
 		public override PersonName[] OperatorsName
 		{
 			get
@@ -372,10 +470,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the body part examined.
+		/// </summary>
 		public override string BodyPartExamined
 		{
 			get
@@ -387,10 +488,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the patient position.
+		/// </summary>
 		public override string PatientPosition
 		{
 			get
@@ -402,10 +506,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the manufacturer.
+		/// </summary>
 		public override string Manufacturer
 		{
 			get
@@ -417,10 +524,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the institution name.
+		/// </summary>
 		public override string InstitutionName
 		{
 			get
@@ -432,10 +542,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the station name.
+		/// </summary>
 		public override string StationName
 		{
 			get
@@ -447,10 +560,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the institutional department name.
+		/// </summary>
 		public override string InstitutionalDepartmentName
 		{
 			get
@@ -462,10 +578,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the manufacturer's model name.
+		/// </summary>
 		public override string ManufacturersModelName
 		{
 			get
@@ -477,10 +596,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the instance number.
+		/// </summary>
 		public override int InstanceNumber
 		{
 			get
@@ -492,10 +614,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the patient orientation.
+		/// </summary>
 		public override PatientOrientation PatientOrientation
 		{
 			get
@@ -513,16 +638,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
-		// Returns the entire ImageType tag, since most of the time we would just 
-		// use the complete string array to compare against when filtering, etc.
+		/// <summary>
+		/// Gets or sets the image type.
+		/// </summary>
 		public override string ImageType
 		{
 			get
 			{
+				// Returns the entire ImageType tag, since most of the time we would just 
+				// use the complete string array to compare against when filtering, etc.
 				bool tagExists;
 				string imageType;
 				_dicomImage.GetTagArray(Dcm.ImageType, out imageType, out tagExists);
@@ -530,10 +658,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the acquisition number.
+		/// </summary>
 		public override int AcquisitionNumber
 		{
 			get
@@ -545,10 +676,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the acquisiton date.
+		/// </summary>
 		public override string AcquisitionDate
 		{
 			get
@@ -560,10 +694,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the acquisition time.
+		/// </summary>
 		public override string AcquisitionTime
 		{
 			get
@@ -575,10 +712,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the acquisition date/time.
+		/// </summary>
 		public override string AcquisitionDateTime
 		{
 			get
@@ -590,10 +730,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the number of images in the acquisition.
+		/// </summary>
 		public override int ImagesInAcquisition
 		{
 			get
@@ -605,10 +748,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the image comments.
+		/// </summary>
 		public override string ImageComments
 		{
 			get
@@ -620,10 +766,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the lossy image compression.
+		/// </summary>
 		public override string LossyImageCompression
 		{
 			get
@@ -635,10 +784,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the lossy image compression ratio.
+		/// </summary>
 		public override double[] LossyImageCompressionRatio
 		{
 			get
@@ -650,10 +802,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the presentation LUT shape.
+		/// </summary>
 		public override string PresentationLUTShape
 		{
 			get
@@ -665,10 +820,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the pixel spacing.
+		/// </summary>
 		public override PixelSpacing PixelSpacing
 		{
 			get
@@ -687,10 +845,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the image orientation patient.
+		/// </summary>
 		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get
@@ -708,10 +869,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the image position patient.
+		/// </summary>
 		public override ImagePositionPatient ImagePositionPatient
 		{
 			get
@@ -729,10 +893,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the slice thickness.
+		/// </summary>
 		public override double SliceThickness
 		{
 			get
@@ -744,10 +911,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the slice location.
+		/// </summary>
 		public override double SliceLocation
 		{
 			get
@@ -759,10 +929,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the pixel aspect ratio.
+		/// </summary>
 		public override PixelAspectRatio PixelAspectRatio
 		{
 			get
@@ -780,10 +953,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the samples per pixel.
+		/// </summary>
 		public override int SamplesPerPixel
 		{
 			get
@@ -792,10 +968,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the photometric interpretation.
+		/// </summary>
 		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get
@@ -804,10 +983,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the number of rows.
+		/// </summary>
 		public override int Rows
 		{
 			get
@@ -816,10 +998,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the number of columns.
+		/// </summary>
 		public override int Columns
 		{
 			get
@@ -828,10 +1013,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the number of bits allocated.
+		/// </summary>
 		public override int BitsAllocated
 		{
 			get
@@ -840,10 +1028,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the number of bits stored.
+		/// </summary>
 		public override int BitsStored
 		{
 			get
@@ -852,10 +1043,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the high bit.
+		/// </summary>
 		public override int HighBit
 		{
 			get
@@ -864,10 +1058,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the pixel representation.
+		/// </summary>
 		public override int PixelRepresentation
 		{
 			get
@@ -876,10 +1073,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the planar configuration.
+		/// </summary>
 		public override int PlanarConfiguration
 		{
 			get
@@ -888,10 +1088,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the rescale intercept.
+		/// </summary>
 		public override double RescaleIntercept
 		{
 			get
@@ -903,10 +1106,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the rescale slope.
+		/// </summary>
 		public override double RescaleSlope
 		{
 			get
@@ -918,10 +1124,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the rescale type.
+		/// </summary>
 		public override string RescaleType
 		{
 			get
@@ -933,10 +1142,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the window width and center.
+		/// </summary>
 		public override Window[] WindowCenterAndWidth
 		{
 			get
@@ -970,10 +1182,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the window width and center explanation.
+		/// </summary>
 		public override string[] WindowCenterAndWidthExplanation
 		{
 			get
@@ -985,7 +1200,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
@@ -1000,7 +1215,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
@@ -1015,10 +1230,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new NotImplementedException("The method or operation is not implemented.");
 			}
 		}
 
+		/// <summary>
+		/// Gets the pixel data.
+		/// </summary>
 		public override byte[] PixelData
 		{
 			get
@@ -1027,41 +1245,93 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag (16 bit, unsigned).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag with value multiplicity (16 bit, unsigned).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out ushort val, uint position, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, position, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag (integer).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out int val, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag with value multiplicity (integer).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out int val, uint position, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, position, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag (double).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out double val, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag with value multiplicity (double).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out double val, uint position, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, position, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag (string).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out string val, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, out tagExists);
 		}
 
+		/// <summary>
+		/// Gets a DICOM tag with value multiplicity (string).
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="val"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(DcmTagKey tag, out string val, uint position, out bool tagExists)
 		{
 			_dicomImage.GetTag(tag, out val, position, out tagExists);

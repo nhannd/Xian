@@ -5,19 +5,31 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// A DICOM SOP.
+	/// </summary>
 	public abstract class Sop : ICacheableSop
 	{
 		private int _referenceCount;
 		private Series _parentSeries;
 
+		/// <summary>
+		/// Gets the parent <see cref="Series"/>.
+		/// </summary>
 		public Series ParentSeries
 		{
 			get { return _parentSeries; }
 			internal set { _parentSeries = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the SOP Instance UID.
+		/// </summary>
 		public abstract string SopInstanceUID { get; set; }
 
+		/// <summary>
+		/// Gets or sets the Transfer Syntax UID.
+		/// </summary>
 		public abstract string TransferSyntaxUID { get; set; }
 
 		public override string ToString()

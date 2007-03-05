@@ -116,7 +116,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void Probe(Point destinationPoint)
 		{
-			PointUtilities.ConfinePointToRectangle(ref destinationPoint, _selectedImageGraphic.SpatialTransform.ClientRectangle);
 			Point sourcePointRounded = Point.Round(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
 			//!! Make these user preferences later.
@@ -132,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			Rectangle imageRectangle = new Rectangle(0, 0, _selectedImageGraphic.Columns, _selectedImageGraphic.Rows);
 
-			if (imageRectangle.Contains(sourcePointRounded))
+			if (_selectedImageGraphic.HitTest(destinationPoint))
 			{
 				if (_selectedImageGraphic.IsGrayscale)
 				{

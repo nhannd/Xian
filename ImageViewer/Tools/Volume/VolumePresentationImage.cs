@@ -43,10 +43,10 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		{
 			get 
 			{
-				if (_imageRenderer == null)
-					_imageRenderer = new VolumePresentationImageRenderer();
+				if (base.ImageRenderer == null)
+					base.ImageRenderer = new VolumePresentationImageRenderer();
 
-				return _imageRenderer;
+				return base.ImageRenderer;
 			}
 		}
 

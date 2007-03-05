@@ -7,27 +7,24 @@ using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	public class SceneGraph : CompositeGraphic
+	/// <summary>
+	/// The root <see cref="CompositeGraphic"/> in the <see cref="PresentationImage"/>.
+	/// </summary>
+	internal class SceneGraph : CompositeGraphic
 	{
 		private event EventHandler<RectangleChangedEventArgs> _clientRectangleChangedEvent;
 
-		public SceneGraph()
+		internal SceneGraph()
 		{
 		}
 
-		/// <summary>
-		/// Occurs when <see cref="ClientRectangle"/> has changed.
-		/// </summary>
-		public event EventHandler<RectangleChangedEventArgs> ClientRectangleChanged
+		internal event EventHandler<RectangleChangedEventArgs> ClientRectangleChanged
 		{
 			add { _clientRectangleChangedEvent += value; }
 			remove { _clientRectangleChangedEvent -= value; }
 		}
 
 
-		/// <summary>
-		/// Gets or sets the destination rectangle.
-		/// </summary>
 		internal Rectangle ClientRectangle
 		{
 			get { return base.SpatialTransform.ClientRectangle; }
@@ -53,6 +50,5 @@ namespace ClearCanvas.ImageViewer.Graphics
 					graphic.SpatialTransform.ClientRectangle = clientRectangle;
 			}
 		}
-
 	}
 }

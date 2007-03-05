@@ -121,6 +121,8 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
+    <Compile Include="Graphics\IImageSpatialTransform.cs" />
+    <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />
     <Compile Include="Graphics\StandardColorImageGraphic.cs" />
     <Compile Include="Graphics\IndexedImageGraphic.cs" />

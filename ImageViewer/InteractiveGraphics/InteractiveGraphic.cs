@@ -12,8 +12,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public abstract class InteractiveGraphic
 		: StatefulCompositeGraphic, IStandardStatefulGraphic, IMemorable
 	{
-		public static readonly int HitTestDistance = 10;
-
 		private ControlPointGroup _controlPointGroup;
 		private CursorToken _stretchToken;
 		private ICursorTokenProvider _stretchIndicatorProvider;

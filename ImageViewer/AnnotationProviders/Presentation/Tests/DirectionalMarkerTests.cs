@@ -92,49 +92,49 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 
-			_transform.Rotation = -90;
+			_transform.RotationXY = -90;
 
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 
-			_transform.Rotation = -180;
+			_transform.RotationXY = -180;
 
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 
-			_transform.Rotation = -270;
+			_transform.RotationXY = -270;
 
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 
-			_transform.Rotation = -0;
-			_transform.FlipHorizontal = true;
+			_transform.RotationXY = -0;
+			_transform.FlipY = true;
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 
-			_transform.Rotation = -90;
+			_transform.RotationXY = -90;
 
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 
-			_transform.Rotation = -180;
+			_transform.RotationXY = -180;
 
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 
-			_transform.Rotation = -270;
+			_transform.RotationXY = -270;
 
 			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);

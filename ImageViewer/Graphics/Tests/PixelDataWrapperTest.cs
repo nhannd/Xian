@@ -268,7 +268,6 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 
 			Assert.AreEqual(testValue, actualValue);
 		}
-
 	}
 }
 

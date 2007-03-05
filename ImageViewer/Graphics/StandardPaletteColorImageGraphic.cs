@@ -5,7 +5,8 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	public class StandardPaletteColorImageGraphic : IndexedImageGraphic
+	// TODO:  support palette colour.
+	internal class StandardPaletteColorImageGraphic : IndexedImageGraphic
 	{
 		private ImageSop _imageSop;
 

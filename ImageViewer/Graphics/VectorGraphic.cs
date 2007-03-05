@@ -40,19 +40,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 	}
 
 	/// <summary>
-	/// An abstract graphical object.
+	/// An vector <see cref="Graphic"/>.
 	/// </summary>
 	public abstract class VectorGraphic : Graphic
 	{
+		public static readonly int HitTestDistance = 10;
 		private Color _color = Color.Yellow;
 		private LineStyle _lineStyle = LineStyle.Solid;
 
+		/// <summary>
+		/// 
+		/// </summary>
 		protected VectorGraphic()
 		{
 		}
 
 		/// <summary>
-		/// Gets or sets the colour of the <see cref="Graphic"/>.
+		/// Gets or sets the colour.
 		/// </summary>
 		public Color Color
 		{
@@ -61,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the line style used for the <see cref="Graphic"/>.
+		/// Gets or sets the line style.
 		/// </summary>
 		public LineStyle LineStyle
 		{
@@ -69,12 +73,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _lineStyle = value; }
 		}
 
-		/// <summary>
-		/// Returns a <see cref="SizeF"/> representing the distance between two points.
-		/// </summary>
-		/// <param name="lastPoint"></param>
-		/// <param name="currentPoint"></param>
-		/// <returns></returns>
+		// TODO: move this to Vector
 		public static SizeF CalcGraphicPositionDelta(PointF lastPoint, PointF currentPoint)
 		{
 			float deltaX = currentPoint.X - lastPoint.X;

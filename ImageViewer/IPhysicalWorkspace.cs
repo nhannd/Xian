@@ -4,9 +4,9 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A container for <see cref="IImageBox"/> objects.
+	/// Defines a container for <see cref="IImageBox"/> objects.
 	/// </summary>
-	public interface IPhysicalWorkspace : IMemorable, IDisposable
+	public interface IPhysicalWorkspace : IDrawable, IMemorable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -64,11 +64,6 @@ namespace ClearCanvas.ImageViewer
 		/// and <b>ResumeLayout</b>.
 		/// </remarks>
 		event EventHandler LayoutCompleted;
-
-		/// <summary>
-		/// Draws the <see cref="IPhysicalWorkspace"/>.
-		/// </summary>
-		void Draw();
 
 		/// <summary>
 		/// Creates a rectangular <see cref="IImageBox"/> grid.

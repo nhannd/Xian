@@ -9,10 +9,18 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// A <see cref="GrayscaleImageGraphic"/> with an associated <see cref="ImageSop"/>.
+	/// </summary>
 	public class StandardGrayscaleImageGraphic : GrayscaleImageGraphic
 	{
 		private ImageSop _imageSop;
-		
+
+		/// <summary>
+		/// Instantiates a new instance of <see cref="StandardGrayscaleImageGraphic"/>
+		/// with the specified <see cref="ImageSop"/>.
+		/// </summary>
+		/// <param name="imageSop"></param>
 		public StandardGrayscaleImageGraphic(ImageSop imageSop) : 
 			base(
 			imageSop.Rows,
@@ -35,11 +43,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			SetWindowLevel();
 		}
 
+		/// <summary>
+		/// Gets the associated <see cref="ImageSop"/>.
+		/// </summary>
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
 		}
 
+		/// <summary>
+		/// Gets the pixel data from the associated <see cref="ImageSop"/>.
+		/// </summary>
 		protected override byte[] PixelDataRaw
 		{
 			get

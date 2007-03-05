@@ -5,7 +5,10 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {
-	public interface ITile : IDisposable
+	/// <summary>
+	/// Defines a container for a single <see cref="IPresentationImage"/>.
+	/// </summary>
+	public interface ITile : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -56,11 +59,6 @@ namespace ClearCanvas.ImageViewer
 		/// only one <see cref="ITile"/> is ever selected at a given time.  
 		/// </remarks>
 		bool Selected { get; }
-
-		/// <summary>
-		/// Draws the <see cref="IPresentationImage"/> in this <see cref="ITile"/>.
-		/// </summary>
-		void Draw();
 
 		/// <summary>
 		/// Selects the <see cref="ITile"/>.

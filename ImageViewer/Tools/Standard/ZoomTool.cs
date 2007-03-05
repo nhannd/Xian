@@ -105,8 +105,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				this.SelectedSpatialTransformProvider == null)
 				return;
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.ScaleToFit = false;
-			this.SelectedSpatialTransformProvider.SpatialTransform.Scale += scaleIncrement;
+			IImageSpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
+
+			transform.ScaleToFit = false;
+			transform.Scale += scaleIncrement;
+
 			this.SelectedSpatialTransformProvider.Draw();
 		}
 

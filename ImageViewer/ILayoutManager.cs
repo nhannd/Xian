@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer 
 {
 	/// <summary>
-	/// Provides an interface for image layout management.
+	/// Defines an interface for image layout management.
 	/// </summary>
 	/// <remarks>If you want to implement your own hanging protocol engine,
 	/// you need to 1) implement this interface and 2) mark your class

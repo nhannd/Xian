@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			command.Name = SR.CommandRotateRight;
 			command.BeginState = applicator.CreateMemento();
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.Rotation += 90;
+			this.SelectedSpatialTransformProvider.SpatialTransform.RotationXY += 90;
 
 			command.EndState = applicator.CreateMemento();
 

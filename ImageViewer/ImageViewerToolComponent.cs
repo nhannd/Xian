@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -16,7 +17,7 @@ namespace ClearCanvas.ImageViewer
 	/// appears when the image layout tool activated has UI elements which should
 	/// be enabled/disabled depending on whether a <see cref="Tile"/> has been selected
 	/// or whether the active workspace contains an <see cref="ImageViewerComponent"/>.
-	/// This base class, in conjunction with <see cref="DeesktopImageViwerTool"/>,
+	/// This base class, in conjunction with <see cref="DesktopImageViewerTool"/>,
 	/// encapsulates that functionality.  If you are developing an 
 	/// <see cref="ApplicationComponent"/> that requires that kind of functionality,
 	/// use this as your base class.

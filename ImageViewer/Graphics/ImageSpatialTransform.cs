@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Desktop;
+using ClearCanvas.Common;
+using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	public class ImageSpatialTransform : SpatialTransform
+	/// <summary>
+	/// An image specific <see cref="SpatialTransform"/>.
+	/// </summary>
+	public class ImageSpatialTransform : SpatialTransform, IImageSpatialTransform
 	{
-		private int _sourceWidth;
-		private int _sourceHeight;
+		#region Private Fields
+
+		private bool _scaleToFit;
+
+		private int _columns;
+		private int _rows;
 
 		private double _pixelSpacingX;
 		private double _pixelSpacingY;
@@ -17,32 +27,61 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private double _pixelAspectRatioX;
 		private double _pixelAspectRatioY;
 
+		#endregion
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageSpatialTransform"/> with
+		/// the specified owner <see cref="IGraphic"/>, width, height, pixel spacing
+		/// and pixel aspect ratio.
+		/// </summary>
+		/// <param name="ownerGraphic"></param>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="pixelSpacingX"></param>
+		/// <param name="pixelSpacingY"></param>
+		/// <param name="pixelAspectRatioX"></param>
+		/// <param name="pixelAspectRatioY"></param>
 		public ImageSpatialTransform(
-			Graphic parentGraphic,
-			int sourceWidth, 
-			int sourceHeight,
+			IGraphic ownerGraphic,
+			int rows, 
+			int columns,
 			double pixelSpacingX,
 			double pixelSpacingY,
 			double pixelAspectRatioX,
-			double pixelAspectRatioY) : base(parentGraphic)
+			double pixelAspectRatioY) : base(ownerGraphic)
 		{
-			_sourceWidth = sourceWidth;
-			_sourceHeight = sourceHeight;
+			_rows = rows;
+			_columns = columns;
 			_pixelSpacingX = pixelSpacingX;
 			_pixelSpacingY = pixelSpacingY;
 			_pixelAspectRatioX = pixelAspectRatioX;
 			_pixelAspectRatioY = pixelAspectRatioY;
+			this.ScaleToFit = true;
 			this.RecalculationRequired = true;
 		}
 
-		public int SourceWidth
+		/// <summary>
+		/// Gets or sets a value indicating whether images will be scaled to fit
+		/// in a <see cref="Tile"/>.
+		/// </summary>
+		public bool ScaleToFit
 		{
-			get { return _sourceWidth; }
+			get { return _scaleToFit; }
+			set
+			{
+				_scaleToFit = value;
+				this.RecalculationRequired = true;
+			}
 		}
 
-		public int SourceHeight
+		private int SourceWidth
 		{
-			get { return _sourceHeight; }
+			get { return _columns; }
+		}
+
+		private int SourceHeight
+		{
+			get { return _rows; }
 		}
 
 		private int DestinationWidth
@@ -55,19 +94,52 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return this.ClientRectangle.Height; }
 		}
 
-		protected override void CalculatePreTransform()
+		public override IMemento CreateMemento()
 		{
-			// Move origin to center of tile before performing transform
-			this.CumulativeTransformInternal.Translate(this.DestinationWidth / 2.0f, this.DestinationHeight / 2.0f);
+			ImageSpatialTransformMemento memento = new ImageSpatialTransformMemento();
+
+			memento.ScaleToFit = _scaleToFit;
+			memento.SpatialTransformMemento = base.CreateMemento();
+
+			return memento;
 		}
 
-		protected override void CalculatePostTransform()
+		public override void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+			ImageSpatialTransformMemento imageSpatialTransformMemento = memento as ImageSpatialTransformMemento;
+			Platform.CheckForInvalidCast(imageSpatialTransformMemento, "memento", "ImageSpatialTransformMemento");
+
+			this.ScaleToFit = _scaleToFit;
+
+			base.SetMemento(imageSpatialTransformMemento.SpatialTransformMemento);
+		}
+
+		/// <summary>
+		/// Moves the origin to center of Tile.
+		/// </summary>
+		protected override void CalculatePreTransform(Matrix cumulativeTransform)
+		{
+			// Move origin to center of tile before performing transform
+			cumulativeTransform.Translate(this.DestinationWidth / 2.0f, this.DestinationHeight / 2.0f);
+		}
+
+		/// <summary>
+		/// Moves the origin to the center of the image.
+		/// </summary>
+		protected override void CalculatePostTransform(Matrix cumulativeTransform)
 		{
 			// Move origin to the center of source image after performing transform.
 			// This will center the image in the tile
-			this.CumulativeTransformInternal.Translate(-this.SourceWidth / 2.0f, -this.SourceHeight / 2.0f);
+			cumulativeTransform.Translate(-this.SourceWidth / 2.0f, -this.SourceHeight / 2.0f);
 		}
 
+		/// <summary>
+		/// Calculates the scale.
+		/// </summary>
+		/// <remarks>
+		/// This scale calculation accounts for non-square pixels.
+		/// </remarks>
 		protected override void CalculateScale()
 		{
 			float pixelAspectRatio;
@@ -101,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void CalculateScaleToFit()
 		{
-			if (this.Rotation == 90 || this.Rotation == 270)
+			if (this.RotationXY == 90 || this.RotationXY == 270)
 			{
 				float imageAspectRatio = (float)this.SourceWidth / (float)this.SourceHeight;
 				float clientAspectRatio = (float)this.DestinationHeight / (float)this.DestinationWidth;

@@ -4,7 +4,7 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// The final image that is presented to the user in a <see cref="Tile"/>.
+	/// Defines the final image that is presented to the user in an <see cref="ITile"/>.
 	/// </summary>
 	/// <remarks>
 	/// <para>
@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer
 	/// Instead, subclass <see cref="PresentationImage"/>.
 	/// </para>
 	/// </remarks>
-	public interface IPresentationImage : IDisposable
+	public interface IPresentationImage : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -93,10 +93,5 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <returns></returns>
 		IPresentationImage Clone();
-
-		/// <summary>
-		/// Draws the <see cref="IPresentationImage"/>.
-		/// </summary>
-		void Draw();
 	}
 }

@@ -4,30 +4,36 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// Provides data for "point changed" events.
+	/// </summary>
 	public class PointChangedEventArgs : EventArgs
 	{
 		private PointF _point;
-		private CoordinateSystem _coordinateSystem;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="PointChangedEventArgs"/>.
+		/// </summary>
 		public PointChangedEventArgs()
 		{
 		}
 
-		public PointChangedEventArgs(PointF point, CoordinateSystem coordinateSystem)
+		/// <summary>
+		/// Initializes a new instance of <see cref="PointChangedEventArgs"/>
+		/// with the specified point.
+		/// </summary>
+		/// <param name="point"></param>
+		public PointChangedEventArgs(PointF point)
 		{
 			_point = point;
 		}
 
+		/// <summary>
+		/// Gets the point.
+		/// </summary>
 		public PointF Point
 		{
 			get { return _point; }
-			set { _point = value; }
-		}
-
-		public CoordinateSystem CoordinateSystem
-		{
-			get { return _coordinateSystem; }
-			set { _coordinateSystem = value; }
 		}
 	}
 }

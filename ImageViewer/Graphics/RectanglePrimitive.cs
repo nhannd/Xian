@@ -8,16 +8,30 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// A primitive rectangle graphic.
+	/// </summary>
 	public class RectanglePrimitive : VectorGraphic
 	{
 		private RectangleF _rectangle = new RectangleF(0,0,0,0);
 		private event EventHandler<PointChangedEventArgs> _topLeftChangedEvent;
 		private event EventHandler<PointChangedEventArgs> _bottomRightChangedEvent;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="RectanglePrimitive"/>.
+		/// </summary>
 		public RectanglePrimitive() 
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the top-left corner of the rectangle
+		/// in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public PointF TopLeft
 		{
 			get
@@ -50,10 +64,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_rectangle.Location = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_topLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft, this.CoordinateSystem));
+				EventsHelper.Fire(_topLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft));
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the bottom-right corner of the rectangle
+		/// in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public PointF BottomRight
 		{
 			get
@@ -87,10 +109,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_rectangle.Height = pointSrc.Y - _rectangle.Y;
 				}
 
-				EventsHelper.Fire(_bottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight, this.CoordinateSystem));
+				EventsHelper.Fire(_bottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight));
 			}
 		}
 
+		/// <summary>
+		/// Gets the width of the rectangle in either source or destination pixels.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination pixels.
+		/// </remarks>
 		public float Width
 		{
 			get
@@ -111,6 +140,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the height of the rectangle in either source or destination pixels.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination pixels.
+		/// </remarks>
 		public float Height
 		{
 			get
@@ -131,18 +167,36 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="TopLeft"/> property changed.
+		/// </summary>
 		public event EventHandler<PointChangedEventArgs> TopLeftChanged
 		{
 			add { _topLeftChangedEvent += value; }
 			remove { _topLeftChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="BottomRight"/> property changed.
+		/// </summary>
 		public event EventHandler<PointChangedEventArgs> BottomRightChanged
 		{
 			add { _bottomRightChangedEvent += value; }
 			remove { _bottomRightChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Performs a hit test on the <see cref="RectanglePrimitive"/> at a given point.
+		/// </summary>
+		/// <param name="point">The mouse position in destination coordinates.</param>
+		/// <returns>
+		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="RectanglePrimitive"/>,
+		/// <b>false</b> otherwise.
+		/// </returns>
+		/// <remarks>
+		/// A "hit" is defined as when the mouse position is <see cref="VectorGraphic.HitTestDistance"/>
+		/// screen pixels away from any point on the rectangle.
+		/// </remarks>
 		public override bool HitTest(Point point)
 		{
 			double distance;
@@ -162,27 +216,36 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			distance = Vector.DistanceFromPointToLine(point, ptTopLeft, ptTopRight, ref ptNearest);
 
-			if (distance < InteractiveGraphic.HitTestDistance)
+			if (distance < VectorGraphic.HitTestDistance)
 				return true;
 
 			distance = Vector.DistanceFromPointToLine(point, ptTopRight, ptBottomRight, ref ptNearest);
 
-			if (distance < InteractiveGraphic.HitTestDistance)
+			if (distance < VectorGraphic.HitTestDistance)
 				return true;
 
 			distance = Vector.DistanceFromPointToLine(point, ptBottomRight, ptBottomLeft, ref ptNearest);
 
-			if (distance < InteractiveGraphic.HitTestDistance)
+			if (distance < VectorGraphic.HitTestDistance)
 				return true;
 
 			distance = Vector.DistanceFromPointToLine(point, ptBottomLeft, ptTopLeft, ref ptNearest);
 
-			if (distance < InteractiveGraphic.HitTestDistance)
+			if (distance < VectorGraphic.HitTestDistance)
 				return true;
 
 			return false;
 		}
 
+		/// <summary>
+		/// Moves the <see cref="RectanglePrimitive"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public override void Move(SizeF delta)
 		{
 #if MONO
@@ -195,6 +258,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 #endif
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified point is contained
+		/// in the rectangle.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public bool Contains(PointF point)
 		{
 			if (base.CoordinateSystem == CoordinateSystem.Source)

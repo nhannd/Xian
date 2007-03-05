@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A container for <see cref="IImageSet"/> objects.
+	/// Defines a container for <see cref="IImageSet"/> objects.
 	/// </summary>
-	public interface ILogicalWorkspace : IDisposable
+	public interface ILogicalWorkspace : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -18,10 +18,5 @@ namespace ClearCanvas.ImageViewer
 		/// this <see cref="ILogicalWorkspace"/>.
 		/// </summary>
 		ImageSetCollection ImageSets { get; }
-
-		/// <summary>
-		/// Draws the <see cref="ILogicalWorkspace"/>.
-		/// </summary>
-		void Draw();
 	}
 }

@@ -323,20 +323,16 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		private void DrawTextPrimitive(InvariantTextPrimitive textPrimitive)
 		{
-			//_surface.FinalBuffer.Graphics.Transform = textPrimitive.SpatialTransform.CumulativeTransform;
 			textPrimitive.CoordinateSystem = CoordinateSystem.Destination;
 
 			// We adjust the font size depending on the scale so that it's the same size
 			// irrespective of the zoom
-			//Font font = new Font(textPrimitive.Font, textPrimitive.SizeInPoints / textPrimitive.SpatialTransform.CumulativeScale);
 			Font font = new Font(textPrimitive.Font, textPrimitive.SizeInPoints);
 			
 			// Calculate how big the text will be so we can set the bounding box
 			Font tempFont = new Font(textPrimitive.Font, textPrimitive.SizeInPoints);
 
-			//textPrimitive.CoordinateSystem = CoordinateSystem.Destination;
 			textPrimitive.Dimensions = _surface.FinalBuffer.Graphics.MeasureString(textPrimitive.Text, font);
-			//textPrimitive.ResetCoordinateSystem();
 
 			tempFont.Dispose();
 
@@ -370,7 +366,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			font.Dispose();
 
 			textPrimitive.ResetCoordinateSystem();
-			//_surface.FinalBuffer.Graphics.ResetTransform();
 		}
 
 		private void DrawTextOverlay(IPresentationImage presentationImage, Rectangle rectangle)

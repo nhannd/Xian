@@ -4,24 +4,17 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	public class SpatialTransformMemento : IMemento
+	internal class SpatialTransformMemento : IMemento
 	{
-		private bool _scaleToFit;
 		private float _scale;
 		private float _translationX;
 		private float _translationY;
-		private int _rotation;
-		private bool _flipHorizontal;
-		private bool _flipVertical;
+		private int _rotationXY;
+		private bool _flipX;
+		private bool _flipY;
 
 		public SpatialTransformMemento()
 		{
-		}
-
-		public bool ScaleToFit
-		{
-			get { return _scaleToFit; }
-			set { _scaleToFit = value; }
 		}
 
 		public float Scale
@@ -42,24 +35,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _translationY = value; }
 		}
 
-		public bool FlipHorizontal
+		public bool FlipX
 		{
-			get { return _flipHorizontal; }
-			set { _flipHorizontal = value; }
+			get { return _flipX; }
+			set { _flipX = value; }
 		}
 
-		public bool FlipVertical
+		public bool FlipY
 		{
-			get { return _flipVertical; }
-			set { _flipVertical = value; }
+			get { return _flipY; }
+			set { _flipY = value; }
 		}
 
-		public int Rotation
+		public int RotationXY
 		{
-			get { return _rotation; }
-			set { _rotation = value; }
+			get { return _rotationXY; }
+			set { _rotationXY = value; }
 		}
-
 
 		public override bool Equals(object obj)
 		{
@@ -68,12 +60,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Platform.CheckForInvalidCast(memento, "obj", "SpatialTransformMemento");
 
 			return (this.Scale == memento.Scale &&
-				    this.TranslationX == memento.TranslationX &&
-				    this.TranslationY == memento.TranslationY &&
-				    this.FlipHorizontal == memento.FlipHorizontal &&
-				    this.FlipVertical == memento.FlipVertical &&
-				    this.Rotation == memento.Rotation &&
-				    this.ScaleToFit == memento.ScaleToFit);
+					this.TranslationX == memento.TranslationX &&
+					this.TranslationY == memento.TranslationY &&
+					this.FlipY == memento.FlipY &&
+					this.FlipX == memento.FlipX &&
+					this.RotationXY == memento.RotationXY);
 		}
 
 		public override int GetHashCode()

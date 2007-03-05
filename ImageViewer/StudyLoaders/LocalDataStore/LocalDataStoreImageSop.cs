@@ -25,9 +25,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		}
 
         /// <summary>
-        /// Disallow default constructor to be called.
         /// </summary>
-        private LocalDataStoreImageSop()
+        protected LocalDataStoreImageSop()
         {
         }
 

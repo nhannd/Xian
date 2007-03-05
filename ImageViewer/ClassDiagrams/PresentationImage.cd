@@ -8,91 +8,96 @@
       <HashCode>QEMUAABAICBgAwAAAABCCABABAAACgEIAAAAAAAAATI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Property Name="ImageViewer" />
+      <Property Name="ParentDisplaySet" />
+      <Property Name="Tile" />
+      <Property Name="SelectedGraphic" />
       <Property Name="FocussedGraphic" />
       <Property Name="ImageRenderer" />
       <Property Name="SceneGraph" />
-      <Property Name="SelectedGraphic" />
-      <Property Name="ParentDisplaySet" />
-      <Property Name="ImageViewer" />
-      <Property Name="Tile" />
     </ShowAsAssociation>
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="FocussedGraphic" Type="ClearCanvas.ImageViewer.Graphics.IFocussableGraphic" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="ImageViewer" Type="ClearCanvas.ImageViewer.IImageViewer" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.417" Y="3.25" />
-        <Point X="5.417" Y="2.097" />
-        <Point X="7.5" Y="2.097" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="ImageRenderer" Type="ClearCanvas.ImageViewer.Rendering.IRenderer" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="4.667" Y="3.806" />
-        <Point X="4.667" Y="5.347" />
-        <Point X="5.5" Y="5.347" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="SceneGraph" Type="ClearCanvas.ImageViewer.Graphics.SceneGraph" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="5.5" Y="3.688" />
-        <Point X="5.875" Y="3.688" />
-        <Point X="5.875" Y="4.39" />
-        <Point X="6.75" Y="4.39" />
+        <Point X="3.5" Y="3.312" />
+        <Point X="3.125" Y="3.312" />
+        <Point X="3.125" Y="2.815" />
+        <Point X="2" Y="2.815" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="ParentDisplaySet" Type="ClearCanvas.ImageViewer.IDisplaySet" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="3.583" Y="3.806" />
-        <Point X="3.583" Y="4.105" />
-        <Point X="2" Y="4.105" />
+        <Point X="3.5" Y="3.688" />
+        <Point X="3.125" Y="3.688" />
+        <Point X="3.125" Y="4.125" />
+        <Point X="2" Y="4.125" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.1" Y="-0.263" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="FocussedGraphic" Type="ClearCanvas.ImageViewer.Graphics.IFocussableGraphic" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.188" Y="3.25" />
+        <Point X="5.188" Y="2.097" />
+        <Point X="7" Y="2.097" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="Tile" Type="ClearCanvas.ImageViewer.ITile" FixedFromPoint="true">
+    <AssociationLine Name="ImageRenderer" Type="ClearCanvas.ImageViewer.Rendering.IRenderer" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.5" Y="3.25" />
-        <Point X="4.5" Y="1.445" />
+        <Point X="4.812" Y="3.759" />
+        <Point X="4.812" Y="5.315" />
+        <Point X="7" Y="5.315" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="SceneGraph" Type="ClearCanvas.ImageViewer.Graphics.CompositeGraphic" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.125" Y="3.759" />
+        <Point X="5.125" Y="4.312" />
+        <Point X="7" Y="4.312" />
       </Path>
     </AssociationLine>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.Graphics.SceneGraph" Collapsed="true">
-    <Position X="6.75" Y="4" Width="1.5" />
+  <Class Name="ClearCanvas.ImageViewer.Graphics.CompositeGraphic" Collapsed="true">
+    <Position X="7" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Graphics\SceneGraph.cs</FileName>
-      <HashCode>AAgAAAggAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\CompositeGraphic.cs</FileName>
+      <HashCode>CAKAAAAAAIBAAAAAAgAAAAAACAAAAAIKAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Interface Name="ClearCanvas.ImageViewer.Graphics.IFocussableGraphic" Collapsed="true">
-    <Position X="7.5" Y="1.75" Width="1.75" />
+    <Position X="7" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>Graphics\IFocussableGraphic.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Rendering.IRenderer" Collapsed="true">
-    <Position X="5.5" Y="5" Width="1.5" />
+    <Position X="7" Y="5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Rendering\IRenderer.cs</FileName>
       <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Graphics.ISelectableGraphic" Collapsed="true">
-    <Position X="7.5" Y="2.75" Width="1.75" />
+    <Position X="7" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>Graphics\ISelectableGraphic.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IDisplaySet" Collapsed="true">
-    <Position X="0.5" Y="4" Width="1.5" />
+    <Position X="0.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>IDisplaySet.cs</FileName>
-      <HashCode>AACIAAAAAAAgAgAAAAACAAQAAAIAAgAIAAAAAAAEABI=</HashCode>
+      <HashCode>AACIAAAAAAAgAAAAAAACAAQAAAIAAgAIAAAAAAAEABI=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IImageViewer" Collapsed="true">
-    <Position X="0.5" Y="3" Width="1.5" />
+    <Position X="0.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>IImageViewer.cs</FileName>
       <HashCode>AACAoAAAEABgAAAAAAAAAAAEAAAAAAAAAQACAAAAAAQ=</HashCode>
@@ -102,7 +107,7 @@
     <Position X="3.75" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>ITile.cs</FileName>
-      <HashCode>AAAAAAAgAAAAAgAAACAIAAAACAIAAgAAAAAAQAAAAAI=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAACAIAAAACAIAAgAAAAAAQAAAAAI=</HashCode>
     </TypeIdentifier>
   </Interface>
 </ClassDiagram>

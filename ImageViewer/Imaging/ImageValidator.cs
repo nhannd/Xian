@@ -54,7 +54,6 @@ namespace ClearCanvas.ImageViewer.Imaging
             }
             
 			if ((image.PhotometricInterpretation == PhotometricInterpretation.Rgb ||
-				image.PhotometricInterpretation == PhotometricInterpretation.Hsv ||
 				image.PhotometricInterpretation == PhotometricInterpretation.YbrFull ||
 				image.PhotometricInterpretation == PhotometricInterpretation.YbrFull422 ||
 				image.PhotometricInterpretation == PhotometricInterpretation.YbrPartial422 ||
@@ -64,33 +63,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretationSamplesPerPixel, image.PhotometricInterpretation, image.SamplesPerPixel));
 			}
-
-			if ((image.PhotometricInterpretation == PhotometricInterpretation.Argb ||
-				 image.PhotometricInterpretation == PhotometricInterpretation.Cmyk) &&
-				image.SamplesPerPixel != 4)
-			{
-				throw new ImageValidationException(String.Format(SR.ExceptionInvalidPhotometricInterpretationSamplesPerPixel, image.PhotometricInterpretation, image.SamplesPerPixel));
-			}
-
-			//int correctStride;
-
-			//if (image.Columns % 4 != 0)
-			//    correctStride = image.Columns / 4 * 4 + 4;
-			//else
-			//    correctStride = image.Columns;
-
-			//if (image.Stride != correctStride)
-			//    throw new ImageValidationException(String.Format(SR.ExceptionInvalidStride, correctStride, image.Stride));
-
-			//int correctImageSizeInPixels = image.Rows * image.Columns;
-			//int correctImageSizeInBytes =  correctImageSizeInPixels * image.BitsAllocated / 8;
-
-			//if (image.SizeInBytes != correctImageSizeInBytes)
-			//    throw new ImageValidationException(String.Format(SR.ExceptionInvalidSizeInBytes, correctImageSizeInBytes, image.SizeInBytes));
-
-			// TODO: commented this out for now, since by accessing the pixel data, the dicom dataset object was being unloaded
-			//if (image.GetPixelData().Length != correctImageSizeInBytes)
-			//	throw new ImageValidationException(SR.ExceptionPixelData(image.GetPixelData().Length, correctImageSizeInBytes));
 		}
 
 		public static void ValidateRows(int rows)

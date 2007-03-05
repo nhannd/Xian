@@ -7,29 +7,34 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// A primitive line graphic.
+	/// </summary>
 	public class LinePrimitive : VectorGraphic
 	{
+		#region Private fields
+		
 		private PointF _srcPt1;
 		private PointF _srcPt2;
 		private event EventHandler<PointChangedEventArgs> _pt1ChangedEvent;
 		private event EventHandler<PointChangedEventArgs> _pt2ChangedEvent;
+		
+		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="LinePrimitive"/>.
+		/// </summary>
 		public LinePrimitive()
 		{
 		}
 
-		public event EventHandler<PointChangedEventArgs> Pt1Changed
-		{
-			add { _pt1ChangedEvent += value; }
-			remove { _pt1ChangedEvent -= value; }
-		}
-
-		public event EventHandler<PointChangedEventArgs> Pt2Changed
-		{
-			add { _pt2ChangedEvent += value; }
-			remove { _pt2ChangedEvent -= value; }
-		}
-
+		/// <summary>
+		/// The start point of the line in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public PointF Pt1
 		{
 			get
@@ -55,10 +60,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_srcPt1 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt1, this.CoordinateSystem));
+				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt1));
 			}
 		}
 
+		/// <summary>
+		/// The end point of the line in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public PointF Pt2
 		{
 			get
@@ -84,10 +96,40 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_srcPt2 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt2, this.CoordinateSystem));
+				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
 			}
 		}
 
+		/// <summary>
+		/// Occurs when <see cref="Pt1"/> has changed.
+		/// </summary>
+		public event EventHandler<PointChangedEventArgs> Pt1Changed
+		{
+			add { _pt1ChangedEvent += value; }
+			remove { _pt1ChangedEvent -= value; }
+		}
+
+		/// <summary>
+		/// Occurs when <see cref="Pt2"/> has changed.
+		/// </summary>
+		public event EventHandler<PointChangedEventArgs> Pt2Changed
+		{
+			add { _pt2ChangedEvent += value; }
+			remove { _pt2ChangedEvent -= value; }
+		}
+
+		/// <summary>
+		/// Performs a hit test on the <see cref="LinePrimitive"/> at a given point.
+		/// </summary>
+		/// <param name="point">The mouse position in destination coordinates.</param>
+		/// <returns>
+		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="LinePrimitive"/>,
+		/// <b>false</b> otherwise.
+		/// </returns>
+		/// <remarks>
+		/// A "hit" is defined as when the mouse position is <see cref="VectorGraphic.HitTestDistance"/>
+		/// screen pixels away from any point on the line.
+		/// </remarks>
 		public override bool HitTest(Point point)
 		{
 			double distance;
@@ -99,12 +141,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 			distance = Vector.DistanceFromPointToLine(point, this.Pt1, this.Pt2, ref ptNearest);
 			this.ResetCoordinateSystem();
 
-			if (distance < InteractiveGraphic.HitTestDistance)
+			if (distance < VectorGraphic.HitTestDistance)
 				return true;
 			else
 				return false;
 		}
 
+		/// <summary>
+		/// Moves the <see cref="LinePrimitive"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public override void Move(SizeF delta)
 		{
 #if MONO

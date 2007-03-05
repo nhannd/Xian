@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer
 
 		private object _tag;
 		
-		protected IRenderer _imageRenderer;
+		private IRenderer _imageRenderer;
 
 		private SceneGraph _sceneGraph;
 		private ISelectableGraphic _selectedGraphic;
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer
 		/// from the <see cref="SceneGraph"/> through interfaces on <see cref="PresentationImage"/>
 		/// subclasses.
 		/// </remarks>
-		public SceneGraph SceneGraph
+		public CompositeGraphic SceneGraph
 		{
 			get 
 			{
@@ -267,7 +267,11 @@ namespace ClearCanvas.ImageViewer
 		/// Framework property and should not be used.
 		/// </para>
 		/// </remarks>
-		public abstract IRenderer ImageRenderer { get; }
+		public virtual IRenderer ImageRenderer 
+		{
+			get { return _imageRenderer; }
+			protected set { _imageRenderer = value; }
+		}
 
 		#endregion
 
@@ -345,7 +349,7 @@ namespace ClearCanvas.ImageViewer
 			drawArgs.PresentationImage = this;
 			drawArgs.DisplaySet = this.ParentDisplaySet;
 
-			this.SceneGraph.ClientRectangle = drawArgs.ClientRectangle;
+			(this.SceneGraph as SceneGraph).ClientRectangle = drawArgs.ClientRectangle;
 
 			// Let others know that we're about to draw
 			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this);

@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class WindowLevelMemento : IMemento
+	internal class WindowLevelMemento : IMemento
 	{
 		private double _windowWidth = 1.0d;
 		private double _windowCenter = 0.0d;

@@ -6,6 +6,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A container for <see cref="IDisplaySet"/> objects.
+	/// </summary>
 	public class ImageSet : IImageSet
 	{
 		#region Private fields

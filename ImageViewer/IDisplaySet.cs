@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Defines a DisplaySet.
+	/// Defines a container for <see cref="IPresentationImage"/> objects.
 	/// </summary>
-	public interface IDisplaySet : IDisposable
+	public interface IDisplaySet : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -81,12 +81,5 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <returns>The cloned <see cref="IDisplaySet"/>.</returns>
 		IDisplaySet Clone();
-
-		/// <summary>
-		/// Draw the <see cref="IDisplaySet"/>.
-		/// </summary>
-		/// <remarks>The <see cref="IDisplaySet"/> will only be drawn
-		/// if it is currently visible.</remarks>
-		void Draw();
 	}
 }

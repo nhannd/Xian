@@ -7,6 +7,18 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// A pixel data wrapper.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="PixelData"/> provides a number of convenience methods
+	/// to make accessing and changing pixel data easier.  Use these methods
+	/// judiciously, as the convenience comes at the expense of performance.
+	/// For example, if you're doing complex image processing, using methods
+	/// such as <see cref="SetPixel"/> is not recommended if you want
+	/// good performance.  Instead, use the <see cref="Raw"/> property 
+	/// to get the raw byte array, then use unsafe code to do your processing.
+	/// </remarks>
 	public class PixelData
 	{
 		#region Private fields
@@ -24,10 +36,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bytesPerPixel;
 		private int _planeOffset;
 		private int _stride;
+		private int _minPixelValue;
+		private int _maxPixelValue;
 
 		#endregion
 
-		public PixelData(ImageGraphic imageGraphic) :
+		/// <summary>
+		/// Initializes a new instance of <see cref="PixelData"/> with the
+		/// specified <see cref="ImageGraphic"/>.
+		/// </summary>
+		/// <param name="imageGraphic"></param>
+		/// <remarks>
+		/// This constructor is provided for convenience so that the
+		/// pixel data in an <see cref="ImageGraphic"/> can be easily wrapped.
+		/// Note that a reference to <paramref name="imageGraphic"/> is <i>not</i> held
+		/// by <see cref="PixelData"/>.
+		/// </remarks>
+		public PixelData(ImageGraphic imageGraphic)
+			:
 			this(imageGraphic.Rows, 
 				imageGraphic.Columns,
 				imageGraphic.BitsAllocated,
@@ -42,6 +68,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="PixelData"/> with the
+		/// specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="samplesPerPixel"></param>
+		/// <param name="pixelRepresentation"></param>
+		/// <param name="planarConfiguration"></param>
+		/// <param name="photometricInterpretation"></param>
+		/// <param name="pixelData"></param>
 		public PixelData(
 			int rows,
 			int columns,
@@ -70,24 +110,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_photometricInterpretation = photometricInterpretation;
 			_pixelData = pixelData;
 
-			if (_photometricInterpretation == PhotometricInterpretation.Rgb)
-			{
-				if (_planarConfiguration == 0)
-					_bytesPerPixel = 3;
-				else
-					_bytesPerPixel = 1;
-			}
-			else
-				_bytesPerPixel = _bitsAllocated / 8;
-
-			if (_planarConfiguration == 0)
-				_planeOffset = 1;
-			else
-				_planeOffset = _bytesPerPixel * _columns * _rows;
-
-			_stride = _columns * _bytesPerPixel;
+			CalculateBytesPerPixel();
+			CalculatePlaneOffset();
+			CalculateStride();
+			CalculateMinMaxPixelValue();
 		}
 
+		/// <summary>
+		/// Gets the raw pixel data.
+		/// </summary>
 		public byte[] Raw
 		{
 			get { return _pixelData; }
@@ -95,6 +126,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public methods
 
+		/// <summary>
+		/// Gets the pixel value at the specified location.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns>
+		/// The value of the pixel.  In the case where the photometric interpretation
+		/// is RGB, an ARGB value is returned.
+		/// </returns>
+		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
+		/// <paramref name="y"/> are out of bounds.</exception>
 		public int GetPixel(int x, int y)
 		{
 			if (_photometricInterpretation == PhotometricInterpretation.Rgb)
@@ -120,14 +162,42 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the RGB pixel value at the specified location.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// <see cref="GetPixelRGB"/> only works with images whose
+		/// photometric interpretation is RGB.
+		/// </remarks>
+		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
+		/// <paramref name="y"/> are out of bounds.</exception>
+		/// <exception cref="InvalidOperationException">The photometric
+		/// interpretation is not RGB.</exception>
 		public Color GetPixelRGB(int x, int y)
 		{
 			if (_photometricInterpretation != PhotometricInterpretation.Rgb)
-				throw new Exception("Photometric Interpretation is not RGB");
+				throw new InvalidOperationException("Photometric Interpretation is not RGB");
 
 			return Color.FromArgb(GetPixelRGBInternal(x, y));
 		}
 
+		/// <summary>
+		/// Sets the pixel value at the specified location.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="value"></param>
+		/// <remarks>
+		/// Allowable pixel values are determined by the pixel representation
+		/// and the number of bits stored.
+		/// represent
+		/// </remarks>
+		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
+		/// <paramref name="y"/> are out of bounds, or <paramref name="value"/>
+		/// is out of range.</exception>
 		public void SetPixel(int x, int y, int value)
 		{
 			if (_photometricInterpretation == PhotometricInterpretation.Rgb)
@@ -153,11 +223,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Sets the RGB pixel value at the specified location.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="color"></param>
+		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
+		/// <paramref name="y"/> are out of bounds.</exception>
 		public void SetPixelRGB(int x, int y, Color color)
 		{
 			SetPixelRGB(x, y, color.R, color.G, color.B);
 		}
 
+		/// <summary>
+		/// Sets the RGB pixel value at the specified location.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="r"></param>
+		/// <param name="g"></param>
+		/// <param name="b"></param>
+		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
+		/// <paramref name="y"/> are out of bounds.</exception>
 		public void SetPixelRGB(int x, int y, byte r, byte g, byte b)
 		{
 			if (_photometricInterpretation != PhotometricInterpretation.Rgb)
@@ -222,8 +310,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelUnsigned8(int x, int y, int value)
 		{
-			if (value < byte.MinValue || value > byte.MaxValue)
-				throw new InvalidOperationException("Value must be 8-bit unsigned ");
+			if (value < _minPixelValue || value > _maxPixelValue)
+				throw new ArgumentException("Value is out of range");
 
 			int i = GetIndex(x, y);
 			_pixelData[i] = (byte)value;
@@ -231,8 +319,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelSigned8(int x, int y, int value)
 		{
-			if (value < sbyte.MinValue || value > sbyte.MaxValue)
-				throw new InvalidOperationException("Value must be 8-bit signed");
+			if (value < _minPixelValue || value > _maxPixelValue)
+				throw new ArgumentException("Value is out of range");
 
 			int i = GetIndex(x, y);
 			_pixelData[i] = (byte)value;
@@ -240,8 +328,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelUnsigned16(int x, int y, int value)
 		{
-			if (value < ushort.MinValue || value > ushort.MaxValue)
-				throw new InvalidOperationException("Value must be 16-bit unsigned");
+			if (value < _minPixelValue || value > _maxPixelValue)
+				throw new ArgumentException("Value is out of range");
 
 			int i = GetIndex(x, y);
 			_pixelData[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
@@ -250,8 +338,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelSigned16(int x, int y, int value)
 		{
-			if (value < short.MinValue || value > short.MaxValue)
-				throw new InvalidOperationException("Value must be 16-bit signed");
+			if (value < _minPixelValue || value > _maxPixelValue)
+				throw new ArgumentException("Value is out of range");
 
 			int i = GetIndex(x, y);
 			_pixelData[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
@@ -260,8 +348,54 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
+		private void CalculateMinMaxPixelValue()
+		{
+			if (_pixelRepresentation == 0)
+			{
+				_minPixelValue = 0;
+				_maxPixelValue = (1 << _bitsStored) - 1;
+			}
+			else
+			{
+				_minPixelValue = -(1 << (_bitsStored - 1));
+				_maxPixelValue = (1 << (_bitsStored - 1)) - 1;
+			}
+		}
+
+		private void CalculateStride()
+		{
+			_stride = _columns * _bytesPerPixel;
+		}
+
+		private void CalculatePlaneOffset()
+		{
+			if (_planarConfiguration == 0)
+				_planeOffset = 1;
+			else
+				_planeOffset = _bytesPerPixel * _columns * _rows;
+		}
+
+		private void CalculateBytesPerPixel()
+		{
+			if (_photometricInterpretation == PhotometricInterpretation.Rgb)
+			{
+				if (_planarConfiguration == 0)
+					_bytesPerPixel = 3;
+				else
+					_bytesPerPixel = 1;
+			}
+			else
+				_bytesPerPixel = _bitsAllocated / 8;
+		}
+
 		private int GetIndex(int x, int y)
 		{
+			if (x < 0 ||
+				x >= _columns ||
+				y < 0 ||
+				y >= _rows)
+				throw new ArgumentException("x and/or y are out of bounds");
+
 			int i = (y * _stride) + (x * _bytesPerPixel);
 			return i;
 		}

@@ -5,7 +5,10 @@ using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer
 {
-	public interface IImageSet : IDisposable
+	/// <summary>
+	/// Defines a container for <see cref="IDisplaySet"/> objects.
+	/// </summary>
+	public interface IImageSet : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -43,10 +46,5 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets a user defined object.
 		/// </summary>
 		object Tag { get; set; }
-
-		/// <summary>
-		/// Draws the <see cref="IImageSet"/>.
-		/// </summary>
-		void Draw();
 	}
 }

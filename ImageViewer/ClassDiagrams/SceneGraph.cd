@@ -2,14 +2,14 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="ClearCanvas.ImageViewer.Graphics.SceneGraph" Collapsed="true">
-    <Position X="3.5" Y="2.75" Width="1.5" />
+    <Position X="3.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\SceneGraph.cs</FileName>
       <HashCode>AAgAAAggAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.PresentationImage" Collapsed="true">
-    <Position X="0.75" Y="2.75" Width="1.5" />
+    <Position X="0.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>PresentationImage.cs</FileName>
       <HashCode>QEMUAABAICBgAwAAAABCCABABAAACgEIAAAAAAAAATI=</HashCode>

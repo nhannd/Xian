@@ -90,8 +90,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			return new ImageSpatialTransform(
 				this,
-				_columns,
 				_rows,
+				_columns,
 				_pixelSpacingX,
 				_pixelSpacingY,
 				_pixelAspectRatioX,

@@ -4,8 +4,10 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-
-	public interface IImageBox : IMemorable, IDisposable
+	/// <summary>
+	/// Defines a container for <see cref="ITile"/> objects.
+	/// </summary>
+	public interface IImageBox : IDrawable, IMemorable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
@@ -122,11 +124,6 @@ namespace ClearCanvas.ImageViewer
 		/// than or equal to the number of presentation images in this
 		/// image box's <see cref="IDisplaySet"/></exception>
 		int TopLeftPresentationImageIndex { get; set; }
-
-		/// <summary>
-		/// Draw the <see cref="ImageBox"/>.
-		/// </summary>
-		void Draw();
 
 		/// <summary>
 		/// Creates a rectangular grid of tiles.

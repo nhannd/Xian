@@ -12,38 +12,37 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public class SpatialTransform : ISpatialTransform
 	{
-		// Private attributes
+		#region Private fields
+
 		private float _scale = 1.0f;
 		private float _maximumScale = 64.0f;
 		private float _minimumScale = 0.25f;
 		private float _scaleX = 1.0f;
 		private float _scaleY = 1.0f;
-		private bool _scaleToFit;
 		private float _cumulativeScale = 1.0f;
 		private float _translationX;
 		private float _translationY;
-		private float _rotation;
-		private bool _flipHorizontal;
-		private bool _flipVertical;
+		private float _rotationXY;
+		private bool _flipX;
+		private bool _flipY;
 		private Matrix _cumulativeTransform;
 		private Matrix _transform;
 		private Rectangle _clientRectangle;
 		private bool _recalculationRequired;
-		private Graphic _ownerGraphic;
+		private IGraphic _ownerGraphic;
+
+		#endregion
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SpatialTransform"/> class.
+		/// Initializes a new instance of <see cref="SpatialTransform"/>.
 		/// </summary>
-		public SpatialTransform(Graphic ownerGraphic)
+		public SpatialTransform(IGraphic ownerGraphic)
 		{
 			_ownerGraphic = ownerGraphic;
 			Initialize();
 		}
 
-		internal Graphic OwnerGraphic
-		{
-			get { return _ownerGraphic; }
-		}
+		#region Properties
 
 		/// <summary>
 		/// Gets or sets the scale.
@@ -67,30 +66,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the minimum allowable scale.
+		/// </summary>
 		public float MinimumScale
 		{
 			get { return _minimumScale; }
 			protected set { _minimumScale = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the maximum allowable scale.
+		/// </summary>
 		public float MaximumScale
 		{
 			get { return _maximumScale; }
 			protected set { _maximumScale = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether images will be scaled to fit
-		/// in a <see cref="Tile"/>.
-		/// </summary>
-		public bool ScaleToFit
-		{
-			get { return _scaleToFit; }
-			set
-			{
-				_scaleToFit = value;
-				this.RecalculationRequired = true;
-			}
 		}
 
 		/// <summary>
@@ -120,29 +111,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether images will flipped horizontally
+		/// Gets or sets a value indicating whether images are flipped horizontally
 		/// (i.e., the y-axis as the axis of reflection)
 		/// </summary>
-		public bool FlipHorizontal
+		public bool FlipY
 		{
-			get { return _flipHorizontal; }
+			get { return _flipY; }
 			set 
 			{ 
-				_flipHorizontal = value;
+				_flipY = value;
 				this.RecalculationRequired = true;
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether images will flipped vertically
+		/// Gets or sets a value indicating whether images are flipped vertically
 		/// (i.e., the x-axis as the axis of reflection)
 		/// </summary>
-		public bool FlipVertical
+		public bool FlipX
 		{
-			get { return _flipVertical; }
+			get { return _flipX; }
 			set 
 			{ 
-				_flipVertical = value;
+				_flipX = value;
 				this.RecalculationRequired = true;
 			}
 		}
@@ -155,18 +146,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// either 0, 90, 180 or 270.  For example, if set to -450, the property will
 		/// return 270.
 		/// </remarks>
-		public int Rotation
+		/// <exception cref="ArgumentException">The rotation is not a multiple
+		/// of 90 degrees.</exception>
+		public int RotationXY
 		{
-			get { return (int)_rotation; }
+			get { return (int)_rotationXY; }
 			set 
 			{
 				if ((value % 90) != 0)
 					throw new ArgumentException(SR.ExceptionInvalidRotationValue);
 
-				_rotation = value % 360;
+				_rotationXY = value % 360;
 
-				if (_rotation < 0)
-					_rotation += 360;
+				if (_rotationXY < 0)
+					_rotationXY += 360;
 
 				this.RecalculationRequired = true;
 			}
@@ -174,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 
 		/// <summary>
-		/// Gets the scale in the x-direction.
+		/// Gets or sets the scale in the x-direction.
 		/// </summary>
 		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
 		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
@@ -190,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the scale in the y-direction.
+		/// Gets or sets the scale in the y-direction.
 		/// </summary>
 		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
 		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
@@ -205,6 +198,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the transform relative to the <see cref="IGraphic"/> object's
+		/// immediate parent <see cref="IGraphic"/>.
+		/// </summary>
 		public Matrix Transform
 		{
 			get
@@ -214,19 +211,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				_transform.Reset();
 				_transform.Translate(this.TranslationX, this.TranslationY);
-				_transform.Rotate(this.Rotation);
+				_transform.Rotate(this.RotationXY);
 				_transform.Scale(this.ScaleX, this.ScaleY);
 
 				return _transform;
 			}
 		}
 
+		/// <summary>
+		/// Gets the cumulative scale.
+		/// </summary>
+		/// <remarks>
+		/// This is the scale relative to the root of the scene graph.
+		/// </remarks>
 		public float CumulativeScale
 		{
 			get { return _cumulativeScale; }
 			protected set { _cumulativeScale = value; }
 		}
 
+		/// <summary>
+		/// Gets the cumulative transform.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CumulativeTransform"/> is the product of an
+		/// <see cref="IGraphic"/>'s <see cref="Transform"/> and the
+		/// <see cref="Transform"/> of all of nodes above it (i.e., all of its
+		/// ancestors).
+		/// </remarks>
 		public Matrix CumulativeTransform
 		{
 			get 
@@ -236,7 +248,31 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		protected Matrix CumulativeTransformInternal
+#if UNIT_TESTS
+		public Rectangle ClientRectangle
+#else
+		internal Rectangle ClientRectangle
+#endif
+		{
+			get { return _clientRectangle; }
+			set 
+			{ 
+				_clientRectangle = value;
+				this.RecalculationRequired = true;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the transformation
+		/// needs to be recalculated.
+		/// </summary>
+		protected bool RecalculationRequired
+		{
+			get { return _recalculationRequired; }
+			set { _recalculationRequired = value; }
+		}
+
+		private Matrix CumulativeTransformInternal
 		{
 			get
 			{
@@ -247,21 +283,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		public Rectangle ClientRectangle
+		internal IGraphic OwnerGraphic
 		{
-			get { return _clientRectangle; }
-			set 
-			{ 
-				_clientRectangle = value;
-				this.RecalculationRequired = true;
-			}
+			get { return _ownerGraphic; }
 		}
 
-		protected bool RecalculationRequired
-		{
-			get { return _recalculationRequired; }
-			set { _recalculationRequired = value; }
-		}
+		#endregion
+
+		#region Public methods
 
 		/// <summary>
 		/// Resets all transform parameters to their defaults.
@@ -271,105 +300,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.Scale = 1.0F;
 			this.ScaleX = 1.0F;
 			this.ScaleY = 1.0F;
-			this.ScaleToFit = true;
 			this.TranslationX = 0.0F;
 			this.TranslationY = 0.0F;
-			this.Rotation = 0;
-			this.FlipHorizontal = false;
-			this.FlipVertical = false;
+			this.RotationXY = 0;
+			this.FlipY = false;
+			this.FlipX = false;
 		}
-
-		/// <summary>
-		/// Calculates the transform.
-		/// </summary>
-		/// <remarks>Once this method is executed, the <see cref="Transform"/>
-		/// property will reflect any changes in the transform parameters.</remarks>
-		protected virtual void Calculate()
-		{
-			if (!this.RecalculationRequired)
-				return;
-
-			CalculateScale();
-			CalculateFlip();
-
-			// The cumulative transform is the product of the transform of the
-			// parent graphic and the transform of this graphic (i.e. the current transform)
-			// If there is no parent graphic, then the cumulative transform = current transform
-			this.CumulativeTransformInternal.Reset();
-
-			Graphic parentGraphic = this.OwnerGraphic.ParentGraphic as Graphic;
-
-			if (parentGraphic != null)
-				this.CumulativeTransformInternal.Multiply(parentGraphic.SpatialTransform.CumulativeTransform);
-
-			CalculatePreTransform();
-			this.CumulativeTransformInternal.Multiply(this.Transform);
-			CalculatePostTransform();
-
-			this.CumulativeScale = this.Scale;
-
-			if (parentGraphic != null)
-				this.CumulativeScale *= parentGraphic.SpatialTransform.CumulativeScale;
-
-			this.RecalculationRequired = false;
-		}
-
-		protected virtual void CalculatePreTransform()
-		{
-		}
-
-		protected virtual void CalculatePostTransform()
-		{
-		}
-
-
-		#region IMemorable members
-
-		/// <summary>
-		/// Creates a memento for this object.
-		/// </summary>
-		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
-		/// to support undo/redo.</remarks>
-		public IMemento CreateMemento()
-		{
-			SpatialTransformMemento spatialTransformMemento = new SpatialTransformMemento();
-
-			spatialTransformMemento.FlipHorizontal = this.FlipHorizontal;
-			spatialTransformMemento.FlipVertical = this.FlipVertical;
-			spatialTransformMemento.Rotation = this.Rotation;
-			spatialTransformMemento.Scale = this.Scale;
-			//spatialTransformMemento.ScaleToFit = this.ScaleToFit;
-			spatialTransformMemento.TranslationX = this.TranslationX;
-			spatialTransformMemento.TranslationY = this.TranslationY;
-
-			return spatialTransformMemento as IMemento;
-		}
-
-		/// <summary>
-		/// Sets a memento for this object.
-		/// </summary>
-		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
-		/// to support undo/redo.</remarks>
-		/// <exception cref="ArgumentNullException"><b>memento</b>
-		/// is <b>null</b>.</exception>
-		/// <exception cref="InvalidCastException"><b>memento</b>
-		/// is not of the type expected by the object.</exception>
-		public void SetMemento(IMemento memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
-			SpatialTransformMemento spatialTransformMemento = memento as SpatialTransformMemento;
-			Platform.CheckForInvalidCast(spatialTransformMemento, "memento", "PresentationViewMemento");
-
-			this.FlipHorizontal = spatialTransformMemento.FlipHorizontal;
-			this.FlipVertical = spatialTransformMemento.FlipVertical;
-			this.Rotation = spatialTransformMemento.Rotation;
-			this.Scale = spatialTransformMemento.Scale;
-			this.ScaleToFit = spatialTransformMemento.ScaleToFit;
-			this.TranslationX = spatialTransformMemento.TranslationX;
-			this.TranslationY = spatialTransformMemento.TranslationY;
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Converts a <see cref="PointF"/> from source to destination coordinates.
@@ -429,18 +365,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Transforms an array of vectors from the source to destination coordinate system.
-		/// The input array is modified directly, and contains the return values.
+		/// Converts an array of vectors from source to destination coordinates.
 		/// </summary>
+		/// <remarks>
+		/// The input array is modified directly, and contains the return values.
+		/// </remarks>
 		public void ConvertVectorsToDestination(PointF[] sourceVectors)
 		{
 			this.CumulativeTransform.TransformVectors(sourceVectors);
 		}
 
 		/// <summary>
-		/// Transforms an array of vectors from the destination to source coordinate system.
-		/// The input array is modified directly, and contains the return values.
+		/// Converts an array of vectors from destination to source coordinates.
 		/// </summary>
+		/// <remarks>
+		/// The input array is modified directly, and contains the return values.
+		/// </remarks>
 		public void ConvertVectorsToSource(PointF[] destinationVectors)
 		{
 			Matrix inverse = this.CumulativeTransform.Clone();
@@ -475,17 +415,125 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return new SizeF(width, height);
 		}
 
+		#region IMemorable members
+
+		/// <summary>
+		/// Creates a memento for this object.
+		/// </summary>
+		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
+		/// to support undo/redo.</remarks>
+		public virtual IMemento CreateMemento()
+		{
+			SpatialTransformMemento memento = new SpatialTransformMemento();
+
+			memento.FlipX = this.FlipX;
+			memento.FlipY = this.FlipY;
+			memento.RotationXY = this.RotationXY;
+			memento.Scale = this.Scale;
+			memento.TranslationX = this.TranslationX;
+			memento.TranslationY = this.TranslationY;
+
+			return memento;
+		}
+
+		/// <summary>
+		/// Sets a memento for this object.
+		/// </summary>
+		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
+		/// to support undo/redo.</remarks>
+		/// <exception cref="ArgumentNullException"><b>memento</b>
+		/// is <b>null</b>.</exception>
+		/// <exception cref="InvalidCastException"><b>memento</b>
+		/// is not of the type expected by the object.</exception>
+		public virtual void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+			SpatialTransformMemento spatialTransformMemento = memento as SpatialTransformMemento;
+			Platform.CheckForInvalidCast(spatialTransformMemento, "memento", "SpatialTransformMemento");
+
+			this.FlipX = spatialTransformMemento.FlipX;
+			this.FlipY = spatialTransformMemento.FlipY;
+			this.RotationXY = spatialTransformMemento.RotationXY;
+			this.Scale = spatialTransformMemento.Scale;
+			this.TranslationX = spatialTransformMemento.TranslationX;
+			this.TranslationY = spatialTransformMemento.TranslationY;
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Protected methods
+
+		/// <summary>
+		/// Calculates the cumulative transform.
+		/// </summary>
+		/// <remarks>Once this method is executed, the <see cref="CumulativeTransform"/>
+		/// property will reflect any changes in the transform parameters.</remarks>
+		protected virtual void Calculate()
+		{
+			if (!this.RecalculationRequired)
+				return;
+
+			CalculateScale();
+			CalculateFlip();
+
+			// The cumulative transform is the product of the transform of the
+			// parent graphic and the transform of this graphic (i.e. the current transform)
+			// If there is no parent graphic, then the cumulative transform = current transform
+			this.CumulativeTransformInternal.Reset();
+
+			IGraphic parentGraphic = this.OwnerGraphic.ParentGraphic;
+
+			if (parentGraphic != null)
+				this.CumulativeTransformInternal.Multiply(parentGraphic.SpatialTransform.CumulativeTransform);
+
+			CalculatePreTransform(this.CumulativeTransformInternal);
+			this.CumulativeTransformInternal.Multiply(this.Transform);
+			CalculatePostTransform(this.CumulativeTransformInternal);
+
+			this.CumulativeScale = this.Scale;
+
+			if (parentGraphic != null)
+				this.CumulativeScale *= parentGraphic.SpatialTransform.CumulativeScale;
+
+			this.RecalculationRequired = false;
+		}
+
+		/// <summary>
+		/// Gives subclasses an opportunity to perform a pre-transform transformation.
+		/// </summary>
+		/// <param name="cumulativeTransform"></param>
+		protected virtual void CalculatePreTransform(Matrix cumulativeTransform)
+		{
+		}
+
+		/// <summary>
+		/// Gives subclasses an opportunity to perform a post-transform transformation.
+		/// </summary>
+		protected virtual void CalculatePostTransform(Matrix cumulativeTransform)
+		{
+		}
+
+		/// <summary>
+		/// Gives subclasses an opportunity to override the scale calculation.
+		/// </summary>
 		protected virtual void CalculateScale()
 		{
 		}
 
-		protected void CalculateFlip()
+		/// <summary>
+		/// Gives subclasses an opportunity to override the flip calculation.
+		/// </summary>
+		protected virtual void CalculateFlip()
 		{
-			if (_flipVertical)
+			if (_flipX)
 				this.ScaleY *= -1;
 
-			if (_flipHorizontal)
+			if (_flipY)
 				this.ScaleX *= -1;
 		}
+
+		#endregion
 	}
 }

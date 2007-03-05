@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// A grayscale image <see cref="Graphic"/>.
+	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
 	public class GrayscaleImageGraphic : IndexedImageGraphic
 	{

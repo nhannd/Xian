@@ -7,6 +7,9 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Defines an image viewer.
+	/// </summary>
     public interface IImageViewer : IDisposable
     {
 		/// <summary>

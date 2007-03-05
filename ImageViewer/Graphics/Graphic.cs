@@ -63,6 +63,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
+		/// <summary>
+		/// 
+		/// </summary>
 		protected Graphic()
 		{
 			_coordinateSystemStack.Push(CoordinateSystem.Source);
@@ -86,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <see cref="IPresentationImage"/>.
 		/// </summary>
 		/// <value>The associated <see cref="IPresentationImage"/> or <b>null</b>
-		/// if the <see cref="Graphic"/> is not yet part of the scene graph.
+		/// if the <see cref="Graphic"/> is not yet part of the scene graph.</value>
 		public virtual IPresentationImage ParentPresentationImage
 		{
 			get { return _parentPresentationImage; }
@@ -103,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <value>The associated <see cref="IImageViewer"/> or <b>null</b>
 		/// if the <see cref="Graphic"/> is not yet associated with
-		/// an <see cref="IImageViewer"/>.
+		/// an <see cref="IImageViewer"/>.</value>
 		public virtual IImageViewer ImageViewer
 		{
 			get { return _parentImageViewer; }
@@ -136,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets or sets the <see cref="CoordinateSystem"/>.
 		/// </summary>
 		/// <remarks>
-		/// After the <see cref="CoordinateSystem"/> has been set and the
+		/// After the <see cref="Graphic.CoordinateSystem"/> has been set and the
 		/// desired operations have been performed on the <see cref="Graphic"/>,
 		/// it is proper practice to call <see cref="ResetCoordinateSystem"/>
 		/// to restore the previous coordinate system.
@@ -184,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <param name="delta">The distance to move.</param>
 		/// <remarks>
-		/// Depending on the value of <see cref="CoordinateSystem"/>,
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
 		/// <paramref name="delta"/> will be interpreted in either source
 		/// or destination coordinates.
 		/// </remarks>
@@ -196,7 +199,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// <para>
 		/// <see cref="ResetCoordinateSystem"/> will reset the <see cref="CoordinateSystem"/>
-		/// to what it was before the <see cref="CoordinateSystem"/> was last set.
+		/// to what it was before the <see cref="Graphic.CoordinateSystem"/> property
+		/// was last set.
 		/// </para>
 		/// </remarks>
 		public virtual void ResetCoordinateSystem()

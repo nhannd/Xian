@@ -176,10 +176,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				if (_imageRenderer == null)
-					_imageRenderer = new StandardPresentationImageRenderer();
+				if (base.ImageRenderer == null)
+					base.ImageRenderer = new StandardPresentationImageRenderer();
 
-				return _imageRenderer;
+				return base.ImageRenderer;
 			}
 		}
 
@@ -254,8 +254,8 @@ namespace ClearCanvas.ImageViewer
 			if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
 				_imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
 				return new StandardGrayscaleImageGraphic(_imageSop);
-			else if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
-				return new StandardPaletteColorImageGraphic(_imageSop);
+			//else if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
+			//    return new StandardPaletteColorImageGraphic(_imageSop);
 			else
 				return new StandardColorImageGraphic(_imageSop);
 		}
