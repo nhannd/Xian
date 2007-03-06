@@ -160,6 +160,9 @@
     <EmbeddedResource Include="Icons\ProbeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icons\ResetLarge.png" />
+    <EmbeddedResource Include="Icons\ResetSmall.png" />
+    <EmbeddedResource Include="Icons\ResetMedium.png" />
     <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

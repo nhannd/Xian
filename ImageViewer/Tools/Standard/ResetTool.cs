@@ -15,11 +15,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardReset")]
     [ClickHandler("activate", "Activate")]
     [Tooltip("activate", "ToolbarToolsStandardReset")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.ResetMedium.png", "Icons.ResetLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.ResetSmall.png", "Icons.ResetMedium.png", "Icons.ResetLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Reset")]
 
-    //[ClearCanvas.Common.ExtensionOf(typeof(ITool))]
-    public class ResetTool : ImageViewerTool
+	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class ResetTool : ImageViewerTool
     {
 		public ResetTool()
 		{
