@@ -129,6 +129,6 @@
   <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>
     <PreBuildEvent />
-    <PostBuildEvent>PostBuild.bat "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>PostBuild.bat "$(SolutionDir)"  $(SolutionName) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

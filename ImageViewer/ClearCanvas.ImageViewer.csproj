@@ -423,7 +423,6 @@
     </None>
     <None Include="app.config" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
-    <None Include="PostBuild.bat" />
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>
