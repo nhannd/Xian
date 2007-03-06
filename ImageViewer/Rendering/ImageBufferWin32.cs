@@ -9,7 +9,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-    public class ImageBufferWin32 : ImageBuffer
+    internal class ImageBufferWin32 : ImageBuffer
     {
         private IntPtr _hDC;
         private IntPtr _hBitmap;

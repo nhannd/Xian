@@ -6,12 +6,15 @@ using System.Collections;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-    [ExtensionPoint()]
+	/// <summary>
+	/// Defines an a study loader extension point.
+	/// </summary>
+	[ExtensionPoint()]
     public class StudyLoaderExtensionPoint : ExtensionPoint<IStudyLoader>
     {
     }
 
-    public sealed class StudyLoaderMap : IEnumerable
+    internal sealed class StudyLoaderMap : IEnumerable
     {
         Dictionary<string, IStudyLoader> _studyLoaderMap = new Dictionary<string, IStudyLoader>();
 

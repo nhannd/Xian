@@ -3,6 +3,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// A LUT that can be added to <see cref="LUTCollection"/>.
+	/// </summary>
 	public class ComposableLUT : LUT, IComposableLUT
 	{
 		private int _minInputValue;
@@ -10,7 +13,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _minOutputValue;
 		private int _maxOutputValue;
 
-		// Constructor
+		/// <summary>
+		/// Initializes a new instance of a <see cref="ComposableLUT"/> with an
+		/// input range specified by the minimum and maximum input values.
+		/// </summary>
+		/// <param name="minInputValue"></param>
+		/// <param name="maxInputValue"></param>
 		public ComposableLUT(
 			int minInputValue,
 			int maxInputValue) : base(maxInputValue - minInputValue + 1)
@@ -21,24 +29,36 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IGrayscaleLUT Members
 
+		/// <summary>
+		/// Gets or sets the minimum input value.
+		/// </summary>
 		public int MinInputValue
 		{
 			get { return _minInputValue; }
 			protected set { _minInputValue = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the maximum input value.
+		/// </summary>
 		public int MaxInputValue
 		{
 			get { return _maxInputValue; }
 			protected set { _maxInputValue = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the minimum output value.
+		/// </summary>
 		public virtual int MinOutputValue
 		{
 			get { return _minOutputValue; }
 			protected set { _minOutputValue = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the maximum output value.
+		/// </summary>
 		public virtual int MaxOutputValue
 		{
 			get { return _maxOutputValue; }
@@ -47,7 +67,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		// Indexer
+		/// <summary>
+		/// Gets or sets the element at the specified index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public override int this[int index]
 		{
 			get

@@ -7,6 +7,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Allows <see cref="IComposableLUT"/> objects
+	/// be composed together in a pipeline.
+	/// </summary>
 	public class LUTComposer
 	{
 		private LUTCollection _lutCollection;
@@ -15,10 +19,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _minInputValue;
 		private int _maxInputValue;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="LUTComposer"/>.
+		/// </summary>
 		public LUTComposer()
 		{
 		}
 
+		/// <summary>
+		/// A collection of <see cref="IComposableLUT"/> objects.
+		/// </summary>
 		public LUTCollection LUTCollection
 		{
 			get 
@@ -30,11 +40,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// The output LUT of the pipeline.
+		/// </summary>
 		public int[] OutputLUT
 		{
 			get { return _outputLUT; }
 		}
 
+		/// <summary>
+		/// Executes the pipeline.
+		/// </summary>
+		/// <remarks>
+		/// After all changes to any of the LUTs in the <see cref="LUTCollection"/>
+		/// have been made, <see cref="Compose"/> should be called to update the
+		/// <see cref="OutputLUT"/>.
+		/// </remarks>
 		public void Compose()
 		{
 			ValidateLUTCollection();
@@ -73,11 +94,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			// If the output LUT hasn't been created or the first LUT in the
 			// collection has changed, create a new output LUT
-			if (lut.NumEntries != _numEntries)
+			if (lut.Length != _numEntries)
 			{
 				_minInputValue = lut.MinInputValue;
 				_maxInputValue = lut.MaxInputValue;
-				_numEntries = lut.NumEntries;
+				_numEntries = lut.Length;
 				_outputLUT = new int[_numEntries];
 			}
 		}

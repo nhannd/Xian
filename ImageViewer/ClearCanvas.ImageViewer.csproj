@@ -287,7 +287,7 @@
     <Compile Include="ImageBoxSelectedEventArgs.cs" />
     <Compile Include="ImageDrawingEventArgs.cs" />
     <Compile Include="ImageViewerComponent.cs" />
-    <Compile Include="Imaging\CalculatedGrayscaleLUT.cs" />
+    <Compile Include="Imaging\CalculatedLUT.cs" />
     <Compile Include="Imaging\ColorSpaceConverter.cs" />
     <Compile Include="Imaging\ImageValidationException.cs" />
     <Compile Include="Imaging\LUTComposer.cs" />

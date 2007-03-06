@@ -388,8 +388,6 @@ namespace ClearCanvas.ImageViewer
 				totalImages++;
 			}
 
-			studyLoader.Stop();
-
 			int successfulImages = totalImages - failedImages;
 
 			// Only bother to tell someone if at least one image loaded

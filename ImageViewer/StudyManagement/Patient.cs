@@ -5,6 +5,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// A DICOM study.
+	/// </summary>
 	public class Patient
 	{
 		private ImageSop _imageSop;
@@ -14,6 +17,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 		}
 
+		/// <summary>
+		/// Gets the collection of <see cref="Study"/> objects that belong
+		/// to this <see cref="Patient"/>.
+		/// </summary>
 		public StudyCollection Studies
 		{
 			get
@@ -24,24 +31,35 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return _studies;
 			}
 		}
-
 		#region Patient Module
 
+		/// <summary>
+		/// Gets the patient ID.
+		/// </summary>
 		public string PatientId
 		{
 			get { return _imageSop.PatientId; }
 		}
 
+		/// <summary>
+		/// Gets the patient's name.
+		/// </summary>
 		public string PatientsName
 		{
 			get { return _imageSop.PatientsName; }
 		}
 
+		/// <summary>
+		/// Gets the patient's birthdate.
+		/// </summary>
 		public string PatientsBirthDate
 		{
 			get { return _imageSop.PatientsBirthDate; }
 		}
 
+		/// <summary>
+		/// Gets the patient's sex.
+		/// </summary>
 		public string PatientsSex
 		{
 			get { return _imageSop.PatientsSex; }

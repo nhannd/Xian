@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-	public unsafe class ImageRenderer
+	internal unsafe class ImageRenderer
 	{
 		public static void Render(
 			ImageGraphic imageGraphic,

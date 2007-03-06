@@ -8,7 +8,7 @@ using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-    public class ImageBuffer : IDisposable
+    internal class ImageBuffer : IDisposable
     {
 		protected System.Drawing.Graphics _graphics;
         protected Bitmap _bitmap;

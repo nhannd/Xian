@@ -6,8 +6,33 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// Provides data for <see cref="PatientCollection"/> events.
+	/// </summary>
 	public class PatientEventArgs : CollectionEventArgs<Patient>
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="PatientEventArgs"/>.
+		/// </summary>
+		public PatientEventArgs()
+		{
+
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="PatientEventArgs"/> with
+		/// a specified <see cref="Patient"/>.
+		/// </summary>
+		/// <param name="patient"></param>
+		public PatientEventArgs(Patient Patient)
+		{
+			base.Item  = Patient;
+		}
+
+		/// <summary>
+		/// Gets the <see cref="Patient"/>.
+		/// </summary>
+		public Patient Patient { get { return base.Item; } }
 
 	}
 }

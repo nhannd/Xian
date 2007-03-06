@@ -4,8 +4,11 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Implements the DICOM concept of a linear VOI LUT.
+	/// </summary>
 	public class VOILUTLinear : 
-		CalculatedGrayscaleLUT, 
+		CalculatedLUT, 
 		IVOILUTLinear
 	{
 		private double _windowWidth = 1;
@@ -15,6 +18,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _outputRange;
 		private bool _recalculate;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="VOILUTLinear"/> with
+		/// the specified minimum and maximum input values.
+		/// </summary>
+		/// <param name="minInputValue"></param>
+		/// <param name="maxInputValue"></param>
 		public VOILUTLinear(int minInputValue, int maxInputValue)
 		{
 			if (minInputValue >= maxInputValue)
@@ -27,6 +36,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_outputRange = this.MaxOutputValue - this.MinOutputValue;
 		}
 
+		/// <summary>
+		/// Gets the element at the specified index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public override int this[int index]
 		{
 			get
@@ -61,6 +75,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IVOILUTLinear Members
 
+		/// <summary>
+		/// Gets or sets the window width.
+		/// </summary>
 		public double WindowWidth
 		{
 			get { return _windowWidth; }
@@ -75,6 +92,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the window center.
+		/// </summary>
 		public double WindowCenter
 		{
 			get { return _windowCenter; }
@@ -87,6 +107,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures the state of the object.
+		/// </summary>
+		/// <returns></returns>
 		public IMemento CreateMemento()
 		{
 			WindowLevelMemento memento = new WindowLevelMemento();
@@ -97,6 +121,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return memento;
 		}
 
+		/// <summary>
+		/// Restores the state of the object.
+		/// </summary>
+		/// <param name="memento"></param>
 		public void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");

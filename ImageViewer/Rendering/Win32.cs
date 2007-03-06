@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	/// <summary>
 	/// Summary description for GDI.
 	/// </summary>
-	public class Win32
+	internal class Win32
 	{
 		/// <summary>
 		/// Enumeration for the raster operations used in BitBlt.

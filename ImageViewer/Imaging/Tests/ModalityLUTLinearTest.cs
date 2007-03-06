@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			Assert.AreEqual(2, lut.NumEntries);
+			Assert.AreEqual(2, lut.Length);
 			Assert.AreEqual(100, lut[0]);
 			Assert.AreEqual(101, lut[1]);
 		}
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			Assert.AreEqual(2, lut.NumEntries);
+			Assert.AreEqual(2, lut.Length);
 			Assert.AreEqual(99, lut[-1]);
 			Assert.AreEqual(100, lut[0]);
 		}
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			Assert.AreEqual(4096, lut.NumEntries);
+			Assert.AreEqual(4096, lut.Length);
 			Assert.AreEqual(100, lut[0]);
 			Assert.AreEqual(1123, lut[2047]);
 			Assert.AreEqual(2147, lut[4095]);
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			Assert.AreEqual(4096, lut.NumEntries);
+			Assert.AreEqual(4096, lut.Length);
 			Assert.AreEqual(-924, lut[-2048]);
 			Assert.AreEqual(100, lut[0]);
 			Assert.AreEqual(1123, lut[2047]);

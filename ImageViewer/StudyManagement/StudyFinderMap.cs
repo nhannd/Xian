@@ -6,20 +6,31 @@ using System.Collections;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-    [ExtensionPoint()]
+	/// <summary>
+	/// Defines an a study finder extension point.
+	/// </summary>
+	[ExtensionPoint()]
     public class StudyFinderExtensionPoint : ExtensionPoint<IStudyFinder>
     {
     }
     
+	/// <summary>
+	/// A map of <see cref="IStudyFinder"/> objects.
+	/// </summary>
     public sealed class StudyFinderMap : IEnumerable
 	{
         Dictionary<string, IStudyFinder> _studyFinderMap = new Dictionary<string, IStudyFinder>();
-		
-		public StudyFinderMap()
+
+		internal StudyFinderMap()
 		{
 			CreateStudyFinders();
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IStudyFinder"/> with the specified name.
+		/// </summary>
+		/// <param name="studyFinderName"></param>
+		/// <returns></returns>
         public IStudyFinder this[string studyFinderName]
 		{
 			get

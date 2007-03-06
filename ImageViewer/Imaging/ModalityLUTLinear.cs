@@ -3,11 +3,22 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class ModalityLUTLinear : CalculatedGrayscaleLUT
+	/// <summary>
+	/// Implements the DICOM concept of a Modality LUT.
+	/// </summary>
+	public class ModalityLUTLinear : CalculatedLUT
 	{
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 
+		/// <summary>
+		/// Initializes a new instance of ModalityLUTLinear with
+		/// the specified parameters.
+		/// </summary>
+		/// <param name="bitsStored"></param>
+		/// <param name="pixelRepresentation"></param>
+		/// <param name="rescaleSlope"></param>
+		/// <param name="rescaleIntercept"></param>
 		public ModalityLUTLinear(
 			int bitsStored,
 			int pixelRepresentation, 
@@ -24,6 +35,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			SetOutputRange();
 		}
 
+		/// <summary>
+		/// Gets the rescale slope.
+		/// </summary>
 		public double RescaleSlope
 		{
 			get { return _rescaleSlope; }
@@ -36,6 +50,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the rescale intercept.
+		/// </summary>
 		public double RescaleIntercept
 		{
 			get { return _rescaleIntercept; }
@@ -48,6 +65,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the element at the specified index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public override int this[int index]
 		{
 			get

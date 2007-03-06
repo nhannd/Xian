@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{
 			ComposableLUT lut = new ComposableLUT(10,73);
 			
-			Assert.IsTrue(lut.NumEntries == 64);
+			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == 10);
 			Assert.IsTrue(lut.MaxInputValue == 73);
 		
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{
 			ComposableLUT lut = new ComposableLUT(-10,53);
 			
-			Assert.IsTrue(lut.NumEntries == 64);
+			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == -10);
 			Assert.IsTrue(lut.MaxInputValue == 53);
 		
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{
 			ComposableLUT lut = new ComposableLUT(-74,-11);
 			
-			Assert.IsTrue(lut.NumEntries == 64);
+			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == -74);
 			Assert.IsTrue(lut.MaxInputValue == -11);
 		
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{
 			ComposableLUT lut = new ComposableLUT(-63,0);
 			
-			Assert.IsTrue(lut.NumEntries == 64);
+			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == -63);
 			Assert.IsTrue(lut.MaxInputValue == 0);
 		

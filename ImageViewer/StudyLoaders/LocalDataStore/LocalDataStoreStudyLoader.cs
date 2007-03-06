@@ -64,10 +64,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			return localImage;
         }
 
-		public void Stop()
-		{
-		}
-
         //private void MapImageObjectToLocalImageObject(ImageSopInstance imageObject, IDicomPropertySettable localImage)
         //{
         //    ClearCanvas.Dicom.DataStore.Study study = imageObject.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;

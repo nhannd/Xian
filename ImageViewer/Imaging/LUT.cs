@@ -3,47 +3,62 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// A lookup table.
+	/// </summary>
 	public class LUT : ILUT
 	{
-		// Protected attributes
-		private int _numEntries;
+		private int _length;
 		private int[] _table;
 
-		// Constructors
-		public LUT(int numEntries)
+		/// <summary>
+		/// Initializes a new instance of <see cref="LUT"/> with the specified
+		/// number of entries.
+		/// </summary>
+		/// <param name="length"></param>
+		public LUT(int length)
 		{
-			Platform.CheckPositive(numEntries, "numEntries");
-			_numEntries = numEntries;
+			Platform.CheckPositive(length, "length");
+			_length = length;
 		}
 
-		// Properties
-		public int NumEntries
+		/// <summary>
+		/// Returns the number of entries in the LUT.
+		/// </summary>
+		public int Length
 		{
-			get { return _numEntries; }
+			get { return _length; }
 		}
 
+		/// <summary>
+		/// Gets the array in which LUT values are stored.
+		/// </summary>
 		protected int[] Table
 		{
 			get
 			{
 				if (_table == null)
-					_table = new int[_numEntries];
+					_table = new int[_length];
 
 				return _table;
 			}
 		}
 
-		// Indexer
+		/// <summary>
+		/// Gets or sets the element at the specified index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public virtual int this[int index]
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, 0, _numEntries - 1, this);
+				Platform.CheckIndexRange(index, 0, _length - 1, this);
 				return this.Table[index];
 			}
 			set
 			{
-				Platform.CheckIndexRange(index, 0, _numEntries - 1, this);
+				Platform.CheckIndexRange(index, 0, _length - 1, this);
 				this.Table[index] = value;
 			}
 		}

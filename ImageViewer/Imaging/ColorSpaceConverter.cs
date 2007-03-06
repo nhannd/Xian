@@ -6,8 +6,19 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Converts between colour spaces.
+	/// </summary>
 	public static unsafe class ColorSpaceConverter
 	{
+		/// <summary>
+		/// Converts the specified <see cref="ImageGraphic"/> from
+		/// YBR_XXX to RGB.
+		/// </summary>
+		/// <param name="imageGraphic"></param>
+		/// <exception cref="ArgumentException">
+		/// Photometric interpretation is not YBR_XXX.
+		/// </exception>
 		public static void YbrToRgb(ImageGraphic imageGraphic)
 		{
 			YbrToRgb(
@@ -18,6 +29,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 				imageGraphic.PixelData.Raw);
 		}
 
+		/// <summary>
+		/// Converts YBR_XXX pixel data to RGB.
+		/// </summary>
+		/// <param name="photometricInterpretation"></param>
+		/// <param name="isPlanar"></param>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="pixelData"></param>
 		public static void YbrToRgb(
 			PhotometricInterpretation photometricInterpretation,
 			bool isPlanar,
@@ -25,8 +44,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int columns,
 			byte[] pixelData)
 		{
-			if (photometricInterpretation == PhotometricInterpretation.Rgb)
-				return;
+			if (photometricInterpretation != PhotometricInterpretation.YbrFull ||
+				photometricInterpretation != PhotometricInterpretation.YbrFull422 ||
+				photometricInterpretation != PhotometricInterpretation.YbrIct ||
+				photometricInterpretation != PhotometricInterpretation.YbrPartial422 ||
+				photometricInterpretation != PhotometricInterpretation.YbrRct)
+				throw new ArgumentException("Photometric interpretation is not YBR_XXX");
 
 			int imageSizeInPixels = rows * columns;
 
@@ -70,65 +93,104 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Converts a YBR_FULL value to RGB.
+		/// </summary>
+		/// <param name="y"></param>
+		/// <param name="b"></param>
+		/// <param name="r"></param>
+		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrFullToRgb(int y, int b, int r)
 		{
 			// |r|   | 1.0000  0.0000  1.4020 | | y       |
 			// |g| = | 1.0000 -0.3441 -0.7141 | | b - 128 |
 			// |b|   | 1.0000  1.7720 -0.0000 | | r - 128 |
 
+			int alpha = 0xff;
 			int red = (int)(y + 1.4020 * (r - 128));
 			int green = (int)(y - 0.3441 * (b - 128) - 0.7141 * (r - 128));
 			int blue = (int)(y + 1.7720 * (b - 128));
 
-			int rgb = (red << 16) + (green << 8) + blue;
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
 
-			return rgb;
+			return argb;
 		}
 
+		/// <summary>
+		/// Converts a YBR_FULL422 value to RGB.
+		/// </summary>
+		/// <param name="y"></param>
+		/// <param name="b"></param>
+		/// <param name="r"></param>
+		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrFull422ToRgb(int y, int b, int r)
 		{
 			return YbrFullToRgb(y, b, r);
 		}
 
+		/// <summary>
+		/// Converts a YBR_PARTIAL422 value to RGB.
+		/// </summary>
+		/// <param name="y"></param>
+		/// <param name="b"></param>
+		/// <param name="r"></param>
+		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrPartial422ToRgb(int y, int b, int r)
 		{
 			// |r|   |  1.1644  0.0000  1.5960 | | y - 16  |
 			// |g| = |  1.1644 -0.3917 -0.8130 | | b - 128 |
 			// |b|   |  1.1644  2.0173  0.0000 | | r - 128 |
 
+			int alpha = 0xff;
 			int red = (int)(1.1644 * (y - 16) + 1.5960 * (r - 128));
 			int green = (int)(1.1644 * (y - 16) - 0.3917 * (b - 128) - 0.8130 * (r - 128));
 			int blue = (int)(1.1644 * (y - 16) + 2.0173 * (b - 128));
 
-			int rgb = (red << 16) + (green << 8) + blue;
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
 
-			return rgb;
+			return argb;
 		}
 
+		/// <summary>
+		/// Converts a YBR_ICT value to RGB.
+		/// </summary>
+		/// <param name="y"></param>
+		/// <param name="b"></param>
+		/// <param name="r"></param>
+		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrIctToRgb(int y, int b, int r)
 		{
 			// |r|   |  1.00000  0.00000  1.40200 | | y |
 			// |g| = |  1.00000 -0.34412 -0.71414 | | b |
 			// |b|   |  1.00000  1.77200  0.00000 | | r |
 
+			int alpha = 0xff;
 			int red = (int)(y + 1.40200 * r);
 			int green = (int)(y - 0.34412 * b - 0.71414 * r);
 			int blue = (int)(y + 1.77200 * b);
 
-			int rgb = (red << 16) + (green << 8) + blue;
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
 
-			return rgb;
+			return argb;
 		}
 
+		/// <summary>
+		/// Converts a YBR_RCT value to RGB.
+		/// </summary>
+		/// <param name="y"></param>
+		/// <param name="b"></param>
+		/// <param name="r"></param>
+		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrRctToRgb(int y, int b, int r)
 		{
+			int alpha = 0xff;
 			int green = y - (r + b) / 4;
 			int red = r + green;
 			int blue = b + green;
 
-			int rgb = (red << 16) + (green << 8) + blue;
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
 
-			return rgb;
+			return argb;
 		}
 
 		private static void YbrFullToRgbPlanar(int imageSizeInPixels, byte[] pixelData)

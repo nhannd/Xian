@@ -6,6 +6,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Provides data for the <see cref="LUTCollection"/> events.
+	/// </summary>
 	public class LUTEventArgs : CollectionEventArgs<IComposableLUT>
 	{
 		public LUTEventArgs()

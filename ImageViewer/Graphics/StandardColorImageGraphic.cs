@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {

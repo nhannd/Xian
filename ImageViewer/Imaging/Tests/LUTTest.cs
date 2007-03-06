@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void CreateLUT()
 		{
 			LUT lut = new LUT(10);
-			Assert.AreEqual(10, lut.NumEntries);
+			Assert.AreEqual(10, lut.Length);
 
 			lut[0] = -8;
 			lut[9] = 10;

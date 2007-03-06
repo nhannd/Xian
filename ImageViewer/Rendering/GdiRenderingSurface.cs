@@ -8,7 +8,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-	public class GdiRenderingSurface : IRenderingSurface
+	internal class GdiRenderingSurface : IRenderingSurface
 	{
 		private ImageBuffer _imageBuffer;
 		private ImageBuffer _finalBuffer;

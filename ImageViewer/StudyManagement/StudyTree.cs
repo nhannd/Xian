@@ -7,6 +7,9 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// A tree representation of the DICOM patient, study, series, SOP hierarchy.
+	/// </summary>
 	public sealed class StudyTree
 	{
 		private PatientCollection _patients;
@@ -33,6 +36,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 #endif
 
+		/// <summary>
+		/// Gets the collection of <see cref="Patient"/> objects that belong
+		/// to this <see cref="StudyTree"/>.
+		/// </summary>
 		public PatientCollection Patients
 		{
 			get 
@@ -77,6 +84,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets a <see cref="Patient"/> with the specified patient ID.
+		/// </summary>
+		/// <param name="patientId"></param>
+		/// <returns>The <see cref="Patient"/> or <b>null</b> if the patient ID
+		/// cannot be found.</returns>
 		public Patient GetPatient(string patientId)
 		{
 			Platform.CheckForEmptyString(patientId, "patientId");
@@ -87,6 +100,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return this.Patients[patientId];
 		}
 
+		/// <summary>
+		/// Gets a <see cref="Study"/> with the specified Study Instance UID.
+		/// </summary>
+		/// <param name="studyInstanceUID"></param>
+		/// <returns>The <see cref="Study"/> or <b>null</b> if the Study Instance UID
+		/// cannot be found.</returns>
 		public Study GetStudy(string studyInstanceUID)
 		{
 			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
@@ -97,6 +116,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return this.Studies[studyInstanceUID];
 		}
 
+		/// <summary>
+		/// Gets a <see cref="Series"/> with the specified Series Instance UID.
+		/// </summary>
+		/// <param name="seriesInstanceUID"></param>
+		/// <returns>The <see cref="Series"/> or <b>null</b> if the Series Instance UID
+		/// cannot be found.</returns>
 		public Series GetSeries(string seriesInstanceUID)
 		{
 			Platform.CheckForEmptyString(seriesInstanceUID, "seriesInstanceUID");
@@ -107,6 +132,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return this.SeriesCollection[seriesInstanceUID];
 		}
 
+		/// <summary>
+		/// Gets a <see cref="Sop"/> with the specified SOP Instance UID.
+		/// </summary>
+		/// <param name="sopInstanceUID"></param>
+		/// <returns>The <see cref="Sop"/> or <b>null</b> if the SOP Instance UID
+		/// cannot be found.</returns>
 		public Sop GetSop(string sopInstanceUID)
 		{
 			Platform.CheckForEmptyString(sopInstanceUID, "sopInstanceUID");
