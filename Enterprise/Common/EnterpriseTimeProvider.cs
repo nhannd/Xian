@@ -68,13 +68,15 @@ namespace ClearCanvas.Enterprise.Common
 
         private DateTime CurrentEnterpriseTime()
         {
-            DateTime time;
-            ITimeService service;
+            DateTime time = default(DateTime);
 
             try
             {
-                service = Platform.GetService<ITimeService>();
-                time = service.GetTime();
+                Platform.GetService<ITimeService>(
+                    delegate(ITimeService service)
+                    {
+                        time = service.GetTime();
+                    });
 
                 _lastResyncInLocalTime = DateTime.Now;
             }
