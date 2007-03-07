@@ -17,7 +17,7 @@ namespace ClearCanvas.Dicom
 	/// +y --> Posterior,		-y --> Anterior 
 	/// +z --> Head,			-z --> Foot
 	/// 
-	/// The primary & secondary directions of a cosine vector correspond directly to the 2 largest
+	/// The primary and secondary directions of a cosine vector correspond directly to the 2 largest
 	/// values in the cosine vector, disregarding the sign.  The sign determines the direction along 
 	/// a particular axis in the patient based system as described above.
 	///

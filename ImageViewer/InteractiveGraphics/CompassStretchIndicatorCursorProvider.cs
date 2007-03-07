@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Gets the bounding rectangle that contains all the points in the <see cref="ControlPointsGraphic"/>.
+		/// Gets the bounding rectangle that contains all the points in the <see cref="ControlPointsGroup"/>.
 		/// </summary>
 		protected RectangleF BoundingRectangle
 		{

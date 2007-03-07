@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// specified message and inner exception.
 		/// </summary>
 		/// <param name="message"></param>
+		/// <param name="inner"></param>
 		public ImageValidationException(string message, Exception inner) : base(message, inner) { }
 	}
 }

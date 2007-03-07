@@ -1204,6 +1204,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets the SOP Instance UID.
+		/// </summary>
 		public override string SopInstanceUID
 		{
 			get
@@ -1219,6 +1222,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets the Transfer Syntax UID.
+		/// </summary>
 		public override string TransferSyntaxUID
 		{
 			get

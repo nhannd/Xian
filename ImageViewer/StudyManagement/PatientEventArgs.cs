@@ -24,9 +24,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// a specified <see cref="Patient"/>.
 		/// </summary>
 		/// <param name="patient"></param>
-		public PatientEventArgs(Patient Patient)
+		public PatientEventArgs(Patient patient)
 		{
-			base.Item  = Patient;
+			base.Item  = patient;
 		}
 
 		/// <summary>
