@@ -70,6 +70,12 @@ namespace ClearCanvas.Common
     /// exclusively by one provider (i.e. no two providers should provide the same service).  The application obtains
     /// services through the <see cref="Platform.GetService"/> method.
     /// </summary>
+    /// <remarks>
+    /// A service provider may be accessed by multiple threads.  For reasons of thread-safety, a service provider
+    /// should return a new instance of the service class for each call to <see cref="IServiceProvider.GetService"/>,
+    /// so that each thread receives its own copy of the service.
+    /// If the provider returns the same object (singleton), then the service object itself must be thread-safe.
+    /// </remarks>
     [ExtensionPoint]
     public class ServiceProviderExtensionPoint : ExtensionPoint<IServiceProvider>
     {
@@ -286,7 +292,7 @@ namespace ClearCanvas.Common
 		}
 
         /// <summary>
-        /// Obtains an instance of the specified service for use by the application
+        /// Obtains an instance of the specified service for use by the application. This operation is thread-safe.
         /// </summary>
         /// <typeparam name="TService">The type of service to obtain</typeparam>
         /// <returns>An instance of the specified service</returns>
@@ -304,7 +310,8 @@ namespace ClearCanvas.Common
         /// this method automatically takes care of determing whether the service implements <see cref="IDisposable"/>
         /// and calling <see cref="IDisposable.Dispose"/> if it does.  The delegate must not cache the returned service
         /// because it may be disposed as soon as the delegate returns.  For the single-use scenario, this overload is preferred
-        /// to the other overloads because it automatically manages the lifecycle of the service object.
+        /// to the other overloads because it automatically manages the lifecycle of the service object.  This operation 
+        /// is thread-safe.
         /// </summary>
         /// <typeparam name="TService">The service to obtain</typeparam>
         /// <param name="proc">A delegate that will receive the service for one-time use</param>
