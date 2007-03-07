@@ -13,9 +13,9 @@ namespace ClearCanvas.Enterprise.Common
     /// Acts as a client-side proxy to <see cref="IConfigurationService"/>
     /// </summary>
     [ExtensionOf(typeof(ConfigurationStoreExtensionPoint))]
-    public class ConfigurationStore : IConfigurationStore
+    public class EnterpriseConfigurationStore : IConfigurationStore
     {
-        public ConfigurationStore()
+        public EnterpriseConfigurationStore()
         {
         }
 

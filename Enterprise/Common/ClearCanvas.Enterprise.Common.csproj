@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationDocumentNotFoundException.cs" />
-    <Compile Include="ConfigurationStore.cs" />
+    <Compile Include="EnterpriseConfigurationStore.cs" />
     <Compile Include="EnterpriseTimeProvider.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
