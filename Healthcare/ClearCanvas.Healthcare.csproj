@@ -69,7 +69,6 @@
     <Compile Include="EmailAddress.cs" />
     <Compile Include="Facility.cs" />
     <Compile Include="HealthcardNumber.cs" />
-    <Compile Include="HealthcareServiceLayer.cs" />
     <Compile Include="HealthcareWorkflowException.cs" />
     <Compile Include="IHealthcareServiceLayer.cs" />
     <Compile Include="InterpretationStep.cs" />
