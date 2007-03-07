@@ -170,16 +170,6 @@ namespace ClearCanvas.Desktop
 
         private void TerminatedHandler(object sender, BackgroundTaskTerminatedEventArgs e)
         {
-            // TODO: Insert handling code here, if needed
-            //switch (e.Reason)
-            //{
-            //    case BackgroundTaskTerminatedReason.Exception:
-            //    case BackgroundTaskTerminatedReason.Cancelled:
-            //    case BackgroundTaskTerminatedReason.Completed:
-            //    default:
-            //        break;
-            //}
-
             if (_autoClose)
             {
                 this.ExitCode = ApplicationComponentExitCode.Cancelled;
@@ -189,6 +179,23 @@ namespace ClearCanvas.Desktop
             {
                 _marqueeSpeed = 0;
                 _enableCancel = true;
+
+                switch (e.Reason)
+                {
+                    case BackgroundTaskTerminatedReason.Completed:
+                        if (this.ProgressBarStyle == ProgressBarStyle.Marquee)
+                        {
+                            // Make the progress bar looks 'full' at completion
+                            _progressBarStyle = ProgressBarStyle.Blocks;
+                            _progressBar = this.ProgressBarMaximum;
+                        }
+                        break;
+                    case BackgroundTaskTerminatedReason.Exception:
+                    case BackgroundTaskTerminatedReason.Cancelled:
+                    default:
+                        break;
+                }
+                
                 SignalProgressTerminate();
             }
         }

@@ -56,6 +56,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _cancelButton.Text = _component.ButtonText;
             _message.Text = _component.ProgressMessage;
             _progressBar.Value = _component.ProgressBar;
+            _progressBar.Style = (System.Windows.Forms.ProgressBarStyle)_component.ProgressBarStyle;
             _progressBar.MarqueeAnimationSpeed = _component.MarqueeSpeed;
         }
 
