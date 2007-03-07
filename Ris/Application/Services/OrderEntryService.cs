@@ -8,7 +8,7 @@ using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Services
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class OrderEntryService : HealthcareServiceLayer, IOrderEntryService

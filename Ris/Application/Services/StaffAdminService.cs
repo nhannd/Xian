@@ -8,7 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Services
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class StaffAdminService : HealthcareServiceLayer, IStaffAdminService

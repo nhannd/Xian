@@ -9,7 +9,7 @@ using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Services
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService

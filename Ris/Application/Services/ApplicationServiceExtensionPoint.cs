@@ -4,10 +4,10 @@ using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Services
 {
     [ExtensionPoint]
-    public class ApplicationServiceExtensionPoint : ExtensionPoint<IServiceLayer>
+    public class ApplicationServiceExtensionPoint : ExtensionPoint<IApplicationServiceLayer>
     {
     }
 }

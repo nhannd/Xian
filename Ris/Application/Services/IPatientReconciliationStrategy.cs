@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Application.Services
 {
     public interface IPatientReconciliationStrategy
     {

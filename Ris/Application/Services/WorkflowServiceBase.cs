@@ -9,7 +9,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Workflow;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Services
 {
     public abstract class WorkflowServiceBase : HealthcareServiceLayer
     {

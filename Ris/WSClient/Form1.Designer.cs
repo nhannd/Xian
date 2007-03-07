@@ -47,14 +47,15 @@ namespace WSClient
             // 
             this._number.Location = new System.Drawing.Point(46, 47);
             this._number.Name = "_number";
-            this._number.Size = new System.Drawing.Size(100, 22);
+            this._number.Size = new System.Drawing.Size(148, 22);
             this._number.TabIndex = 1;
             // 
             // _result
             // 
             this._result.Location = new System.Drawing.Point(46, 103);
+            this._result.Multiline = true;
             this._result.Name = "_result";
-            this._result.Size = new System.Drawing.Size(237, 22);
+            this._result.Size = new System.Drawing.Size(336, 211);
             this._result.TabIndex = 2;
             // 
             // Form1

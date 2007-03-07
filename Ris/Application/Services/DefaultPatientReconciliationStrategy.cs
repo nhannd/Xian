@@ -6,7 +6,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Ris.Services
+namespace ClearCanvas.Ris.Application.Services
 {
     [ExtensionOf(typeof(PatientReconciliationStrategyExtensionPoint))]
     public class DefaultPatientReconciliationStrategy : IPatientReconciliationStrategy

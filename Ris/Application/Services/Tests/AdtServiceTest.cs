@@ -12,7 +12,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using System.Reflection;
 
-namespace ClearCanvas.Ris.Services.Tests
+namespace ClearCanvas.Ris.Application.Services.Tests
 {
     [TestFixture]
     public class AdtServiceTest

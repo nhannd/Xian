@@ -9,6 +9,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Test.Services;
+using System.IdentityModel.Policy;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -51,7 +53,11 @@ namespace ClearCanvas.Ris.Server
 
         private List<ServiceHost> MountServices(IExtensionPoint serviceLayer, string baseAddress)
         {
-            Binding binding = new BasicHttpBinding();
+            WSHttpBinding binding = new WSHttpBinding();
+            binding.Security.Mode = SecurityMode.Message;
+            binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+
+
             List<ServiceHost> hostedServices = new List<ServiceHost>();
 
             IServiceFactory serviceManager = new ServiceFactory(serviceLayer);
@@ -86,11 +92,21 @@ namespace ClearCanvas.Ris.Server
                     ServiceBehaviorAttribute debuggingBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
                     debuggingBehavior.IncludeExceptionDetailInFaults = true;
 #endif
-
-
                     // set up authentication model
                     host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
-                    host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new UserValidator();
+                    host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
+
+                    // set up the certificate
+                    host.Credentials.ServiceCertificate.SetCertificate(
+                        StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, "localhost");
+
+                    // set up authorization
+                    List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                    policies.Add(new CustomAuthorizationPolicy());
+                    host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                    host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
+
+                        
 
                     hostedServices.Add(host);
                 }
