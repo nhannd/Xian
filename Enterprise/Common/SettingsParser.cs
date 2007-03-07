@@ -4,11 +4,11 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
-namespace ClearCanvas.Enterprise.Configuration
+namespace ClearCanvas.Enterprise.Common
 {
-    public class SettingsParser
+    class SettingsParser
     {
-        public void FromXml(string xml, IDictionary<string, string> values)
+        internal void FromXml(string xml, IDictionary<string, string> values)
         {
             if (xml != null)
             {
@@ -19,7 +19,7 @@ namespace ClearCanvas.Enterprise.Configuration
             }
         }
 
-        public string ToXml(IDictionary<string, string> values)
+        internal string ToXml(IDictionary<string, string> values)
         {
             StringWriter sw = new StringWriter();
             using (XmlTextWriter writer = new XmlTextWriter(sw))
@@ -35,16 +35,16 @@ namespace ClearCanvas.Enterprise.Configuration
         /// from a previous version
         /// </summary>
         /// <param name="previousVersion">The previous version from which to copy settings values</param>
-        public void UpgradeFromPrevious(ConfigurationDocument currentVersion, ConfigurationDocument previousVersion)
+        internal string UpgradeFromPrevious(string currentVersionXml, string previousVersionXml)
         {
             Dictionary<string, string> values = new Dictionary<string, string>();
-            FromXml(currentVersion.DocumentText, values);
+            FromXml(currentVersionXml, values);
 
             // overwrite any values with those from the previous version
-            FromXml(previousVersion.DocumentText, values);
+            FromXml(previousVersionXml, values);
 
-            // re-write the values into this object
-            currentVersion.DocumentText = ToXml(values);
+            // return the document that represents the upgrade
+            return ToXml(values);
         }
         
         #region XML de/serialization

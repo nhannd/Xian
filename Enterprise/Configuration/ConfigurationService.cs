@@ -20,11 +20,19 @@ namespace ClearCanvas.Enterprise.Configuration
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public string LoadDocument(string name, Version version, string user, string instanceKey)
         {
-            IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
-            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
-            ConfigurationDocument document = broker.FindOne(criteria);
+            try
+            {
+                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+                ConfigurationDocument document = broker.FindOne(criteria);
 
-            return document.DocumentText;
+                return document.DocumentText;
+
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new ConfigurationDocumentNotFoundException("Configuration document not found");
+            }
         }
 
 

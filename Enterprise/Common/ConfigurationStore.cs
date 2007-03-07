@@ -5,10 +5,8 @@ using System.Text;
 using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Enterprise.Configuration
+namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// Implementation of <see cref="IConfigurationStore"/>, extends <see cref="ConfigurationStoreExtensionPoint"/>.
@@ -17,23 +15,31 @@ namespace ClearCanvas.Enterprise.Configuration
     [ExtensionOf(typeof(ConfigurationStoreExtensionPoint))]
     public class ConfigurationStore : IConfigurationStore
     {
-        private IConfigurationService _service;
-
         public ConfigurationStore()
         {
-            _service = Platform.GetService<IConfigurationService>();
         }
 
-        #region IEnterpriseConfigurationStore Members
+        #region IConfigurationStore Members
 
         public string LoadDocument(string name, Version version, string user, string instanceKey)
         {
-            return _service.LoadDocument(name, version, user, instanceKey);
+            string document = null;
+            Platform.GetService<IConfigurationService>(
+                delegate(IConfigurationService service)
+                {
+                    document = service.LoadDocument(name, version, user, instanceKey);
+                });
+
+            return document;
         }
 
         public void SaveDocument(string name, Version version, string user, string instanceKey, string documentText)
         {
-            _service.SaveDocument(name, version, user, instanceKey, documentText);
+            Platform.GetService<IConfigurationService>(
+                delegate(IConfigurationService service)
+                {
+                    service.SaveDocument(name, version, user, instanceKey, documentText);
+                });
         }
 
         public void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
@@ -49,7 +55,7 @@ namespace ClearCanvas.Enterprise.Configuration
                 SettingsParser parser = new SettingsParser();
                 parser.FromXml(xml, values);
             }
-            catch (EntityNotFoundException)
+            catch (ConfigurationDocumentNotFoundException)
             {
                 // no saved settings
             }
@@ -70,11 +76,15 @@ namespace ClearCanvas.Enterprise.Configuration
 
         public void RemoveUserSettings(Type settingsClass, string user, string instanceKey)
         {
-            _service.RemoveDocument(
-                SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                SettingsClassMetaDataReader.GetVersion(settingsClass),
-                user,
-                instanceKey);
+            Platform.GetService<IConfigurationService>(
+                delegate(IConfigurationService service)
+                {
+                    service.RemoveDocument(
+                        SettingsClassMetaDataReader.GetGroupName(settingsClass),
+                        SettingsClassMetaDataReader.GetVersion(settingsClass),
+                        user,
+                        instanceKey);
+                });
         }
 
         public void UpgradeUserSettings(Type settingsClass, string user, string instanceKey)

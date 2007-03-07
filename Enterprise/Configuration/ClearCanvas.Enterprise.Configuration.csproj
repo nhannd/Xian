@@ -43,9 +43,7 @@
     <Compile Include="ConfigurationDocument.cs" />
     <Compile Include="ConfigurationException.cs" />
     <Compile Include="ConfigurationService.cs" />
-    <Compile Include="ConfigurationStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SettingsParser.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
