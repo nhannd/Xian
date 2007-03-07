@@ -11,7 +11,7 @@ using ClearCanvas.Healthcare.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public abstract class WorkflowServiceBase : HealthcareServiceLayer
+    public abstract class WorkflowServiceBase : ApplicationServiceBase
     {
         class PersistentWorkflow : IWorkflow
         {

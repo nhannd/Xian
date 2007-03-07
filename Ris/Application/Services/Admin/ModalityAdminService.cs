@@ -7,10 +7,10 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class ModalityAdminService : HealthcareServiceLayer, IModalityAdminService
+    public class ModalityAdminService : ApplicationServiceBase, IModalityAdminService
     {
         [ReadOperation]
         public IList<Modality> GetAllModalities()

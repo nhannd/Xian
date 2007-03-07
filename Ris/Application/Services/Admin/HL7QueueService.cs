@@ -12,10 +12,10 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class HL7QueueService : HL7ServiceLayer, IHL7QueueService
+    public class HL7QueueService : ApplicationServiceBase, IHL7QueueService
     {
         private readonly int numResults = 50;
 

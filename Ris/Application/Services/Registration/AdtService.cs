@@ -7,7 +7,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Registration
 {
 
     [ExtensionPoint()]
@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Application.Services
     }
 
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class AdtService : HealthcareServiceLayer, IAdtService
+    public class AdtService : ApplicationServiceBase, IAdtService
     {
         private IExtensionPoint _strategyExtensionPoint;
 

@@ -7,10 +7,10 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class DiagnosticServiceAdminService : HealthcareServiceLayer, IDiagnosticServiceAdminService
+    public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
         [UpdateOperation]
         public void BatchImport(IList<string[]> data)

@@ -7,10 +7,10 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class FacilityAdminService : HealthcareServiceLayer, IFacilityAdminService
+    public class FacilityAdminService : ApplicationServiceBase, IFacilityAdminService
     {
         [ReadOperation]
         public IList<Facility> GetAllFacilities()

@@ -10,7 +10,7 @@ using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Modality
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService

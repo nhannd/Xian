@@ -8,10 +8,10 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Services.Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class StaffAdminService : HealthcareServiceLayer, IStaffAdminService
+    public class StaffAdminService : ApplicationServiceBase, IStaffAdminService
     {
         [ReadOperation]
         public IList<Staff> FindStaffs(string surname, string givenName)
