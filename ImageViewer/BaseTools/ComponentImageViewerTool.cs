@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// A base class image viewer tool that can notify its associated application
 	/// component when the active workspace changes.
 	/// </summary>
-	public abstract class DesktopImageViewerTool : Tool<IDesktopToolContext>
+	public abstract class ComponentImageViewerTool : ImageViewerTool
 	{
 		private ImageViewerToolComponent _imageViewerToolComponent;
 

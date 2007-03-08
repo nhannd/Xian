@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[ClickHandler("show", "Show")]
 	[GroupHint("show", "Tools.VolumeImage.Create")]
 
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class CreateVolumeTool : DesktopImageViewerTool
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class CreateVolumeTool : ComponentImageViewerTool
 	{
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the

@@ -18,8 +18,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class LayoutTool : DesktopImageViewerTool
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class LayoutTool : ComponentImageViewerTool
 	{
         /// <summary>
         /// Constructor
