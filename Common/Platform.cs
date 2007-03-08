@@ -86,9 +86,9 @@ namespace ClearCanvas.Common
 	/// </summary>
 	public static class Platform
 	{
-		private static string _installDir = null;
-		private static string _pluginDir = "plugins";
-		private static string _logDir = "logs";
+		private static string _installDirectory = null;
+		private static string _pluginDirectory = "plugins";
+		private static string _logDirectory = "logs";
 		private static volatile PluginManager _pluginManager;
 		private static object _syncRoot = new Object();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
@@ -111,7 +111,7 @@ namespace ClearCanvas.Common
 					lock (_syncRoot)
 					{
 						if (_pluginManager == null)
-							_pluginManager = new PluginManager(PluginDir);
+							_pluginManager = new PluginManager(PluginDirectory);
 					}
 				}
 
@@ -146,18 +146,14 @@ namespace ClearCanvas.Common
 		/// Gets or sets ClearCanvas' installation directory.
 		/// </summary>
 		/// <value>ClearCanvas' fully qualified installation directory.</value>
-		public static string InstallDir
+		public static string InstallDirectory
 		{
 			get
 			{
-				if (_installDir == null)
-					_installDir = Directory.GetCurrentDirectory();
+				if (_installDirectory == null)
+					_installDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-				return _installDir;
-			}
-			set
-			{
-				_installDir = value;
+				return _installDirectory;
 			}
 		}
 
@@ -165,11 +161,11 @@ namespace ClearCanvas.Common
 		/// Gets or sets the plugin directory.
 		/// </summary>
 		/// <value>The fully qualified plugin directory.</value>
-		public static string PluginDir
+		public static string PluginDirectory
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _pluginDir);
+                return string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _pluginDirectory);
 			}
 		}
 
@@ -178,11 +174,11 @@ namespace ClearCanvas.Common
 		/// Gets or sets the log directory.
 		/// </summary>
 		/// <value>The fully qualified log directory.</value>
-		public static string LogDir
+		public static string LogDirectory
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", InstallDir, PathSeparator, _logDir);
+                return string.Format("{0}{1}{2}", InstallDirectory, PathSeparator, _logDirectory);
 			}
 		}
 

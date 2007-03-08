@@ -28,7 +28,7 @@ namespace ClearCanvas.Common.Tests
 
 			// Make dummy plugin directory so PluginManager doesn't complain
 			Directory.CreateDirectory(_pluginDir);
-			Platform.InstallDir = _testDir;
+			//Platform.InstallDir = _testDir;
 
 			CopyConfigFiles();
 
