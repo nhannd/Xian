@@ -225,7 +225,9 @@ namespace ClearCanvas.ImageViewer
 				_imageSop.Rows,
 				_imageSop.Columns,
 				_imageSop.PixelSpacing.Column,
-				_imageSop.PixelSpacing.Row);
+				_imageSop.PixelSpacing.Row,
+				_imageSop.PixelAspectRatio.Column,
+				_imageSop.PixelAspectRatio.Row);
 
 			_imageGraphic = CreateImageGraphic();
 			_overlayGraphics = new CompositeGraphic();

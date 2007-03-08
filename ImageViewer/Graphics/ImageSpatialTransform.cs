@@ -27,6 +27,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private double _pixelAspectRatioX;
 		private double _pixelAspectRatioY;
 
+		private float _pixelAspectRatio = 0.0f;
+
 		#endregion
 
 		/// <summary>
@@ -84,9 +86,37 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _rows; }
 		}
 
+		private float AdjustedSourceHeight
+		{
+			get { return this.SourceHeight * this.PixelAspectRatio; }
+		}
+
 		private int DestinationWidth
 		{
 			get { return this.ClientRectangle.Width; }
+		}
+
+		private float PixelAspectRatio
+		{
+			get
+			{
+				if (_pixelAspectRatio == 0)
+				{
+					if (_pixelAspectRatioX == 0 || _pixelAspectRatioY == 0)
+					{
+						if (_pixelSpacingX == 0 || _pixelSpacingY == 0)
+							_pixelAspectRatio = 1;
+						else
+							_pixelAspectRatio = (float)_pixelSpacingY / (float)_pixelSpacingX;
+					}
+					else
+					{
+						_pixelAspectRatio = (float)_pixelAspectRatioY / (float)_pixelAspectRatioX;
+					}
+				}
+
+				return _pixelAspectRatio;
+			}
 		}
 
 		private int DestinationHeight
@@ -142,32 +172,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		protected override void CalculateScale()
 		{
-			float pixelAspectRatio;
-
-			if (_pixelAspectRatioX == 0 || _pixelAspectRatioY == 0)
-			{
-				if (_pixelSpacingX == 0 || _pixelSpacingY == 0)
-					pixelAspectRatio = 1;
-				else
-					pixelAspectRatio = (float)_pixelSpacingY / (float)_pixelSpacingX;
-			}
-			else
-			{
-				pixelAspectRatio = (float)_pixelAspectRatioY / (float)_pixelAspectRatioX;
-			}
-
 			if (this.ScaleToFit)
-				CalculateScaleToFit();
-
-			if (pixelAspectRatio >= 1)
 			{
-				this.ScaleX = this.Scale * pixelAspectRatio;
-				this.ScaleY = this.Scale;
+				CalculateScaleToFit();
 			}
 			else
 			{
 				this.ScaleX = this.Scale;
-				this.ScaleY = this.Scale / pixelAspectRatio;
+				this.ScaleY = this.Scale * this.PixelAspectRatio;
 			}
 		}
 
@@ -175,23 +187,35 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (this.RotationXY == 90 || this.RotationXY == 270)
 			{
-				float imageAspectRatio = (float)this.SourceWidth / (float)this.SourceHeight;
+				float imageAspectRatio = (float)this.SourceWidth / this.AdjustedSourceHeight;
 				float clientAspectRatio = (float)this.DestinationHeight / (float)this.DestinationWidth;
 
 				if (clientAspectRatio >= imageAspectRatio)
-					this.Scale = (float)this.DestinationWidth / (float)this.SourceHeight;
+				{
+					this.ScaleX = (float)this.DestinationWidth / this.AdjustedSourceHeight;
+					this.ScaleY = (float)this.DestinationWidth / this.SourceHeight;
+				}
 				else
-					this.Scale = (float)this.DestinationHeight / (float)this.SourceWidth;
+				{
+					this.ScaleX = (float)this.DestinationHeight / (float)this.SourceWidth;
+					this.ScaleY = (float)this.DestinationHeight / (float)this.SourceWidth * this.PixelAspectRatio;
+				}
 			}
 			else
 			{
-				float imageAspectRatio = (float)this.SourceHeight / (float)this.SourceWidth;
+				float imageAspectRatio = this.AdjustedSourceHeight / (float)this.SourceWidth;
 				float clientAspectRatio = (float)this.DestinationHeight / (float)this.DestinationWidth;
 
 				if (clientAspectRatio >= imageAspectRatio)
-					this.Scale = (float)this.DestinationWidth / (float)this.SourceWidth;
+				{
+					this.ScaleX = (float)this.DestinationWidth / (float)this.SourceWidth;
+					this.ScaleY = (float)this.DestinationWidth / (float)this.SourceWidth * this.PixelAspectRatio;
+				}
 				else
-					this.Scale = (float)this.DestinationHeight / (float)this.SourceHeight;
+				{
+					this.ScaleX = (float)this.DestinationHeight / this.AdjustedSourceHeight;
+					this.ScaleY = (float)this.DestinationHeight / this.SourceHeight;
+				}
 			}
 
 			this.MinimumScale = this.Scale / 2;
