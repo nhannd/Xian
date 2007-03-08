@@ -43,7 +43,7 @@ copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll" ".
 :: Copy shared plugins
 copy "..\..\..\bin\%3\ClearCanvas.Desktop.dll" ".\plugins"
 copy "..\..\..\Configuration\bin\%3\ClearCanvas.Desktop.Configuration.dll" .\plugins
-copy "..\..\..\Configuration\View\WinForms\bin\%3\ClearCanvas.Desktop.Configuration.View.Winforms.dll" .\plugins
+copy "..\..\..\Configuration\View\WinForms\bin\%3\ClearCanvas.Desktop.Configuration.View.WinForms.dll" .\plugins
 copy "..\..\..\View\WinForms\bin\%3\ClearCanvas.Desktop.View.WinForms.dll" ".\plugins"
 copy "..\..\..\Help\bin\%3\ClearCanvas.Desktop.Help.dll" ".\plugins"
 copy "..\..\..\ExtensionBrowser\bin\%3\ClearCanvas.Desktop.ExtensionBrowser.dll" ".\plugins"
