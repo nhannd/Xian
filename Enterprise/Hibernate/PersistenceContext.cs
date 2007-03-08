@@ -196,7 +196,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             // check version if necessary
             if ((flags & EntityLoadFlags.CheckVersion) != 0 && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
-                throw new ConcurrencyException(null);
+                throw new EntityVersionException(EntityRefUtils.GetOID(entityRef), null);
 
             System.Diagnostics.Debug.Assert(entity != null);
 
@@ -246,18 +246,27 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             System.Diagnostics.Debug.Assert(_transaction != null, "There is no transaction to commit");
 
-            if (_session.FlushMode != FlushMode.Never)
-            {
-                // do a final flush prior to commit, so that the DefaultInterceptor will capture the entire change set
-                // prior to auditing
-                _session.Flush();
-            }
+            // do a final flush prior to commit, so that the DefaultInterceptor will capture the entire change set
+            // prior to auditing
+            SynchState();
 
             // do auditing prior to commit
             AuditTransaction();
 
             _transaction.Commit();
             _transaction = null;
+        }
+
+        /// <summary>
+        /// Synchronizes the state of the context with the persistent store, ensuring that any new entities
+        /// have OIDs generated, and writing all changes to the database.
+        /// </summary>
+        public void SynchState()
+        {
+            if (_session.FlushMode != FlushMode.Never)
+            {
+                _session.Flush();
+            }
         }
 
         /// <summary>
@@ -309,7 +318,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             if (e is StaleObjectStateException)
             {
-                throw new ConcurrencyException(e);
+                throw new EntityVersionException((e as StaleObjectStateException).Identifier, e);
             }
             else if (e is ObjectNotFoundException)
             {

@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionConcurrency" xml:space="preserve">
-    <value>The version does not match the version in the database</value>
-  </data>
   <data name="ExceptionEntityNotFound" xml:space="preserve">
     <value>The entity was not found</value>
+  </data>
+  <data name="ExceptionEntityVersion" xml:space="preserve">
+    <value>Entity version does not match the version in the database (OID: {0})</value>
   </data>
   <data name="ExceptionIncompatiblePersistenceContext" xml:space="preserve">
     <value>Cannot inherit read-context as an update-context</value>

@@ -68,6 +68,8 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         void Resume();
 
+        void SynchState();
+
         ITransactionRecorder TransactionRecorder { get; set; }
 
     }

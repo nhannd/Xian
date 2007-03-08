@@ -61,20 +61,20 @@ namespace ClearCanvas.Enterprise.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The version does not match the version in the database.
-        /// </summary>
-        internal static string ExceptionConcurrency {
-            get {
-                return ResourceManager.GetString("ExceptionConcurrency", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The entity was not found.
         /// </summary>
         internal static string ExceptionEntityNotFound {
             get {
                 return ResourceManager.GetString("ExceptionEntityNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entity version does not match the version in the database (OID: {0}).
+        /// </summary>
+        internal static string ExceptionEntityVersion {
+            get {
+                return ResourceManager.GetString("ExceptionEntityVersion", resourceCulture);
             }
         }
         
