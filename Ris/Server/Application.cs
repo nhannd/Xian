@@ -11,6 +11,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Test.Services;
 using System.IdentityModel.Policy;
 using System.Security.Cryptography.X509Certificates;
+using ClearCanvas.Ris.Application.Services;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -30,7 +31,7 @@ namespace ClearCanvas.Ris.Server
             _serviceHosts = new List<ServiceHost>();
 
             _serviceHosts.AddRange(MountServices(new CoreServiceExtensionPoint(), baseAddress));
-            _serviceHosts.AddRange(MountServices(new TestServiceExtensionPoint(), baseAddress));
+            _serviceHosts.AddRange(MountServices(new ApplicationServiceExtensionPoint(), baseAddress));
 
             Console.WriteLine("Starting services...");
             foreach (ServiceHost host in _serviceHosts)

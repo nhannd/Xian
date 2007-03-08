@@ -41,6 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\AddLocationRequest.cs" />
+    <Compile Include="Admin\AddLocationResponse.cs" />
+    <Compile Include="Admin\GetAllLocationsRequest.cs" />
+    <Compile Include="Admin\GetAllLocationsResponse.cs" />
+    <Compile Include="Admin\GetLocationEditViewRequest.cs" />
+    <Compile Include="Admin\GetLocationEditViewResponse.cs" />
     <Compile Include="Admin\IDiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\IFacilityAdminService.cs" />
     <Compile Include="Admin\IHL7QueueService.cs" />
@@ -49,6 +55,11 @@
     <Compile Include="Admin\IPatientAdminService.cs" />
     <Compile Include="Admin\IPractitionerAdminService.cs" />
     <Compile Include="Admin\IStaffAdminService.cs" />
+    <Compile Include="Admin\LoadLocationRequest.cs" />
+    <Compile Include="Admin\LoadLocationResponse.cs" />
+    <Compile Include="Admin\UpdateLocationRequest.cs" />
+    <Compile Include="Admin\UpdateLocationResponse.cs" />
+    <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ImportException.cs" />
     <Compile Include="IWorklistService.cs" />
     <Compile Include="Modality\IModalityWorkflowService.cs" />

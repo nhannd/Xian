@@ -2,41 +2,38 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
+    [ServiceContract]
     public interface ILocationAdminService
     {
         /// <summary>
         /// Return all location options
         /// </summary>
         /// <returns></returns>
-        IList<Location> GetAllLocations();
-
-        /// <summary>
-        /// Get all locations for a specific facility
-        /// </summary>
-        /// <param name="facility"></param>
-        /// <returns></returns>
-        IList<Location> GetLocations(EntityRef facility);
+        [OperationContract]
+        GetAllLocationsResponse GetAllLocations(GetAllLocationsRequest request);
 
         /// <summary>
         /// Add the specified location
         /// </summary>
         /// <param name="location"></param>
-        void AddLocation(Location location);
+        [OperationContract]
+        AddLocationResponse AddLocation(AddLocationRequest request);
 
         /// <summary>
         /// Update the specified location
         /// </summary>
         /// <param name="location"></param>
-        void UpdateLocation(Location location);
+        [OperationContract]
+        UpdateLocationResponse UpdateLocation(UpdateLocationRequest request);
 
-        /// <summary>
-        /// Loads the location for the specified location reference
-        /// </summary>
-        /// <param name="locationRef"></param>
-        /// <returns></returns>
-        Location LoadLocation(EntityRef locationRef);
+        [OperationContract]
+        GetLocationEditViewResponse GetLocationEditView(GetLocationEditViewRequest request);
+
+        [OperationContract]
+        LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request);
     }
 }
