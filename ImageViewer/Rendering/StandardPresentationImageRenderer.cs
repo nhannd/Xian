@@ -339,6 +339,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Draw drop shadow
 			_brush.Color = Color.Black;
 
+			SizeF dropShadowOffset = new SizeF(1, 1);
 #if MONO
 			Size del = new Size((int)GDIRenderer._dropShadowOffset.Width, (int)GDIRenderer._dropShadowOffset.Height);
 
@@ -352,7 +353,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				textPrimitive.Text,
 				font,
 				_brush,
-				textPrimitive.AnchorPoint + GetDropShadowOffset(textPrimitive));
+				textPrimitive.AnchorPoint + dropShadowOffset);
 #endif
 			// Draw text
 			_brush.Color = textPrimitive.Color;
