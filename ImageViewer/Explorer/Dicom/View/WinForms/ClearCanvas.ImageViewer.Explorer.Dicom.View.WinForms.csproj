@@ -47,6 +47,13 @@
     <Compile Include="AENavigatorControl.Designer.cs">
       <DependentUpon>AENavigatorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="DicomExplorerConfigurationApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomExplorerConfigurationApplicationComponentControl.Designer.cs">
+      <DependentUpon>DicomExplorerConfigurationApplicationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomExplorerConfigurationApplicationComponentView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -120,6 +127,10 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
@@ -183,6 +194,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DicomExplorerConfigurationApplicationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DicomExplorerConfigurationApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Icons\ExpandRight.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

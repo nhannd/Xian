@@ -147,6 +147,9 @@
   <data name="ColumnHeadingStudyDescription" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="DicomExplorerConfiguration" xml:space="preserve">
+    <value>DICOM Explorer</value>
+  </data>
   <data name="DicomStudyBrowserToolsOpenStudy" xml:space="preserve">
     <value>Open</value>
   </data>

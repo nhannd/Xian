@@ -151,6 +151,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Explorer.
+        /// </summary>
+        internal static string DicomExplorerConfiguration {
+            get {
+                return ResourceManager.GetString("DicomExplorerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         internal static string DicomStudyBrowserToolsOpenStudy {

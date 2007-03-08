@@ -160,7 +160,7 @@
     <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
-    <Compile Include="BaseTools\DesktopImageViewerTool.cs" />
+    <Compile Include="BaseTools\ComponentImageViewerTool.cs" />
     <Compile Include="ImageViewerToolComponent.cs" />
     <Compile Include="InputManagement\IContextMenuProvider.cs" />
     <Compile Include="InputManagement\ICursorTokenProvider.cs" />
