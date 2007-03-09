@@ -2,40 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
+    [ServiceContract]
     public interface IFacilityAdminService
     {
         /// <summary>
         /// Return all facility options
         /// </summary>
         /// <returns></returns>
-        IList<Facility> GetAllFacilities();
+        [OperationContract]
+        GetAllFacilitiesResponse GetAllFacilities(GetAllFacilitiesRequest request);
 
         /// <summary>
         /// Add a facility
         /// </summary>
         /// <returns></returns>
-        void AddFacility(string facilityName);
-
-        /// <summary>
-        /// Add a facility
-        /// </summary>
-        /// <returns></returns>
-        void AddFacility(Facility facility);
+        [OperationContract]
+        AddFacilityResponse AddFacility(AddFacilityRequest request);
 
         /// <summary>
         /// Update a facility
         /// </summary>
         /// <returns></returns>
-        void UpdateFacility(Facility facility);
+        [OperationContract]
+        UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request);
 
         /// <summary>
         /// Loads the Facility for the specified Facility reference
         /// </summary>
         /// <param name="facilityRef"></param>
         /// <returns></returns>
-        Facility LoadFacility(EntityRef facilityRef);
+        [OperationContract]
+        LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request);
     }
 }

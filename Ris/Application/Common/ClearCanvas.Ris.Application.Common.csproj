@@ -41,8 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\AddFacilityRequest.cs" />
+    <Compile Include="Admin\AddFacilityResponse.cs" />
     <Compile Include="Admin\AddLocationRequest.cs" />
     <Compile Include="Admin\AddLocationResponse.cs" />
+    <Compile Include="Admin\GetAllFacilitiesRequest.cs" />
+    <Compile Include="Admin\GetAllFacilitiesResponse.cs" />
     <Compile Include="Admin\GetAllLocationsRequest.cs" />
     <Compile Include="Admin\GetAllLocationsResponse.cs" />
     <Compile Include="Admin\GetLocationEditViewRequest.cs" />
@@ -55,8 +59,12 @@
     <Compile Include="Admin\IPatientAdminService.cs" />
     <Compile Include="Admin\IPractitionerAdminService.cs" />
     <Compile Include="Admin\IStaffAdminService.cs" />
-    <Compile Include="Admin\LoadLocationRequest.cs" />
-    <Compile Include="Admin\LoadLocationResponse.cs" />
+    <Compile Include="Admin\LoadFacilityForEditRequest.cs" />
+    <Compile Include="Admin\LoadFacilityForEditResponse.cs" />
+    <Compile Include="Admin\LoadLocationForEditRequest.cs" />
+    <Compile Include="Admin\LoadLocationForEditResponse.cs" />
+    <Compile Include="Admin\UpdateFacilityRequest.cs" />
+    <Compile Include="Admin\UpdateFacilityResponse.cs" />
     <Compile Include="Admin\UpdateLocationRequest.cs" />
     <Compile Include="Admin\UpdateLocationResponse.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
