@@ -126,23 +126,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			rectangleGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (rectangleGraphic.BottomRight.X - rectangleGraphic.TopLeft.X);
 			double heightInPixels = (rectangleGraphic.BottomRight.Y - rectangleGraphic.TopLeft.Y);
-			double widthInCm = widthInPixels * image.ImageSop.PixelSpacing.Column / 10;
-			double heightInCm = heightInPixels * image.ImageSop.PixelSpacing.Row / 10;
 			rectangleGraphic.ResetCoordinateSystem();
 
+			double pixelSpacingX;
+			double pixelSpacingY;
+
+			image.ImageSop.GetModalityPixelSpacing(out pixelSpacingX, out pixelSpacingY);
+
+			bool pixelSpacingInvalid =  pixelSpacingX <= float.Epsilon ||
+										pixelSpacingY <= float.Epsilon ||
+										double.IsNaN(pixelSpacingX) ||
+										double.IsNaN(pixelSpacingY);
+
 			string text;
-
-			bool pixelSpacingInvalid = image.ImageSop.PixelSpacing.Column <= float.Epsilon ||
-										image.ImageSop.PixelSpacing.Row <= float.Epsilon ||
-										double.IsNaN(image.ImageSop.PixelSpacing.Column) ||
-										double.IsNaN(image.ImageSop.PixelSpacing.Row);
-
-			//!! This has been put in as a temporary measure to stop certain modality 
-			//!! images (DX, CR, MG) from reporting the incorrect measurements in cm.
-			//!! These modalities should actually use Imager Pixel Spacing for the calculation.
-
-			if (this.PixelSpacingNotAllowed(image.ImageSop))
-				pixelSpacingInvalid = true;
 
 			if (pixelSpacingInvalid)
 			{
@@ -151,6 +147,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
+				double widthInCm = widthInPixels * pixelSpacingX / 10;
+				double heightInCm = heightInPixels * pixelSpacingY / 10;
 				double area = Math.Abs(widthInCm * heightInCm);
 				text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, area);
 			}

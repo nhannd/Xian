@@ -11,6 +11,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -111,16 +112,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			
 		}
 
-		private bool PixelSpacingNotAllowed(ImageSop imageSop)
-		{
-			foreach (string modality in _disallowedModalities)
-			{
-				if (String.Compare(modality, imageSop.Modality, true) == 0)
-					return true;
-			}
-
-			return false;
-		}
 
 		// This is temporary code.  Right now, the api is difficult to use.  
 		// Ideally, we should have domain objects that make this easier.  
@@ -134,23 +125,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			multiLineGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (multiLineGraphic.AnchorPoints[1].X - multiLineGraphic.AnchorPoints[0].X);
 			double heightInPixels = (multiLineGraphic.AnchorPoints[1].Y - multiLineGraphic.AnchorPoints[0].Y);
-			double widthInCm = widthInPixels * image.ImageSop.PixelSpacing.Column / 10;
-			double heightInCm = heightInPixels * image.ImageSop.PixelSpacing.Row / 10;
 			multiLineGraphic.ResetCoordinateSystem();
 
+			double pixelSpacingX;
+			double pixelSpacingY;
+
+			image.ImageSop.GetModalityPixelSpacing(out pixelSpacingX, out pixelSpacingY);
+
+			bool pixelSpacingInvalid =  pixelSpacingX <= float.Epsilon ||
+										pixelSpacingY <= float.Epsilon ||
+										double.IsNaN(pixelSpacingX) ||
+										double.IsNaN(pixelSpacingY);
+
 			string text;
-
-			bool pixelSpacingInvalid = image.ImageSop.PixelSpacing.Column <= float.Epsilon ||
-										image.ImageSop.PixelSpacing.Row <= float.Epsilon ||
-										double.IsNaN(image.ImageSop.PixelSpacing.Column) ||
-										double.IsNaN(image.ImageSop.PixelSpacing.Row);
-
-			//!! This has been put in as a temporary measure to stop certain modality 
-			//!! images (DX, CR, MG) from reporting the incorrect measurements in cm.
-			//!! These modalities should actually use Imager Pixel Spacing for the calculation.
-
-			if (this.PixelSpacingNotAllowed(image.ImageSop))
-				pixelSpacingInvalid = true;
 
 			if (pixelSpacingInvalid)
 			{
@@ -159,6 +146,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
+				double widthInCm = widthInPixels * pixelSpacingX / 10;
+				double heightInCm = heightInPixels * pixelSpacingY / 10;
+
 				double length = Math.Sqrt(widthInCm * widthInCm + heightInCm * heightInCm);
 				text = String.Format(SR.ToolsMeasurementFormatLengthCm, length);
 			}

@@ -371,7 +371,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public abstract string[] WindowCenterAndWidthExplanation { get; set; }
 
-
 		/// <summary>
 		/// Gets a DICOM tag (16 bit, unsigned).
 		/// </summary>
@@ -441,6 +440,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract void GetTag(DcmTagKey tag, out string val, uint position, out bool tagExists);
 
 		public abstract void GetTagArray(DcmTagKey tag, out string val, out bool tagExists);
+
+		/// <summary>
+		/// Gets the pixel spacing appropriate to the modality.
+		/// </summary>
+		/// <param name="pixelSpacingX"></param>
+		/// <param name="pixelSpacingY"></param>
+		/// <remarks>
+		/// For projection based modalities (i.e., CR, DX and MG), Imager Pixel Spacing is
+		/// returned as the pixel spacing.  For all other modalities, the standard
+		/// Pixel Spacing is returned.
+		/// </remarks>
+		public void GetModalityPixelSpacing(out double pixelSpacingX, out double pixelSpacingY)
+		{
+			if (String.Compare(this.Modality, "CR", true) == 0 ||
+				String.Compare(this.Modality, "DX", true) == 0 ||
+				String.Compare(this.Modality, "MG", true) == 0)
+			{
+				bool tagExists;
+				this.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingY, 0, out tagExists);
+
+				if (!tagExists)
+				{
+					pixelSpacingX = double.NaN;
+					pixelSpacingY = double.NaN;
+					return;
+				}
+
+				this.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingX, 1, out tagExists);
+			}
+			else
+			{
+				pixelSpacingX = this.PixelSpacing.Row;
+				pixelSpacingY = this.PixelSpacing.Column;
+			}
+		}
 
 		public override string ToString()
 		{
