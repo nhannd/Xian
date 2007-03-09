@@ -294,6 +294,18 @@ namespace ClearCanvas.ImageViewer.Tests
 			}
 		}
 
+		public override string ProtocolName
+		{
+			get
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
+			set
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+
 		public override PersonName[] OperatorsName
 		{
 			get

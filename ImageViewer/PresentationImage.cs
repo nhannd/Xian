@@ -26,8 +26,7 @@ namespace ClearCanvas.ImageViewer
 
 		private bool _selected = false;
 		private bool _linked = true;
-
-		private object _tag;
+		private string _uid;
 		
 		private IRenderer _imageRenderer;
 
@@ -167,12 +166,12 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a user-defined object.
+		/// Gets or sets unique identifier for this <see cref="IPresentationImage"/>.
 		/// </summary>
-		public object Tag
+		public string Uid
 		{
-			get { return _tag; }
-			set { _tag = value; }
+			get { return _uid; }
+			set { _uid = value; }
 		}
 
 		/// <summary>

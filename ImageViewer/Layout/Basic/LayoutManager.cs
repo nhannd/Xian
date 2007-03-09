@@ -143,9 +143,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private IImageSet AddImageSet(ILogicalWorkspace logicalWorkspace, Study study)
 		{
 			IImageSet imageSet = new ImageSet();
-			imageSet.Tag = study.StudyInstanceUID;
+			imageSet.Name = study.StudyDescription;
+			imageSet.Uid = study.StudyInstanceUID;
 
-			//imageSet.Name = study.StudyDate;
 			logicalWorkspace.ImageSets.Add(imageSet);
 
 			return imageSet;
@@ -163,8 +163,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private IDisplaySet AddDisplaySet(IImageSet imageSet, Series series)
 		{
 			DisplaySet displaySet = new DisplaySet();
-			displaySet.Name = series.SeriesDescription;
-			displaySet.Tag = series.SeriesInstanceUID;
+			displaySet.Name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
+			displaySet.Uid = series.SeriesInstanceUID;
 
 			imageSet.DisplaySets.Add(displaySet);
 
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
 		{
 			StandardPresentationImage presentationImage = new StandardPresentationImage(image);
-			presentationImage.Tag = image.SopInstanceUID;
+			presentationImage.Uid = image.SopInstanceUID;
 			displaySet.PresentationImages.Add(presentationImage);
 
 			// This has been added so that the initial presentation of each display set has a reasonable 
@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			foreach (IImageSet imageSet in logicalWorkspace.ImageSets)
 			{
-				if (imageSet.Tag.ToString() == studyInstanceUID)
+				if (imageSet.Uid == studyInstanceUID)
 					return imageSet;
 			}
 
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			foreach (IDisplaySet displaySet in imageSet.DisplaySets)
 			{
-				if (displaySet.Tag.ToString() == seriesInstanceUID)
+				if (displaySet.Uid == seriesInstanceUID)
 					return displaySet;
 			}
 

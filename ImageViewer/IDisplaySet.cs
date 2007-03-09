@@ -72,9 +72,9 @@ namespace ClearCanvas.ImageViewer
 		bool Visible { get; }
 
 		/// <summary>
-		/// Gets or sets a user defined object.
+		/// Gets or sets unique identifier for this <see cref="IDisplaySet"/>.
 		/// </summary>
-		object Tag { get; set; }
+		string Uid { get; set; }
 
 		/// <summary>
 		/// Creates a clone of the <see cref="IDisplaySet"/>.

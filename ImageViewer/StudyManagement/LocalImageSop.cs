@@ -367,24 +367,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets or sets the series description.
-		/// </summary>
-		public override string SeriesDescription
-		{
-			get
-			{
-				bool tagExists;
-				string seriesDescription;
-				_dicomImage.GetTag(Dcm.SeriesDescription, out seriesDescription, out tagExists);
-				return seriesDescription;
-			}
-			set
-			{
-				throw new NotImplementedException("The method or operation is not implemented.");
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets the laterality.
 		/// </summary>
 		public override string Laterality
@@ -449,6 +431,42 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				string performingPhysiciansNames;
 				_dicomImage.GetTagArray(Dcm.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
 				return VMStringConverter.ToPersonNameArray(performingPhysiciansNames);
+			}
+			set
+			{
+				throw new NotImplementedException("The method or operation is not implemented.");
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the protocol name.
+		/// </summary>
+		public override string ProtocolName
+		{
+			get
+			{
+				bool tagExists;
+				string protocolName;
+				_dicomImage.GetTag(Dcm.ProtocolName, out protocolName, out tagExists);
+				return protocolName;
+			}
+			set
+			{
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the series description.
+		/// </summary>
+		public override string SeriesDescription
+		{
+			get
+			{
+				bool tagExists;
+				string seriesDescription;
+				_dicomImage.GetTag(Dcm.SeriesDescription, out seriesDescription, out tagExists);
+				return seriesDescription;
 			}
 			set
 			{

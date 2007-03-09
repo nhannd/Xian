@@ -206,7 +206,10 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		public override IPresentationImage Clone()
 		{
-			return new StandardPresentationImage(_imageSop);
+			IPresentationImage image = new StandardPresentationImage(_imageSop);
+			image.Uid = this.Uid;
+
+			return image;
 		}
 
 		public override string ToString()

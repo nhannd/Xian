@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer
 		private LogicalWorkspace _parentLogicalWorkspace;
 		private IImageViewer _imageViewer;
 		private string _name;
-		private object _tag;
+		private string _uid;
 
 		#endregion
 		
@@ -93,12 +93,12 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a user defined object.
+		/// Gets or sets unique identifier for this <see cref="IImageSet"/>.
 		/// </summary>
-		public object Tag
+		public string Uid
 		{
-			get { return _tag; }
-			set { _tag = value; }
+			get { return _uid; }
+			set { _uid = value; }
 		}
 
 		/// <summary>

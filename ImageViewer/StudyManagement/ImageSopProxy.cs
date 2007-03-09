@@ -229,18 +229,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string SeriesDescription
-		{
-			get
-			{
-				return _realImageSop.SeriesDescription;
-			}
-			set
-			{
-				_realImageSop.SeriesDescription = value;
-			}
-		}
-
 		public override string Laterality
 		{
 			get
@@ -286,6 +274,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set
 			{
 				_realImageSop.PerformingPhysiciansName = value;
+			}
+		}
+
+		public override string ProtocolName
+		{
+			get
+			{
+				return _realImageSop.ProtocolName;
+			}
+			set
+			{
+				_realImageSop.ProtocolName = value;
+			}
+		}
+
+		public override string SeriesDescription
+		{
+			get
+			{
+				return _realImageSop.SeriesDescription;
+			}
+			set
+			{
+				_realImageSop.SeriesDescription = value;
 			}
 		}
 

@@ -43,8 +43,8 @@ namespace ClearCanvas.ImageViewer
 		string Name { get; set; }
 
 		/// <summary>
-		/// Gets or sets a user defined object.
+		/// Gets or sets unique identifier for this <see cref="IImageSet"/>.
 		/// </summary>
-		object Tag { get; set; }
+		string Uid { get; set; }
 	}
 }

@@ -125,11 +125,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract int SeriesNumber { get; set; }
 
 		/// <summary>
-		/// Gets or sets the series description.
-		/// </summary>
-		public abstract string SeriesDescription { get; set; }
-
-		/// <summary>
 		/// Gets or sets the laterality.
 		/// </summary>
 		public abstract string Laterality { get; set; }
@@ -148,6 +143,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets or sets the names of performing physicians.
 		/// </summary>
 		public abstract PersonName[] PerformingPhysiciansName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the protocol name.
+		/// </summary>
+		public abstract string ProtocolName { get; set;}
+
+		/// <summary>
+		/// Gets or sets the series description.
+		/// </summary>
+		public abstract string SeriesDescription { get; set; }
 
 		/// <summary>
 		/// Gets or sets the names of operators.

@@ -62,11 +62,6 @@ namespace ClearCanvas.ImageViewer
 		bool Visible { get; }
 
 		/// <summary>
-		/// Gets or sets a user-defined object.
-		/// </summary>
-		object Tag { get; set; }
-
-		/// <summary>
 		/// Gets the currently selected <see cref="IGraphic"/>.
 		/// </summary>
 		/// <value>The currently selected <see cref="IGraphic"/> or <b>null</b>
@@ -87,6 +82,11 @@ namespace ClearCanvas.ImageViewer
 		/// focussed or selected and focussed.
 		/// </remarks>
 		IFocussableGraphic FocussedGraphic { get; set; }
+
+		/// <summary>
+		/// Gets or sets unique identifier for this <see cref="IPresentationImage"/>.
+		/// </summary>
+		string Uid { get; set; }
 
 		/// <summary>
 		/// Creates a clone of the <see cref="IPresentationImage"/>.

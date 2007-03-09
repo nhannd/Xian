@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			action.Checked = this.ImageViewer.SelectedImageBox != null &&
 				this.ImageViewer.SelectedImageBox.DisplaySet != null && 
-				this.ImageViewer.SelectedImageBox.DisplaySet.Name == displaySet.Name;
+				this.ImageViewer.SelectedImageBox.DisplaySet.Uid == displaySet.Uid;
 
 			return action;
 		}
