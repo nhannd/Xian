@@ -12,7 +12,7 @@ namespace ClearCanvas.Dicom
 	/// Encapsulates a set of static functions that helps with work on various aspects to
     /// do with the OFFIS DICOM Toolkit.
 	/// </summary>
-	public class DicomHelper
+	public static class DicomHelper
 	{
         /// <summary>
         /// Check the OFCondition object that is returned from many of the OFFIS functions/methods.
@@ -142,7 +142,5 @@ namespace ClearCanvas.Dicom
             else
                 return dicomDAValue;
         }
-
-        private DicomHelper() { }
-    }
+	}
 }
