@@ -86,11 +86,15 @@ namespace ClearCanvas.Common
 	/// </summary>
 	public static class Platform
 	{
-		private static string _installDirectory = null;
-		private static string _pluginDirectory = "plugins";
-		private static string _logDirectory = "logs";
+        private static object _syncRoot = new Object();
+
+        private static string _installDirectory = null;
+        private static string _pluginsDirectory = null;
+        private static string _logDirectory = null;
+
+		private static string _pluginSubFolder = "plugins";
+		private static string _logSubFolder = "logs";
 		private static volatile PluginManager _pluginManager;
-		private static object _syncRoot = new Object();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
         private static IApplicationRoot _applicationRoot;
 		private static IMessageBox _messageBox;
@@ -119,6 +123,12 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets whether the application is executing on a Win32 operating system
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
 		public static bool IsWin32Platform
 		{
 			get
@@ -127,8 +137,14 @@ namespace ClearCanvas.Common
 				return (id == PlatformID.Win32NT || id == PlatformID.Win32Windows || id == PlatformID.Win32S || id == PlatformID.WinCE);
 			}
 		}
-		
-		public static bool IsUnixPlatform
+
+        /// <summary>
+        /// Gets whether the application is executing on a Unix operating systems
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        public static bool IsUnixPlatform
 		{
 			get
 			{
@@ -137,48 +153,84 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets the file-system path separator character for the current operating system
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
         public static char PathSeparator
         {
             get { return IsWin32Platform ? '\\' : '/'; }
         }
 		
 		/// <summary>
-		/// Gets or sets ClearCanvas' installation directory.
+		/// Gets the ClearCanvas installation directory.
 		/// </summary>
-		/// <value>ClearCanvas' fully qualified installation directory.</value>
-		public static string InstallDirectory
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        public static string InstallDirectory
 		{
 			get
 			{
-				if (_installDirectory == null)
-					_installDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                if (_installDirectory == null)
+                {
+                    lock (_syncRoot)
+                    {
+                        if (_installDirectory == null)
+                            _installDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                    }
+                }
 
 				return _installDirectory;
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the plugin directory.
+		/// Gets the fully qualified plugin directory.
 		/// </summary>
-		/// <value>The fully qualified plugin directory.</value>
-		public static string PluginDirectory
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        public static string PluginDirectory
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _pluginDirectory);
+                if (_pluginsDirectory == null)
+                {
+                    lock (_syncRoot)
+                    {
+                        if (_pluginsDirectory == null)
+                            _pluginsDirectory = string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _pluginSubFolder);
+                    }
+                }
+
+                return _pluginsDirectory;
 			}
 		}
 
 
 		/// <summary>
-		/// Gets or sets the log directory.
+		/// Gets the fully qualified log directory.
 		/// </summary>
-		/// <value>The fully qualified log directory.</value>
-		public static string LogDirectory
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        public static string LogDirectory
 		{
 			get
 			{
-                return string.Format("{0}{1}{2}", InstallDirectory, PathSeparator, _logDirectory);
+                if (_logDirectory == null)
+                {
+                    lock (_syncRoot)
+                    {
+                        if (_logDirectory == null)
+                            _logDirectory = string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _logSubFolder);
+                    }
+                }
+
+                return _logDirectory;
 			}
 		}
 
@@ -199,27 +251,47 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets the current time from an extension of <see cref="TimeProviderExtensionPoint"/>, if one exists.
+        /// </summary>
+        /// <remarks>
+        /// The time returned may differ from the current time on the local machine, because the provider may choose
+        /// to obtain the time from another source (i.e. a server).
+        /// This method is thread-safe.
+        /// </remarks>
         public static DateTime Time
         {
             get
             {
                 if (_timeProvider == null)
                 {
-                    try
+                    lock (_syncRoot)
                     {
-                        // check for a time provider extension
-                        TimeProviderExtensionPoint xp = new TimeProviderExtensionPoint();
-                        _timeProvider = (ITimeProvider)xp.CreateExtension();
-                    }
-                    catch (NotSupportedException)
-                    {
-                        // can't find time provider, default to local time
-						Log(SR.LogTimeProviderNotFound, LogLevel.Warn);
+                        if (_timeProvider == null)
+                        {
+                            try
+                            {
+                                // check for a time provider extension
+                                TimeProviderExtensionPoint xp = new TimeProviderExtensionPoint();
+                                _timeProvider = (ITimeProvider)xp.CreateExtension();
+                            }
+                            catch (NotSupportedException)
+                            {
+                                // can't find time provider, default to local time
+                                Log(SR.LogTimeProviderNotFound, LogLevel.Warn);
 
-                        _timeProvider = new LocalTimeProvider();
+                                _timeProvider = new LocalTimeProvider();
+                            }
+                        }
                     }
                 }
-                return _timeProvider.CurrentTime;
+
+                // need to lock here, as the time provider itself may not be thread-safe
+                // note: lock on _timeProvider rather than _syncRoot, so _syncRoot remains free for other methods
+                lock (_timeProvider)
+                {
+                    return _timeProvider.CurrentTime;
+                }
             }
         }
 
@@ -231,7 +303,8 @@ namespace ClearCanvas.Common
         /// <remarks>
         /// A ClearCanvas based application is started by calling this convenience method from
         /// a bootstrap executable of some kind.  Calling this method results in the loading
-        /// of all plugins and creation of an IApplicationRoot extension.
+        /// of all plugins and creation of an IApplicationRoot extension.  This method is not thread-safe as it should only
+        /// ever be invoked once per execution, by a single thread.
         /// </remarks>
         public static void StartApp(ExtensionFilter applicationRootFilter, string[] args)
         {
@@ -280,7 +353,8 @@ namespace ClearCanvas.Common
 		/// <remarks>
 		/// A ClearCanvas based application is started by calling this convenience method from
 		/// a bootstrap executable of some kind.  Calling this method results in the loading
-		/// of all plugins and creation of an IApplicationRoot extension.
+        /// of all plugins and creation of an IApplicationRoot extension.  This method is not thread-safe as it should only
+        /// ever be invoked once per execution, by a single thread.
 		/// </remarks>
 		public static void StartApp()
 		{
@@ -288,8 +362,11 @@ namespace ClearCanvas.Common
 		}
 
         /// <summary>
-        /// Obtains an instance of the specified service for use by the application. This operation is thread-safe.
+        /// Obtains an instance of the specified service for use by the application.
         /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
         /// <typeparam name="TService">The type of service to obtain</typeparam>
         /// <returns>An instance of the specified service</returns>
         /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
@@ -306,9 +383,11 @@ namespace ClearCanvas.Common
         /// this method automatically takes care of determing whether the service implements <see cref="IDisposable"/>
         /// and calling <see cref="IDisposable.Dispose"/> if it does.  The delegate must not cache the returned service
         /// because it may be disposed as soon as the delegate returns.  For the single-use scenario, this overload is preferred
-        /// to the other overloads because it automatically manages the lifecycle of the service object.  This operation 
-        /// is thread-safe.
+        /// to the other overloads because it automatically manages the lifecycle of the service object.
         /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
         /// <typeparam name="TService">The service to obtain</typeparam>
         /// <param name="proc">A delegate that will receive the service for one-time use</param>
         public static void GetService<TService>(WithServiceDelegate<TService> proc)
@@ -329,21 +408,27 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Obtains an instance of the specified service for use by the application. This operation is thread-safe.
+        /// Obtains an instance of the specified service for use by the application.
         /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
         /// <param name="service">The type of service to obtain</param>
         /// <returns>An instance of the specified service</returns>
         /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
         public static object GetService(Type service)
         {
             // load all service providers if not yet loaded
-            lock (_syncRoot)
+            if (_serviceProviders == null)
             {
-                if (_serviceProviders == null)
+                lock (_syncRoot)
                 {
-                    _serviceProviders = Array.ConvertAll<object, IServiceProvider>(
-                                            (new ServiceProviderExtensionPoint()).CreateExtensions(),
-                                                delegate(object sp) { return (IServiceProvider)sp; });
+                    if (_serviceProviders == null)
+                    {
+                        _serviceProviders = Array.ConvertAll<object, IServiceProvider>(
+                                                (new ServiceProviderExtensionPoint()).CreateExtensions(),
+                                                    delegate(object sp) { return (IServiceProvider)sp; });
+                    }
                 }
             }
 
@@ -362,33 +447,31 @@ namespace ClearCanvas.Common
             throw new UnknownServiceException(string.Format(SR.ExceptionNoServiceProviderCanProvide, service.FullName));
         }
 
-        /// <summary>
-        /// Private method to get a session manager
-        /// </summary>
-        /// <returns></returns>
-        private static ISessionManager GetSessionManager()
-        {
-            try
-            {
-                SessionManagerExtensionPoint xp = new SessionManagerExtensionPoint();
-                return (ISessionManager)xp.CreateExtension();
-            }
-            catch (NotSupportedException)
-            {
-                // no session manager implementation
-                return null;
-            }
-        }
-
 		/// <summary>
-		/// Writes a message to the default log.
-		/// </summary>
+        /// Logs the specified message at <see cref="LogLevel.Info"/>.
+        /// </summary>
 		/// <param name="message"></param>
 		public static void Log(object message)
 		{
 			Log(message, LogLevel.Info);
 		}
 
+        /// <summary>
+        /// Logs the specified exception at <see cref="LogLevel.Error"/>.
+        /// </summary>
+        /// <remarks>This method is thread-safe.</remarks>
+        /// <param name="ex"></param>
+        public static void Log(Exception ex)
+        {
+            Log(ex, LogLevel.Error);
+        }
+
+        /// <summary>
+        /// Logs the specified message at the specified <see cref="LogLevel"/>.
+        /// </summary>
+        /// <remarks>This method is thread-safe.</remarks>
+        /// <param name="message"></param>
+        /// <param name="category"></param>
 		public static void Log(object message, LogLevel category)
 		{
 			switch (category)
@@ -411,11 +494,12 @@ namespace ClearCanvas.Common
 			}
 		}
 
-		public static void Log(Exception ex)
-		{
-			Log(ex, LogLevel.Error);
-		}
-
+        /// <summary>
+        /// Logs the specified exception at the specified <see cref="LogLevel"/>.
+        /// </summary>
+        /// <remarks>This method is thread-safe.</remarks>
+        /// <param name="ex"></param>
+        /// <param name="category"></param>
 		public static void Log(Exception ex, LogLevel category)
 		{
 			switch (category)
@@ -438,20 +522,51 @@ namespace ClearCanvas.Common
 			}
 		}
 
-		public static void ShowMessageBox(string message)
+        /// <summary>
+        /// Displays a message box with the specified message.
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe, however displaying message boxes from a thread other than the UI
+        /// thread is not a recommended practice.
+        /// </remarks>
+        public static void ShowMessageBox(string message)
 		{
             ShowMessageBox(message, MessageBoxActions.Ok);
 		}
 
+        /// <summary>
+        /// Displays a message box with the specified message and buttons, and returns a value indicating the action
+        /// taken by the user.
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe, however displaying message boxes from a thread other than the UI
+        /// thread is not a recommended practice.
+        /// </remarks>
+        /// <param name="message"></param>
+        /// <param name="buttons"></param>
+        /// <returns></returns>
         public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
+            // create message box if does not exist
             if (_messageBox == null)
             {
-                MessageBoxExtensionPoint xp = new MessageBoxExtensionPoint();
-                _messageBox = (IMessageBox)xp.CreateExtension();
+                lock (_syncRoot)
+                {
+                    if (_messageBox == null)
+                    {
+                        MessageBoxExtensionPoint xp = new MessageBoxExtensionPoint();
+                        _messageBox = (IMessageBox)xp.CreateExtension();
+                    }
+                }
             }
 
-            return _messageBox.Show(message, buttons);
+            // must lock here, because we have no guarantee that the underlying _messageBox object is thread-safe
+            // lock on the _messageBox itself, rather than _syncRoot, so that _syncRoot is free for other threads to lock on
+            // (i.e the message box may block this thread for a long time, and all other threads would halt if we locked on _syncRoot)
+            lock (_messageBox)
+            {
+                return _messageBox.Show(message, buttons);
+            }
         }
 
 
@@ -677,5 +792,25 @@ namespace ClearCanvas.Common
 			if (variable == null)
 				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
-	}
+
+
+        /// <summary>
+        /// Private method to get a session manager
+        /// </summary>
+        /// <returns></returns>
+        private static ISessionManager GetSessionManager()
+        {
+            try
+            {
+                SessionManagerExtensionPoint xp = new SessionManagerExtensionPoint();
+                return (ISessionManager)xp.CreateExtension();
+            }
+            catch (NotSupportedException)
+            {
+                // no session manager implementation
+                return null;
+            }
+        }
+
+    }
 }
