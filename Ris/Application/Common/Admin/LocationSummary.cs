@@ -4,13 +4,19 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.Location
+namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class LocationDetail : DataContractBase
+    public class LocationSummary : DataContractBase
     {
         [DataMember]
-        public EntityRef Facility;
+        public EntityRef LocationRef;
+
+        [DataMember]
+        public string FacilityName;
+
+        [DataMember]
+        public string FacilityCode;
 
         [DataMember]
         public string Building;
@@ -26,5 +32,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.Location
 
         [DataMember]
         public string Bed;
+
+        [DataMember]
+        public bool Active;
+
+        [DataMember]
+        public DateTime? InactiveDate;
+
     }
 }

@@ -12,7 +12,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Ris.Application.Services.Admin.HL7
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class HL7QueueService : ApplicationServiceBase, IHL7QueueService

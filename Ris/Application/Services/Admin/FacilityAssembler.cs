@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Application.Services.Admin

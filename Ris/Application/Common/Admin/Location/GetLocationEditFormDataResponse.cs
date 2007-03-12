@@ -18,17 +18,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.Location
         public List<FacilitySummary> FacilityChoices;
     }
 
-    [DataContract]
-    public class FacilitySummary : DataContractBase
-    {
-        [DataMember]
-        public EntityRef FacilityRef;
-
-        [DataMember]
-        public string Code;
-
-        [DataMember]
-        public string Name;
-    }
 
 }

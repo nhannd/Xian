@@ -53,17 +53,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\DiagnosticServiceAdminService.cs" />
-    <Compile Include="Admin\DiagnosticServiceBatchImporter.cs" />
-    <Compile Include="Admin\FacilityAdminService.cs" />
+    <Compile Include="Admin\DiagnosticService\DiagnosticServiceAdminService.cs" />
+    <Compile Include="Admin\DiagnosticService\DiagnosticServiceBatchImporter.cs" />
     <Compile Include="Admin\FacilityAssembler.cs" />
-    <Compile Include="Admin\HL7QueueService.cs" />
-    <Compile Include="Admin\LocationAdminService.cs" />
+    <Compile Include="Admin\Facility\FacilityAdminService.cs" />
+    <Compile Include="Admin\HL7\HL7QueueService.cs" />
     <Compile Include="Admin\LocationAssembler.cs" />
-    <Compile Include="Admin\ModalityAdminService.cs" />
+    <Compile Include="Admin\Location\LocationAdminService.cs" />
+    <Compile Include="Admin\Modality\ModalityAdminService.cs" />
     <Compile Include="Admin\PatientAdminService.cs" />
-    <Compile Include="Admin\PractitionerAdminService.cs" />
-    <Compile Include="Admin\StaffAdminService.cs" />
+    <Compile Include="Admin\Practitioner\PractitionerAdminService.cs" />
+    <Compile Include="Admin\Staff\StaffAdminService.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />

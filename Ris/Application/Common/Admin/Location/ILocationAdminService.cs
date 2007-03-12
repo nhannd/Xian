@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.Location
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        GetAllLocationsResponse GetAllLocations(GetAllLocationsRequest request);
+        ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request);
 
         /// <summary>
         /// Add the specified location

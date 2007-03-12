@@ -6,7 +6,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticService
 {
     internal class DiagnosticServiceBatchImporter
     {

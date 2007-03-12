@@ -7,9 +7,9 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.Location
 {
     [DataContract]
-    public class GetAllLocationsResponse : DataContractBase
+    public class ListAllLocationsResponse : DataContractBase
     {
-        public GetAllLocationsResponse(List<LocationSummary> locations)
+        public ListAllLocationsResponse(List<LocationSummary> locations)
         {
             this.Locations = locations;
         }

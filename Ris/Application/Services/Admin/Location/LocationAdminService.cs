@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.Location;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Ris.Application.Services.Admin.Location
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class LocationAdminService : ApplicationServiceBase, ILocationAdminService
@@ -19,10 +19,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         /// </summary>
         /// <returns></returns>
         [ReadOperation]
-        public GetAllLocationsResponse GetAllLocations(GetAllLocationsRequest request)
+        public ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request)
         {
             LocationAssembler assembler = new LocationAssembler();
-            return new GetAllLocationsResponse(
+            return new ListAllLocationsResponse(
                 CollectionUtils.Map<Location, LocationSummary, List<LocationSummary>>(
                     PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
                     delegate(Location l)

@@ -8,7 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Ris.Application.Services.Admin.Practitioner
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class PractitionerAdminService : ApplicationServiceBase, IPractitionerAdminService
