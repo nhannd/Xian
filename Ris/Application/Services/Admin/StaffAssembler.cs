@@ -38,13 +38,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Degree = staff.Name.Degree;
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            foreach (ClearCanvas.Healthcare.TelephoneNumber phoneNumber in staff.TelephoneNumbers)
+            foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
             {
                 detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber));
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach (ClearCanvas.Healthcare.Address address in staff.Addresses)
+            foreach (Address address in staff.Addresses)
             {
                 detail.Addresses.Add(addressAssembler.CreateAddressDetail(address));
             }
@@ -62,13 +62,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Degree = staff.Name.Degree;
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            foreach (ClearCanvas.Healthcare.TelephoneNumber phoneNumber in staff.TelephoneNumbers)
+            foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
             {
                 telephoneNumberAssembler.AddTelephoneNumber(phoneNumber, detail.TelephoneNumbers);
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach (ClearCanvas.Healthcare.Address address in staff.Addresses)
+            foreach (Address address in staff.Addresses)
             {
                 telephoneNumberAssembler.AddAddress(address, detail.Addresses);
             }

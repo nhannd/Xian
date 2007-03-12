@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
@@ -14,26 +14,30 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         /// <param name="surname">The practitioner surname to search for.  May not be null</param>
         /// <param name="givenName">The practitioner givenname to search for.  May be null</param>
         /// <returns>A list of matching practitioners</returns>
-        IList<PractitionerAdmin> FindPractitioners(string surname, string givenName);
+        [OperationContract]
+        FindPractitionersResponse FindPractitioners(FindPractitionersRequest request);
 
         /// <summary>
         /// Return all practitioner
         /// </summary>
         /// <returns>A list of all practitioners</returns>
-        IList<PractitionerAdmin> GetAllPractitioners();
+        [OperationContract]
+        ListAllPractitionersResponse ListAllPractitioners(ListAllPractitionersRequest request);
 
         /// <summary>
         /// Add a practitioner
         /// </summary>
         /// <param name="practitioner"></param>
-        void AddPractitioner(PractitionerAdmin practitioner);
+        [OperationContract]
+        AddPractitionerResponse AddPractitioner(AddPractitionerRequest request);
 
         /// <summary>
         /// Update a practitioner
         /// </summary>
         /// <param name="practitioner"></param>
         /// <returns></returns>
-        void UpdatePractitioner(PractitionerAdmin practitioner);
+        [OperationContract]
+        UpdatePractitionerResponse UpdatePractitioner(UpdatePractitionerRequest request);
         
         /// <summary>
         /// Load a practitioner from an entity ref
@@ -41,6 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         /// <param name="practitionerRef"></param>
         /// <param name="withDetails">If true, will also load the related detail collections</param>
         /// <returns></returns>
-        PractitionerAdmin LoadPractitioner(EntityRef practitionerRef, bool withDetails);
+        [OperationContract]
+        LoadPractitionerForEditResponse LoadPractitionerForEdit(LoadPractitionerForEditRequest request);
     }
 }

@@ -3,33 +3,38 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class PractitionerAdminService : ApplicationServiceBase, IPractitionerAdminService
     {
-        #region IPractitionerAdminService Members
-
         [ReadOperation]
-        public IList<PractitionerAdmin> FindPractitioners(string surname, string givenName)
+        public FindPractitionersResponse FindPractitioners(FindPractitionersRequest request)
         {
-            Platform.CheckForNullReference(surname, "surname");
-
-            IPractitionerBroker broker = this.CurrentContext.GetBroker<IPractitionerBroker>();
-
+            //Note: FamilyName should never be null because the null reference check is done by WCF using the DataMember IsRequired attribute
             PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
-            criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(surname));
-            if (givenName != null)
+            criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(request.FamilyName));
+            if (request.GivenName != null)
             {
-                criteria.Name.GivenName.Like(StringCriteriaWithWildcardAppendedTo(givenName));
+                criteria.Name.GivenName.Like(StringCriteriaWithWildcardAppendedTo(request.GivenName));
             }
 
-            return broker.Find(criteria);
+            PractitionerAssembler assembler = new PractitionerAssembler();
+            return new FindPractitionersResponse(
+                CollectionUtils.Map<Practitioner, PractitionerSummary, List<PractitionerSummary>>(
+                    PersistenceContext.GetBroker<IPractitionerBroker>().Find(criteria),
+                    delegate(Practitioner p)
+                    {
+                        return assembler.CreatePractitionerSummary(p);
+                    }));
         }
 
         private string StringCriteriaWithWildcardAppendedTo(string surname)
@@ -38,44 +43,56 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         }
 
         [ReadOperation]
-        public PractitionerAdmin LoadPractitioner(EntityRef practitionerRef)
+        public ListAllPractitionersResponse ListAllPractitioners(ListAllPractitionersRequest request)
         {
-            IPractitionerBroker broker = this.CurrentContext.GetBroker<IPractitionerBroker>();
-            return broker.Load(practitionerRef);
+            PractitionerAssembler assembler = new PractitionerAssembler();
+            return new ListAllPractitionersResponse(
+                CollectionUtils.Map<Practitioner, PractitionerSummary, List<PractitionerSummary>>(
+                    PersistenceContext.GetBroker<IPractitionerBroker>().FindAll(),
+                    delegate(Practitioner p)
+                    {
+                        return assembler.CreatePractitionerSummary(p);
+                    }));
         }
 
         [ReadOperation]
-        public IList<PractitionerAdmin> GetAllPractitioners()
+        public LoadPractitionerForEditResponse LoadPractitionerForEdit(LoadPractitionerForEditRequest request)
         {
-            return this.CurrentContext.GetBroker<IPractitionerBroker>().FindAll();
+            // note that the version of the PractitionerRef is intentionally ignored here (default behaviour of ReadOperation)
+            Practitioner p = (Practitioner)PersistenceContext.Load(request.PractitionerRef);
+            PractitionerAssembler assembler = new PractitionerAssembler();
+
+            return new LoadPractitionerForEditResponse(p.GetRef(), assembler.CreatePractitionerDetail(p));
         }
 
         [UpdateOperation]
-        public void AddPractitioner(PractitionerAdmin practitioner)
+        public AddPractitionerResponse AddPractitioner(AddPractitionerRequest request)
         {
-            this.CurrentContext.Lock(practitioner, DirtyState.New);
+            Practitioner practitioner = new Practitioner();
+            PractitionerAssembler assembler = new PractitionerAssembler();
+            assembler.UpdatePractitioner(practitioner, request.PractitionerDetail);
+
+            // TODO prior to accepting this add request, we should check that the same practitioner does not already exist
+
+            PersistenceContext.Lock(practitioner, DirtyState.New);
+
+            // ensure the new practitioner is assigned an OID before using it in the return value
+            PersistenceContext.SynchState();
+
+            return new AddPractitionerResponse(assembler.CreatePractitionerSummary(practitioner));
         }
 
         [UpdateOperation]
-        public void UpdatePractitioner(PractitionerAdmin practitioner)
+        public UpdatePractitionerResponse UpdatePractitioner(UpdatePractitionerRequest request)
         {
-            this.CurrentContext.Lock(practitioner, DirtyState.Dirty);
-        }
+            Practitioner practitioner = (Practitioner)PersistenceContext.Load(request.PractitionerRef, EntityLoadFlags.CheckVersion);
 
-        [ReadOperation]
-        public PractitionerAdmin LoadPractitioner(EntityRef practitionerRef, bool withDetails)
-        {
-            IPractitionerBroker practitionerBroker = CurrentContext.GetBroker<IPractitionerBroker>();
-            PractitionerAdmin practitioner = practitionerBroker.Load(practitionerRef);
-            if (withDetails)
-            {
-                IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
-                staffBroker.LoadAddressesForStaff(practitioner);
-                staffBroker.LoadTelephoneNumbersForStaff(practitioner);
-            }
-            return practitioner;
-        }
+            PractitionerAssembler assembler = new PractitionerAssembler();
+            assembler.UpdatePractitioner(practitioner, request.PractitionerDetail);
 
-        #endregion
+            // TODO prior to accepting this update request, we should check that the same practitioner does not already exist
+
+            return new UpdatePractitionerResponse(assembler.CreatePractitionerSummary(practitioner));
+        }
     }
 }
