@@ -9,7 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
     [DataContract]
     public class AddFacilityResponse : DataContractBase
     {
+        public AddFacilityResponse(FacilitySummary facility)
+        {
+            this.Facility = facility;
+        }
+
         [DataMember]
-        public FacilityListItem Facility;
+        public FacilitySummary Facility;
     }
 }

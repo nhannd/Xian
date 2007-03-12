@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class LocationAssembler
     {
-        public LocationSummary CreateLocationSummary(LocationAdmin location)
+        public LocationSummary CreateLocationSummary(Location location)
         {
             LocationSummary summary = new LocationSummary();
             summary.LocationRef = location.GetRef();
@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return summary;
         }
 
-        public LocationDetail CreateLocationDetail(LocationAdmin location)
+        public LocationDetail CreateLocationDetail(Location location)
         {
             LocationDetail detail = new LocationDetail();
             detail.Bed = location.Bed;
@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return detail;
         }
 
-        public void UpdateLocation(LocationAdmin location, LocationDetail detail, IPersistenceContext context)
+        public void UpdateLocation(Location location, LocationDetail detail, IPersistenceContext context)
         {
             location.Bed = detail.Bed;
             location.Building = detail.Building;

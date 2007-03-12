@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         {
             Location location = new Location();
             LocationAssembler assembler = new LocationAssembler();
-            assembler.UpdateLocation(locationm, request.LocationDetail, PersistenceContext);
+            assembler.UpdateLocation(location, request.LocationDetail, PersistenceContext);
 
             // TODO prior to accepting this add request, we should check that the same location does not already exist
 

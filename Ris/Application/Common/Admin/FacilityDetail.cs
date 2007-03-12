@@ -4,12 +4,15 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
+namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class AddFacilityRequest : DataContractBase
+    public class FacilityDetail : DataContractBase
     {
         [DataMember]
-        public FacilityDetail FacilityDetail;
+        public string Code;
+
+        [DataMember]
+        public string Name;
     }
 }
