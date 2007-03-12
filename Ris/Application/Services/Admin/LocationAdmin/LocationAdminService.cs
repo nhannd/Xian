@@ -24,9 +24,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         {
             LocationAssembler assembler = new LocationAssembler();
             return new ListAllLocationsResponse(
-                CollectionUtils.Map<LocationAdmin, LocationSummary, List<LocationSummary>>(
+                CollectionUtils.Map<Location, LocationSummary, List<LocationSummary>>(
                     PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
-                    delegate(LocationAdmin l)
+                    delegate(Location l)
                     {
                         return assembler.CreateLocationSummary(l);
                     }));
@@ -37,9 +37,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         {
             FacilityAssembler assembler = new FacilityAssembler();
             return new GetLocationEditFormDataResponse(
-                CollectionUtils.Map<FacilityAdmin, FacilitySummary, List<FacilitySummary>>(
+                CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
                     PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
-                    delegate(FacilityAdmin f)
+                    delegate(Facility f)
                     {
                         return assembler.CreateFacilitySummary(f);
                     }));
@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         public LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request)
         {
             // note that the version of the LocationRef is intentionally ignored here (default behaviour of ReadOperation)
-            LocationAdmin l = (LocationAdmin)PersistenceContext.Load(request.LocationRef);
+            Location l = (Location)PersistenceContext.Load(request.LocationRef);
             LocationAssembler assembler = new LocationAssembler();
 
             return new LoadLocationForEditResponse(l.GetRef(), assembler.CreateLocationDetail(l));
@@ -62,11 +62,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         [UpdateOperation]
         public AddLocationResponse AddLocation(AddLocationRequest request)
         {
-            LocationAdmin location = new LocationAdmin();
+            Location location = new Location();
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(locationm, request.LocationDetail, PersistenceContext);
 
+            // TODO prior to accepting this add request, we should check that the same location does not already exist
+
             PersistenceContext.Lock(location, DirtyState.New);
+
+            // ensure the new location is assigned an OID before using it in the return value
             PersistenceContext.SynchState();
 
             return new AddLocationResponse(assembler.CreateLocationSummary(location));
@@ -80,10 +84,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         [UpdateOperation]
         public UpdateLocationResponse UpdateLocation(UpdateLocationRequest request)
         {
-            LocationAdmin location = (LocationAdmin)PersistenceContext.Load(request.LocationRef, EntityLoadFlags.CheckVersion);
+            Location location = (Location)PersistenceContext.Load(request.LocationRef, EntityLoadFlags.CheckVersion);
 
             LocationAssembler assembler = new LocationAssembler();
-            assembler.UpdateLocation(locationm, request.LocationDetail, PersistenceContext);
+            assembler.UpdateLocation(location, request.LocationDetail, PersistenceContext);
+
+            // TODO prior to accepting this update request, we should check that the same location does not already exist
 
             return new UpdateLocationResponse(assembler.CreateLocationSummary(location));
         }
