@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Registration
+namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     /// <summary>
     /// Provides ADT (Admit-Discharge-Transfer) services 

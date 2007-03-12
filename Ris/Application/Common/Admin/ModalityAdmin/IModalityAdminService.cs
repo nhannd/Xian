@@ -14,21 +14,21 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        List<ModalitySummary> GetAllModalities();
+        ListAllModalitiesResponse ListAllModalities(ListAllModalitiesRequest request);
 
         /// <summary>
         /// Add the specified modality
         /// </summary>
         /// <param name="modality"></param>
         [OperationContract]
-        ModalitySummary AddModality(ModalityDetail modality);
+        AddModalityResponse AddModality(AddModalityRequest request);
 
         /// <summary>
         /// Update the specified modality
         /// </summary>
         /// <param name="modality"></param>
         [OperationContract]
-        ModalitySummary UpdateModality(EntityRef modalityRef, ModalityDetail modalityDetail);
+        UpdateModalityResponse UpdateModality(UpdateModalityRequest request);
 
         /// <summary>
         /// Loads the modality for the specified modality reference
@@ -36,9 +36,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
         /// <param name="modalityRef"></param>
         /// <returns></returns>
         [OperationContract]
-        ModalityDetail LoadModalityDetail(EntityRef modalityRef);
-
-        [OperationContract]
-        ModalityEditFormData LoadModalityEditForm();
+        LoadModalityForEditResponse LoadModalityForEdit(LoadModalityForEditRequest request);
     }
 }

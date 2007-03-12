@@ -4,13 +4,13 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Healthcare.Workflow.ModalityWorkflow;
 using ClearCanvas.Common;
 using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Services.Modality
+namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Modality
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     public interface IModalityWorkflowService
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Reporting
+namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     public interface IReportingWorkflowService
     {
