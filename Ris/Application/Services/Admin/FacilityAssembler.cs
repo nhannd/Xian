@@ -8,7 +8,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 {
     class FacilityAssembler
     {
-        public FacilitySummary CreateFacilitySummary(Facility facility)
+        public FacilitySummary CreateFacilitySummary(FacilityAdmin facility)
         {
             FacilitySummary summary = new FacilitySummary();
             summary.Code = facility.Code;
