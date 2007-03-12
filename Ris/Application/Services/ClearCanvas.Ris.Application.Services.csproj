@@ -56,8 +56,10 @@
     <Compile Include="Admin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceBatchImporter.cs" />
     <Compile Include="Admin\FacilityAdminService.cs" />
+    <Compile Include="Admin\FacilityAssembler.cs" />
     <Compile Include="Admin\HL7QueueService.cs" />
     <Compile Include="Admin\LocationAdminService.cs" />
+    <Compile Include="Admin\LocationAssembler.cs" />
     <Compile Include="Admin\ModalityAdminService.cs" />
     <Compile Include="Admin\PatientAdminService.cs" />
     <Compile Include="Admin\PractitionerAdminService.cs" />
