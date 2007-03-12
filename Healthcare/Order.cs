@@ -28,16 +28,17 @@ namespace ClearCanvas.Healthcare {
             OrderPriority priority)
         {
             // create the basic order
-            Order order = new Order(
-                                patient,
-                                visit,
-                                accessionNumber,
-                                diagnosticService,
-                                Platform.Time,
-                                schedulingRequestDateTime,
-                                orderingPhysician,
-                                orderingFacility,
-                                priority);
+            Order order = new Order();
+
+            order.Patient = patient;
+            order.Visit = visit;
+            order.AccessionNumber = accessionNumber;
+            order.DiagnosticService = diagnosticService;
+            order.EnteredDateTime = Platform.Time;
+            order.SchedulingRequestDateTime = schedulingRequestDateTime;
+            order.OrderingPractitioner = orderingPhysician;
+            order.OrderingFacility = orderingFacility;
+            order.Priority = priority;
 
             // add requested procedures according to the diagnostic service breakdown
             int rpIndex = 0;

@@ -14,6 +14,13 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class RequestedProcedure : Entity
 	{
+
+        public RequestedProcedure(Order order, RequestedProcedureType type, string index)
+        {
+            _order = order;
+            _type = type;
+            _index = index;
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

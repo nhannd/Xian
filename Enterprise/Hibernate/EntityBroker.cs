@@ -30,7 +30,6 @@ namespace ClearCanvas.Enterprise.Hibernate
         public virtual IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
         {
             string baseHql = string.Format("from {0} x", typeof(TEntity).Name);
-            HqlCondition.FromSearchCriteria("x", criteria);
             HqlQuery query = new HqlQuery(
                 baseHql,
                 HqlCondition.FromSearchCriteria("x", criteria),
@@ -70,7 +69,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             string baseHql = string.Format("select count(*) from {0} x", typeof(TEntity).Name);
 
-            // for a "count" query, sort conditions and limits that may be present in the
+            // for a "count" query, sort conditions that may be present in the
             // criteria object must be ignored- therefore, only the conditions are added to the query
             HqlQuery query = new HqlQuery(baseHql);
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("x", criteria));

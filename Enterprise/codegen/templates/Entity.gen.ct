@@ -42,7 +42,7 @@ namespace <%= model.namespace %> {
 	  	/// <summary>
 	  	/// All fields constructor
 	  	/// </summary>
-	  	public <%= className %>(<%= fields.map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
+	  	public <%= className %>(<%= (inheritedFields + fields).map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
 			:base(<%= inheritedFields.map {|f| "#{f.accessorName.downcase}1" }.join(', ') %>)
 	  	{
 		  	CustomInitialize();
