@@ -9,33 +9,32 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class TelephoneNumberAssembler
     {
-        public ClearCanvas.Ris.Application.Common.Admin.TelephoneNumber CreateTelephoneNumber(ClearCanvas.Healthcare.TelephoneNumber domainTelephoneNumber)
+        public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber)
         {
-            ClearCanvas.Ris.Application.Common.Admin.TelephoneNumber dtoTelephoneNumber = new ClearCanvas.Ris.Application.Common.Admin.TelephoneNumber();
+            TelephoneDetail telephoneDetail = new TelephoneDetail();
 
-            dtoTelephoneNumber.CountryCode = domainTelephoneNumber.CountryCode;
-            dtoTelephoneNumber.AreaCode = domainTelephoneNumber.AreaCode;
-            dtoTelephoneNumber.Number = domainTelephoneNumber.Number;
-            dtoTelephoneNumber.Extension = domainTelephoneNumber.Extension;
+            telephoneDetail.CountryCode = telephoneNumber.CountryCode;
+            telephoneDetail.AreaCode = telephoneNumber.AreaCode;
+            telephoneDetail.Number = telephoneNumber.Number;
+            telephoneDetail.Extension = telephoneNumber.Extension;
 
             // TODO Enum fields
-            //dtoTelephoneNumber.Use = domainTelephoneNumber.Use;
-            //dtoTelephoneNumber.Equipment = domainTelephoneNumber.Equipment;
+            //telephoneDetail.Use = telephoneNumber.Use;
+            //telephoneDetail.Equipment = telephoneNumber.Equipment;
 
-            dtoTelephoneNumber.ValidRangeFrom = domainTelephoneNumber.ValidRange.From;
-            dtoTelephoneNumber.ValidRangeUntil = domainTelephoneNumber.ValidRange.Until;
+            telephoneDetail.ValidRangeFrom = telephoneNumber.ValidRange.From;
+            telephoneDetail.ValidRangeUntil = telephoneNumber.ValidRange.Until;
 
-            return dtoTelephoneNumber;
+            return telephoneDetail;
         }
 
-        public void AddTelephoneNumber(ClearCanvas.Healthcare.TelephoneNumber domainTelephoneNumber
-            , List<ClearCanvas.Ris.Application.Common.Admin.TelephoneNumber> phoneNumbers)
+        public void AddTelephoneNumber(TelephoneNumber telephoneNumber, List<TelephoneDetail> phoneNumbers)
         {
-            ClearCanvas.Ris.Application.Common.Admin.TelephoneNumber dtoTelephoneNumber = CreateAddress(domainTelephoneNumber);
+            TelephoneDetail telephoneDetail = CreateTelephoneDetail(telephoneNumber);
 
             //TODO:  for each new telephone number, automatically expired any previous numbers based on the telephone use enum value
 
-            phoneNumbers.Add(dtoTelephoneNumber);
+            phoneNumbers.Add(telephoneDetail);
         }
     }
 }

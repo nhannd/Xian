@@ -7,29 +7,25 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class Address : DataContractBase
+    public class TelephoneDetail : DataContractBase
     {
         [DataMember]
-        public string Street;
+        public string CountryCode;
 
         [DataMember]
-        public string Unit;
+        public string AreaCode;
 
         [DataMember]
-        public string City;
+        public string Number;
 
         [DataMember]
-        public string Province;
+        public string Extension;
 
-        [DataMember]
-        public string PostalCode;
-
-        [DataMember]
-        public string Country;
-
-        //TODO Enum field
+        // TODO Enum fields
         //[DataMember]
-        //public AddressType Type;
+        //public TelephoneUse Use;
+        //[DataMember]
+        //public TelephoneEquipment Equipment;
 
         [DataMember]
         public DateTime? ValidRangeFrom;

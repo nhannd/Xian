@@ -40,13 +40,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (ClearCanvas.Healthcare.TelephoneNumber phoneNumber in staff.TelephoneNumbers)
             {
-                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneNumber(phoneNumber));
+                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber));
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
             foreach (ClearCanvas.Healthcare.Address address in staff.Addresses)
             {
-                detail.Addresses.Add(addressAssembler.CreateAddress(address));
+                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address));
             }
 
             return detail;

@@ -9,34 +9,33 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class AddressAssembler
     {
-        public ClearCanvas.Ris.Application.Common.Admin.Address CreateAddress(ClearCanvas.Healthcare.Address domainAddress)
+        public AddressDetail CreateAddressDetail(Address address)
         {
-            ClearCanvas.Ris.Application.Common.Admin.Address dtoAddress = new ClearCanvas.Ris.Application.Common.Admin.Address();
+            AddressDetail addressDetail = new AddressDetail();
 
-            dtoAddress.Street = domainAddress.Street;
-            dtoAddress.Unit = domainAddress.Unit;
-            dtoAddress.City = domainAddress.City;
-            dtoAddress.Province = domainAddress.Province;
-            dtoAddress.PostalCode = domainAddress.PostalCode;
-            dtoAddress.Country = domainAddress.Country;
+            addressDetail.Street = address.Street;
+            addressDetail.Unit = address.Unit;
+            addressDetail.City = address.City;
+            addressDetail.Province = address.Province;
+            addressDetail.PostalCode = address.PostalCode;
+            addressDetail.Country = address.Country;
 
             //TODO Enum field
-            //dtoAddress.Type = domainAddress.Type;
+            //addressDetail.Type = address.Type;
 
-            dtoAddress.ValidRangeFrom = domainAddress.ValidRange.From;
-            dtoAddress.ValidRangeUntil = domainAddress.ValidRange.Until;
+            addressDetail.ValidRangeFrom = address.ValidRange.From;
+            addressDetail.ValidRangeUntil = address.ValidRange.Until;
 
-            return dtoAddress;
+            return addressDetail;
         }
 
-        public void AddTelephoneNumber(ClearCanvas.Healthcare.Address domainAddress
-            , List<ClearCanvas.Ris.Application.Common.Admin.Address> addresses)
+        public void AddTelephoneNumber(Address address, List<AddressDetail> addresses)
         {
-            ClearCanvas.Ris.Application.Common.Admin.Address dtoAddress = CreateAddress(domainAddress);
+            AddressDetail addressDetail = CreateAddressDetail(address);
 
             //TODO:  for each new address, automatically expired any previous address based on the AddressType enum value
 
-            addresses.Add(dtoAddress);
+            addresses.Add(addressDetail);
         }
     }
 }

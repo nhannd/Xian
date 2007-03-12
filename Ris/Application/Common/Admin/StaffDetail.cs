@@ -28,9 +28,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public string Degree;
 
         [DataMember]
-        public List<TelephoneNumber> TelephoneNumbers;
+        public List<TelephoneDetail> TelephoneNumbers;
 
         [DataMember]
-        public List<Address> Addresses;
+        public List<AddressDetail> Addresses;
     }
 }
