@@ -120,4 +120,7 @@
   <data name="ExceptionConcurrentModification" xml:space="preserve">
     <value>Object modified by another user or process</value>
   </data>
+  <data name="ExceptionHL7Processing" xml:space="preserve">
+    <value>Cannot process HL7 message</value>
+  </data>
 </root>
