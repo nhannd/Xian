@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -14,56 +16,82 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
     public class StaffAdminService : ApplicationServiceBase, IStaffAdminService
     {
         [ReadOperation]
-        public IList<StaffAdmin> FindStaffs(string surname, string givenName)
+        public FindStaffsResponse FindStaffs(FindStaffsRequest request)
         {
-            Platform.CheckForNullReference(surname, "surname");
-
-            IStaffBroker broker = this.CurrentContext.GetBroker<IStaffBroker>();
-
+            //Note: FamilyName should never be null because the null reference check is done by WCF using the DataMember IsRequired attribute
             StaffSearchCriteria criteria = new StaffSearchCriteria();
-            criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(surname));
-            if (givenName != null)
+            criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(request.FamilyName));
+            if (request.GivenName != null)
             {
-                criteria.Name.GivenName.Like(StringCriteriaWithWildcardAppendedTo(givenName));
+                criteria.Name.GivenName.Like(StringCriteriaWithWildcardAppendedTo(request.GivenName));
             }
 
-            return broker.Find(criteria);
+            StaffAssembler assembler = new StaffAssembler();
+            return new FindStaffsResponse(
+                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
+                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria),
+                    delegate(Staff s)
+                    {
+                        return assembler.CreateStaffSummary(s);
+                    }));
         }
 
-        private string StringCriteriaWithWildcardAppendedTo(string surname)
+        private string StringCriteriaWithWildcardAppendedTo(string name)
         {
-            return surname.IndexOf('%') < 0 ? surname + "%" : surname;
+            return name.IndexOf('%') < 0 ? name + "%" : name;
         }
 
         [ReadOperation]
-        public IList<StaffAdmin> GetAllStaffs()
+        public ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request)
         {
-            return this.CurrentContext.GetBroker<IStaffBroker>().FindAll();
-        }
-
-        [UpdateOperation]
-        public void AddStaff(StaffAdmin staff)
-        {
-            this.CurrentContext.Lock(staff, DirtyState.New);
-        }
-
-        [UpdateOperation]
-        public void UpdateStaff(StaffAdmin staff)
-        {
-            this.CurrentContext.Lock(staff, DirtyState.Dirty);
+            StaffAssembler assembler = new StaffAssembler();
+            return new ListAllStaffsResponse(
+                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
+                    PersistenceContext.GetBroker<IStaffBroker>().FindAll(),
+                    delegate(Staff s)
+                    {
+                        return assembler.CreateStaffSummary(s);
+                    }));
         }
 
         [ReadOperation]
-        public StaffAdmin LoadStaff(EntityRef staffRef, bool withDetails)
+        public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
         {
-            IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
-            StaffAdmin staff = staffBroker.Load(staffRef);
-            if (withDetails)
-            {
-                staffBroker.LoadAddressesForStaff(staff);
-                staffBroker.LoadTelephoneNumbersForStaff(staff);
-            }
-            return staff;
+            // note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)
+            Staff s = (Staff)PersistenceContext.Load(request.StaffRef);
+            StaffAssembler assembler = new StaffAssembler();
+
+            return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s));
+        }
+
+        [UpdateOperation]
+        public AddStaffResponse AddStaff(AddStaffRequest request)
+        {
+            Staff staff = new Staff();
+            StaffAssembler assembler = new StaffAssembler();
+            assembler.UpdateStaff(staff, request.StaffDetail);
+
+            // TODO prior to accepting this add request, we should check that the same staff does not already exist
+
+            PersistenceContext.Lock(staff, DirtyState.New);
+
+            // ensure the new staff is assigned an OID before using it in the return value
+            PersistenceContext.SynchState();
+
+            return new AddStaffResponse(assembler.CreateStaffSummary(staff));
+        }
+
+        [UpdateOperation]
+        public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
+        {
+            Staff staff = (Staff)PersistenceContext.Load(request.StaffRef, EntityLoadFlags.CheckVersion);
+
+            StaffAssembler assembler = new StaffAssembler();
+            assembler.UpdateStaff(staff, request.StaffDetail);
+
+            // TODO prior to accepting this update request, we should check that the same staff does not already exist
+
+            return new UpdateStaffResponse(assembler.CreateStaffSummary(staff));
         }
     }
 }

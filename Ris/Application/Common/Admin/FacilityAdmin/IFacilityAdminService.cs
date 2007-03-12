@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        ListAllFacilitiesResponse GetAllFacilities(ListAllFacilitiesRequest request);
+        ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request);
 
         /// <summary>
         /// Add a facility

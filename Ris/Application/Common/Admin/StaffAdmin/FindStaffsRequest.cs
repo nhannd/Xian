@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     [DataContract]
     public class FindStaffsRequest : DataContractBase
     {
-        [DataMember]
+        [DataMember(IsRequired=true)]
         public string FamilyName;
 
         [DataMember]

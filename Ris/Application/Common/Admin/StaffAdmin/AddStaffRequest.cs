@@ -10,39 +10,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     public class AddStaffRequest : DataContractBase
     {
         [DataMember]
-        public string FamilyName;
-
-        [DataMember]
-        public string GivenName;
-
-        [DataMember]
-        public string MiddleName;
-
-        [DataMember]
-        public string Prefix;
-
-        [DataMember]
-        public string Suffix;
-
-        [DataMember]
-        public string Degree;
-
-        [DataMember]
-        public TelephoneNumber[] TelephoneNumbers;
-
-        [DataMember]
-        public Address[] Addresses;
-    }
-
-    [DataContract]
-    public class TelephoneNumber : DataContractBase
-    {
-
-    }
-
-    [DataContract]
-    public class Address : DataContractBase
-    {
-
+        public StaffDetail StaffDetail;
     }
 }

@@ -4,17 +4,10 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
+namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class GetAllStaffsResponse : DataContractBase
-    {
-        [DataMember]
-        public StaffListItem[] Staffs;
-    }
-
-    [DataContract]
-    public class StaffListItem : DataContractBase
+    public class StaffSummary : DataContractBase
     {
         [DataMember]
         public EntityRef StaffRef;
@@ -37,6 +30,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         [DataMember]
         public string Degree;
 
+        // Member for Practitioner
         [DataMember]
         public string LicenseNumber;
     }

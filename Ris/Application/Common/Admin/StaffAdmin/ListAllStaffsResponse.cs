@@ -7,12 +7,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 {
     [DataContract]
-    public class UpdateStaffRequest : DataContractBase
+    public class ListAllStaffsResponse : DataContractBase
     {
-        [DataMember]
-        public EntityRef StaffRef;
+        public ListAllStaffsResponse(List<StaffSummary> staffs)
+        {
+            this.Staffs = staffs;
+        }
 
         [DataMember]
-        public StaffDetail StaffDetail;
+        public List<StaffSummary> Staffs;
     }
 }

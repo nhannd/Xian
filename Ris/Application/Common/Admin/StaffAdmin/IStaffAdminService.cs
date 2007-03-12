@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         /// </summary>
         /// <returns>A list of all staffs</returns>
         [OperationContract]
-        GetAllStaffsResponse GetAllStaffs(GetAllStaffsRequest request);
+        ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request);
 
         /// <summary>
         /// Add a staff

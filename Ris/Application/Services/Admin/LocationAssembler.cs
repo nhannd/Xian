@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             location.Bed = detail.Bed;
             location.Building = detail.Building;
-            location.Facility = (FacilityAdmin)context.Load(detail.Facility, EntityLoadFlags.Proxy);
+            location.Facility = (Facility)context.Load(detail.Facility, EntityLoadFlags.Proxy);
             location.Floor = detail.Floor;
             location.PointOfCare = detail.PointOfCare;
             location.Room = detail.Room;

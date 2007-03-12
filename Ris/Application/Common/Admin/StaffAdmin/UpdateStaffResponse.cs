@@ -9,7 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     [DataContract]
     public class UpdateStaffResponse : DataContractBase
     {
+        public UpdateStaffResponse(StaffSummary staff)
+        {
+            this.Staff = staff;
+        }
+
         [DataMember]
-        public StaffListItem Staff;
+        public StaffSummary Staff;
     }
 }

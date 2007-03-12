@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 
             PersistenceContext.Lock(facility, DirtyState.New);
 
-            // ensure the new location is assigned an OID before using it in the return value
+            // ensure the new facility is assigned an OID before using it in the return value
             PersistenceContext.SynchState();
 
             return new AddFacilityResponse(assembler.CreateFacilitySummary(facility));
