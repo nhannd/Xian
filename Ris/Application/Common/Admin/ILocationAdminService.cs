@@ -28,10 +28,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         /// </summary>
         /// <param name="location"></param>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
         UpdateLocationResponse UpdateLocation(UpdateLocationRequest request);
 
         [OperationContract]
-        GetLocationEditViewResponse GetLocationEditView(GetLocationEditViewRequest request);
+        GetLocationEditFormDataResponse GetLocationEditFormData(GetLocationEditFormDataRequest request);
 
         [OperationContract]
         LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request);

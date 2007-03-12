@@ -7,12 +7,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class UpdateLocationRequest : DataContractBase
+    public class AddLocationResponse : DataContractBase
     {
-        [DataMember]
-        public EntityRef LocationRef;
+        public AddLocationResponse(LocationSummary location)
+        {
+            this.Location = location;
+        }
 
         [DataMember]
-        public LocationDetail LocationDetail;
+        public LocationSummary Location;
     }
 }

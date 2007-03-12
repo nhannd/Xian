@@ -2,34 +2,43 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
+    [ServiceContract]
     public interface IModalityAdminService
     {
         /// <summary>
         /// Return all modality options
         /// </summary>
         /// <returns></returns>
-        IList<Modality> GetAllModalities();
+        [OperationContract]
+        List<ModalitySummary> GetAllModalities();
 
         /// <summary>
         /// Add the specified modality
         /// </summary>
         /// <param name="modality"></param>
-        void AddModality(Modality modality);
+        [OperationContract]
+        ModalitySummary AddModality(ModalityDetail modality);
 
         /// <summary>
         /// Update the specified modality
         /// </summary>
         /// <param name="modality"></param>
-        void UpdateModality(Modality modality);
+        [OperationContract]
+        ModalitySummary UpdateModality(EntityRef modalityRef, ModalityDetail modalityDetail);
 
         /// <summary>
         /// Loads the modality for the specified modality reference
         /// </summary>
         /// <param name="modalityRef"></param>
         /// <returns></returns>
-        Modality LoadModality(EntityRef modalityRef);
+        [OperationContract]
+        ModalityDetail LoadModalityDetail(EntityRef modalityRef);
+
+        [OperationContract]
+        ModalityEditFormData LoadModalityEditForm();
     }
 }

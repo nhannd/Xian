@@ -59,6 +59,12 @@
     <Compile Include="Admin\IPatientAdminService.cs" />
     <Compile Include="Admin\IPractitionerAdminService.cs" />
     <Compile Include="Admin\IStaffAdminService.cs" />
+    <Compile Include="Admin\LoadLocationForEditRequest.cs" />
+    <Compile Include="Admin\LoadLocationForEditResponse.cs" />
+    <Compile Include="Admin\LocationDetail.cs" />
+    <Compile Include="Admin\LocationSummary.cs" />
+    <Compile Include="Admin\ModalityDetail.cs" />
+    <Compile Include="Admin\ModalitySummary.cs" />
     <Compile Include="Admin\LoadFacilityForEditRequest.cs" />
     <Compile Include="Admin\LoadFacilityForEditResponse.cs" />
     <Compile Include="Admin\LoadLocationForEditRequest.cs" />

@@ -7,23 +7,24 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class GetLocationEditViewResponse : DataContractBase
+    public class LocationDetail : DataContractBase
     {
         [DataMember]
-        public FacilityInfo[] FacilityChoices;
+        public EntityRef Facility;
+
+        [DataMember]
+        public string Building;
+
+        [DataMember]
+        public string Floor;
+
+        [DataMember]
+        public string PointOfCare;
+
+        [DataMember]
+        public string Room;
+
+        [DataMember]
+        public string Bed;
     }
-
-    [DataContract]
-    public class FacilityInfo : DataContractBase
-    {
-        [DataMember]
-        public EntityRef FacilityRef;
-
-        [DataMember]
-        public string Code;
-
-        [DataMember]
-        public string Name;
-    }
-
 }

@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class UpdateLocationRequest : DataContractBase
+    public class ModalityDetail : DataContractBase
     {
         [DataMember]
-        public EntityRef LocationRef;
+        public string Id;
 
         [DataMember]
-        public LocationDetail LocationDetail;
+        public string Name;
     }
 }

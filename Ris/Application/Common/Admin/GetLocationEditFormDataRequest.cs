@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class GetLocationEditViewRequest : DataContractBase
+    public class GetLocationEditFormDataRequest : DataContractBase
     {
     }
 }

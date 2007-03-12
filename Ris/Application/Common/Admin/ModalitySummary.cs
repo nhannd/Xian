@@ -7,9 +7,18 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class AddLocationResponse : DataContractBase
+    public class ModalitySummary : DataContractBase
     {
         [DataMember]
-        public LocationListItem Location;
+        public EntityRef ModalityRef;
+
+        [DataMember]
+        public string Id;
+
+        [DataMember]
+        public string Name;
+
+        [DataMember]
+        public bool Active;
     }
 }

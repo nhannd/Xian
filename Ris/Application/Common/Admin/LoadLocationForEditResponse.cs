@@ -9,25 +9,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class LoadLocationForEditResponse : DataContractBase
     {
+        public LoadLocationForEditResponse(EntityRef locationRef, LocationDetail locationDetail)
+        {
+            this.LocationRef = locationRef;
+            this.LocationDetail = locationDetail;
+        }
+
+
         [DataMember]
         public EntityRef LocationRef;
 
         [DataMember]
-        public EntityRef Facility;
-
-        [DataMember]
-        public string Building;
-
-        [DataMember]
-        public string Floor;
-
-        [DataMember]
-        public string PointOfCare;
-
-        [DataMember]
-        public string Room;
-
-        [DataMember]
-        public string Bed;
+        public LocationDetail LocationDetail;
     }
 }

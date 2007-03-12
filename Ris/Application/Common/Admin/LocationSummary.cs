@@ -1,20 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class GetAllLocationsResponse : DataContractBase
-    {
-        [DataMember]
-        public LocationListItem[] Locations;
-    }
-
-    [DataContract]
-    public class LocationListItem : DataContractBase
+    public class LocationSummary : DataContractBase
     {
         [DataMember]
         public EntityRef LocationRef;

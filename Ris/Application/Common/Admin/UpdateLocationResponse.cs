@@ -9,7 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class UpdateLocationResponse : DataContractBase
     {
+        public UpdateLocationResponse(LocationSummary summary)
+        {
+            this.Location = summary;
+        }
+
         [DataMember]
-        public LocationListItem Location;
+        public LocationSummary Location;
     }
 }

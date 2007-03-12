@@ -9,5 +9,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class GetAllLocationsRequest : DataContractBase
     {
+        public GetAllLocationsRequest(bool activeOnly)
+        {
+            this.ActiveOnly = activeOnly; 
+        }
+
+        [DataMember]
+        public bool ActiveOnly;
+
     }
 }
