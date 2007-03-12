@@ -4,12 +4,15 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.Location
+namespace ClearCanvas.Ris.Application.Common.Admin.Modality
 {
     [DataContract]
-    public class AddLocationRequest : DataContractBase
+    public class ModalityDetail : DataContractBase
     {
         [DataMember]
-        public LocationDetail LocationDetail;
+        public string Id;
+
+        [DataMember]
+        public string Name;
     }
 }

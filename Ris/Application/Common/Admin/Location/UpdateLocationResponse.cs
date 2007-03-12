@@ -1,21 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.Location
 {
     [DataContract]
-    public class GetAllLocationsRequest : DataContractBase
+    public class UpdateLocationResponse : DataContractBase
     {
-        public GetAllLocationsRequest(bool activeOnly)
+        public UpdateLocationResponse(LocationSummary summary)
         {
-            this.ActiveOnly = activeOnly; 
+            this.Location = summary;
         }
 
         [DataMember]
-        public bool ActiveOnly;
-
+        public LocationSummary Location;
     }
 }

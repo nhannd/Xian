@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.Admin
+namespace ClearCanvas.Ris.Application.Common.Admin.Location
 {
     [DataContract]
     public class GetAllLocationsResponse : DataContractBase

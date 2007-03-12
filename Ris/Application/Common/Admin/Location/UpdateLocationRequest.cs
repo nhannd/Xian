@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.Location
 {
     [DataContract]
-    public class AddLocationRequest : DataContractBase
+    public class UpdateLocationRequest : DataContractBase
     {
+        [DataMember]
+        public EntityRef LocationRef;
+
         [DataMember]
         public LocationDetail LocationDetail;
     }
