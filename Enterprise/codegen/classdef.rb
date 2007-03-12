@@ -68,6 +68,18 @@ class ClassDef < ElementDef
   def searchableFields
     @fields.select {|f| f.isSearchable }
   end
+  
+  # returns the FieldDef matching the specified fieldName, or nil if not found
+  # searches the inheritance chain if the field is not found in this class
+  # the fieldName may be either the name of the field or its property accessor (e.g. _field or Field)
+  def findField(fieldName)
+    return (@fields.find {|f| f.fieldName == fieldName || f.accessorName == fieldName}) || (isSubClass ? superClass.findField(fieldName) : nil)
+  end
+  
+  # gets the name of the search criteria class to generate for this classDef, or nil if not applicable
+  def searchCriteriaClassName
+    nil # defer to subclass
+  end
 
   
 protected  

@@ -38,27 +38,7 @@ namespace <%= model.namespace %> {
 		  	CustomInitialize();
 	  	}
                 
-        <% if((superClass || superClassName == "Entity") && (inheritedMandatoryFields + mandatoryFields).length > 0) %>
-	  	/// <summary>
-	  	/// Mandatory fields constructor
-	  	/// </summary>
-	  	public <%= className %>(<%= (inheritedMandatoryFields + mandatoryFields).map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
-			:base(<%= inheritedMandatoryFields.map {|f| "#{f.accessorName.downcase}1" }.join(', ') %>)
-	  	{
-            // initialize all fields to default values
-		 	<% initializedFields.each do |f| %>
-		  	<%= f.fieldName %> = <%= f.initialValue %>;
-		  	<% end %>
-                        
-		  	CustomInitialize();
-
-            // set mandatory fields
-            <% mandatoryFields.each do |f| %>
-		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
-		  	<% end %>
-	  	}
-	  	
-		<% if(fields.length > mandatoryFields.length) %>
+		<% if(fields.length > 0) %>
 	  	/// <summary>
 	  	/// All fields constructor
 	  	/// </summary>
@@ -71,7 +51,6 @@ namespace <%= model.namespace %> {
 		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
 		  	<% end %>
 	  	}
-		<% end %>
 		<% end %>
                 
 	  	#endregion

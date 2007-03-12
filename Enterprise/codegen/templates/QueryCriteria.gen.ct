@@ -1,0 +1,37 @@
+// This file is machine generated - changes will be lost.
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Data;
+
+namespace <%= namespace %> {
+
+    /// <summary>
+    /// <see cref="<%= className %>"/> class
+    /// </summary>
+	public partial class <%= className %>
+	{
+		<% fields.each do |f| %>
+	  	private <%= f.searchCriteriaDataType %> <%= f.fieldName %>;
+	  	<% end %>
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public <%= className %>()
+		{
+			<% fields.each do |f| %>
+		  	<%= f.fieldName %> = new <%= f.searchCriteriaDataType %>();
+		  	<% end %>
+		}
+	
+		<% fields.each do |f| %>
+	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>
+	  	{
+	  		get { return <%= f.fieldName %>; }
+	  	}
+	  	<% end %>
+	}
+}

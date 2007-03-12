@@ -41,11 +41,7 @@ class CollectionFieldDef < FieldDef
     false
   end
   
-  # collection fields never have setters
-  def hasSetter
-    true
-  end
-  
+  # collection setters should be private  
   def setterAccess
 	  "private"
   end
@@ -62,11 +58,7 @@ class CollectionFieldDef < FieldDef
   
 protected
   def collectionElementClassDef
-     classDef = model.entityDefs.find {|entity| entity.className == @elementType}
-     if(classDef == nil)
-	classDef = model.componentDefs.find {|component| component.className == @elementType}
-     end
-     return classDef
+     model.findClass(@elementType)
   end
  
 end

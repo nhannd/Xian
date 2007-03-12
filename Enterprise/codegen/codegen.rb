@@ -37,6 +37,18 @@ class CodeGen
     Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true),
   ]
   
+  @@queryResultTemplates = [
+    Template.new("QueryResult.gen.ct", "<%=@className%>.gen.cs", true)
+  ]
+  
+  @@queryCriteriaTemplates = [
+    Template.new("QueryCriteria.gen.ct", "<%=@className%>.gen.cs", true)
+  ]
+  
+  @@queryTemplates = [
+    Template.new("QueryBroker.gen.ct", "Hibernate/Brokers/<%=queryName%>Broker.gen.cs", true)
+  ]
+  
   
   # total number of generated files
   @@count = 0
@@ -60,13 +72,12 @@ class CodeGen
     Dir.entries(srcDir).each do |file|
     
       #check if the filename matches the *.hbm.xml extension
-      if File.fnmatch?("*.hbm.xml", file, File::FNM_DOTMATCH)
-      
-        #add the hbm file to the model
-	filePath = File.expand_path(file, srcDir)
-	if(!shouldIgnoreFile(filePath))
-		model.add(filePath)
-	end
+      if File.fnmatch?("*.hbm.xml", file, File::FNM_DOTMATCH) || File.fnmatch?("*.hrq.xml", file, File::FNM_DOTMATCH)
+        #add the file to the model
+    	filePath = File.expand_path(file, srcDir)
+#    	if(!shouldIgnoreFile(filePath))
+    		model.add(filePath, shouldIgnoreFile(filePath))
+#    	end
       end
     end
     
@@ -75,6 +86,9 @@ class CodeGen
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
     applyTemplates(@@enumTemplates, model.enumDefs, destDir)
     applyTemplates(@@componentTemplates, model.componentDefs, destDir)
+    applyTemplates(@@queryResultTemplates, model.queryResultDefs, destDir)
+    applyTemplates(@@queryCriteriaTemplates, model.queryCriteriaDefs, destDir)
+    applyTemplates(@@queryTemplates, model.queryDefs, destDir)
     
     
     puts "Total #{@@count} files"
@@ -83,12 +97,16 @@ class CodeGen
   # applies the specified array of templates to the specified array of elementDefs, placing output into destDir
   def CodeGen.applyTemplates(templates, elementDefs, destDir)
     elementDefs.each do |elementDef|
-      puts "Processing " + elementDef.elementName
-      templates.each do |template|
-        outputFile = template.run(elementDef, "./templates", destDir)
-        if (outputFile) 
-          @@count += 1
-          puts "Generated " + outputFile.sub(destDir, "")
+      if(elementDef.suppressCodeGen)
+        puts "Skipping " + elementDef.elementName
+      else
+        puts "Processing " + elementDef.elementName
+        templates.each do |template|
+          outputFile = template.run(elementDef, "./templates", destDir)
+          if (outputFile) 
+            @@count += 1
+            puts "Generated " + outputFile.sub(destDir, "")
+          end
         end
       end
     end

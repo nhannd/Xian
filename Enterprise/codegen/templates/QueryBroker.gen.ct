@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Enterprise.Hibernate.Hql;
+
+namespace ClearCanvas.Healthcare.Hibernate.Brokers
+{
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public partial class <%= queryName %>Broker : Broker, I<%= queryName %>Broker
+    {
+        public IList<<%= resultClass.className %>> Query(<%= criteriaClass.className %> criteria)
+        {
+            HqlReportQuery query = new HqlReportQuery(new HqlFrom("<%= root.hqlAlias %>", "<%= root.dataType %>"));
+            
+            <% joins.each do |j| %>
+            query.Joins.Add(new HqlJoin("<%= j.hqlAlias %>", "<%= j.source %>"));
+	  		<% end %>
+
+            <% resultFieldMappings.each do |m| %>
+            query.Selectors.Add(new HqlSelector("<%= m.name %>", "<%= m.source %>"));
+	  		<% end %>
+
+            <% criteriaFieldMappings.each do |m| %>
+            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("<%= m.source %>", criteria.<%= m.name %>));
+	  		<% end %>
+
+            return CollectionUtils.Map<object[], <%= resultClass.className %>, List<<%= resultClass.className %>>>(
+            	ExecuteHql(query),
+            	delegate(object[] tuple)
+            	{
+            		<%= resultClass.className %> result = new <%= resultClass.className %>();
+            		
+              		<% resultFieldMappings.each do |m| %>
+              		result.<%= m.name %> = (<%= m.dataType %>)tuple[<%= m.index %>];
+	  				<% end %>
+	  				
+	  				return result;
+            	});
+        }
+    }
+}

@@ -2,15 +2,20 @@ require 'elementdef'
 require 'entitydef'
 require 'enumdef'
 require 'componentdef'
+require 'querydef'
 
 # Represents a domain model defined by a set of NHibernate XML mappings
 class Model < ElementDef
-  attr_reader :namespace, :entityDefs, :enumDefs, :componentDefs
+  attr_reader :namespace, :entityDefs, :enumDefs, :componentDefs, :queryDefs, :queryCriteriaDefs, :queryResultDefs
   
   def initialize()
     @entityDefs = []
     @enumDefs = []
     @componentDefs = []
+    @queryDefs = []
+    @queryCriteriaDefs = []
+    @queryResultDefs = []
+    
     @symbolSpace = []
   end
   
@@ -18,8 +23,38 @@ class Model < ElementDef
     @namespace + " Model"
   end
   
-  # add the specified hbm file to the model  
-  def add(hbmFile)
+  # add the specified file to the model
+  # suppressCodeGen is a boolean that will suppress code generation for the classes defined in the specified file (hbm only)
+  def add(fileName, suppressCodeGen)
+    case
+      when fileName.include?('.hbm.xml') : addHbmFile(fileName, suppressCodeGen)
+      when fileName.include?('.hrq.xml') : addHrqFile(fileName)
+    end
+  end
+  
+  # returns the last component of the namespace
+  def shortName
+    @namespace.split('.')[-1]
+  end
+  
+  # searches entityDefs, componentDefs and enumDefs for the specified class, and returns the ClassDef or nil if not found
+  def findClass(className)
+    (@entityDefs + @componentDefs + @enumDefs).find {|c| c.className == className}
+  end
+
+  # processes componentNode to create instances of ComponentDef
+  # this method is public because it must be called from the ClassDef class - it should not be called otherwise
+  def processComponent(componentNode)
+    # only create a ComponentDef if the component is in the same namespace as this model
+    # (otherwise the component is defined in another namespace, and is simply being referenced by this model)
+    if(extractNamespace(componentNode.attributes['class']) == @namespace)
+	    componentDef = ComponentDef.new(self, componentNode)
+	    @componentDefs << componentDef if(!@symbolSpace.include?(componentDef.className))
+    end
+  end
+  
+protected
+  def addHbmFile(hbmFile, suppressCodeGen)
     # read the hbm xml file
     mappings = REXML::Document.new(File.new(hbmFile))
     
@@ -36,36 +71,39 @@ class Model < ElementDef
           if(/Enum$/.match(className))	#does the class name end with "Enum"?
             processEnum(c)
           else
-            processEntity(c, c.attributes['extends'] || "Entity", @entityDefs)
+            processEntity(c, c.attributes['extends'] || "Entity", @entityDefs, suppressCodeGen)
           end
         end
       end
     end
+  end
+  
+  def addHrqFile(hrqFile)
+    # read the hrq xml file
+    mappings = REXML::Document.new(File.new(hrqFile))
+    # extract the namespace - TODO throw exception if model already defined and doesn't match
+    @namespace = mappings.root.attributes['namespace'] if @namespace == nil
     
-  end
-  
-  # returns the last component of the namespace
-  def shortName
-    @namespace.split('.')[-1]
-  end
-  
-  # processes componentNode to create instances of ComponentDef
-  # this method is public because it must be called from the ClassDef class - it should not be called otherwise
-  def processComponent(componentNode)
-    # only create a ComponentDef if the component is in the same namespace as this model
-    # (otherwise the component is defined in another namespace, and is simply being referenced by this model)
-    if(extractNamespace(componentNode.attributes['class']) == @namespace)
-	    componentDef = ComponentDef.new(self, componentNode)
-	    @componentDefs << componentDef if(!@symbolSpace.include?(componentDef.className))
+    # process each query in the hrq file
+    mappings.root.each_element do |queryNode|
+      if(queryNode.name == 'query')
+        queryName = queryNode.attributes['name']
+        
+        # check if this class name already exists
+        if(!@symbolSpace.include?(queryName))
+          queryDef = QueryDef.new(self, queryNode)
+          @queryDefs << queryDef
+          @symbolSpace << queryDef.queryName
+        end
+      end
     end
   end
   
-protected
-  
   # processes classNode to create instances of EntityDef
-  def processEntity(classNode, superClassName, entityDefs)
+  def processEntity(classNode, superClassName, entityDefs, suppressCodeGen)
     #create EntityDef for classNode
     entityDef = EntityDef.new(self, classNode, superClassName)
+    entityDef.suppressCodeGen = suppressCodeGen
     entityDefs << entityDef
     @symbolSpace << entityDef.className
     

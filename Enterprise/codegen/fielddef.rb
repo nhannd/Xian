@@ -9,7 +9,7 @@ class FieldDef < ElementDef
                :dataType,             # the type of the field, and return type of the property
                :hasGetter,            # true if a getter should be generated
                :hasSetter,            # true if a setter should be generated
-	       :setterAccess,	  # access level of the setter, returns nil by default (eg no access modifier), or protected, internal, private
+	           :setterAccess,    	  # access level of the setter, returns nil by default (eg no access modifier), or protected, internal, private
                :nullable              # true if the field is nullable
   
   def initialize(model, fieldNode)
