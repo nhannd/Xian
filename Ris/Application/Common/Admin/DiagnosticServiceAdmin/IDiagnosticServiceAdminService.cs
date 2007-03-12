@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
+    [ServiceContract]
     public interface IDiagnosticServiceAdminService
     {
         /// <summary>
@@ -20,6 +22,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
         ///     6 - Default Modality ID
         ///     7 - Default Modality Name
         /// </param>
-        void BatchImport(IList<string[]> data);
+        [OperationContract]
+        BatchImportResponse BatchImport(BatchImportRequest request);
     }
 }

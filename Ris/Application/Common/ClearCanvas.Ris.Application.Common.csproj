@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AddressDetail.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\FacilityDetail.cs" />
     <Compile Include="Admin\FacilitySummary.cs" />

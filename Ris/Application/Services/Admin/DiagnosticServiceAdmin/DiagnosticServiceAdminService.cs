@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
@@ -13,9 +16,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
     public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
         [UpdateOperation]
-        public void BatchImport(IList<string[]> data)
+        public BatchImportResponse BatchImport(BatchImportRequest request)
         {
-            DiagnosticServiceBatchImporter.Import((IUpdateContext)this.CurrentContext, data);
+            DiagnosticServiceBatchImporter.Import((IUpdateContext)this.PersistenceContext, data);
         }
     }
 }
