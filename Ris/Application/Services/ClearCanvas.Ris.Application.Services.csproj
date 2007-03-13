@@ -55,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Admin\AddressAssembler.cs" />
     <Compile Include="Admin\ModalityAssembler.cs" />
-    <Compile Include="Admin\PersonNameAssembler.cs" />
     <Compile Include="Admin\PractitionerAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceBatchImporter.cs" />
@@ -75,6 +74,7 @@
     <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistAssembler.cs" />
+    <Compile Include="PersonNameAssembler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationWorkflow\AdtService.cs" />
     <Compile Include="RegistrationWorkflow\DefaultPatientReconciliationStrategy.cs" />
