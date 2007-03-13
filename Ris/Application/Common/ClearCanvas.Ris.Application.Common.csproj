@@ -98,6 +98,16 @@
     <Compile Include="Admin\ModalityAdmin\UpdateModalityResponse.cs" />
     <Compile Include="Admin\ModalityDetail.cs" />
     <Compile Include="Admin\ModalitySummary.cs" />
+    <Compile Include="Admin\PatientAdmin\ListPatientProfilesRequest.cs" />
+    <Compile Include="Admin\PatientAdmin\ListPatientProfilesResponse.cs" />
+    <Compile Include="Admin\PatientAdmin\LoadPatientProfileDetailsRequest.cs" />
+    <Compile Include="Admin\PatientAdmin\LoadPatientProfileDetailsResponse.cs" />
+    <Compile Include="Admin\PatientAdmin\LoadPatientProfileRequest.cs" />
+    <Compile Include="Admin\PatientAdmin\LoadPatientProfileResponse.cs" />
+    <Compile Include="Admin\PatientAdmin\AddNewPatientRequest.cs" />
+    <Compile Include="Admin\PatientAdmin\AddNewPatientResponse.cs" />
+    <Compile Include="Admin\PatientAdmin\UpdatePatientProfileRequest.cs" />
+    <Compile Include="Admin\PatientAdmin\UpdatePatientProfileResponse.cs" />
     <Compile Include="Admin\PractitionerAdmin\AddPractitionerRequest.cs" />
     <Compile Include="Admin\PractitionerAdmin\AddPractitionerResponse.cs" />
     <Compile Include="Admin\PractitionerAdmin\FindPractitionersRequest.cs" />
