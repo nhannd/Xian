@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
+namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.Adt
 {
     /// <summary>
     /// Provides ADT (Admit-Discharge-Transfer) services 
@@ -15,33 +16,38 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// </summary>
         /// <param name="criteria">Criteria to match</param>
         /// <returns>A list of patient profiles</returns>
-        IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
+        //IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
+        ListPatientProfilesResponse ListPatientProfiles(ListPatientProfilesRequest request);
 
         /// <summary>
         /// Loads the details collections for the specified patient profile, if not already loaded.
         /// </summary>
         /// <param name="profile"></param>
-        Patient LoadPatientAndAllProfiles(EntityRef profileRef);
+        //Patient LoadPatientAndAllProfiles(EntityRef profileRef);
+        LoadPatientAndAllProfilesResponse LoadPatientAndAllProfiles(LoadPatientAndAllProfilesRequest request);
 
         /// <summary>
         /// Loads a patient from the specified patient entity reference
         /// </summary>
         /// <param name="patientRef"></param>
         /// <returns></returns>
-        Patient LoadPatient(EntityRef patientRef);
+        //Patient LoadPatient(EntityRef patientRef);
+        LoadPatientResponse LoadPatient(LoadPatientRequest request);
 
         /// <summary>
         /// Loads the <see cref="Patient.Visits"/> collection, if it is not already loaded.
         /// </summary>
         /// <param name="patient">The patient to load profiles for</param>
-        IList<Visit> ListPatientVisits(EntityRef patientRef);
+        //IList<Visit> ListPatientVisits(EntityRef patientRef);
+        ListPatientVisitsResponse ListPatientVisits(ListPatientVisitsRequest request);
 
         /// <summary>
         /// Loads the Visit for the specified Visit reference
         /// </summary>
         /// <param name="visitRef"></param>
         /// <returns></returns>
-        Visit LoadVisit(EntityRef visitRef, bool withDetails);
+        //Visit LoadVisit(EntityRef visitRef, bool withDetails);
+        LoadVisitResponse LoadVisit(LoadVisitRequest request);
 
         /// <summary>
         /// Loads the patient profile with the specified OID, and optionally with details.
@@ -49,14 +55,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <param name="profileRef">A reference to the patient profile to load</param>
         /// <param name="withDetails">If true, will also load the related detail collections</param>
         /// <returns></returns>
-        PatientProfile LoadPatientProfile(EntityRef profileRef, bool withDetails);
+        //PatientProfile LoadPatientProfile(EntityRef profileRef, bool withDetails);
+        LoadPatientProfileResponse LoadPatientProfile(LoadPatientProfileRequest request);
 
         /// <summary>
         /// Searches for reconciliation candidates for the specified patient profile.
         /// </summary>
         /// <param name="patientProfile"></param>
         /// <returns>A list of matches</returns>
-        IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef patientProfileRef);
+        //IList<PatientProfileMatch> FindPatientReconciliationMatches(EntityRef patientProfileRef);
+        FindPatientReconciliationMatchesResponse FindPatientReconciliationMatches(FindPatientReconciliationMatchesRequest request);
 
         /// <summary>
         /// Loads specified profiles, with details, and computes the discrepancy according to the specified set
@@ -65,7 +73,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <param name="profileRefs"></param>
         /// <param name="testables"></param>
         /// <returns></returns>
-        PatientProfileDiff LoadPatientProfileDiff(EntityRef[] profileRefs, PatientProfileDiscrepancy testables);
+        //PatientProfileDiff LoadPatientProfileDiff(EntityRef[] profileRefs, PatientProfileDiscrepancy testables);
+        LoadPatientProfileDiffResponse LoadPatientProfileDiff(LoadPatientProfileDiffRequest request);
  
             
         /// <summary>
@@ -73,31 +82,36 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// </summary>
         /// <param name="toBeKept">Destination patient</param>
         /// <param name="toBeReconciled">Source patients</param>
-        void ReconcilePatients(Patient destPatient, IList<Patient> sourcePatients);
+        //void ReconcilePatients(Patient destPatient, IList<Patient> sourcePatients);
+        ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request);
 
         /// <summary>
         /// Creates a new patient for the specified profile, and returns the <see cref="Patient"/> object
         /// </summary>
         /// <param name="profile"></param>
-        Patient CreatePatientForProfile(PatientProfile profile);
+        //Patient CreatePatientForProfile(PatientProfile profile);
+        CreatePatientForProfileResponse CreatePatientForProfile(CreatePatientForProfileRequest request);
  
         /// <summary>
         /// Updates the specified patient profile
         /// </summary>
         /// <param name="profile"></param>
-        void UpdatePatientProfile(PatientProfile profile);
+        //void UpdatePatientProfile(PatientProfile profile);
+        UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request);
 
         /// <summary>
         /// Saves a new visit entity and associates it with the specified patient
         /// </summary>
         /// <param name="visit"></param>
         /// <param name="patientRef"></param>
-        void SaveNewVisit(Visit visit, EntityRef patientRef);
+        //void SaveNewVisit(Visit visit, EntityRef patientRef);
+        SaveNewVisitResponse SaveNewVisit(SaveNewVisitRequest request);
 
         /// <summary>
         /// Updates the specified visit
         /// </summary>
         /// <param name="visit"></param>
-        void UpdateVisit(Visit visit);
+        //void UpdateVisit(Visit visit);
+        UpdateVisitResponse UpdateVisit(UpdateVisitRequest request);
     }
 }
