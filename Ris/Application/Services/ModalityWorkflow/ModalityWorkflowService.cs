@@ -9,6 +9,8 @@ using ClearCanvas.Common;
 using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Healthcare.Workflow.Modality;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -16,28 +18,40 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
         [ReadOperation]
-        public IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria)
+        public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-            IModalityWorklistBroker broker = CurrentContext.GetBroker<IModalityWorklistBroker>();
-            return broker.GetWorklist(criteria, "UHN");
+            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
+            
+            // TODO Enum value
+            //criteria.State.EqualTo(request.ActivityStatus);
+
+            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            return new GetWorklistResponse(
+                CollectionUtils.Map<WorklistQueryResult, ModalityWorklistItem, List<ModalityWorklistItem>>(
+                    PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
+                    delegate(WorklistQueryResult queryResult)
+                    {
+                        return assembler.CreateWorklistItem(queryResult);
+                    }));
         }
 
         [ReadOperation]
-        public WorklistQueryResult GetWorklistItem(EntityRef mpsRef)
+        public GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request)
         {
-            IModalityWorklistBroker broker = CurrentContext.GetBroker<IModalityWorklistBroker>();
-            return broker.GetWorklistItem(mpsRef, "UHN");
+            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            WorklistQueryResult result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.MPSRef, request.PatientProfileAuthority);
+            return new GetWorklistItemResponse(assembler.CreateWorklistItem(result));
         }
 
         [ReadOperation]
-        public ModalityProcedureStep LoadWorklistItemPreview(WorklistQueryResult item)
+        public LoadWorklistItemPreviewResponse LoadWorklistItemPreview(LoadWorklistItemPreviewRequest request)
         {
-            IModalityProcedureStepBroker spsBroker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
-            IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();
-            IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
-            IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
+            IModalityProcedureStepBroker spsBroker = PersistenceContext.GetBroker<IModalityProcedureStepBroker>();
+            IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
+            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
+            IPatientBroker patientBroker = PersistenceContext.GetBroker<IPatientBroker>();
 
-            ModalityProcedureStep sps = spsBroker.Load(item.ProcedureStep);
+            ModalityProcedureStep sps = spsBroker.Load(request.MPSRef);
 
             // force a whole bunch of relationships to load... this could be optimized by using fetch joins
             //spsBroker.LoadRequestedProcedureForModalityProcedureStep(sps);
@@ -49,23 +63,24 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             spsBroker.LoadTypeForModalityProcedureStep(sps);
             rpBroker.LoadTypeForRequestedProcedure(sps.RequestedProcedure);
 
-            
             patientBroker.LoadProfilesForPatient( sps.RequestedProcedure.Order.Patient );
-            return sps;
+
+            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(sps, request.PatientProfileAuthority));
         }
 
         [UpdateOperation]
-        public void ExecuteOperation(EntityRef stepRef, string operationClassName)
+        public void ExecuteOperation(ExecuteOperationRequest request)
         {
-            ExecuteOperation(LoadStep(stepRef), 
-                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint(), operationClassName);
+            ExecuteOperation(LoadStep(request.MPSRef), 
+                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint(), request.OperationClassName);
         }
 
         [ReadOperation]
-        public IDictionary<string, bool> GetOperationEnablement(EntityRef stepRef)
+        public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return GetOperationEnablement(LoadStep(stepRef),
-                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint());
+            return new GetOperationEnablementResponse(GetOperationEnablement(LoadStep(request.MPSRef),
+                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint()));
         }
 
         private ModalityProcedureStep LoadStep(EntityRef stepRef)

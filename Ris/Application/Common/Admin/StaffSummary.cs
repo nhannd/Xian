@@ -13,22 +13,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public EntityRef StaffRef;
 
         [DataMember]
-        public string FamilyName;
-
-        [DataMember]
-        public string GivenName;
-
-        [DataMember]
-        public string MiddleName;
-
-        [DataMember]
-        public string Prefix;
-
-        [DataMember]
-        public string Suffix;
-
-        [DataMember]
-        public string Degree;
+        public PersonNameDetail PersonNameDetail;
 
         // Member for Practitioner
         [DataMember]

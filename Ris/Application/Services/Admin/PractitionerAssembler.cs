@@ -13,13 +13,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             PractitionerSummary summary = new PractitionerSummary();
             summary.StaffRef = practitioner.GetRef();
-            summary.FamilyName = practitioner.Name.FamilyName;
-            summary.GivenName = practitioner.Name.GivenName;
-            summary.MiddleName = practitioner.Name.MiddleName;
-            summary.Prefix = practitioner.Name.Prefix;
-            summary.Suffix = practitioner.Name.Suffix;
-            summary.Degree = practitioner.Name.Degree;
             summary.LicenseNumber = practitioner.LicenseNumber;
+
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            summary.PersonNameDetail = assembler.CreatePersonNameDetail(practitioner.Name);
 
             return summary;
         }
@@ -27,13 +24,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         public PractitionerDetail CreatePractitionerDetail(Practitioner practitioner)
         {
             PractitionerDetail detail = new PractitionerDetail();
-            detail.FamilyName = practitioner.Name.FamilyName;
-            detail.GivenName = practitioner.Name.GivenName;
-            detail.MiddleName = practitioner.Name.MiddleName;
-            detail.Prefix = practitioner.Name.Prefix;
-            detail.Suffix = practitioner.Name.Suffix;
-            detail.Degree = practitioner.Name.Degree;
             detail.LicenseNumber = practitioner.LicenseNumber;
+
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            detail.PersonNameDetail = assembler.CreatePersonNameDetail(practitioner.Name);
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneNumber phoneNumber in practitioner.TelephoneNumbers)
@@ -52,13 +46,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdatePractitioner(Practitioner practitioner, PractitionerDetail detail)
         {
-            detail.FamilyName = practitioner.Name.FamilyName;
-            detail.GivenName = practitioner.Name.GivenName;
-            detail.MiddleName = practitioner.Name.MiddleName;
-            detail.Prefix = practitioner.Name.Prefix;
-            detail.Suffix = practitioner.Name.Suffix;
-            detail.Degree = practitioner.Name.Degree;
             detail.LicenseNumber = practitioner.LicenseNumber;
+
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            detail.PersonNameDetail = assembler.CreatePersonNameDetail(practitioner.Name);
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneNumber phoneNumber in practitioner.TelephoneNumbers)

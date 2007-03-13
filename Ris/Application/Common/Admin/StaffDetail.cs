@@ -10,22 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     public class StaffDetail : DataContractBase
     {
         [DataMember]
-        public string FamilyName;
-
-        [DataMember]
-        public string GivenName;
-
-        [DataMember]
-        public string MiddleName;
-
-        [DataMember]
-        public string Prefix;
-
-        [DataMember]
-        public string Suffix;
-
-        [DataMember]
-        public string Degree;
+        public PersonNameDetail PersonNameDetail;
 
         [DataMember]
         public List<TelephoneDetail> TelephoneNumbers;

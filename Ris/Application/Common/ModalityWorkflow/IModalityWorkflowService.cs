@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ServiceModel;
+
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
+    [ServiceContract]
     public interface IModalityWorkflowService
     {
-        IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria);
-        WorklistQueryResult GetWorklistItem(EntityRef mpsRef);
-        ModalityProcedureStep LoadWorklistItemPreview(WorklistQueryResult item);
+        [OperationContract]
+        GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
-        IDictionary<string, bool> GetOperationEnablement(EntityRef stepRef);
-        void ExecuteOperation(EntityRef stepRef, string operationClassName);
+        [OperationContract]
+        GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request);
 
+        [OperationContract]
+        LoadWorklistItemPreviewResponse LoadWorklistItemPreview(LoadWorklistItemPreviewRequest request);
+
+        [OperationContract]
+        GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
+
+        [OperationContract(IsOneWayt=true)]
+        void ExecuteOperation(ExecuteOperationRequest request);
     }
 }

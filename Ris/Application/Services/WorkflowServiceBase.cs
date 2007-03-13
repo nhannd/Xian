@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services
             operation.Execute(step, new PersistentWorkflow(CurrentContext));
         }
 
-        protected IDictionary<string, bool> GetOperationEnablement(ProcedureStep step, IExtensionPoint operationExtPoint)
+        protected Dictionary<string, bool> GetOperationEnablement(ProcedureStep step, IExtensionPoint operationExtPoint)
         {
             // just hack in the user staff for the time-being
             IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();

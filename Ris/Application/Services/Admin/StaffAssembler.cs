@@ -13,12 +13,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             StaffSummary summary = new StaffSummary();
             summary.StaffRef = staff.GetRef();
-            summary.FamilyName = staff.Name.FamilyName;
-            summary.GivenName = staff.Name.GivenName;
-            summary.MiddleName = staff.Name.MiddleName;
-            summary.Prefix = staff.Name.Prefix;
-            summary.Suffix = staff.Name.Suffix;
-            summary.Degree = staff.Name.Degree;
+
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            summary.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
 
             Practitioner practitioner = staff as Practitioner;
             if (practitioner != null)
@@ -30,12 +27,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         public StaffDetail CreateStaffDetail(Staff staff)
         {
             StaffDetail detail = new StaffDetail();
-            detail.FamilyName = staff.Name.FamilyName;
-            detail.GivenName = staff.Name.GivenName;
-            detail.MiddleName = staff.Name.MiddleName;
-            detail.Prefix = staff.Name.Prefix;
-            detail.Suffix = staff.Name.Suffix;
-            detail.Degree = staff.Name.Degree;
+
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            detail.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
@@ -54,12 +48,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdateStaff(Staff staff, StaffDetail detail)
         {
-            detail.FamilyName = staff.Name.FamilyName;
-            detail.GivenName = staff.Name.GivenName;
-            detail.MiddleName = staff.Name.MiddleName;
-            detail.Prefix = staff.Name.Prefix;
-            detail.Suffix = staff.Name.Suffix;
-            detail.Degree = staff.Name.Degree;
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            detail.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
