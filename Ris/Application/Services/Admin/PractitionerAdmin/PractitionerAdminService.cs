@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         {
             Practitioner practitioner = new Practitioner();
             PractitionerAssembler assembler = new PractitionerAssembler();
-            assembler.UpdatePractitioner(practitioner, request.PractitionerDetail);
+            assembler.UpdatePractitioner(request.PractitionerDetail, practitioner);
 
             // TODO prior to accepting this add request, we should check that the same practitioner does not already exist
 
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             Practitioner practitioner = (Practitioner)PersistenceContext.Load(request.PractitionerRef, EntityLoadFlags.CheckVersion);
 
             PractitionerAssembler assembler = new PractitionerAssembler();
-            assembler.UpdatePractitioner(practitioner, request.PractitionerDetail);
+            assembler.UpdatePractitioner(request.PractitionerDetail, practitioner);
 
             // TODO prior to accepting this update request, we should check that the same practitioner does not already exist
 

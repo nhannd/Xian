@@ -21,11 +21,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         [DataMember]
         public string Extension;
 
-        // TODO Enum fields
-        //[DataMember]
-        //public TelephoneUse Use;
-        //[DataMember]
-        //public TelephoneEquipment Equipment;
+        [DataMember]
+        public string Use;
+
+        [DataMember]
+        public string Equipment;
 
         [DataMember]
         public DateTime? ValidRangeFrom;

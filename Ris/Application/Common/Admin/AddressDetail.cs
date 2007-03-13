@@ -27,9 +27,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         [DataMember]
         public string Country;
 
-        //TODO Enum field
-        //[DataMember]
-        //public AddressType Type;
+        [DataMember]
+        public string Type;
 
         [DataMember]
         public DateTime? ValidRangeFrom;

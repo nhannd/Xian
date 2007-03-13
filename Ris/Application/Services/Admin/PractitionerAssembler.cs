@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Healthcare;
+
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -44,24 +45,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return detail;
         }
 
-        public void UpdatePractitioner(Practitioner practitioner, PractitionerDetail detail)
+        public void UpdatePractitioner(PractitionerDetail detail, Practitioner practitioner)
         {
-            detail.LicenseNumber = practitioner.LicenseNumber;
+            practitioner.LicenseNumber = detail.LicenseNumber;
 
             PersonNameAssembler assembler = new PersonNameAssembler();
-            detail.PersonNameDetail = assembler.CreatePersonNameDetail(practitioner.Name);
+            assembler.UpdatePersonName(detail.PersonNameDetail, practitioner.Name);
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            foreach (TelephoneNumber phoneNumber in practitioner.TelephoneNumbers)
+            foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
             {
-                telephoneNumberAssembler.AddTelephoneNumber(phoneNumber, detail.TelephoneNumbers);
+                telephoneNumberAssembler.AddTelephoneNumber(phoneDetail, practitioner.TelephoneNumbers);
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach (Address address in practitioner.Addresses)
+            foreach (AddressDetail addressDetail in detail.Addresses)
             {
-                telephoneNumberAssembler.AddAddress(address, detail.Addresses);
+                addressAssembler.AddAddress(addressDetail, practitioner.Addresses);
             }
+
         }
     }
 }

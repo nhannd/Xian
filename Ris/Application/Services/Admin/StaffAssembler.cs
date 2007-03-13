@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Healthcare;
+
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -46,21 +47,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return detail;
         }
 
-        public void UpdateStaff(Staff staff, StaffDetail detail)
+        public void UpdateStaff(StaffDetail detail, Staff staff)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
-            detail.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
+            assembler.UpdatePersonName(detail.PersonNameDetail, staff.Name);
 
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
+            foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
             {
-                telephoneNumberAssembler.AddTelephoneNumber(phoneNumber, detail.TelephoneNumbers);
+                telephoneNumberAssembler.AddTelephoneNumber(phoneDetail, staff.TelephoneNumbers);
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach (Address address in staff.Addresses)
+            foreach (AddressDetail addressDetail in detail.Addresses)
             {
-                telephoneNumberAssembler.AddAddress(address, detail.Addresses);
+                addressAssembler.AddAddress(addressDetail, staff.Addresses);
             }
         }
     }

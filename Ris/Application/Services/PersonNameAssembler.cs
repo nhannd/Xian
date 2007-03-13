@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -20,5 +21,15 @@ namespace ClearCanvas.Ris.Application.Services
             detail.Degree = personName.Degree;
             return detail;
         }
+
+        public void UpdatePersonName(PersonNameDetail detail, PersonName personName)
+        {
+            personName.FamilyName = detail.FamilyName;
+            personName.GivenName = detail.GivenName;
+            personName.MiddleName = detail.MiddleName;
+            personName.Prefix = detail.Prefix;
+            personName.Suffix = detail.Suffix;
+            personName.Degree = detail.Degree;
+        }    
     }
 }

@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.ModalityWorkflow;
-using ClearCanvas.Common;
 using Iesi.Collections;
+
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -22,8 +23,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
             
-            // TODO Enum value
-            //criteria.State.EqualTo(request.ActivityStatus);
+            // TODO Check Enum conversion
+            ActivityStatus status = (ActivityStatus) Enum.Parse(typeof(ActivityStatus), request.ActivityStatus); 
+            criteria.State.EqualTo(status);
 
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
             return new GetWorklistResponse(

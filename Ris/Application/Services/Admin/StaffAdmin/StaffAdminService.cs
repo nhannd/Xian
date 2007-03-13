@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         {
             Staff staff = new Staff();
             StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(staff, request.StaffDetail);
+            assembler.UpdateStaff(request.StaffDetail, staff);
 
             // TODO prior to accepting this add request, we should check that the same staff does not already exist
 
@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             Staff staff = (Staff)PersistenceContext.Load(request.StaffRef, EntityLoadFlags.CheckVersion);
 
             StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(staff, request.StaffDetail);
+            assembler.UpdateStaff(request.StaffDetail, staff);
 
             // TODO prior to accepting this update request, we should check that the same staff does not already exist
 
