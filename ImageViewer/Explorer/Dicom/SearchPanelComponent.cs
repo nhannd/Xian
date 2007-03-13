@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	/// SearchPanelComponent class
 	/// </summary>
 	[AssociateView(typeof(SearchPanelComponentViewExtensionPoint))]
-	public class SearchPanelComponent : ApplicationComponent, INotifyPropertyChanged
+	public class SearchPanelComponent : ApplicationComponent
 	{
 		private StudyBrowserComponent _studyBrowserComponent;
 
