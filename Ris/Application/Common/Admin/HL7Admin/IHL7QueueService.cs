@@ -67,6 +67,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatient request);
+        GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatientRequest request);
     }
 }

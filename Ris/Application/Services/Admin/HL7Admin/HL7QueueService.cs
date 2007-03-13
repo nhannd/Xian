@@ -11,54 +11,111 @@ using ClearCanvas.HL7.Processing;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class HL7QueueService : ApplicationServiceBase, IHL7QueueService
     {
-        private readonly int numResults = 50;
+        //TODO:  The following three service methods need a new home
 
-        public HL7QueueService()
-        {
-        }
+        #region To Be Refactored
 
+        //[UpdateOperation]
+        //public void EnqueueHL7QueueItem(ClearCanvas.HL7.HL7QueueItem item)
+        //{
+        //    this.CurrentContext.Lock(item, DirtyState.New);
+        //}
+
+        ////[UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.Required)]
+        //public string GetAccessionNumber()
+        //{
+        //    IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
+        //    return broker.GetNextAccessionNumber();
+        //}
+
+        ////[ReadOperation(PersistenceScopeOption = PersistenceScopeOption.Required)]
+        //public PractitionerAdmin FindPractitioner(string id)
+        //{
+        //    IPractitionerBroker broker = this.CurrentContext.GetBroker<IPractitionerBroker>();
+
+        //    PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
+        //    criteria.LicenseNumber.EqualTo(id);
+
+        //    IList<PractitionerAdmin> results = broker.Find(criteria);
+        //    if (results.Count == 0)
+        //    {
+        //        return null;
+        //    }
+        //    else if (results.Count == 1)
+        //    {
+        //        return results[0];
+        //    }
+        //    else
+        //    {
+        //        throw new Exception("Multiple practioners");
+        //    }
+        //}
+
+        #endregion
+        
         #region IHL7QueueService Members
 
         [ReadOperation]
-        public HL7QueueItem LoadHL7QueueItem(EntityRef queueItemRef)
+        public GetHL7QueueFormDataResponse GetHL7QueueFormData(GetHL7QueueFormDataRequest request)
         {
-            IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
-            return broker.Load(queueItemRef);
+            GetHL7QueueFormDataResponse response = new GetHL7QueueFormDataResponse();
+
+            //TODO: Populate choices lists from database
+
+            response.DirectionChoices = new string[] { "Inbound", "Outbound" };
+            response.StatusCodeChoices = new string[] { "Pending", "Complete", "Error" };
+            response.MessageEventChoices = new string[] { };
+            response.MessageFormatChoices = new string[] { "XML", "ER7" };
+            response.MessageTypeChoices = new string[] { };
+            response.MessageVersionChoices = new string[] { };
+            response.PeerChoices = new string[] { };
+
+            return response;
         }
 
         [ReadOperation]
-        public IList<HL7QueueItem> GetNextInboundHL7QueueItemBatch()
+        public ListHL7QueueItemsResponse ListHL7QueueItems(ListHL7QueueItemsRequest request)
         {
-            // Find the first pending item in the queue
-            HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
-            criteria.Status.Code.EqualTo(HL7MessageStatusCode.P);
-            criteria.Status.CreationDateTime.SortAsc(0);
+            HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
+            HL7QueueItemSearchCriteria criteria = assembler.CreateHL7QueueItemSearchCriteria(request);
 
-            SearchResultPage page = new SearchResultPage();
-            page.FirstRow = 0;
-            page.MaxRows = numResults;
-
-            return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, page);
+            return new ListHL7QueueItemsResponse(
+                CollectionUtils.Map<HL7QueueItem, HL7QueueItemSummary, List<HL7QueueItemSummary>>(
+                    PersistanceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria),
+                    delegate(HL7QueueItem queueItem)
+                    {
+                        return assembler.CreateHL7QueueItemSummary(queueItem);
+                    }));
         }
 
         [ReadOperation]
-        public IList<HL7QueueItem> GetHL7QueueItems(HL7QueueItemSearchCriteria criteria, SearchResultPage page)
+        public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
         {
-            return this.CurrentContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, page);
+            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
+            HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
+            
+            return new LoadHL7QueueItemResponse(
+                queueItem.GetRef(),
+                assembler.CreateHL7QueueItemDetail(queueItem));
         }
 
         [ReadOperation]
-        public PatientProfile GetReferencedPatient(EntityRef hl7QueueItemRef)
+        public GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatientRequest request)
         {
-            IHL7QueueItemBroker broker = this.CurrentContext.GetBroker<IHL7QueueItemBroker>();
-            HL7QueueItem queueItem = broker.Load(hl7QueueItemRef);
+            HL7QueueItem queueItem = (HL7QueueItem)PersistanceContext.Load(request.QueueItemRef);
 
+            //TODO:  Refactor following region
+            #region To Be Refactored
+            
             IHL7PreProcessor preProcessor = new HL7PreProcessor();
             HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
 
@@ -71,26 +128,33 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             }
             string assigningAuthority = processor.ReferencedPatientIdentifiersAssigningAuthority();
 
+            #endregion
+
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             criteria.Mrn.Id.EqualTo(identifiers[0]);
             criteria.Mrn.AssigningAuthority.EqualTo(assigningAuthority);
 
-            IPatientProfileBroker profileBroker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
+            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             IList<PatientProfile> profiles = profileBroker.Find(criteria);
 
             if (profiles.Count == 0)
             {
-                return null;
+                return new GetReferencedPatientResponse();
             }
             else
             {
-                return profiles[0];
+                return new GetReferencedPatientResponse(profiles[0].GetRef());
             }
         }
 
         [UpdateOperation]
-        public IList<Patient> ProcessHL7QueueItem(HL7QueueItem hl7QueueItem)
+        public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
         {
+            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
+            
+            //TODO:  Refactor following region
+            #region To Be Refactored
+
             IList<Patient> referencedPatients = null;
 
             IHL7PreProcessor preProcessor = new HL7PreProcessor();
@@ -104,7 +168,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             processor.Visits = LoadOrCreateVisitFromVisitNumber(
                 processor.ListReferencedVisitIdentifiers(),
                 processor.ReferencedVisitIdentifierAssigningAuthority());
-            processor.Orders = processor.HasOrders == false ? new List<EntityAccess<Order>>() : 
+            processor.Orders = processor.HasOrders == false ? new List<EntityAccess<Order>>() :
                 LoadOrCreateOrdersFromPlacerNumber(
                     processor.ListReferencedPlacerOrderNumbers(),
                     processor.ReferencedPlacerOrderNumberAssigningAuthority());
@@ -124,57 +188,31 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                 this.CurrentContext.Lock(orderAccess.Entity, orderAccess.State);
             }
 
-            return referencedPatients;
+            #endregion
+
+            return new ProcessHL7QueueItemResponse();
         }
 
         [UpdateOperation]
-        public void SetHL7QueueItemComplete(HL7QueueItem item)
+        public SetHL7QueueItemCompleteResponse SetHL7QueueItemComplete(SetHL7QueueItemCompleteRequest request)
         {
-            this.CurrentContext.Lock(item);
-            item.SetComplete();
+            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
+
+            PersistenceContext.Lock(queueItem);
+            queueItem.SetComplete();
+
+            return new SetHL7QueueItemCompleteResponse();
         }
 
         [UpdateOperation]
-        public void SetHL7QueueItemError(HL7QueueItem item, string errorMessage)
+        public SetHL7QueueItemErrorResponse SetHL7QueueItemError(SetHL7QueueItemErrorRequest request)
         {
-            this.CurrentContext.Lock(item);
-            item.SetError(errorMessage);
-        }
+            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
 
-        [UpdateOperation]
-        public void EnqueueHL7QueueItem(ClearCanvas.HL7.HL7QueueItem item)
-        {
-            this.CurrentContext.Lock(item, DirtyState.New);
-        }
+            PersistenceContext.Lock(queueItem);
+            queueItem.SetError(request.ErrorMessage);
 
-        //[UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.Required)]
-        public string GetAccessionNumber()
-        {
-            IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
-            return broker.GetNextAccessionNumber();
-        }
-
-        //[ReadOperation(PersistenceScopeOption = PersistenceScopeOption.Required)]
-        public PractitionerAdmin FindPractitioner(string id)
-        {
-            IPractitionerBroker broker = this.CurrentContext.GetBroker<IPractitionerBroker>();
-
-            PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
-            criteria.LicenseNumber.EqualTo(id);
-
-            IList<PractitionerAdmin> results = broker.Find(criteria);
-            if (results.Count == 0)
-            {
-                return null;
-            }
-            else if (results.Count == 1)
-            {
-                return results[0];
-            }
-            else
-            {
-                throw new Exception("Multiple practioners");
-            }
+            return new SetHL7QueueItemErrorResponse();
         }
 
         #endregion
@@ -191,7 +229,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                 criteria.Mrn.Id.EqualTo(mrn);
                 criteria.Mrn.AssigningAuthority.EqualTo(assigningAuthority);
 
-                IList<PatientProfile> profiles = this.CurrentContext.GetBroker<IPatientProfileBroker>().Find(criteria);
+                IList<PatientProfile> profiles = PersistenceContext.GetBroker<IPatientProfileBroker>().Find(criteria);
                 if (profiles.Count > 0)
                 {
                     loadedPatients.Add(new EntityAccess<Patient>(profiles[0].Patient, DirtyState.Dirty));
@@ -217,15 +255,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             IList<EntityAccess<Visit>> loadedVisits = new List<EntityAccess<Visit>>();
 
-            if (visitNumbers.Count == 0) return loadedVisits;
-
             foreach (string visitNumber in visitNumbers)
             {
                 VisitSearchCriteria criteria = new VisitSearchCriteria();
                 criteria.VisitNumber.Id.EqualTo(visitNumber);
                 criteria.VisitNumber.AssigningAuthority.EqualTo(assigningAuthority);
 
-                IList<Visit> visits = this.CurrentContext.GetBroker<IVisitBroker>().Find(criteria);
+                IList<Visit> visits = PersistenceContext.GetBroker<IVisitBroker>().Find(criteria);
                 if (visits.Count > 0)
                 {
                     loadedVisits.Add(new EntityAccess<Visit>(visits[0], DirtyState.Dirty));
@@ -237,7 +273,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                     visit.VisitNumber.Id = visitNumber;
                     visit.VisitNumber.AssigningAuthority = assigningAuthority;
 
-                    IList<FacilityAdmin> facilities = this.CurrentContext.GetBroker<IFacilityBroker>().FindAll();
+                    IList<Facility> facilities = PersistenceContext.GetBroker<IFacilityBroker>().FindAll();
                     visit.Facility = facilities[0];
 
                     loadedVisits.Add(new EntityAccess<Visit>(visit, DirtyState.New));
@@ -247,27 +283,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             return loadedVisits;
         }
 
+
         private IList<EntityAccess<Order>> LoadOrCreateOrdersFromPlacerNumber(IList<string> placerNumbers, string assigningAuthority)
         {
             IList<EntityAccess<Order>> loadedOrders = new List<EntityAccess<Order>>();
-
-            if(placerNumbers.Count == 0) return loadedOrders;
 
             foreach (string placerNumber in placerNumbers)
             {
                 OrderSearchCriteria criteria = new OrderSearchCriteria();
                 criteria.PlacerNumber.EqualTo(placerNumber);
-                
-                IList<Order> orders = this.CurrentContext.GetBroker<IOrderBroker>().Find(criteria);
-                if(orders.Count > 0)
+
+                IList<Order> orders = PersistenceContext.GetBroker<IOrderBroker>().Find(criteria);
+                if (orders.Count > 0)
                 {
                     loadedOrders.Add(new EntityAccess<Order>(orders[0], DirtyState.Dirty));
                 }
                 else
                 {
-                    //Order order = new Order();
-                    //order.PlacerNumber = placerNumber;
-                    //loadedOrders.Add(new EntityAccess<Order>(order, DirtyState.New));
                     loadedOrders.Add(new EntityAccess<Order>(null, DirtyState.New));
                 }
             }
@@ -275,7 +307,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             return loadedOrders;
         }
 
-        #endregion    
+        #endregion
+
     }
 }
 

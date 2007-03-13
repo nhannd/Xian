@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    class HL7QueueItemSummary : DataContractBase
+    public class HL7QueueItemSummary : DataContractBase
     {
         [DataMember]
         public EntityRef QueueItemRef;

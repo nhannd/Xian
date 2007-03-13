@@ -70,6 +70,7 @@
     <Compile Include="Admin\TelephoneNumberAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
+    <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
