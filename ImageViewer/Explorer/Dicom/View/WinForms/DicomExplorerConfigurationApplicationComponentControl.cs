@@ -27,7 +27,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
-        }
+			BindingSource bindingSource = new BindingSource();
+			bindingSource.DataSource = _component;
+
+			_showPhoneticIdeographicNames.DataBindings.Add("Checked", bindingSource, "ShowPhoneticIdeographicNames", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
     }
 }

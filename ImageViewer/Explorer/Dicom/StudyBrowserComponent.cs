@@ -249,6 +249,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
+
+			DicomExplorerConfigurationSettings.Default.PropertyChanged += new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
 		}
 
 		public override void Stop()
@@ -289,6 +291,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
 		}
+
+
 
 		public void Search()
 		{
@@ -424,18 +428,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					delegate(StudyItem item) { return item.PatientsName.FirstName; },
                     1.5f
 					));
-            studyList.Columns.Add(
-                new TableColumn<StudyItem, string>(
-                    SR.ColumnHeadingIdeographicName,
-                    delegate(StudyItem item) { return item.PatientsName.Ideographic; },
-                    1.5f
-                    ));
-            studyList.Columns.Add(
-                new TableColumn<StudyItem, string>(
-                    SR.ColumnHeadingPhoneticName,
-                    delegate(StudyItem item) { return item.PatientsName.Phonetic; },
-                    1.5f
-                    ));
+			if (DicomExplorerConfigurationSettings.Default.ShowIdeographicName)
+			{
+				studyList.Columns.Add(
+				new TableColumn<StudyItem, string>(
+					SR.ColumnHeadingIdeographicName,
+					delegate(StudyItem item) { return item.PatientsName.Ideographic; },
+					1.5f
+					));
+			}
+			if (DicomExplorerConfigurationSettings.Default.ShowPhoneticName)
+			{
+				studyList.Columns.Add(
+					new TableColumn<StudyItem, string>(
+						SR.ColumnHeadingPhoneticName,
+						delegate(StudyItem item) { return item.PatientsName.Phonetic; },
+						1.5f
+						));
+			}
             studyList.Columns.Add(
                 new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingDateOfBirth,
@@ -510,5 +520,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             return "";
         }
+
+		void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "ShowIdeographicName" ||
+				e.PropertyName == "ShowPhoneticName")
+			{
+				SelectServerGroup(_selectedServerGroup);
+			}
+		}
 	}
 }

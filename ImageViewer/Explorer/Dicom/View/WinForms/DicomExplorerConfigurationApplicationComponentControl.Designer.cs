@@ -28,24 +28,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this._showPhoneticIdeographicNames = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
-			// checkBox1
+			// _showPhoneticIdeographicNames
 			// 
-			this.checkBox1.AutoSize = true;
-			this.checkBox1.Location = new System.Drawing.Point(25, 29);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(80, 17);
-			this.checkBox1.TabIndex = 0;
-			this.checkBox1.Text = "checkBox1";
-			this.checkBox1.UseVisualStyleBackColor = true;
+			this._showPhoneticIdeographicNames.AutoSize = true;
+			this._showPhoneticIdeographicNames.Location = new System.Drawing.Point(11, 11);
+			this._showPhoneticIdeographicNames.Name = "_showPhoneticIdeographicNames";
+			this._showPhoneticIdeographicNames.Size = new System.Drawing.Size(210, 17);
+			this._showPhoneticIdeographicNames.TabIndex = 0;
+			this._showPhoneticIdeographicNames.Text = "Show phonetic and ideographic names";
+			this._showPhoneticIdeographicNames.UseVisualStyleBackColor = true;
 			// 
 			// DicomExplorerConfigurationApplicationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.checkBox1);
+			this.Controls.Add(this._showPhoneticIdeographicNames);
 			this.Name = "DicomExplorerConfigurationApplicationComponentControl";
 			this.Size = new System.Drawing.Size(329, 210);
 			this.ResumeLayout(false);
@@ -55,6 +55,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         #endregion
 
-		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.CheckBox _showPhoneticIdeographicNames;
     }
 }

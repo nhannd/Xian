@@ -22,6 +22,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[AssociateView(typeof(DicomExplorerConfigurationApplicationComponentViewExtensionPoint))]
 	public class DicomExplorerConfigurationApplicationComponent : ConfigurationApplicationComponent
 	{
+		private bool _showPhoneticIdeographicNames = false;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -29,9 +31,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 		}
 
+		public bool ShowPhoneticIdeographicNames
+		{
+			get 
+			{
+				return _showPhoneticIdeographicNames; 
+			}
+			set 
+			{ 
+				_showPhoneticIdeographicNames = value;
+				this.Modified = true;
+			}
+		}
+
 		public override void Start()
 		{
-			// TODO prepare the component for its live phase
+			_showPhoneticIdeographicNames = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
 			base.Start();
 		}
 
@@ -44,7 +59,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Save()
 		{
-			//throw new Exception("The method or operation is not implemented.");
+			DicomExplorerConfigurationSettings.Default.ShowIdeographicName = this.ShowPhoneticIdeographicNames;
+			DicomExplorerConfigurationSettings.Default.ShowPhoneticName = this.ShowPhoneticIdeographicNames;
+			DicomExplorerConfigurationSettings.Default.Save();
 		}
 	}
 }
