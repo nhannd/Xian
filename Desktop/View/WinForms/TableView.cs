@@ -26,8 +26,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ITable _table;
         private bool _multiLine;
 
-
-
 		public TableView()
 		{
 			InitializeComponent();
@@ -151,6 +149,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _table; }
             set
             {
+				// Important: Unsubscribe from old table
+				if (_table != null)
+				{
+					foreach (ITableColumn column in _table.Columns)
+						column.VisibilityChanged -= OnColumnVisibilityChanged;
+				}
+
                 _table = value;
 
                 // by setting the datasource to null here, we eliminate the SelectionChanged events that
@@ -263,13 +268,44 @@ namespace ClearCanvas.Desktop.View.WinForms
                     dgcol.HeaderText = col.Name;
                     dgcol.DataPropertyName = col.Name;
                     dgcol.ReadOnly = col.ReadOnly;
-
                     dgcol.MinimumWidth = (int)(col.WidthFactor * _table.BaseColumnWidthChars * fontSize);
                     dgcol.FillWeight = col.WidthFactor;
+					dgcol.Visible = col.Visible;
+
+					// Associate the ITableColumn with the DataGridViewColumn
+					dgcol.Tag = col;
+
+					col.VisibilityChanged += OnColumnVisibilityChanged;
+
                     _dataGridView.Columns.Add(dgcol);
                 }
             }
         }
+
+		private void OnColumnVisibilityChanged(object sender, EventArgs e)
+		{
+			// NY: Yes, I know, this is really cheap. The original plan was
+			// to use anonymous delegates to "bind" the ITableColumn to the
+			// DataGridViewColumn, but unsubscribing from ITableColumn.VisiblityChanged
+			// was problematic.  This is the next best thing if we want
+			// easy unsubscription.
+			ITableColumn column = sender as ITableColumn;
+			DataGridViewColumn dgcolumn = FindDataGridViewColumn(column);
+
+			if (dgcolumn != null)
+				dgcolumn.Visible = column.Visible;
+		}
+
+		private DataGridViewColumn FindDataGridViewColumn(ITableColumn column)
+		{
+			foreach (DataGridViewColumn dgcolumn in _dataGridView.Columns)
+			{
+				if (dgcolumn.Tag == column)
+					return dgcolumn;
+			}
+
+			return null;
+		}
 
         private void _dataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.ComponentModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
 {
@@ -34,19 +36,26 @@ namespace ClearCanvas.Desktop.Tables
 
         private Table<TItem> _table;
         private string _name;
+		private bool _visible = true;
         private Type _columnType;
         private float _widthFactor;
 
         private Comparison<TItem> _comparison;
+		private event EventHandler _visibilityChangedEvent;
+
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="columnName">The name of the column</param>
         /// <param name="columnType">The type of value that the column holds</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+		/// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
         /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
-        public TableColumnBase(string columnName, Type columnType, float widthFactor, Comparison<TItem> comparison)
+        public TableColumnBase(
+			string columnName, 
+			Type columnType, 
+			float widthFactor, 
+			Comparison<TItem> comparison)
         {
             _name = columnName;
             _widthFactor = widthFactor;
@@ -94,7 +103,23 @@ namespace ClearCanvas.Desktop.Tables
             get { return _columnType; }
         }
 
-        /// <summary>
+		public bool Visible
+		{
+			get { return _visible; }
+			set 
+			{ 
+				_visible = value;
+				EventsHelper.Fire(_visibilityChangedEvent, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler VisibilityChanged
+		{
+			add { _visibilityChangedEvent += value; }
+			remove { _visibilityChangedEvent -= value; }
+		}
+		
+		/// <summary>
         /// Gets or sets a factor that determines the width of this column relative to other columns in the table.
         /// The default value is 1.0.  
         /// </summary>

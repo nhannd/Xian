@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.Tables
 {
@@ -19,6 +20,16 @@ namespace ClearCanvas.Desktop.Tables
         /// The type of data that the column holds
         /// </summary>
         Type ColumnType { get; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this column is visible.
+		/// </summary>
+		bool Visible { get; set; }
+
+		/// <summary>
+		/// Occurs when the <see cref="Visible"/> property has changed.
+		/// </summary>
+		event EventHandler VisibilityChanged;
 
         /// <summary>
         /// A factor that influences the width of the column relative to other columns.
