@@ -27,6 +27,7 @@ namespace ClearCanvas.Dicom
                 throw new System.ArgumentNullException("personsName", SR.ExceptionGeneralPersonsNameNull);
 
             _personsName = personsName;
+            BreakApartIntoComponentGroups();
         }
 
         protected virtual string InternalPersonName
@@ -95,8 +96,7 @@ namespace ClearCanvas.Dicom
             if (null == this.InternalPersonName || "" == this.InternalPersonName)
                 return;
 
-            string decodedRawData = SpecificCharacterSetParser.Parse(_specificCharacterSet, this.InternalPersonName);
-            string[] componentGroupsStrings = decodedRawData.Split('=');
+            string[] componentGroupsStrings = this.InternalPersonName.Split('=');
 
             if (componentGroupsStrings.GetUpperBound(0) >= 0 && componentGroupsStrings[0] != string.Empty)
                 _componentGroups[0] = new ComponentGroup(componentGroupsStrings[0]);
@@ -107,21 +107,6 @@ namespace ClearCanvas.Dicom
             if (componentGroupsStrings.GetUpperBound(0) > 1 && componentGroupsStrings[2] != string.Empty)
                 _componentGroups[2] = new ComponentGroup(componentGroupsStrings[2]);
         }
-
-        #region Properties
-        private string _specificCharacterSet = "ISO 2022 IR 6";     // this is the default
-
-        public string SpecificCharacterSet
-        {
-            get { return _specificCharacterSet; }
-            set 
-            { 
-                _specificCharacterSet = value;
-                BreakApartIntoComponentGroups();
-            }
-        }
-	
-        #endregion
 
         #region Private fields
         private string _personsName;

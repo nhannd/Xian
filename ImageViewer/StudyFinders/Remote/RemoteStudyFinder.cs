@@ -53,8 +53,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
                 StudyItem item = new StudyItem();
                 item.SpecificCharacterSet = result.SpecificCharacterSet;
                 item.PatientId = result.PatientId.ToString();
-                item.PatientsName = result.PatientsName;
-                item.PatientsName.SpecificCharacterSet = item.SpecificCharacterSet;
+
+                if (item.SpecificCharacterSet == String.Empty)
+                    item.PatientsName = result.PatientsName;
+                else
+                    item.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(item.SpecificCharacterSet, result.PatientsName));
+
                 item.PatientsBirthDate = result[DicomTag.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
                 item.StudyDescription = result.StudyDescription;
@@ -63,6 +67,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
                 item.StudyLoaderName = this.Name;
                 item.Server = _selectedServer;
                 item.StudyInstanceUID = result.StudyInstanceUid.ToString();
+
                 if (result.ContainsTag(DicomTag.NumberOfStudyRelatedInstances))
                     item.NumberOfStudyRelatedInstances = result.NumberOfStudyRelatedInstances;
                 else

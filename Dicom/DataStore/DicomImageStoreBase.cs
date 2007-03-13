@@ -137,10 +137,6 @@ namespace ClearCanvas.Dicom.DataStore
             if (cond.good())
                 study.PatientId = new PatientId(stringValue.ToString());
 
-            cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
-            if (cond.good())
-                study.PatientsName = new PersonName(stringValue.ToString());
-
             cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsSex, stringValue);
             if (cond.good())
                 study.PatientsSex = stringValue.ToString();
@@ -152,6 +148,17 @@ namespace ClearCanvas.Dicom.DataStore
             cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
             if (cond.good())
                 study.SpecificCharacterSet = stringValue.ToString();
+
+            cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
+            if (cond.good())
+            {
+                study.PatientsNameRaw = stringValue.ToString();
+
+                if (study.SpecificCharacterSet == String.Empty)
+                    study.PatientsName = new PersonName(stringValue.ToString());
+                else
+                    study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, stringValue.ToString()));
+            }
 
             study.StoreTime = Platform.Time;
 

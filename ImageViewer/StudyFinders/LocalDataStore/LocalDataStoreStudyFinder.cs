@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
                 item.SpecificCharacterSet = result.SpecificCharacterSet;
                 item.PatientId = result.PatientId.ToString();
                 item.PatientsName = result.PatientsName;
-                item.PatientsName.SpecificCharacterSet = item.SpecificCharacterSet;
                 item.PatientsBirthDate = result[DicomTag.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
                 item.StudyDescription = result.StudyDescription;

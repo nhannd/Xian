@@ -85,6 +85,12 @@ namespace ClearCanvas.Dicom.DataStore
             set { _patientsName = value; }
         }
 
+        public virtual string PatientsNameRaw
+        {
+            get { return _patientsNameRaw; }
+            set { _patientsNameRaw = value; }
+        }
+
         public virtual string PatientsSex
         {
             get { return _patientsSex; }
@@ -152,7 +158,7 @@ namespace ClearCanvas.Dicom.DataStore
             }
             return accumulator;
         }
-        #region Private Members
+        #region Private fields
         Guid _studyOid;
         string _procedureCodeSequenceCodingSchemeDesignator;
         string _studyId;
@@ -166,6 +172,7 @@ namespace ClearCanvas.Dicom.DataStore
         string _procedureCodeSequenceCodeValue;
         PatientId _patientId;
         PersonName _patientsName;
+        string _patientsNameRaw;
         string _patientsSex;
         string _patientsBirthDate;
         ISet _internalSeries;

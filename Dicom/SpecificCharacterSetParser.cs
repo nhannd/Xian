@@ -315,8 +315,12 @@ namespace ClearCanvas.Dicom
         {
             get { return SpecificCharacterSetParser._characterSetInfo; }
         }
-	
-  
+
+        protected static string DefaultCharacterSet
+        {
+            get { return "ISO 2022 IR 6"; }    // this is the default    
+        }
+
         #endregion
 
         #region Private fields
