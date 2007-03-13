@@ -40,13 +40,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._contentPanel.Location = new System.Drawing.Point(3, 3);
 			this._contentPanel.Name = "_contentPanel";
-			this._contentPanel.Size = new System.Drawing.Size(377, 356);
+			this._contentPanel.Size = new System.Drawing.Size(349, 301);
 			this._contentPanel.TabIndex = 0;
 			// 
 			// _okButton
 			// 
 			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._okButton.Location = new System.Drawing.Point(207, 369);
+			this._okButton.Location = new System.Drawing.Point(179, 314);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 1;
@@ -56,7 +56,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(288, 369);
+			this._cancelButton.Location = new System.Drawing.Point(260, 314);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -71,7 +71,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._contentPanel);
 			this.Name = "DialogComponentContainerControl";
-			this.Size = new System.Drawing.Size(383, 405);
+			this.Size = new System.Drawing.Size(355, 350);
 			this.ResumeLayout(false);
 
 		}

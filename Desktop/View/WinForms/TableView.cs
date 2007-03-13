@@ -94,6 +94,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _toolStrip.Visible = value; }
         }
 
+		protected ToolStrip ToolStrip
+		{
+			get { return _toolStrip; }
+		}
+
+		protected new ContextMenuStrip ContextMenuStrip
+		{
+			get { return _contextMenu; }
+		}
+
         #endregion
 
         public ActionModelNode ToolbarModel

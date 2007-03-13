@@ -70,6 +70,10 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
@@ -96,6 +100,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WindowLevelConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
     <Compile Include="PanTool.cs" />
@@ -125,6 +130,8 @@
     <Compile Include="LutPresets\LutPresetGroup.cs" />
     <Compile Include="LutPresets\LutPresetSettings.cs" />
     <Compile Include="LutPresetTool.cs" />
+    <Compile Include="WindowLevelConfigurationApplicationComponent.cs" />
+    <Compile Include="WindowLevelPresetApplicationComponent.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="ZoomFixedTool.cs" />
     <Compile Include="ZoomTool.cs" />
@@ -174,7 +181,6 @@
     <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>
     <PreBuildEvent />
     <PostBuildEvent />
