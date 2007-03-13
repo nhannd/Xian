@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom.DataStore
             {
                 study.PatientsNameRaw = stringValue.ToString();
 
-                if (study.SpecificCharacterSet == String.Empty)
+                if (null == study.SpecificCharacterSet || study.SpecificCharacterSet == String.Empty)
                     study.PatientsName = new PersonName(stringValue.ToString());
                 else
                     study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, stringValue.ToString()));
