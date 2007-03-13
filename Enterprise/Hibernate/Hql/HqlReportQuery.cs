@@ -16,7 +16,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// </summary>
         /// <param name="from"></param>
         public HqlReportQuery(HqlFrom from)
-            :this(from, new HqlSelector[]{}, new HqlJoin[]{}, new HqlCondition[]{}, new HqlSort[]{}, null)
+            : this(from, new HqlSelector[] { }, new HqlJoin[] { }, new HqlCondition[] { }, new HqlSort[] { }, null)
         {
         }
 
@@ -30,7 +30,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="sorts"></param>
         /// <param name="page"></param>
         public HqlReportQuery(HqlFrom from, HqlSelector[] selectors, HqlJoin[] joins, HqlCondition[] conditions, HqlSort[] sorts, SearchResultPage page)
-            :base("", conditions, sorts, page)
+            : base("", conditions, sorts, page)
         {
             _from = from;
             _selectors = new List<HqlSelector>(selectors);

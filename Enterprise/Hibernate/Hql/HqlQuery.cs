@@ -14,9 +14,17 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
     public class HqlQuery : HqlElement
     {
         private string _baseQuery;
-        private List<HqlCondition> _conditions;
+        private HqlAnd _where;
         private List<HqlSort> _sorts;
         private SearchResultPage _page;
+
+        /// <summary>
+        /// Constructs an empty query
+        /// </summary>
+        protected HqlQuery()
+            : this(null, new HqlCondition[] { }, new HqlSort[] { }, null)
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -38,25 +46,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         {
             _baseQuery = baseHql;
             _page = page;
-
-            _conditions = new List<HqlCondition>(conditions);
+            _where = new HqlAnd(conditions);
             _sorts = new List<HqlSort>(sorts);
         }
 
         /// <summary>
-        /// Constructs an empty query
-        /// </summary>
-        protected HqlQuery()
-            : this(null, new HqlCondition[] { }, new HqlSort[] { }, null)
-        {
-        }
-
-        /// <summary>
-        /// Exposes the collection of conditions, which will form the "where" clause
+        /// Exposes the set of conditions that will form the "where" clause
         /// </summary>
         public List<HqlCondition> Conditions
         {
-            get { return _conditions; }
+            get { return _where.Conditions; }
         }
 
         /// <summary>
@@ -92,16 +91,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         {
             get
             {
-                // build the where clause
-                StringBuilder where = new StringBuilder();
-                foreach (HqlCondition c in _conditions)
-                {
-                    if (where.Length != 0)
-                        where.Append(" and ");
-
-                    where.Append(c.Hql);
-                }
-
                 // build the order by clause
                 StringBuilder orderBy = new StringBuilder();
 
@@ -118,10 +107,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 // append where and order by to base query
                 StringBuilder hql = new StringBuilder();
                 hql.Append(_baseQuery);
-                if (where.Length > 0)
+                if (_where.Conditions.Count > 0)
                 {
                     hql.Append(" where ");
-                    hql.Append(where.ToString());
+                    hql.Append(_where.Hql);
                 }
                 if (orderBy.Length > 0)
                 {
@@ -143,21 +132,18 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 
             // add the parameters to the query
             int i = 0;
-            foreach (HqlCondition c in _conditions)
+            foreach (object val in _where.Parameters)
             {
-                foreach (object val in c.Parameters)
+                if (val is Enum || val is CodedValue)
                 {
-                    if (val is Enum || val is CodedValue)
-                    {
-                        // convert to string, since nhibernate doesn't know what to do with enums
-                        q.SetParameter(i++, val.ToString());
-                    }
-                    else
-                    {
-                        q.SetParameter(i++, val);
-                    }
-
+                    // convert to string, since nhibernate doesn't know what to do with enums
+                    q.SetParameter(i++, val.ToString());
                 }
+                else
+                {
+                    q.SetParameter(i++, val);
+                }
+
             }
 
             // if limits were specified, pass them to nhibernate

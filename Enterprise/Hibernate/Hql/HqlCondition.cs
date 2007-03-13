@@ -15,29 +15,31 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <summary>
         /// Extracts a list of <see cref="HqlCondition"/> objects from the specified <see cref="SearchCriteria"/>
         /// </summary>
-        /// <param name="alias">The HQL alias to prepend to the criteria variables</param>
+        /// <param name="qualifier">The HQL qualifier to prepend to the criteria variables</param>
         /// <param name="criteria">The search criteria object</param>
         /// <returns>A list of HQL conditions that are equivalent to the search criteria</returns>
-        public static HqlCondition[] FromSearchCriteria(string alias, SearchCriteria criteria)
+        public static HqlCondition[] FromSearchCriteria(string qualifier, SearchCriteria criteria)
         {
             List<HqlCondition> hqlConditions = new List<HqlCondition>();
-            foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+            if (criteria is SearchConditionBase)
             {
-                if (subCriteria is SearchConditionBase)
+                SearchConditionBase sc = (SearchConditionBase)criteria;
+                if (sc.Test != SearchConditionTest.None)
                 {
-                    SearchConditionBase sc = (SearchConditionBase)subCriteria;
-                    if (sc.Test != SearchConditionTest.None)
-                    {
-                        hqlConditions.Add(new HqlCondition(alias, sc.GetKey(), sc));
-                    }
-                }
-                else
-                {
-                    // recur on subCriteria
-                    string subAlias = string.Format("{0}.{1}", alias, subCriteria.GetKey());
-                    hqlConditions.AddRange(FromSearchCriteria(subAlias, subCriteria));
+                    string hqlVariable = string.IsNullOrEmpty(sc.GetKey()) ? qualifier : string.Format("{0}.{1}", qualifier, sc.GetKey());
+                    hqlConditions.Add(new HqlCondition(GetHqlText(hqlVariable, sc), sc.Values));
                 }
             }
+            else
+            {
+                // recur on subCriteria
+                foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+                {
+                    string subQualifier = string.Format("{0}.{1}", qualifier, subCriteria.GetKey());
+                    hqlConditions.AddRange(FromSearchCriteria(subQualifier, subCriteria));
+                }
+            }
+
             return hqlConditions.ToArray();
         }
 
@@ -49,10 +51,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// </summary>
         /// <param name="hql">The HQL string containing conditional parameter placeholders</param>
         /// <param name="parameters">Set of parameters to substitute</param>
-        public HqlCondition(string alias, string fieldName, SearchConditionBase sc)
+        public HqlCondition(string hql, object[] parameters)
         {
-            _hql = GetHqlText(alias, fieldName, sc);
-            _parameters = sc.Values;
+            _hql = hql;
+            _parameters = parameters;
         }
 
         /// <summary>
@@ -66,12 +68,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <summary>
         /// The set of parameters to be substituted into this condition.
         /// </summary>
-        public object[] Parameters
+        public virtual object[] Parameters
         {
             get { return _parameters; }
         }
 
-        private static string GetHqlText(string alias, string field, SearchConditionBase sc)
+        private static string GetHqlText(string variable, SearchConditionBase sc)
         {
             string a;
             switch (sc.Test)
@@ -120,7 +122,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                     throw new Exception();  // invalid
             }
 
-            return string.Format("{0}.{1} {2}", alias, field, a);
+            return string.Format("{0} {1}", variable, a);
         }
 
     }

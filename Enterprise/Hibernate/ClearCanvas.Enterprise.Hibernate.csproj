@@ -56,10 +56,13 @@
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />
     <Compile Include="DefaultInterceptor.cs" />
+    <Compile Include="Hql\HqlAnd.cs" />
+    <Compile Include="Hql\HqlJunction.cs" />
     <Compile Include="Hql\HqlCondition.cs" />
     <Compile Include="Hql\HqlElement.cs" />
     <Compile Include="Hql\HqlFrom.cs" />
     <Compile Include="Hql\HqlJoin.cs" />
+    <Compile Include="Hql\HqlOr.cs" />
     <Compile Include="Hql\HqlQuery.cs" />
     <Compile Include="Hql\HqlReportQuery.cs" />
     <Compile Include="Hql\HqlSelector.cs" />
@@ -92,6 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Hql\hql support classes.cd" />
     <None Include="persistence.cd">
       <SubType>
       </SubType>
