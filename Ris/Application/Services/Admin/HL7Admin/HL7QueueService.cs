@@ -69,15 +69,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             GetHL7QueueFormDataResponse response = new GetHL7QueueFormDataResponse();
 
-            //TODO: Populate choices lists from database
-
-            response.DirectionChoices = new string[] { "Inbound", "Outbound" };
-            response.StatusCodeChoices = new string[] { "Pending", "Complete", "Error" };
-            response.MessageEventChoices = new string[] { };
-            response.MessageFormatChoices = new string[] { "XML", "ER7" };
-            response.MessageTypeChoices = new string[] { };
-            response.MessageVersionChoices = new string[] { };
-            response.PeerChoices = new string[] { };
+            response.DirectionChoices = PersistenceContext.GetBroker<HL7MessageDirectionEnumTable>().Values;
+            response.StatusCodeChoices = PersistenceContext.GetBroker<HL7MessageStatusCodeEnumTable>().Values;
+            response.MessageTypeChoices = new string[]
+                { "ADT_A01", "ADT_A02", "ADT_A03", "ADT_A04", "ADT_A05", "ADT_A06", "ADT_A07", "ADT_A08", "ADT_A09", "ADT_A10",
+                /*"ADT_A11", "ADT_A12", "ADT_A13", "ADT_A14", "ADT_A15", "ADT_A16", "ADT_A17", "ADT_A18", "ADT_A19", "ADT_A20",
+                  "ADT_A21", "ADT_A22", "ADT_A23", "ADT_A24", "ADT_A25", "ADT_A26", "ADT_A27", "ADT_A28", "ADT_A29", "ADT_A30",*/
+                  "ORM_O01"};
+            response.MessageFormatChoices = PersistenceContext.GetBroker<HL7MessageFormatEnumTable>().Values;
+            response.MessageVersionChoices = PersistenceContext.GetBroker<HL7MessageVersionEnumTable>().Values;
+            response.PeerChoices = PersistenceContext.GetBroker<HL7MessagePeerEnumTable>().Values;
 
             return response;
         }
@@ -86,14 +87,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         public ListHL7QueueItemsResponse ListHL7QueueItems(ListHL7QueueItemsRequest request)
         {
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
-            HL7QueueItemSearchCriteria criteria = assembler.CreateHL7QueueItemSearchCriteria(request);
+            HL7QueueItemSearchCriteria criteria = assembler.CreateHL7QueueItemSearchCriteria(request, PersistenceContext);
 
             return new ListHL7QueueItemsResponse(
                 CollectionUtils.Map<HL7QueueItem, HL7QueueItemSummary, List<HL7QueueItemSummary>>(
                     PersistanceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria),
                     delegate(HL7QueueItem queueItem)
                     {
-                        return assembler.CreateHL7QueueItemSummary(queueItem);
+                        return assembler.CreateHL7QueueItemSummary(queueItem, PersistenceContext);
                     }));
         }
 
@@ -105,7 +106,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             
             return new LoadHL7QueueItemResponse(
                 queueItem.GetRef(),
-                assembler.CreateHL7QueueItemDetail(queueItem));
+                assembler.CreateHL7QueueItemDetail(queueItem, PersistenceContext));
         }
 
         [ReadOperation]
