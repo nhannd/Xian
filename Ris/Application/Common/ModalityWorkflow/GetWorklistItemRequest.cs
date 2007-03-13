@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class GetWorklistItemRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public EntityRef MPSRef;
+        public EntityRef ProcedureStepRef;
 
         [DataMember]
         public string PatientProfileAuthority;

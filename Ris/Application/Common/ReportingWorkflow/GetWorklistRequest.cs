@@ -4,15 +4,15 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
+namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
     public class GetWorklistRequest : DataContractBase
     {
         [DataMember]
-        public ModalityWorklistSearchCriteria SearchCriteria;
+        public Type StepClass;
 
         [DataMember]
-        public string PatientProfileAuthority;
+        public ReportingWorklistSearchCriteria SearchCriteria;
     }
 }

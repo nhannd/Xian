@@ -2,24 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
+    [ServiceContract]
     public interface IReportingWorkflowService
     {
-        IList<ReportingWorklistQueryResult> GetWorklist(Type stepClass, ReportingProcedureStepSearchCriteria criteria);
+        [OperationContract]
+        GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
-        void ScheduleInterpretation(EntityRef procedure);
+        [OperationContract(IsOneWay=true)]
+        void ScheduleInterpretation(ScheduleInterpretationRequest request);
 
-        void ClaimInterpretation(EntityRef step);
-        void StartInterpretation(EntityRef step);
-        void CompleteInterpretationForTranscription(EntityRef step);
-        void CompleteInterpretationForVerification(EntityRef step);
-        void CompleteInterpretationAndVerify(EntityRef step);
+        [OperationContract(IsOneWay = true)]
+        void ClaimInterpretation(ClaimInterpretationRequest request);
 
-        void CancelPendingTranscription(EntityRef step);
+        [OperationContract(IsOneWay = true)]
+        void StartInterpretation(StartInterpretationRequest request);
 
-        void StartVerification(EntityRef step);
-        void CompleteVerification(EntityRef step);
+        [OperationContract(IsOneWay = true)]
+        void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
+
+        [OperationContract(IsOneWay = true)]
+        void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
+
+        [OperationContract(IsOneWay = true)]
+        void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
+
+        [OperationContract(IsOneWay = true)]
+        void CancelPendingTranscription(CancelPendingTranscriptionRequest request);
+
+        [OperationContract(IsOneWay = true)]
+        void StartVerification(StartVerificationRequest request);
+
+        [OperationContract(IsOneWay = true)]
+        void CompleteVerification(CompleteVerificationRequest request);
     }
 }

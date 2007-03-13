@@ -81,6 +81,7 @@
     <Compile Include="RegistrationWorkflow\IPatientReconciliationStrategy.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntryService.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorkflowService.cs" />
+    <Compile Include="ReportingWorkflow\ReportingWorklistAssembler.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

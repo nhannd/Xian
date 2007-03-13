@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class ExecuteOperationRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public EntityRef MPSRef;
+        public EntityRef ProcedureStepRef;
 
         [DataMember(IsRequired=true)]
         public string OperationClassName;

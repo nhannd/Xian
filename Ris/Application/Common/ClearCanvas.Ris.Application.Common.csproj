@@ -149,6 +149,7 @@
     <Compile Include="ModalityWorkflow\IModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\LoadWorklistItemPreviewRequest.cs" />
     <Compile Include="ModalityWorkflow\LoadWorklistItemPreviewResponse.cs" />
+    <Compile Include="ModalityWorkflow\ModalityWorklistSearchCriteria.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistPreview.cs" />
     <Compile Include="PersonNameDetail.cs" />
@@ -194,7 +195,20 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListResponse.cs" />
     <Compile Include="RegistrationWorkflow\PatientProfileDiff.cs" />
+    <Compile Include="ReportingWorkflow\CancelPendingTranscriptionRequest.cs" />
+    <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteVerificationRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetWorklistRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetWorklistResponse.cs" />
     <Compile Include="ReportingWorkflow\IReportingWorkflowService.cs" />
+    <Compile Include="ReportingWorkflow\ReportingWorklistItem.cs" />
+    <Compile Include="ReportingWorkflow\ReportingWorklistSearchCriteria.cs" />
+    <Compile Include="ReportingWorkflow\ScheduleInterpretationRequest.cs" />
+    <Compile Include="ReportingWorkflow\StartInterpretationRequest.cs" />
+    <Compile Include="ReportingWorkflow\StartVerificationRequest.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -5,6 +5,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -14,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             ModalityWorklistItem item = new ModalityWorklistItem();
 
-            item.MPSRef = result.ProcedureStep;
+            item.ProcedureStepRef = result.ProcedureStep;
             item.MRNAssigningAuthority = result.Mrn.AssigningAuthority;
             item.MRNID = result.Mrn.Id;
             PersonNameAssembler assembler = new PersonNameAssembler();
@@ -44,5 +45,15 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return preview;
         }
     
+        public ModalityProcedureStepSearchCriteria CreateSearchCriteria(ModalityWorklistSearchCriteria criteria)
+        {
+            ModalityProcedureStepSearchCriteria mpsSearchCriteria = new ModalityProcedureStepSearchCriteria();
+
+            // TODO Check Enum conversion
+            ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatus);
+            mpsSearchCriteria.State.EqualTo(status);
+
+            return mpsSearchCriteria;
+        }
     }
 }

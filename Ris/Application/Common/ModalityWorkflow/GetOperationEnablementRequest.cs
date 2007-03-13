@@ -10,6 +10,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class GetOperationEnablementRequest : DataContractBase
     {
         [DataMember(IsRequired=true)]
-        public EntityRef MPSRef;
+        public EntityRef ProcedureStepRef;
     }
 }

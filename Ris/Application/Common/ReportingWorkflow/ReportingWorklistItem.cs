@@ -4,11 +4,12 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
+namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class ModalityWorklistItem : DataContractBase
+    public class ReportingWorklistItem : DataContractBase
     {
+        //TODO: ReportWorklistItem detail not defined
         [DataMember(IsRequired = true)]
         public EntityRef ProcedureStepRef;
 
@@ -25,12 +26,15 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public string AccessionNumber;
 
         [DataMember]
-        public string ModalityProcedureStepName;
+        public string RequestedProcedureName;
 
         [DataMember]
-        public string ModalityName;
+        public string DiagnosticServiceName;
 
         [DataMember]
         public string Priority;
+
+        [DataMember]
+        public string ActivityStatus;
     }
 }

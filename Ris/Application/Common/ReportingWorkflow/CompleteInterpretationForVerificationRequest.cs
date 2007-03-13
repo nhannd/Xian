@@ -4,15 +4,12 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
+namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class LoadWorklistItemPreviewRequest : DataContractBase
+    public class CompleteInterpretationForVerificationRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public EntityRef ProcedureStepRef;
-
-        [DataMember]
-        public string PatientProfileAuthority;
     }
 }

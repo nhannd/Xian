@@ -7,12 +7,10 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class LoadWorklistItemPreviewRequest : DataContractBase
+    public class ModalityWorklistSearchCriteria : DataContractBase
     {
-        [DataMember(IsRequired = true)]
-        public EntityRef ProcedureStepRef;
-
+        //TODO: expand the MPS search criteria here
         [DataMember]
-        public string PatientProfileAuthority;
+        public string ActivityStatus;
     }
 }

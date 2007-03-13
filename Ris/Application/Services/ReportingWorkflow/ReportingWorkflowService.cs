@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.ReportingWorkflow;
 using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -46,67 +48,75 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         #region IReportingWorkflowService Members
 
         [ReadOperation]
-        public IList<ReportingWorklistQueryResult> GetWorklist(Type stepClass, ReportingProcedureStepSearchCriteria criteria)
+        public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-            IReportingWorklistBroker broker = this.CurrentContext.GetBroker<IReportingWorklistBroker>();
-            return broker.GetWorklist(stepClass, criteria);
+            ReportingWorklistAssembler assembler = new ReportingWorklistAssembler();
+            ReportingProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
+
+            return new GetWorklistResponse(
+                CollectionUtils.Map<ReportingWorklistQueryResult, ReportingWorklistItem, List<ReportingWorklistItem>>(
+                    PersistenceContext.GetBroker<IReportingWorklistBroker>().GetWorklist(request.StepClass, criteria),
+                    delegate(ReportingWorklistQueryResult queryResult)
+                    {
+                        return assembler.CreateWorklistItem(queryResult);
+                    }));
         }
 
         [UpdateOperation]
-        public void ScheduleInterpretation(EntityRef procedure)
+        public void ScheduleInterpretation(ScheduleInterpretationRequest request)
         {
-            IRequestedProcedureBroker broker = CurrentContext.GetBroker<IRequestedProcedureBroker>();
-            RequestedProcedure rp = broker.Load(procedure, EntityLoadFlags.Proxy);
+            IRequestedProcedureBroker broker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
+            RequestedProcedure rp = broker.Load(request.ProcedureRef, EntityLoadFlags.Proxy);
             InterpretationStep interpretation = new InterpretationStep(rp);
             CurrentContext.Lock(interpretation, DirtyState.New);
         }
 
         [UpdateOperation]
-        public void ClaimInterpretation(EntityRef step)
+        public void ClaimInterpretation(ClaimInterpretationRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.ClaimInterpretation());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.ClaimInterpretation());
         }
 
         [UpdateOperation]
-        public void StartInterpretation(EntityRef step)
+        public void StartInterpretation(StartInterpretationRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.StartInterpretation());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.StartInterpretation());
         }
 
         [UpdateOperation]
-        public void CompleteInterpretationForTranscription(EntityRef step)
+        public void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.CompleteInterpretationForTranscription());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteInterpretationForTranscription());
         }
 
         [UpdateOperation]
-        public void CompleteInterpretationForVerification(EntityRef step)
+        public void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.CompleteInterpretationForVerification());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteInterpretationForVerification());
         }
 
         [UpdateOperation]
-        public void CompleteInterpretationAndVerify(EntityRef step)
+        public void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.CompleteInterpretationAndVerify());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteInterpretationAndVerify());
         }
 
         [UpdateOperation]
-        public void CancelPendingTranscription(EntityRef step)
+        public void CancelPendingTranscription(CancelPendingTranscriptionRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.CancelPendingTranscription());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CancelPendingTranscription());
         }
 
         [UpdateOperation]
-        public void StartVerification(EntityRef step)
+        public void StartVerification(StartVerificationRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.StartVerification());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.StartVerification());
         }
 
         [UpdateOperation]
-        public void CompleteVerification(EntityRef step)
+        public void CompleteVerification(CompleteVerificationRequest request)
         {
-            ExecuteOperation(LoadStep(step), new Operations.CompleteVerification());
+            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteVerification());
         }
 
         #endregion
