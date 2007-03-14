@@ -48,9 +48,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public ModalityProcedureStepSearchCriteria CreateSearchCriteria(ModalityWorklistSearchCriteria criteria)
         {
             ModalityProcedureStepSearchCriteria mpsSearchCriteria = new ModalityProcedureStepSearchCriteria();
-
-            // TODO Check Enum conversion
-            ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatus);
+            ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatusCode);
             mpsSearchCriteria.State.EqualTo(status);
 
             return mpsSearchCriteria;

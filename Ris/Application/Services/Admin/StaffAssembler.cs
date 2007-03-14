@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return summary;
         }
 
-        public StaffDetail CreateStaffDetail(Staff staff)
+        public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
         {
             StaffDetail detail = new StaffDetail();
 
@@ -35,13 +35,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
             {
-                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber));
+                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber, context));
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
             foreach (Address address in staff.Addresses)
             {
-                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address));
+                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address, context));
             }
 
             return detail;

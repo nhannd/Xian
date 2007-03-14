@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\AddressDetail.cs" />
+    <Compile Include="AddressDetail.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportRequest.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
@@ -134,8 +134,9 @@
     <Compile Include="Admin\StaffAdmin\UpdateStaffResponse.cs" />
     <Compile Include="Admin\StaffDetail.cs" />
     <Compile Include="Admin\StaffSummary.cs" />
-    <Compile Include="Admin\TelephoneDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
+    <Compile Include="EnumValueInfo.cs" />
+    <Compile Include="HealthcardDetail.cs" />
     <Compile Include="HL7ProcessingException.cs" />
     <Compile Include="ImportException.cs" />
     <Compile Include="IWorklistService.cs" />
@@ -181,6 +182,18 @@
     <Compile Include="RegistrationWorkflow\Adt\SaveNewVisitResponse.cs" />
     <Compile Include="RegistrationWorkflow\Adt\UpdatePatientProfileRequest.cs" />
     <Compile Include="RegistrationWorkflow\Adt\UpdatePatientProfileResponse.cs" />
+    <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
+    <Compile Include="RegistrationWorkflow\ExecuteOperationRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetOperationEnablementRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetOperationEnablementResponse.cs" />
+    <Compile Include="RegistrationWorkflow\GetWorklistRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetWorklistResponse.cs" />
+    <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
+    <Compile Include="RegistrationWorkflow\LoadWorklistPreviewRequest.cs" />
+    <Compile Include="RegistrationWorkflow\LoadWorklistPreviewResponse.cs" />
+    <Compile Include="RegistrationWorkflow\RegistrationWorklistItem.cs" />
+    <Compile Include="RegistrationWorkflow\RegistrationWorklistPreview.cs" />
+    <Compile Include="RegistrationWorkflow\RegistrationWorklistSearchCriteria.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\IOrderEntryService.cs" />
@@ -214,6 +227,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TelephoneDetail.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

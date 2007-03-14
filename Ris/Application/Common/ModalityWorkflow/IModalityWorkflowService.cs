@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 
-using ClearCanvas.Enterprise.Common;
-
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [ServiceContract]

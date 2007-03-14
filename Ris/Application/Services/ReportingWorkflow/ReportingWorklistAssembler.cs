@@ -17,15 +17,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             item.ProcedureStepRef = result.ProcedureStep;
             item.MRNAssigningAuthority = result.Mrn.AssigningAuthority;
             item.MRNID = result.Mrn.Id;
+
             PersonNameAssembler assembler = new PersonNameAssembler();
             item.PersonNameDetail = assembler.CreatePersonNameDetail(result.PatientName);
+
             item.AccessionNumber = result.AccessionNumber;
             item.RequestedProcedureName = result.RequestedProcedureName;
             item.DiagnosticServiceName = result.DiagnosticServiceName;
             item.Priority = result.Priority;
-
-            //TODO: Check Enum conversion
-            item.ActivityStatus = result.Status.ToString();
+            item.ActivityStatusCode = result.Status.ToString();
 
             return item;
         }
@@ -34,8 +34,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             ReportingProcedureStepSearchCriteria rpsSearchCriteria = new ReportingProcedureStepSearchCriteria();
 
-            // TODO Check Enum conversion
-            ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatus);
+            ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatusCode);
             rpsSearchCriteria.State.EqualTo(status);
 
             return rpsSearchCriteria;

@@ -6,12 +6,14 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class TelephoneNumberAssembler
     {
-        public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber)
+        public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber, IPersistenceContext context)
         {
             TelephoneDetail telephoneDetail = new TelephoneDetail();
 
@@ -20,9 +22,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             telephoneDetail.Number = telephoneNumber.Number;
             telephoneDetail.Extension = telephoneNumber.Extension;
 
-            // TODO Check Enum conversion
-            telephoneDetail.Use = telephoneNumber.Use.ToString();
-            telephoneDetail.Equipment = telephoneNumber.Equipment;
+            TelephoneUseEnumTable useEnumTable = context.GetBroker<ITelephoneUseEnumBroker>().Load();
+            telephoneDetail.Use.Code = telephoneNumber.Use.ToString();
+            telephoneDetail.Use.Value = useEnumTable[telephoneNumber.Use].Values;
+
+            TelephoneEquipmentEnumTable equipmentEnumTable = context.GetBroker<ITelephoneEquipmentEnumBroker>().Load();
+            telephoneDetail.Equipment.Code = telephoneNumber.Equipment.ToString();
+            telephoneDetail.Equipment.Value = equipmentEnumTable[telephoneNumber.Equipment].Values;
 
             telephoneDetail.ValidRangeFrom = telephoneNumber.ValidRange.From;
             telephoneDetail.ValidRangeUntil = telephoneNumber.ValidRange.Until;
@@ -38,11 +44,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             telephoneNumber.AreaCode = telephoneDetail.AreaCode;
             telephoneNumber.Number = telephoneDetail.Number;
             telephoneNumber.Extension = telephoneDetail.Extension;
-
-            // TODO Check Enum conversion
-            telephoneNumber.Use = (TelephoneUse)Enum.Parse(typeof(TelephoneUse), telephoneDetail.Use);
-            telephoneNumber.Equipment = (TelephoneEquipment)Enum.Parse(typeof(TelephoneEquipment), telephoneDetail.Equipment);
-
+            telephoneNumber.Use = (TelephoneUse)Enum.Parse(typeof(TelephoneUse), telephoneDetail.Use.Code);
+            telephoneNumber.Equipment = (TelephoneEquipment)Enum.Parse(typeof(TelephoneEquipment), telephoneDetail.Equipment.Code);
             telephoneNumber.ValidRange.From = telephoneDetail.ValidRangeFrom;
             telephoneNumber.ValidRange.Until = elephoneDetail.ValidRangeUntil;
 

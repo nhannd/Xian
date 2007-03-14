@@ -4,31 +4,28 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class AddressDetail : DataContractBase
+    public class TelephoneDetail : DataContractBase
     {
         [DataMember]
-        public string Street;
+        public string CountryCode;
 
         [DataMember]
-        public string Unit;
+        public string AreaCode;
 
         [DataMember]
-        public string City;
+        public string Number;
 
         [DataMember]
-        public string Province;
+        public string Extension;
 
         [DataMember]
-        public string PostalCode;
+        public EnumValueInfo Use;
 
         [DataMember]
-        public string Country;
-
-        [DataMember]
-        public string Type;
+        public EnumValueInfo Equipment;
 
         [DataMember]
         public DateTime? ValidRangeFrom;

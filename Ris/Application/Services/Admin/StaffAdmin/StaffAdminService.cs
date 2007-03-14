@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             Staff s = (Staff)PersistenceContext.Load(request.StaffRef);
             StaffAssembler assembler = new StaffAssembler();
 
-            return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s));
+            return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s, this.PersistenceContext));
         }
 
         [UpdateOperation]

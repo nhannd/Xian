@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
-    public class ProcedureStepPerformer : ActivityPerformer
+    public partial class ProcedureStepPerformer : ActivityPerformer
     {
         private Staff _staff;
 

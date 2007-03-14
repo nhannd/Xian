@@ -30,15 +30,15 @@
   <ItemGroup>
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="NMock2, Version=1.0.2313.18049, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\NMock2.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\NMock2.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\Branches\stewart\DicomActivityMonitor\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\AddressAssembler.cs" />
+    <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\ModalityAssembler.cs" />
     <Compile Include="Admin\PractitionerAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
@@ -67,10 +67,10 @@
     <Compile Include="Admin\PatientAdminService.cs" />
     <Compile Include="Admin\PractitionerAdmin\PractitionerAdminService.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
-    <Compile Include="Admin\TelephoneNumberAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
+    <Compile Include="HealthcardAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistAssembler.cs" />
@@ -80,6 +80,8 @@
     <Compile Include="RegistrationWorkflow\DefaultPatientReconciliationStrategy.cs" />
     <Compile Include="RegistrationWorkflow\IPatientReconciliationStrategy.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntryService.cs" />
+    <Compile Include="RegistrationWorkflow\RegistrationWorkflowAssembler.cs" />
+    <Compile Include="RegistrationWorkflow\RegistrationWorkflowService.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorkflowService.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistAssembler.cs" />
     <Compile Include="SR.Designer.cs">
@@ -88,6 +90,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Admin\StaffAssembler.cs" />
+    <Compile Include="TelephoneNumberAssembler.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
     <Compile Include="WorklistService.cs" />
     <Compile Include="WorkflowServiceBase.cs" />

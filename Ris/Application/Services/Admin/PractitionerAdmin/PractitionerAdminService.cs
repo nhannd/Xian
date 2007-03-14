@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             Practitioner p = (Practitioner)PersistenceContext.Load(request.PractitionerRef);
             PractitionerAssembler assembler = new PractitionerAssembler();
 
-            return new LoadPractitionerForEditResponse(p.GetRef(), assembler.CreatePractitionerDetail(p));
+            return new LoadPractitionerForEditResponse(p.GetRef(), assembler.CreatePractitionerDetail(p, this.PersistenceContext));
         }
 
         [UpdateOperation]

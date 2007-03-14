@@ -6,12 +6,14 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class AddressAssembler
     {
-        public AddressDetail CreateAddressDetail(Address address)
+        public AddressDetail CreateAddressDetail(Address address, IPersistenceContext context)
         {
             AddressDetail addressDetail = new AddressDetail();
 
@@ -22,8 +24,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             addressDetail.PostalCode = address.PostalCode;
             addressDetail.Country = address.Country;
 
-            //TODO Check Enum conversion
-            addressDetail.Type = address.Type.ToString();
+            AddressTypeEnumTable typeEnumTable = context.GetBroker<IAddressTypeEnumBroker>().Load();
+            addressDetail.Type.Code = address.Type.ToString();
+            addressDetail.Type.Value = typeEnumTable[address.Type].Values;
+
             addressDetail.ValidRangeFrom = address.ValidRange.From;
             addressDetail.ValidRangeUntil = address.ValidRange.Until;
 
@@ -40,9 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             newAddress.Province = addressDetail.Province;
             newAddress.PostalCode = addressDetail.PostalCode;
             newAddress.Country = addressDetail.Country;
-
-            //TODO Check Enum conversion
-            newAddress.Type = (AddressType)Enum.Parse(typeof(AddressType), addressDetail.Type);
+            newAddress.Type = (AddressType)Enum.Parse(typeof(AddressType), addressDetail.Type.Code);
             newAddress.ValidRange.From = addressDetail.ValidRangeFrom;
             newAddress.ValidRange.Until = addressDetail.ValidRangeUntil;
 

@@ -11,6 +11,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     {
         //TODO: the exact reporting ps search criteria not defined
         [DataMember]
-        public string ActivityStatus;
+        public string ActivityStatusCode;
     }
 }

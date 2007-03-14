@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return summary;
         }
 
-        public PractitionerDetail CreatePractitionerDetail(Practitioner practitioner)
+        public PractitionerDetail CreatePractitionerDetail(Practitioner practitioner, IPersistenceContext context)
         {
             PractitionerDetail detail = new PractitionerDetail();
             detail.LicenseNumber = practitioner.LicenseNumber;
@@ -33,13 +33,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneNumber phoneNumber in practitioner.TelephoneNumbers)
             {
-                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber));
+                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber, context));
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
             foreach (Address address in practitioner.Addresses)
             {
-                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address));
+                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address, context));
             }
 
             return detail;
