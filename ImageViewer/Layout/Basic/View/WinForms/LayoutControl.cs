@@ -342,11 +342,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// _buttonConfigure
 			// 
-			this._buttonConfigure.Location = new System.Drawing.Point(74, 316);
+			this._buttonConfigure.Location = new System.Drawing.Point(60, 316);
 			this._buttonConfigure.Name = "_buttonConfigure";
-			this._buttonConfigure.Size = new System.Drawing.Size(75, 23);
+			this._buttonConfigure.Size = new System.Drawing.Size(104, 23);
 			this._buttonConfigure.TabIndex = 14;
-			this._buttonConfigure.Text = "Configure";
+			this._buttonConfigure.Text = "Change Defaults";
 			this._buttonConfigure.UseVisualStyleBackColor = true;
 			this._buttonConfigure.Click += new System.EventHandler(this.OnButtonConfigureClick);
 			// 
