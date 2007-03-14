@@ -31,6 +31,7 @@ namespace ClearCanvas.Desktop.Help
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
 			this._closeButton = new System.Windows.Forms.LinkLabel();
 			this._versionLabel = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _closeButton
@@ -56,6 +57,17 @@ namespace ClearCanvas.Desktop.Help
 			this._versionLabel.TabIndex = 2;
 			this._versionLabel.Text = "Version";
 			// 
+			// label1
+			// 
+			this.label1.AutoEllipsis = true;
+			this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
+			this.label1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Location = new System.Drawing.Point(429, 340);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(233, 23);
+			this.label1.TabIndex = 3;
+			this.label1.Text = "© 2007 ClearCanvas Inc. All rights reserved.";
+			// 
 			// AboutForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -64,6 +76,7 @@ namespace ClearCanvas.Desktop.Help
 			this.CancelButton = this._closeButton;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this._versionLabel);
 			this.Controls.Add(this._closeButton);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -80,5 +93,6 @@ namespace ClearCanvas.Desktop.Help
 
 		private System.Windows.Forms.LinkLabel _closeButton;
 		private System.Windows.Forms.Label _versionLabel;
+		private System.Windows.Forms.Label label1;
 	}
 }
