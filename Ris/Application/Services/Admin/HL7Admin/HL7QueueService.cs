@@ -69,16 +69,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             GetHL7QueueFormDataResponse response = new GetHL7QueueFormDataResponse();
 
-            response.DirectionChoices = PersistenceContext.GetBroker<HL7MessageDirectionEnumTable>().Values;
-            response.StatusCodeChoices = PersistenceContext.GetBroker<HL7MessageStatusCodeEnumTable>().Values;
+            response.DirectionChoices = PersistenceContext.GetBroker<IHL7MessageDirectionEnumBroker>().Load().Values;
+            response.StatusCodeChoices = PersistenceContext.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load().Values;
             response.MessageTypeChoices = new string[]
                 { "ADT_A01", "ADT_A02", "ADT_A03", "ADT_A04", "ADT_A05", "ADT_A06", "ADT_A07", "ADT_A08", "ADT_A09", "ADT_A10",
                 /*"ADT_A11", "ADT_A12", "ADT_A13", "ADT_A14", "ADT_A15", "ADT_A16", "ADT_A17", "ADT_A18", "ADT_A19", "ADT_A20",
                   "ADT_A21", "ADT_A22", "ADT_A23", "ADT_A24", "ADT_A25", "ADT_A26", "ADT_A27", "ADT_A28", "ADT_A29", "ADT_A30",*/
                   "ORM_O01"};
-            response.MessageFormatChoices = PersistenceContext.GetBroker<HL7MessageFormatEnumTable>().Values;
-            response.MessageVersionChoices = PersistenceContext.GetBroker<HL7MessageVersionEnumTable>().Values;
-            response.PeerChoices = PersistenceContext.GetBroker<HL7MessagePeerEnumTable>().Values;
+            response.MessageFormatChoices = PersistenceContext.GetBroker<IHL7MessageFormatEnumBroker>().Load().Values;
+            response.MessageVersionChoices = PersistenceContext.GetBroker<IHL7MessageVersionEnumBroker>().Load().Values;
+            response.PeerChoices = PersistenceContext.GetBroker<IHL7MessagePeerEnumBroker>().Load().Values;
 
             return response;
         }

@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
-        [OperationContract(IsOneWayt=true)]
+        [OperationContract(IsOneWay=true)]
         void ExecuteOperation(ExecuteOperationRequest request);
     }
 }
