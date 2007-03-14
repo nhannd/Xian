@@ -18,12 +18,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract(IsOneWay = true)]
         void ExecuteOperation(ExecuteOperationRequest request);
 
+        [OperationContract]
+        GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request);
+
         [OperationContract(IsOneWay = true)]
         void CheckInProcedure(CheckInProcedureRequest request);
-
-        //RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);
-        //void UpdateRequestedProcedure(RequestedProcedure rp);
-        //void AddCheckInProcedureStep(CheckInProcedureStep cps);
-    
     }
 }

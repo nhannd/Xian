@@ -16,8 +16,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ModalityWorklistItem item = new ModalityWorklistItem();
 
             item.ProcedureStepRef = result.ProcedureStep;
-            item.MRNAssigningAuthority = result.Mrn.AssigningAuthority;
-            item.MRNID = result.Mrn.Id;
+            item.MrnAssigningAuthority = result.Mrn.AssigningAuthority;
+            item.MrnID = result.Mrn.Id;
             PersonNameAssembler assembler = new PersonNameAssembler();
             item.PersonNameDetail = assembler.CreatePersonNameDetail(result.PatientName);
             item.AccessionNumber = result.AccessionNumber;

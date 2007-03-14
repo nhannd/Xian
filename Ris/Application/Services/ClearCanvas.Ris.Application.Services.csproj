@@ -72,6 +72,7 @@
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />
+    <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistAssembler.cs" />
     <Compile Include="PersonNameAssembler.cs" />

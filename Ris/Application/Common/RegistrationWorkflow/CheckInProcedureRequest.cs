@@ -11,5 +11,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     {
         [DataMember(IsRequired = true)]
         public List<EntityRef> RequestedProcedures;
+
+        [DataMember(IsRequired = true)]
+        public EntityRef Staff;
     }
 }

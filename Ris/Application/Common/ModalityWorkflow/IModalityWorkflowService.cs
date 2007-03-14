@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow

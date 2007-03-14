@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin

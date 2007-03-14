@@ -11,6 +11,27 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     {
         //TODO: expand the MPS search criteria here
         [DataMember]
-        public string ActivityStatus;
+        public EntityRef PatientProfile;
+
+        [DataMember]
+        public string MrnID;
+
+        [DataMember]
+        public string MrnAssigningAuthority;
+
+        [DataMember]
+        public string HealthcardID;
+
+        [DataMember]
+        public string FamilyName;
+
+        [DataMember]
+        public string GivenName;
+
+        [DataMember]
+        public string SexCode;
+
+        [DataMember]
+        public DateTime? DateOfBirth;
     }
 }

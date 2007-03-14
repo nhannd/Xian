@@ -47,6 +47,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _patientProfile = profile.GetRef();
         }
 
+        public WorklistItem(string workClassName, EntityRef profileRef)
+        {
+            _workClassName = workClassName;
+            _patientProfile = profileRef;
+         }
+
         #region Public Properties
 
         public EntityRef PatientProfile

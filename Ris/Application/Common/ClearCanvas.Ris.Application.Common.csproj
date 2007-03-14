@@ -139,7 +139,6 @@
     <Compile Include="HealthcardDetail.cs" />
     <Compile Include="HL7ProcessingException.cs" />
     <Compile Include="ImportException.cs" />
-    <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementResponse.cs" />
@@ -184,6 +183,8 @@
     <Compile Include="RegistrationWorkflow\Adt\UpdatePatientProfileResponse.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
     <Compile Include="RegistrationWorkflow\ExecuteOperationRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetDataForCheckInTableRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetDataForCheckInTableResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetWorklistRequest.cs" />

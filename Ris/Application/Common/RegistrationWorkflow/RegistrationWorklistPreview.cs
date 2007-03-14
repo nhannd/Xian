@@ -10,13 +10,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     public class RegistrationWorklistPreview : DataContractBase
     {
         [DataMember(IsRequired=true)]
-        public EntityRef PatientProfile;
+        public EntityRef PatientProfileRef;
 
         [DataMember]
-        public string MRNID;
+        public string MrnID;
 
         [DataMember]
-        public string MRNAssigningAuthority;
+        public string MrnAssigningAuthority;
 
         [DataMember]
         public PersonNameDetail Name;
@@ -28,13 +28,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public DateTime? DateOfBirth;
 
         [DataMember]
-        public string Sex;
-
-        [DataMember]
-        public string PrimaryLanguage;
-
-        [DataMember]
-        public string Religion;
+        public EnumValueInfo Sex;
 
         [DataMember]
         public List<TelephoneDetail> TelephoneNumbers;
@@ -49,11 +43,20 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class RICSummary : DataContractBase
     {
+        public RICSummary(string rpName, string orderingPractitioner, string insurance, DateTime? mpsScheduledTime, string performingFacility)
+        {
+            this.RequestedProcedureName = rpName;
+            this.OrderingPractitioner = orderingPractitioner;
+            this.Insurance = insurance;
+            this.ModalityProcedureStepScheduledTime = mpsScheduledTime;
+            this.PerformingFacility = performingFacility;
+        }
+
         [DataMember]
         public string RequestedProcedureName;
 
         [DataMember]
-        public string OrderingPhysician;
+        public string OrderingPractitioner;
 
         [DataMember]
         public string Insurance;

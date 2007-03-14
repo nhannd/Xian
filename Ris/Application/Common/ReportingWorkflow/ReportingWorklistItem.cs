@@ -14,10 +14,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EntityRef ProcedureStepRef;
 
         [DataMember]
-        public string MRNAssigningAuthority;
+        public string MrnAssigningAuthority;
 
         [DataMember]
-        public string MRNID;
+        public string MrnID;
 
         [DataMember]
         public PersonNameDetail PersonNameDetail;

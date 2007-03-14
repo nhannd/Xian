@@ -12,11 +12,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [DataMember(IsRequired = true)]
         public EntityRef PatientProfileRef;
 
-        [DataMember]
-        public string MRNAssigningAuthority;
+        [DataMember(IsRequired = true)]
+        public string WorklistClassName;
 
         [DataMember]
-        public string MRNID;
+        public string MrnAssigningAuthority;
+
+        [DataMember]
+        public string MrnID;
 
         [DataMember]
         public PersonNameDetail Name;

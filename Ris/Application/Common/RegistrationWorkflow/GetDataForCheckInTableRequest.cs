@@ -7,12 +7,12 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
-    public class GetWorklistRequest : DataContractBase
+    public class GetDataForCheckInTableRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public string WorklistClassName;
 
-        [DataMember]
-        public RegistrationWorklistSearchCriteria SearchCriteria;
+        [DataMember(IsRequired = true)]
+        public EntityRef PatientProfileRef;
     }
 }
