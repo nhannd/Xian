@@ -32,6 +32,7 @@ namespace ClearCanvas.Desktop.Help
 			this._closeButton = new System.Windows.Forms.LinkLabel();
 			this._versionLabel = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
+			this._showLicenseButton = new System.Windows.Forms.LinkLabel();
 			this.SuspendLayout();
 			// 
 			// _closeButton
@@ -68,6 +69,18 @@ namespace ClearCanvas.Desktop.Help
 			this.label1.TabIndex = 3;
 			this.label1.Text = "© 2007 ClearCanvas Inc. All rights reserved.";
 			// 
+			// _showLicenseButton
+			// 
+			this._showLicenseButton.AutoSize = true;
+			this._showLicenseButton.BackColor = System.Drawing.Color.White;
+			this._showLicenseButton.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(150)))), ((int)(((byte)(208)))));
+			this._showLicenseButton.Location = new System.Drawing.Point(585, 31);
+			this._showLicenseButton.Name = "_showLicenseButton";
+			this._showLicenseButton.Size = new System.Drawing.Size(74, 13);
+			this._showLicenseButton.TabIndex = 4;
+			this._showLicenseButton.TabStop = true;
+			this._showLicenseButton.Text = "Show License";
+			// 
 			// AboutForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -76,6 +89,7 @@ namespace ClearCanvas.Desktop.Help
 			this.CancelButton = this._closeButton;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
+			this.Controls.Add(this._showLicenseButton);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._versionLabel);
 			this.Controls.Add(this._closeButton);
@@ -94,5 +108,6 @@ namespace ClearCanvas.Desktop.Help
 		private System.Windows.Forms.LinkLabel _closeButton;
 		private System.Windows.Forms.Label _versionLabel;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.LinkLabel _showLicenseButton;
 	}
 }

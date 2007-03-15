@@ -52,5 +52,8 @@ copy "..\..\..\ExtensionBrowser\View\WinForms\bin\%3\ClearCanvas.Desktop.Extensi
 :: Copy config files
 copy "..\..\..\Actions\actionmodels.xml "."
 
+:: Copy license file
+copy "..\..\..\..\License.rtf ."
+
 :: Run the solution specific batch file
 call ""%1\%2.bat"" %3
