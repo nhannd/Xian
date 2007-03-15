@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Shreds
             DriveInfo[] driveinfos = DriveInfo.GetDrives();
             foreach (DriveInfo driveInfo in driveinfos)
             {
-                if (!driveInfo.DriveType.Equals(DriveType.Fixed) && !driveInfo.DriveType.Equals(DriveType.Network))
+                if (!driveInfo.DriveType.Equals(DriveType.Fixed))
                     continue;
                 DMDriveInfo dmDriveInfo = new DMDriveInfo();
                 dmDriveInfo.DriveName = driveInfo.RootDirectory.ToString().Replace("\\", "");

@@ -103,14 +103,15 @@ namespace ClearCanvas.ImageViewer.Shreds
                     DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
                     deletedNumber += 1;
                     studyItem.Status = DiskspaceManagementStatus.DeletedFromDatabase;
-                    Platform.Log("    Study deleted in DB " + deletedNumber + ") A#: " + studyItem.AccessionNumber + "; InstanceUid: " + studyItem.StudyInstanceUID);
+                    Platform.Log("    Study deleted in DB " + deletedNumber + ") StudyInstanceUid: " + studyItem.StudyInstanceUID);
                 }
                 catch (Exception e)
                 {
                     Platform.Log(e, LogLevel.Error);
                 }
             }
-            Platform.Log("    Total studies deleted in DB: " + deletedNumber);
+            if (deletedNumber > 0)
+                Platform.Log("    Total studies deleted in DB: " + deletedNumber);
             return;
         }
 
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Shreds
 
             if (studiesFound == null || studiesFound.Count <= 0)
             {
-                Platform.Log("    There is not any study in DataStore.");
+                //Platform.Log("    There is not any study in DataStore.");
                 _component.IsProcessing = false;
                 return false;
             }
