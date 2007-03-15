@@ -45,6 +45,5 @@ copy "..\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\%1\ClearCanvas.Ima
 copy "..\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\%1\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\AnnotationProviders\bin\%1\ClearCanvas.ImageViewer.AnnotationProviders.dll" ".\plugins"
 copy "..\..\..\..\Dicom\Services\bin\%1\ClearCanvas.Dicom.Services.dll" ".\plugins"
-copy "..\..\..\..\Dicom\Services\View\WinForms\bin\%1\ClearCanvas.Dicom.Services.View.WinForms.dll" ".\plugins"
 copy "..\..\..\..\Utilities\DicomEditor\bin\%1\ClearCanvas.Utilities.DicomEditor.dll" ".\plugins"
 copy "..\..\..\..\Utilities\DicomEditor\View\WinForms\bin\%1\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" ".\plugins"

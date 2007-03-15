@@ -36,72 +36,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void RetrieveStudy()
 		{
-            //
-            // check pre-conditions
-            //
-            if (this.Context.SelectedStudy == null)
-                return;
-
-            if (this.IsRetrieveActive)
-            {
-				Platform.ShowMessageBox(SR.MessageCannotStartMultipleRetrievalSessions, MessageBoxActions.Ok);
-                return;
-            }
-
-            // Try to create the storage directory if it doesn't already exist.
-            // Ideally, this code should eventually be removed when the
-            // directory is handled properly by the dicom.services layer.
-            try
-            {
-				CreateStorageDirectory(LocalApplicationEntity.DicomStoragePath);
-            }
-            catch
-            {
-				Platform.ShowMessageBox(SR.MessageUnableToCreateStorageDirectory);
-                return;
-            }
-
-            // create an instance of the retrieval component if it doesn't already exist
-            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
-            if (null == this.RetrieveProgressComponent)
-				this.RetrieveProgressComponent = new RetrieveStudyToolProgressComponent(me, LocalApplicationEntity.DicomStoragePath);
-
-            // open the retrieval component shelf if it's currently closed
-            // delegate is used to reset the state of ProgressComponentShelfClosed
-            if (this.ProgressComponentShelfClosed)
-            {
-                #region Launch the retrieval component as a shelf
-                ApplicationComponent.LaunchAsShelf(
-                    this.Context.DesktopWindow,
-                    this.RetrieveProgressComponent,
-					SR.TitleRetrieveProgressComponent,
-                    ShelfDisplayHint.DockRight,
-                    delegate(IApplicationComponent component)
-                    {
-                        this.ProgressComponentShelfClosed = true;
-                    }
-                    );
-                #endregion
-
-                this.ProgressComponentShelfClosed = false;
-            }
-
-            this.IsRetrieveActive = true;
-            this.RetrieveProgressComponent.AllRetrievalTasksCompleted += 
-                delegate(object source, EventArgs args)
-                {
-                    this.IsRetrieveActive = false;
-                };
-
-
-            this.RetrieveProgressComponent.Retrieve(this.Context.SelectedStudies);           
 		}
 
-		private void CreateStorageDirectory(string path)
-		{
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-		}
 
 		private void SetDoubleClickHandler()
 		{
@@ -139,39 +75,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				SetDoubleClickHandler();
 			}
         }
-        #region Properties
-        private RetrieveStudyToolProgressComponent _retrieveProgressComponent;
-        private bool _progressComponentShelfClosed = true;
-        private bool _isRetrieveActive;
-
-        /// <summary>
-        /// Indicates whether or not there is currently an active retrieve operation
-        /// taking place.
-        /// </summary>
-        public bool IsRetrieveActive
-        {
-            get { return _isRetrieveActive; }
-            set { _isRetrieveActive = value; }
-        }
-	
-        /// <summary>
-        /// Used to keep track of whether the shelf component that 
-        /// displays the retrieval progress has been closed. This 
-        /// allows us to reopen the shelf, whenever a new retrieve
-        /// operation is initiated.
-        /// </summary>
-        private bool ProgressComponentShelfClosed
-        {
-            get { return _progressComponentShelfClosed; }
-            set { _progressComponentShelfClosed = value; }
-        }
-	
-        private RetrieveStudyToolProgressComponent RetrieveProgressComponent
-        {
-            get { return _retrieveProgressComponent; }
-            set { _retrieveProgressComponent = value; }
-        }
-	
-        #endregion
     }
 }
