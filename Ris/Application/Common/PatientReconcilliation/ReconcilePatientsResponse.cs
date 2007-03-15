@@ -3,10 +3,10 @@ using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
+namespace ClearCanvas.Ris.Application.Common.PatientReconcilliation
 {
     [DataContract]
-    public class LoadPatientProfileResponse : DataContractBase
+    public class ReconcilePatientsResponse : DataContractBase
     {
     }
 }

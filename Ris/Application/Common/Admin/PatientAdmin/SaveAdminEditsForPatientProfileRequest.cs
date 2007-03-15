@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
     [DataContract]
-    public class ListPatientProfilesRequest : DataContractBase
+    public class SaveAdminEditsForPatientProfileRequest : DataContractBase
     {
     }
 }

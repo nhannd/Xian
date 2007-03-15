@@ -1,50 +1,38 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ServiceModel;
 
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
+    /// <summary>
+    /// Provides data loading/saving for the <see cref="PatientProfileEditorComponent"/>
+    /// </summary>
+    [ServiceContract]
     public interface IPatientAdminService
     {
         /// <summary>
-        /// List all patients matching the specified criteria
+        /// Loads all form data for the <see cref="PatientProfileEditorComponent"/>
         /// </summary>
-        /// <param name="criteria"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        //IList<PatientProfile> ListPatientProfiles(PatientProfileSearchCriteria criteria);
-        ListPatientProfilesResponse ListPatientProfiles(ListPatientProfilesRequest request);
+        [OperationContract]
+        LoadPatientProfileEditorFormDataResponse LoadPatientProfileEditorFormData(LoadPatientProfileEditorFormDataRequest request);
 
         /// <summary>
-        /// Loads the specified patient, including collections and related entities
-        /// relevant in the context of patient administration.
+        /// Loads all patient profile data for the <see cref="PatientProfileEditorComponent"/>
         /// </summary>
-        /// <param name="oid"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        //PatientProfile LoadPatientProfileDetails(EntityRef profileRef);
-        LoadPatientProfileDetailsResponse LoadPatientProfileDetails(LoadPatientProfileDetailsRequest request);
+        [OperationContract]
+        LoadPatientProfileForAdminEditResponse LoadPatientProfileForAdminEdit(LoadPatientProfileForAdminEditRequest request);
 
         /// <summary>
-        /// Loads the specified patient.
+        /// Saves changes to a patient profile made via the <see cref="PatientProfileEditorComponent"/>
         /// </summary>
-        /// <param name="oid"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        //PatientProfile LoadPatientProfile(EntityRef profileRef);
-        LoadPatientProfileResponse LoadPatientProfile(LoadPatientProfileRequest request);
-
-        /// <summary>
-        /// Add a new patient to the system
-        /// </summary>
-        /// <param name="patient"></param>
-        //void AddNewPatient(PatientProfile patient);
-        AddNewPatientResponse AddNewPatient(AddNewPatientRequest request);
-
-        /// <summary>
-        /// Updates an existing patient
-        /// </summary>
-        /// <param name="patient"></param>
-        //void UpdatePatientProfile(PatientProfile patient);
-        UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request);
+        [OperationContract]
+        SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request);
     }
 }

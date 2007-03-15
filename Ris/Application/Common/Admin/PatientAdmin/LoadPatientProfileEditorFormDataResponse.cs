@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
     [DataContract]
-    public class UpdatePatientProfileResponse : DataContractBase
+    public class LoadPatientProfileEditorFormDataResponse : DataContractBase
     {
     }
 }
