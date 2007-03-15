@@ -8,5 +8,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     [DataContract]
     public class SaveAdminEditsForVisitResponse : DataContractBase
     {
+        [DataMember]
+        public VisitSummary AddedVisit;
     }
 }

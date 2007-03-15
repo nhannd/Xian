@@ -8,5 +8,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     [DataContract]
     public class LoadVisitEditorFormDataRequest : DataContractBase
     {
+        // None
     }
 }

@@ -140,6 +140,10 @@
     <Compile Include="Admin\VisitAdmin\LoadVisitForAdminEditResponse.cs" />
     <Compile Include="Admin\VisitAdmin\SaveAdminEditsForVisitRequest.cs" />
     <Compile Include="Admin\VisitAdmin\SaveAdminEditsForVisitResponse.cs" />
+    <Compile Include="Admin\VisitAdmin\VisitDetail.cs" />
+    <Compile Include="Admin\VisitAdmin\VisitLocationDetail.cs" />
+    <Compile Include="Admin\VisitAdmin\VisitPractitionerDetail.cs" />
+    <Compile Include="Admin\VisitAdmin\VisitSummary.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
     <Compile Include="EmailAddressDetail.cs" />
