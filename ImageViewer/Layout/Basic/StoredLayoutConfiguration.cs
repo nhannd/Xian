@@ -25,10 +25,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 	public sealed class StoredLayoutConfiguration : INotifyPropertyChanged
 	{
-		public const int MaximumImageBoxRows = 8;
-		public const int MaximumImageBoxColumns = 10;
-		public const int MaximumTileRows = 8;
-		public const int MaximumTileColumns = 10;
+		public const int MaximumImageBoxRows = 4;
+		public const int MaximumImageBoxColumns = 8;
+		public const int MaximumTileRows = 4;
+		public const int MaximumTileColumns = 4;
 
 		private string _modality;
 		private int _imageBoxRows;
