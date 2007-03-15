@@ -8,5 +8,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class LoadPatientProfileEditorFormDataRequest : DataContractBase
     {
+        // none
     }
 }

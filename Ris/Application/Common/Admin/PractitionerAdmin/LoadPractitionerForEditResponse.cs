@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         public LoadPractitionerForEditResponse(EntityRef practitionerRef, StaffDetail practitionerDetail)
         {
             this.PractitionerRef = practitionerRef;
-            this.PractitionerDetail = practitionerDetail;
+            this.PractitionerDetail = (PractitionerDetail)practitionerDetail;
         }
 
         [DataMember]

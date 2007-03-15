@@ -6,23 +6,23 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     public class PatientProfileDiff
     {
-        private PatientProfile[] _profiles;
-        private PatientProfileDiscrepancy _discrepancies;
+        //private PatientProfile[] _profiles;
+        //private PatientProfileDiscrepancy _discrepancies;
 
-        public PatientProfileDiff(PatientProfile[] profiles, PatientProfileDiscrepancy discrepancies)
-        {
-            _profiles = profiles;
-            _discrepancies = discrepancies;
-        }
+        //public PatientProfileDiff(PatientProfile[] profiles, PatientProfileDiscrepancy discrepancies)
+        //{
+        //    _profiles = profiles;
+        //    _discrepancies = discrepancies;
+        //}
 
-        public PatientProfile[] Profiles
-        {
-            get { return _profiles; }
-        }
+        //public PatientProfile[] Profiles
+        //{
+        //    get { return _profiles; }
+        //}
 
-        public PatientProfileDiscrepancy Discrepancies
-        {
-            get { return _discrepancies; }
-        }
+        //public PatientProfileDiscrepancy Discrepancies
+        //{
+        //    get { return _discrepancies; }
+        //}
     }
 }

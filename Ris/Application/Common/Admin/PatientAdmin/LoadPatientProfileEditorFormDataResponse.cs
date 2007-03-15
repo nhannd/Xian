@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
@@ -8,5 +9,43 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class LoadPatientProfileEditorFormDataResponse : DataContractBase
     {
+        [DataMember]
+        public List<EnumValueInfo> HealthcardAssigningAuthorityChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> MrnAssigningAuthorityChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> SexChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> AddressTypeChoices;
+
+        [DataMember]
+        public List<string> AddressProvinceChoices;
+
+        [DataMember]
+        public List<string> AddressCountryChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> TelephoneEquipmentChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> TelephoneUseChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> ContactPersonTypeChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> ContactPersonRelationshipChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> NoteSeverityChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> PrimaryLanguageChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> ReligionChoices;
     }
 }

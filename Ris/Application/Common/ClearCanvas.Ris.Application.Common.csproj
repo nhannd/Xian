@@ -102,6 +102,7 @@
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileForAdminEditResponse.cs" />
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileEditorFormDataRequest.cs" />
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileEditorFormDataResponse.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientProfileDetail.cs" />
     <Compile Include="Admin\PatientAdmin\SaveAdminEditsForPatientProfileRequest.cs" />
     <Compile Include="Admin\PatientAdmin\SaveAdminEditsForPatientProfileResponse.cs" />
     <Compile Include="Admin\PractitionerAdmin\AddPractitionerRequest.cs" />
@@ -140,6 +141,8 @@
     <Compile Include="Admin\VisitAdmin\SaveAdminEditsForVisitRequest.cs" />
     <Compile Include="Admin\VisitAdmin\SaveAdminEditsForVisitResponse.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
+    <Compile Include="ContactPersonDetail.cs" />
+    <Compile Include="EmailAddressDetail.cs" />
     <Compile Include="EnumValueInfo.cs" />
     <Compile Include="HealthcardDetail.cs" />
     <Compile Include="HL7ProcessingException.cs" />
@@ -157,6 +160,7 @@
     <Compile Include="ModalityWorkflow\ModalityWorklistSearchCriteria.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistPreview.cs" />
+    <Compile Include="NoteDetail.cs" />
     <Compile Include="PatientReconcilliation\IPatientReconcilliationService.cs" />
     <Compile Include="PatientReconcilliation\ListPatientReconciliationMatchesRequest.cs" />
     <Compile Include="PatientReconcilliation\ListPatientReconciliationMatchesResponse.cs" />
