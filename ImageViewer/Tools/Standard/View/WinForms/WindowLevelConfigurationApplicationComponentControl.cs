@@ -16,7 +16,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
     public partial class WindowLevelConfigurationApplicationComponentControl : ApplicationComponentUserControl
     {
         private WindowLevelConfigurationApplicationComponent _component;
-		private BindingSource _bindingSource;
 
         /// <summary>
         /// Constructor
@@ -31,9 +30,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_modalityCombo.DataSource = _component.ModalityList;
 			_modalityCombo.ValueChanged += new EventHandler(OnModalityChanged);
 
-			_bindingSource = new BindingSource();
-
-			_bindingSource.DataSource = _component;
 			_presetTable.DataBindings.Add("Table", _component, "SelectedPresetList", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_presetTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
