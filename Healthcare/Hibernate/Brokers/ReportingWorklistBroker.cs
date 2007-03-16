@@ -22,18 +22,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             query.Joins.Add(new HqlJoin("p", "o.Patient"));
             query.Joins.Add(new HqlJoin("pp", "p.Profiles"));
 
-            query.Selectors.Add(new HqlSelector("Patient", "p"));
-            query.Selectors.Add(new HqlSelector("PatientProfile", "pp"));
-            query.Selectors.Add(new HqlSelector("Order", "o"));
-            query.Selectors.Add(new HqlSelector("RequestedProcedure", "rp"));
-            query.Selectors.Add(new HqlSelector("WorkflowStep", "rps"));
-            query.Selectors.Add(new HqlSelector("Mrn", "pp.Mrn"));
-            query.Selectors.Add(new HqlSelector("PatientName", "pp.Name"));
-            query.Selectors.Add(new HqlSelector("AccessionNumber", "o.AccessionNumber"));
-            query.Selectors.Add(new HqlSelector("DiagnosticService", "ds.Name"));
-            query.Selectors.Add(new HqlSelector("RequestedProcedureName", "rpt.Name"));
-            query.Selectors.Add(new HqlSelector("Priority", "o.Priority"));
-            query.Selectors.Add(new HqlSelector("State", "rps.State"));
+            query.Selects.Add(new HqlSelect("p"));
+            query.Selects.Add(new HqlSelect("pp"));
+            query.Selects.Add(new HqlSelect("o"));
+            query.Selects.Add(new HqlSelect("rp"));
+            query.Selects.Add(new HqlSelect("rps"));
+            query.Selects.Add(new HqlSelect("pp.Mrn"));
+            query.Selects.Add(new HqlSelect("pp.Name"));
+            query.Selects.Add(new HqlSelect("o.AccessionNumber"));
+            query.Selects.Add(new HqlSelect("ds.Name"));
+            query.Selects.Add(new HqlSelect("rpt.Name"));
+            query.Selects.Add(new HqlSelect("o.Priority"));
+            query.Selects.Add(new HqlSelect("rps.State"));
 
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rps", criteria));
 
