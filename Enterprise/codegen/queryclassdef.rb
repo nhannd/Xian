@@ -3,9 +3,10 @@ require 'elementdef'
 class QueryClassDef < ElementDef
   attr_reader :className, :fields
 
-  def initialize(model, className, mappings)
+  def initialize(model, className, defaultNamespace, mappings)
     @model = model
-    @className = className
+    @className = TypeNameUtils.getShortName(className)
+    @namespace = TypeNameUtils.getNamespace(className) || defaultNamespace
     @fields = []
     mappings.each do |mapping|
       @fields << QueryFieldDef.new(model, mapping)
@@ -16,8 +17,12 @@ class QueryClassDef < ElementDef
     @className
   end
   
+  def qualifiedName
+    @namespace + "." + @className
+  end
+  
   def namespace
-    @model.namespace
+    @namespace
   end
   
 end

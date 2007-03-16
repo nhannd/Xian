@@ -4,12 +4,6 @@ require 'template'
 # Main class for program execution
 class CodeGen
 
-  # set of templates that apply to the model as a whole
-  @@modelTemplates = [
-    #Template.new("IDomainServiceLayer.gen.ct", "I<%=shortName%>ServiceLayer.gen.cs", true),
-    #Template.new("DomainServiceLayer.gen.ct", "<%=shortName%>ServiceLayer.gen.cs", true)
-  ]
-
   # specifies a set of templates that will be applied to entity classes
   @@entityTemplates = [
     Template.new("Entity.ct", "<%=@className%>.cs", false),
@@ -46,6 +40,7 @@ class CodeGen
   ]
   
   @@queryTemplates = [
+    Template.new("IQueryBroker.gen.ct", "Brokers/I<%=queryName%>Broker.gen.cs", true),
     Template.new("QueryBroker.gen.ct", "Hibernate/Brokers/<%=queryName%>Broker.gen.cs", true)
   ]
   
@@ -82,7 +77,6 @@ class CodeGen
     end
     
     #process each template
-    applyTemplates(@@modelTemplates, [model], destDir)
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
     applyTemplates(@@enumTemplates, model.enumDefs, destDir)
     applyTemplates(@@componentTemplates, model.componentDefs, destDir)

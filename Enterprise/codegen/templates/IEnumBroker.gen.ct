@@ -5,12 +5,12 @@ using System.Text;
 
 using ClearCanvas.Enterprise.Core;
 
-namespace <%= @model.namespace %>.Brokers {
+namespace <%= namespace %>.Brokers {
 
     /// <summary>
-    /// Defines the interface for a <see cref="<%= @className %>"/> broker
+    /// Defines the interface for a <see cref="<%= className %>"/> broker
     /// </summary>
-	public partial interface I<%= @className %>Broker : IEnumBroker<<%= @className %>, <%= @className %>Table>
+	public partial interface I<%= className %>Broker : IEnumBroker<<%= className %>, <%= className %>Table>
 	{
 	}
 }

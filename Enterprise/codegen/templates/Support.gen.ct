@@ -7,7 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 
 
-namespace <%= model.namespace %>.Support {
+namespace <%= namespace %>.Support {
 
 
     /// <summary>

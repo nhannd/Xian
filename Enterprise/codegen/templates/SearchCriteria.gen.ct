@@ -6,7 +6,8 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace <%= model.namespace %> {
+namespace <%= namespace %>
+{
 
     /// <summary>
     /// Search criteria for <see cref="<%= className %>"/> entity

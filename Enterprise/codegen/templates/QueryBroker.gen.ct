@@ -1,18 +1,20 @@
+// This file is machine generated - changes will be lost.
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 
-namespace ClearCanvas.Healthcare.Hibernate.Brokers
+namespace <%= namespace %>
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public partial class <%= queryName %>Broker : Broker, I<%= queryName %>Broker
     {
-        public IList<<%= resultClass.className %>> Query(<%= criteriaClass.className %> criteria)
+        public IList<<%= resultClass.qualifiedName %>> Query(<%= criteriaClass.qualifiedName %> criteria, SearchResultPage page)
         {
             HqlReportQuery query = new HqlReportQuery(new HqlFrom("<%= root.hqlAlias %>", "<%= root.dataType %>"));
             
@@ -25,14 +27,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	  		<% end %>
 
             <% criteriaFieldMappings.each do |m| %>
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("<%= m.source %>", criteria.<%= m.name %>));
+            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("<%= m.source %>", criteria.SubCriteria["<%= m.name %>"]));
 	  		<% end %>
 
-            return CollectionUtils.Map<object[], <%= resultClass.className %>, List<<%= resultClass.className %>>>(
+            return CollectionUtils.Map<object[], <%= resultClass.qualifiedName %>, List<<%= resultClass.qualifiedName %>>>(
             	ExecuteHql(query),
             	delegate(object[] tuple)
             	{
-            		<%= resultClass.className %> result = new <%= resultClass.className %>();
+            		<%= resultClass.qualifiedName %> result = new <%= resultClass.qualifiedName %>();
             		
               		<% resultFieldMappings.each do |m| %>
               		result.<%= m.name %> = (<%= m.dataType %>)tuple[<%= m.index %>];

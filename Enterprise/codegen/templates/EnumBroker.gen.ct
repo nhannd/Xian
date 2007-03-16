@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Hibernate;
-using <%= @model.namespace %>.Brokers;
+using <%= namespace %>.Brokers;
 
-namespace <%= @model.namespace %>.Hibernate.Brokers
+namespace <%= namespace %>.Hibernate.Brokers
 {
     /// <summary>
-    /// NHibernate implementation of <see cref="I<%= @className %>Broker"/>.
+    /// NHibernate implementation of <see cref="I<%= className %>Broker"/>.
     /// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(BrokerExtensionPoint))]
-	public partial class <%= @className %>Broker : EnumBroker<<%= @className %>, <%= @className %>Table>, I<%= @className %>Broker
+	public partial class <%= className %>Broker : EnumBroker<<%= className %>, <%= className %>Table>, I<%= className %>Broker
 	{
 	}
 }

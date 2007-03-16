@@ -1,11 +1,12 @@
 require 'fielddef'
+require 'type_name_utils'
 
 # Represents the definition of a field that is a reference to another entity
 class EntityFieldDef < FieldDef
 
-  def initialize(model, fieldNode)
+  def initialize(model, fieldNode, defaultNamespace)
     super(model, fieldNode)
-    @dataType = Model.fixDataType(fieldNode.attributes['class'])
+    @dataType = TypeNameUtils.getQualifiedName(fieldNode.attributes['class'], defaultNamespace)
   end
 
   def kind
@@ -21,12 +22,6 @@ class EntityFieldDef < FieldDef
   end
   
   def supportDataType
-    "EntityRef<"+@dataType+">"
+    "EntityRef"
   end
-  
-protected
-  def entityDef
-    model.entityDefs.find {|entity| entity.className == @dataType}
-  end
-  
 end

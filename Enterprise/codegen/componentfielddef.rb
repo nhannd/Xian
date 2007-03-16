@@ -1,11 +1,12 @@
 require 'fielddef'
+require 'type_name_utils'
 
 # Represents the definition of a field that is a component
 class ComponentFieldDef < FieldDef
   
-  def initialize(model, fieldNode)
+  def initialize(model, fieldNode, defaultNamespace)
     super(model, fieldNode)
-    @dataType = Model.fixDataType(fieldNode.attributes['class'])
+    @dataType = TypeNameUtils.getQualifiedName(fieldNode.attributes['class'], defaultNamespace)
   end
 
   def kind
@@ -43,7 +44,7 @@ class ComponentFieldDef < FieldDef
 
 protected
   def componentDef
-    model.componentDefs.find {|component| component.className == @dataType}
+    model.findClass(@dataType)
   end
 
 end

@@ -6,11 +6,11 @@ using System.Text;
 using ClearCanvas.Enterprise.Core;
 
 
-namespace <%= @model.namespace %> {
+namespace <%= namespace %> {
     /// <summary>
-    /// <%= @className %> wrapper for <see cref="<%= enumName %>"/>
+    /// <%= className %> wrapper for <see cref="<%= enumName %>"/>
     /// </summary>
-    public class <%= @className %> : EnumValue<<%= @enumName %>>
+    public class <%= className %> : EnumValue<<%= enumName %>>
     {
     }
 }

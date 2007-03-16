@@ -7,11 +7,17 @@ require 'fielddeffactory'
 # There are several different categories of logical classes:
 # see subclasses EnumDef, EntityDef, and ComponentDef
 class ClassDef < ElementDef
-  attr_reader :className, :model, :fields
+  attr_reader :className, :model, :fields, :suppressCodeGen
   
-  def initialize(model, className)
+  # model - the model to which this class belongs
+  # className - the short name of this class
+  # namespace - the namespace in which this class is contained
+  # suppressCodeGen - a boolean flag indicating whether to suppress code generation for this class
+  def initialize(model, className, namespace, suppressCodeGen)
     @model = model
     @className = className
+    @namespace = namespace
+    @suppressCodeGen = suppressCodeGen
     @fields = []
   end
   
@@ -20,7 +26,11 @@ class ClassDef < ElementDef
   end
   
   def namespace
-    @model.namespace
+    @namespace
+  end
+  
+  def qualifiedName
+    @namespace + "." + @className
   end
   
   # the kind of class (:entity, :enum, :component)
@@ -46,7 +56,7 @@ class ClassDef < ElementDef
   # returns the superclass as a ClassDef, or null if the superclass is "Entity"
   def superClass
     return nil if !isSubClass
-    @model.entityDefs.find {|entity| entity.className == @superClassName}
+    @model.findClass(@superClassName)
   end
   
   # returns the set of inherited fields as an array of FieldDef
@@ -80,20 +90,26 @@ class ClassDef < ElementDef
   def searchCriteriaClassName
     nil # defer to subclass
   end
-
   
 protected  
   # processes fields to create instances of FieldDef
   # a "field" is a node of type property, map, set, many-to-one, and others
   def processField(fieldNode)
-    field = FieldDefFactory.CreateFieldDef(@model, fieldNode)
+    field = FieldDefFactory.CreateFieldDef(@model, fieldNode, namespace)
     @fields << field
     
     # check for components/composite elements, and process them
     if(fieldNode.name == 'component')
-      @model.processComponent(fieldNode) 
+      # pass the namespace of this class as the default namespace for the component
+      processComponent(fieldNode, namespace, suppressCodeGen) 
     elsif(field.kind == :collection && (compositeElementNode = fieldNode.elements['composite-element']))
-      @model.processComponent(compositeElementNode)
+      processComponent(compositeElementNode, namespace, suppressCodeGen)
     end
+  end
+  
+  # processes componentNode to create instances of ComponentDef
+  def processComponent(componentNode, defaultNamespace, suppressCodeGen)
+   componentDef = ComponentDef.new(@model, componentNode, defaultNamespace, suppressCodeGen)
+   @model.symbolMap[componentDef.qualifiedName] = componentDef
   end
 end

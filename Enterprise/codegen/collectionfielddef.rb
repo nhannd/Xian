@@ -1,15 +1,16 @@
 require 'fielddef'
+require 'type_name_utils'
 
 # Represents the definition of a field that is a collection type,
 # such as an IList or ISet
 class CollectionFieldDef < FieldDef
   
-  def initialize(model, fieldNode)
+  def initialize(model, fieldNode, defaultNamespace)
     super(model, fieldNode)
     @dataType = DATATYPE_MAPPINGS[fieldNode.name]
     @isLazy = (fieldNode.attributes['lazy'] == 'true')
     elementNode = fieldNode.elements['composite-element'] || fieldNode.elements['one-to-many'] || fieldNode.elements['many-to-many']
-    @elementType = elementNode.attributes['class'] if elementNode
+    @elementType = TypeNameUtils.getQualifiedName(elementNode.attributes['class'], defaultNamespace) if elementNode
   end
   
   def kind

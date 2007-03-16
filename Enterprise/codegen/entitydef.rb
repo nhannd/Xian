@@ -4,8 +4,8 @@ require 'classdef'
 class EntityDef < ClassDef
   attr_reader :superClassName, :isSubClass
   
-  def initialize(model, classNode, superClassName)
-    super(model, classNode.attributes['name'])
+  def initialize(model, classNode, namespace, superClassName, suppressCodeGen)
+    super(model, TypeNameUtils.getShortName(classNode.attributes['name']), namespace, suppressCodeGen)
     @superClassName = superClassName
     @isSubClass = (superClassName != "Entity")
     classNode.each_element do |fieldNode|

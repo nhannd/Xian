@@ -4,33 +4,34 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Data;
+using ClearCanvas.Enterprise.Core;
 
-namespace <%= namespace %> {
+namespace <%= namespace %>
+{
 
     /// <summary>
     /// <see cref="<%= className %>"/> class
     /// </summary>
-	public partial class <%= className %>
+	public partial class <%= className %> : ClearCanvas.Enterprise.Core.SearchCriteria
 	{
-		<% fields.each do |f| %>
-	  	private <%= f.searchCriteriaDataType %> <%= f.fieldName %>;
-	  	<% end %>
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public <%= className %>()
 		{
-			<% fields.each do |f| %>
-		  	<%= f.fieldName %> = new <%= f.searchCriteriaDataType %>();
-		  	<% end %>
 		}
 	
 		<% fields.each do |f| %>
 	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>
 	  	{
-	  		get { return <%= f.fieldName %>; }
+	  		get
+	  		{
+	  			if(!this.SubCriteria.ContainsKey("<%= f.accessorName %>"))
+	  			{
+	  				this.SubCriteria["<%= f.accessorName %>"] = new <%= f.searchCriteriaDataType %>();
+	  			}
+	  			return (<%= f.searchCriteriaReturnType %>)this.SubCriteria["<%= f.accessorName %>"];
+	  		}
 	  	}
 	  	<% end %>
 	}

@@ -34,6 +34,11 @@ namespace ClearCanvas.Enterprise.Core
         private int _sortPosition;
         private bool _sortDirection;
 
+        public SearchConditionBase()
+            : this(null)
+        {
+        }
+
         public SearchConditionBase(string name)
             :base(name)
         {

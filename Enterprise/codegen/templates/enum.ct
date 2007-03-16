@@ -5,12 +5,12 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace <%= @model.namespace %> {
+namespace <%= namespace %> {
 
     /// <summary>
-    /// <%= @enumName %> enumeration
+    /// <%= enumName %> enumeration
     /// </summary>
-	public enum <%= @enumName %>
+	public enum <%= enumName %>
 	{
 	}
 }

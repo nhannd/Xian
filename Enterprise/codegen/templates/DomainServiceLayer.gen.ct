@@ -6,7 +6,7 @@ using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 
 
-namespace <%= @namespace %> {
+namespace <%= namespace %> {
 
     /// <summary>
     /// Abstract base class for service layers that make use of this domain model.

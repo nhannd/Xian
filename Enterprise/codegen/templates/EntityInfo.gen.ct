@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Support;
 
 
-namespace <%= model.namespace %>.Support {
+namespace <%= namespace %>.Support {
 
 
     /// <summary>

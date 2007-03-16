@@ -11,6 +11,10 @@ namespace ClearCanvas.Enterprise.Core
     /// <typeparam name="T">The type of the condition variable</typeparam>
     public class SearchCondition<T> : SearchConditionBase, ISearchCondition<T>
     {
+        public SearchCondition()
+        {
+        }
+
         public SearchCondition(string name)
             : base(name)
         {

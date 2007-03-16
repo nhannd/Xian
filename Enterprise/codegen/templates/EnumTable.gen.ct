@@ -6,17 +6,17 @@ using System.Text;
 using ClearCanvas.Enterprise.Core;
 
 
-namespace <%= @model.namespace %> {
+namespace <%= namespace %> {
 
     /// <summary>
-    /// <%= @className %> wrapper for <see cref="<%= enumName %>"/>
+    /// <%= className %> wrapper for <see cref="<%= enumName %>"/>
     /// </summary>
-    public class <%= @className %>Table : EnumTable<<%= @enumName %>, <%= @className %>>
+    public class <%= className %>Table : EnumTable<<%= enumName %>, <%= className %>>
     {
         /// <summary>
         /// Constructor - not used by application code.
         /// </summary>
-        public <%= @className %>Table()
+        public <%= className %>Table()
         {
         }
 
@@ -24,7 +24,7 @@ namespace <%= @model.namespace %> {
         /// Constructor - not used by application code.
         /// </summary>
         /// <param name="values">The values to insert in the table</param>
-        public <%= @className %>Table(IList<<%= @className %>> values)
+        public <%= className %>Table(IList<<%= className %>> values)
 		    :base(values)
         {
         }

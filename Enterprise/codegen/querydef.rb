@@ -2,28 +2,30 @@ require 'elementdef'
 require 'queryresultdef'
 require 'querycriteriadef'
 require 'model'
+require 'type_name_utils'
 
 class QueryDef < ElementDef
   attr_reader :queryName, :root, :joins, :resultFieldMappings, :criteriaFieldMappings
   
-  def initialize(model, queryNode)
+  def initialize(model, queryNode, defaultNamespace)
     @model = model
     @joins = []
-    @queryName = queryNode.attributes['name']
+    @queryName = TypeNameUtils.getShortName(queryNode.attributes['name'])
+    @namespace = TypeNameUtils.getNamespace(queryNode.attributes['name']) || defaultNamespace
     queryNode.each_element do |subNode|
       case subNode.name
         when 'root'
-          @root = QueryRoot.new(self, subNode)
+          @root = QueryRoot.new(self, subNode, defaultNamespace)
         when 'join'
           @joins << QueryJoin.new(self, subNode)
         when 'result'
           @resultFieldMappings = createMappings(subNode);
-          @resultClassName = subNode.attributes['class'] || (@queryName + "Result")
-          model.queryResultDefs << QueryResultDef.new(model, @resultClassName, @resultFieldMappings)
+          @resultClassName = TypeNameUtils.getQualifiedName(subNode.attributes['class'] || (@queryName + "Result"), defaultNamespace)
+          @model.symbolMap[@resultClassName] = QueryResultDef.new(model, @resultClassName, defaultNamespace, @resultFieldMappings)
         when 'criteria'
           @criteriaFieldMappings = createMappings(subNode);
-          @criteriaClassName = subNode.attributes['class'] || (@queryName + "Criteria")
-          model.queryCriteriaDefs << QueryCriteriaDef.new(model, @criteriaClassName, @criteriaFieldMappings)
+          @criteriaClassName = TypeNameUtils.getQualifiedName(subNode.attributes['class'] || (@queryName + "Criteria"), defaultNamespace)
+          @model.symbolMap[@criteriaClassName] = QueryCriteriaDef.new(model, @criteriaClassName, defaultNamespace, @criteriaFieldMappings)
       end
     end
   end
@@ -32,16 +34,20 @@ class QueryDef < ElementDef
     @queryName
   end
   
+  def qualifiedName
+    @namespace + "." + @queryName
+  end
+  
   def namespace
-    @model.namespace
+    @namespace
   end
   
   def resultClass
-    @model.queryResultDefs.find { |r| r.className == @resultClassName }
+    @model.findClass(@resultClassName)
   end
   
   def criteriaClass
-    @model.queryCriteriaDefs.find { |c| c.className == @criteriaClassName }
+    @model.findClass(@criteriaClassName)
   end
   
   def resolveHqlSource(source)
@@ -70,9 +76,9 @@ end
 
 class QueryRoot
   attr_reader :dataType, :hqlAlias
-  def initialize(queryDef, rootNode)
+  def initialize(queryDef, rootNode, defaultNamespace)
     @queryDef = queryDef
-    @dataType = Model.fixDataType(rootNode.attributes['class'])
+    @dataType = TypeNameUtils.getQualifiedName(rootNode.attributes['class'], defaultNamespace)
     @hqlAlias = rootNode.attributes['alias']
   end
 end

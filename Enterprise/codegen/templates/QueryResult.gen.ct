@@ -8,13 +8,14 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
 
-namespace <%= namespace %> {
+namespace <%= namespace %>
+{
 
 
     /// <summary>
     /// <%= className %> entity
     /// </summary>
-	public partial class <%= className %> : <%= @superClassName %>
+	public partial class <%= className %>
 	{
        	#region Private fields
        	
