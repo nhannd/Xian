@@ -1,6 +1,7 @@
 require 'elementdef'
 require 'fielddef'
 require 'fielddeffactory'
+require 'type_name_utils'
 
 # represents the definition of a logical class (a class as defined by an NHibernate mapping).
 # A number of C# classes that serve different purposes will typically be generated for each logical class
@@ -30,7 +31,7 @@ class ClassDef < ElementDef
   end
   
   def qualifiedName
-    @namespace + "." + @className
+    TypeNameUtils.getQualifiedName(@className, @namespace)
   end
   
   # the kind of class (:entity, :enum, :component)
@@ -56,7 +57,7 @@ class ClassDef < ElementDef
   # returns the superclass as a ClassDef, or null if the superclass is "Entity"
   def superClass
     return nil if !isSubClass
-    @model.findClass(@superClassName)
+    @model.findDef(@superClassName)
   end
   
   # returns the set of inherited fields as an array of FieldDef
@@ -91,6 +92,11 @@ class ClassDef < ElementDef
     nil # defer to subclass
   end
   
+  # same as searchCriteriaClassName, but returns a qualified version
+  def searchCriteriaQualifiedClassName
+    searchCriteriaClassName ? TypeNameUtils.getQualifiedName(searchCriteriaClassName, @namespace) : nil
+  end
+  
 protected  
   # processes fields to create instances of FieldDef
   # a "field" is a node of type property, map, set, many-to-one, and others
@@ -110,6 +116,8 @@ protected
   # processes componentNode to create instances of ComponentDef
   def processComponent(componentNode, defaultNamespace, suppressCodeGen)
    componentDef = ComponentDef.new(@model, componentNode, defaultNamespace, suppressCodeGen)
-   @model.symbolMap[componentDef.qualifiedName] = componentDef
+   
+   # only add the component def to the model if it wasn't already defined by another entity class
+   @model.addDef(componentDef.qualifiedName, componentDef) if !@model.findDef(componentDef.qualifiedName)
   end
 end

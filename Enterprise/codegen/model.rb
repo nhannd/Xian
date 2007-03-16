@@ -7,7 +7,7 @@ require 'type_name_utils'
 
 # Represents a domain model defined by a set of NHibernate XML mappings
 class Model < ElementDef
-  attr_reader :namespace, :symbolMap
+  attr_reader :namespace
   
   def initialize()
     @entityDefs = []
@@ -33,9 +33,17 @@ class Model < ElementDef
     end
   end
   
-  # searches the entire symbol space for the specified class, and returns the ElementDef or nil if not found
-  def findClass(qualifiedClassName)
-    @symbolMap[qualifiedClassName]
+  # searches the model for the specified definition, and returns the ElementDef or nil if not found
+  def findDef(qualifiedDefName)
+    @symbolMap[qualifiedDefName]
+  end
+  
+  # adds the specified element definition to the model
+  def addDef(qualifiedDefName, elementDef)
+    if(@symbolMap[qualifiedDefName])
+      raise "Symbol " + qualifiedDefName + " already defined"
+    end
+    @symbolMap[qualifiedDefName] = elementDef
   end
 
   def entityDefs
@@ -106,7 +114,7 @@ protected
   def processEntity(classNode, namespace, superClassName, suppressCodeGen)
     #create EntityDef for classNode
     entityDef = EntityDef.new(self, classNode, namespace, superClassName, suppressCodeGen)
-    @symbolMap[entityDef.qualifiedName] = entityDef
+    addDef(entityDef.qualifiedName, entityDef)
     
     #process any contained subclassses recursively
     classNode.each_element do |subclassNode|
@@ -117,12 +125,12 @@ protected
   # processes classNode to create instances of EnumDef
   def processEnum(classNode, namespace, suppressCodeGen)
     enumDef = EnumDef.new(self, classNode, namespace, suppressCodeGen)
-    @symbolMap[enumDef.qualifiedName] = enumDef
+    addDef(enumDef.qualifiedName, enumDef)
   end
   
   def processQuery(queryNode, namespace)
     queryDef = QueryDef.new(self, queryNode, namespace)
-    @symbolMap[queryDef.queryName] = queryDef
+    addDef(queryDef.queryName,queryDef)
   end
    
 end

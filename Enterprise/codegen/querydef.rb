@@ -21,11 +21,11 @@ class QueryDef < ElementDef
         when 'result'
           @resultFieldMappings = createMappings(subNode);
           @resultClassName = TypeNameUtils.getQualifiedName(subNode.attributes['class'] || (@queryName + "Result"), defaultNamespace)
-          @model.symbolMap[@resultClassName] = QueryResultDef.new(model, @resultClassName, defaultNamespace, @resultFieldMappings)
+          @model.addDef(@resultClassName, QueryResultDef.new(model, @resultClassName, defaultNamespace, @resultFieldMappings))
         when 'criteria'
           @criteriaFieldMappings = createMappings(subNode);
           @criteriaClassName = TypeNameUtils.getQualifiedName(subNode.attributes['class'] || (@queryName + "Criteria"), defaultNamespace)
-          @model.symbolMap[@criteriaClassName] = QueryCriteriaDef.new(model, @criteriaClassName, defaultNamespace, @criteriaFieldMappings)
+          @model.addDef(@criteriaClassName, QueryCriteriaDef.new(model, @criteriaClassName, defaultNamespace, @criteriaFieldMappings))
       end
     end
   end
@@ -43,11 +43,11 @@ class QueryDef < ElementDef
   end
   
   def resultClass
-    @model.findClass(@resultClassName)
+    @model.findDef(@resultClassName)
   end
   
   def criteriaClass
-    @model.findClass(@criteriaClassName)
+    @model.findDef(@criteriaClassName)
   end
   
   def resolveHqlSource(source)
@@ -68,7 +68,7 @@ protected
   def resolveDataType(dataType, pathParts)
     return dataType if(pathParts.length == 0)
     
-    classDef = @model.findClass(dataType)
+    classDef = @model.findDef(dataType)
     fieldDef = classDef.findField(pathParts[0])
     return resolveDataType((fieldDef.kind == :collection) ? fieldDef.elementType : fieldDef.dataType, pathParts[1..-1])
   end

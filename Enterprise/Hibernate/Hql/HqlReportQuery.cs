@@ -7,7 +7,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 {
     public class HqlReportQuery : HqlQuery
     {
-        private List<HqlSelector> _selectors;
+        private List<HqlSelect> _selects;
         private List<HqlJoin> _joins;
         private HqlFrom _from;
 
@@ -16,7 +16,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// </summary>
         /// <param name="from"></param>
         public HqlReportQuery(HqlFrom from)
-            : this(from, new HqlSelector[] { }, new HqlJoin[] { }, new HqlCondition[] { }, new HqlSort[] { }, null)
+            : this(from, new HqlSelect[] { }, new HqlJoin[] { }, new HqlCondition[] { }, new HqlSort[] { }, null)
         {
         }
 
@@ -29,11 +29,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="conditions"></param>
         /// <param name="sorts"></param>
         /// <param name="page"></param>
-        public HqlReportQuery(HqlFrom from, HqlSelector[] selectors, HqlJoin[] joins, HqlCondition[] conditions, HqlSort[] sorts, SearchResultPage page)
+        public HqlReportQuery(HqlFrom from, HqlSelect[] selectors, HqlJoin[] joins, HqlCondition[] conditions, HqlSort[] sorts, SearchResultPage page)
             : base("", conditions, sorts, page)
         {
             _from = from;
-            _selectors = new List<HqlSelector>(selectors);
+            _selects = new List<HqlSelect>(selectors);
             _joins = new List<HqlJoin>(joins);
         }
 
@@ -43,9 +43,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             set { _from = value; }
         }
 
-        public List<HqlSelector> Selectors
+        public List<HqlSelect> Selects
         {
-            get { return _selectors; }
+            get { return _selects; }
         }
 
         public List<HqlJoin> Joins
@@ -59,7 +59,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             {
                 // build the select clause
                 StringBuilder select = new StringBuilder();
-                foreach (HqlSelector s in _selectors)
+                foreach (HqlSelect s in _selects)
                 {
                     if (select.Length != 0)
                         select.Append(", ");

@@ -15,29 +15,31 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <summary>
         /// Extracts a list of <see cref="HqlSort"/> objects from the specified <see cref="SearchCriteria"/>
         /// </summary>
-        /// <param name="alias">The HQL alias to prepend to the sort variables</param>
+        /// <param name="qualifier">The HQL qualifier to prepend to the sort variables</param>
         /// <param name="criteria">The search criteria object</param>
         /// <returns>A list of HQL sort object that are equivalent to the specified criteria</returns>
-        public static HqlSort[] FromSearchCriteria(string alias, SearchCriteria criteria)
+        public static HqlSort[] FromSearchCriteria(string qualifier, SearchCriteria criteria)
         {
             List<HqlSort> hqlSorts = new List<HqlSort>();
-            foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+            if (criteria is SearchConditionBase)
             {
-                if (subCriteria is SearchConditionBase)
+                SearchConditionBase sc = (SearchConditionBase)criteria;
+                if (sc.Test != SearchConditionTest.None)
                 {
-                    SearchConditionBase sc = (SearchConditionBase)subCriteria;
-                    if (sc.SortPosition > -1)
-                    {
-                        hqlSorts.Add(new HqlSort(alias, sc.GetKey(), sc.SortDirection, sc.SortPosition));
-                    }
-                }
-                else
-                {
-                    // recur on subCriteria
-                    string subAlias = string.Format("{0}.{1}", alias, subCriteria.GetKey());
-                    hqlSorts.AddRange(FromSearchCriteria(subAlias, subCriteria));
+                    string hqlVariable = string.IsNullOrEmpty(sc.GetKey()) ? qualifier : string.Format("{0}.{1}", qualifier, sc.GetKey());
+                    hqlSorts.Add(new HqlSort(hqlVariable, sc.SortDirection, sc.SortPosition));
                 }
             }
+            else
+            {
+                // recur on subCriteria
+                foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+                {
+                    string subQualifier = string.Format("{0}.{1}", qualifier, subCriteria.GetKey());
+                    hqlSorts.AddRange(FromSearchCriteria(subQualifier, subCriteria));
+                }
+            }
+
             return hqlSorts.ToArray();
         }
 
@@ -47,13 +49,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <summary>
         /// Constructs an <see cref="HqlSort"/> object.
         /// </summary>
-        /// <param name="alias">The HQL alias to prepend</param>
-        /// <param name="fieldName">The HQL field name</param>
+        /// <param name="variable">The HQL variable on which to sort</param>
         /// <param name="ascending">Specifies whether the sort is ascending or descending</param>
         /// <param name="position">Specifies the relative priority of the sort condition</param>
-        public HqlSort(string alias, string fieldName, bool ascending, int position)
+        public HqlSort(string variable, bool ascending, int position)
         {
-            _hql = string.Format("{0}.{1} {2}", alias, fieldName, ascending ? "asc" : "desc");
+            _hql = string.Format("{0} {1}", variable, ascending ? "asc" : "desc");
             _position = position;
         }
 

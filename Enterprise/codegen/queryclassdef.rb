@@ -49,15 +49,15 @@ class QueryFieldDef < ElementDef
   
   # the C# datatype of the field to be used in SearchCriteria classes
   def searchCriteriaDataType
-    classDef = @model.findClass(dataType)
-    (classDef && classDef.searchCriteriaClassName) ? classDef.searchCriteriaClassName : "SearchCondition<#{dataType}>"
+    classDef = @model.findDef(dataType)
+    (classDef && classDef.searchCriteriaQualifiedClassName) ? classDef.searchCriteriaQualifiedClassName : "SearchCondition<#{dataType}>"
   end
   
   # the C# return datatype of the field to be used in SearchCriteria classes
   # (this is necessary because the return type is potentially an interface)
   def searchCriteriaReturnType
-    classDef = @model.findClass(dataType)
-    (classDef && classDef.searchCriteriaClassName) ? classDef.searchCriteriaClassName : "ISearchCondition<#{dataType}>"
+    classDef = @model.findDef(dataType)
+    (classDef && classDef.searchCriteriaQualifiedClassName) ? classDef.searchCriteriaQualifiedClassName : "ISearchCondition<#{dataType}>"
   end
 end
 

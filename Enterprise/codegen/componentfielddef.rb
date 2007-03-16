@@ -35,16 +35,16 @@ class ComponentFieldDef < FieldDef
   end
 
   def searchCriteriaDataType
-    componentDef.searchCriteriaClassName
+    componentDef.searchCriteriaQualifiedClassName
   end
   
   def searchCriteriaReturnType
-    componentDef.searchCriteriaClassName
+    componentDef.searchCriteriaQualifiedClassName
   end
 
 protected
   def componentDef
-    model.findClass(@dataType)
+    model.findDef(@dataType)
   end
 
 end
