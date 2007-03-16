@@ -62,6 +62,7 @@
     <Compile Include="EnumTable.cs" />
     <Compile Include="EnumValue.cs" />
     <Compile Include="EnumValueAttribute.cs" />
+    <Compile Include="IAuthenticationService.cs" />
     <Compile Include="ICodedValueBroker.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
