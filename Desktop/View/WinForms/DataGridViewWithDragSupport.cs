@@ -52,23 +52,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-            {
-                if (ShouldBeginDrag(e))
-                {
-                    // Proceed with the drag and drop, passing in the list item.  
-                    ItemDragEventArgs args = new ItemDragEventArgs(MouseButtons.Left, null);
-                    EventsHelper.Fire(_itemDrag, this, args);
+			if (_rowIndexFromMouseDown != -1 && 
+				(e.Button & MouseButtons.Left) == MouseButtons.Left)
+			{
+				if (ShouldBeginDrag(e))
+				{
+					// Proceed with the drag and drop, passing in the list item.  
+					ItemDragEventArgs args = new ItemDragEventArgs(MouseButtons.Left, null);
+					EventsHelper.Fire(_itemDrag, this, args);
 
-                    // reset the drag box to empty so that the event is not fired repeatedly
-                    _dragBoxFromMouseDown = Rectangle.Empty;
-                }
-            }
-            else
-            {
-                // allow the base class to handle it only if the left mouse button was not pressed
-                base.OnMouseMove(e);
-            }
+					// reset the drag box to empty so that the event is not fired repeatedly
+					_dragBoxFromMouseDown = Rectangle.Empty;
+				}
+			}
+			else
+			{
+				// allow the base class to handle it only if the left mouse button was not pressed
+				base.OnMouseMove(e);
+			}
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
