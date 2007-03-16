@@ -1,4 +1,4 @@
-require 'fielddef'
+require 'field_def'
 require 'type_name_utils'
 
 

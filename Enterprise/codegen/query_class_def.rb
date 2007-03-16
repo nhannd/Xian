@@ -1,4 +1,4 @@
-require 'elementdef'
+require 'element_def'
 
 class QueryClassDef < ElementDef
   attr_reader :className, :fields

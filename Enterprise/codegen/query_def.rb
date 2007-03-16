@@ -1,6 +1,6 @@
-require 'elementdef'
-require 'queryresultdef'
-require 'querycriteriadef'
+require 'element_def'
+require 'query_result_def'
+require 'query_criteria_def'
 require 'model'
 require 'type_name_utils'
 

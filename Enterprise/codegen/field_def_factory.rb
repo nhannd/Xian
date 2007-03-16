@@ -1,10 +1,10 @@
 require 'constants'
-require 'primitivefielddef'
-require 'collectionfielddef'
-require 'enumfielddef'
-require 'componentfielddef'
-require 'entityfielddef'
-require 'usertypefielddef'
+require 'primitive_field_def'
+require 'collection_field_def'
+require 'enum_field_def'
+require 'component_field_def'
+require 'entity_field_def'
+require 'user_type_field_def'
 require 'type_name_utils'
 
 # Factory class to create FieldDef subclasses of the correct type, based upon the specified fieldNode

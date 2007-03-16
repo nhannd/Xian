@@ -1,9 +1,11 @@
-require 'queryclassdef'
+require 'query_class_def'
 
-class QueryCriteriaDef < QueryClassDef
+class QueryResultDef < QueryClassDef
   def initialize(model, className, defaultNamespace, mappings)
     super(model, className, defaultNamespace, mappings)
   end
   
-  
+  def superClassName
+    "QueryResult"
+  end    
 end

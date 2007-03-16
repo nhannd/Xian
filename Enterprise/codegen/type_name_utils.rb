@@ -1,4 +1,3 @@
-
 # Contains static utility methods for working with .NET type names
 class TypeNameUtils
 
