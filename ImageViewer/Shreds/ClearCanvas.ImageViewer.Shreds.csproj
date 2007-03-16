@@ -40,18 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomServer\DicomServerSettings.cs" />
     <Compile Include="DicomServer\DicomMoveRequestServiceType.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DicomServer\DicomServerExtension.cs" />
     <Compile Include="DicomServer\DicomServerManager.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\DicomServerSettings.cs" />
-    <Compile Include="DicomServer\DicomServerSettings.Designer.cs">
-      <DependentUpon>DicomServerSettings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="DicomServer\DicomSessionObjects.cs">
       <SubType>Code</SubType>
@@ -101,13 +96,6 @@
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
       <Name>ClearCanvas.Server.ShredHost</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="DicomServer\DicomServerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

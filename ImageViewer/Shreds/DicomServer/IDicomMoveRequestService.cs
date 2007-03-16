@@ -101,6 +101,96 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		}
 	}
 
+    [DataContract]
+    public class UpdateServerSettingRequest
+    {
+		private string _hostName;
+		private string _AETitle;
+		private int _port;
+		private string _interimStorageDirectory;
+
+        public UpdateServerSettingRequest(string hostName, string aeTitle, int port, string storageDir)
+        {
+            _hostName = hostName;
+            _AETitle = aeTitle;
+            _port = port;
+            _interimStorageDirectory = storageDir;
+        }
+
+		[DataMember(IsRequired = true)]
+		public string HostName
+		{
+			get { return _hostName; }
+			set { _hostName = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string AETitle
+		{
+			get { return _AETitle; }
+			set { _AETitle = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public int Port
+		{
+            get { return _port; }
+            set { _port = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        public string InterimStorageDirectory
+        {
+            get { return _interimStorageDirectory; }
+            set { _interimStorageDirectory = value; }
+        }
+    }
+
+    [DataContract]
+    public class GetServerSettingResponse
+    {
+        private string _hostName;
+        private string _AETitle;
+        private int _port;
+        private string _interimStorageDirectory;
+
+        public GetServerSettingResponse(string hostName, string aeTitle, int port, string storageDir)
+        {
+            _hostName = hostName;
+            _AETitle = aeTitle;
+            _port = port;
+            _interimStorageDirectory = storageDir;
+        }
+
+        [DataMember(IsRequired = true)]
+        public string HostName
+        {
+            get { return _hostName; }
+            set { _hostName = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        public string AETitle
+        {
+            get { return _AETitle; }
+            set { _AETitle = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        public int Port
+        {
+            get { return _port; }
+            set { _port = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        public string InterimStorageDirectory
+        {
+            get { return _interimStorageDirectory; }
+            set { _interimStorageDirectory = value; }
+        }
+    }
+
 	[ServiceContract]
 	public interface IDicomMoveRequestService
 	{
@@ -109,5 +199,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		[OperationContract]
 		void Retrieve(DicomRetrieveRequest request);
+
+        [OperationContract]
+        GetServerSettingResponse GetServerSetting();
+
+        [OperationContract]
+        void UpdateServerSetting(UpdateServerSettingRequest request);
 	}
 }

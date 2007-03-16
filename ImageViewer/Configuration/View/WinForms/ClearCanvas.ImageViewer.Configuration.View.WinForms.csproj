@@ -35,8 +35,52 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomServerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerConfigurationComponentView.cs">
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
+      <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
+      <Name>ClearCanvas.Controls.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Desktop\Configuration\View\WinForms\ClearCanvas.Desktop.Configuration.View.WinForms.csproj">
+      <Project>{1AC0E6EC-4E65-4B90-936B-7174B870A30F}</Project>
+      <Name>ClearCanvas.Desktop.Configuration.View.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
+      <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
+      <Name>ClearCanvas.Desktop.View.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Configuration.csproj">
+      <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
+      <Name>ClearCanvas.ImageViewer.Configuration</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DicomServerConfigurationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

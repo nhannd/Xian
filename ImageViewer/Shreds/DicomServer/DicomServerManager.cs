@@ -13,6 +13,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.ImageViewer.Shreds.ServerTree;
+using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -34,8 +35,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public DicomServerManager()
         {
-            _myApplicationEntity = new ApplicationEntity(new HostName("localhost"), new AETitle(DicomServerSettings.Default.AETitle), new ListeningPort(DicomServerSettings.Default.Port));
-            _storageDirectory = DicomServerSettings.Default.InterimStorageDirectory;
+            _myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+            _storageDirectory = DicomServerSettings.Instance.InterimStorageDirectory;
 
             _querySessionDictionary = new Dictionary<DicomSessionKey, DicomQuerySession>();
             _moveSessionDictionary = new Dictionary<DicomSessionKey, DicomMoveSession>();
@@ -50,6 +51,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				return _instance;
 			}
+            set
+            {
+                _instance = value;
+            }
 		}
 
         public void StartServer()
@@ -518,6 +523,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				task.Run();
 			}
 		}
+
+        public GetServerSettingResponse GetServerSetting()
+        {
+            return new GetServerSettingResponse(DicomServerSettings.Instance.HostName,
+                                                DicomServerSettings.Instance.AETitle,
+                                                DicomServerSettings.Instance.Port,
+                                                DicomServerSettings.Instance.InterimStorageDirectory);
+        }
+
+        public void UpdateServerSetting(UpdateServerSettingRequest request)
+        {
+            DicomServerSettings.Instance.HostName = request.HostName;
+            DicomServerSettings.Instance.AETitle = request.AETitle;
+            DicomServerSettings.Instance.Port = request.Port;
+            DicomServerSettings.Instance.InterimStorageDirectory = request.InterimStorageDirectory;
+            DicomServerSettings.Save();
+        }
 
 		#endregion
 

@@ -176,14 +176,14 @@ namespace ClearCanvas.ImageViewer.Shreds.ServerTree
             {
                 _myServerGroup = new DicomServerGroup();
 
-				_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", DicomServerSettings.Default.AETitle, DicomServerSettings.Default.Port));
+                _myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", DicomServerSettings.Instance.HostName, DicomServerSettings.Instance.AETitle, DicomServerSettings.Instance.Port));
                 _myServerGroup.AddChild(new DicomServerGroup(AENavigatorComponent.MyServersTitle, _myServerGroup.ServerPath));
             }
             else
             {
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyDatastoreTitle, svrPaths, 1) == null)
                 {
-					_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", DicomServerSettings.Default.AETitle, DicomServerSettings.Default.Port));
+                    _myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", DicomServerSettings.Instance.HostName, DicomServerSettings.Instance.AETitle, DicomServerSettings.Instance.Port));
                     isupdated = true;
                 }
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyServersTitle, svrPaths, 1) == null)
