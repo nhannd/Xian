@@ -12,12 +12,14 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.Dicom.Services;
+using ClearCanvas.ImageViewer.Shreds.ServerTree;
 
-namespace ClearCanvas.Server.DicomServerShred
+namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-    public partial class DicomServerEventManager
+	public partial class DicomServerManager : IDicomMoveRequestService
     {
+		private static DicomServerManager _instance;
+
         private ApplicationEntity _myApplicationEntity;
         private string _storageDirectory;
         private ClearCanvas.Dicom.Network.DicomServer _dicomServer;
@@ -30,14 +32,25 @@ namespace ClearCanvas.Server.DicomServerShred
         private Dictionary<DicomSessionKey, DicomMoveSession> _moveSessionDictionary;
         private object _moveSessionLock = new object();
 
-        public DicomServerEventManager(string hostName, string aeTitle, int port, string storageDirectory)
+        public DicomServerManager()
         {
-            _myApplicationEntity = new ApplicationEntity(new HostName(hostName), new AETitle(aeTitle), new ListeningPort(port));
-            _storageDirectory = storageDirectory;
+            _myApplicationEntity = new ApplicationEntity(new HostName("localhost"), new AETitle(DicomServerSettings.Default.AETitle), new ListeningPort(DicomServerSettings.Default.Port));
+            _storageDirectory = DicomServerSettings.Default.InterimStorageDirectory;
 
             _querySessionDictionary = new Dictionary<DicomSessionKey, DicomQuerySession>();
             _moveSessionDictionary = new Dictionary<DicomSessionKey, DicomMoveSession>();
         }
+
+		public static DicomServerManager Instance
+		{
+			get
+			{
+				if (_instance == null)
+					_instance = new DicomServerManager();
+
+				return _instance;
+			}
+		}
 
         public void StartServer()
         {
@@ -340,7 +353,7 @@ namespace ClearCanvas.Server.DicomServerShred
             {
                 if (ids.IsServer)
                 {
-                    DicomServer dicomServer = ids as DicomServer;
+					ClearCanvas.ImageViewer.Shreds.ServerTree.DicomServer dicomServer = ids as ClearCanvas.ImageViewer.Shreds.ServerTree.DicomServer;
                     if (dicomServer != null && dicomServer.DicomAE.AE == aeTitle)
                         return dicomServer.DicomAE;
                 }
@@ -387,14 +400,14 @@ namespace ClearCanvas.Server.DicomServerShred
             SendParcel sendParcel = new SendParcel(_myApplicationEntity, destinationAE, studyDescription);
             sendParcel.Include(new Uid(studyInstanceUID));
 
-            BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) { sendParcel.StartSend(); }, false);
-            lock (_moveSessionLock)
-            {
-                _moveSessionDictionary[key] = new DicomMoveSession(sendParcel, task);
-            }
+			//BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) { sendParcel.StartSend(); }, false);
+			//lock (_moveSessionLock)
+			//{
+			//    _moveSessionDictionary[key] = new DicomMoveSession(sendParcel, task);
+			//}
 
             info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
-            task.Run();
+			//task.Run();
 
             return OffisDcm.STATUS_Pending;
         }
@@ -465,7 +478,48 @@ namespace ClearCanvas.Server.DicomServerShred
                 return buf.ToString();
 
             return "";
-        }
+		}
 
-    }
+		#region IDicomMoveRequestService Members
+
+		public void Send(DicomSendRequest request)
+		{
+			DicomClient client = new DicomClient(_myApplicationEntity);
+			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.DestinationHostName), new AETitle(request.DestinationAETitle), new ListeningPort(request.Port));
+
+			SendParcel parcel = new SendParcel(_myApplicationEntity, destinationAE, "");
+			foreach (string uid in request.Uids)
+				parcel.Include(new Uid(uid));
+
+			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) 
+			{
+				client.Store(destinationAE, parcel.GetReferencedSopInstanceFileNames(), parcel.SopClasses, parcel.TransferSyntaxes); 
+			}, false);
+			
+			task.Run();
+		}
+
+		public void Retrieve(DicomRetrieveRequest request)
+		{
+			if (request.RetrieveLevel != RetrieveLevel.Study)
+				throw new Exception("The specified retrieve level is unsupported at this time.");
+
+			DicomClient client = new DicomClient(_myApplicationEntity);
+			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
+
+			//SendParcel parcel = new SendParcel(_myApplicationEntity, destinationAE, "");
+			foreach (string uid in request.Uids)
+			{
+				BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
+				{
+					client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(uid), this.SaveDirectory);
+				}, false);
+				
+				task.Run();
+			}
+		}
+
+		#endregion
+
+	}
 }

@@ -7,9 +7,9 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Dicom.Services;
 using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Shreds.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -36,8 +36,41 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void RetrieveStudy()
 		{
-		}
+            //
+            // check pre-conditions
+            //
 
+			if (this.Context.SelectedServerGroup.IsLocalDatastore)
+				return;
+
+            if (this.Context.SelectedStudy == null)
+                return;
+
+			DicomRetrieveRequest request = new DicomRetrieveRequest();
+			request.SourceAETitle = this.Context.SelectedStudy.Server.AE;
+			request.SourceHostName = this.Context.SelectedStudy.Server.Host; ;
+			request.Port = this.Context.SelectedStudy.Server.Port;
+
+			List<string> studyUids = new List<string>();
+			foreach (StudyItem item in this.Context.SelectedStudies)
+				studyUids.Add(item.StudyInstanceUID);
+
+			request.Uids = studyUids.ToArray();
+
+			DicomMoveRequestServiceClient client = new DicomMoveRequestServiceClient();
+
+			try
+			{
+				client.Open();
+				client.Retrieve(request);
+				client.Close();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+
+		}
 
 		private void SetDoubleClickHandler()
 		{

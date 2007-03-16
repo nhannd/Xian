@@ -8,8 +8,8 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Dicom.Services;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Shreds.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -53,9 +53,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
             }
 
-            ApplicationEntity me = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
-            ISendParcel iParcel = DicomServicesLayer.GetISender(me).Send(new Uid(this.Context.SelectedStudy.StudyInstanceUID), destinationAE, this.Context.SelectedStudy.StudyDescription);
-            iParcel.StartSend();
+			DicomSendRequest request = new DicomSendRequest();
+			request.DestinationAETitle = destinationAE.AE;
+			request.DestinationHostName = destinationAE.Host;
+			request.Port = destinationAE.Port;
+			
+			List<string> studyUids = new List<string>();
+			foreach (StudyItem item in this.Context.SelectedStudies)
+				studyUids.Add(item.StudyInstanceUID);
+			
+			request.Uids = studyUids.ToArray();
+
+			DicomMoveRequestServiceClient client = new DicomMoveRequestServiceClient();
+
+			try
+			{
+				client.Open();
+				client.Send(request);
+				client.Close();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
         }
 
         protected override void OnSelectedStudyChanged(object sender, EventArgs e)

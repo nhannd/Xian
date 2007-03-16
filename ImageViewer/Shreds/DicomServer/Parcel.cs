@@ -6,9 +6,8 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom.Services;
 
-namespace ClearCanvas.Server.DicomServerShred
+namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
     abstract public class Parcel
     {

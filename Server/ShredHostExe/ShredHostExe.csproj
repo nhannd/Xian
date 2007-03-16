@@ -32,10 +32,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
     </Reference>
-    <Reference Include="ClearCanvas.Server.ShredHost, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ShredHost\bin\Release\ClearCanvas.Server.ShredHost.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -51,6 +47,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShredHost\ClearCanvas.Server.ShredHost.csproj">
+      <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
+      <Name>ClearCanvas.Server.ShredHost</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -60,9 +62,15 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)..\SampleShred1\$(Outdir)SampleShred1.dll $(TargetDir)plugins
+    <PostBuildEvent>rem copy $(ProjectDir)..\SampleShred1\$(Outdir)SampleShred1.dll $(TargetDir)plugins
 copy $(ProjectDir)..\SampleShred2\$(Outdir)SampleShred2.dll $(TargetDir)plugins
-copy $(ProjectDir)..\DicomServerShred\$(Outdir)ClearCanvas.Server.DicomServerShred.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageViewer\Shreds\$(Outdir)ClearCanvas.ImageViewer.Shreds.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)
+copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\Dicom\DataStore\$(OutDir)ClearCanvas.Dicom.DataStore.dll $(TargetDir)plugins
+
+copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)plugins
 rem copy $(ProjectDir)..\SampleShredCrash\$(Outdir)SampleShredCrash.dll $(TargetDir)plugins</PostBuildEvent>
   </PropertyGroup>
 </Project>

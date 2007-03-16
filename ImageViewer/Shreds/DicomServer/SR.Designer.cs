@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Server.DicomServerShred {
+namespace ClearCanvas.ImageViewer.Shreds.DicomServer {
     using System;
     
     

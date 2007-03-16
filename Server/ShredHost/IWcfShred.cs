@@ -6,10 +6,16 @@ namespace ClearCanvas.Server.ShredHost
 {
     public interface IWcfShred
     {
-        int ServicePort
+        int HttpPort
         {
             get;
             set;
         }
+
+		int TcpPort
+		{
+			get;
+			set;
+		}
     }
 }

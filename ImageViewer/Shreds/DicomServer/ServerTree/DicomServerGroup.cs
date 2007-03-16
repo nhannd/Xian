@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Server.DicomServerShred
+namespace ClearCanvas.ImageViewer.Shreds.ServerTree
 {
     public static class AENavigatorComponent
     {

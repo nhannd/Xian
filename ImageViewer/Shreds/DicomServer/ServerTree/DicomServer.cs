@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 
-namespace ClearCanvas.Server.DicomServerShred
+namespace ClearCanvas.ImageViewer.Shreds.ServerTree
 {
     public class DicomServer : DicomServerBase
     {

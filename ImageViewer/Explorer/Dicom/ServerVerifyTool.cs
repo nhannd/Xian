@@ -7,7 +7,6 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -32,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				throw new DicomServerException(SR.ExceptionNoServersSelected);
             }
 
-			ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle(LocalApplicationEntity.AETitle), new ListeningPort(LocalApplicationEntity.Port));
+			ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle("AETITLE"), new ListeningPort(4006));
             StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
             using (DicomClient client = new DicomClient(myAE))

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml.Serialization;
-using ClearCanvas.Dicom.Services;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Shreds.DicomServer;
 
-namespace ClearCanvas.Server.DicomServerShred
+namespace ClearCanvas.ImageViewer.Shreds.ServerTree
 {
     public class DicomServerTree
     {
@@ -176,14 +176,14 @@ namespace ClearCanvas.Server.DicomServerShred
             {
                 _myServerGroup = new DicomServerGroup();
 
-				_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", LocalApplicationEntity.AETitle, LocalApplicationEntity.Port));
+				_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", DicomServerSettings.Default.AETitle, DicomServerSettings.Default.Port));
                 _myServerGroup.AddChild(new DicomServerGroup(AENavigatorComponent.MyServersTitle, _myServerGroup.ServerPath));
             }
             else
             {
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyDatastoreTitle, svrPaths, 1) == null)
                 {
-					_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", LocalApplicationEntity.AETitle, LocalApplicationEntity.Port));
+					_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", DicomServerSettings.Default.AETitle, DicomServerSettings.Default.Port));
                     isupdated = true;
                 }
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyServersTitle, svrPaths, 1) == null)

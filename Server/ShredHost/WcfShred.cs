@@ -9,10 +9,9 @@ namespace ClearCanvas.Server.ShredHost
 {
     public abstract class WcfShred : ShredBase, IWcfShred
     {
-        public WcfShred()
+		public WcfShred()
         {
             _serviceEndpointDescriptions = new Dictionary<string,ServiceEndpointDescription>();
-
         }
 
         public override object InitializeLifetimeService()
@@ -23,17 +22,24 @@ namespace ClearCanvas.Server.ShredHost
             return null;
         }
 
-        protected void StartHost<TServiceType, TServiceInterfaceType>(string name, string description)
+		protected void StartHost<TServiceType, TServiceInterfaceType>(string name, string description)
         {
-            ServiceEndpointDescription sed = WcfHelper.StartHost<TServiceType, TServiceInterfaceType>(this.ServicePort, name, description);
-            _serviceEndpointDescriptions.Add(name, sed);
-        }
+			StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.WSHttp);
+		}
+		
+		protected void StartHost<TServiceType, TServiceInterfaceType>(string name, string description, HostBindingType bindingType)
+		{
+			if (_serviceEndpointDescriptions.ContainsKey(name))
+				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-        protected void StopHost(string name)
+			WcfHelper.StartHost<TServiceType, TServiceInterfaceType>(name, description, new HostBindingInformation(this.HttpPort, this.TcpPort));
+		}
+
+		protected void StopHost(string name)
         {
             if (_serviceEndpointDescriptions.ContainsKey(name))
             {
-                WcfHelper.StopHost(_serviceEndpointDescriptions[name]);
+                _serviceEndpointDescriptions[name].ServiceHost.Close();
                 _serviceEndpointDescriptions.Remove(name);
             }
             else
@@ -43,26 +49,27 @@ namespace ClearCanvas.Server.ShredHost
             }
         }
 
-        #region Private Members
+		#region Private Members
         private Dictionary<string, ServiceEndpointDescription> _serviceEndpointDescriptions;
         #endregion
 
+		#region IWcfShred Members
+		
+		private int _httpPort;
+		private int _tcpPort;
 
-        #region IWcfShred Members
-        private int _servicePort;
+		public int HttpPort
+		{
+			get { return _httpPort; }
+			set	{ _httpPort = value; }
+		}
 
-        public int ServicePort
-        {
-            get
-            {
-                return _servicePort;
-            }
-            set
-            {
-                _servicePort = value;
-            }
-        }
+		public int TcpPort
+		{
+			get { return _tcpPort; }
+			set	{ _tcpPort = value; }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

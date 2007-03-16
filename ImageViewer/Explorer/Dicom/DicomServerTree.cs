@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml.Serialization;
-using ClearCanvas.Dicom.Services;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -176,14 +175,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 _myServerGroup = new DicomServerGroup();
 
-				_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", LocalApplicationEntity.AETitle, LocalApplicationEntity.Port));
+				//!!
+				_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, _myServerGroup.ServerPath, "", "localhost", "AETITLE", 4006));
                 _myServerGroup.AddChild(new DicomServerGroup(AENavigatorComponent.MyServersTitle, _myServerGroup.ServerPath));
             }
             else
             {
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyDatastoreTitle, svrPaths, 1) == null)
                 {
-					_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", LocalApplicationEntity.AETitle, LocalApplicationEntity.Port));
+					_myServerGroup.AddChild(new DicomServer(AENavigatorComponent.MyDatastoreTitle, ".", "", "localhost", "AETITLE", 4006));
                     isupdated = true;
                 }
                 if (FindDicomServer(_myServerGroup, AENavigatorComponent.MyServersTitle, svrPaths, 1) == null)

@@ -45,9 +45,18 @@ namespace ClearCanvas.Dicom.Network
             if (ServerState.STARTED == State)
                 throw new System.Exception("Server is already started: cannot start again");
 
-            Thread t = new Thread(new ThreadStart(WaitForIncomingAssociations));
+			State = ServerState.INITIALIZING;
+			
+			Thread t = new Thread(new ThreadStart(WaitForIncomingAssociations));
             t.IsBackground = true;
             t.Start();
+
+			while (this.State == ServerState.INITIALIZING)
+			{
+				Thread.Sleep(10);
+			}
+
+			CheckStartStopException();
         }
 
         public String SaveDirectory
@@ -57,8 +66,6 @@ namespace ClearCanvas.Dicom.Network
 
         protected void WaitForIncomingAssociations()
         {
-            State = ServerState.INITIALIZING;
-
             try
             {
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTOR, _myOwnAE.Port, _timeout);
@@ -103,7 +110,7 @@ namespace ClearCanvas.Dicom.Network
             catch (DicomRuntimeApplicationException e)
             {
                 State = ServerState.STOPPED;
-                throw new NetworkDicomException(OffisConditionParser.GetTextString(_myOwnAE, e), e);
+				_startException = new NetworkDicomException(OffisConditionParser.GetTextString(_myOwnAE, e), e);
             }
         }
 
@@ -114,6 +121,11 @@ namespace ClearCanvas.Dicom.Network
                 throw new System.Exception("Cannot stop server while it has not yet been started.");
 
             StopRequestedFlag = true;
+
+			while (State != ServerState.STOPPED)
+			{
+				Thread.Sleep(10);
+			}
         }
 
         ~DicomServer()
@@ -351,10 +363,22 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+		private void CheckStartStopException()
+		{
+			if (_startException != null)
+			{
+				Exception e = _startException;
+				_startException = null;
+				throw e;
+			}
+		}
+
         private ApplicationEntity _myOwnAE;
         private int _timeout = 500;
         private int _operationTimeout = 5;
         private ServerState _state;
+		private Exception _startException;
+
         private bool _stopRequestedFlag;
         private object _monitorLock = new object();
         private ThreadList _threadList = new ThreadList();

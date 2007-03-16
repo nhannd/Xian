@@ -15,7 +15,6 @@ namespace ClearCanvas.Server.ShredHost
             _startupInfo = startupInfo;
             _id = ShredController.NextId;
             _runningState = RunningState.Stopped;
-            _servicePortHash = new Dictionary<int, string>();
         }
 
         static ShredController()
@@ -83,25 +82,9 @@ namespace ClearCanvas.Server.ShredHost
         {
             ShredController shredController = threadData as ShredController;
             IWcfShred wcfShred = shredController.Shred as IWcfShred;
-            if (null != wcfShred)
-            {
-                wcfShred.ServicePort = GetServicePortHash(shredController.StartupInfo.ShredTypeName);
-            }
-
+			wcfShred.HttpPort = 8088;
+			wcfShred.TcpPort = 4044;
             shredController.Shred.Start();
-        }
-
-        private int GetServicePortHash(string displayName)
-        {
-            int hashedValue = Math.Abs(displayName.GetHashCode());
-            int validRange = _highestServicePort - _baseServicePort;
-            int portOffset = hashedValue % validRange;
-
-            // find a port offset that hasn't been used yet
-            while (_servicePortHash.ContainsKey(portOffset))
-                ++portOffset;
-
-            return _baseServicePort + portOffset;
         }
 
         private class ShredCacheObject : IShred
@@ -143,12 +126,9 @@ namespace ClearCanvas.Server.ShredHost
         }
 
         #region Private fields
-        private readonly int _highestServicePort = 65535;
-        private readonly int _baseServicePort = 49153;
         private static object _lockShredId = new object();
         private static object _lockRunningState = new object();
         private RunningState _runningState;
-        private Dictionary<int, string> _servicePortHash;
         #endregion
 
         #region Properties

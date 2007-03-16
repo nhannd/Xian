@@ -5,9 +5,8 @@ using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.Dicom.Services;
 
-namespace ClearCanvas.Server.DicomServerShred
+namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
     public class DicomSessionKey
     {
