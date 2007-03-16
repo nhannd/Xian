@@ -793,6 +793,16 @@ namespace ClearCanvas.Common
 				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
 
+        /// <summary>
+        /// Launches a file browser opened to the parent folder of a path to a single file or folder and highlights the file/folder 
+        /// </summary>
+        public static void OpenFileBrowser(string path)
+        {
+            if (IsWin32Platform)
+            {                
+                System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + path);
+            }
+        }
 
         /// <summary>
         /// Private method to get a session manager
@@ -811,6 +821,5 @@ namespace ClearCanvas.Common
                 return null;
             }
         }
-
     }
 }

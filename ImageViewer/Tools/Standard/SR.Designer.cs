@@ -250,6 +250,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Locate on Disk.
+        /// </summary>
+        internal static string MenuStandardLocateOnDisk {
+            get {
+                return ResourceManager.GetString("MenuStandardLocateOnDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip &amp;Horizontal.
         /// </summary>
         internal static string MenuToolsStandardFlipHorizontal {

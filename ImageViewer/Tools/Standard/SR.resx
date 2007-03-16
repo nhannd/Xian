@@ -267,4 +267,7 @@
   <data name="WindowLevelConfiguration" xml:space="preserve">
     <value>Window Level Presets</value>
   </data>
+  <data name="MenuStandardLocateOnDisk" xml:space="preserve">
+    <value>Locate on Disk</value>
+  </data>
 </root>
