@@ -173,7 +173,6 @@
     <EmbeddedResource Include="Icons\ResetMedium.png" />
     <EmbeddedResource Include="Icons\LocateOnDiskToolLarge.png" />
     <EmbeddedResource Include="Icons\LocateOnDiskToolMedium.png" />
-    <EmbeddedResource Include="Icons\LocateOnDiskToolSmall.png" />
     <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
