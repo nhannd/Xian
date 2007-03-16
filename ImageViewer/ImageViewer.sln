@@ -276,6 +276,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Ser
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Configuration", "Configuration\ClearCanvas.ImageViewer.Configuration.csproj", "{89DF567B-A0D1-456A-A28F-043FD57D7F9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Configuration.View.WinForms", "Configuration\View\WinForms\ClearCanvas.ImageViewer.Configuration.View.WinForms.csproj", "{9929C5B6-C13B-4436-9326-955EDE2CA102}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
