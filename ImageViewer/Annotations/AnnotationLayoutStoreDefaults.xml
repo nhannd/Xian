@@ -6,91 +6,91 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -101,95 +101,95 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -200,95 +200,95 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -299,95 +299,95 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="Dicom.GeneralImage.Composite.LateralityViewPosition" >
-            <box-settings>
-              <configuration-settings show-label="true" show-label-if-empty="true" />
-            </box-settings>
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="Dicom.GeneralImage.Composite.LateralityViewPosition" >
+              <box-settings>
+                <configuration-settings show-label="true" show-label-if-empty="true" />
+              </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -398,104 +398,104 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="!!Plane" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="!!FOV" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="!!Voltage" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="!!Current" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="!!Gantry Tilt" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="!!Exposure Time" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="!!Plane" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="!!FOV" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="!!Voltage" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="!!Current" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="!!Gantry Tilt" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="!!Exposure Time" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="true" font="Century Gothic" vertical-alignment="Center" fit-width="true"/>
+          <default-box-settings bold="true" font="Century Gothic" color="WhiteSmoke" vertical-alignment="Center" fit-width="true"/>
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
-            <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
+            <annotation-box normalized-rectangle="0.000000\0.487500\0.100000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Left" />
+            <annotation-box normalized-rectangle="0.900000\0.487500\1.000000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Right">
               <box-settings justification="Far" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.031250" annotation-item-id="Presentation.DirectionalMarkers.Top">
+            <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.025000" annotation-item-id="Presentation.DirectionalMarkers.Top">
               <box-settings justification="Center" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.450000\0.968750\0.550000\1.000000" annotation-item-id="Presentation.DirectionalMarkers.Bottom">
+            <annotation-box normalized-rectangle="0.450000\0.975000\0.550000\1.000000" annotation-item-id="Presentation.DirectionalMarkers.Bottom">
               <box-settings justification="Center" />
             </annotation-box>
           </annotation-boxes>
@@ -508,104 +508,104 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="!!Plane" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="!!FOV" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="!!Slice Thickness" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="!!Receive Coil Name" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="!!Echo Time" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="!!Repetition Time" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="!!Echo Train Length" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="!!Plane" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="!!FOV" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="!!Slice Thickness" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="!!Receive Coil Name" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="!!Echo Time" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="!!Repetition Time" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="!!Echo Train Length" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="true" font="Century Gothic" vertical-alignment="Center" fit-width="true"/>
+          <default-box-settings bold="true" font="Century Gothic" color="WhiteSmoke" vertical-alignment="Center" fit-width="true"/>
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
-            <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
+            <annotation-box normalized-rectangle="0.000000\0.487500\0.100000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Left" />
+            <annotation-box normalized-rectangle="0.900000\0.487500\1.000000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Right">
               <box-settings justification="Far" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.031250" annotation-item-id="Presentation.DirectionalMarkers.Top">
+            <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.025000" annotation-item-id="Presentation.DirectionalMarkers.Top">
               <box-settings justification="Center" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.450000\0.968750\0.550000\1.000000" annotation-item-id="Presentation.DirectionalMarkers.Bottom">
+            <annotation-box normalized-rectangle="0.450000\0.975000\0.550000\1.000000" annotation-item-id="Presentation.DirectionalMarkers.Bottom">
               <box-settings justification="Center" />
             </annotation-box>
           </annotation-boxes>
@@ -618,95 +618,95 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
-          <default-box-settings bold="true" font="Century Gothic" vertical-alignment="Center" fit-width="true"/>
+          <default-box-settings bold="true" font="Century Gothic" color="WhiteSmoke"  vertical-alignment="Center" fit-width="true"/>
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
@@ -728,91 +728,91 @@
         <annotation-box-group id="TopLeftQuadrant">
           <default-box-settings bold="true" font="Century Gothic" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.031250" annotation-item-id="Dicom.Patient.PatientId" />
-            <annotation-box normalized-rectangle="0.000000\0.031250\0.500000\0.062500" annotation-item-id="Dicom.Patient.PatientsName" />
-            <annotation-box normalized-rectangle="0.000000\0.062500\0.500000\0.093750" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
-            <annotation-box normalized-rectangle="0.000000\0.093750\0.500000\0.125000" annotation-item-id="Dicom.Patient.PatientsSex" />
-            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.156250" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.156250\0.500000\0.187500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.187500\0.500000\0.218750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.218750\0.500000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.281250\0.500000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.312500\0.500000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.343750\0.500000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.375000\0.500000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.406250\0.500000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.437500\0.500000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.000000\0.400000\0.025000" annotation-item-id="Dicom.Patient.PatientId" />
+            <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
+            <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsBirthDate" />
+            <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.Patient.PatientsSex" />
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
+            <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.200000\0.500000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.225000\0.500000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.250000\0.500000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.275000\0.500000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.300000\0.500000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.325000\0.500000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.350000\0.500000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" color="OrangeRed" justification="Far" />
+          <default-box-settings font="Century Gothic" justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.031250" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
-            <annotation-box normalized-rectangle="0.500000\0.031250\1.000000\0.062500" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
-            <annotation-box normalized-rectangle="0.500000\0.062500\1.000000\0.093750" annotation-item-id="Dicom.GeneralStudy.StudyId" />
-            <annotation-box normalized-rectangle="0.500000\0.093750\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
-            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.156250" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
-            <annotation-box normalized-rectangle="0.500000\0.156250\1.000000\0.187500" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralStudy.StudyDescription" />
+            <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
+            <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyId" />
+            <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralStudy.StudyTime" />
+            <annotation-box normalized-rectangle="0.500000\0.125000\1.000000\0.150000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.187500\1.000000\0.218750" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.InstanceNumber" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.218750\1.000000\0.250000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.281250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.281250\1.000000\0.312500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.312500\1.000000\0.343750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.343750\1.000000\0.375000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.375000\1.000000\0.406250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.406250\1.000000\0.437500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.437500\1.000000\0.468750" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.200000\1.000000\0.225000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.225000\1.000000\0.250000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.250000\1.000000\0.275000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.275000\1.000000\0.300000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.300000\1.000000\0.325000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.325000\1.000000\0.350000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.350000\1.000000\0.375000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomLeftQuadrant">
-          <default-box-settings font="Century Gothic" color="Cyan" />
+          <default-box-settings font="Century Gothic"  />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.000000\0.968750\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
-            <annotation-box normalized-rectangle="0.000000\0.937500\0.500000\0.968750" annotation-item-id="Presentation.Zoom" />
-            <annotation-box normalized-rectangle="0.000000\0.906250\0.500000\0.937500" annotation-item-id="!!FOV" />
-            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.906250" annotation-item-id="!!Image Dimensions/Acq Matrix" />
-            <annotation-box normalized-rectangle="0.000000\0.843750\0.500000\0.875000" annotation-item-id="!!Radio Pharm" />
-            <annotation-box normalized-rectangle="0.000000\0.812500\0.500000\0.843750" annotation-item-id="!!Energy Window" />
-            <annotation-box normalized-rectangle="0.000000\0.781250\0.500000\0.812500" annotation-item-id="!!Counts" />
-            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.781250" annotation-item-id="!!Duration" />
-            <annotation-box normalized-rectangle="0.000000\0.718750\0.500000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.687500\0.500000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.656250\0.500000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.593750\0.500000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.562500\0.500000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.000000\0.531250\0.500000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.975000\0.400000\1.000000" annotation-item-id="Presentation.AppliedLut" />
+            <annotation-box normalized-rectangle="0.000000\0.950000\0.500000\0.975000" annotation-item-id="Presentation.Zoom" />
+            <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="!!FOV" />
+            <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
+            <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="!!Radio Pharm" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="!!Energy Window" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="!!Counts" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="!!Duration" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.675000\0.500000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.650000\0.500000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.000000\0.625000\0.500000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic" color="Yellow" justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Far" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.968750\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
-            <annotation-box normalized-rectangle="0.500000\0.937500\1.000000\0.968750" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.500000\0.906250\1.000000\0.937500" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.906250" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
-            <annotation-box normalized-rectangle="0.500000\0.843750\1.000000\0.875000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralSeries.OperatorsName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.GeneralStudy.ReferringPhysiciansName">
               <box-settings number-of-lines="2" />
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.812500\1.000000\0.843750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.781250\1.000000\0.812500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.781250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.718750\1.000000\0.750000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.687500\1.000000\0.718750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.656250\1.000000\0.687500" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.656250" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.593750\1.000000\0.625000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.562500\1.000000\0.593750" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.531250\1.000000\0.562500" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.775000\1.000000\0.800000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.750000\1.000000\0.775000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.725000\1.000000\0.750000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.700000\1.000000\0.725000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.675000\1.000000\0.700000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
+            <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>

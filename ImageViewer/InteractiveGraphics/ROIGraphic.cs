@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Callout.State = this.Callout.CreateSelectedState();
 
 			this.Roi.ControlPoints.Visible = true;
-			this.Color = Color.Red;
+			this.Color = Color.Tomato;
 			Draw();
 
 			Trace.Write("EnterSelectedState\n");
@@ -314,7 +314,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Callout.State = this.Callout.CreateFocussedSelectedState();
 
 			this.Roi.ControlPoints.Visible = true;
-			this.Color = Color.Red;
+			this.Color = Color.Tomato;
 			Draw();
 
 			Trace.Write("EnterFocusSelectedState\n");

@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer
 		private int _columns;
 		private static int _borderWidth = 2;
 		private static int _insetWidth = 5;
-		private static Color _selectedColor = Color.White;
+		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
 
 		private event EventHandler _drawingEvent;

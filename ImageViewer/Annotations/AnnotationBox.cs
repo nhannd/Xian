@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private byte _numberOfLines = 1;
 
 		private static readonly string _defaultFont = "Arial";
-		private static readonly string _defaultColor = "White";
+		private static readonly string _defaultColor = "WhiteSmoke";
 
 		private string _font = _defaultFont;
 		private string _color = _defaultColor; 
