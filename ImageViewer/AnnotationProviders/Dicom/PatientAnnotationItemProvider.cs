@@ -12,6 +12,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class PatientAnnotationItemProvider : AnnotationItemProvider
 	{
+		private List<IAnnotationItem> _annotationItems;
+
 		public PatientAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.Patient")
 		{
@@ -21,86 +23,89 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 			get
 			{
-				List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
+				if (_annotationItems == null)
+				{
+					_annotationItems = new List<IAnnotationItem>();
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.EthnicGroup",
-							this,
-							new DicomTagAsStringRetriever(Dcm.EthnicGroup).GetTagValue,
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.Patient.EthnicGroup",
+								this,
+								new DicomTagAsStringRetriever(Dcm.EthnicGroup).GetTagValue,
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.PatientComments",
-							this,
-							new DicomTagAsStringRetriever(Dcm.PatientComments).GetTagValue,
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.Patient.PatientComments",
+								this,
+								new DicomTagAsStringRetriever(Dcm.PatientComments).GetTagValue,
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.PatientId",
-							this,
-							delegate(ImageSop imageSop){ return imageSop.PatientId; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.Patient.PatientId",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.PatientId; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.PatientsBirthDate",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.PatientsBirthDate; },
-							DicomBasicResultFormatter.DateFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.Patient.PatientsBirthDate",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.PatientsBirthDate; },
+								DicomBasicResultFormatter.DateFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.PatientsBirthTime",
-							this,
-							new DicomTagAsStringRetriever(Dcm.PatientsBirthTime).GetTagValue,
-							DicomBasicResultFormatter.TimeFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.Patient.PatientsBirthTime",
+								this,
+								new DicomTagAsStringRetriever(Dcm.PatientsBirthTime).GetTagValue,
+								DicomBasicResultFormatter.TimeFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.PatientsName",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.PatientsName; },
-							DicomBasicResultFormatter.PersonNameFormatter
-						)
-					);
+							new DicomAnnotationItem<PersonName>
+							(
+								"Dicom.Patient.PatientsName",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.PatientsName; },
+								DicomBasicResultFormatter.PersonNameFormatter
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.Patient.PatientsSex",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.PatientsSex; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.Patient.PatientsSex",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.PatientsSex; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
+				}
 
-				return annotationItems;
+				return _annotationItems;
 			}
 		}
 	}

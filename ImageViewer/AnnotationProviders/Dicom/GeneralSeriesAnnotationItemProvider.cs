@@ -12,6 +12,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class GeneralSeriesAnnotationItemProvider : AnnotationItemProvider
 	{
+		private List<IAnnotationItem> _annotationItems;
+
 		public GeneralSeriesAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.GeneralSeries")
 		{
@@ -21,130 +23,139 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 			get
 			{
-				List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
+				if (_annotationItems == null)
+				{
+					_annotationItems = new List<IAnnotationItem>();
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.BodyPartExamined",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.BodyPartExamined; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.BodyPartExamined",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.BodyPartExamined; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.Laterality",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.Laterality; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.Laterality",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.Laterality; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.Modality",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.Modality; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.Modality",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.Modality; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName[]>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.OperatorsName",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.OperatorsName; },
-							DicomBasicResultFormatter.PersonNameListFormatter
-						)
-					);
-				
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.PerformedProcedureStepDescription",
-							this,
-							new DicomTagAsStringRetriever(Dcm.PerformedProcedureStepDescription).GetTagValue,
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<PersonName[]>
+							(
+								"Dicom.GeneralSeries.OperatorsName",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.OperatorsName; },
+								DicomBasicResultFormatter.PersonNameListFormatter
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName[]>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.PerformingPhysiciansName",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.PerformingPhysiciansName; },
-							DicomBasicResultFormatter.PersonNameListFormatter
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.PerformedProcedureStepDescription",
+								this,
+								new DicomTagAsStringRetriever(Dcm.PerformedProcedureStepDescription).GetTagValue,
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.ProtocolName",
-							this,
-							new DicomTagAsStringRetriever(Dcm.ProtocolName).GetTagValue,
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<PersonName[]>
+							(
+								"Dicom.GeneralSeries.PerformingPhysiciansName",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.PerformingPhysiciansName; },
+								DicomBasicResultFormatter.PersonNameListFormatter
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.SeriesDate",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.SeriesDate; },
-							DicomBasicResultFormatter.DateFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.ProtocolName",
+								this,
+								new DicomTagAsStringRetriever(Dcm.ProtocolName).GetTagValue,
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.SeriesTime",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.SeriesTime; },
-							DicomBasicResultFormatter.TimeFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.SeriesDate",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.SeriesDate; },
+								DicomBasicResultFormatter.DateFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.SeriesDescription",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.SeriesDescription; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.SeriesTime",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.SeriesTime; },
+								DicomBasicResultFormatter.TimeFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.GeneralSeries.SeriesNumber",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.SeriesNumber.ToString(); },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.SeriesDescription",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.SeriesDescription; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				return annotationItems;
+					_annotationItems.Add
+						(
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.GeneralSeries.SeriesNumber",
+								this,
+								delegate(ImageSop imageSop)
+								{
+									string str = String.Format("{0}/{1}",
+										imageSop.SeriesNumber,
+										imageSop.ParentSeries.ParentStudy.Series.Count);
+									return str;
+								},
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
+				}
+
+				return _annotationItems;
 			}
 		}
 	}

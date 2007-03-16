@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (image.VoiLutLinear == null)
 				return string.Empty;
 
-			return String.Format("{0}/{1}", image.VoiLutLinear.WindowWidth, image.VoiLutLinear.WindowCenter);
+			return String.Format("W:{0} L:{1}", image.VoiLutLinear.WindowWidth, image.VoiLutLinear.WindowCenter);
 		}
 	}
 }

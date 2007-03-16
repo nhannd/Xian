@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dicom (CT Image).
+        /// </summary>
+        internal static string AnnotationItemProviders_Dicom_CTImage_DisplayName {
+            get {
+                return ResourceManager.GetString("AnnotationItemProviders_Dicom_CTImage_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dicom (General Equipment).
         /// </summary>
         internal static string AnnotationItemProviders_Dicom_GeneralEquipment_DisplayName {
@@ -93,6 +102,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string AnnotationItemProviders_Dicom_GeneralStudy_DisplayName {
             get {
                 return ResourceManager.GetString("AnnotationItemProviders_Dicom_GeneralStudy_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dicom (MR Image).
+        /// </summary>
+        internal static string AnnotationItemProviders_Dicom_MRImage_DisplayName {
+            get {
+                return ResourceManager.GetString("AnnotationItemProviders_Dicom_MRImage_DisplayName", resourceCulture);
             }
         }
         
@@ -142,6 +160,78 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exposure.
+        /// </summary>
+        internal static string Dicom_CTImage_ExposureTime_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_ExposureTime_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exp.
+        /// </summary>
+        internal static string Dicom_CTImage_ExposureTime_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_ExposureTime_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gantry Tilt.
+        /// </summary>
+        internal static string Dicom_CTImage_GantryDetectorTilt_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_GantryDetectorTilt_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tilt.
+        /// </summary>
+        internal static string Dicom_CTImage_GantryDetectorTilt_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_GantryDetectorTilt_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KVP.
+        /// </summary>
+        internal static string Dicom_CTImage_KVP_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_KVP_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KVP.
+        /// </summary>
+        internal static string Dicom_CTImage_KVP_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_KVP_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tube Current.
+        /// </summary>
+        internal static string Dicom_CTImage_XRayTubeCurrent_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_XRayTubeCurrent_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tube Current.
+        /// </summary>
+        internal static string Dicom_CTImage_XRayTubeCurrent_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_XRayTubeCurrent_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date Of Last Calibration.
         /// </summary>
         internal static string Dicom_GeneralEquipment_DateOfLastCalibration_DisplayName {
@@ -169,7 +259,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Serial#.
+        ///   Looks up a localized string similar to Serial.
         /// </summary>
         internal static string Dicom_GeneralEquipment_DeviceSerialNumber_Label {
             get {
@@ -367,7 +457,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acq.#.
+        ///   Looks up a localized string similar to Acq..
         /// </summary>
         internal static string Dicom_GeneralImage_AcquisitionNumber_Label {
             get {
@@ -511,7 +601,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Img.#.
+        ///   Looks up a localized string similar to Im.
         /// </summary>
         internal static string Dicom_GeneralImage_InstanceNumber_Label {
             get {
@@ -745,7 +835,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Series#.
+        ///   Looks up a localized string similar to Se.
         /// </summary>
         internal static string Dicom_GeneralSeries_SeriesNumber_Label {
             get {
@@ -781,7 +871,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acc.#.
+        ///   Looks up a localized string similar to Acc.
         /// </summary>
         internal static string Dicom_GeneralStudy_AccessionNumber_Label {
             get {
@@ -876,6 +966,42 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Dicom_GeneralStudy_StudyTime_Label {
             get {
                 return ResourceManager.GetString("Dicom_GeneralStudy_StudyTime_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Echo Number.
+        /// </summary>
+        internal static string Dicom_MRImage_EchoNumber_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_EchoNumber_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Echo.
+        /// </summary>
+        internal static string Dicom_MRImage_EchoNumber_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_EchoNumber_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Echo Time.
+        /// </summary>
+        internal static string Dicom_MRImage_EchoTime_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_EchoTime_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TE.
+        /// </summary>
+        internal static string Dicom_MRImage_EchoTime_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_EchoTime_Label", resourceCulture);
             }
         }
         

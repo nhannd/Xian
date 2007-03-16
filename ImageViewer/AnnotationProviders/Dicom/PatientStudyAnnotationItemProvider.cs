@@ -12,6 +12,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class PatientStudyAnnotationItemProvider : AnnotationItemProvider
 	{
+		private List<IAnnotationItem> _annotationItems;
+
 		public PatientStudyAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.PatientStudy")
 		{
@@ -21,72 +23,75 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 			get
 			{
-				List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
+				if (_annotationItems == null)
+				{
+					_annotationItems = new List<IAnnotationItem>();
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.PatientStudy.AdditionalPatientsHistory",
-							this,
-							delegate(ImageSop imageSop) { return imageSop.AdditionalPatientsHistory; },
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.PatientStudy.AdditionalPatientsHistory",
+								this,
+								delegate(ImageSop imageSop) { return imageSop.AdditionalPatientsHistory; },
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.PatientStudy.Occupation",
-							this,
-							new DicomTagAsStringRetriever(Dcm.Occupation).GetTagValue,
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.PatientStudy.Occupation",
+								this,
+								new DicomTagAsStringRetriever(Dcm.Occupation).GetTagValue,
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
+					_annotationItems.Add
 						(
-							"Dicom.PatientStudy.PatientsAge",
-							this,
-							new DicomTagAsStringRetriever(Dcm.PatientsAge).GetTagValue,
-							DicomBasicResultFormatter.RawStringFormat
-						)
-					);
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.PatientStudy.PatientsAge",
+								this,
+								new DicomTagAsStringRetriever(Dcm.PatientsAge).GetTagValue,
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<double>
+					_annotationItems.Add
 						(
-							"Dicom.PatientStudy.PatientsSize",
-							this,
-							new DicomTagAsDoubleRetriever(Dcm.PatientsSize).GetTagValue,
-							delegate(double input)
-							{
-								DoubleFormatter formatter = new DoubleFormatter();
-								return String.Format("{0} {1}", formatter.Format(input), SR.Label_metres);
-							}
-						)
-					);
+							new DicomAnnotationItem<double>
+							(
+								"Dicom.PatientStudy.PatientsSize",
+								this,
+								new DicomTagAsDoubleRetriever(Dcm.PatientsSize).GetTagValue,
+								delegate(double input)
+								{
+									DoubleFormatter formatter = new DoubleFormatter();
+									return String.Format("{0} {1}", formatter.Format(input), SR.Label_metres);
+								}
+							)
+						);
 
-				annotationItems.Add
-					(
-						new DicomAnnotationItem<double>
+					_annotationItems.Add
 						(
-							"Dicom.PatientStudy.PatientsWeight",
-							this,
-							new DicomTagAsDoubleRetriever(Dcm.PatientsWeight).GetTagValue,
-							delegate(double input)
-							{
-								DoubleFormatter formatter = new DoubleFormatter();
-								return String.Format("{0} {1}", formatter.Format(input), SR.Label_kilograms);
-							}
-						)
-					);
+							new DicomAnnotationItem<double>
+							(
+								"Dicom.PatientStudy.PatientsWeight",
+								this,
+								new DicomTagAsDoubleRetriever(Dcm.PatientsWeight).GetTagValue,
+								delegate(double input)
+								{
+									DoubleFormatter formatter = new DoubleFormatter();
+									return String.Format("{0} {1}", formatter.Format(input), SR.Label_kilograms);
+								}
+							)
+						);
+				}
 
-				return annotationItems;
+				return _annotationItems;
 			}
 		}
 	}

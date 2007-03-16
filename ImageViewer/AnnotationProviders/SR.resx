@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AnnotationItemProviders_Dicom_CTImage_DisplayName" xml:space="preserve">
+    <value>Dicom (CT Image)</value>
+  </data>
   <data name="AnnotationItemProviders_Dicom_GeneralEquipment_DisplayName" xml:space="preserve">
     <value>Dicom (General Equipment)</value>
   </data>
@@ -128,6 +131,9 @@
   </data>
   <data name="AnnotationItemProviders_Dicom_GeneralStudy_DisplayName" xml:space="preserve">
     <value>Dicom (General Study)</value>
+  </data>
+  <data name="AnnotationItemProviders_Dicom_MRImage_DisplayName" xml:space="preserve">
+    <value>Dicom (MR Image)</value>
   </data>
   <data name="AnnotationItemProviders_Dicom_Patient_DisplayName" xml:space="preserve">
     <value>Dicom (Patient)</value>
@@ -144,6 +150,30 @@
   <data name="BoolYes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="Dicom_CTImage_ExposureTime_DisplayName" xml:space="preserve">
+    <value>Exposure</value>
+  </data>
+  <data name="Dicom_CTImage_ExposureTime_Label" xml:space="preserve">
+    <value>Exp</value>
+  </data>
+  <data name="Dicom_CTImage_GantryDetectorTilt_DisplayName" xml:space="preserve">
+    <value>Gantry Tilt</value>
+  </data>
+  <data name="Dicom_CTImage_GantryDetectorTilt_Label" xml:space="preserve">
+    <value>Tilt</value>
+  </data>
+  <data name="Dicom_CTImage_KVP_DisplayName" xml:space="preserve">
+    <value>KVP</value>
+  </data>
+  <data name="Dicom_CTImage_KVP_Label" xml:space="preserve">
+    <value>KVP</value>
+  </data>
+  <data name="Dicom_CTImage_XRayTubeCurrent_DisplayName" xml:space="preserve">
+    <value>Tube Current</value>
+  </data>
+  <data name="Dicom_CTImage_XRayTubeCurrent_Label" xml:space="preserve">
+    <value>Tube Current</value>
+  </data>
   <data name="Dicom_GeneralEquipment_DateOfLastCalibration_DisplayName" xml:space="preserve">
     <value>Date Of Last Calibration</value>
   </data>
@@ -154,7 +184,7 @@
     <value>Device Serial Number</value>
   </data>
   <data name="Dicom_GeneralEquipment_DeviceSerialNumber_Label" xml:space="preserve">
-    <value>Serial#</value>
+    <value>Serial</value>
   </data>
   <data name="Dicom_GeneralEquipment_InstitutionAddress_DisplayName" xml:space="preserve">
     <value>Institution Address</value>
@@ -220,7 +250,7 @@
     <value>Acquisition Number</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionNumber_Label" xml:space="preserve">
-    <value>Acq.#</value>
+    <value>Acq.</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionTime_DisplayName" xml:space="preserve">
     <value>Acquisition Time</value>
@@ -268,7 +298,7 @@
     <value>Instance Number</value>
   </data>
   <data name="Dicom_GeneralImage_InstanceNumber_Label" xml:space="preserve">
-    <value>Img.#</value>
+    <value>Im</value>
   </data>
   <data name="Dicom_GeneralImage_LossyImageCompression_DisplayName" xml:space="preserve">
     <value>Lossy Image Compression</value>
@@ -346,7 +376,7 @@
     <value>Series Number</value>
   </data>
   <data name="Dicom_GeneralSeries_SeriesNumber_Label" xml:space="preserve">
-    <value>Series#</value>
+    <value>Se</value>
   </data>
   <data name="Dicom_GeneralSeries_SeriesTime_DisplayName" xml:space="preserve">
     <value>Series Time</value>
@@ -358,7 +388,7 @@
     <value>Accession Number</value>
   </data>
   <data name="Dicom_GeneralStudy_AccessionNumber_Label" xml:space="preserve">
-    <value>Acc.#</value>
+    <value>Acc</value>
   </data>
   <data name="Dicom_GeneralStudy_ReferringPhysiciansName_DisplayName" xml:space="preserve">
     <value>Referring Physician</value>
@@ -389,6 +419,18 @@
   </data>
   <data name="Dicom_GeneralStudy_StudyTime_Label" xml:space="preserve">
     <value>Study Time</value>
+  </data>
+  <data name="Dicom_MRImage_EchoNumber_DisplayName" xml:space="preserve">
+    <value>Echo Number</value>
+  </data>
+  <data name="Dicom_MRImage_EchoNumber_Label" xml:space="preserve">
+    <value>Echo</value>
+  </data>
+  <data name="Dicom_MRImage_EchoTime_DisplayName" xml:space="preserve">
+    <value>Echo Time</value>
+  </data>
+  <data name="Dicom_MRImage_EchoTime_Label" xml:space="preserve">
+    <value>TE</value>
   </data>
   <data name="Dicom_Patient_EthnicGroup_DisplayName" xml:space="preserve">
     <value>Ethnic Group</value>

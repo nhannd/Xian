@@ -451,10 +451,10 @@
             <annotation-box normalized-rectangle="0.000000\0.925000\0.500000\0.950000" annotation-item-id="!!Plane" />
             <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="!!FOV" />
             <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
-            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="!!Voltage" />
-            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="!!Current" />
-            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="!!Gantry Tilt" />
-            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="!!Exposure Time" />
+            <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="Dicom.CTImage.KVP" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="Dicom.CTImage.XRayTubeCurrent" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="Dicom.CTImage.GantryDetectorTilt" />
+            <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="Dicom.CTImage.ExposureTime" />
             <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.000000\0.700000\0.500000\0.725000" annotation-item-id="" />
@@ -562,8 +562,12 @@
             <annotation-box normalized-rectangle="0.000000\0.900000\0.500000\0.925000" annotation-item-id="!!FOV" />
             <annotation-box normalized-rectangle="0.000000\0.875000\0.500000\0.900000" annotation-item-id="!!Image Dimensions/Acq Matrix" />
             <annotation-box normalized-rectangle="0.000000\0.850000\0.500000\0.875000" annotation-item-id="!!Slice Thickness" />
-            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="!!Receive Coil Name" />
-            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="!!Echo Time" />
+            <annotation-box normalized-rectangle="0.000000\0.825000\0.500000\0.850000" annotation-item-id="Dicom.MRImage.EchoNumber" />
+            <annotation-box normalized-rectangle="0.000000\0.800000\0.500000\0.825000" annotation-item-id="Dicom.MRImage.EchoTime">
+              <box-settings>
+                <configuration-settings show-label="true" show-label-if-empty="true" />
+              </box-settings>
+            </annotation-box>
             <annotation-box normalized-rectangle="0.000000\0.775000\0.500000\0.800000" annotation-item-id="!!Repetition Time" />
             <annotation-box normalized-rectangle="0.000000\0.750000\0.500000\0.775000" annotation-item-id="!!Echo Train Length" />
             <annotation-box normalized-rectangle="0.000000\0.725000\0.500000\0.750000" annotation-item-id="" />

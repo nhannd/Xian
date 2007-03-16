@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="AnnotationItemProvider.cs" />
     <Compile Include="AnnotationResourceResolver.cs" />
+    <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\CTImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\DicomAnnotationItem.cs" />
     <Compile Include="DoubleFormatter.cs" />
     <Compile Include="Dicom\DicomBasicResultFormatter.cs" />
