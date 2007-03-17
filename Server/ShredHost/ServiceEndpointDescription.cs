@@ -9,16 +9,14 @@ namespace ClearCanvas.Server.ShredHost
 {
     internal class ServiceEndpointDescription
     {
-        public ServiceEndpointDescription(int port, string name, string description)
+        public ServiceEndpointDescription(string name, string description)
         {
-            _hostPort = port;
             _serviceName = name;
             _serviceDescription = description;
         }
 
         private string _serviceName;
         private string _serviceDescription;
-        private int _hostPort;
         private Binding _binding;
         private ServiceHost _serviceHost;
 
@@ -32,12 +30,6 @@ namespace ClearCanvas.Server.ShredHost
         {
             get { return _binding; }
             set { _binding = value; }
-        }
-
-        public int HostPort
-        {
-            get { return _hostPort; }
-            set { _hostPort = value; }
         }
 
         public string ServiceName

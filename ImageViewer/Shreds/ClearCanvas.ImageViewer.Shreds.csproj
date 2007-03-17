@@ -40,31 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DicomServer\DicomServerSettings.cs" />
-    <Compile Include="DicomServer\DicomMoveRequestServiceType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\DicomServerExtension.cs" />
-    <Compile Include="DicomServer\DicomServerManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\DicomSessionObjects.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\IDicomMoveRequestService.cs" />
-    <Compile Include="DicomServer\Parcel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\SendParcel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\ServerTree\DicomServer.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerBase.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerGroup.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerSetting.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerSettings.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerTree.cs" />
-    <Compile Include="DicomServer\SR.Designer.cs" />
+    <Compile Include="LocalDataStore\ILocalDataStoreService.cs" />
+    <Compile Include="LocalDataStore\ILocalDataStoreActivityMonitorService.cs" />
+    <Compile Include="LocalDataStore\DataContracts.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreService.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceExtension.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -91,6 +74,10 @@
     <ProjectReference Include="..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
       <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
       <Name>ClearCanvas.Dicom.DataStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Server\ServiceModelEx\ServiceModelEx.csproj">
+      <Project>{0858C710-AF53-4049-B98E-CFE3638D1228}</Project>
+      <Name>ServiceModelEx</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>

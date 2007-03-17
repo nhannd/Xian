@@ -18,12 +18,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     public class DicomServerExtension : WcfShred
     {
         private readonly string _className;
-        private readonly string _serviceEndPointName;
+        private readonly string _dicomServerEndpointName;
 
         public DicomServerExtension()
         {
             _className = this.GetType().ToString();
-            _serviceEndPointName = "DicomServerShred";
+            _dicomServerEndpointName = "DicomServer";
             System.Diagnostics.Trace.WriteLine(_className + ": constructed");
         }
 
@@ -33,14 +33,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			DicomServerManager.Instance.StartServer();
 
-			StartHost<DicomMoveRequestServiceType, IDicomMoveRequestService>(_serviceEndPointName, "DicomServerShred");
+			StartHttpHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, "DicomServer");
         }
 
         public override void Stop()
         {
 			DicomServerManager.Instance.StopServer();
 			
-			StopHost(_serviceEndPointName);
+			StopHost(_dicomServerEndpointName);
 
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
         }

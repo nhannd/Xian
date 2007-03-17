@@ -28,8 +28,8 @@ namespace ClearCanvas.Server.ShredHost
 
             // the ShredList and shreds objects are proxy objects that actually exist
             // in the secondary AppDomain
-            AppDomain stagingDomain = AppDomain.CreateDomain("StagingDomain");
-            ExtensionScanner scanner = (ExtensionScanner)stagingDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, "ClearCanvas.Server.ShredHost.ExtensionScanner");
+			//AppDomain stagingDomain = AppDomain.CreateDomain("StagingDomain");
+            ExtensionScanner scanner = (ExtensionScanner)AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, "ClearCanvas.Server.ShredHost.ExtensionScanner");
             ShredStartupInfoList shredStartupInfoList = null;
 
             try
@@ -47,9 +47,9 @@ namespace ClearCanvas.Server.ShredHost
 
             // all the shreds have been created, so we can dismantle the secondary domain that was used 
             // for scanning for all Extensions that are shreds
-            AppDomain.Unload(stagingDomain);
+			//AppDomain.Unload(stagingDomain);
 
-            _sed = WcfHelper.StartHost<ShredHostServiceType, IShredHost>(49152, "ShredHost", "Host program of multiple indepdent service-like subprograms");
+			_sed = WcfHelper.StartHttpHost<ShredHostServiceType, IShredHost>("ShredHost", "Host program of multiple indepdent service-like subprograms", 49152);
             Platform.Log("ShredHost WCF Service started on port 49152");
             lock (_lockObject)
             {

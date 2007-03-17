@@ -31,7 +31,7 @@ namespace SampleShred2
             GlobalStore.Score = 0;
             GlobalStore.Darts = 0;
 
-            StartHost<SampleShredServiceType, ISampleShred2Interface>(_serviceEndPointName, "pi digits calculator");
+            StartHttpHost<SampleShredServiceType, ISampleShred2Interface>(_serviceEndPointName, "pi digits calculator");
 
             // start up processing thread
             Thread t = new Thread(new ThreadStart(ComputePi));

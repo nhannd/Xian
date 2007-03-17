@@ -362,53 +362,53 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-[System.ServiceModel.ServiceContractAttribute(ConfigurationName="IDicomMoveRequestService")]
-public interface IDicomMoveRequestService
+[System.ServiceModel.ServiceContractAttribute(ConfigurationName="IDicomServerService")]
+public interface IDicomServerService
 {
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomMoveRequestService/Send", ReplyAction="http://tempuri.org/IDicomMoveRequestService/SendResponse")]
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomServerService/Send", ReplyAction="http://tempuri.org/IDicomServerService/SendResponse")]
     void Send(ClearCanvas.ImageViewer.Shreds.DicomServer.DicomSendRequest request);
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomMoveRequestService/Retrieve", ReplyAction="http://tempuri.org/IDicomMoveRequestService/RetrieveResponse")]
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomServerService/Retrieve", ReplyAction="http://tempuri.org/IDicomServerService/RetrieveResponse")]
     void Retrieve(ClearCanvas.ImageViewer.Shreds.DicomServer.DicomRetrieveRequest request);
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomMoveRequestService/GetServerSetting", ReplyAction="http://tempuri.org/IDicomMoveRequestService/GetServerSettingResponse")]
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomServerService/GetServerSetting", ReplyAction="http://tempuri.org/IDicomServerService/GetServerSettingResponse")]
     ClearCanvas.ImageViewer.Shreds.DicomServer.GetServerSettingResponse GetServerSetting();
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomMoveRequestService/UpdateServerSetting", ReplyAction="http://tempuri.org/IDicomMoveRequestService/UpdateServerSettingResponse")]
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDicomServerService/UpdateServerSetting", ReplyAction="http://tempuri.org/IDicomServerService/UpdateServerSettingResponse")]
     void UpdateServerSetting(ClearCanvas.ImageViewer.Shreds.DicomServer.UpdateServerSettingRequest request);
 }
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-public interface IDicomMoveRequestServiceChannel : IDicomMoveRequestService, System.ServiceModel.IClientChannel
+public interface IDicomServerServiceChannel : IDicomServerService, System.ServiceModel.IClientChannel
 {
 }
 
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-public partial class DicomMoveRequestServiceClient : System.ServiceModel.ClientBase<IDicomMoveRequestService>, IDicomMoveRequestService
+public partial class DicomServerServiceClient : System.ServiceModel.ClientBase<IDicomServerService>, IDicomServerService
 {
     
-    public DicomMoveRequestServiceClient()
+    public DicomServerServiceClient()
     {
     }
     
-    public DicomMoveRequestServiceClient(string endpointConfigurationName) : 
+    public DicomServerServiceClient(string endpointConfigurationName) : 
             base(endpointConfigurationName)
     {
     }
     
-    public DicomMoveRequestServiceClient(string endpointConfigurationName, string remoteAddress) : 
+    public DicomServerServiceClient(string endpointConfigurationName, string remoteAddress) : 
             base(endpointConfigurationName, remoteAddress)
     {
     }
     
-    public DicomMoveRequestServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+    public DicomServerServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
             base(endpointConfigurationName, remoteAddress)
     {
     }
     
-    public DicomMoveRequestServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+    public DicomServerServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
             base(binding, remoteAddress)
     {
     }

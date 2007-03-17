@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.ServerTree
             get
             {
                 StringBuilder aeDescText = new StringBuilder();
-                aeDescText.AppendFormat(SR.FormatTooltipServerDetails, base.ServerName, _dicomAE.AE, _dicomAE.Host, _dicomAE.Port, ServerLocation);
+                aeDescText.AppendFormat("Server: {0}\nAE: {1}\nHost: {2}\nPort: {3}\nLocation: {4}", base.ServerName, _dicomAE.AE, _dicomAE.Host, _dicomAE.Port, ServerLocation);
                 return aeDescText.ToString();
             }
         }

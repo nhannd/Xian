@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			request.Uids = studyUids.ToArray();
 
-			DicomMoveRequestServiceClient client = new DicomMoveRequestServiceClient();
+			DicomServerServiceClient client = new DicomServerServiceClient();
 
 			try
 			{

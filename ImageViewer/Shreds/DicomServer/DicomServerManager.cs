@@ -17,7 +17,7 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-	public partial class DicomServerManager : IDicomMoveRequestService
+	public partial class DicomServerManager : IDicomServerService
     {
 		private static DicomServerManager _instance;
 
@@ -203,8 +203,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
-
-            //WCF TODO: Notify ActivityService via WCF, the receiving of a SOP has begun
         }
 
         private void OnStoreScpProgressEvent(object sender, DicomServerEventArgs e)
@@ -222,7 +220,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             if (info == null)
                 return;
 
-            //WCF TODO: Notify ActivityService via WCF, a SOP Instance has been stored successfully
+			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
+
+			try
+			{
+				client.Open();
+				ClearCanvas.ImageViewer.Shreds.LocalDataStore.StoreScpReceivedFilesInformation storedInformation =
+					new ClearCanvas.ImageViewer.Shreds.LocalDataStore.StoreScpReceivedFilesInformation();
+				storedInformation.AETitle = "AETitle";
+				storedInformation.FilePaths = new string[] { info.FileName };
+				client.FilesReceived(storedInformation);
+				client.Close();
+			}
+			catch (Exception ex)
+			{
+				client.Abort();
+				Platform.Log(ex);
+			}
 
             info.DimseStatus = (ushort)OffisDcm.STATUS_Success;
         }

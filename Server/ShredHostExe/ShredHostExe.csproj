@@ -65,10 +65,14 @@
     <PostBuildEvent>rem copy $(ProjectDir)..\SampleShred1\$(Outdir)SampleShred1.dll $(TargetDir)plugins
 copy $(ProjectDir)..\SampleShred2\$(Outdir)SampleShred2.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageViewer\Shreds\$(Outdir)ClearCanvas.ImageViewer.Shreds.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageViewer\Services\$(Outdir)ClearCanvas.ImageViewer.Services.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageViewer\Shreds\DicomServer\$(Outdir)ClearCanvas.ImageViewer.Shreds.DicomServer.dll $(TargetDir)plugins
+
 copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)
 copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\Dicom\DataStore\$(OutDir)ClearCanvas.Dicom.DataStore.dll $(TargetDir)plugins
 
+copy $(ProjectDir)..\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)plugins
 rem copy $(ProjectDir)..\SampleShredCrash\$(Outdir)SampleShredCrash.dll $(TargetDir)plugins</PostBuildEvent>

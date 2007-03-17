@@ -22,19 +22,42 @@ namespace ClearCanvas.Server.ShredHost
             return null;
         }
 
-		protected void StartHost<TServiceType, TServiceInterfaceType>(string name, string description)
-        {
-			StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.WSHttp);
-		}
-		
-		protected void StartHost<TServiceType, TServiceInterfaceType>(string name, string description, HostBindingType bindingType)
+		public void StartHttpHost<TServiceType, TServiceInterfaceType>(string name, string description)
 		{
 			if (_serviceEndpointDescriptions.ContainsKey(name))
 				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-			WcfHelper.StartHost<TServiceType, TServiceInterfaceType>(name, description, new HostBindingInformation(this.HttpPort, this.TcpPort));
+			ServiceEndpointDescription sed = WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, this.HttpPort);
+			_serviceEndpointDescriptions[name] = sed;
 		}
 
+		public void StartHttpDualHost<TServiceType, TServiceInterfaceType>(string name, string description)
+		{
+			if (_serviceEndpointDescriptions.ContainsKey(name))
+				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+			ServiceEndpointDescription sed = WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, this.HttpPort);
+			_serviceEndpointDescriptions[name] = sed;
+		}
+
+		public void StartNetTcpHost<TServiceType, TServiceInterfaceType>(string name, string description)
+		{
+			if (_serviceEndpointDescriptions.ContainsKey(name))
+				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+			ServiceEndpointDescription sed = WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, this.TcpPort, this.HttpPort);
+			_serviceEndpointDescriptions[name] = sed;
+		}
+
+		public void StartNetPipeHost<TServiceType, TServiceInterfaceType>(string name, string description)
+		{
+			if (_serviceEndpointDescriptions.ContainsKey(name))
+				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+			ServiceEndpointDescription sed = WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, this.HttpPort);
+			_serviceEndpointDescriptions[name] = sed;
+		}
+		
 		protected void StopHost(string name)
         {
             if (_serviceEndpointDescriptions.ContainsKey(name))
