@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._storageDir = new ClearCanvas.Controls.WinForms.TextField();
             this._buttonBrowse = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this._refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _hostName
@@ -90,17 +91,28 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._buttonBrowse.UseVisualStyleBackColor = true;
             this._buttonBrowse.Click += new System.EventHandler(this._buttonBrowse_Click);
             // 
+            // _refreshButton
+            // 
+            this._refreshButton.Location = new System.Drawing.Point(4, 191);
+            this._refreshButton.Name = "_refreshButton";
+            this._refreshButton.Size = new System.Drawing.Size(75, 23);
+            this._refreshButton.TabIndex = 5;
+            this._refreshButton.Text = "Refresh";
+            this._refreshButton.UseVisualStyleBackColor = true;
+            this._refreshButton.Click += new System.EventHandler(this._refreshButton_Click);
+            // 
             // DicomServerConfigurationComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._refreshButton);
             this.Controls.Add(this._buttonBrowse);
             this.Controls.Add(this._storageDir);
             this.Controls.Add(this._port);
             this.Controls.Add(this._aeTitle);
             this.Controls.Add(this._hostName);
             this.Name = "DicomServerConfigurationComponentControl";
-            this.Size = new System.Drawing.Size(252, 220);
+            this.Size = new System.Drawing.Size(252, 227);
             this.ResumeLayout(false);
 
         }
@@ -113,5 +125,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _storageDir;
         private System.Windows.Forms.Button _buttonBrowse;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button _refreshButton;
     }
 }

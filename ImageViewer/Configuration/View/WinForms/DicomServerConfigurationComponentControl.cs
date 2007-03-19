@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using System.IO;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
@@ -30,18 +31,29 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
             _port.DataBindings.Add("Value", _component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
             _storageDir.DataBindings.Add("Value", _component, "StorageDir", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _hostName.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _aeTitle.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _port.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _storageDir.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _buttonBrowse.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);        
         }
 
         private void _buttonBrowse_Click(object sender, EventArgs e)
         {
             if (_storageDir.Value != "")
-                folderBrowserDialog1.SelectedPath = _storageDir.Value;
+                folderBrowserDialog1.SelectedPath = Path.GetFullPath(_storageDir.Value);
 
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 _storageDir.Value = folderBrowserDialog1.SelectedPath;
             }
 
+        }
+
+        private void _refreshButton_Click(object sender, EventArgs e)
+        {
+            _component.ConnectToClient();
         }
     }
 }

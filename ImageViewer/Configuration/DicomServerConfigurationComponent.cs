@@ -28,51 +28,18 @@ namespace ClearCanvas.ImageViewer.Configuration
         private int _port;
         private string _storageDir;
 
-        private DicomMoveRequestServiceClient _serviceClient;
-        private BackgroundTask _task;
+        private DicomServerServiceClient _serviceClient;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DicomServerConfigurationComponent()
         {
-            _task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
-                {
-                    backgroundcontext.ReportProgress(new BackgroundTaskProgress(0, SR.MessageRetrievingServerSettings));
-
-                    try
-                    {
-                        _serviceClient = new DicomMoveRequestServiceClient();
-                        GetServerSettingResponse response = _serviceClient.GetServerSetting();
-                        _hostName = response.HostName;
-                        _aeTitle = response.AETitle;
-                        _port = response.Port;
-                        _storageDir = response.InterimStorageDirectory;
-                        backgroundcontext.Complete(null);
-                    }
-                    catch (Exception e)
-                    {
-                        _serviceClient = null;
-                        backgroundcontext.ReportProgress(new BackgroundTaskProgress(100, SR.ExceptionFailedToRetrieveServerSettings));
-                        backgroundcontext.Error(e);
-                    }
-                }, false);
         }
 
         public override void Start()
         {
-            try
-            {
-                if (_serviceClient == null)
-                {
-                    ProgressDialog.Show(_task, true, ProgressBarStyle.Marquee, this.Host.DesktopWindow);
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
+            ConnectToClient();
             base.Start();
         }
 
@@ -82,9 +49,55 @@ namespace ClearCanvas.ImageViewer.Configuration
             if (_serviceClient != null)
             {
                 _serviceClient.Close();
+                _serviceClient = null;
             }
 
             base.Stop();
+        }
+
+        public void ConnectToClient()
+        {
+            try
+            {
+                BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
+                    {
+                        backgroundcontext.ReportProgress(new BackgroundTaskProgress(0, SR.MessageRetrievingServerSettings));
+
+                        try
+                        {
+                            if (_serviceClient != null)
+                                _serviceClient.Close();
+
+                            _serviceClient = new DicomServerServiceClient();
+                            GetServerSettingResponse response = _serviceClient.GetServerSetting();
+
+                            _hostName = response.HostName;
+                            _aeTitle = response.AETitle;
+                            _port = response.Port;
+                            _storageDir = response.InterimStorageDirectory;
+
+                            backgroundcontext.Complete(null);
+                        }
+                        catch (Exception e)
+                        {
+                            _hostName = "";
+                            _aeTitle = "";
+                            _port = 0;
+                            _storageDir = "";
+                            _serviceClient = null;
+
+                            backgroundcontext.ReportProgress(new BackgroundTaskProgress(100, SR.ExceptionFailedToRetrieveServerSettings));
+                            backgroundcontext.Error(e);
+                        }
+                    }, false);
+
+                ProgressDialog.Show(task, true, ProgressBarStyle.Marquee, this.Host.DesktopWindow);
+                SignalPropertyChanged();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public override void Save()
@@ -105,6 +118,15 @@ namespace ClearCanvas.ImageViewer.Configuration
                     ExceptionHandler.Report(e, SR.ExceptionFailedToUpdateServerSettings, this.Host.DesktopWindow);
                 }
             }
+        }
+
+        private void SignalPropertyChanged()
+        {
+            NotifyPropertyChanged("HostName");
+            NotifyPropertyChanged("AETitle");
+            NotifyPropertyChanged("Port");
+            NotifyPropertyChanged("InterimStorageDirectory");
+            NotifyPropertyChanged("Enabled");
         }
 
         #region Properties
@@ -147,6 +169,11 @@ namespace ClearCanvas.ImageViewer.Configuration
                 _storageDir = value;
                 this.Modified = true;
             }
+        }
+
+        public bool Enabled
+        {
+            get { return _serviceClient != null; }
         }
 
         #endregion
