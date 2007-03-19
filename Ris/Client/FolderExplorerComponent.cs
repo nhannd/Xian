@@ -10,7 +10,6 @@ using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client
 {

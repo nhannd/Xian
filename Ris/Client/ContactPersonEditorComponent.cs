@@ -4,8 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Client
@@ -24,15 +23,15 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(ContactPersonEditorComponentViewExtensionPoint))]
     public class ContactPersonEditorComponent : ApplicationComponent
     {
-        private ContactPerson _contactPerson;
-        private ContactPersonRelationshipEnumTable _relationshipTypes;
-        private ContactPersonTypeEnumTable _typeTypes;
-        private IAdtService _service;
+        private ContactPersonDetail _contactPerson;
+        private List<EnumValueInfo> _contactTypeChoices;
+
+        private List<EnumValueInfo> _contactRelationshipChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ContactPersonEditorComponent(ContactPerson contactPerson)
+        public ContactPersonEditorComponent(ContactPersonDetail contactPerson)
         {
             _contactPerson = contactPerson;
         }
@@ -41,11 +40,6 @@ namespace ClearCanvas.Ris.Client
         {
             // TODO prepare the component for its live phase
             base.Start();
-
-            _service = ApplicationContext.GetService<IAdtService>();
-
-            _relationshipTypes = _service.GetContactPersonRelationshipEnumTable();
-            _typeTypes = _service.GetContactPersonTypeEnumTable();
         }
 
         public override void Stop()
@@ -57,7 +51,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public ContactPerson ContactPerson
+        public ContactPersonDetail ContactPerson
         {
             get { return _contactPerson; }
             set { _contactPerson = value; }
@@ -85,20 +79,20 @@ namespace ClearCanvas.Ris.Client
 
         public string HomePhoneNumber
         {
-            get { return _contactPerson.HomePhone; }
+            get { return _contactPerson.HomePhoneNumber; }
             set
             {
-                _contactPerson.HomePhone = value;
+                _contactPerson.HomePhoneNumber = value;
                 this.Modified = true;
             }
         }
 
         public string BusinessPhoneNumber
         {
-            get { return _contactPerson.BusinessPhone; }
+            get { return _contactPerson.BusinessPhoneNumber; }
             set
             {
-                _contactPerson.BusinessPhone = value;
+                _contactPerson.BusinessPhoneNumber = value;
                 this.Modified = true;
             }
         }
@@ -110,32 +104,32 @@ namespace ClearCanvas.Ris.Client
 
         public string Type
         {
-            get { return _typeTypes[_contactPerson.Type].Value; }
+            get { return _contactPerson.Type.Value; }
             set
             {
-                _contactPerson.Type = _typeTypes[value].Code;
+                _contactPerson.Type = EnumValueUtils.MapDisplayValue(_contactTypeChoices, value);
                 this.Modified = true;
             }
         }
 
-        public string[] TypeChoices
+        public List<string> TypeChoices
         {
-            get { return _typeTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_contactTypeChoices); }
         }
 
         public string Relationship
         {
-            get { return _relationshipTypes[_contactPerson.Relationship].Value; }
+            get { return _contactPerson.Relationship.Value; }
             set
             {
-                _contactPerson.Relationship = _relationshipTypes[value].Code;
+                _contactPerson.Relationship = EnumValueUtils.MapDisplayValue(_contactRelationshipChoices, value);
                 this.Modified = true;
             }
         }
 
-        public string[] RelationshipChoices
+        public List<string> RelationshipChoices
         {
-            get { return _relationshipTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_contactRelationshipChoices); }
         }
 
         public void Accept()

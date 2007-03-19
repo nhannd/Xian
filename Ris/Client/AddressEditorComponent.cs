@@ -6,8 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
@@ -20,13 +19,11 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(AddressesEditorComponentViewExtensionPoint))]
     public class AddressEditorComponent : ApplicationComponent
     {
-        private Address _address;
-        private IPatientAdminService _patientAdminService;
-
-        private AddressTypeEnumTable _addressTypes;
+        private AddressDetail _address;
+        private List<EnumValueInfo> _addressTypes;
         private AddressSettings _settings;
 
-        public AddressEditorComponent(Address address)
+        public AddressEditorComponent(AddressDetail address)
         {
             _address = address;
         }
@@ -35,7 +32,7 @@ namespace ClearCanvas.Ris.Client
         /// Sets the subject upon which the editor acts
         /// Not for use by the view
         /// </summary>
-        public Address Address
+        public AddressDetail Address
         {
             get { return _address; }
             set { _address = value; }
@@ -44,9 +41,6 @@ namespace ClearCanvas.Ris.Client
         public override void Start()
         {
             base.Start();
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _addressTypes = _patientAdminService.GetAddressTypeEnumTable();
-
             _settings = new AddressSettings();
         }
 
@@ -122,35 +116,35 @@ namespace ClearCanvas.Ris.Client
 
         public DateTime? ValidFrom
         {
-            get { return _address.ValidRange.From; }
+            get { return _address.ValidRangeFrom; }
             set {
-                _address.ValidRange.From = value;
+                _address.ValidRangeFrom = value;
                 this.Modified = true;
             }
         }
 
         public DateTime? ValidUntil
         {
-            get { return _address.ValidRange.Until; }
+            get { return _address.ValidRangeUntil; }
             set {
-                _address.ValidRange.Until = value;
+                _address.ValidRangeUntil = value;
                 this.Modified = true;
             }
         }
 
         public string Type
         {
-            get { return _addressTypes[_address.Type].Value; }
+            get { return _address.Type.Value; }
             set
             {
-                _address.Type = _addressTypes[value].Code;
+                _address.Type = EnumValueUtils.MapDisplayValue(_addressTypes, value);
                 this.Modified = true;
             }
         }
 
-        public string[] TypeChoices
+        public List<string> TypeChoices
         {
-            get { return _addressTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_addressTypes); }
         }
 
         public void Accept()

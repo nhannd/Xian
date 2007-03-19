@@ -5,9 +5,8 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
@@ -21,7 +20,7 @@ namespace ClearCanvas.Ris.Client
     {
         private IList _phoneNumberList;
         private TelephoneNumberTable _phoneNumbers;
-        private TelephoneNumber _currentPhoneNumberSelection;
+        private TelephoneDetail _currentPhoneNumberSelection;
         private CrudActionModel _phoneNumberActionHandler;
 
         public PhoneNumbersSummaryComponent()
@@ -48,7 +47,7 @@ namespace ClearCanvas.Ris.Client
         {
             if (_phoneNumberList != null)
             {
-                foreach (TelephoneNumber phoneNumber in _phoneNumberList)
+                foreach (TelephoneDetail phoneNumber in _phoneNumberList)
                 {
                     _phoneNumbers.Items.Add(phoneNumber);
                 }
@@ -74,14 +73,14 @@ namespace ClearCanvas.Ris.Client
             get { return _currentPhoneNumberSelection == null ? Selection.Empty : new Selection(_currentPhoneNumberSelection); }
             set
             {
-                _currentPhoneNumberSelection = (TelephoneNumber)value.Item;
+                _currentPhoneNumberSelection = (TelephoneDetail)value.Item;
                 PhoneNumberSelectionChanged();
             }
         }
 
         public void AddPhoneNumber()
         {
-            TelephoneNumber phoneNumber = new TelephoneNumber();
+            TelephoneDetail phoneNumber = new TelephoneDetail();
 
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);
@@ -98,14 +97,14 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentPhoneNumberSelection == null) return;
 
-            TelephoneNumber phoneNumber = (TelephoneNumber)_currentPhoneNumberSelection.Clone();
+            TelephoneDetail phoneNumber = (TelephoneDetail)_currentPhoneNumberSelection.Clone();
             
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdatePhoneNumber);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 // delete and re-insert to ensure that TableView updates correctly
-                TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
+                TelephoneDetail toBeRemoved = _currentPhoneNumberSelection;
                 _phoneNumbers.Items.Remove(toBeRemoved);
                 _phoneNumberList.Remove(toBeRemoved);
 
@@ -122,7 +121,7 @@ namespace ClearCanvas.Ris.Client
             {
                 //  Must use temporary TelephoneNumber otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong TelephoneNumber being removed from the PatientProfile
-                TelephoneNumber toBeRemoved = _currentPhoneNumberSelection;
+                TelephoneDetail toBeRemoved = _currentPhoneNumberSelection;
                 _phoneNumbers.Items.Remove(toBeRemoved);
                 _phoneNumberList.Remove(toBeRemoved);
                 this.Modified = true;

@@ -4,9 +4,8 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -18,12 +17,10 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
     public class PhoneNumberEditorComponent : ApplicationComponent
     {
-        private TelephoneNumber _phoneNumber;
-        private IPatientAdminService _patientAdminService;
-        private TelephoneEquipmentEnumTable _phoneEquipments;
-        private TelephoneUseEnumTable _phoneUses;
+        private TelephoneDetail _phoneNumber;
+        private List<EnumValueInfo> _phoneTypeChoices;
 
-        public PhoneNumberEditorComponent(TelephoneNumber phoneNumber)
+        public PhoneNumberEditorComponent(TelephoneDetail phoneNumber)
         {
             _phoneNumber = phoneNumber;
         }
@@ -31,16 +28,13 @@ namespace ClearCanvas.Ris.Client
         public override void Start()
         {
             base.Start();
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _phoneEquipments = _patientAdminService.GetTelephoneEquipmentEnumTable();
-            _phoneUses = _patientAdminService.GetTelephoneUseEnumTable();
         }
 
         /// <summary>
         /// Sets the subject upon which the editor acts
         /// Not for use by the view
         /// </summary>
-        public TelephoneNumber PhoneNumber
+        public TelephoneDetail PhoneNumber
         {
             get { return _phoneNumber; }
             set { _phoneNumber = value; }
@@ -93,60 +87,36 @@ namespace ClearCanvas.Ris.Client
 
         public string PhoneType
         {
-            // We will display only allow "Home", "Work" and "Mobile" in the dropdown
-            get
-            {
-                if (_phoneNumber.Use == TelephoneUse.PRN && _phoneNumber.Equipment == TelephoneEquipment.CP)
-                    return SR.PhoneNumberMobile;
-                else
-                    return _phoneUses[_phoneNumber.Use].Value;
-            }
+            get { return _phoneNumber.Type.Value; }
             set
             {
-                if (value == SR.PhoneNumberMobile)
-                {
-                    _phoneNumber.Use = TelephoneUse.PRN;
-                    _phoneNumber.Equipment = TelephoneEquipment.CP;
-                }
-                else
-                {
-                    _phoneNumber.Equipment = TelephoneEquipment.PH;
-                    if (value == _phoneUses[TelephoneUse.WPN].Value)
-                        _phoneNumber.Use = TelephoneUse.WPN;
-                    else
-                        _phoneNumber.Use = TelephoneUse.PRN;
-                }
+                _phoneNumber.Type = EnumValueUtils.MapDisplayValue(_phoneTypeChoices, value);
 
                 this.Modified = true;
             }
         }
 
-        public string[] PhoneTypeChoices
+        public List<string> PhoneTypeChoices
         {
-            get
-            {
-                return new string[] { _phoneUses[TelephoneUse.PRN].Value
-                                    , _phoneUses[TelephoneUse.WPN].Value
-                                    , SR.PhoneNumberMobile };
-            }
+            get { return EnumValueUtils.GetDisplayValues(_phoneTypeChoices); }
         }
 
         public DateTime? ValidFrom
         {
-            get { return _phoneNumber.ValidRange.From; }
+            get { return _phoneNumber.ValidRangeFrom; }
             set
             {
-                _phoneNumber.ValidRange.From = value;
+                _phoneNumber.ValidRangeFrom = value;
                 this.Modified = true;
             }
         }
 
         public DateTime? ValidUntil
         {
-            get { return _phoneNumber.ValidRange.Until; }
+            get { return _phoneNumber.ValidRangeUntil; }
             set
             {
-                _phoneNumber.ValidRange.Until = value;
+                _phoneNumber.ValidRangeUntil = value;
                 this.Modified = true;
             }
         }

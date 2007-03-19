@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    public delegate IList<U> PageSearchDelegate<U>(SearchCriteria criteria, SearchResultPage page);
+    public delegate IList<U> PageSearchDelegate<U>(SearchResultPage page);
 
     public class PagingController<T> : IPagingController<T>
     {
@@ -15,23 +15,21 @@ namespace ClearCanvas.Ris.Client
         private int _currentPageNumber;
         private bool _hasNext;
         private PageSearchDelegate<T> _searchDelegate;
-        private SearchCriteria _criteria;
         public event QueryEventHandler OnInitialQueryEvent;
-
-        #region IPagingController<T> Members
 
         public PagingController(int pageSize, PageSearchDelegate<T> searchDelegate)
         {
             _pageSize = pageSize;
             _searchDelegate = searchDelegate;
             _currentPageNumber = 0;
-            _criteria = null;
         }
 
         public PagingController(PageSearchDelegate<T> searchDelegate)
             : this(_defaultPageSize, searchDelegate)
         {
         }
+
+        #region IPagingController<T> Members
 
         public int PageSize
         {
@@ -63,9 +61,8 @@ namespace ClearCanvas.Ris.Client
             return results;
         }
 
-        public IList<T> GetFirst(SearchCriteria criteria)
+        public IList<T> GetFirst()
         {
-            _criteria = criteria;
             _currentPageNumber = 0;
             IList<T> results = DoQuery(FirstPage());
             OnInitialQueryEvent();
@@ -77,7 +74,7 @@ namespace ClearCanvas.Ris.Client
         private IList<T> DoQuery(SearchResultPage page)
         {
             IList<T> results;
-            results = _searchDelegate(_criteria, page);
+            results = _searchDelegate(page);
 
             if (results.Count == _pageSize + 1)
             {

@@ -5,7 +5,7 @@ using System.IO;
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {

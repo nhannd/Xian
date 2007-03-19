@@ -2,27 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class AddressTable : Table<Address>
+    public class AddressTable : Table<AddressDetail>
     {
         public AddressTable()
         {
-            IAdtService _adtService = ApplicationContext.GetService<IAdtService>();
-            AddressTypeEnumTable _addressTypes = _adtService.GetAddressTypeEnumTable();
-
-            this.Columns.Add(new TableColumn<Address, string>(SR.ColumnType, 
-                delegate(Address a) { return _addressTypes[a.Type].Value; }, 
+            this.Columns.Add(new TableColumn<AddressDetail, string>(SR.ColumnType,
+                delegate(AddressDetail a) { return a.Type.Value; }, 
                 1.1f));
-            this.Columns.Add(new TableColumn<Address, string>(SR.ColumnAddress, 
-                delegate(Address a) { return Format.Custom(a); }, 
+            this.Columns.Add(new TableColumn<AddressDetail, string>(SR.ColumnAddress,
+                delegate(AddressDetail a) { return Format.Custom(a); }, 
                 2.2f));
-            this.Columns.Add(new TableColumn<Address, string>(SR.ColumnExpiryDate, delegate(Address a) { return a.ValidRange == null ? null : Format.Date(a.ValidRange.Until); }, 
+            this.Columns.Add(new TableColumn<AddressDetail, string>(SR.ColumnExpiryDate,
+                delegate(AddressDetail a) { return Format.Date(a.ValidRangeUntil); }, 
                 0.9f));
 
         }

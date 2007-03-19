@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client
     {
         private IList _contactPersonList;
         private ContactPersonTable _contactPersons;
-        private ContactPerson _currentContactPersonSelection;
+        private ContactPersonDetail _currentContactPersonSelection;
         private CrudActionModel _contactPersonActionHandler;
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client
         {
             if (_contactPersonList != null)
             {
-                foreach (ContactPerson contactPerson in _contactPersonList)
+                foreach (ContactPersonDetail contactPerson in _contactPersonList)
                 {
                     _contactPersons.Items.Add(contactPerson);
                 }
@@ -86,20 +86,18 @@ namespace ClearCanvas.Ris.Client
         {
             get 
             { 
-                return _currentContactPersonSelection == null 
-                    ? Selection.Empty 
-                    : new Selection(_currentContactPersonSelection); 
+                return new Selection(_currentContactPersonSelection); 
             }
             set
             {
-                _currentContactPersonSelection = (ContactPerson)value.Item;
+                _currentContactPersonSelection = (ContactPersonDetail)value.Item;
                 ContactPersonSelectionChanged();
             }
         }
 
         public void AddContactPerson()
         {
-            ContactPerson contactPerson = new ContactPerson();
+            ContactPersonDetail contactPerson = new ContactPersonDetail();
 
             ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddContactPerson);
@@ -116,14 +114,14 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentContactPersonSelection == null) return;
 
-            ContactPerson contactPerson = (ContactPerson)_currentContactPersonSelection.Clone();
+            ContactPersonDetail contactPerson = (ContactPersonDetail)_currentContactPersonSelection.Clone();
 
             ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateContactPerson);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
                 // delete and re-insert to ensure that TableView updates correctly
-                ContactPerson toBeRemoved = _currentContactPersonSelection;
+                ContactPersonDetail toBeRemoved = _currentContactPersonSelection;
                 _contactPersons.Items.Remove(toBeRemoved);
                 _contactPersonList.Remove(toBeRemoved);
 
@@ -140,7 +138,7 @@ namespace ClearCanvas.Ris.Client
             {
                 //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong Address being removed from the PatientProfile
-                ContactPerson toBeRemoved = _currentContactPersonSelection;
+                ContactPersonDetail toBeRemoved = _currentContactPersonSelection;
                 _contactPersons.Items.Remove(toBeRemoved);
                 _contactPersonList.Remove(toBeRemoved);
                 this.Modified = true;

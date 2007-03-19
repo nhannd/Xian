@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
         /// 
         /// </summary>
         /// <returns></returns>
-        IList<T> GetFirst(SearchCriteria criteria);
+        IList<T> GetFirst();
 
         /// <summary>
         /// 

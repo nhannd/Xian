@@ -520,11 +520,29 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string PhoneNumberHome {
+            get {
+                return ResourceManager.GetString("PhoneNumberHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mobile.
         /// </summary>
         internal static string PhoneNumberMobile {
             get {
                 return ResourceManager.GetString("PhoneNumberMobile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Work.
+        /// </summary>
+        internal static string PhoneNumberWork {
+            get {
+                return ResourceManager.GetString("PhoneNumberWork", resourceCulture);
             }
         }
         

@@ -35,13 +35,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcquisitionWorkflowPreviewComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AcquisitionWorkflowPreviewComponentControl.Designer.cs">
-      <DependentUpon>AcquisitionWorkflowPreviewComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AcquisitionWorkflowPreviewComponentView.cs" />
     <Compile Include="AddressEditorComponentView.cs" />
     <Compile Include="AddressEditorControl.cs">
       <SubType>UserControl</SubType>

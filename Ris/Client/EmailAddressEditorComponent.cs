@@ -4,7 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -22,12 +22,12 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(EmailAddressEditorComponentViewExtensionPoint))]
     public class EmailAddressEditorComponent : ApplicationComponent
     {
-        private EmailAddress _emailAddress;
+        private EmailAddressDetail _emailAddress;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public EmailAddressEditorComponent(EmailAddress emailAddress)
+        public EmailAddressEditorComponent(EmailAddressDetail emailAddress)
         {
             _emailAddress = emailAddress;
         }
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public EmailAddress EmailAddress
+        public EmailAddressDetail EmailAddress
         {
             get { return _emailAddress; }
             set { _emailAddress = value; }
@@ -66,20 +66,20 @@ namespace ClearCanvas.Ris.Client
 
         public DateTime? ValidFrom
         {
-            get { return _emailAddress.ValidRange.From; }
+            get { return _emailAddress.ValidRangeFrom; }
             set
             {
-                _emailAddress.ValidRange.From = value;
+                _emailAddress.ValidRangeFrom = value;
                 this.Modified = true;
             }
         }
 
         public DateTime? ValidUntil
         {
-            get { return _emailAddress.ValidRange.Until; }
+            get { return _emailAddress.ValidRangeUntil; }
             set
             {
-                _emailAddress.ValidRange.Until = value;
+                _emailAddress.ValidRangeUntil = value;
                 this.Modified = true;
             }
         }

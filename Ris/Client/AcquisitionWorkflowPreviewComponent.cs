@@ -5,9 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
@@ -31,8 +29,6 @@ namespace ClearCanvas.Ris.Client
         private PatientProfile _patientProfile;
 
         private IModalityWorkflowService _workflowService;
-        private SexEnumTable _sexChoices;
-        private OrderPriorityEnumTable _orderPriorities;
 
         /// <summary>
         /// Constructor
