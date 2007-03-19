@@ -61,11 +61,29 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dicom Server Info.
+        ///   Looks up a localized string similar to Dicom Server Setting.
         /// </summary>
         internal static string DicomServerConfiguration {
             get {
                 return ResourceManager.GetString("DicomServerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieving Server Settings.  Make sure the DICOM Server is running..
+        /// </summary>
+        internal static string ExceptionFailedToRetrieveServerSettings {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToRetrieveServerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieving DICOM Server Settings....
+        /// </summary>
+        internal static string MessageRetrievingServerSettings {
+            get {
+                return ResourceManager.GetString("MessageRetrievingServerSettings", resourceCulture);
             }
         }
     }

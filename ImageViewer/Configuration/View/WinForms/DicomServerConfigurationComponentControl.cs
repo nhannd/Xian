@@ -34,6 +34,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
         private void _buttonBrowse_Click(object sender, EventArgs e)
         {
+            if (_storageDir.Value != "")
+                folderBrowserDialog1.SelectedPath = _storageDir.Value;
+
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 _storageDir.Value = folderBrowserDialog1.SelectedPath;

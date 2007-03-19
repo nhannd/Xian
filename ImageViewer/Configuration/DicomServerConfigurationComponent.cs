@@ -29,27 +29,48 @@ namespace ClearCanvas.ImageViewer.Configuration
         private string _storageDir;
 
         private DicomMoveRequestServiceClient _serviceClient;
+        private BackgroundTask _task;
+
         /// <summary>
         /// Constructor
         /// </summary>
         public DicomServerConfigurationComponent()
         {
+            _task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
+                {
+                    backgroundcontext.ReportProgress(new BackgroundTaskProgress(0, SR.MessageRetrievingServerSettings));
+
+                    try
+                    {
+                        _serviceClient = new DicomMoveRequestServiceClient();
+                        GetServerSettingResponse response = _serviceClient.GetServerSetting();
+                        _hostName = response.HostName;
+                        _aeTitle = response.AETitle;
+                        _port = response.Port;
+                        _storageDir = response.InterimStorageDirectory;
+                        backgroundcontext.Complete(null);
+                    }
+                    catch (Exception e)
+                    {
+                        _serviceClient = null;
+                        backgroundcontext.ReportProgress(new BackgroundTaskProgress(100, SR.ExceptionFailedToRetrieveServerSettings));
+                        backgroundcontext.Error(e);
+                    }
+                }, false);
         }
 
         public override void Start()
         {
             try
             {
-                _serviceClient = new DicomMoveRequestServiceClient();
-                GetServerSettingResponse response = _serviceClient.GetServerSetting();
-                _hostName = response.HostName;
-                _aeTitle = response.AETitle;
-                _port = response.Port;
-                _storageDir = response.InterimStorageDirectory;
+                if (_serviceClient == null)
+                {
+                    ProgressDialog.Show(_task, true, ProgressBarStyle.Marquee, this.Host.DesktopWindow);
+                }
             }
             catch (Exception e)
             {
-                //TODO: handle exception
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             base.Start();

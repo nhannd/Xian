@@ -170,7 +170,7 @@ namespace ClearCanvas.Desktop
 
         private void TerminatedHandler(object sender, BackgroundTaskTerminatedEventArgs e)
         {
-            if (_autoClose)
+            if (_autoClose && e.Reason != BackgroundTaskTerminatedReason.Exception)
             {
                 this.ExitCode = ApplicationComponentExitCode.Cancelled;
                 Host.Exit();
