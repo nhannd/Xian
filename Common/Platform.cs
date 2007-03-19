@@ -179,16 +179,7 @@ namespace ClearCanvas.Common
                     lock (_syncRoot)
                     {
                         if (_installDirectory == null)
-                        {
-                            Assembly entryAssembly = Assembly.GetEntryAssembly();
-                            if (entryAssembly != null)
-                                _installDirectory = Path.GetDirectoryName(entryAssembly.Location);
-                            else
-                            {
-                                Assembly exeAssembly = Assembly.GetExecutingAssembly();
-                                _installDirectory = Path.GetDirectoryName(exeAssembly.Location);
-                            }
-                        }
+                            _installDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
                     }
                 }
 
