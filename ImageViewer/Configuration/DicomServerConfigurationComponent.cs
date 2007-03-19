@@ -91,12 +91,19 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             if (_serviceClient != null)
             {
-                UpdateServerSettingRequest request = new UpdateServerSettingRequest();
-                request.HostName = _hostName;
-                request.AETitle = _aeTitle;
-                request.Port = _port;
-                request.InterimStorageDirectory = _storageDir;
-                _serviceClient.UpdateServerSetting(request);
+                try
+                {
+                    UpdateServerSettingRequest request = new UpdateServerSettingRequest();
+                    request.HostName = _hostName;
+                    request.AETitle = _aeTitle;
+                    request.Port = _port;
+                    request.InterimStorageDirectory = _storageDir;
+                    _serviceClient.UpdateServerSetting(request);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, SR.ExceptionFailedToUpdateServerSettings, this.Host.DesktopWindow);
+                }
             }
         }
 

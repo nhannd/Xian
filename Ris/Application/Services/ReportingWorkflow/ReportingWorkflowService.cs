@@ -7,7 +7,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.ReportingWorkflow;
+using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 

@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to update server settings.  Make sure the DICOM Server is running..
+        /// </summary>
+        internal static string ExceptionFailedToUpdateServerSettings {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToUpdateServerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieving DICOM Server Settings....
         /// </summary>
         internal static string MessageRetrievingServerSettings {

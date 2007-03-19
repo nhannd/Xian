@@ -123,6 +123,9 @@
   <data name="ExceptionFailedToRetrieveServerSettings" xml:space="preserve">
     <value>Failed to retrieving Server Settings.  Make sure the DICOM Server is running.</value>
   </data>
+  <data name="ExceptionFailedToUpdateServerSettings" xml:space="preserve">
+    <value>Failed to update server settings.  Make sure the DICOM Server is running.</value>
+  </data>
   <data name="MessageRetrievingServerSettings" xml:space="preserve">
     <value>Retrieving DICOM Server Settings...</value>
   </data>
