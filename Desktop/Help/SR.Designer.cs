@@ -68,5 +68,14 @@ namespace ClearCanvas.Desktop.Help {
                 return ResourceManager.GetString("FormatVersion", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find license file..
+        /// </summary>
+        public static string LicenseNotFound {
+            get {
+                return ResourceManager.GetString("LicenseNotFound", resourceCulture);
+            }
+        }
     }
 }

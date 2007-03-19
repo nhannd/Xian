@@ -44,7 +44,14 @@ namespace ClearCanvas.Desktop.Help
 				System.IO.Path.DirectorySeparatorChar, 
 				"License.rtf");
 
-			Process.Start(licensePath);
+			try
+			{
+				Process.Start(licensePath);
+			}
+			catch
+			{
+				Platform.ShowMessageBox(SR.LicenseNotFound);
+			}
 		}
 	}
 }

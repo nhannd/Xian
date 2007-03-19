@@ -120,4 +120,7 @@
   <data name="FormatVersion" xml:space="preserve">
     <value>Version {0}</value>
   </data>
+  <data name="LicenseNotFound" xml:space="preserve">
+    <value>Could not find license file.</value>
+  </data>
 </root>
