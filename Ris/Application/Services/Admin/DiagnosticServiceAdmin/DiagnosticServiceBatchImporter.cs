@@ -23,10 +23,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         private IModalityProcedureStepTypeBroker _sptBroker;
         private IModalityBroker _modalityBroker;
 
-        private List<DiagnosticServiceAdmin> _diagnosticServices = new List<DiagnosticServiceAdmin>();
+        private List<DiagnosticService> _diagnosticServices = new List<DiagnosticService>();
         private List<RequestedProcedureType> _rpTypes = new List<RequestedProcedureType>();
         private List<ModalityProcedureStepType> _spTypes = new List<ModalityProcedureStepType>();
-        private List<ModalityAdmin> _modalities = new List<ModalityAdmin>();
+        private List<Modality> _modalities = new List<Modality>();
 
         private DiagnosticServiceBatchImporter(IUpdateContext updateContext)
         {
@@ -67,11 +67,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
             }
         }
 
-        private DiagnosticServiceAdmin GetDiagnosticService(string id, string name)
+        private DiagnosticService GetDiagnosticService(string id, string name)
         {
             // first check if we have it in memory
-            DiagnosticServiceAdmin ds = CollectionUtils.SelectFirst<DiagnosticServiceAdmin>(_diagnosticServices,
-                delegate(DiagnosticServiceAdmin s) { return s.Id == id; });
+            DiagnosticService ds = CollectionUtils.SelectFirst<DiagnosticService>(_diagnosticServices,
+                delegate(DiagnosticService s) { return s.Id == id; });
 
             // if not, check the database
             if (ds == null)
@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
             return rpType;
         }
 
-        private ModalityProcedureStepType GetModalityProcedureStepType(string id, string name, ModalityAdmin modality)
+        private ModalityProcedureStepType GetModalityProcedureStepType(string id, string name, Modality modality)
         {
             // first check if we have it in memory
             ModalityProcedureStepType spType = CollectionUtils.SelectFirst<ModalityProcedureStepType>(_spTypes,
@@ -163,11 +163,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
             return spType;
         }
 
-        private ModalityAdmin GetModality(string id, string name)
+        private Modality GetModality(string id, string name)
         {
             // first check if we have it in memory
-            ModalityAdmin modality = CollectionUtils.SelectFirst<ModalityAdmin>(_modalities,
-                delegate(ModalityAdmin sp) { return sp.Id == id; });
+            Modality modality = CollectionUtils.SelectFirst<Modality>(_modalities,
+                delegate(Modality sp) { return sp.Id == id; });
 
             // if not, check the database
             if (modality == null)

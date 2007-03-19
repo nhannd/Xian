@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ExecuteOperation(request.ProcedureStepRef, request.OperationClassName);
         }
 
-        [OperationContract]
+        [ReadOperation]
         GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
         {
             IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
