@@ -2,19 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public abstract class RegistrationWorkflowFolder : WorkflowFolder<WorklistItem>
+    public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
     {
         private RegistrationWorkflowFolderSystem _folderSystem;
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
+
+        private string _worklistClassName;
+        private RegistrationWorklistSearchCriteria _searchCriteria;
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
             : base(folderSystem, folderName, new RegistrationWorklistTable())
@@ -25,6 +30,22 @@ namespace ClearCanvas.Ris.Client.Adt
             _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
             this.IconSet = _closedIconSet;
             this.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+        }
+
+        public string WorklistClassName
+        {
+            get { return _worklistClassName; }
+            set { _worklistClassName = value; }
+        }
+
+        public RegistrationWorklistSearchCriteria SearchCriteria
+        {
+            get { return _searchCriteria; }
+            set 
+            { 
+                _searchCriteria = value;
+                this.Refresh();
+            }
         }
 
         public IconSet ClosedIconSet
@@ -55,22 +76,36 @@ namespace ClearCanvas.Ris.Client.Adt
             base.CloseFolder();
         }
 
-        protected IWorklistService WorkflowService
+        protected override IList<RegistrationWorklistItem> QueryItems()
         {
-            get { return _folderSystem.WorkflowService; }
+            try
+            {
+                Platform.GetService<IRegistrationWorkflowService>(
+                    delegate(IRegistrationWorkflowService service)
+                    {
+                        GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName, this.SearchCriteria));
+                        return response.WorklistItems;
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+            return List<RegistrationWorklistItem>();
         }
 
-        protected override bool CanAcceptDrop(WorklistItem item)
+        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
         {
             return false;
         }
 
-        protected override bool ConfirmAcceptDrop(ICollection<WorklistItem> items)
+        protected override bool ConfirmAcceptDrop(ICollection<RegistrationWorklistItem> items)
         {
             return false;
         }
 
-        protected override bool ProcessDrop(WorklistItem item)
+        protected override bool ProcessDrop(RegistrationWorklistItem item)
         {
             return false;
         }

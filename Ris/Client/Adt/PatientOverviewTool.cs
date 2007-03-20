@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
-                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).PatientProfileRef != null);
+                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).WorklistItem.PatientProfileRef != null);
             }
 
         }
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
                 IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                OpenPatient(context.PatientProfileRef, context.DesktopWindow);
+                OpenPatient(context.WorklistItem.PatientProfileRef, context.DesktopWindow);
             }
         }
 

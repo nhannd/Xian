@@ -9,6 +9,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -27,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
         bool GetWorkflowOperationEnablement(string operationClass);
         void ExecuteWorkflowOperation(string operationClass);
 
-        ICollection<WorklistItem> SelectedItems { get; }
+        ICollection<RegistrationWorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
 
         IDesktopWindow DesktopWindow { get; }
@@ -35,13 +36,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IRegistrationWorkflowFolderToolContext : IToolContext
     {
-        SearchCriteria SearchCriteria { set; }
+        RegistrationWorklistSearchCriteria SearchCriteria { set; }
 
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public class RegistrationWorkflowFolderSystem : WorkflowFolderSystem<WorklistItem>
+    public class RegistrationWorkflowFolderSystem : WorkflowFolderSystem<RegistrationWorklistItem>
     {
         class RegistrationWorkflowItemToolContext : ToolContext, IRegistrationWorkflowItemToolContext
         {
@@ -59,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _owner.DesktopWindow; }
             }
 
-            public ICollection<WorklistItem> SelectedItems
+            public ICollection<RegistrationWorklistItem> SelectedItems
             {
                 get { return _owner.SelectedItems; }
             }
@@ -94,9 +95,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
             #region IRegistrationWorkflowItemToolContext Members
 
-            public SearchCriteria SearchCriteria
+            public RegistrationWorklistSearchCriteria SearchCriteria
             {
-                set { _owner.SearchCriteria = value as PatientProfileSearchCriteria; }
+                set { _owner.SearchCriteria = value as RegistrationWorklistSearchCriteria; }
             }
 
             public event EventHandler SelectedFolderChanged
@@ -113,13 +114,12 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private IWorklistService _workflowService;
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
         private Folders.SearchFolder _searchFolder;
 
-        public SearchCriteria SearchCriteria
+        public RegistrationWorklistSearchCriteria SearchCriteria
         {
             get { return (_searchFolder == null ? null : _searchFolder.SearchCriteria); }
             set 
@@ -200,11 +200,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool GetOperationEnablement(string operationName)
         {
             return _workflowEnablment == null ? false : _workflowEnablment[operationName];
-        }
-
-        public IWorklistService WorkflowService
-        {
-            get { return _workflowService; }
         }
 
         protected override void Dispose(bool disposing)

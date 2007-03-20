@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
-                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).PatientProfileRef != null);
+                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).WorklistItem.PatientProfileRef != null);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
                 IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                OrderEntryComponent component = new OrderEntryComponent(context.PatientProfileRef);
+                OrderEntryComponent component = new OrderEntryComponent(context.WorklistItem.PatientProfileRef);
                 ApplicationComponent.LaunchAsWorkspace(
                     context.DesktopWindow,
                     component,

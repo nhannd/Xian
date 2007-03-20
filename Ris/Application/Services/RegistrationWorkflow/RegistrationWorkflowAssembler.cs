@@ -79,13 +79,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             preview.Sex.Value = sexEnumTable[profile.Sex].Values;
 
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
-            foreach(TelephoneNumber number in profile.TelephoneNumbers)
+            preview.CurrentHomePhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone);
+            preview.CurrentWorkPhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone);
+            foreach (TelephoneNumber number in profile.TelephoneNumbers)
             {
                 preview.TelephoneNumbers.Add(phoneAssembler.CreateTelephoneDetail(number));
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach(Address address in profile.Addresses)
+            preview.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress);
+            preview.CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress);
+            foreach (Address address in profile.Addresses)
             {
                 preview.Addresses.Add(addressAssembler.CreateAddressDetail(address));
             }

@@ -12,6 +12,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
@@ -26,17 +27,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.OpenIconSet = new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png");
             this.IconSet = this.OpenIconSet;
-        }
 
-        protected override IList<WorklistItem> QueryItems()
-        {
-            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled");
-        }
-
-        protected override bool IsMember(WorklistItem item)
-        {
-            //return item.HasStatus(ActivityStatus.SC);
-            return true;
+            this.WorklistClassName = "Scheduled";
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -53,40 +45,20 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel) this.MenuModel).AddAction("CheckInOption", "Option", "Edit.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.WorklistClassName = "CheckIn";
         }
 
-        protected override IList<WorklistItem> QueryItems()
+        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
         {
-            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn");
+            return item.WorklistClassName == "Scheduled";
         }
 
-        protected override bool IsMember(WorklistItem item)
+        protected override bool ProcessDrop(RegistrationWorklistItem item)
         {
-            //return item.HasStatus(ActivityStatus.IP);
-            return true;
-        }
-
-        protected override bool CanAcceptDrop(WorklistItem item)
-        {
-            //return item.HasStatus(ActivityStatus.SC);
-            return true;
-        }
-
-        protected override bool ConfirmAcceptDrop(ICollection<WorklistItem> items)
-        {
-            //DialogBoxAction result = Platform.ShowMessageBox("Are you sure you want to check in these patients?", MessageBoxActions.YesNo);
-            //return (result == DialogBoxAction.Yes);
-
-            return true;
-        }
-
-        protected override bool ProcessDrop(WorklistItem item)
-        {
-            //Todo: Process drop
-            //service.StartProcedureStep(item.ProcedureStep);
             RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
             ApplicationComponent.LaunchAsDialog(
-                this.WorkflowFolderSystem.DesktopWindow, checkInComponent, String.Format("Checking in {0}", item.PatientName.ToString()));
+                this.WorkflowFolderSystem.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.PatientName)));
                         
             return true;
         }
@@ -102,17 +74,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "In Progress")
         {
-        }
-
-        protected override IList<WorklistItem> QueryItems()
-        {
-            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress");
-        }
-
-        protected override bool IsMember(WorklistItem item)
-        {
-            //return item.HasStatus(ActivityStatus.IP);
-            return true;
+            this.WorklistClassName = "InProgress";
         }
     }
 
@@ -121,17 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Completed")
         {
-        }
-
-        protected override IList<WorklistItem> QueryItems()
-        {
-            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed");
-        }
-
-        protected override bool IsMember(WorklistItem item)
-        {
-            //return item.HasStatus(ActivityStatus.CM);
-            return true;
+            this.WorklistClassName = "Completed";
         }
     }
 
@@ -140,50 +92,20 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Cancelled")
         {
-        }
-
-        protected override IList<WorklistItem> QueryItems()
-        {
-            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled");
-        }
-
-        protected override bool IsMember(WorklistItem item)
-        {
-            //return item.HasStatus(ActivityStatus.DC);
-            return true;
+            this.WorklistClassName = "Cancelled";
         }
     }
 
     public class SearchFolder : RegistrationWorkflowFolder
     {
-        PatientProfileSearchCriteria _searchCriteria;
-
         public SearchFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Search")
         {
             this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchToolSmall.png", "SearchToolMedium.png", "SearchToolLarge.png");
             this.ClosedIconSet = this.OpenIconSet;
             this.IconSet = this.OpenIconSet;
-        }
 
-        public SearchCriteria SearchCriteria
-        {
-            get { return _searchCriteria; }
-            set 
-            { 
-                _searchCriteria = value as PatientProfileSearchCriteria;
-                this.Refresh();
-            }
-        }
-
-        protected override IList<WorklistItem> QueryItems()
-        {
-            return (IList<WorklistItem>)this.WorkflowService.GetWorklist("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search", _searchCriteria);
-        }
-
-        protected override bool IsMember(WorklistItem item)
-        {
-            return true;
+            this.WorklistClassName = "Search";
         }
     }
 }

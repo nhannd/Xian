@@ -31,6 +31,18 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public EnumValueInfo Sex;
 
         [DataMember]
+        public AddressDetail CurrentHomeAddress;
+
+        [DataMember]
+        public AddressDetail CurrentWorkAddress;
+
+        [DataMember]
+        public TelephoneDetail CurrentHomePhone;
+
+        [DataMember]
+        public TelephoneDetail CurrentWorkPhone;
+
+        [DataMember]
         public List<TelephoneDetail> TelephoneNumbers;
 
         [DataMember]

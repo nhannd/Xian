@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
                 delegate(RegistrationWorklistItem item) { return Format.Custom(item.MrnID); }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
-                delegate(RegistrationWorklistItem item) { return String.Format("{0}, {1}", item.Name.FamilyName, item.Name.GivenName); }, 2.0f));
+                delegate(RegistrationWorklistItem item) { return Format.Custom(item.Name); }, 2.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnHealthcardNumber,
                 delegate(RegistrationWorklistItem item) { return Format.Custom(item.Healthcard.Id); }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDateOfBirth,

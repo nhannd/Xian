@@ -13,6 +13,9 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -23,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IRegistrationPreviewToolContext : IToolContext
     {
-        EntityRef<PatientProfile> PatientProfileRef { get; }
+        RegistrationWorklistItem WorklistItem { get; }
         IDesktopWindow DesktopWindow { get; }
     }
     
@@ -49,9 +52,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 _component = component;
             }
 
-            public EntityRef<PatientProfile> PatientProfileRef
+            public RegistrationWorklistItem WorklistItem
             {
-                get { return _component.PatientProfileRef; }
+                get { return _component.WorklistItem; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -63,17 +66,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _showHeader;
         private bool _showReconciliationAlert;
 
-        private WorklistItem _worklistItem;
-        private PatientProfile _patientProfile;
+        private RegistrationWorklistItem _worklistItem;
+        private RegistrationWorklistPreview _worklistPreview;
 
-        private IWorklistService _worklistService;
-        private IAdtService _adtService;
-
-        private int _numberOfRIC;
         private int _maxRICDisplay;
-
-        private RICTable _RIC;
-        private SexEnumTable _sexChoices;
+        private RICTable _RICTable;
 
         private ToolSet _toolSet;
 
@@ -95,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _maxRICDisplay = 5;
         }
 
-        public WorklistItem WorklistItem
+        public RegistrationWorklistItem WorklistItem
         {
             get { return _worklistItem; }
             set
@@ -114,18 +111,9 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _maxRICDisplay = value; } 
         }
 
-        public EntityRef<PatientProfile> PatientProfileRef
-        {
-            get { return (_worklistItem == null ? null : _worklistItem.PatientProfile); }
-        }
-
         public override void Start()
         {
-            _worklistService = ApplicationContext.GetService<IWorklistService>();
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _sexChoices = _adtService.GetSexEnumTable();
-
-            _RIC = new RICTable();
+            _RICTable = new RICTable();
             _toolSet = new ToolSet(new RegistrationPreviewToolExtensionPoint(), new RegistrationPreviewToolContext(this));
 
             UpdateDisplay();
@@ -142,20 +130,28 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void UpdateDisplay()
         {
-            _RIC.Items.Clear();
+            _RICTable.Items.Clear();
             
             if (_worklistItem != null && _worklistItem.PatientProfile != null)
             {
-                _patientProfile = _adtService.LoadPatientProfile(_worklistItem.PatientProfile, true);
-                IList<WorklistQueryResult> listQueryResult = (IList<WorklistQueryResult>)_worklistService.GetQueryResultForWorklistItem(_worklistItem.WorkClassName, _worklistItem);
-                _numberOfRIC = listQueryResult.Count;
-
-                int count = 0;
-                foreach (WorklistQueryResult queryResult in listQueryResult)
+                try
                 {
-                    _RIC.Items.Add(queryResult);
-                    count++;
-                    if (count >= this._maxRICDisplay)
+                    Platform.GetService<IRegistrationWorkflowService>(
+                        delegate(IRegistrationWorkflowService service)
+                        {
+                            LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(_worklistItem));
+                            _worklistPreview = response.WorklistPreview;
+                        });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
+
+                foreach (RICSummary summary in _worklistPreview.RICs)
+                {
+                    _RICTable.Items.Add(summary);
+                    if (_RICTable.Items.Count >= this._maxRICDisplay)
                         break;
                 }
             }
@@ -175,73 +171,82 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                return _showReconciliationAlert &&
-                    _adtService.FindPatientReconciliationMatches(_worklistItem.PatientProfile).Count > 0;
+                if (_showReconciliationAlert)
+                {
+                    try
+                    {
+                        Platform.GetService<IPatientReconciliationService>(
+                            delegate(IPatientReconciliationService service)
+                            {
+                                ListPatientReconciliationMatchesResponse response = service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(_worklistItem.PatientProfileRef));
+                                return response.ReconciledProfiles.Count > 0;
+
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+                }
+
+                return false;
             }
             set { _showReconciliationAlert = value; }
         }
 
         public string Name
         {
-            get { return Format.Custom(_patientProfile.Name); }
+            get { return Format.Custom(_worklistPreview.Name); }
         }
 
         public string DateOfBirth
         {
-            get { return ClearCanvas.Desktop.Format.Date(_patientProfile.DateOfBirth); }
+            get { return Format.Date(_worklistPreview.DateOfBirth); }
         }
 
         public string Mrn
         {
-            get { return Format.Custom(_patientProfile.Mrn); }
+            get { return Format.Custom(_worklistPreview.Mrn); }
         }
 
         public string Healthcard
         {
-            get { return Format.Custom(_patientProfile.Healthcard); }
+            get { return Format.Custom(_worklistPreview.Healthcard); }
         }
 
         public string Sex
         {
-            get { return _sexChoices[_patientProfile.Sex].Value; }
+            get { return Format.Custom(_worklistPreview.Sex.Value); }
         }
 
         public string CurrentHomeAddress
         {
-            get
-            {
-                Address address = _patientProfile.CurrentHomeAddress;
-                return (address == null) ? SR.TextUnknownValue : Format.Custom(address);
-            }
+            get { return Format.Custom(_worklistPreview.CurrentHomeAddress); }
         }
 
         public string CurrentHomePhone
         {
-            get
-            {
-                TelephoneNumber phone = _patientProfile.CurrentHomePhone;
-                return (phone == null) ? SR.TextUnknownValue : Format.Custom(phone);
-            }
+            get { return Format.Custom(_worklistPreview.CurrentHomePhone); }
         }
 
         public bool HasMoreBasicInfo
         {
             get 
             {
-                int moreAddresses = _patientProfile.Addresses.Count - (_patientProfile.CurrentHomeAddress == null ? 0 : 1);
-                int morePhoneNumbers = _patientProfile.TelephoneNumbers.Count - (_patientProfile.CurrentHomePhone == null ? 0 : 1);
+                int moreAddresses = _worklistPreview.Addresses.Count - (_worklistPreview.CurrentHomeAddress == null ? 0 : 1);
+                int morePhoneNumbers = _worklistPreview.TelephoneNumbers.Count - (_worklistPreview.CurrentHomePhone == null ? 0 : 1);
                 return (moreAddresses > 0 || morePhoneNumbers > 0); 
             }
         }
 
         public ITable RIC
         {
-            get { return _RIC; }
+            get { return _RICTable; }
         }
 
         public int MoreRICCount
         {
-            get { return _numberOfRIC - _RIC.Items.Count; }
+            get { return _worklistPreview.RICs.Count - _RICTable.Items.Count; }
         }
 
         public bool HasAlert
