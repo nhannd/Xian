@@ -10,9 +10,9 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 
 using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Client.Common;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -56,10 +56,9 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(StaffSummaryComponentViewExtensionPoint))]
     public class StaffSummaryComponent : ApplicationComponent
     {
-        private Staff _selectedStaff;
+        private StaffSummary _selectedStaff;
         private StaffTable _staffTable;
 
-        private IStaffAdminService _staffAdminService;
         private ActionModelRoot _staffActionHandler;
         private ClickAction _addStaffAction;
         private ClickAction _addPractitionerAction;
@@ -74,9 +73,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _staffAdminService = ApplicationContext.GetService<IStaffAdminService>();
-            _staffAdminService.StaffChanged += StaffChangedEventHandler;
-            _staffAdminService.PractitionerChanged += PractitionerChangedEventHandler;
+            //_staffAdminService.StaffChanged += StaffChangedEventHandler;
+            //_staffAdminService.PractitionerChanged += PractitionerChangedEventHandler;
 
             _staffTable = new StaffTable();
             _staffActionHandler = new ActionModelRoot();
@@ -92,96 +90,98 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            _staffAdminService.StaffChanged -= StaffChangedEventHandler;
-            _staffAdminService.PractitionerChanged -= PractitionerChangedEventHandler;
+            //_staffAdminService.StaffChanged -= StaffChangedEventHandler;
+            //_staffAdminService.PractitionerChanged -= PractitionerChangedEventHandler;
 
             base.Stop();
         }
 
         #region Event Handler
 
-        private void PractitionerChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // check if the staff with this oid is in the list
-            int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
-            IPractitionerAdminService practitionerAdminService = ApplicationContext.GetService<IPractitionerAdminService>();
-            if (index > -1)
-            {
-                if (e.ChangeType == EntityChangeType.Update)
-                {
-                    try
-                    {
-                        Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
-                        _staffTable.Items[index] = p;
-                    }
-                    catch (Exception exception)
-                    {
-                        ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-                    }
-                }
-                else if (e.ChangeType == EntityChangeType.Delete)
-                {
-                    _staffTable.Items.RemoveAt(index);
-                }
-            }
-            else
-            {
-                if (e.ChangeType == EntityChangeType.Create)
-                {
-                    try
-                    {
-                        Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
-                        if (p != null)
-                            _staffTable.Items.Add(p);
-                    }
-                    catch (Exception exception)
-                    {
-                        ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-                    }
-                }
-            }
-        }
+        //TODO: PractitionerChangedEventHandler
+        //private void PractitionerChangedEventHandler(object sender, EntityChangeEventArgs e)
+        //{
+        //    // check if the staff with this oid is in the list
+        //    int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
+        //    IPractitionerAdminService practitionerAdminService = ApplicationContext.GetService<IPractitionerAdminService>();
+        //    if (index > -1)
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Update)
+        //        {
+        //            try
+        //            {
+        //                Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
+        //                _staffTable.Items[index] = p;
+        //            }
+        //            catch (Exception exception)
+        //            {
+        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+        //            }
+        //        }
+        //        else if (e.ChangeType == EntityChangeType.Delete)
+        //        {
+        //            _staffTable.Items.RemoveAt(index);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Create)
+        //        {
+        //            try
+        //            {
+        //                Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
+        //                if (p != null)
+        //                    _staffTable.Items.Add(p);
+        //            }
+        //            catch (Exception exception)
+        //            {
+        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+        //            }
+        //        }
+        //    }
+        //}
 
-        private void StaffChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // check if the staff with this oid is in the list
-            int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
-            if (index > -1)
-            {
-                if (e.ChangeType == EntityChangeType.Update)
-                {
-                    try
-                    {
-                        Staff s = _staffAdminService.LoadStaff((EntityRef<Staff>)e.EntityRef, false);
-                        _staffTable.Items[index] = s;
-                    }
-                    catch (Exception exception)
-                    {
-                        ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-                    }
-                }
-                else if (e.ChangeType == EntityChangeType.Delete)
-                {
-                    _staffTable.Items.RemoveAt(index);
-                }
-            }
-            else
-            {
-                if (e.ChangeType == EntityChangeType.Create)
-                {
-                    try
-                    {
-                        Staff s = _staffAdminService.LoadStaff((EntityRef<Staff>)e.EntityRef, false);
-                        if (s != null)
-                            _staffTable.Items.Add(s);
-                    }
-                    catch (Exception exception)
-                    {
-                        ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-                    }
-                }
-            }
-        }
+        //TODO: StaffChangedEventHandler
+        //private void StaffChangedEventHandler(object sender, EntityChangeEventArgs e)
+        //{
+        //    // check if the staff with this oid is in the list
+        //    int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
+        //    if (index > -1)
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Update)
+        //        {
+        //            try
+        //            {
+        //                Staff s = _staffAdminService.LoadStaff((EntityRef<Staff>)e.EntityRef, false);
+        //                _staffTable.Items[index] = s;
+        //            }
+        //            catch (Exception exception)
+        //            {
+        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+        //            }
+        //        }
+        //        else if (e.ChangeType == EntityChangeType.Delete)
+        //        {
+        //            _staffTable.Items.RemoveAt(index);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Create)
+        //        {
+        //            try
+        //            {
+        //                Staff s = _staffAdminService.LoadStaff((EntityRef<Staff>)e.EntityRef, false);
+        //                if (s != null)
+        //                    _staffTable.Items.Add(s);
+        //            }
+        //            catch (Exception exception)
+        //            {
+        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+        //            }
+        //        }
+        //    }
+        //}
 
         #endregion
 
@@ -202,7 +202,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedStaff == null ? Selection.Empty : new Selection(_selectedStaff); }
             set
             {
-                _selectedStaff = (Staff)value.Item;
+                _selectedStaff = (StaffSummary)value.Item;
                 StaffSelectionChanged();
             }
         }
@@ -227,17 +227,17 @@ namespace ClearCanvas.Ris.Client.Admin
             if (_selectedStaff == null) return;
 
             StaffEditorComponent editor;
-            if (_selectedStaff is Practitioner)
+            if (_selectedStaff.LicenseNumber == null || _selectedStaff.LicenseNumber == "")
             {
-                editor = new StaffEditorComponent(new EntityRef<Practitioner>(_selectedStaff as Practitioner));
+                editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
             }
             else
             {
-                editor = new StaffEditorComponent(new EntityRef<Staff>(_selectedStaff));
+                editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+                    this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
             }
         }
 
@@ -245,12 +245,16 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                IList<Staff> staffList = _staffAdminService.GetAllStaffs();
-                if (staffList != null)
-                {
-                    _staffTable.Items.Clear();
-                    _staffTable.Items.AddRange(staffList);
-                }
+                Platform.GetService<IStaffAdminService>(
+                    delegate(IStaffAdminService service)
+                    {
+                        ListAllStaffsResponse response = service.ListAllStaffs(new ListAllStaffsRequest());
+                        if (response.Staffs != null)
+                        {
+                            _staffTable.Items.Clear();
+                            _staffTable.Items.AddRange(response.Staffs);
+                        }
+                    });
             }
             catch (Exception e)
             {

@@ -1,42 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class StaffTable : Table<Staff>
+    class StaffTable : Table<StaffSummary>
     {
         public StaffTable()
         {
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnLicenseNumber,
-                delegate(Staff staff) { return (staff is Practitioner ? (staff as Practitioner).LicenseNumber : ""); },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnLicenseNumber,
+                delegate(StaffSummary staff) { return staff.LicenseNumber; },
                 1.0f));
 
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnPrefix,
-                delegate(Staff staff) { return staff.Name.Prefix; },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnPrefix,
+                delegate(StaffSummary staff) { return staff.PersonNameDetail.Prefix; },
                 0.2f));
 
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnGivenName,
-                delegate(Staff staff) { return staff.Name.GivenName; },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnGivenName,
+                delegate(StaffSummary staff) { return staff.PersonNameDetail.GivenName; },
                 1.0f));
 
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnMiddleName,
-                delegate(Staff staff) { return staff.Name.MiddleName; },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnMiddleName,
+                delegate(StaffSummary staff) { return staff.PersonNameDetail.MiddleName; },
                 1.0f));
 
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnFamilyName,
-                delegate(Staff staff) { return staff.Name.FamilyName; },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnFamilyName,
+                delegate(StaffSummary staff) { return staff.PersonNameDetail.FamilyName; },
                 1.0f));
 
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnSuffix,
-                delegate(Staff staff) { return staff.Name.Suffix; },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnSuffix,
+                delegate(StaffSummary staff) { return staff.PersonNameDetail.Suffix; },
                 0.2f));
 
-            this.Columns.Add(new TableColumn<Staff, string>(SR.ColumnDegree,
-                delegate(Staff staff) { return staff.Name.Degree; },
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnDegree,
+                delegate(StaffSummary staff) { return staff.PersonNameDetail.Degree; },
                 1.0f));
         }
     }

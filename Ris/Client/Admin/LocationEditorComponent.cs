@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
@@ -88,14 +89,14 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get 
             {
+                List<string> facilityStrings = new List<string>();
+
                 try
                 {
-                    List<string> facilityStrings = new List<string>();
-
                     Platform.GetService<IFacilityAdminService>(
                         delegate(IFacilityAdminService service)
                         {
-                            ListAllFacilitiesResponse response = service.ListAllLocations(new ListAllFacilitiesRequest());
+                            ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
                             facilityStrings.AddRange(
                                 CollectionUtils.Map<FacilitySummary, string>(response.Facilities,
                                         delegate(FacilitySummary f) { return f.Name; }));
@@ -106,13 +107,13 @@ namespace ClearCanvas.Ris.Client.Admin
                             }
                         
                         });
-
-                    return facilityStrings;
                 }
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, this.Host.DesktopWindow);
                 }
+
+                return facilityStrings;
             }
         }
 
@@ -126,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     Platform.GetService<IFacilityAdminService>(
                         delegate(IFacilityAdminService service)
                         {
-                            ListAllFacilitiesResponse response = service.ListAllLocations(new ListAllFacilitiesRequest());
+                            ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
                             FacilitySummary summary = CollectionUtils.SelectFirst<FacilitySummary>(response.Facilities,
                                     delegate(FacilitySummary f) { return f.Name == value; });
 
@@ -210,10 +211,6 @@ namespace ClearCanvas.Ris.Client.Admin
                     SaveChanges();
                     this.ExitCode = ApplicationComponentExitCode.Normal;
                     Host.Exit();
-                }
-                catch (ConcurrencyException e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionConcurrencyLocationNotSaved, this.Host.DesktopWindow);
                 }
                 catch (Exception e)
                 {

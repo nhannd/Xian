@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
     [DataContract]
     public class AddPractitionerRequest : DataContractBase
     {
+        public AddPractitionerRequest(PractitionerDetail practitionerDetail)
+        {
+            this.PractitionerDetail = practitionerDetail;
+        }
+
         [DataMember]
         public PractitionerDetail PractitionerDetail;
     }

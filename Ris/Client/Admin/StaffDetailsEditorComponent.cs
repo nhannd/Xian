@@ -4,9 +4,9 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -24,7 +24,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(StaffDetailsEditorComponentViewExtensionPoint))]
     public class StaffDetailsEditorComponent : ApplicationComponent
     {
-        private Staff _staff;
+        private StaffDetail _staffDetail;
+        private PractitionerDetail _practitionerDetail;
         private bool _isStaffMode;
 
         /// <summary>
@@ -34,9 +35,9 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _isStaffMode = staffMode;
             if (_isStaffMode)
-                _staff = new Staff();
+                _staffDetail = new StaffDetail();
             else
-                _staff = new Practitioner();
+                _practitionerDetail = new PractitionerDetail();
         }
 
         public override void Start()
@@ -51,10 +52,16 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public Staff Staff
+        public StaffDetail StaffDetail
         {
-            get { return _staff; }
-            set { _staff = value; }
+            get { return _staffDetail; }
+            set { _staffDetail = value; }
+        }
+
+        public PractitionerDetail PractitionerDetail
+        {
+            get { return _practitionerDetail; }
+            set { _practitionerDetail = value; }
         }
 
         public bool StaffMode
@@ -66,60 +73,108 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string FamilyName
         {
-            get { return _staff.Name.FamilyName; }
+            get 
+            {
+                return (_isStaffMode ? _staffDetail.PersonNameDetail.FamilyName 
+                              : _practitionerDetail.PersonNameDetail.FamilyName);
+            }
             set
             {
-                _staff.Name.FamilyName = value;
+                if (_isStaffMode)
+                    _staffDetail.PersonNameDetail.FamilyName = value;
+                else
+                    _practitionerDetail.PersonNameDetail.FamilyName = value;
+
                 this.Modified = true;
             }
         }
 
         public string GivenName
         {
-            get { return _staff.Name.GivenName; }
+            get
+            {
+                return (_isStaffMode ? _staffDetail.PersonNameDetail.GivenName
+                              : _practitionerDetail.PersonNameDetail.GivenName);
+            }
             set
             {
-                _staff.Name.GivenName = value;
+                if (_isStaffMode)
+                    _staffDetail.PersonNameDetail.GivenName = value;
+                else
+                    _practitionerDetail.PersonNameDetail.GivenName = value;
+
                 this.Modified = true;
             }
         }
 
         public string MiddleName
         {
-            get { return _staff.Name.MiddleName; }
+            get
+            {
+                return (_isStaffMode ? _staffDetail.PersonNameDetail.MiddleName
+                              : _practitionerDetail.PersonNameDetail.MiddleName);
+            }
             set
             {
-                _staff.Name.MiddleName = value;
+                if (_isStaffMode)
+                    _staffDetail.PersonNameDetail.MiddleName = value;
+                else
+                    _practitionerDetail.PersonNameDetail.MiddleName = value;
+
                 this.Modified = true;
             }
         }
 
         public string Prefix
         {
-            get { return _staff.Name.Prefix; }
+            get
+            {
+                return (_isStaffMode ? _staffDetail.PersonNameDetail.Prefix
+                              : _practitionerDetail.PersonNameDetail.Prefix);
+            }
             set
             {
-                _staff.Name.Prefix = value;
+                if (_isStaffMode)
+                    _staffDetail.PersonNameDetail.Prefix = value;
+                else
+                    _practitionerDetail.PersonNameDetail.Prefix = value;
+
                 this.Modified = true;
             }
         }
 
         public string Suffix
         {
-            get { return _staff.Name.Suffix; }
+            get
+            {
+                return (_isStaffMode ? _staffDetail.PersonNameDetail.Suffix
+                              : _practitionerDetail.PersonNameDetail.Suffix);
+            }
             set
             {
-                _staff.Name.Suffix = value;
+                if (_isStaffMode)
+                    _staffDetail.PersonNameDetail.Suffix = value;
+                else
+                    _practitionerDetail.PersonNameDetail.Suffix = value;
+
                 this.Modified = true;
             }
         }
 
         public string Degree
         {
-            get { return _staff.Name.Degree; }
+            get
+            {
+                return (_isStaffMode ? _staffDetail.PersonNameDetail.Degree
+                              : _practitionerDetail.PersonNameDetail.Degree);
+            }
             set
             {
-                _staff.Name.Degree = value;
+                if (_isStaffMode)
+                    _staffDetail.PersonNameDetail.Degree = value;
+                else
+                    _practitionerDetail.PersonNameDetail.Degree = value;
+
                 this.Modified = true;
             }
         }
@@ -132,17 +187,13 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get
             {
-                if (_isStaffMode)
-                    return null;
-                else
-                    return (_staff as Practitioner).LicenseNumber;
+                return (_isStaffMode ? "" : _practitionerDetail.LicenseNumber);
             }
-
             set
             {
                 if (_isStaffMode == false)
                 {
-                    (_staff as Practitioner).LicenseNumber = value;
+                    _practitionerDetail.LicenseNumber = value;
                     this.Modified = true;
                 }
             }

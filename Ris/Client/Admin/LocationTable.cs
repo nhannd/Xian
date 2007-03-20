@@ -1,3 +1,4 @@
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin;
 

@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Client.Admin
             // can occur if user double clicks while holding control
             if (_selectedLocation == null) return;
 
-            LocationEditorComponent editor = new LocationEditorComponent(new EntityRef<Location>(_selectedLocation));
+            LocationEditorComponent editor = new LocationEditorComponent(_selectedLocation.LocationRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
         }
@@ -161,11 +161,11 @@ namespace ClearCanvas.Ris.Client.Admin
                 Platform.GetService<ILocationAdminService>(
                     delegate(ILocationAdminService service)
                     {
-                        ListAllLocationsResponse response = service.ListAllLocations(new ListAllLocationsRequest());
+                        ListAllLocationsResponse response = service.ListAllLocations(new ListAllLocationsRequest(false));
                         if (response.Locations != null)
                         {
-                            _facilityTable.Items.Clear();
-                            _facilityTable.Items.AddRange(response.Locations);
+                            _locationTable.Items.Clear();
+                            _locationTable.Items.AddRange(response.Locations);
                         }
                     });
             }

@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
     [DataContract]
     public class LoadPractitionerForEditRequest : DataContractBase
     {
+        public LoadPractitionerForEditRequest(EntityRef practitionerRef)
+        {
+            this.PractitionerRef = practitionerRef;
+        }
+
         [DataMember]
         public EntityRef PractitionerRef;
     }

@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Client.Admin
             // can occur if user double clicks while holding control
             if (_selectedModality == null) return;
 
-            ModalityEditorComponent editor = new ModalityEditorComponent(new EntityRef<Modality>(_selectedModality));
+            ModalityEditorComponent editor = new ModalityEditorComponent(_selectedModality.ModalityRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
         }
@@ -163,11 +163,11 @@ namespace ClearCanvas.Ris.Client.Admin
                 Platform.GetService<IModalityAdminService>(
                     delegate(IModalityAdminService service)
                     {
-                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest());
+                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest(false));
                         if (response.Modalities != null)
                         {
-                            _facilityTable.Items.Clear();
-                            _facilityTable.Items.AddRange(response.Modalities);
+                            _modalityTable.Items.Clear();
+                            _modalityTable.Items.AddRange(response.Modalities);
                         }
                     });
             }

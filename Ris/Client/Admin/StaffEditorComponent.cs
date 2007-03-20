@@ -2,26 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     public class StaffEditorComponent : NavigatorComponentContainer
     {
         private bool _isStaffMode;
-        private EntityRef<Staff> _staffRef;
-        private EntityRef<Practitioner> _practitionerRef;
-        private Staff _staff;
+        private EntityRef _staffRef;
+        private EntityRef _practitionerRef;
+        private StaffDetail _staffDetail;
+        private PractitionerDetail _practitionerDetail;
 
         private bool _isNew;
-        private IStaffAdminService _staffAdminService;
-        private IPractitionerAdminService _practitionerAdminService;
 
         private StaffDetailsEditorComponent _detailsEditor;
         private AddressesSummaryComponent _addressesSummary;
@@ -37,25 +36,20 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         /// <summary>
-        /// Constructs an editor to edit an existing staff profile
+        /// Constructs an editor to edit an existing staff/practitioner profile
         /// </summary>
         /// <param name="staffRef"></param>
-        public StaffEditorComponent(EntityRef<Staff> staffRef)
+        public StaffEditorComponent(EntityRef reference, bool staffMode)
         {
             _isNew = false;
-            _staffRef = staffRef;
-            _isStaffMode = true;
-        }
+            _isStaffMode = staffMode;
 
-        /// <summary>
-        /// Constructs an editor to edit an existing practitioner profile
-        /// </summary>
-        /// <param name="staffRef"></param>
-        public StaffEditorComponent(EntityRef<Practitioner> staffRef)
-        {
-            _isNew = false;
-            _practitionerRef = staffRef;
-            _isStaffMode = false;
+
+            if (_isStaffMode)
+                _staffRef = reference;
+            else
+                _practitionerRef = reference;                
+        
         }
 
         public bool StaffMode
@@ -66,24 +60,37 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _staffAdminService = ApplicationContext.GetService<IStaffAdminService>();
-            _practitionerAdminService = ApplicationContext.GetService<IPractitionerAdminService>();
-
             if (_isNew)
             {
                 if (_isStaffMode)
-                    _staff = new Staff();
+                    _staffDetail = new StaffDetail();
                 else
-                    _staff = new Practitioner();
+                    _staffDetail = new PractitionerDetail();
             }
             else
             {
                 try
                 {
                     if (_isStaffMode)
-                        _staff = _staffAdminService.LoadStaff(_staffRef, true);
+                    {
+                        Platform.GetService<IStaffAdminService>(
+                            delegate(IStaffAdminService service)
+                            {
+                                LoadStaffForEditResponse response = service.LoadStaffForEdit(new LoadStaffForEditRequest(_staffRef));
+                                _staffRef = response.StaffRef;
+                                _staffDetail = response.StaffDetail;
+                            });
+                    }
                     else
-                        _staff = _practitionerAdminService.LoadPractitioner(_practitionerRef, true);
+                    {
+                        Platform.GetService<IPractitionerAdminService>(
+                            delegate(IPractitionerAdminService service)
+                            {
+                                LoadPractitionerForEditResponse response = service.LoadPractitionerForEdit(new LoadPractitionerForEditRequest(_practitionerRef));
+                                _practitionerRef = response.PractitionerRef;
+                                _practitionerDetail = response.PractitionerDetail;
+                            });
+                    }               
                 }
                 catch (Exception e)
                 {
@@ -98,9 +105,18 @@ namespace ClearCanvas.Ris.Client.Admin
 
             this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
-            _detailsEditor.Staff = _staff;
-            _addressesSummary.Subject = _staff.Addresses;
-            _phoneNumbersSummary.Subject = _staff.TelephoneNumbers;
+            if (_isStaffMode)
+            {
+                _detailsEditor.StaffDetail = _staffDetail;
+                _addressesSummary.Subject = _staffDetail.Addresses;
+                _phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
+            }
+            else
+            {
+                _detailsEditor.PractitionerDetail = _practitionerDetail;
+                _addressesSummary.Subject = _practitionerDetail.Addresses;
+                _phoneNumbersSummary.Subject = _practitionerDetail.TelephoneNumbers;
+            }
 
             base.Start();
         }
@@ -115,65 +131,60 @@ namespace ClearCanvas.Ris.Client.Admin
             if (this.HasValidationErrors)
             {
                 this.ShowValidation(true);
+                return;
             }
-            else
+
+            try
             {
-                try
+                if (_isStaffMode)
                 {
-                    if (_isStaffMode)
-                        SaveStaffChanges();
-                    else
-                        SavePractitionerChanges();
+                    Platform.GetService<IStaffAdminService>(
+                        delegate(IStaffAdminService service)
+                        {
+                            if (_isNew)
+                            {
+                                AddStaffResponse response = service.AddStaff(new AddStaffRequest(_staffDetail));
+                                _staffRef = response.Staff.StaffRef;
+                            }
+                            else
+                            {
+                                UpdateStaffResponse response = service.UpdateStaff(new UpdateStaffRequest(_staffRef, _staffDetail));
+                                _staffRef = response.Staff.StaffRef;
+                            }
+                        });
+                }
+                else
+                {
+                    Platform.GetService<IPractitionerAdminService>(
+                        delegate(IPractitionerAdminService service)
+                        {
+                            if (_isNew)
+                            {
+                                AddPractitionerResponse response = service.AddPractitioner(new AddPractitionerRequest(_practitionerDetail));
+                                _practitionerRef = response.Practitioner.StaffRef;
+                            }
+                            else
+                            {
+                                UpdatePractitionerResponse response = service.UpdatePractitioner(new UpdatePractitionerRequest(_practitionerRef, _practitionerDetail));
+                                _practitionerRef = response.Practitioner.StaffRef;
+                            }
+                        });
+                }
 
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
-                }
-                catch (ConcurrencyException e)
-                {
-                    if (_isStaffMode)
-                        ExceptionHandler.Report(e, SR.ExceptionConcurrencyStaffNotSaved, this.Host.DesktopWindow);
-                    else
-                        ExceptionHandler.Report(e, SR.ExceptionConcurrencyPractitionerNotSaved, this.Host.DesktopWindow);
-
-                    this.ExitCode = ApplicationComponentExitCode.Error;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow);
-                    this.ExitCode = ApplicationComponentExitCode.Error;
-                }
-                this.Host.Exit();
+                this.ExitCode = ApplicationComponentExitCode.Normal;
             }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+            }
+
+            this.Host.Exit();
         }
 
         public override void Cancel()
         {
             base.Cancel();
-        }
-
-        private void SaveStaffChanges()
-        {
-            if (_isNew)
-            {
-                _staffAdminService.AddStaff(_staff);
-                _staffRef = new EntityRef<Staff>(_staff);
-            }
-            else
-            {
-                _staffAdminService.UpdateStaff(_staff);
-            }
-        }
-
-        private void SavePractitionerChanges()
-        {
-            if (_isNew)
-            {
-                _practitionerAdminService.AddPractitioner(_staff as Practitioner);
-                _staffRef = new EntityRef<Staff>(_staff);
-            }
-            else
-            {
-                _practitionerAdminService.UpdatePractitioner(_staff as Practitioner);
-            }
         }
     }
 }

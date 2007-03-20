@@ -106,10 +106,6 @@ namespace ClearCanvas.Ris.Client.Admin
                     this.ExitCode = ApplicationComponentExitCode.Normal;
                     Host.Exit();
                 }
-                catch (ConcurrencyException e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionConcurrencyFacilityNotSaved, this.Host.DesktopWindow);
-                }
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, this.Host.DesktopWindow);

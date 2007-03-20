@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
     [DataContract]
     public class UpdatePractitionerRequest : DataContractBase
     {
+        public UpdatePractitionerRequest(EntityRef practitionerRef, PractitionerDetail practitionerDetail)
+        {
+            this.PractitionerRef = practitionerRef;
+            this.PractitionerDetail = practitionerDetail;
+        }
+
         [DataMember]
         public EntityRef PractitionerRef;
 

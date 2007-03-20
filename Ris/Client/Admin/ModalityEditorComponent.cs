@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_isNew)
             {
-                _modalityDetail = new Modality();
+                _modalityDetail = new ModalityDetail();
             }
             else
             {
@@ -118,10 +118,6 @@ namespace ClearCanvas.Ris.Client.Admin
                         Host.Exit();
                     }
                 }
-                catch (ConcurrencyException e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionConcurrencyModalityNotSaved, this.Host.DesktopWindow);
-                }
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, this.Host.DesktopWindow);
@@ -185,14 +181,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private bool DuplicateIDExist()
         {
-            List<ModalitySummary> listModality;
+            List<ModalitySummary> listModality = new List<ModalitySummary>();
 
             try
             {
                 Platform.GetService<IModalityAdminService>(
                     delegate(IModalityAdminService service)
                     {
-                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest());
+                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest(false));
                         listModality = response.Modalities;
                     });
             }

@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     [DataContract]
     public class LoadStaffForEditRequest : DataContractBase
     {
+        public LoadStaffForEditRequest(EntityRef staffRef)
+        {
+            this.StaffRef = staffRef;
+        }
+
         [DataMember]
         public EntityRef StaffRef;
     }
