@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Bed = location.Bed;
             detail.Building = location.Building;
             detail.Facility = location.Facility.GetRef();
+            detail.FacilityName = location.Facility.Name;
             detail.Floor = location.Floor;
             detail.PointOfCare = location.PointOfCare;
             detail.Room = location.Room;

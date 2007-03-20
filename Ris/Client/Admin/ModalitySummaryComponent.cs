@@ -9,9 +9,9 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 
 using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Client.Common;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(ModalitySummaryComponentViewExtensionPoint))]
     public class ModalitySummaryComponent : ApplicationComponent
     {
-        private Modality _selectedModality;
+        private ModalitySummary _selectedModality;
         private ModalityTable _modalityTable;
 
         private IModalityAdminService _modalityAdminService;
@@ -70,8 +70,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _modalityAdminService = ApplicationContext.GetService<IModalityAdminService>();
-            _modalityAdminService.ModalityChanged += ModalityChangedEventHandler;
+            //_modalityAdminService.ModalityChanged += ModalityChangedEventHandler;
 
             _modalityTable = new ModalityTable();
             _modalityActionHandler = new CrudActionModel();
@@ -85,37 +84,38 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            _modalityAdminService.ModalityChanged -= ModalityChangedEventHandler;
+            //_modalityAdminService.ModalityChanged -= ModalityChangedEventHandler;
 
             base.Stop();
         }
 
-        private void ModalityChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // check if the modality with this oid is in the list
-            int index = _modalityTable.Items.FindIndex(delegate(Modality m) { return e.EntityRef.RefersTo(m); });
-            if (index > -1)
-            {
-                if (e.ChangeType == EntityChangeType.Update)
-                {
-                    Modality m = _modalityAdminService.LoadModality((EntityRef<Modality>)e.EntityRef);
-                    _modalityTable.Items[index] = m;
-                }
-                else if (e.ChangeType == EntityChangeType.Delete)
-                {
-                    _modalityTable.Items.RemoveAt(index);
-                }
-            }
-            else
-            {
-                if (e.ChangeType == EntityChangeType.Create)
-                {
-                    Modality m = _modalityAdminService.LoadModality((EntityRef<Modality>)e.EntityRef);
-                    if (m != null)
-                        _modalityTable.Items.Add(m);
-                }
-            }
-        }
+        //TODO: ModalityChangedEventHandler
+        //private void ModalityChangedEventHandler(object sender, EntityChangeEventArgs e)
+        //{
+        //    // check if the modality with this oid is in the list
+        //    int index = _modalityTable.Items.FindIndex(delegate(Modality m) { return e.EntityRef.RefersTo(m); });
+        //    if (index > -1)
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Update)
+        //        {
+        //            Modality m = _modalityAdminService.LoadModality((EntityRef<Modality>)e.EntityRef);
+        //            _modalityTable.Items[index] = m;
+        //        }
+        //        else if (e.ChangeType == EntityChangeType.Delete)
+        //        {
+        //            _modalityTable.Items.RemoveAt(index);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Create)
+        //        {
+        //            Modality m = _modalityAdminService.LoadModality((EntityRef<Modality>)e.EntityRef);
+        //            if (m != null)
+        //                _modalityTable.Items.Add(m);
+        //        }
+        //    }
+        //}
 
         #region Presentation Model
 
@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedModality == null ? Selection.Empty : new Selection(_selectedModality); }
             set
             {
-                _selectedModality = (Modality)value.Item;
+                _selectedModality = (ModalitySummary)value.Item;
                 ModalitySelectionChanged();
             }
         }
@@ -160,12 +160,16 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                IList<Modality> modalityList = _modalityAdminService.GetAllModalities();
-                if (modalityList != null)
-                {
-                    _modalityTable.Items.Clear();
-                    _modalityTable.Items.AddRange(modalityList);
-                }
+                Platform.GetService<IModalityAdminService>(
+                    delegate(IModalityAdminService service)
+                    {
+                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest());
+                        if (response.Modalities != null)
+                        {
+                            _facilityTable.Items.Clear();
+                            _facilityTable.Items.AddRange(response.Modalities);
+                        }
+                    });
             }
             catch (Exception e)
             {

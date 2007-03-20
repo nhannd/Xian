@@ -15,13 +15,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void ExecuteOperation(ExecuteOperationRequest request);
 
         [OperationContract]
         GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void CheckInProcedure(CheckInProcedureRequest request);
 
         //RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);

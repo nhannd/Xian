@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
     [DataContract]
     public class LoadFacilityForEditRequest : DataContractBase
     {
+        public LoadFacilityForEditRequest(EntityRef facilityRef)
+        {
+            this.FacilityRef = facilityRef;
+        }
+
         [DataMember]
         public EntityRef FacilityRef;
     }

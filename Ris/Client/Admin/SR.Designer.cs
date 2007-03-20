@@ -88,6 +88,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code.
+        /// </summary>
+        internal static string ColumnCode {
+            get {
+                return ResourceManager.GetString("ColumnCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Degree.
         /// </summary>
         internal static string ColumnDegree {

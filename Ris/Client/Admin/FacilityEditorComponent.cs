@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -24,9 +24,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(FacilityEditorComponentViewExtensionPoint))]
     public class FacilityEditorComponent : ApplicationComponent
     {
-        private Facility _facility;
-        private EntityRef<Facility> _facilityRef;
-        private IFacilityAdminService _facilityAdminService;
+        private FacilityDetail _facilityDetail;
+        private EntityRef _facilityRef;
         private bool _isNew;
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _isNew = true;
         }
 
-        public FacilityEditorComponent(EntityRef<Facility> facilityRef)
+        public FacilityEditorComponent(EntityRef facilityRef)
         {
             _isNew = false;
             _facilityRef = facilityRef;
@@ -45,17 +44,21 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
-
             if (_isNew)
             {
-                _facility = new Facility();
+                _facilityDetail = new FacilityDetail();
             }
             else
             {
                 try
                 {
-                    _facility = _facilityAdminService.LoadFacility(_facilityRef);
+                    Platform.GetService<IFacilityAdminService>(
+                        delegate(IFacilityAdminService service)
+                        {
+                            LoadFacilityForEditResponse response = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(_facilityRef));
+                            _facilityRef = response.FacilityRef;
+                            _facilityDetail = response.FacilityDetail;
+                        });
                 }
                 catch (Exception e)
                 {
@@ -73,18 +76,18 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public Facility Facility
+        public FacilityDetail FacilityDetail
         {
-            get { return _facility; }
-            set { _facility = value; }
+            get { return _facilityDetail; }
+            set { _facilityDetail = value; }
         }
 
         public string Name
         {
-            get { return _facility.Name; }
+            get { return _facilityDetail.Name; }
             set
             {
-                _facility.Name = value;
+                _facilityDetail.Name = value;
                 this.Modified = true;
             }
         }
@@ -116,14 +119,30 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void SaveChanges()
         {
-            if (_isNew)
+            try
             {
-                _facilityAdminService.AddFacility(_facility);
-                _facilityRef = new EntityRef<Facility>(_facility);
+                if (_isNew)
+                {
+                    Platform.GetService<IFacilityAdminService>(
+                        delegate(IFacilityAdminService service)
+                        {
+                            AddFacilityResponse response = service.AddFacility(new AddFacilityRequest(_facilityDetail));
+                            _facilityRef = response.Facility.FacilityRef;
+                        });
+                }
+                else
+                {
+                    Platform.GetService<IFacilityAdminService>(
+                        delegate(IFacilityAdminService service)
+                        {
+                            UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
+                            _facilityRef = response.Facility.FacilityRef;
+                        });
+                }
             }
-            else
+            catch (Exception e)
             {
-                _facilityAdminService.UpdateFacility(_facility);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

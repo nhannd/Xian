@@ -1,18 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class FacilityTable : Table<Facility>
+    class FacilityTable : Table<FacilitySummary>
     {
         public FacilityTable()
         {
-            this.Columns.Add(new TableColumn<Facility, string>(SR.ColumnName,
-                delegate(Facility f) { return f.Name; },
+            this.Columns.Add(new TableColumn<FacilitySummary, string>(SR.ColumnCode,
+                delegate(FacilitySummary f) { return f.Code; },
+                0.5f));
+
+            this.Columns.Add(new TableColumn<FacilitySummary, string>(SR.ColumnName,
+                delegate(FacilitySummary f) { return f.Name; },
                 1.0f));
         }
     }

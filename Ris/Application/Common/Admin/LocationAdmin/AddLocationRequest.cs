@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
     [DataContract]
     public class AddLocationRequest : DataContractBase
     {
+        public AddLocationRequest(LocationDetail detail)
+        {
+            this.LocationDetail = detail;
+        }
+
         [DataMember]
         public LocationDetail LocationDetail;
     }

@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
     [DataContract]
     public class BatchImportRequest : DataContractBase
     {
+        public BatchImportRequest(List<string[]> importData)
+        {
+            this.ImportData = importData;
+        }
+
         [DataMember]
         public List<string[]> ImportData;
     }

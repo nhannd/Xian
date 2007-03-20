@@ -9,31 +9,31 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
-        [OperationContract(IsOneWay=true)]
+        [OperationContract]
         void ScheduleInterpretation(ScheduleInterpretationRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void ClaimInterpretation(ClaimInterpretationRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void StartInterpretation(StartInterpretationRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void CancelPendingTranscription(CancelPendingTranscriptionRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void StartVerification(StartVerificationRequest request);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void CompleteVerification(CompleteVerificationRequest request);
     }
 }

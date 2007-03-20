@@ -9,9 +9,9 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 
 using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Client.Common;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -55,10 +55,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(LocationSummaryComponentViewExtensionPoint))]
     public class LocationSummaryComponent : ApplicationComponent
     {
-        private Location _selectedLocation;
+        private LocationSummary _selectedLocation;
         private LocationTable _locationTable;
-
-        private ILocationAdminService _locationAdminService;
         private CrudActionModel _locationActionHandler;
 
         /// <summary>
@@ -70,8 +68,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _locationAdminService = ApplicationContext.GetService<ILocationAdminService>();
-            _locationAdminService.LocationChanged += LocationChangedEventHandler;
+            //_locationAdminService.LocationChanged += LocationChangedEventHandler;
 
             _locationTable = new LocationTable();
             _locationActionHandler = new CrudActionModel();
@@ -85,37 +82,38 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            _locationAdminService.LocationChanged -= LocationChangedEventHandler;
+            //_locationAdminService.LocationChanged -= LocationChangedEventHandler;
             
             base.Stop();
         }
 
-        private void LocationChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // check if the location with this oid is in the list
-            int index = _locationTable.Items.FindIndex(delegate(Location loc) { return e.EntityRef.RefersTo(loc); });
-            if (index > -1)
-            {
-                if (e.ChangeType == EntityChangeType.Update)
-                {
-                    Location loc = _locationAdminService.LoadLocation((EntityRef<Location>)e.EntityRef);
-                    _locationTable.Items[index] = loc;
-                }
-                else if (e.ChangeType == EntityChangeType.Delete)
-                {
-                    _locationTable.Items.RemoveAt(index);
-                }
-            }
-            else
-            {
-                if (e.ChangeType == EntityChangeType.Create)
-                {
-                    Location loc = _locationAdminService.LoadLocation((EntityRef<Location>)e.EntityRef);
-                    if (loc != null)
-                        _locationTable.Items.Add(loc);
-                }
-            }
-        }
+        //TODO: LocationChangedEventHandler
+        //private void LocationChangedEventHandler(object sender, EntityChangeEventArgs e)
+        //{
+        //    // check if the location with this oid is in the list
+        //    int index = _locationTable.Items.FindIndex(delegate(Location loc) { return e.EntityRef.RefersTo(loc); });
+        //    if (index > -1)
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Update)
+        //        {
+        //            Location loc = _locationAdminService.LoadLocation((EntityRef<Location>)e.EntityRef);
+        //            _locationTable.Items[index] = loc;
+        //        }
+        //        else if (e.ChangeType == EntityChangeType.Delete)
+        //        {
+        //            _locationTable.Items.RemoveAt(index);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Create)
+        //        {
+        //            Location loc = _locationAdminService.LoadLocation((EntityRef<Location>)e.EntityRef);
+        //            if (loc != null)
+        //                _locationTable.Items.Add(loc);
+        //        }
+        //    }
+        //}
 
         #region Presentation Model
 
@@ -134,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedLocation == null ? Selection.Empty : new Selection(_selectedLocation); }
             set
             {
-                _selectedLocation = (Location)value.Item;
+                _selectedLocation = (LocationSummary)value.Item;
                 LocationSelectionChanged();
             }
         }
@@ -160,12 +158,16 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                IList<Location> locationList = _locationAdminService.GetAllLocations();
-                if (locationList != null)
-                {
-                    _locationTable.Items.Clear();
-                    _locationTable.Items.AddRange(locationList);
-                }
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                        ListAllLocationsResponse response = service.ListAllLocations(new ListAllLocationsRequest());
+                        if (response.Locations != null)
+                        {
+                            _facilityTable.Items.Clear();
+                            _facilityTable.Items.AddRange(response.Locations);
+                        }
+                    });
             }
             catch (Exception e)
             {

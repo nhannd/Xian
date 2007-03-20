@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
     [DataContract]
     public class LoadLocationForEditRequest : DataContractBase
     {
+        public LoadLocationForEditRequest(EntityRef locationRef)
+        {
+            this.LocationRef = locationRef;
+        }
+
         [DataMember]
         public EntityRef LocationRef;
     }

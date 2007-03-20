@@ -9,9 +9,9 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 
 using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Client.Common;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -55,10 +55,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(FacilitySummaryComponentViewExtensionPoint))]
     public class FacilitySummaryComponent : ApplicationComponent
     {
-        private Facility _selectedFacility;
+        private FacilitySummary _selectedFacility;
         private FacilityTable _facilityTable;
-
-        private IFacilityAdminService _facilityAdminService;
         private CrudActionModel _facilityActionHandler;
 
         /// <summary>
@@ -70,52 +68,59 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
-            _facilityAdminService.FacilityChanged += FacilityChangedEventHandler;
+            try
+            {
+                //_facilityAdminService.FacilityChanged += FacilityChangedEventHandler;
 
-            _facilityTable = new FacilityTable();
-            _facilityActionHandler = new CrudActionModel();
-            _facilityActionHandler.Add.SetClickHandler(AddFacility);
-            _facilityActionHandler.Edit.SetClickHandler(UpdateSelectedFacility);
-            _facilityActionHandler.Add.Enabled = true;
-            _facilityActionHandler.Delete.Enabled = false;
+                _facilityTable = new FacilityTable();
+                _facilityActionHandler = new CrudActionModel();
+                _facilityActionHandler.Add.SetClickHandler(AddFacility);
+                _facilityActionHandler.Edit.SetClickHandler(UpdateSelectedFacility);
+                _facilityActionHandler.Add.Enabled = true;
+                _facilityActionHandler.Delete.Enabled = false;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
             base.Start();
         }
 
         public override void Stop()
         {
-            _facilityAdminService.FacilityChanged -= FacilityChangedEventHandler; 
+            //_facilityAdminService.FacilityChanged -= FacilityChangedEventHandler; 
             
             base.Stop();
         }
 
-        private void FacilityChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // check if the facility with this oid is in the list
-            int index = _facilityTable.Items.FindIndex(delegate(Facility f) { return e.EntityRef.RefersTo(f); });
-            if (index > -1)
-            {
-                if (e.ChangeType == EntityChangeType.Update)
-                {
-                    Facility f = _facilityAdminService.LoadFacility((EntityRef<Facility>)e.EntityRef);
-                    _facilityTable.Items[index] = f;
-                }
-                else if (e.ChangeType == EntityChangeType.Delete)
-                {
-                    _facilityTable.Items.RemoveAt(index);
-                }
-            }
-            else
-            {
-                if (e.ChangeType == EntityChangeType.Create)
-                {
-                    Facility f = _facilityAdminService.LoadFacility((EntityRef<Facility>)e.EntityRef);
-                    if (f != null)
-                        _facilityTable.Items.Add(f);
-                }
-            }
-        }
+        //TODO: FacilityChangedEventHandler
+        //private void FacilityChangedEventHandler(object sender, EntityChangeEventArgs e)
+        //{
+        //    // check if the facility with this oid is in the list
+        //    int index = _facilityTable.Items.FindIndex(delegate(Facility f) { return e.EntityRef.RefersTo(f); });
+        //    if (index > -1)
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Update)
+        //        {
+        //            Facility f = _facilityAdminService.LoadFacility((EntityRef<Facility>)e.EntityRef);
+        //            _facilityTable.Items[index] = f;
+        //        }
+        //        else if (e.ChangeType == EntityChangeType.Delete)
+        //        {
+        //            _facilityTable.Items.RemoveAt(index);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (e.ChangeType == EntityChangeType.Create)
+        //        {
+        //            Facility f = _facilityAdminService.LoadFacility((EntityRef<Facility>)e.EntityRef);
+        //            if (f != null)
+        //                _facilityTable.Items.Add(f);
+        //        }
+        //    }
+        //}
 
         #region Presentation Model
 
@@ -134,7 +139,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedFacility == null ? Selection.Empty : new Selection(_selectedFacility); }
             set
             {
-                _selectedFacility = (Facility)value.Item;
+                _selectedFacility = (FacilitySummary)value.Item;
                 FacilitySelectionChanged();
             }
         }
@@ -151,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Admin
             // can occur if user double clicks while holding control
             if (_selectedFacility == null) return;
 
-            FacilityEditorComponent editor = new FacilityEditorComponent(new EntityRef<Facility>(_selectedFacility));
+            FacilityEditorComponent editor = new FacilityEditorComponent(_selectedFacility.FacilityRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
         }
@@ -160,13 +165,16 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                IList<Facility> facilityList = _facilityAdminService.GetAllFacilities();
-
-                if (facilityList != null)
-                {
-                    _facilityTable.Items.Clear();
-                    _facilityTable.Items.AddRange(facilityList);
-                }
+                Platform.GetService<IFacilityAdminService>(
+                    delegate(IFacilityAdminService service)
+                    {
+                        ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                        if (response.Facilities != null)
+                        {
+                            _facilityTable.Items.Clear();
+                            _facilityTable.Items.AddRange(response.Facilities);
+                        }
+                    });
             }
             catch (Exception e)
             {

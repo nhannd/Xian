@@ -8,8 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -142,7 +141,6 @@ namespace ClearCanvas.Ris.Client.Admin
                 return;
             }
 
-            IDiagnosticServiceAdminService service = ApplicationContext.GetService<IDiagnosticServiceAdminService>();
             List<string[]> rowsToImport = new List<string[]>();
             int startRow = 0, endRow = 0;
 
@@ -167,16 +165,22 @@ namespace ClearCanvas.Ris.Client.Admin
                     rowsToImport.Add(_rows[i]);
                 }
 
-                try
+                if (rowsToImport.Count > 0)
                 {
-                    if (rowsToImport.Count > 0)
-                        service.BatchImport(rowsToImport);
-                }
-                catch (Exception e)
-                {
-                    String message = String.Format("Error importing batch {0} of {1} between rows {2}~{3}", batch, NumberOfBatches, startRow, endRow);
-                    context.Error(new Exception(message, e));
-                    return;
+                    try
+                    {
+                        Platform.GetService<IDiagnosticServiceAdminService>(
+                            delegate(IDiagnosticServiceAdminService service)
+                            {
+                                service.BatchImport(new BatchImportRequest(rowsToImport));
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        String message = String.Format("Error importing batch {0} of {1} between rows {2}~{3}", batch, NumberOfBatches, startRow, endRow);
+                        context.Error(new Exception(message, e));
+                        return;
+                    }
                 }
 
                 context.ReportProgress(new BackgroundTaskProgress(percentage, String.Format("Importing batch {0} of {1}", batch, NumberOfBatches)));

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -24,9 +24,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(ModalityEditorComponentViewExtensionPoint))]
     public class ModalityEditorComponent : ApplicationComponent
     {
-        private Modality _modality;
-        private EntityRef<Modality> _modalityRef;
-        private IModalityAdminService _modalityAdminService;
+        private ModalityDetail _modalityDetail;
+        private EntityRef _modalityRef;
         private bool _isNew;
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _isNew = true;
         }
 
-        public ModalityEditorComponent(EntityRef<Modality> modalityRef)
+        public ModalityEditorComponent(EntityRef modalityRef)
         {
             _isNew = false;
             _modalityRef = modalityRef;
@@ -45,18 +44,26 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _modalityAdminService = ApplicationContext.GetService<IModalityAdminService>();
-
-            try
+            if (_isNew)
             {
-                if (_isNew)
-                    _modality = new Modality();
-                else
-                    _modality = _modalityAdminService.LoadModality(_modalityRef);
+                _modalityDetail = new Modality();
             }
-            catch (Exception e)
+            else
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                try
+                {
+                    Platform.GetService<IModalityAdminService>(
+                        delegate(IModalityAdminService service)
+                        {
+                            LoadModalityForEditResponse response = service.LoadModalityForEdit(new LoadModalityForEditRequest(_modalityRef));
+                            _modalityRef = response.ModalityRef;
+                            _modalityDetail = response.ModalityDetail;
+                        });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
             }
 
             base.Start();
@@ -69,28 +76,28 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public Modality Modality
+        public ModalityDetail ModalityDetail
         {
-            get { return _modality; }
-            set { _modality = value; }
+            get { return _modalityDetail; }
+            set { _modalityDetail = value; }
         }
 
         public string ID
         {
-            get { return _modality.Id; }
+            get { return _modalityDetail.Id; }
             set
             {
-                _modality.Id = value;
+                _modalityDetail.Id = value;
                 this.Modified = true;
             }
         }
 
         public string Name
         {
-            get { return _modality.Name; }
+            get { return _modalityDetail.Name; }
             set
             {
-                _modality.Name = value;
+                _modalityDetail.Name = value;
                 this.Modified = true;
             }
         }
@@ -130,14 +137,30 @@ namespace ClearCanvas.Ris.Client.Admin
                 return false;
             }
 
-            if (_isNew)
+            try
             {
-                _modalityAdminService.AddModality(_modality);
-                _modalityRef = new EntityRef<Modality>(_modality);
+                if (_isNew)
+                {
+                    Platform.GetService<IModalityAdminService>(
+                        delegate(IModalityAdminService service)
+                        {
+                            AddModalityResponse response = service.AddModality(new AddModalityRequest(_modalityDetail));
+                            _modalityRef = response.Modality.ModalityRef;
+                        });
+                }
+                else
+                {
+                    Platform.GetService<IModalityAdminService>(
+                        delegate(IModalityAdminService service)
+                        {
+                            UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityRef, _modalityDetail));
+                            _modalityRef = response.Modality.ModalityRef;
+                        });
+                }
             }
-            else
+            catch (Exception e)
             {
-                _modalityAdminService.UpdateModality(_modality);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             return true;
@@ -162,17 +185,32 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private bool DuplicateIDExist()
         {
-            IList<Modality> listModality = _modalityAdminService.GetAllModalities();
-            foreach (Modality m in listModality)
+            List<ModalitySummary> listModality;
+
+            try
+            {
+                Platform.GetService<IModalityAdminService>(
+                    delegate(IModalityAdminService service)
+                    {
+                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest());
+                        listModality = response.Modalities;
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+            foreach (ModalitySummary m in listModality)
             {
                 if (_isNew)
                 {
-                    if (m.Id == _modality.Id)
+                    if (m.Id == _modalityDetail.Id)
                         return true;                    
                 }
                 else
                 {
-                    if (m.Id == _modality.Id && (_modalityRef != null && _modalityRef.RefersTo(m) == false))
+                    if (m.Id == _modalityDetail.Id && (_modalityRef != null && _modalityRef == m.ModalityRef))
                         return true;
                 }
             }

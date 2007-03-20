@@ -1,22 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class ModalityTable : Table<Modality>
+    class ModalityTable : Table<ModalitySummary>
     {
         public ModalityTable()
         {
-            this.Columns.Add(new TableColumn<Modality, string>(SR.ColumnID,
-                delegate(Modality modality) { return modality.Id; },
+            this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnID,
+                delegate(ModalitySummary modality) { return modality.Id; },
                 0.2f));
 
-            this.Columns.Add(new TableColumn<Modality, string>(SR.ColumnName,
-                delegate(Modality modality) { return modality.Name; },
+            this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnName,
+                delegate(ModalitySummary modality) { return modality.Name; },
                 1.0f));
         }
     }

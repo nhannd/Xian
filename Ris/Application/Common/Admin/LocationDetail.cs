@@ -13,6 +13,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public EntityRef Facility;
 
         [DataMember]
+        public string FacilityName;
+
+        [DataMember]
         public string Building;
 
         [DataMember]
