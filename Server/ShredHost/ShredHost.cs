@@ -49,8 +49,8 @@ namespace ClearCanvas.Server.ShredHost
             // for scanning for all Extensions that are shreds
 			//AppDomain.Unload(stagingDomain);
 
-			_sed = WcfHelper.StartHttpHost<ShredHostServiceType, IShredHost>("ShredHost", "Host program of multiple indepdent service-like subprograms", 49152);
-            Platform.Log("ShredHost WCF Service started on port 49152");
+			_sed = WcfHelper.StartHttpHost<ShredHostServiceType, IShredHost>("ShredHost", "Host program of multiple indepdent service-like subprograms", ShredHostServiceSettings.Instance.ShredHostHttpPort);
+			Platform.Log("ShredHost WCF Service started on port " + ShredHostServiceSettings.Instance.ShredHostHttpPort.ToString());
             lock (_lockObject)
             {
                 _runningState = RunningState.Running;

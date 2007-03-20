@@ -58,6 +58,7 @@
     <Compile Include="ShredController.cs" />
     <Compile Include="ShredControllerList.cs" />
     <Compile Include="ShredHostServiceType.cs" />
+    <Compile Include="ShredHostServiceSettings.cs" />
     <Compile Include="ShredStartupInfo.cs" />
     <Compile Include="ShredStartupInfoList.cs" />
     <Compile Include="WcfDataShred.cs" />

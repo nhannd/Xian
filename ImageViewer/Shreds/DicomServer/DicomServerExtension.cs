@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.HttpPort.ToString());
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.SharedHttpPort.ToString());
 
 			DicomServerManager.Instance.StartServer();
 

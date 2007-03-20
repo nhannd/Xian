@@ -82,8 +82,8 @@ namespace ClearCanvas.Server.ShredHost
         {
             ShredController shredController = threadData as ShredController;
             IWcfShred wcfShred = shredController.Shred as IWcfShred;
-			wcfShred.HttpPort = 49153;
-			wcfShred.TcpPort = 49154;
+			wcfShred.SharedHttpPort = ShredHostServiceSettings.Instance.SharedHttpPort;
+			wcfShred.SharedTcpPort = ShredHostServiceSettings.Instance.SharedTcpPort;
             shredController.Shred.Start();
         }
 

@@ -27,7 +27,7 @@ namespace ClearCanvas.Server.ShredHost
 			if (_serviceEndpointDescriptions.ContainsKey(name))
 				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-			ServiceEndpointDescription sed = WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, this.HttpPort);
+			ServiceEndpointDescription sed = WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedHttpPort);
 			_serviceEndpointDescriptions[name] = sed;
 		}
 
@@ -36,7 +36,7 @@ namespace ClearCanvas.Server.ShredHost
 			if (_serviceEndpointDescriptions.ContainsKey(name))
 				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-			ServiceEndpointDescription sed = WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, this.HttpPort);
+			ServiceEndpointDescription sed = WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedHttpPort);
 			_serviceEndpointDescriptions[name] = sed;
 		}
 
@@ -45,7 +45,7 @@ namespace ClearCanvas.Server.ShredHost
 			if (_serviceEndpointDescriptions.ContainsKey(name))
 				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-			ServiceEndpointDescription sed = WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, this.TcpPort, this.HttpPort);
+			ServiceEndpointDescription sed = WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedTcpPort, this.SharedHttpPort);
 			_serviceEndpointDescriptions[name] = sed;
 		}
 
@@ -54,7 +54,7 @@ namespace ClearCanvas.Server.ShredHost
 			if (_serviceEndpointDescriptions.ContainsKey(name))
 				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-			ServiceEndpointDescription sed = WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, this.HttpPort);
+			ServiceEndpointDescription sed = WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedHttpPort);
 			_serviceEndpointDescriptions[name] = sed;
 		}
 		
@@ -81,13 +81,13 @@ namespace ClearCanvas.Server.ShredHost
 		private int _httpPort;
 		private int _tcpPort;
 
-		public int HttpPort
+		public int SharedHttpPort
 		{
 			get { return _httpPort; }
 			set	{ _httpPort = value; }
 		}
 
-		public int TcpPort
+		public int SharedTcpPort
 		{
 			get { return _tcpPort; }
 			set	{ _tcpPort = value; }

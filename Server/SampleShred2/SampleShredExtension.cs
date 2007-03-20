@@ -26,7 +26,7 @@ namespace SampleShred2
 
         public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on port " + this.HttpPort.ToString());
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on port " + this.SharedHttpPort.ToString());
             _stopSignal.Reset();
             GlobalStore.Score = 0;
             GlobalStore.Darts = 0;

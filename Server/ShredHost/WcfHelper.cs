@@ -50,8 +50,9 @@ namespace ClearCanvas.Server.ShredHost
 
 			if (bindingType == HostBindingType.NetTcp)
 			{
-				sed.Binding = new NetTcpBinding();
-				//sed.Binding.PortSharingEnabled = true;
+				NetTcpBinding binding = new NetTcpBinding();
+				binding.PortSharingEnabled = true;
+				sed.Binding = binding;
 			}
 			else if (bindingType == HostBindingType.NamedPipes)
 			{

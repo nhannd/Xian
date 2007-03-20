@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			clone.StorageFolder = _instance.StorageFolder;
 			clone.BadFileFolder = _instance.BadFileFolder;
 			clone.SendReceiveImportConcurrency = _instance.SendReceiveImportConcurrency;
+			clone.SendReceiveImportIdleTimeoutSeconds = _instance.SendReceiveImportIdleTimeoutSeconds;
 
 			return clone;
 		}
