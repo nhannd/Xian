@@ -170,6 +170,7 @@
     <Compile Include="PatientReconcilliation\ListPatientReconciliationMatchesResponse.cs" />
     <Compile Include="PatientReconcilliation\LoadPatientProfileDiffRequest.cs" />
     <Compile Include="PatientReconcilliation\LoadPatientProfileDiffResponse.cs" />
+    <Compile Include="PatientReconcilliation\PatientProfileDiff.cs" />
     <Compile Include="PatientReconcilliation\PatientProfileMatch.cs" />
     <Compile Include="PatientReconcilliation\PatientProfileSummary.cs" />
     <Compile Include="PatientReconcilliation\ReconcilePatientsRequest.cs" />

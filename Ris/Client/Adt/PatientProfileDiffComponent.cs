@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -30,36 +31,31 @@ namespace ClearCanvas.Ris.Client.Adt
             private List<Value> _values;
             private bool _discrepancy;
 
-            public Field(string heading, IList<string> fieldValues, bool discrepancy)
+            public Field(string heading, bool discrepancy, string leftValue, string rightValue, string diffMask)
             {
                 _heading = heading;
                 _discrepancy = discrepancy;
-                BuildValues(fieldValues);
+                BuildValues(leftValue, rightValue, diffMask);
             }
 
-            private void BuildValues(IList<string> fieldValues)
+            private void BuildValues(string leftValue, string rightValue, string diffMask)
             {
                 _values = new List<Value>();
-                if (fieldValues == null || fieldValues.Count < 2)
-                {
-                    return;
-                }
                 List<String> ls1 = new List<String>();
                 List<String> ls2 = new List<String>();
-                String str1 = fieldValues[0] == null ? "" : fieldValues[0];
-                String str2 = fieldValues[1] == null ? "" : fieldValues[1];
+
                 if (!_discrepancy)
                 {
-                    ls1.Add(str1);
+                    ls1.Add(leftValue);
                     _values.Add(new Value(ls1));
-                    ls2.Add(str2);
+                    ls2.Add(rightValue);
                     _values.Add(new Value(ls2));
                     return;
                 }
-                StringDiff diff = new StringDiff(str1.ToLower(), str2.ToLower());
-                char[] dm = diff.DiffMask.ToCharArray();
-                char[] al = diff.AlignedLeft.ToCharArray();
-                char[] ar = diff.AlignedRight.ToCharArray();
+
+                char[] dm = diffMask.ToCharArray();
+                char[] al = leftValue.ToCharArray();
+                char[] ar = rightValue.ToCharArray();
                 char diagCh = '|';
                 StringBuilder sb1 = new StringBuilder();
                 StringBuilder sb2 = new StringBuilder();
@@ -124,9 +120,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         private List<Field> _fields;
-        private EntityRef<PatientProfile>[] _profileRefs;
-        private IAdtService _adtService;
-        private SexEnumTable _sexEnumTable;
+        private EntityRef[] _profileRefs;
 
         private IList<string> _profileAuthorities;
 
@@ -138,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _fields = new List<Field>();
         }
 
-        public EntityRef<PatientProfile>[] ProfilesToCompare
+        public EntityRef[] ProfilesToCompare
         {
             get { return _profileRefs; }
             set
@@ -154,9 +148,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _sexEnumTable = _adtService.GetSexEnumTable();
-
             Refresh();
 
             base.Start();
@@ -187,131 +178,39 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _fields.Clear();
 
-            if (_profileRefs != null && _profileRefs.Length > 1)
+            if (_profileRefs != null && _profileRefs.Length == 2)
             {
-                PatientProfileDiff diffData = _adtService.LoadPatientProfileDiff(_profileRefs, PatientProfileDiscrepancy.All);
+                Platform.GetService<IPatientReconciliationService>(
+                    delegate(IPatientReconciliationService service)
+                    {
+                        PatientProfileDiff diffData = 
+                            service.LoadPatientProfileDiff(new LoadPatientProfileDiffRequest(_profileRefs[0], _profileRefs[1])).ProfileDiff;
 
-                _profileAuthorities = CollectionUtils.Map<PatientProfile, string, List<string>>(diffData.Profiles, delegate(PatientProfile p) { return p.Mrn.AssigningAuthority; });
+                        _profileAuthorities = new List<string>(new string[] { diffData.LeftProfileAssigningAuthority, diffData.RightProfileAssigningAuthority });
 
-                AddField(SR.ColumnHealthcardNumber, PatientProfileDiscrepancy.Healthcard, diffData, delegate(PatientProfile p) { return Format.Custom(p.Healthcard); });
-                AddField(SR.ColumnFamilyName, PatientProfileDiscrepancy.FamilyName, diffData, delegate(PatientProfile p) { return p.Name.FamilyName; });
-                AddField(SR.ColumnGivenName, PatientProfileDiscrepancy.GivenName, diffData, delegate(PatientProfile p) { return p.Name.GivenName; });
-                AddField(SR.ColumnMiddleName, PatientProfileDiscrepancy.MiddleName, diffData, delegate(PatientProfile p) { return p.Name.MiddleName; });
-                AddField(SR.ColumnDateOfBirth, PatientProfileDiscrepancy.DateOfBirth, diffData, delegate(PatientProfile p) { return Format.Date(p.DateOfBirth); });
-                AddField(SR.ColumnSex, PatientProfileDiscrepancy.Sex, diffData, delegate(PatientProfile p) { return _sexEnumTable[p.Sex].Value; });
+                        AddField(SR.ColumnHealthcardNumber, diffData.Healthcard);
+                        AddField(SR.ColumnFamilyName, diffData.FamilyName);
+                        AddField(SR.ColumnGivenName, diffData.GivenName);
+                        AddField(SR.ColumnMiddleName, diffData.MiddleName);
+                        AddField(SR.ColumnDateOfBirth, diffData.DateOfBirth);
+                        AddField(SR.ColumnSex, diffData.Sex);
 
-                AddField(SR.ColumnHomePhone, PatientProfileDiscrepancy.HomePhone, diffData,
-                    delegate(PatientProfile p) { return p.CurrentHomePhone == null ? "" : Format.Custom(p.CurrentHomePhone); });
-                AddField(SR.ColumnWorkPhone, PatientProfileDiscrepancy.WorkPhone, diffData,
-                    delegate(PatientProfile p) { return p.CurrentWorkPhone == null ? "" : Format.Custom(p.CurrentWorkPhone); });
-                AddField(SR.ColumnHomeAddress, PatientProfileDiscrepancy.HomeAddress, diffData,
-                    delegate(PatientProfile p) { return p.CurrentHomeAddress == null ? "" : Format.Custom(p.CurrentHomeAddress); });
-                AddField(SR.ColumnWorkAddress, PatientProfileDiscrepancy.WorkAddress, diffData,
-                    delegate(PatientProfile p) { return p.CurrentWorkAddress == null ? "" : Format.Custom(p.CurrentWorkAddress); });
+                        AddField(SR.ColumnHomePhone, diffData.HomePhone);
+                        AddField(SR.ColumnWorkPhone, diffData.WorkPhone);
+                        AddField(SR.ColumnHomeAddress, diffData.HomeAddress);
+                        AddField(SR.ColumnWorkAddress, diffData.WorkAddress);
+                    });
+
             }
 
             NotifyAllPropertiesChanged();
         }
 
-        private void AddField(string heading, PatientProfileDiscrepancy test, PatientProfileDiff data, Converter<PatientProfile, string> fieldValueGetter)
+        private void AddField(string heading, PropertyDiff propertyDiff)
         {
-            List<string> values = CollectionUtils.Map<PatientProfile, string, List<string>>(data.Profiles, fieldValueGetter);
-            _fields.Add(new Field(heading, values, (test & data.Discrepancies) != 0));
+            _fields.Add(new Field(heading, propertyDiff.Discrepant, propertyDiff.AlignedLeftValue, propertyDiff.AlignedRightValue, propertyDiff.Discrepant));
         }
 
     }
 
-    /// <summary>
-    /// Computes the difference between two strings.  The speed and memory requirements are 
-    /// to be O(n2) for this algorithm, so it should not be used on very long strings.
-    /// 
-    /// Adapted from an algorithm presented here in Javascript:
-    /// http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Dynamic/Edit/
-    /// </summary>
-    public class StringDiff
-    {
-        private string _alignedLeft;
-        private string _alignedRight;
-        private string _diffMask;
-
-        public StringDiff(string left, string right)
-        {
-            string[] results = ComputeDiff(left, right);
-            _alignedLeft = results[0];
-            _alignedRight = results[2];
-            _diffMask = results[1];
-        }
-
-        public string AlignedLeft
-        {
-            get { return _alignedLeft; }
-        }
-
-        public string AlignedRight
-        {
-            get { return _alignedRight; }
-        }
-
-        public string DiffMask
-        {
-            get { return _diffMask; }
-        }
-
-        private string[] ComputeDiff(string s1, string s2)
-        {
-            int[,] m = new int[s1.Length + 1, s2.Length + 1];
-
-            m[0, 0] = 0; // boundary conditions
-
-            for (int j = 1; j <= s2.Length; j++)
-                m[0, j] = m[0, j - 1] - 0 + 1; // boundary conditions
-
-            for (int i = 1; i <= s1.Length; i++)                            // outer loop
-            {
-                m[i, 0] = m[i - 1, 0] - 0 + 1; // boundary conditions
-
-                for (int j = 1; j <= s2.Length; j++)                         // inner loop
-                {
-                    int diag = m[i - 1, j - 1];
-                    if (s1[i - 1] != s2[j - 1]) diag++;
-
-                    m[i, j] = Math.Min(diag,               // match or change
-                           Math.Min(m[i - 1, j] - 0 + 1,    // deletion
-                                     m[i, j - 1] - 0 + 1)); // insertion
-                }//for j
-            }//for i
-
-            return traceBack("", "", "", m, s1.Length, s2.Length, s1, s2);
-        }
-
-        private string[] traceBack(string row1, string row2, string row3, int[,] m, int i, int j, string s1, string s2)
-        {
-            // recover the alignment of s1 and s2
-            if (i > 0 && j > 0)
-            {
-                int diag = m[i - 1, j - 1];
-                char diagCh = '|';
-
-                if (s1[i - 1] != s2[j - 1]) { diag++; diagCh = ' '; }
-
-                if (m[i, j] == diag) //LAllison comp sci monash uni au
-                    return traceBack(' ' + row1, diagCh + row2, ' ' + row3,
-                              m, i - 1, j - 1, s1, s2);    // change or match
-                else if (m[i, j] == m[i - 1, j] - 0 + 1) // delete
-                    return traceBack(' ' + row1, ' ' + row2, '-' + row3,
-                              m, i - 1, j, s1, s2);
-                else
-                    return traceBack('-' + row1, ' ' + row2, ' ' + row3,
-                              m, i, j - 1, s1, s2);      // insertion
-            }
-            else if (i > 0)
-                return traceBack(' ' + row1, ' ' + row2, '-' + row3, m, i - 1, j, s1, s2);
-            else if (j > 0)
-                return traceBack('-' + row1, ' ' + row2, ' ' + row3, m, i, j - 1, s1, s2);
-            else // i==0 and j==0
-            {
-                return new string[] { row1, row2, row3 };
-            }
-        }//traceBack
-    }
 }
