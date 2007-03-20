@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 				annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem(this));
 				annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem(this));
+				//annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem(this));
 
 				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(this, DirectionalMarkerAnnotationItem.ImageEdge.Left));
 				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(this, DirectionalMarkerAnnotationItem.ImageEdge.Top));

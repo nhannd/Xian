@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dicom (Image Plane).
+        /// </summary>
+        internal static string AnnotationItemProviders_Dicom_ImagePlane_DisplayName {
+            get {
+                return ResourceManager.GetString("AnnotationItemProviders_Dicom_ImagePlane_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dicom (MR Image).
         /// </summary>
         internal static string AnnotationItemProviders_Dicom_MRImage_DisplayName {
@@ -156,6 +165,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string BoolYes {
             get {
                 return ResourceManager.GetString("BoolYes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convolution Kernel.
+        /// </summary>
+        internal static string Dicom_CTImage_ConvolutionKernel_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_ConvolutionKernel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dicom_CTImage_ConvolutionKernel_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_ConvolutionKernel_Label", resourceCulture);
             }
         }
         
@@ -970,6 +997,60 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Slice Location.
+        /// </summary>
+        internal static string Dicom_ImagePlane_SliceLocation_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_ImagePlane_SliceLocation_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loc.
+        /// </summary>
+        internal static string Dicom_ImagePlane_SliceLocation_Label {
+            get {
+                return ResourceManager.GetString("Dicom_ImagePlane_SliceLocation_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slice Thickness.
+        /// </summary>
+        internal static string Dicom_ImagePlane_SliceThickness_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_ImagePlane_SliceThickness_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thk.
+        /// </summary>
+        internal static string Dicom_ImagePlane_SliceThickness_Label {
+            get {
+                return ResourceManager.GetString("Dicom_ImagePlane_SliceThickness_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acquisition Matrix.
+        /// </summary>
+        internal static string Dicom_MRImage_AcquisitionMatrix_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_AcquisitionMatrix_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dicom_MRImage_AcquisitionMatrix_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_AcquisitionMatrix_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Echo Number.
         /// </summary>
         internal static string Dicom_MRImage_EchoNumber_DisplayName {
@@ -979,7 +1060,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Echo.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string Dicom_MRImage_EchoNumber_Label {
             get {
@@ -1002,6 +1083,78 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Dicom_MRImage_EchoTime_Label {
             get {
                 return ResourceManager.GetString("Dicom_MRImage_EchoTime_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Echo Train Length.
+        /// </summary>
+        internal static string Dicom_MRImage_EchoTrainLength_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_EchoTrainLength_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ET.
+        /// </summary>
+        internal static string Dicom_MRImage_EchoTrainLength_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_EchoTrainLength_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Magnetic Field Strength.
+        /// </summary>
+        internal static string Dicom_MRImage_MagneticFieldStrength_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_MagneticFieldStrength_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dicom_MRImage_MagneticFieldStrength_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_MagneticFieldStrength_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Receive Coil Name.
+        /// </summary>
+        internal static string Dicom_MRImage_ReceiveCoilName_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_ReceiveCoilName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dicom_MRImage_ReceiveCoilName_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_ReceiveCoilName_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repetition Time.
+        /// </summary>
+        internal static string Dicom_MRImage_RepetitionTime_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_RepetitionTime_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TR.
+        /// </summary>
+        internal static string Dicom_MRImage_RepetitionTime_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_RepetitionTime_Label", resourceCulture);
             }
         }
         
@@ -1263,6 +1416,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Presentation_AppliedLut_Label {
             get {
                 return ResourceManager.GetString("Presentation_AppliedLut_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Displayed Field of View.
+        /// </summary>
+        internal static string Presentation_DFOV_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DFOV_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DFOV.
+        /// </summary>
+        internal static string Presentation_DFOV_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DFOV_Label", resourceCulture);
             }
         }
         

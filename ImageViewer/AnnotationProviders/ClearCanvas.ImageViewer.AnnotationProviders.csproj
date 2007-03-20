@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="AnnotationItemProvider.cs" />
     <Compile Include="AnnotationResourceResolver.cs" />
+    <Compile Include="Dicom\ImagePlaneAnnotationItemProvider.cs" />
     <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\CTImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\DicomAnnotationItem.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Presentation\AppliedLutAnnotationItem.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Presentation\DFOVAnnotationItem.cs" />
     <Compile Include="Presentation\DirectionalMarkerAnnotationItem.cs">
       <SubType>Code</SubType>
     </Compile>

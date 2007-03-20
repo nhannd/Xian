@@ -98,6 +98,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);
+
+					_annotationItems.Add
+						(
+							new DicomAnnotationItem<string>
+							(
+								"Dicom.CTImage.ConvolutionKernel",
+								this,
+								delegate(ImageSop imageSop)
+								{
+									string val;
+									bool tagExists;
+									imageSop.GetTag(Dcm.ConvolutionKernel, out val, out tagExists);
+									return val;
+								},
+								DicomBasicResultFormatter.RawStringFormat
+							)
+						);
+
 				}
 
 				return _annotationItems;
