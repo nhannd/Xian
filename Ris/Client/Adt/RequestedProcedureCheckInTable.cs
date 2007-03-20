@@ -5,9 +5,7 @@ using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

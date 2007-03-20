@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.HL7;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt

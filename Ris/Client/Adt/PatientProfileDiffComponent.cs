@@ -4,10 +4,9 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

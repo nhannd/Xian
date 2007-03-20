@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

@@ -9,9 +9,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 using System.IO;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

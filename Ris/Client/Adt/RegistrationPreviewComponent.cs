@@ -10,11 +10,9 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Registration;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Client.Common;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

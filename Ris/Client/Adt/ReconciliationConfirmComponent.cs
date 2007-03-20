@@ -4,10 +4,10 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -32,16 +32,13 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public ReconciliationConfirmComponent(Patient target, IList<Patient> sources)
+        public ReconciliationConfirmComponent(IList<PatientProfileSummary> targets, IList<PatientProfileSummary> sources)
         {
             _sourceProfiles = new PatientProfileTable();
-            foreach (Patient patient in sources)
-            {
-                _sourceProfiles.Items.AddRange(patient.Profiles);
-            }
+            _sourceProfiles.Items.AddRange(sources);
 
             _targetProfiles = new PatientProfileTable();
-            _targetProfiles.Items.AddRange(target.Profiles);
+            _targetProfiles.Items.AddRange(targets);
         }
 
         public override void Start()

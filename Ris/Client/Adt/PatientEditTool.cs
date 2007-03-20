@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

@@ -5,7 +5,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Scripting;
-using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

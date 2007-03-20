@@ -2,31 +2,23 @@ using System;
 
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class VisitTable : Table<Visit>
+    public class VisitTable : Table<VisitSummary>
     {
         public VisitTable()
         {
-            IAdtService service = ApplicationContext.GetService<IAdtService>();
-
-            PatientClassEnumTable patientClasses = service.GetPatientClassEnumTable();
-            PatientTypeEnumTable patientTypes = service.GetPatientTypeEnumTable();
-            AdmissionTypeEnumTable admissionTypes = service.GetAdmissionTypeEnumTable();
-            AmbulatoryStatusEnumTable ambulatoryStatuses = service.GetAmbulatoryStatusEnumTable();
-            VisitStatusEnumTable visitStatuses = service.GetVisitStatusEnumTable();
-
-            this.Columns.Add(new TableColumn<Visit, string>(SR.ColumnVisitNumber,
-                delegate(Visit v) { return Format.Custom(v.VisitNumber); },
+            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnVisitNumber,
+                delegate(VisitSummary v) { return string.Format("{0} {1}", v.VisitNumberAssigningAuthority, v.VisitNumberId); },
                 1.0f));
 
             //Visit type description
-            this.Columns.Add(new TableColumn<Visit, string>(SR.ColumnVisitType,
-                delegate(Visit v)
+            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnVisitType,
+                delegate(VisitSummary v)
                 {
                     return patientClasses[v.PatientClass].Value + (v.PatientType != PatientType.X ? " - " + patientTypes[v.PatientType].Value : v.AdmissionType != AdmissionType.X ? " - " + admissionTypes[v.AdmissionType].Value : "");
                 },
@@ -42,13 +34,13 @@ namespace ClearCanvas.Ris.Client.Adt
             //    1.0f));
 
             //status
-            this.Columns.Add(new TableColumn<Visit, string>(SR.ColumnStatus,
-                delegate(Visit v) { return visitStatuses[v.VisitStatus].Value; },
+            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnStatus,
+                delegate(VisitSummary v) { return v.VisitStatus.Value; },
                 1.0f));
 
             //admit date/time
-            this.Columns.Add(new TableColumn<Visit, string>(SR.ColumnAdmitDateTime,
-                delegate(Visit v) { return Format.Date(v.AdmitDateTime); },
+            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnAdmitDateTime,
+                delegate(VisitSummary v) { return Format.Date(v.AdmitDateTime); },
                 1.0f));
 
             ////Patient class
@@ -72,8 +64,8 @@ namespace ClearCanvas.Ris.Client.Adt
             //    1.0f));ime
 
             //discharge datetime
-            this.Columns.Add(new TableColumn<Visit, string>(SR.ColumnDischargeDateTime,
-                delegate(Visit v) { return Format.Date(v.DischargeDateTime); },
+            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnDischargeDateTime,
+                delegate(VisitSummary v) { return Format.Date(v.DischargeDateTime); },
                 1.0f));
 
             ////discharge disposition

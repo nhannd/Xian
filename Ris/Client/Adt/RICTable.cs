@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

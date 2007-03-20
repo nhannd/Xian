@@ -4,8 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 

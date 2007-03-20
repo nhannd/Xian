@@ -4,17 +4,16 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
 
 using System.IO;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Scripting;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

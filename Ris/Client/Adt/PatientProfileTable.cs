@@ -2,39 +2,36 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    class PatientProfileTable : Table<PatientProfile>
+    class PatientProfileTable : Table<PatientProfileSummary>
     {
         public PatientProfileTable()
         {
-            IAdtService service = ApplicationContext.GetService<IAdtService>();
-            SexEnumTable sexChoices = service.GetSexEnumTable();
-
             this.Columns.Add(
-                new TableColumn<PatientProfile, string>(SR.ColumnSite,
-                    delegate(PatientProfile profile) { return profile.Mrn.AssigningAuthority; }, 0.5f));
+                new TableColumn<PatientProfileSummary, string>(SR.ColumnSite,
+                    delegate(PatientProfileSummary profile) { return profile.AssigningAuthority; }, 0.5f));
             this.Columns.Add(
-               new TableColumn<PatientProfile, string>(SR.ColumnMRN,
-                   delegate(PatientProfile profile) { return profile.Mrn.Id; }, 1.0f));
+               new TableColumn<PatientProfileSummary, string>(SR.ColumnMRN,
+                   delegate(PatientProfileSummary profile) { return profile.Mrn; }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>(SR.ColumnName,
-                  delegate(PatientProfile profile) { return Format.Custom(profile.Name); }, 2.0f));
+              new TableColumn<PatientProfileSummary, string>(SR.ColumnName,
+                  delegate(PatientProfileSummary profile) { return profile.Name; }, 2.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>(SR.ColumnHealthcardNumber,
-                  delegate(PatientProfile profile) { return profile.Healthcard.Id; }, 1.0f));
+              new TableColumn<PatientProfileSummary, string>(SR.ColumnHealthcardNumber,
+                  delegate(PatientProfileSummary profile) { return profile.Healthcard; }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>(SR.ColumnDateOfBirth,
-                  delegate(PatientProfile profile) { return Format.Date(profile.DateOfBirth); }, 1.0f));
+              new TableColumn<PatientProfileSummary, string>(SR.ColumnDateOfBirth,
+                  delegate(PatientProfileSummary profile) { return profile.DateOfBirth; }, 1.0f));
             this.Columns.Add(
-              new TableColumn<PatientProfile, string>(SR.ColumnSex,
-                  delegate(PatientProfile profile) { return sexChoices[profile.Sex].Value; }, 0.5f));
+              new TableColumn<PatientProfileSummary, string>(SR.ColumnSex,
+                  delegate(PatientProfileSummary profile) { return profile.Sex.Value; }, 0.5f));
         }
     }
 }

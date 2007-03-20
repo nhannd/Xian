@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientOverviewDocument : Document
     {
-        private EntityRef<PatientProfile> _profileRef;
+        private EntityRef _profileRef;
 
-        public PatientOverviewDocument(EntityRef<PatientProfile> profileRef, IDesktopWindow window)
+        public PatientOverviewDocument(EntityRef profileRef, IDesktopWindow window)
             :base(profileRef.ToString(), window)
         {
             _profileRef = profileRef;

@@ -6,10 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -98,9 +96,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void ShowReconciliationDialog(EntityRef<PatientProfile> profile, IDesktopWindow desktopWindow)
+        private void ShowReconciliationDialog(EntityRef patientProfile, IDesktopWindow desktopWindow)
         {
-            PatientReconciliation.ShowReconciliationDialog(profile, desktopWindow);
+            PatientReconciliation.ShowReconciliationDialog(patientProfile, desktopWindow);
         }
     }
 }

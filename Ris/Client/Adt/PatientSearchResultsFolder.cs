@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 

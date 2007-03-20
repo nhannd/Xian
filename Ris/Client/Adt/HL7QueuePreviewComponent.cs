@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Healthcare;
-
-using ClearCanvas.HL7;
 
 using Iesi.Collections;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Ris.Client.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client;
 using ClearCanvas.Common.Utilities;
 
 

@@ -4,11 +4,11 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Services;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -45,23 +45,25 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileDiffComponent _diffComponent;
         private ApplicationComponentHost _diffComponentHost;
 
-        private PatientProfile _selectedTargetProfile;
-        private PatientProfile _selectedReconciliationProfile;
+        private PatientProfileSummary _selectedTargetProfile;
+        private PatientProfileSummary _selectedReconciliationProfile;
 
         private PatientProfileTable _targetProfileTable;
         private ReconciliationCandidateTable _reconciliationProfileTable;
 
         private IList<PatientProfileMatch> _matches;
-
-        private IAdtService _adtService;
+        private IList<PatientProfileSummary> _targetProfiles;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ReconciliationComponent(PatientProfile targetProfile, IList<PatientProfileMatch> matches)
+        public ReconciliationComponent(EntityRef targetProfileRef, IList<PatientProfileSummary> reconciledProfiles, IList<PatientProfileMatch> candidates)
         {
-            _selectedTargetProfile = targetProfile;
+            _targetProfiles = reconciledProfiles;
             _matches = matches;
+
+            _selectedTargetProfile = CollectionUtils.SelectFirst <PatientProfileSummary>(reconciledProfiles,
+                delegate(PatientProfileSummary p) { return p.ProfileRef == targetProfileRef; });
         }
 
         public override void Start()
@@ -70,15 +72,12 @@ namespace ClearCanvas.Ris.Client.Adt
             _diffComponentHost = new DiffHost(this, _diffComponent = new PatientProfileDiffComponent());
             _diffComponentHost.StartComponent();
 
-            // get the ADT service
-            _adtService = ApplicationContext.GetService<IAdtService>();
-
             // add all target profiles - ensure the initially selected one is at the top of the list
             _targetProfileTable = new PatientProfileTable();
             _targetProfileTable.Items.Add(_selectedTargetProfile);
-            foreach (PatientProfile profile in _selectedTargetProfile.Patient.Profiles)
+            foreach (PatientProfileSummary profile in _targetProfiles)
             {
-                if (!profile.Equals(_selectedTargetProfile))
+                if (!profile.ProfileRef.Equals(_selectedTargetProfile.ProfileRef))
                 {
                     _targetProfileTable.Items.Add(profile);
                 }
@@ -120,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void SetSelectedTargetProfile(ISelection selection)
         {
-            PatientProfile profile = (PatientProfile)selection.Item;
+            PatientProfileSummary profile = (PatientProfileSummary)selection.Item;
             if (profile != _selectedTargetProfile)
             {
                 _selectedTargetProfile = profile;
@@ -131,7 +130,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public void SetSelectedReconciliationProfile(ISelection selection)
         {
             ReconciliationCandidateTableEntry entry = (ReconciliationCandidateTableEntry)selection.Item;
-            PatientProfile profile = (entry == null) ? null : entry.ProfileMatch.PatientProfile;
+            PatientProfileSummary profile = (entry == null) ? null : entry.ProfileMatch.PatientProfile;
             if (profile != _selectedReconciliationProfile)
             {
                 _selectedReconciliationProfile = profile;
@@ -151,9 +150,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 DoReconciliation();
                 this.ExitCode = ApplicationComponentExitCode.Normal;
             }
-            catch (PatientReconciliationException e)
+            catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToReconcile, this.Host.DesktopWindow);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
                 this.ExitCode = ApplicationComponentExitCode.Error;
             }
 
@@ -176,34 +175,44 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else
             {
-                _diffComponent.ProfilesToCompare = new EntityRef<PatientProfile>[] {
-                    new EntityRef<PatientProfile>(_selectedTargetProfile),
-                    new EntityRef<PatientProfile>(_selectedReconciliationProfile) };
+                _diffComponent.ProfilesToCompare = new EntityRef[] {
+                    _selectedTargetProfile.ProfileRef,
+                    _selectedReconciliationProfile.ProfileRef };
             }
         }
 
         private void DoReconciliation()
         {
-            IList<Patient> checkedPatients = new List<Patient>();
+            List<EntityRef> checkedPatients = new List<EntityRef>();
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
-                if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.Patient))
+                if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.PatientRef))
                 {
-                    // we need to load all the profiles for this patient, for the confirmation stage
-                    Patient patient = _adtService.LoadPatientAndAllProfiles(new EntityRef<PatientProfile>(entry.ProfileMatch.PatientProfile));
-                    checkedPatients.Add(patient);
+                    checkedPatients.Add(entry.ProfileMatch.PatientProfile.PatientRef);
                 }
             }
 
-            // confirmation
-            ReconciliationConfirmComponent confirmComponent = new ReconciliationConfirmComponent(_selectedTargetProfile.Patient, checkedPatients);
-            ApplicationComponentExitCode confirmExitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, confirmComponent, SR.TitleConfirmReconciliation);
+            Platform.GetService<IPatientReconciliationService>(
+                delegate(IPatientReconciliationService service)
+                {
+                    List<PatientProfileSummary> indirectlyReconciledProfiles = service.ListIndirectlyReconciledPatients(
+                        new ListIndirectlyReconciledPatientsRequest(checkedPatients)).Profiles;
 
-            if (confirmExitCode == ApplicationComponentExitCode.Normal)
-            {
-                _adtService.ReconcilePatients(_selectedTargetProfile.Patient, checkedPatients);
-            }
+                    // confirmation
+                    ReconciliationConfirmComponent confirmComponent = new ReconciliationConfirmComponent(_targetProfiles, indirectlyReconciledProfiles);
+                    ApplicationComponentExitCode confirmExitCode = ApplicationComponent.LaunchAsDialog(
+                        this.Host.DesktopWindow, confirmComponent, SR.TitleConfirmReconciliation);
+
+                    if (confirmExitCode == ApplicationComponentExitCode.Normal)
+                    {
+                        // add the target patient to the set
+                        checkedPatients.Add(_targetProfiles[0].PatientRef);
+
+                        // reconcile
+                        service.ReconcilePatients(new ReconcilePatientsRequest(checkedPatients));
+                    }
+
+                });
         }
 
         private void CandidateCheckedChangedEventHandler(object sender, EventArgs e)

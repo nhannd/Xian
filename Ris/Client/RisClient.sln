@@ -23,14 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Adt"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Adt.View.WinForms", "Adt\View\WinForms\ClearCanvas.Ris.Client.Adt.View.WinForms.csproj", "{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Modality", "Modality\ClearCanvas.Ris.Client.Modality.csproj", "{74BAA130-6C61-4C2E-8F54-3EEA47B37AB6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Modality.View.WinForms", "Modality\View\WinForms\ClearCanvas.Ris.Client.Modality.View.WinForms.csproj", "{37AEFD30-85DF-4CA2-9C26-E6DB118750FD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Reporting", "Reporting\ClearCanvas.Ris.Client.Reporting.csproj", "{EB579705-2821-45B8-AE5E-EE397BE73ED9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Reporting.View.WinForms", "Reporting\View\WinForms\ClearCanvas.Ris.Client.Reporting.View.WinForms.csproj", "{5F4CE71B-C674-415C-BD56-7A955E40F309}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client", "ClearCanvas.Ris.Client.csproj", "{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.View.WinForms", "View\WinForms\ClearCanvas.Ris.Client.View.WinForms.csproj", "{7932D8CA-34CF-47E6-A425-9B8DA4F60341}"
@@ -89,22 +81,6 @@ Global
 		{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F9AC5E-EB3E-42F7-BD51-37D300EA53DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74BAA130-6C61-4C2E-8F54-3EEA47B37AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74BAA130-6C61-4C2E-8F54-3EEA47B37AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74BAA130-6C61-4C2E-8F54-3EEA47B37AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74BAA130-6C61-4C2E-8F54-3EEA47B37AB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37AEFD30-85DF-4CA2-9C26-E6DB118750FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37AEFD30-85DF-4CA2-9C26-E6DB118750FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37AEFD30-85DF-4CA2-9C26-E6DB118750FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37AEFD30-85DF-4CA2-9C26-E6DB118750FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU

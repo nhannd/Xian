@@ -1,44 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Services;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public static class PatientReconciliation
     {
-        public static void ShowReconciliationDialog(EntityRef<PatientProfile> targetProfile, IDesktopWindow window)
+        public static void ShowReconciliationDialog(EntityRef targetProfile, IDesktopWindow window)
         {
             if (targetProfile != null)
             {
-                IAdtService service = ApplicationContext.GetService<IAdtService>();
-
-                IList<PatientProfileMatch> matches = service.FindPatientReconciliationMatches(targetProfile);
-
-                if (matches.Count > 0)
+                try
                 {
-                    // load the target patient and all profiles
-                    Patient targetPatient = service.LoadPatientAndAllProfiles(targetProfile);
+                    IList<PatientProfileMatch> matches = null;
+                    IList<PatientProfileSummary> reconciledProfiles = null;
 
-                    // find the target profile
-                    FunctionalList<PatientProfile> allProfiles = new FunctionalList<PatientProfile>(targetPatient.Profiles);
-                    PatientProfile profile = allProfiles.SelectFirst(
-                        delegate(PatientProfile p) { return targetProfile.RefersTo(p); });
+                    Platform.GetService<IPatientReconciliationService>(
+                        delegate(IPatientReconciliationService service)
+                        {
+                            ListPatientReconciliationMatchesResponse response =
+                                service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(targetProfile));
 
-                    ReconciliationComponent component = new ReconciliationComponent(profile, matches);
-                    ApplicationComponent.LaunchAsDialog(
-                        window,
-                        component,
-                        SR.TitlePatientReconciliation);
+                            matches = response.CandidateMatches;
+                            reconciledProfiles = response.ReconciledProfiles;
+                        });
+
+                    if (matches.Count > 0)
+                    {
+                        ReconciliationComponent component = new ReconciliationComponent(targetProfile, reconciledProfiles, matches);
+                        ApplicationComponent.LaunchAsDialog(
+                            window,
+                            component,
+                            SR.TitlePatientReconciliation);
+                    }
+                    else
+                    {
+                        window.ShowMessageBox(SR.MessageNoReconciliationCandidate, MessageBoxActions.Ok);
+                    }
+
                 }
-                else
+                catch (Exception e)
                 {
-                    Platform.ShowMessageBox(SR.MessageNoReconciliationCandidate);
+                    ExceptionHandler.Report(e, window);
                 }
             }
         }

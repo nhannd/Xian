@@ -6,9 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Client.Common;
-using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

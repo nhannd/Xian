@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
