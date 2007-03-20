@@ -68,6 +68,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._dataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
 			this._dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this._dataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+			this._dataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this._dataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 			this._dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this._dataGridView.ContextMenuStrip = this._contextMenu;
@@ -79,9 +80,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._dataGridView.Size = new System.Drawing.Size(540, 203);
 			this._dataGridView.TabIndex = 2;
 			this._dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellDoubleClick);
+			this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
 			this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
 			this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);
-			this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
 			// 
 			// TableView
 			// 
