@@ -200,6 +200,7 @@
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
+    <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\SimpleThreadPool.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
