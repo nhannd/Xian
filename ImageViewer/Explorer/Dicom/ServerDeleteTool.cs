@@ -23,9 +23,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void DeleteServerServerGroup()
         {
-            DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
+            NewServerTree serverTree = this.Context.ServerTree;
             string msg = "";
-            if (_dicomServerTree.CurrentServer.IsServer)
+            if (serverTree.CurrentNode.IsServer)
 				msg = SR.MessageConfirmDeleteServer;
             else
 				msg = SR.MessageConfirmDeleteServerGroup;
@@ -33,14 +33,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
 
             this.Context.UpdateType = (int)ServerUpdateType.Delete;
-            _dicomServerTree.DeleteDicomServer();
+            serverTree.DeleteDicomServer();
             return;
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle)
-                            && !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyServersTitle);
+            this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle)
+                            && !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyServersTitle);
         }
     }
 }

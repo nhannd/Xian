@@ -25,33 +25,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void VerifyServer()
         {
-            DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
-            if (!_dicomServerTree.CurrentServer.IsServer && _dicomServerTree.ChildServers.Count == 0)
+            NewServerTree serverTree = this.Context.ServerTree;
+            if (!serverTree.CurrentNode.IsServer && serverTree.RootNode.ServerGroupNode.ChildServers.Count == 0)
             {
 				throw new DicomServerException(SR.ExceptionNoServersSelected);
             }
 
-			ApplicationEntity myAE = new ApplicationEntity(new HostName("localhost"), new AETitle("AETITLE"), new ListeningPort(4006));
+            ApplicationEntity myAE = serverTree.RootNode.LocalDataStoreNode.GetApplicationEntity();
+
             StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
             using (DicomClient client = new DicomClient(myAE))
             {
-                if (_dicomServerTree.CurrentServer.IsServer)
+                if (serverTree.CurrentNode.IsServer)
                 {
-                    DicomServer ae = (DicomServer)_dicomServerTree.CurrentServer;
-                    if (client.Verify(ae.DicomAE))
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", ae.ServerPath + "/" + ae.ServerName);
+                    Server target = serverTree.CurrentNode as Server;
+                    ApplicationEntity targetServer = (serverTree.CurrentNode as Server).GetApplicationEntity();
+
+                    if (client.Verify(targetServer))
+						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", serverTree.CurrentNode.Path);
                     else
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", ae.ServerPath + "/" + ae.ServerName);
+                        msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", serverTree.CurrentNode.Path);
                 }
                 else
                 {
-                    foreach (DicomServer ae in _dicomServerTree.ChildServers)
+                    foreach (Server server in serverTree.RootNode.ServerGroupNode.ChildServers)
                     {
-                        if (client.Verify(ae.DicomAE))
-							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", ae.ServerPath + "/" + ae.ServerName);
+                        if (client.Verify(server.GetApplicationEntity()))
+							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
                         else
-							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", ae.ServerPath + "/" + ae.ServerName);
+							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
                     }
                 }
             }
@@ -62,8 +65,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle)
-                            && this.Context.DicomAEServerTree.ChildServers.Count > 0;
+            this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle)
+                            && this.Context.ServerTree.RootNode.ServerGroupNode.ChildServers.Count > 0;
         }
     }
 }

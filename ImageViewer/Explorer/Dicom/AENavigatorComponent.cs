@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
     public interface IAENavigatorToolContext : IToolContext
     {
-        DicomServerTree DicomAEServerTree { get; set;}
+        NewServerTree ServerTree { get; set;}
         event EventHandler SelectedServerChanged;
         IDesktopWindow DesktopWindow { get; }
         int UpdateType { get; set; }
@@ -50,10 +50,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             #region IAENavigatorToolContext Members
 
-            public DicomServerTree DicomAEServerTree
+            public NewServerTree ServerTree
             {
-                get { return _component._dicomServerTree; }
-                set { _component._dicomServerTree = value; }
+                get { return _component._serverTree; }
+                set { _component._serverTree = value; }
             }
 
             public event EventHandler SelectedServerChanged
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Fields
 
-        private DicomServerTree _dicomServerTree;
+        private NewServerTree _serverTree;
         private event EventHandler _selectedServerChanged;
         private AEServerGroup _selectedServers;
         private int _updateType;
@@ -91,10 +91,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private static String _myServersRoot = "MyServersRoot";
         private static String _myServersXmlFile = "DicomAEServers.xml";
 
-        public DicomServerTree DicomServerTree
+        public NewServerTree ServerTree
         {
-            get { return _dicomServerTree; }
-            set { _dicomServerTree = value; }
+            get { return _serverTree; }
+            set { _serverTree = value; }
         }
 
         public AEServerGroup SelectedServers
@@ -146,58 +146,60 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public AENavigatorComponent()
         {
             _selectedServers = new AEServerGroup();
-            _dicomServerTree = new DicomServerTree();
-            if (_dicomServerTree.CurrentServer != null && _dicomServerTree.CurrentServer.IsServer)
-            {
-                _selectedServers.Servers.Add((DicomServer)_dicomServerTree.CurrentServer);
-                _selectedServers.Name = _dicomServerTree.CurrentServer.ServerName;
-                _selectedServers.GroupID = _dicomServerTree.CurrentServer.ServerPath + "/" + _selectedServers.Name;
-            }
+            _serverTree = new NewServerTree();
 
+            if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
+            {
+                _selectedServers.Servers.Add(_serverTree.CurrentNode as Server);
+                _selectedServers.Name = _serverTree.CurrentNode.Name;
+                _selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
+            }
         }
 
-        public void SelectChanged(IDicomServer dataNode)
+        public void SelectChanged(IServerTreeNode dataNode)
         {
             if (dataNode.IsServer)
             {
-                SetSelectedServer((DicomServer)dataNode);
+                SetSelectedServer(dataNode as Server);
             }
-            else
+            else if (dataNode.IsServerGroup)
             {
                 _selectedServers = new AEServerGroup();
-                _selectedServers.Servers = _dicomServerTree.FindChildServers((DicomServerGroup)dataNode);
-                _selectedServers.GroupID = dataNode.ServerPath + "/" + dataNode.ServerName;
-                _selectedServers.Name = dataNode.ServerName;
-                _dicomServerTree.CurrentServer = dataNode;
+                _selectedServers.Servers = _serverTree.FindChildServers(dataNode as ServerGroup);
+                _selectedServers.GroupID = dataNode.Path;
+                _selectedServers.Name = dataNode.Name;
+                _serverTree.CurrentNode = dataNode;
                 FireSelectedServerChangedEvent();
             }
 
         }
 
-        public bool NodeMoved(IDicomServer dataNodeParent, IDicomServer dataNodeNew)
+        public bool NodeMoved(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
-            if (dataNodeParent.IsServer || isMovingInvalid((DicomServerGroup)dataNodeParent, dataNodeNew))
+            if (destinationNode.IsServer || isMovingInvalid(destinationNode as ServerGroup, movingDataNode))
                 return false;
-            if (dataNodeNew.IsServer)
+
+            if (movingDataNode.IsServer)
             {
-                _dicomServerTree.CurrentServer = dataNodeNew;
-                _dicomServerTree.DeleteDicomServer();
-                dataNodeNew.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
-                ((DicomServerGroup)dataNodeParent).AddChild(dataNodeNew);
-                SelectChanged(dataNodeNew);
+                Server movingServer = movingDataNode as Server;
+                _serverTree.CurrentNode = movingDataNode;
+                _serverTree.DeleteDicomServer();
+
+                movingServer.ChangeParentPath(destinationNode.Path);
+                (destinationNode as ServerGroup).AddChild(movingDataNode);
+                SelectChanged(movingDataNode);
             }
-            else
+            else if (movingDataNode.IsServerGroup)
             {
-                DicomServerGroup dsg = (DicomServerGroup)dataNodeNew;
-                _dicomServerTree.CurrentServer = dataNodeNew;
-                _dicomServerTree.DeleteDicomServer();
-                _dicomServerTree.RenameDicomServerGroup(dsg, "", dsg.ServerPath, dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName, 1);
-                dsg.ServerPath = dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName;
-                ((DicomServerGroup)dataNodeParent).AddChild(dsg);
-                _dicomServerTree.CurrentServer = dsg;
-                SelectChanged(dsg);
+                ServerGroup movingGroup = movingDataNode as ServerGroup;
+                _serverTree.CurrentNode = movingGroup;
+                _serverTree.DeleteServerGroup();
+
+                movingGroup.ChangeParentPath(destinationNode.Path);
+                (destinationNode as ServerGroup).AddChild(movingGroup);
+                SelectChanged(movingGroup);
             }
-            _dicomServerTree.SaveDicomServers();
+            _serverTree.SaveDicomServers();
             return true;
         }
 
@@ -207,27 +209,30 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             remove { _selectedServerChanged -= value; }
         }
 
-        private void SetSelectedServer(DicomServer server)
+        private void SetSelectedServer(Server server)
         {
             _selectedServers = new AEServerGroup();
             _selectedServers.Servers.Add(server);
-            _selectedServers.Name = server.ServerName;
-            _selectedServers.GroupID = server.ServerPath + "/" + server.ServerName;
-            _dicomServerTree.CurrentServer = server;
+            _selectedServers.Name = server.Name;
+            _selectedServers.GroupID = server.Path;
+            _serverTree.CurrentNode = server;
             FireSelectedServerChangedEvent();
         }
 
-        private bool isMovingInvalid(DicomServerGroup dataNodeParent, IDicomServer dataNodeNew)
+        private bool isMovingInvalid(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
-            if (dataNodeNew.ServerName.Equals(_myServersTitle) || dataNodeNew.ServerName.Equals(_myDatastoreTitle) || dataNodeNew.ServerPath.Equals(dataNodeParent.ServerPath + "/" + dataNodeParent.ServerName))
+            if (movingDataNode.Name.Equals(_myServersTitle) || movingDataNode.Name.Equals(_myDatastoreTitle) || movingDataNode.Path.Equals(destinationNode.Path))
                 return true;
-            foreach (IDicomServer ids in dataNodeParent.ChildServers)
+
+            foreach (Server server in (destinationNode as ServerGroup).ChildServers)
             {
-                if (ids.ServerName.Equals(dataNodeNew.ServerName))
+                if (server.Name.Equals(movingDataNode.Name))
                     return true;
             }
-            if (!dataNodeNew.IsServer && dataNodeParent.ServerPath.StartsWith(dataNodeNew.ServerPath + "/" + dataNodeNew.ServerName))
+
+            if (!movingDataNode.IsServer && destinationNode.Path.StartsWith(movingDataNode.Path))
                 return true;
+
             return false;
         }
 

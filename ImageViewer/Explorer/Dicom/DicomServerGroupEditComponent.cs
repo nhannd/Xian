@@ -24,13 +24,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Constructor
         /// </summary>
-        public DicomServerGroupEditComponent(DicomServerTree dicomServerTree, ServerUpdateType updatedType)
+        public DicomServerGroupEditComponent(NewServerTree dicomServerTree, ServerUpdateType updatedType)
         {
             _isNewServerGroup = updatedType.Equals(ServerUpdateType.Add)? true : false;
-            _dicomServerTree = dicomServerTree;
+            _serverTree = dicomServerTree;
             if (!_isNewServerGroup)
             {
-                _serverGroupName = _dicomServerTree.CurrentServer.ServerName;
+                _serverGroupName = _serverTree.CurrentNode.Name;
             }
             else
             {
@@ -43,18 +43,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             if (!IsServerGroupNameValid() || !this.Modified)
                 return;
+
             if (!_isNewServerGroup)
             {
-                _dicomServerTree.RenameDicomServerGroup((DicomServerGroup)_dicomServerTree.CurrentServer, _serverGroupName, "", "", 0);
+                ServerGroup serverGroup = _serverTree.CurrentNode as ServerGroup;
+                serverGroup.NameOfGroup = _serverGroupName;
+
+                // this doesn't alter our own parent path, but is used to
+                // pass down our new name so that children nodes can 
+                // properly update their parent path
+                serverGroup.ChangeParentPath(serverGroup.ParentPath);
             }
             else
             {
-                DicomServerGroup dsg = new DicomServerGroup(_serverGroupName, _dicomServerTree.CurrentServer.ServerPath + "/" + _dicomServerTree.CurrentServer.ServerName);
-                ((DicomServerGroup)_dicomServerTree.CurrentServer).AddChild(dsg);
-                _dicomServerTree.CurrentServer = dsg;
+                ServerGroup serverGroup = new ServerGroup(_serverGroupName, _serverTree.CurrentNode.Path);
+                ((ServerGroup)_serverTree.CurrentNode).AddChild(serverGroup);
+                _serverTree.CurrentNode = serverGroup;
             }
-            _dicomServerTree.SaveDicomServers();
-            _dicomServerTree.FireServerTreeUpdatedEvent();
+            _serverTree.SaveDicomServers();
+            _serverTree.FireServerTreeUpdatedEvent();
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
             return;
@@ -80,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private bool IsServerGroupNameEmpty()
         {
             if (_serverGroupName == null || _serverGroupName.Equals("")
-                || !_isNewServerGroup && _serverGroupName.Equals(_dicomServerTree.CurrentServer.ServerName))
+                || !_isNewServerGroup && _serverGroupName.Equals(_serverTree.CurrentNode.Name))
             {
                 return false;
             }
@@ -90,12 +97,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool IsServerGroupNameValid()
         {
-            string msg = _dicomServerTree.DicomServerGroupNameValidation(_serverGroupName);
-            if (!msg.Equals(""))
+            string conflictingPath;
+
+            if (_serverTree.IsDuplicateServerGroupInGroup(_serverGroupName, out conflictingPath))
             {
                 this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.FormatServerGroupNameConflict, _serverGroupName, msg);
+				msgText.AppendFormat(SR.FormatServerGroupNameConflict, _serverGroupName, conflictingPath);
                 throw new DicomServerException(msgText.ToString());
             }
             return true;
@@ -116,14 +124,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Fields
 
-        private DicomServerTree _dicomServerTree;
+        private NewServerTree _serverTree;
         private string _serverGroupName = "";
         private bool _isNewServerGroup;
 
-        public DicomServerTree DicomServerTree
+        public NewServerTree ServerTree
         {
-            get { return _dicomServerTree; }
-            set { _dicomServerTree = value; }
+            get { return _serverTree; }
+            set { _serverTree = value; }
         }
 
         public string ServerGroupName

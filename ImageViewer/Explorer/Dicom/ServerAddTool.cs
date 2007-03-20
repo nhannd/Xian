@@ -23,16 +23,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void AddNewServer()
         {
-            DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
+            NewServerTree serverTree = this.Context.ServerTree;
             this.Context.UpdateType = (int)ServerUpdateType.Add;
-            DicomServerEditComponent editor = new DicomServerEditComponent(_dicomServerTree);
+            DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddNewServer);
             return;
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-                this.Enabled = !this.Context.DicomAEServerTree.CurrentServer.IsServer;
+                this.Enabled = !this.Context.ServerTree.CurrentNode.IsServer;
         }
     }
 }

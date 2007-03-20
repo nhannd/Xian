@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (code == ApplicationComponentExitCode.Cancelled)
                 return;
 
-            ApplicationEntity destinationAE = aeNavigator.SelectedServers.Servers[0].DicomAE;
+            ApplicationEntity destinationAE = (aeNavigator.SelectedServers.Servers[0] as Server).GetApplicationEntity();
 
             if (destinationAE == null)
             {

@@ -23,16 +23,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void EditServer()
         {
-            DicomServerTree _dicomServerTree = this.Context.DicomAEServerTree;
+            NewServerTree serverTree = this.Context.ServerTree;
             this.Context.UpdateType = (int)ServerUpdateType.Edit;
-            if (_dicomServerTree.CurrentServer.IsServer)
+            if (serverTree.CurrentNode.IsServer)
             {
-                DicomServerEditComponent editor = new DicomServerEditComponent(_dicomServerTree);
+                DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServer);
             }
             else
             {
-                DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_dicomServerTree, ServerUpdateType.Edit);
+                DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(serverTree, ServerUpdateType.Edit);
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServerGroup);
             }
             return;
@@ -40,8 +40,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle)
-                            && !this.Context.DicomAEServerTree.CurrentServer.ServerName.Equals(AENavigatorComponent.MyServersTitle);
+            this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle)
+                            && !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyServersTitle);
         }
     }
 }

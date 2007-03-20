@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	public class AEServerGroup
 	{
-        private List<DicomServer> _servers;
+        private List<IServerTreeNode> _servers;
         private string _name;
 		private string _groupID;
 
@@ -14,11 +14,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
         }
 
-        public List<DicomServer> Servers
+        public List<IServerTreeNode> Servers
         {
             get {
                 if (_servers == null)
-                    _servers = new List<DicomServer>();
+                    _servers = new List<IServerTreeNode>();
                 return _servers; 
             }
             set { _servers = value; }
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 if (_servers.Count != 1)
 					return false;
 
-                if (_servers[0].DicomAE.Host == "localhost")
+                if (_servers[0].IsLocalDataStore)
 					return true;
 				else
 					return false;

@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.MenuModel = _component.ContextMenuModel;
 
             _aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
-            BuildServerTreeView(_aeTreeView, _component.DicomServerTree);
+            BuildServerTreeView(_aeTreeView, _component.ServerTree);
         }
 
         void OnServerTreeUpdated(object sender, EventArgs e)
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 return;
             if (_component.UpdateType == (int)ServerUpdateType.Add)
             {
-                IDicomServer dataChild = _component.DicomServerTree.CurrentServer;
+                IServerTreeNode dataChild = _component.ServerTree.CurrentNode;
                 AddTreeNode(_lastClickedNode, dataChild);
                 _lastClickedNode.Expand();
             }
@@ -54,13 +54,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             }
             else if (_component.UpdateType == (int)ServerUpdateType.Edit)
             {
-                IDicomServer dataNode = _component.DicomServerTree.CurrentServer;
-                _lastClickedNode.Text = dataNode.ServerName;
+                IServerTreeNode dataNode = _component.ServerTree.CurrentNode;
+                _lastClickedNode.Text = dataNode.Name;
                 _lastClickedNode.Tag = dataNode;
-                _lastClickedNode.ToolTipText = dataNode.ServerDetails;
+                _lastClickedNode.ToolTipText = dataNode.ToString();
                 RefreshToolTipText(_aeTreeView.Nodes[1]);
             }
-            _component.SelectChanged((IDicomServer)_lastClickedNode.Tag);
+            _component.SelectChanged(_lastClickedNode.Tag as IServerTreeNode);
         }
 
 
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             if (_lastClickedNode == null)
                 return;
             _aeTreeView.SelectedNode = _lastClickedNode;
-            IDicomServer dataNode = (IDicomServer)_lastClickedNode.Tag;
+            IServerTreeNode dataNode = _lastClickedNode.Tag as IServerTreeNode;
             _component.SelectChanged(dataNode);
         }
 
@@ -79,33 +79,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         /// <param name="treeView"></param>
         /// <param name="dataRoot"></param>
-        private void BuildServerTreeView(TreeView treeView, DicomServerTree dicomServerTree)
+        private void BuildServerTreeView(TreeView treeView, NewServerTree dicomServerTree)
         {
             treeView.Nodes.Clear();
             treeView.ShowNodeToolTips = true;
 
-            dicomServerTree.MyServerGroup.ChildServers.Sort(delegate(IDicomServer s1, IDicomServer s2)
-            {
-                string s1param = s1.IsServer ? "aa" : "bb"; s1param += s1.ServerName;
-                string s2param = s2.IsServer ? "aa" : "bb"; s2param += s2.ServerName;
-                return s1param.CompareTo(s2param);
-            });
-            foreach (IDicomServer dataChild in dicomServerTree.MyServerGroup.ChildServers)
-            {
-                TreeNode treeChild = new TreeNode(dataChild.ServerName);
-                treeChild.Tag = dataChild;
-                treeChild.ToolTipText = dataChild.ServerDetails;
+            // build the localdatastorenode
+            TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.RootNode.LocalDataStoreNode.Name);
+            localDataStoreTreeNode.Tag = dicomServerTree.RootNode.LocalDataStoreNode;
+            localDataStoreTreeNode.ToolTipText = dicomServerTree.RootNode.LocalDataStoreNode.ToString();
+            SetIcon(dicomServerTree.RootNode.LocalDataStoreNode, localDataStoreTreeNode);
+            treeView.Nodes.Add(localDataStoreTreeNode);
+            treeView.SelectedNode = localDataStoreTreeNode;
+            _lastClickedNode = localDataStoreTreeNode;
 
-				SetIcon(dataChild, treeChild);
+            // build the default server group
+            TreeNode firstServerGroup = new TreeNode(dicomServerTree.RootNode.ServerGroupNode.Name);
+            firstServerGroup.Tag = dicomServerTree.RootNode.ServerGroupNode;
+            firstServerGroup.ToolTipText = dicomServerTree.RootNode.ServerGroupNode.ToString();
+            SetIcon(dicomServerTree.RootNode.ServerGroupNode, firstServerGroup);
+            treeView.Nodes.Add(firstServerGroup);
 
-                treeView.Nodes.Add(treeChild);
-                if (dataChild.ServerName.Equals(AENavigatorComponent.MyDatastoreTitle))
-                {
-                    treeView.SelectedNode = treeChild;
-                    _lastClickedNode = treeChild;
-                    //_component.SelectChanged(dataChild);
-                }
-                BuildNextTreeLevel(treeChild);
+            BuildNextTreeLevel(firstServerGroup);
+        }
+
+        private void BuildNextTreeLevel(TreeNode serverGroupUITreeNode)
+        {
+            ServerGroup serverGroupNode = serverGroupUITreeNode.Tag as ServerGroup;
+            if (null == serverGroupNode)
+                return;
+
+            foreach (ServerGroup childServerGroup in serverGroupNode.ChildGroups)
+            {
+                TreeNode childServerGroupUINode = AddTreeNode(serverGroupUITreeNode, childServerGroup);
+                BuildNextTreeLevel(childServerGroupUINode);
+            }
+
+            foreach (Server server in serverGroupNode.ChildServers)
+            {
+                AddTreeNode(serverGroupUITreeNode, server);
             }
         }
 
@@ -113,55 +125,59 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// Called to build subsequent levels of the tree as they are expanded
         /// </summary>
         /// <param name="treeNode"></param>
-        private void BuildNextTreeLevel(TreeNode treeNode)
-        {
-            IDicomServer dataNode = (IDicomServer)treeNode.Tag;
-            if (dataNode.IsServer)
-                return;
-            foreach (IDicomServer dataChild in ((DicomServerGroup)dataNode).ChildServers)
-            {
-                TreeNode treeChild = AddTreeNode(treeNode, dataChild);
-                BuildNextTreeLevel(treeChild);
-            }
-        }
+        //private void BuildNextTreeLevel(TreeNode treeNode)
+        //{
+        //    IServerTreeNode dataNode = treeNode.Tag as IServerTreeNode;
 
-        private TreeNode AddTreeNode(TreeNode treeNode, IDicomServer dataChild)
+        //    if (dataNode.IsServer)
+        //    {
+        //        return;
+        //    }
+
+        //    foreach (IServerTreeNode dataChild in (dataNode as ServerGroup).ChildServers)
+        //    {
+        //        TreeNode treeChild = AddTreeNode(treeNode, dataChild);
+        //        BuildNextTreeLevel(treeChild);
+        //    }
+        //}
+
+        private TreeNode AddTreeNode(TreeNode treeNode, IServerTreeNode dataChild)
         {
-            TreeNode treeChild = new TreeNode(dataChild.ServerName);
+            TreeNode treeChild = new TreeNode(dataChild.Name);
             SetIcon(dataChild, treeChild);
             treeChild.Tag = dataChild;
-            treeChild.ToolTipText = dataChild.ServerDetails;
+            treeChild.ToolTipText = dataChild.ToString();
             treeNode.Nodes.Add(treeChild);
             return treeChild;
         }
 
         private void RefreshToolTipText(TreeNode treeNode)
         {
-            DicomServerGroup dataNode = (DicomServerGroup)treeNode.Tag;
+            ServerGroup dataNode = treeNode.Tag as ServerGroup;
             foreach (TreeNode tnChild in treeNode.Nodes)
             {
-                foreach (IDicomServer dataChild in (dataNode.ChildServers))
+                foreach (IServerTreeNode dataChild in (dataNode as ServerGroup).ChildServers)
                 {
-                    if (tnChild.Text.Equals(dataChild.ServerName))
+                    if (tnChild.Text.Equals(dataChild.Name))
                     {
-                        if (!tnChild.ToolTipText.Equals(dataChild.ServerDetails))
-                            tnChild.ToolTipText = dataChild.ServerDetails;
+                        if (!tnChild.ToolTipText.Equals(dataChild.ToString()))
+                            tnChild.ToolTipText = dataChild.ToString();
                         break;
                     }
                 }
-                if (!((IDicomServer)tnChild.Tag).IsServer)
+                if (!((tnChild.Tag as IServerTreeNode).IsServer))
                     RefreshToolTipText(tnChild);
             }
         }
 
-        private void SetIcon(IDicomServer browserNode, TreeNode treeNode)
+        private void SetIcon(IServerTreeNode browserNode, TreeNode treeNode)
 		{
             if (browserNode == null)
 				return;
 
-            if (browserNode.IsServer)
+            if (browserNode.IsServer || browserNode.IsLocalDataStore)
 			{
-                if (browserNode.ServerName == AENavigatorComponent.MyDatastoreTitle)
+                if (browserNode.Name == AENavigatorComponent.MyDatastoreTitle)
 				{
 					treeNode.ImageIndex = 0;
 					treeNode.SelectedImageIndex = 0;
@@ -184,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
         private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
-        private TreeNode OldNode = null;
+        private TreeNode _lastMouseOverNode = null;
 
         public ActionModelNode ToolbarModel
         {
@@ -225,8 +241,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         public event EventHandler ServerTreeUpdated
         {
-            add { _component.DicomServerTree.ServerTreeUpdated += value; }
-            remove { _component.DicomServerTree.ServerTreeUpdated -= value; }
+            add { _component.ServerTree.ServerTreeUpdated += value; }
+            remove { _component.ServerTree.ServerTreeUpdated -= value; }
         }
 
         private void treeView_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
@@ -241,41 +257,71 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         private void treeView_DragOver(object sender, DragEventArgs e)
         {
-            TreeNode aNode = _aeTreeView.GetNodeAt(_aeTreeView.PointToClient(new Point(e.X, e.Y)));
-            if (aNode != null && !((IDicomServer)aNode.Tag).IsServer && aNode != _lastClickedNode)
+            // precondition
+            TreeNode underPointerNode = _aeTreeView.GetNodeAt(_aeTreeView.PointToClient(new Point(e.X, e.Y)));
+            if (null == underPointerNode)
+                return;
+
+            IServerTreeNode underPointerDataNode = underPointerNode.Tag as IServerTreeNode;
+            IServerTreeNode lastClickedDataNode = _lastClickedNode.Tag as IServerTreeNode;
+
+            // _lastMouseOverNode was the node that I highlighted last 
+            // but its highlight must be turned off
+            if ((_lastMouseOverNode != null) && (_lastMouseOverNode != underPointerNode))
             {
-                aNode.BackColor = Color.DarkBlue;
-                aNode.ForeColor = Color.White;
-                if ((OldNode != null) && (OldNode != aNode))
-                {
-                    OldNode.BackColor = Color.White;
-                    OldNode.ForeColor = Color.Black;
-                }
-                if ((OldNode == null) || (OldNode != aNode))
-                    OldNode = aNode;
+                _lastMouseOverNode.BackColor = Color.White;
+                _lastMouseOverNode.ForeColor = Color.Black;
+            }
+
+            // highlight node only if the target node is a potential place
+            // for us to drop a node for moving
+            if (underPointerDataNode.CanAddAsChild(lastClickedDataNode))
+            {
+                underPointerNode.BackColor = Color.DarkBlue;
+                underPointerNode.ForeColor = Color.White;
+                
+                _lastMouseOverNode = underPointerNode;
             }
         }
 
         private void treeView_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+           if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
             {
                 Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
-                TreeNode DestinationNode = ((TreeView)sender).GetNodeAt(pt);
-                TreeNode newNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
-                if (OldNode != null)
+                TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
+                TreeNode draggingNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+                IServerTreeNode draggingDataNode = draggingNode.Tag as IServerTreeNode;
+                IServerTreeNode destinationDataNode = destinationNode.Tag as IServerTreeNode;
+
+                // turn off the white-on-blue highlight of a destination node
+                destinationNode.BackColor = Color.White;
+                destinationNode.ForeColor = Color.Black;
+                _lastMouseOverNode.BackColor = Color.White;
+                _lastMouseOverNode.ForeColor = Color.Black;
+ 
+                // detecting if a node is being moved to the same/current parent, then do nothing
+                // or if we're not dragging into a server group, do nothing
+                // or if you're dragging over a child group
+                //if (destinationDataNode.Path == draggingDataNode.Path ||
+                //    !destinationDataNode.IsServerGroup ||
+                //    draggingDataNode.Path.IndexOf(destinationDataNode.Path) == -1)  // don't allow dropping a node into one of its own children
+
+                if (!destinationDataNode.CanAddAsChild(draggingDataNode))
                 {
-                    OldNode.BackColor = Color.White;
-                    OldNode.ForeColor = Color.Black;
-                    OldNode = null;
-                }
-                if (!_component.NodeMoved((IDicomServer)DestinationNode.Tag, (IDicomServer)newNode.Tag))
                     return;
-                newNode.Remove();
-                _lastClickedNode = DestinationNode;
-                DestinationNode.Nodes.Clear();
+                }
+                
+                if (!_component.NodeMoved(destinationNode.Tag as IServerTreeNode, draggingNode.Tag as IServerTreeNode))
+                    return;
+
+                draggingNode.Remove();
+                _lastClickedNode = destinationNode;
+
+                // build up the destination
+                destinationNode.Nodes.Clear();
                 BuildNextTreeLevel(_lastClickedNode);
-                DestinationNode.Expand(); 
+                destinationNode.Expand(); 
                 _aeTreeView.SelectedNode = _lastClickedNode;
             }
         }

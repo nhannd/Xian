@@ -23,22 +23,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Constructor
         /// </summary>
-        public DicomServerEditComponent(DicomServerTree dicomServerTree)
+        public DicomServerEditComponent(NewServerTree dicomServerTree)
         {
-            _dicomServerTree = dicomServerTree;
-            if (_dicomServerTree.CurrentServer.IsServer)
+            _serverTree = dicomServerTree;
+            if (_serverTree.CurrentNode.IsServer)
             {
-                _serverName = _dicomServerTree.CurrentServer.ServerName;
-                _serverPath = _dicomServerTree.CurrentServer.ServerPath;
-                _serverLocation = ((DicomServer)_dicomServerTree.CurrentServer).ServerLocation;
-                _serverAE = ((DicomServer)_dicomServerTree.CurrentServer).DicomAE.AE;
-                _serverHost = ((DicomServer)_dicomServerTree.CurrentServer).DicomAE.Host;
-                _serverPort = ((DicomServer)_dicomServerTree.CurrentServer).DicomAE.Port.ToString();
+                _serverName = _serverTree.CurrentNode.Name;
+                _serverPath = _serverTree.CurrentNode.Path;
+                _serverParentPath = _serverTree.CurrentNode.ParentPath;
+                _serverLocation = (_serverTree.CurrentNode as Server).Location;
+                _serverAE = (_serverTree.CurrentNode as Server).AETitle;
+                _serverHost = (_serverTree.CurrentNode as Server).Host;
+                _serverPort = (_serverTree.CurrentNode as Server).Port.ToString();
             }
             else
             {
                 _serverName = "";
-                _serverPath = _dicomServerTree.CurrentServer.ServerPath + "/" + _dicomServerTree.CurrentServer.ServerName;
+                _serverPath = _serverTree.CurrentNode.Path;
+                _serverParentPath = _serverTree.CurrentNode.ParentPath;
                 _serverLocation = "";
                 _serverAE = "";
                 _serverHost = "";
@@ -50,22 +52,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             if (!IsServerPropertyValid() || !this.Modified)
                 return;
-            DicomServer ds = new DicomServer(_serverName, _serverPath, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
+
+            Server newServer = new Server(_serverName, _serverLocation, _serverParentPath, _serverHost, _serverAE, int.Parse(_serverPort));
+
             // edit current server
-            if (_dicomServerTree.CurrentServer.IsServer)
+            if (_serverTree.CurrentNode.IsServer)
             {
-                _dicomServerTree.ReplaceDicomServer(ds);
+                _serverTree.ReplaceDicomServerInCurrentGroup(newServer);
             }
             // add new server
-            else
+            else if (_serverTree.CurrentNode.IsServerGroup)
             {
-                ((DicomServerGroup)_dicomServerTree.CurrentServer).AddChild(ds);
+                (_serverTree.CurrentNode as ServerGroup).AddChild(newServer);
             }
-            _dicomServerTree.CurrentServer = ds;
-            _dicomServerTree.SaveDicomServers();
-            _dicomServerTree.FireServerTreeUpdatedEvent();
+
+            _serverTree.CurrentNode = newServer;
+            _serverTree.SaveDicomServers();
+            _serverTree.FireServerTreeUpdatedEvent();
+            
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
+
             return;
         }
 
@@ -92,11 +99,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             try
             {
                 port = int.Parse(_serverPort);
-                if (_dicomServerTree.CurrentServer.IsServer
-                        && _serverName.Equals(_dicomServerTree.CurrentServer.ServerName)
-                        && _serverAE.Equals(((DicomServer)_dicomServerTree.CurrentServer).DicomAE.AE)
-                        && _serverHost.Equals(((DicomServer)_dicomServerTree.CurrentServer).DicomAE.Host)
-                        && port == ((DicomServer)_dicomServerTree.CurrentServer).DicomAE.Port)
+                if (_serverTree.CurrentNode.IsServer
+                        && _serverName.Equals(_serverTree.CurrentNode.Name)
+                        && _serverAE.Equals((_serverTree.CurrentNode as Server).AETitle)
+                        && _serverHost.Equals((_serverTree.CurrentNode as Server).Host)
+                        && port == (_serverTree.CurrentNode as Server).Port)
                     return true;
             }
             catch
@@ -113,12 +120,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				throw new DicomServerException(SR.MessageServerPortMustBePositiveInteger);
             }
 
-            string msg = _dicomServerTree.DicomServerValidation(_serverName, _serverAE, _serverHost, int.Parse(_serverPort));
-            if (!msg.Equals(""))
+            string conflictingServerPath;
+            bool isConflicted = _serverTree.IsDuplicateServerInGroup(_serverTree.CurrentNode, _serverName, _serverAE, _serverHost, int.Parse(_serverPort), out conflictingServerPath);
+
+            if (isConflicted)
             {
                 this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.FormatServerNameConflict, _serverName, msg);
+				msgText.AppendFormat(SR.FormatServerNameConflict, _serverName, conflictingServerPath);
                 throw new DicomServerException(msgText.ToString());
             }
 
@@ -134,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get 
             {
-                return _dicomServerTree.CurrentServer.IsServer && _serverName.Equals(AENavigatorComponent.MyDatastoreTitle) ? true : false; 
+                return _serverTree.CurrentNode.IsServer && _serverName.Equals(AENavigatorComponent.MyDatastoreTitle) ? true : false; 
             }
         }
 
@@ -159,24 +168,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Fields
 
-        private DicomServerTree _dicomServerTree;
+        private NewServerTree _serverTree;
         private string _serverName = "";
         private string _serverPath = "";
         private string _serverLocation = "";
         private string _serverAE = "";
         private string _serverHost = "";
         private string _serverPort = "";
+        private string _serverParentPath = "";
 
-        public DicomServerTree DicomServerTree
+        public NewServerTree ServerTree
         {
-          get { return _dicomServerTree; }
-          set { _dicomServerTree = value; }
+          get { return _serverTree; }
+          set { _serverTree = value; }
         }
 
         public string ServerPath
         {
             get { return _serverPath; }
             set { _serverPath = value; }
+        }
+
+        public string ParentPath
+        {
+            get { return _serverParentPath; }
+            set { _serverParentPath = value; }
         }
 
         public string ServerName
