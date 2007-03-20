@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     orderBroker.LoadOrderingFacilityForOrder(rp.Order);
                     orderBroker.LoadOrderingPractitionerForOrder(rp.Order);
 
-                    checkInItemList.Add(new CheckInTableItem(rp.Type.Name, rp.Order.SchedulingRequestDateTime, rp.Order.OrderingFacility));
+                    checkInItemList.Add(new CheckInTableItem(rp.GetRef(), rp.Type.Name, rp.Order.SchedulingRequestDateTime, rp.Order.OrderingFacility));
                 }
             }
 

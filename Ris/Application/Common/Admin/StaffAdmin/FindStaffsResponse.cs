@@ -15,6 +15,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         }
 
         [DataMember]
-        List<StaffSummary> Staffs;
+        public List<StaffSummary> Staffs;
     }
 }

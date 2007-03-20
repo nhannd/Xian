@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class RegistrationWorklistTable : Table<WorklistItem>
+    public class RegistrationWorklistTable : Table<RegistrationWorklistItem>
     {
         public RegistrationWorklistTable()
         {
-            this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnSite,
-                delegate(WorklistItem item) { return Format.Custom(item.Mrn.AssigningAuthority); }, 0.5f));
-            this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnMRN,
-                delegate(WorklistItem item) { return Format.Custom(item.Mrn.Id); }, 1.0f));
-            this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnName,
-                delegate(WorklistItem item) { return Format.Custom(item.PatientName); }, 2.0f));
-            this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnHealthcardNumber,
-                delegate(WorklistItem item) { return Format.Custom(item.HealthcardNumber.Id); }, 1.0f));
-            this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnDateOfBirth,
-                delegate(WorklistItem item) { return Format.Date(item.DateOfBirth); }, 1.0f));
-            this.Columns.Add(new TableColumn<WorklistItem, string>(SR.ColumnSex,
-                delegate(WorklistItem item) { return Format.Custom(item.Sex); }, 0.5f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSite,
+                delegate(RegistrationWorklistItem item) { return Format.Custom(item.MrnAssigningAuthority); }, 0.5f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
+                delegate(RegistrationWorklistItem item) { return Format.Custom(item.MrnID); }, 1.0f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
+                delegate(RegistrationWorklistItem item) { return String.Format("{0}, {1}", item.Name.FamilyName, item.Name.GivenName); }, 2.0f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnHealthcardNumber,
+                delegate(RegistrationWorklistItem item) { return Format.Custom(item.Healthcard.Id); }, 1.0f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDateOfBirth,
+                delegate(RegistrationWorklistItem item) { return Format.Date(item.DateOfBirth); }, 1.0f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSex,
+                delegate(RegistrationWorklistItem item) { return Format.Custom(item.Sex); }, 0.5f));
         }
    }
 }

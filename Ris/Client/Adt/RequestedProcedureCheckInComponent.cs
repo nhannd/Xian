@@ -8,6 +8,9 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -25,14 +28,13 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(RequestedProcedureCheckInComponentViewExtensionPoint))]
     public class RequestedProcedureCheckInComponent : ApplicationComponent
     {
-        private WorklistItem _worklistItem;
-        private IWorklistService _worklistService;
+        private RegistrationWorklistItem _worklistItem;
         private RequestedProcedureCheckInTable _requestedProcedureCheckInTable;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public RequestedProcedureCheckInComponent(WorklistItem item)
+        public RequestedProcedureCheckInComponent(RegistrationWorklistItem item)
         {
             _worklistItem = item;
         }
@@ -41,22 +43,25 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _requestedProcedureCheckInTable = new RequestedProcedureCheckInTable();
 
-            IDictionary<EntityRef<RequestedProcedure>, RequestedProcedureCheckInTableEntry> dictionary = new Dictionary<EntityRef<RequestedProcedure>, RequestedProcedureCheckInTableEntry>();
-
-            _worklistService = ApplicationContext.GetService<IWorklistService>();
-            IList<WorklistQueryResult> listQueryResult = (IList<WorklistQueryResult>)_worklistService.GetQueryResultForWorklistItem("ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled", _worklistItem);
-
-            foreach (WorklistQueryResult queryResult in listQueryResult)
+            try
             {
-                if (dictionary.ContainsKey(queryResult.RequestedProcedure) == false)
-                {
-                    RequestedProcedure rp = _worklistService.LoadRequestedProcedure(queryResult.RequestedProcedure, true);
-                    RequestedProcedureCheckInTableEntry entry = new RequestedProcedureCheckInTableEntry(rp);
-                    entry.CheckedChanged += new EventHandler(RequestedProcedureCheckedStateChangedEventHandler);
-                    _requestedProcedureCheckInTable.Items.Add(entry);
-                    
-                    dictionary[queryResult.RequestedProcedure] = entry;
-                }
+                Platform.GetService<IRegistrationWorkflowService>(
+                    delegate(IRegistrationWorkflowService service)
+                    {
+                        GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.WorklistClassName, _worklistItem.PatientProfileRef));
+                        _requestedProcedureCheckInTable.Items.AddRange(
+                            CollectionUtils.Map<CheckInTableItem, RequestedProcedureCheckInTableEntry>(response.CheckInTableItems,
+                                    delegate(CheckInTableItem item)
+                                    {
+                                        RequestedProcedureCheckInTableEntry entry = new RequestedProcedureCheckInTableEntry(item);
+                                        entry.CheckedChanged += new EventHandler(RequestedProcedureCheckedStateChangedEventHandler);
+                                        return entry;
+                                    }));
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             // Special case for 0 or 1 Requested Procedure.  No need to show the dialog box
@@ -114,25 +119,39 @@ namespace ClearCanvas.Ris.Client.Adt
         private void SaveChanges()
         {
             // TODO: Need to get the real current staff that is using the system
-            IStaffAdminService staffAdminService = ApplicationContext.GetService<IStaffAdminService>();
-            Staff staff = new Staff(new PersonName("Clerk", "Registration"));
-            IList<Staff> listStaff = staffAdminService.FindStaffs(staff.Name.FamilyName, staff.Name.GivenName);
-            if (listStaff.Count == 0)
-                staffAdminService.AddStaff(staff);
-            else
-                staff = CollectionUtils.FirstElement(listStaff) as Staff;
+            EntityRef staffRef;
+            Platform.GetService<IStaffAdminService>(
+                delegate(IStaffAdminService service)
+                {
+                    FindStaffsResponse response = service.FindStaffs(new FindStaffsRequest("Clerk", "Registration"));
+                    if (response.Staffs.Count == 0)
+                    {
+                        StaffDetail newStaff = new StaffDetail();
+                        newStaff.PersonNameDetail.FamilyName = "Clerk";
+                        newStaff.PersonNameDetail.GivenName = "Registration";
+                        AddStaffResponse response = service.AddStaff(new AddStaffRequest(newStaff));
+                        staffRef = response.Staff.StaffRef;
+                    }
+                    else
+                    {
+                        StaffSummary staff = CollectionUtils.FirstElement(response.Staffs) as StaffSummary;
+                        staffRef = staff.StaffRef;
+                    }
+                });
 
+            // Get the list of RequestedProcedure EntityRef from the table
+            List<EntityRef> selectedRequestedProcedures = new List<EntityRef>();
             foreach (RequestedProcedureCheckInTableEntry entry in _requestedProcedureCheckInTable.Items)
             {
                 if (entry.Checked)
-                {
-                    CheckInProcedureStep cps = new CheckInProcedureStep(entry.RequestedProcedure);
-                    cps.Start(staff);
-                    cps.Complete(staff);
-                    entry.RequestedProcedure.CheckInProcedureSteps.Add(cps);
-                    _worklistService.UpdateRequestedProcedure(entry.RequestedProcedure);
-                }
+                    selectedRequestedProcedures.Add(entry.CheckInTableItem.RequestedProcedureRef);
             }      
+
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    service.CheckInProcedure(new CheckInProcedureRequest(selectedRequestedProcedures, staffRef));
+                });        
         }
 
         public void Cancel()

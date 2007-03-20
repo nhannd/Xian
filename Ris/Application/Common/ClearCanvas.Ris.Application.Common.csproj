@@ -179,6 +179,7 @@
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
+    <Compile Include="RegistrationWorkflow\CheckInTableItem.cs" />
     <Compile Include="RegistrationWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableResponse.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="RegistrationWorkflow\PatientProfileDiff.cs" />
     <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataResponse.cs" />
+    <Compile Include="RegistrationWorkflow\RICSummary.cs" />
     <Compile Include="ReportingWorkflow\CancelPendingTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />

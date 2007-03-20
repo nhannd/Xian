@@ -57,8 +57,6 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         private ModalitySummary _selectedModality;
         private ModalityTable _modalityTable;
-
-        private IModalityAdminService _modalityAdminService;
         private CrudActionModel _modalityActionHandler;
 
         /// <summary>

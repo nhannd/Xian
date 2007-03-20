@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetDataForCheckInTableRequest : DataContractBase
     {
+        public GetDataForCheckInTableRequest(string worklistClassName, EntityRef patientProfileRef)
+        {
+            this.WorklistClassName = worklistClassName;
+            this.PatientProfileRef = patientProfileRef;
+        }
+
         [DataMember(IsRequired = true)]
         public string WorklistClassName;
 

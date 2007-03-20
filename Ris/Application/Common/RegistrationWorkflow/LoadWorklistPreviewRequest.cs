@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class LoadWorklistPreviewRequest : DataContractBase
     {
+        public LoadWorklistPreviewRequest(RegistrationWorklistItem item)
+        {
+            this.WorklistItem = item;
+        }
+
         [DataMember]
         public RegistrationWorklistItem WorklistItem;
     }

@@ -4,29 +4,24 @@ using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class RICTable : Table<WorklistQueryResult>
+    public class RICTable : Table<RICSummary>
     {
         public RICTable()
         {
-            this.Columns.Add(new TableColumn<WorklistQueryResult, string>("Requested Procedure",
-                delegate(WorklistQueryResult item) { return Format.Custom(item.RequestedProcedureName); }));
-            this.Columns.Add(new TableColumn<WorklistQueryResult, string>("Ordering Physician",
-                delegate(WorklistQueryResult item) { return Format.Custom(item.OrderingPractitioner); }));
-            this.Columns.Add(new TableColumn<WorklistQueryResult, string>("Insurance",
-                delegate(WorklistQueryResult item) { return "N/A"; }));
-            this.Columns.Add(new TableColumn<WorklistQueryResult, string>("Scheduled For",
-                delegate(WorklistQueryResult item) 
-                {
-                    if (item.ProcedureStepScheduledStartTime == null)
-                        return "Not Scheduled";
-                    else
-                        return Format.Custom(item.ProcedureStepScheduledStartTime); 
-                }));
-            this.Columns.Add(new TableColumn<WorklistQueryResult, string>("Facility",
-                delegate(WorklistQueryResult item) { return "N/A"; }));
+            this.Columns.Add(new TableColumn<RICSummary, string>("Requested Procedure",
+                delegate(RICSummary item) { return Format.Custom(item.RequestedProcedureName); }));
+            this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
+                delegate(RICSummary item) { return Format.Custom(item.OrderingPractitioner); }));
+            this.Columns.Add(new TableColumn<RICSummary, string>("Insurance",
+                delegate(RICSummary item) { return item.Insurance; }));
+            this.Columns.Add(new TableColumn<RICSummary, string>("Scheduled For",
+                delegate(RICSummary item) { return Format.Custom(item.ModalityProcedureStepScheduledTime); }));
+            this.Columns.Add(new TableColumn<RICSummary, string>("Facility",
+                delegate(RICSummary item) { return item.PerformingFacility; }));
         }
    }
 }
