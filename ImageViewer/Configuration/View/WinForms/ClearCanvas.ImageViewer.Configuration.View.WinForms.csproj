@@ -43,6 +43,13 @@
     </Compile>
     <Compile Include="DicomServerConfigurationComponentView.cs">
     </Compile>
+    <Compile Include="DiskspaceManagerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiskspaceManagerConfigurationComponentControl.designer.cs">
+      <DependentUpon>DiskspaceManagerConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiskspaceManagerConfigurationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -80,6 +87,10 @@
     <EmbeddedResource Include="DicomServerConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiskspaceManagerConfigurationComponentControl.resx">
+      <DependentUpon>DiskspaceManagerConfigurationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="DicomServerConfigurationComponent.cs" />
     <Compile Include="DicomServerConfigurationPageProvider.cs" />
+    <Compile Include="DiskspaceManagerConfigurationComponent.cs" />
+    <Compile Include="DiskspaceManagerConfigurationPageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,19 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DicomServerConfiguration" xml:space="preserve">
-    <value>Dicom Server Setting</value>
-  </data>
-  <data name="DiskspaceManagerConfiguration" xml:space="preserve">
-    <value>Diskspace Manager Setting</value>
-  </data>
-  <data name="ExceptionFailedToRetrieveServerSettings" xml:space="preserve">
-    <value>Failed to retrieving Server Settings.  Make sure the DICOM Server is running.</value>
-  </data>
-  <data name="ExceptionFailedToUpdateServerSettings" xml:space="preserve">
-    <value>Failed to update server settings.  Make sure the DICOM Server is running.</value>
-  </data>
-  <data name="MessageRetrievingServerSettings" xml:space="preserve">
-    <value>Retrieving DICOM Server Settings...</value>
-  </data>
 </root>

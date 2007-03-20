@@ -70,6 +70,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Diskspace Manager Setting.
+        /// </summary>
+        internal static string DiskspaceManagerConfiguration {
+            get {
+                return ResourceManager.GetString("DiskspaceManagerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to retrieving Server Settings.  Make sure the DICOM Server is running..
         /// </summary>
         internal static string ExceptionFailedToRetrieveServerSettings {
