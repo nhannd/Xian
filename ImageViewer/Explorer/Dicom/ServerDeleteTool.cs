@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void DeleteServerServerGroup()
         {
-            NewServerTree serverTree = this.Context.ServerTree;
+            ServerTree serverTree = this.Context.ServerTree;
             string msg = "";
             if (serverTree.CurrentNode.IsServer)
 				msg = SR.MessageConfirmDeleteServer;

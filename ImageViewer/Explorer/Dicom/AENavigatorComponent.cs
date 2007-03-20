@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
     public interface IAENavigatorToolContext : IToolContext
     {
-        NewServerTree ServerTree { get; set;}
+        ServerTree ServerTree { get; set;}
         event EventHandler SelectedServerChanged;
         IDesktopWindow DesktopWindow { get; }
         int UpdateType { get; set; }
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             #region IAENavigatorToolContext Members
 
-            public NewServerTree ServerTree
+            public ServerTree ServerTree
             {
                 get { return _component._serverTree; }
                 set { _component._serverTree = value; }
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Fields
 
-        private NewServerTree _serverTree;
+        private ServerTree _serverTree;
         private event EventHandler _selectedServerChanged;
         private AEServerGroup _selectedServers;
         private int _updateType;
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private static String _myServersRoot = "MyServersRoot";
         private static String _myServersXmlFile = "DicomAEServers.xml";
 
-        public NewServerTree ServerTree
+        public ServerTree ServerTree
         {
             get { return _serverTree; }
             set { _serverTree = value; }
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public AENavigatorComponent()
         {
             _selectedServers = new AEServerGroup();
-            _serverTree = new NewServerTree();
+            _serverTree = new ServerTree();
 
             if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
             {

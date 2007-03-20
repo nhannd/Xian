@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Constructor
         /// </summary>
-        public DicomServerGroupEditComponent(NewServerTree dicomServerTree, ServerUpdateType updatedType)
+        public DicomServerGroupEditComponent(ServerTree dicomServerTree, ServerUpdateType updatedType)
         {
             _isNewServerGroup = updatedType.Equals(ServerUpdateType.Add)? true : false;
             _serverTree = dicomServerTree;
@@ -124,11 +124,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Fields
 
-        private NewServerTree _serverTree;
+        private ServerTree _serverTree;
         private string _serverGroupName = "";
         private bool _isNewServerGroup;
 
-        public NewServerTree ServerTree
+        public ServerTree ServerTree
         {
             get { return _serverTree; }
             set { _serverTree = value; }

@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         /// <param name="treeView"></param>
         /// <param name="dataRoot"></param>
-        private void BuildServerTreeView(TreeView treeView, NewServerTree dicomServerTree)
+        private void BuildServerTreeView(TreeView treeView, ServerTree dicomServerTree)
         {
             treeView.Nodes.Clear();
             treeView.ShowNodeToolTips = true;

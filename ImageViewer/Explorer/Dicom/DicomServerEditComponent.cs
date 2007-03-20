@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Constructor
         /// </summary>
-        public DicomServerEditComponent(NewServerTree dicomServerTree)
+        public DicomServerEditComponent(ServerTree dicomServerTree)
         {
             _serverTree = dicomServerTree;
             if (_serverTree.CurrentNode.IsServer)
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #region Fields
 
-        private NewServerTree _serverTree;
+        private ServerTree _serverTree;
         private string _serverName = "";
         private string _serverPath = "";
         private string _serverLocation = "";
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private string _serverPort = "";
         private string _serverParentPath = "";
 
-        public NewServerTree ServerTree
+        public ServerTree ServerTree
         {
           get { return _serverTree; }
           set { _serverTree = value; }

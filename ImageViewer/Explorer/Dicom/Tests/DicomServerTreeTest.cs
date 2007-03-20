@@ -1,4 +1,4 @@
-#if	UNIT_TESTS
+#if	NOCOMPILE
 
 using System;
 using System.Collections;

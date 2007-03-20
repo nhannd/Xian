@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void VerifyServer()
         {
-            NewServerTree serverTree = this.Context.ServerTree;
+            ServerTree serverTree = this.Context.ServerTree;
             if (!serverTree.CurrentNode.IsServer && serverTree.RootNode.ServerGroupNode.ChildServers.Count == 0)
             {
 				throw new DicomServerException(SR.ExceptionNoServersSelected);

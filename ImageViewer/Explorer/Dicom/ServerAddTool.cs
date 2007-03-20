@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void AddNewServer()
         {
-            NewServerTree serverTree = this.Context.ServerTree;
+            ServerTree serverTree = this.Context.ServerTree;
             this.Context.UpdateType = (int)ServerUpdateType.Add;
             DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddNewServer);
