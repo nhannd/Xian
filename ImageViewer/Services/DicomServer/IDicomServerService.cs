@@ -4,9 +4,9 @@ using System.Text;
 using System.ServiceModel;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageViewer.Shreds.DicomServer
+namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
-	[ServiceContract]
+	[ServiceContract(ConfigurationName = "IDicomServerService")]
 	public interface IDicomServerService
 	{
 		[OperationContract]

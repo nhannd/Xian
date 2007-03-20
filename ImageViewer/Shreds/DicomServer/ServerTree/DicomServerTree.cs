@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Shreds.DicomServer;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.ServerTree
 {
@@ -336,7 +337,7 @@ namespace ClearCanvas.ImageViewer.Shreds.ServerTree
                 Stream fStream = File.OpenRead(AENavigatorComponent.MyServersXmlFile);
                 XmlSerializer xmlFormat = new XmlSerializer(typeof(DicomAEGroup), new Type[] { typeof(List<DicomAEGroup>), typeof(DicomAEGroup), typeof(List<DicomAEServer>), typeof(DicomAEServer) });
 
-                DicomAEGroup dsgs;
+                DicomAEGroup dsgs = null;
 
                 try
                 {
@@ -345,7 +346,7 @@ namespace ClearCanvas.ImageViewer.Shreds.ServerTree
                 }
                 catch (Exception exception)
                 {
-                    dsgs = null;
+                    Platform.Log(exception);
                 }
                 
                 if (dsgs != null)

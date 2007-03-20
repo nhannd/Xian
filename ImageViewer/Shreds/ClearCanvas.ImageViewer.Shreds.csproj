@@ -40,14 +40,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalDataStore\ILocalDataStoreService.cs" />
-    <Compile Include="LocalDataStore\ILocalDataStoreActivityMonitorService.cs" />
-    <Compile Include="LocalDataStore\DataContracts.cs" />
+    <Compile Include="DicomServer\DicomServerExtension.cs" />
+    <Compile Include="DicomServer\DicomServerManager.cs" />
+    <Compile Include="DicomServer\DicomServerServiceType.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.cs" />
+    <Compile Include="DicomServer\DicomSessionObjects.cs" />
+    <Compile Include="DicomServer\Parcel.cs" />
+    <Compile Include="DicomServer\SendParcel.cs" />
+    <Compile Include="DicomServer\ServerTree\DicomServer.cs" />
+    <Compile Include="DicomServer\ServerTree\DicomServerBase.cs" />
+    <Compile Include="DicomServer\ServerTree\DicomServerGroup.cs" />
+    <Compile Include="DicomServer\ServerTree\DicomServerSetting.cs" />
+    <Compile Include="DicomServer\ServerTree\DicomServerTree.cs" />
+    <Compile Include="LocalDataStore\DicomFileImporter.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityPublisher.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreService.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceExtension.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
+    <Compile Include="LocalDataStore\SendReceiveImportQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -82,6 +95,10 @@
     <ProjectReference Include="..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
       <Name>ClearCanvas.Server.ShredHost</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
+      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
+      <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

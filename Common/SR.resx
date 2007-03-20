@@ -252,4 +252,10 @@
   <data name="ExceptionNoServiceProviderCanProvide" xml:space="preserve">
     <value>No service provider was found that can provide the service {0}</value>
   </data>
+  <data name="ExceptionThreadPoolAlreadyStarted" xml:space="preserve">
+    <value>The thread pool has already been started.</value>
+  </data>
+  <data name="ExceptionThreadPoolNotStarted" xml:space="preserve">
+    <value>The thread pool has not been started.</value>
+  </data>
 </root>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
+namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	[Flags]
 	public enum CancellationFlags
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	public class StoreScpReceivedFilesInformation
 	{
 		private string _aeTitle;
-		private IEnumerable<string> _filePaths;
+		private string _file;
 
 		public StoreScpReceivedFilesInformation()
 		{
@@ -66,10 +66,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public IEnumerable<string> FilePaths
+		public string File
 		{
-			get { return _filePaths; }
-			set { _filePaths = value; }
+			get { return _file; }
+			set { _file = value; }
 		}
 	}
 
@@ -105,6 +105,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private FileOperationProgressItemState _state;
 		private CancellationFlags _allowedCancellationOperations;
 		private string _statusMessage;
+		private DateTime _startTime;
+		private DateTime _lastActive;
 
 		public FileOperationProgressItem()
 		{ 
@@ -136,6 +138,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			get { return _statusMessage; }
 			set { _statusMessage = value; }
+		}
+
+		public DateTime StartTime
+		{
+			get { return _startTime; }
+			set { _startTime = value; }
+		}
+
+		public DateTime LastActive
+		{
+			get { return _lastActive; }
+			set { _lastActive = value; }
 		}
 	}
 
@@ -201,8 +215,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	public class ReceiveProgressItem : ImportProgressItem
 	{
 		private string _fromAETitle;
-		private int _filesReceived;
+		private string _studyInstanceUid;
 
+		private string _patientId;
+		private string _studyDescription;
+		private string _studyId;
+		
 		public ReceiveProgressItem()
 		{ 
 		}
@@ -215,10 +233,31 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public int FilesReceived
+		public string StudyInstanceUid
 		{
-			get { return _filesReceived; }
-			set { _filesReceived = value; }
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string PatientId
+		{
+			get { return _patientId; }
+			set { _patientId = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StudyDescription
+		{
+			get { return _studyDescription; }
+			set { _studyDescription = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StudyId
+		{
+			get { return _studyId; }
+			set { _studyId = value; }
 		}
 	}
 
@@ -308,7 +347,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	public enum BadFileBehaviour
 	{ 
 		Ignore = 0,
-		Move
+		Move,
+		Delete
 	}
 
 	[DataContract]

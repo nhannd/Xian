@@ -11,6 +11,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Server.ShredHost;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.HttpPort.ToString() + " tcp port " + this.TcpPort.ToString());
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.HttpPort.ToString());
 
 			DicomServerManager.Instance.StartServer();
 
@@ -38,10 +39,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public override void Stop()
         {
-			DicomServerManager.Instance.StopServer();
-			
 			StopHost(_dicomServerEndpointName);
 
+			DicomServerManager.Instance.StopServer();
+			
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
         }
 

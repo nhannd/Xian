@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
 
-namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
+namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	public interface ILocalDataStoreActivityMonitorServiceCallback
 	{
@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		void ServiceStopped();
 	}
 
-	[ServiceContract(CallbackContract = typeof(ILocalDataStoreActivityMonitorServiceCallback))]
-	public interface ILocalDataStoreActivityMonitorService : ISubscriptionService
+	[ServiceContract(CallbackContract = typeof(ILocalDataStoreActivityMonitorServiceCallback), ConfigurationName="ILocalDataStoreActivityMonitorService")]
+	public interface ILocalDataStoreActivityMonitorService
 	{
 		[OperationContract(IsOneWay = true)]
 		void Cancel(CancelProgressItemInformation information);
@@ -31,5 +31,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		
 		[OperationContract(IsOneWay = true)]
 		void Refresh();
+
+		[OperationContract(IsOneWay = true)]
+		void Subscribe(string eventName);
+
+		[OperationContract(IsOneWay = true)]
+		void Unsubscribe(string eventName);
 	}
 }

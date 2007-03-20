@@ -4,6 +4,7 @@ using System.Text;
 using System.ServiceModel;
 
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {

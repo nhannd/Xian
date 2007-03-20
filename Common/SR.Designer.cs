@@ -367,6 +367,24 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The thread pool has already been started..
+        /// </summary>
+        public static string ExceptionThreadPoolAlreadyStarted {
+            get {
+                return ResourceManager.GetString("ExceptionThreadPoolAlreadyStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The thread pool has not been started..
+        /// </summary>
+        public static string ExceptionThreadPoolNotStarted {
+            get {
+                return ResourceManager.GetString("ExceptionThreadPoolNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception thrown.
         /// </summary>
         public static string ExceptionThrown {

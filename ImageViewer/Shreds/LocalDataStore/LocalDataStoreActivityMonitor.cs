@@ -2,15 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ServiceModelEx;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal sealed class LocalDataStoreActivityMonitor : SubscriptionManager<ILocalDataStoreActivityMonitorService>, ILocalDataStoreActivityMonitorService
+	internal sealed class LocalDataStoreActivityMonitor : ILocalDataStoreActivityMonitorService
 	{
+		private class InternalSubscriptionManager : SubscriptionManager<ILocalDataStoreActivityMonitorServiceCallback>
+		{
+			public InternalSubscriptionManager()
+			{ 
+			}
+		}
+
 		private static LocalDataStoreActivityMonitor _instance;
 
+		private InternalSubscriptionManager _subscriptionManager;
+
 		private LocalDataStoreActivityMonitor()
-		{ 
+		{
+			_subscriptionManager = new InternalSubscriptionManager();
 		}
 
 		public static LocalDataStoreActivityMonitor Instance
@@ -47,12 +58,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void Subscribe(string eventOperation)
 		{
-			base.Subscribe(eventOperation);
+			_subscriptionManager.Subscribe(eventOperation);
 		}
 
 		public void Unsubscribe(string eventOperation)
 		{
-			base.Unsubscribe(eventOperation);
+			_subscriptionManager.Unsubscribe(eventOperation);
 		}
 
 		#endregion

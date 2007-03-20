@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -26,6 +27,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
+			LocalDataStoreService.Instance.Start();
+
 			StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, "Local Data Store service");
 			StartNetPipeHost<LocalDataStoreActivityMonitorServiceType, ILocalDataStoreActivityMonitorService>(_localDataStoreActivityMonitorEndpointName, "Local Data Store Activity Monitor service");
 		}
@@ -34,6 +37,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			StopHost(_localDataStoreEndpointName);
 			StopHost(_localDataStoreActivityMonitorEndpointName);
+
+			LocalDataStoreService.Instance.Stop();
 
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
 		}

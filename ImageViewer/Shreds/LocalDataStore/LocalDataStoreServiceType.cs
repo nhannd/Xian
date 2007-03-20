@@ -4,6 +4,7 @@ using System.Text;
 using System.ServiceModel;
 
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -25,24 +26,49 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				LocalDataStoreService.Instance.FilesReceived(filesReceivedInformation);
 			}
 			catch (Exception e)
-			{ 
-			
+			{
+				string message = String.Format("An error has occurred while attempting to process a received file ({0})", filesReceivedInformation.File);
+				throw new LocalDataStoreFaultException(message, e);
 			}
 		}
 
 		public void FilesSent(StoreScuSentFilesInformation filesSentInformation)
 		{
-			LocalDataStoreService.Instance.FilesSent(filesSentInformation);
+			try
+			{
+				LocalDataStoreService.Instance.FilesSent(filesSentInformation);
+			}
+			catch (Exception e)
+			{
+				string message = "An error has occurred while attempting to process the sent file information.";
+				throw new LocalDataStoreFaultException(message, e);
+			}
 		}
 
 		public void Import(FileImportRequest request)
 		{
-			LocalDataStoreService.Instance.Import(request);
+			try
+			{
+				LocalDataStoreService.Instance.Import(request);
+			}
+			catch (Exception e)
+			{
+				string message = "An error has occurred while attempting to process the file import request.";
+				throw new LocalDataStoreFaultException(message, e);
+			}
 		}
 
 		public void Reindex()
 		{
-			LocalDataStoreService.Instance.Reindex();
+			try
+			{
+				LocalDataStoreService.Instance.Reindex();
+			}
+			catch (Exception e)
+			{
+				string message = "An error has occurred while attempting to process the file import request.";
+				throw new LocalDataStoreFaultException(message, e);
+			}
 		}
 
 		#endregion

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
 
-namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
+namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	// For reasons of simplification, the local datastore services do not adhere strictly to 
 	// the publish-subscribe pattern where there are separate services for publish-only and
 	// subscription/callback functionality.
 
-	[ServiceContract]
+	[ServiceContract(ConfigurationName = "ILocalDataStoreService")]
 	public interface ILocalDataStoreService
 	{
 		// Dicom Server event publishing

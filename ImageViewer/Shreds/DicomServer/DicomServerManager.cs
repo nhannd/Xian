@@ -14,6 +14,8 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.ImageViewer.Shreds.ServerTree;
 using ClearCanvas.Server.ShredHost;
+using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -225,10 +227,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			try
 			{
 				client.Open();
-				ClearCanvas.ImageViewer.Shreds.LocalDataStore.StoreScpReceivedFilesInformation storedInformation =
-					new ClearCanvas.ImageViewer.Shreds.LocalDataStore.StoreScpReceivedFilesInformation();
+				
+				StoreScpReceivedFilesInformation storedInformation = new StoreScpReceivedFilesInformation();
 				storedInformation.AETitle = "AETitle";
-				storedInformation.FilePaths = new string[] { info.FileName };
+				storedInformation.File = info.FileName;
+
 				client.FilesReceived(storedInformation);
 				client.Close();
 			}

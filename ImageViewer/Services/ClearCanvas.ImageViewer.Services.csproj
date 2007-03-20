@@ -35,9 +35,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DicomServerServiceClient.cs" />
-    <Compile Include="LocalDataStoreActivityMonitorServiceClient.cs" />
-    <Compile Include="LocalDataStoreServiceClient.cs" />
+    <Compile Include="DicomServer\DataContracts.cs" />
+    <Compile Include="DicomServer\DicomServerServiceClient.cs" />
+    <Compile Include="DicomServer\IDicomServerService.cs" />
+    <Compile Include="LocalDataStore\DataContracts.cs" />
+    <Compile Include="LocalDataStore\ILocalDataStoreActivityMonitorService.cs" />
+    <Compile Include="LocalDataStore\ILocalDataStoreService.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceClient.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

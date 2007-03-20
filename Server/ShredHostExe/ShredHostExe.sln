@@ -8,7 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShredHostExe", "ShredHostEx
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06} = {E991CF00-A0E1-490C-A0D1-2BD77FAECF06}
-		{00E45170-102F-4D11-8BBE-C43F627CDB55} = {00E45170-102F-4D11-8BBE-C43F627CDB55}
 		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2} = {84E99D28-8C46-49C7-BBD9-41037EFCCBE2}
 		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
 		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE} = {9607D0DF-42D7-4FCA-82FF-962D5BC872DE}
@@ -80,12 +79,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceModelEx", "..\Servic
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Shreds.DicomServer", "..\..\ImageViewer\Shreds\DicomServer\ClearCanvas.ImageViewer.Shreds.DicomServer.csproj", "{00E45170-102F-4D11-8BBE-C43F627CDB55}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Services", "..\..\ImageViewer\Services\ClearCanvas.ImageViewer.Services.csproj", "{2F464B93-3631-4886-96A0-D3F493536997}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -141,10 +134,6 @@ Global
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Release|Any CPU.Build.0 = Release|Any CPU
-		{00E45170-102F-4D11-8BBE-C43F627CDB55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00E45170-102F-4D11-8BBE-C43F627CDB55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00E45170-102F-4D11-8BBE-C43F627CDB55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{00E45170-102F-4D11-8BBE-C43F627CDB55}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F464B93-3631-4886-96A0-D3F493536997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F464B93-3631-4886-96A0-D3F493536997}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F464B93-3631-4886-96A0-D3F493536997}.Release|Any CPU.ActiveCfg = Release|Any CPU

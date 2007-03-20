@@ -334,12 +334,12 @@ namespace ClearCanvas.Dicom.DataStore
             return image;
         }
 
-        public Dictionary<string, Study> StudyCache
+        protected Dictionary<string, Study> StudyCache
         {
             get { return _studyCache; }
         }
 
-        public Dictionary<string, Series> SeriesCache
+		protected Dictionary<string, Series> SeriesCache
         {
             get { return _seriesCache; }
         }

@@ -62,7 +62,9 @@ namespace ClearCanvas.Server.ShredHost
 				sed.Binding = new WSDualHttpBinding();
 			}
 			else
+			{
 				sed.Binding = new WSHttpBinding();
+			}
 
 			sed.ServiceHost = new ServiceHost(typeof(TServiceType), GetServiceHostBaseAddresses(name, bindingType, tcpPort, httpPort));
 

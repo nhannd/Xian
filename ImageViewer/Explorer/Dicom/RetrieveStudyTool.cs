@@ -9,7 +9,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Shreds.DicomServer;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

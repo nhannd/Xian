@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageViewer.Shreds.DicomServer
+namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
 	public enum RetrieveLevel
 	{
@@ -108,12 +108,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private int _port;
 		private string _interimStorageDirectory;
 
-		public UpdateServerSettingRequest(string hostName, string aeTitle, int port, string storageDir)
+		public UpdateServerSettingRequest()
 		{
-			_hostName = hostName;
-			_AETitle = aeTitle;
-			_port = port;
-			_interimStorageDirectory = storageDir;
 		}
 
 		[DataMember(IsRequired = true)]

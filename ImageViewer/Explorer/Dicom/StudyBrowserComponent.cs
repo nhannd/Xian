@@ -362,7 +362,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					aggregateStudyItemList.AddRange(serverStudyItemList);
 				}
 			}
-			catch (Exception e)
+			catch
 			{
 				throw;
 			}
