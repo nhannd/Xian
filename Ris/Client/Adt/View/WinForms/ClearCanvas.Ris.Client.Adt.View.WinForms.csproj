@@ -155,13 +155,6 @@
       <DependentUpon>VisitSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="VisitSummaryComponentView.cs" />
-    <Compile Include="WorklistComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WorklistComponentControl.Designer.cs">
-      <DependentUpon>WorklistComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WorklistComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -252,10 +245,6 @@
     <EmbeddedResource Include="VisitSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>VisitSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WorklistComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>WorklistComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
