@@ -42,15 +42,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Initialize()
         {
             base.Initialize();
-            if (this.ContextBase is IWorklistToolContext)
-            {
-                _enabled = false;   // disable by default
-                ((IWorklistToolContext)this.ContextBase).SelectedPatientProfileChanged += delegate(object sender, EventArgs args)
-                {
-                    this.Enabled = ((IWorklistToolContext)this.ContextBase).SelectedPatientProfile != null;
-                };
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 _enabled = false;   // disable by default
                 ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
@@ -104,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void Edit(EntityRef<PatientProfile> profileRef, IDesktopWindow desktopWindow)
+        private void Edit(EntityRef profileRef, IDesktopWindow desktopWindow)
         {
             ApplicationComponent.LaunchAsDialog(
                 desktopWindow,

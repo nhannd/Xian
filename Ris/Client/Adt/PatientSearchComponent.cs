@@ -1,27 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
 using System.ComponentModel;
+
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientSearchRequestedEventArgs : EventArgs
     {
-        private PatientProfileSearchCriteria _criteria;
+        private RegistrationWorklistSearchCriteria _criteria;
 
-        public PatientSearchRequestedEventArgs(PatientProfileSearchCriteria criteria)
+        public PatientSearchRequestedEventArgs(RegistrationWorklistSearchCriteria criteria)
 	    {
             _criteria = criteria;
 	    }
 
-        public PatientProfileSearchCriteria SearchCriteria
+        public RegistrationWorklistSearchCriteria SearchCriteria
         {
             get { return _criteria; }
         }
@@ -36,14 +38,13 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PatientSearchComponentViewExtensionPoint))]
     public class PatientSearchComponent : ApplicationComponent
     {
-        private IPatientAdminService _patientAdminService;
         private event EventHandler<PatientSearchRequestedEventArgs> _searchRequested;
 
         private string _mrn;
         private string _healthcard;
         private string _familyName;
         private string _givenName;
-        private Sex? _sex;
+        private EnumValueInfo _sex;
         private DateTime? _dateOfBirth;
         private bool _keepOpen;
 
@@ -213,24 +214,20 @@ namespace ClearCanvas.Ris.Client.Adt
             this.SearchEnabled = _mrn != null || _healthcard != null || _familyName != null || _givenName != null;
         }
 
-        private PatientProfileSearchCriteria BuildCriteria()
+        private RegistrationWorklistSearchCriteria BuildCriteria()
         {
-            PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
+            RegistrationWorklistSearchCriteria criteria = new RegistrationWorklistSearchCriteria();
             if (_mrn != null)
-            {
-                criteria.Mrn.Id.StartsWith(_mrn);
-            }
+                criteria.MrnID = _mrn;
 
             if (_healthcard != null)
-            {
-                criteria.Healthcard.Id.StartsWith(_healthcard);
-            }
+                criteria.HealthcardID = _healthcard;
 
             if (_familyName != null)
-                criteria.Name.FamilyName.StartsWith(_familyName);
+                criteria.FamilyName = _familyName;
 
             if (_givenName != null)
-                criteria.Name.GivenName.StartsWith(_givenName);
+                criteria.GivenName = _givenName;
 
             if (_sex != null)
                 criteria.Sex.EqualTo((Sex)_sex);

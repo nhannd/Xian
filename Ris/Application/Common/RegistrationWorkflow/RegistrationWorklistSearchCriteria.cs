@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public string GivenName;
 
         [DataMember]
-        public string SexCode;
+        public EnumValueInfo Sex;
 
         [DataMember]
         public DateTime? DateOfBirth;

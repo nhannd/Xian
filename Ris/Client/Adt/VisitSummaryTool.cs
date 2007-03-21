@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void ShowVisitSummaryDialog(EntityRef<PatientProfile> patientProfileRef, IDesktopWindow iDesktopWindow)
+        private void ShowVisitSummaryDialog(EntityRef patientProfileRef, IDesktopWindow iDesktopWindow)
         {
             VisitSummaryComponent component = new VisitSummaryComponent(patientProfileRef);
             ApplicationComponent.LaunchAsWorkspace(

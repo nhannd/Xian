@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ExtensionOf(typeof(WorklistToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
-    public class PatientOverviewTool : Tool<IWorklistToolContext>
+    public class PatientOverviewTool : Tool<IToolContext>
     {
         private bool _enabled;
         private event EventHandler _enabledChanged;
@@ -42,15 +42,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Initialize()
         {
             base.Initialize();
-            if (this.ContextBase is IWorklistToolContext)
-            {
-                this.Context.DefaultAction = View;
-                this.Context.SelectedPatientProfileChanged += delegate(object sender, EventArgs args)
-                {
-                    this.Enabled = (this.Context.SelectedPatientProfile != null);
-                };
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 //this.Context.DefaultAction = View;
                 ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
@@ -104,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        protected void OpenPatient(EntityRef<PatientProfile> profile, IDesktopWindow window)
+        protected void OpenPatient(EntityRef profile, IDesktopWindow window)
         {
             Document doc = DocumentManager.Get(profile.ToString());
             if (doc == null)

@@ -122,8 +122,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             if (criteria.GivenName != null)
                 profileCriteria.Name.GivenName.StartsWith(criteria.GivenName);
 
-            if (criteria.SexCode != null)
-                profileCriteria.Sex.EqualTo((Sex)Enum.Parse(typeof(Sex), criteria.SexCode));
+            if (criteria.Sex != null)
+                profileCriteria.Sex.EqualTo((Sex)Enum.Parse(typeof(Sex), criteria.Sex.Code));
 
             if (criteria.DateOfBirth != null)
             {

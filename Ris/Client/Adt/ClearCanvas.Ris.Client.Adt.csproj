@@ -86,7 +86,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTable.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />
-    <Compile Include="PatientSearchResultsFolder.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
