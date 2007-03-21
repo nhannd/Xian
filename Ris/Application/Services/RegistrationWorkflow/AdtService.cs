@@ -10,11 +10,6 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
 
-    [ExtensionPoint()]
-    public class PatientReconciliationStrategyExtensionPoint : ExtensionPoint<IPatientReconciliationStrategy>
-    {
-    }
-
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class AdtService : ApplicationServiceBase, IAdtService
     {

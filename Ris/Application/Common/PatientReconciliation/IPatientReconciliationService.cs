@@ -1,7 +1,7 @@
 using System;
 using System.ServiceModel;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconcilliation
+namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
 {
     /// <summary>
     /// Provides patient reconcilliation services
@@ -39,6 +39,6 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconcilliation
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        ListIndirectlyReconciledPatientsResponse ListIndirectlyReconciledPatients(ListIndirectlyReconciledPatientsRequest request);
+        ListProfilesForPatientsResponse ListProfilesForPatients(ListProfilesForPatientsRequest request);
     }
 }

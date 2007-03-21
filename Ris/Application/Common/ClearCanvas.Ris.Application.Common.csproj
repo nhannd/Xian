@@ -171,12 +171,12 @@
     <Compile Include="PatientReconciliation\LoadPatientProfileDiffRequest.cs" />
     <Compile Include="PatientReconciliation\LoadPatientProfileDiffResponse.cs" />
     <Compile Include="PatientReconciliation\PatientProfileDiff.cs" />
-    <Compile Include="PatientReconciliation\PatientProfileMatch.cs" />
+    <Compile Include="PatientReconciliation\ReconciliationCandidate.cs" />
     <Compile Include="PatientReconciliation\PatientProfileSummary.cs" />
     <Compile Include="PatientReconciliation\ReconcilePatientsRequest.cs" />
     <Compile Include="PatientReconciliation\ReconcilePatientsResponse.cs" />
-    <Compile Include="PatientReconciliation\ListIndirectlyReconciledPatientsRequest.cs" />
-    <Compile Include="PatientReconciliation\ListIndirectlyReconciledPatientsResponse.cs" />
+    <Compile Include="PatientReconciliation\ListProfilesForPatientsRequest.cs" />
+    <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
@@ -207,7 +207,6 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListResponse.cs" />
-    <Compile Include="RegistrationWorkflow\PatientProfileDiff.cs" />
     <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />

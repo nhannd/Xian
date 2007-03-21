@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconcilliation
+namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
 {
     [DataContract]
     public class ListPatientReconciliationMatchesResponse : DataContractBase
@@ -13,6 +13,6 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconcilliation
         public List<PatientProfileSummary> ReconciledProfiles;
 
         [DataMember]
-        public List<PatientProfileMatch> CandidateMatches;
+        public List<ReconciliationCandidate> MatchCandidates;
     }
 }

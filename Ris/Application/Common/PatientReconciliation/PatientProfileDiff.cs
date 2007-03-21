@@ -4,61 +4,61 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconcilliation
+namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
 {
     [DataContract]
     public class PatientProfileDiff : DataContractBase
     {
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string RightProfileAssigningAuthority;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string LeftProfileAssigningAuthority;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff Healthcard;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff FamilyName;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff MiddleName;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff GivenName;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff DateOfBirth;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff Sex;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff HomePhone;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff HomeAddress;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff WorkPhone;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public PropertyDiff WorkAddress;
     }
 
     [DataContract]
     public class PropertyDiff : DataContractBase
     {
-        [DataMember]
-        public bool Discrepant;
+        [DataMember(IsRequired = true)]
+        public bool IsDiscrepant;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string AlignedLeftValue;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string AlignedRightValue;
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string DiffMask;
     }
 }
