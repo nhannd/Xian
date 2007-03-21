@@ -14,16 +14,22 @@ namespace ClearCanvas.Common.Utilities
     /// <remarks>
     /// The <see cref="AlignedLeft"/> and  <see cref="AlignedRight"/> properties return versions
     /// of the left and right strings that are as closely aligned as possible on a character by
-    /// character basis.  '|' characters are inserted into both strings at specific points so as to
+    /// character basis.  '-' characters are inserted into both strings at specific points so as to
     /// produce the closest possible alignment, such that <code>AlignedLeft.Length == AlignedRight.Length</code>. 
     /// The <see cref="DiffMask"/> property is a string of the same length that contains a '|' character
-    /// where the aligned strings match, e.g.
+    /// where the aligned strings match and a space where they don't, e.g.
     /// <code>DiffMask[i] = (AlignedLeft[i] == AlignedRight[i]) ? '|' : ' '</code>
     /// </remarks>
     public class StringDiff
     {
         public static StringDiff Compute(string left, string right)
         {
+            if (left == right)
+            {
+                // nop
+                return new StringDiff(left, right, new string('|', left.Length));
+            }
+
             string[] result = ComputeDiff(left, right);
             return new StringDiff(result[0], result[2], result[1]);
         }
