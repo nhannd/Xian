@@ -82,7 +82,7 @@ namespace ClearCanvas.Enterprise.Core
         /// <summary>
         /// Returns an array of the displayable values for this enum table, for use in presentation layer.
         /// </summary>
-        public string[] Values
+        public string[] DisplayValues
         {
             get
             {
@@ -96,5 +96,14 @@ namespace ClearCanvas.Enterprise.Core
                 return _displayValues;
             }
         }
+
+        /// <summary>
+        /// Returns the collection of items in this enum table
+        /// </summary>
+        public ICollection<E> Items
+        {
+            get { return _values.Values; }
+        }
+
      }
 }
