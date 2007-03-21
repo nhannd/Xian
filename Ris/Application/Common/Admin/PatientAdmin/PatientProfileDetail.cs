@@ -22,6 +22,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         public string HealthcardAssigningAuthority;
 
         [DataMember]
+        public string HealthcardVC;
+
+        [DataMember]
+        public DateTime? HealthcardExpiry;
+
+        [DataMember]
         public PersonNameDetail Name;
 
         [DataMember]
