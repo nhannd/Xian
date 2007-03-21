@@ -2,23 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
+using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     class ReconciliationCandidateTableEntry
     {
-        private PatientProfileMatch _profileMatch;
+        private ReconciliationCandidate _profileMatch;
         private bool _checked;
         private event EventHandler _checkedChanged;
 
-        public ReconciliationCandidateTableEntry(PatientProfileMatch match)
+        public ReconciliationCandidateTableEntry(ReconciliationCandidate match)
         {
             _profileMatch = match;
             _checked = false;
         }
 
-        public PatientProfileMatch ProfileMatch
+        public ReconciliationCandidate ReconciliationCandidate
         {
             get { return _profileMatch; }
         }

@@ -8,7 +8,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
+using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -51,13 +51,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileTable _targetProfileTable;
         private ReconciliationCandidateTable _reconciliationProfileTable;
 
-        private IList<PatientProfileMatch> _matches;
+        private IList<ReconciliationCandidate> _matches;
         private IList<PatientProfileSummary> _targetProfiles;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ReconciliationComponent(EntityRef targetProfileRef, IList<PatientProfileSummary> reconciledProfiles, IList<PatientProfileMatch> candidates)
+        public ReconciliationComponent(EntityRef targetProfileRef, IList<PatientProfileSummary> reconciledProfiles, IList<ReconciliationCandidate> candidates)
         {
             _targetProfiles = reconciledProfiles;
             _matches = matches;
@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public void SetSelectedReconciliationProfile(ISelection selection)
         {
             ReconciliationCandidateTableEntry entry = (ReconciliationCandidateTableEntry)selection.Item;
-            PatientProfileSummary profile = (entry == null) ? null : entry.ProfileMatch.PatientProfile;
+            PatientProfileSummary profile = (entry == null) ? null : entry.ReconciliationCandidate.PatientProfile;
             if (profile != _selectedReconciliationProfile)
             {
                 _selectedReconciliationProfile = profile;
@@ -186,17 +186,18 @@ namespace ClearCanvas.Ris.Client.Adt
             List<EntityRef> checkedPatients = new List<EntityRef>();
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
-                if (entry.Checked && !checkedPatients.Contains(entry.ProfileMatch.PatientProfile.PatientRef))
+                if (entry.Checked && !checkedPatients.Contains(entry.ReconciliationCandidate.PatientProfile.PatientRef))
                 {
-                    checkedPatients.Add(entry.ProfileMatch.PatientProfile.PatientRef);
+                    checkedPatients.Add(entry.ReconciliationCandidate.PatientProfile.PatientRef);
                 }
             }
 
             Platform.GetService<IPatientReconciliationService>(
                 delegate(IPatientReconciliationService service)
                 {
-                    List<PatientProfileSummary> indirectlyReconciledProfiles = service.ListIndirectlyReconciledPatients(
-                        new ListIndirectlyReconciledPatientsRequest(checkedPatients)).Profiles;
+                    // get the full list of all the profiles that will be reconciled if this operation is carried out
+                    List<PatientProfileSummary> indirectlyReconciledProfiles = service.ListProfilesForPatients(
+                        new ListProfilesForPatientsRequest(checkedPatients)).Profiles;
 
                     // confirmation
                     ReconciliationConfirmComponent confirmComponent = new ReconciliationConfirmComponent(_targetProfiles, indirectlyReconciledProfiles);
@@ -221,7 +222,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
-                if (entry != changedEntry && entry.ProfileMatch.PatientProfile.Patient.Equals(changedEntry.ProfileMatch.PatientProfile.Patient))
+                if (entry != changedEntry && entry.ReconciliationCandidate.PatientProfile.Patient.Equals(changedEntry.ReconciliationCandidate.PatientProfile.Patient))
                 {
                     entry.Checked = changedEntry.Checked;
                     _reconciliationProfileTable.Items.NotifyItemUpdated(entry);

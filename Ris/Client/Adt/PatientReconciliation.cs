@@ -6,7 +6,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.PatientReconcilliation;
+using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
