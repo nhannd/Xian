@@ -12,7 +12,11 @@ namespace ClearCanvas.Ris.Application.Common
         public EnumValueInfo(string code, string value)
         {
             this.Code = code;
-            this.Value; = value;
+            this.Value = value;
+        }
+
+        public EnumValueInfo()
+        {
         }
 
         [DataMember]
