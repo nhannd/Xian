@@ -45,6 +45,9 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="CheckInProcedureStep.cs" />
     <Compile Include="CheckInProcedureStepSearchCriteria.cs" />
+    <Compile Include="PatientReconciliationException.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PatientReconciliation\DefaultPatientReconciliationStrategy.cs" />
     <Compile Include="PatientReconciliation\IPatientReconciliationStrategy.cs" />
     <Compile Include="PatientReconciliation\PatientProfileDiscrepancy.cs" />
