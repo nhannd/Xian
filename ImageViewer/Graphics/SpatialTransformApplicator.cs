@@ -29,12 +29,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
-			ISpatialTransformProvider voiLutLinear = image as ISpatialTransformProvider;
+			ISpatialTransformProvider spatialTransformProvider = image as ISpatialTransformProvider;
 
-			if (voiLutLinear == null)
+			if (spatialTransformProvider == null)
 				throw new Exception("PresentationImage does not support ISpatialTransformProvider");
 
-			return voiLutLinear.SpatialTransform as IMemorable;
+			return spatialTransformProvider.SpatialTransform as IMemorable;
 		}
 	}
 }

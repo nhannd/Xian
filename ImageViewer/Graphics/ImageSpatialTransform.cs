@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			ImageSpatialTransformMemento memento = new ImageSpatialTransformMemento();
 
-			memento.ScaleToFit = _scaleToFit;
+			memento.ScaleToFit = this.ScaleToFit;
 			memento.SpatialTransformMemento = base.CreateMemento();
 
 			return memento;
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			ImageSpatialTransformMemento imageSpatialTransformMemento = memento as ImageSpatialTransformMemento;
 			Platform.CheckForInvalidCast(imageSpatialTransformMemento, "memento", "ImageSpatialTransformMemento");
 
-			this.ScaleToFit = _scaleToFit;
+			this.ScaleToFit = imageSpatialTransformMemento.ScaleToFit;
 
 			base.SetMemento(imageSpatialTransformMemento.SpatialTransformMemento);
 		}
@@ -218,7 +218,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 			}
 
-			this.MinimumScale = this.Scale / 2;
+			this.MinimumScale = Math.Min(this.ScaleX / 2, 0.5f);
+			this.Scale = this.ScaleX;
 		}
 	}
 }

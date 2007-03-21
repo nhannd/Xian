@@ -59,9 +59,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 				else
 					_scale = value;
 
-				this.ScaleX = _scale;
-				this.ScaleY = _scale;
-
 				this.RecalculationRequired = true;
 			}
 		}
@@ -213,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_transform.Translate(this.TranslationX, this.TranslationY);
 				_transform.Rotate(this.RotationXY);
 				_transform.Scale(this.ScaleX, this.ScaleY);
-
+				 
 				return _transform;
 			}
 		}
@@ -298,8 +295,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public virtual void Initialize()
 		{
 			this.Scale = 1.0F;
-			this.ScaleX = 1.0F;
-			this.ScaleY = 1.0F;
 			this.TranslationX = 0.0F;
 			this.TranslationY = 0.0F;
 			this.RotationXY = 0;
@@ -520,6 +515,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		protected virtual void CalculateScale()
 		{
+			this.ScaleX = _scale;
+			this.ScaleY = _scale;
 		}
 
 		/// <summary>
