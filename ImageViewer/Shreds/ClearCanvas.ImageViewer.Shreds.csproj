@@ -32,6 +32,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate, Version=1.0.3.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -52,6 +56,12 @@
     <Compile Include="DicomServer\ServerTree\DicomServerGroup.cs" />
     <Compile Include="DicomServer\ServerTree\DicomServerSetting.cs" />
     <Compile Include="DicomServer\ServerTree\DicomServerTree.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerComponent.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerDBAccess.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs" />
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />
@@ -81,6 +91,10 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
@@ -88,6 +102,10 @@
     <ProjectReference Include="..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
       <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
       <Name>ClearCanvas.Dicom.DataStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dicom\DataStore\NHibernateDriver\ClearCanvas.Dicom.DataStore.NHibernateDriver.csproj">
+      <Project>{AFD2273D-4124-466B-A9BA-0623347435EA}</Project>
+      <Name>ClearCanvas.Dicom.DataStore.NHibernateDriver</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Server\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858C710-AF53-4049-B98E-CFE3638D1228}</Project>
