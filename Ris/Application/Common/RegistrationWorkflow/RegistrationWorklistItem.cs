@@ -31,6 +31,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public DateTime? DateOfBirth;
 
         [DataMember]
-        public EnumValueInfo Sex;
+        public string Sex;
     }
 }

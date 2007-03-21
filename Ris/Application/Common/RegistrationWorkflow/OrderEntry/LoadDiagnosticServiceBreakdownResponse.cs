@@ -8,5 +8,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class LoadDiagnosticServiceBreakdownResponse : DataContractBase
     {
+        public LoadDiagnosticServiceBreakdownResponse(DiagnosticServiceDetail detail)
+        {
+            this.DiagnosticServiceDetail = detail;
+        }
+
+        [DataMember]
+        public DiagnosticServiceDetail DiagnosticServiceDetail;
     }
 }

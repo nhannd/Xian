@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
@@ -7,14 +8,15 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class GetOrdersWorkListResponse : DataContractBase
+    public class DiagnosticServiceDetail : DataContractBase
     {
-        public GetOrdersWorkListResponse(List<OrderSummary> orders)
-        {
-            this.Orders = orders;
-        }
+        [DataMember]
+        public string Id;
 
         [DataMember]
-        public List<OrderSummary> Orders;
+        public string Name;
+
+        [DataMember]
+        public List<RequestedProcedureTypeDetail> RequestedProcedureTypes;
     }
 }

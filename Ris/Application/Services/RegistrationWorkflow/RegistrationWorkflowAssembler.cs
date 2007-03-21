@@ -30,8 +30,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             item.Healthcard = healthcardAssembler.CreateHealthcardDetail(result.HealthcardNumber);
 
             SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            item.Sex.Code = result.Sex.ToString();
-            item.Sex.Value = sexEnumTable[result.Sex].Values;
+            item.Sex = sexEnumTable[result.Sex].Values;
 
             return item;
         }
@@ -52,8 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             item.Healthcard = healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber);
 
             SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            item.Sex.Code = domainItem.Sex.ToString();
-            item.Sex.Value = sexEnumTable[domainItem.Sex].Values;
+            item.Sex = sexEnumTable[domainItem.Sex].Values;
 
             return registrationItem;
         }
@@ -75,8 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             preview.Healthcard = healthcardAssembler.CreateHealthcardDetail(item.Healthcard);
 
             SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            preview.Sex.Code = profile.Sex.ToString();
-            preview.Sex.Value = sexEnumTable[profile.Sex].Values;
+            preview.Sex = sexEnumTable[profile.Sex].Values;
 
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
             preview.CurrentHomePhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone);

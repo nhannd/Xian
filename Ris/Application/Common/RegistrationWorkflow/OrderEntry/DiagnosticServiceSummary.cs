@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
@@ -6,14 +8,15 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class LoadDiagnosticServiceBreakdownRequest : DataContractBase
+    public class DiagnosticServiceSummary : DataContractBase
     {
-        public LoadDiagnosticServiceBreakdownRequest(EntityRef diagnosticServiceRef)
-        {
-            this.DiagnosticServiceRef = diagnosticServiceRef;
-        }
-
         [DataMember]
         public EntityRef DiagnosticServiceRef;
+
+        [DataMember]
+        public string Id;
+
+        [DataMember]
+        public string Name;
     }
 }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        void CheckInProcedure(CheckInProcedureRequest request)
+        CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {
@@ -94,6 +94,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 rp.CheckInProcedureSteps.Add(cps);
                 PersistenceContext.Lock(rp, DirtyState.Dirty);
             }
+
+            return new CheckInProcedureResponse();
         }
     }
 }

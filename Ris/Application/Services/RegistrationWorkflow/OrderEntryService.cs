@@ -1,82 +1,109 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Healthcare;
+
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class OrderEntryService : ApplicationServiceBase, IOrderEntryService
     {
-        #region IOrderEntryService Members
-
         [ReadOperation]
-        public PatientProfile LoadPatientProfile(EntityRef profileRef)
+        public ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request)
         {
-            IPatientProfileBroker broker = this.CurrentContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = broker.Load(profileRef);
-            broker.LoadPatientForPatientProfile(profile);
-            return profile;
-        }
+            IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+            patientProfileBroker.LoadPatientForPatientProfile(profile);
 
-        [ReadOperation]
-        public IList<Visit> ListActiveVisits(EntityRef patientRef)
-        {
             // ensure that the profiles collection is loaded
-            IPatientBroker patientBroker = this.CurrentContext.GetBroker<IPatientBroker>();
-            Patient patient = patientBroker.Load(patientRef, EntityLoadFlags.Proxy);
+            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.Patient.EqualTo(patient);
             criteria.VisitStatus.NotEqualTo(VisitStatus.Discharged);
 
-            IVisitBroker visitBroker = this.CurrentContext.GetBroker<IVisitBroker>();
-            return visitBroker.Find(criteria);
+            VisitAssembler assembler = new VisitAssembler();
+            return new ListActiveVisitsForPatientResponse(
+                CollectionUtils.Map<Visit, VisitDetail, List<VisitSummary>>(
+                    PersistenceContext.GetBroker<IVisitBroker>().Find(criteria),
+                    delegate(Visit v)
+                    {
+                        return assembler.CreateVisitSummary(v);
+                    }));
         }
 
         [ReadOperation]
-        public IList<DiagnosticService> ListDiagnosticServiceChoices()
+        public GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request)
         {
-            return this.CurrentContext.GetBroker<IDiagnosticServiceBroker>().FindAll();
+            OrderEntryAssembler orderEntryAssembler = new OrderEntryAssembler();
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+            PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
+
+            // TODO: figure out how to determine which physicians are "ordering" physicians
+            return new GetOrderEntryFormDataResponse(
+                CollectionUtils.Map<DiagnosticService, DiagnosticServiceSummary, List<DiagnosticServiceSummary>>(
+                    PersistenceContext.GetBroker<IDiagnosticServiceBroker>().FindAll(),
+                    delegate(DiagnosticService ds)
+                    {
+                        return orderEntryAssembler.CreateDiagnosticServiceSummary(ds);
+                    }), 
+                CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
+                    PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+                    delegate(Facility f)
+                    {
+                        return facilityAssembler.CreateFacilitySummary(f);
+                    }), 
+                CollectionUtils.Map<Practitioner, PractitionerSummary, List<PractitionerSummary>>(
+                    PersistenceContext.GetBroker<IPractitionerBroker>().FindAll(),
+                    delegate(Practitioner p)
+                    {
+                        return practitionerAssembler.CreatePractitionerSummary(p);
+                    })
+                );
         }
 
         [ReadOperation]
-        public DiagnosticService LoadDiagnosticServiceBreakdown(EntityRef diagnosticServiceRef)
+        public LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request)
         {
-            IDiagnosticServiceBroker dsBroker = this.CurrentContext.GetBroker<IDiagnosticServiceBroker>();
-            IRequestedProcedureTypeBroker rptBroker = this.CurrentContext.GetBroker<IRequestedProcedureTypeBroker>();
+            IDiagnosticServiceBroker dsBroker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
+            IRequestedProcedureTypeBroker rptBroker = PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>();
 
-            DiagnosticService diagnosticService = dsBroker.Load(diagnosticServiceRef);
+            DiagnosticService diagnosticService = dsBroker.Load(request.DiagnosticServiceRef);
             foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
             {
                 rptBroker.LoadModalityProcedureStepTypesForRequestedProcedureType(rpt);
             }
-            return diagnosticService;
+
+            OrderEntryAssembler assembler = new OrderEntryAssembler();
+            return new LoadDiagnosticServiceBreakdownResponse(assembler.CreateDiagnosticServiceDetail(diagnosticService));
         }
 
-        [ReadOperation]
-        public IList<Facility> ListOrderingFacilityChoices()
-        {
-            return this.CurrentContext.GetBroker<IFacilityBroker>().FindAll();
-        }
 
         [ReadOperation]
-        public IList<Practitioner> ListOrderingPhysicianChoices()
+        public GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request)
         {
-            // TODO: figure out how to determine which physicians are "ordering" physicians
-            return this.CurrentContext.GetBroker<IPractitionerBroker>().FindAll();
-        }
+            //TODO: remove this after adding the criteria into GetOrdersWorkListRequest
+            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
 
-        [ReadOperation]
-        public IList<WorklistQueryResult> GetOrdersWorklist(ModalityProcedureStepSearchCriteria criteria)
-        {
-            IModalityWorklistBroker broker = this.CurrentContext.GetBroker<IModalityWorklistBroker>();
-            return broker.GetWorklist(criteria, "UHN");
+            OrderEntryAssembler assembler = new OrderEntryAssembler();
+            return new GetOrdersWorkListResponse(
+                CollectionUtils.Map<WorklistQueryResult, OrderSummary, List<OrderSummary>>(
+                    PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
+                    delegate(WorklistQueryResult result)
+                    {
+                        return assembler.CreateOrderSummary(result, this.PersistenceContext);
+                    }));
         }
 
 /*
@@ -93,21 +120,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 */
         [UpdateOperation]
-        public void PlaceOrder(
-            Patient patient,
-            Visit visit,
-            DiagnosticService diagnosticService,
-            OrderPriority priority,
-            Practitioner orderingPhysician,
-            Facility orderingFacility,
-            DateTime schedulingRequestTime)
+        public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
         {
-            Platform.CheckForNullReference(patient, "patient");
-            Platform.CheckForNullReference(visit, "visit");
-            Platform.CheckForNullReference(diagnosticService, "diagnosticService");
-            Platform.CheckForNullReference(priority, "priority");
-            Platform.CheckForNullReference(orderingPhysician, "orderingPhysician");
-            Platform.CheckForNullReference(orderingFacility, "orderingFacility");
+            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.Patient, EntityLoadFlags.Proxy);
+            Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
+            Practitioner orderingPhysician = PersistenceContext.GetBroker<IPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
+            Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
+            OrderPriority orderingPriority = (OrderPriority)Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code);
+
+            DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
+            IRequestedProcedureTypeBroker rptBroker = PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>();
+            foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
+            {
+                rptBroker.LoadModalityProcedureStepTypesForRequestedProcedureType(rpt);
+            }
 
             this.CurrentContext.Lock(patient);
             this.CurrentContext.Lock(visit);
@@ -115,15 +141,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             this.CurrentContext.Lock(orderingPhysician);
             this.CurrentContext.Lock(orderingFacility);
 
-            IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
+            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();
 
             Order order = Order.NewOrder(
                 accNum, patient, visit, diagnosticService, schedulingRequestTime, orderingPhysician, orderingFacility, priority);
 
-            this.CurrentContext.Lock(order, DirtyState.New);
-        }
+            PersistenceContext.Lock(order, DirtyState.New);
 
-        #endregion
+            // ensure the new order is assigned an OID before using it in the return value
+            PersistenceContext.SynchState();
+
+            return new PlaceOrderResponse(order.GetRef());
+        }
     }
 }

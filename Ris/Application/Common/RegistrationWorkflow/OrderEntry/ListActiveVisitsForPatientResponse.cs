@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class GetOrdersWorkListResponse : DataContractBase
+    public class ListActiveVisitsForPatientResponse : DataContractBase
     {
-        public GetOrdersWorkListResponse(List<OrderSummary> orders)
+        public ListActiveVisitsForPatientResponse(List<VisitSummary> visits)
         {
-            this.Orders = orders;
+            this.Visits = visits;
         }
 
         [DataMember]
-        public List<OrderSummary> Orders;
+        public List<VisitSummary> Visits;
     }
 }

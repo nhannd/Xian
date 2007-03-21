@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request);
 
         [OperationContract]
-        void CheckInProcedure(CheckInProcedureRequest request);
+        CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request);
 
         //RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);
         //void UpdateRequestedProcedure(RequestedProcedure rp);
