@@ -73,6 +73,8 @@
     <Compile Include="Admin\HL7Admin\SetHL7QueueItemErrorResponse.cs" />
     <Compile Include="Admin\HL7QueueItemDetail.cs" />
     <Compile Include="Admin\HL7QueueItemSummary.cs" />
+    <Compile Include="Admin\PatientAdmin\AdminAddPatientProfileRequest.cs" />
+    <Compile Include="Admin\PatientAdmin\AdminAddPatientProfileResponse.cs" />
     <Compile Include="Admin\PatientAdmin\IPatientAdminService.cs" />
     <Compile Include="Admin\LocationDetail.cs" />
     <Compile Include="Admin\LocationSummary.cs" />
@@ -131,6 +133,8 @@
     <Compile Include="Admin\StaffAdmin\UpdateStaffResponse.cs" />
     <Compile Include="Admin\StaffDetail.cs" />
     <Compile Include="Admin\StaffSummary.cs" />
+    <Compile Include="Admin\VisitAdmin\AdminAddVisitRequest.cs" />
+    <Compile Include="Admin\VisitAdmin\AdminAddVisitResponse.cs" />
     <Compile Include="Admin\VisitAdmin\IVisitAdminService.cs" />
     <Compile Include="Admin\VisitAdmin\LoadVisitEditorFormDataRequest.cs" />
     <Compile Include="Admin\VisitAdmin\LoadVisitEditorFormDataResponse.cs" />

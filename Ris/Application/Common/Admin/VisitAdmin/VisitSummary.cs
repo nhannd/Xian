@@ -22,16 +22,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
         public string VisitNumberAssigningAuthority;
 
         [DataMember]
-        public EnumValueInfo PatientClass;
+        public string PatientClass;
 
         [DataMember]
-        public EnumValueInfo PatientType;
+        public string PatientType;
 
         [DataMember]
-        public EnumValueInfo AdmissionType;
+        public string AdmissionType;
 
         [DataMember]
-        public EnumValueInfo Status;
+        public string Status;
 
         [DataMember]
         public DateTime? AdmitDateTime;

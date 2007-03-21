@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     public class VisitLocationDetail : DataContractBase
     {
         [DataMember]
-        public LocationDetail Location;
+        public LocationSummary Location;
 
         [DataMember]
         public EnumValueInfo Role;

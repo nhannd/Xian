@@ -34,5 +34,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         /// <returns></returns>
         [OperationContract]
         SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request);
+
+        /// <summary>
+        /// Add a new patient profile via the <see cref="PatientProfileEditorComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request);
     }
 }

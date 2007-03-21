@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     public class LoadVisitEditorFormDataResponse : DataContractBase
     {
         [DataMember]
-        public List<EnumValueInfo> VisitNumberAssigningAuthorityChoices;
+        public List<string> VisitNumberAssigningAuthorityChoices;
 
         [DataMember]
         public List<EnumValueInfo> PatientClassChoices;

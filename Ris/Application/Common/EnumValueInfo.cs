@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class EnumValueInfo : DataContractBase, ICloneable
     {
+        public EnumValueInfo(string code, string value)
+        {
+            this.Code = code;
+            this.Value; = value;
+        }
+
         [DataMember]
         public string Code;
 

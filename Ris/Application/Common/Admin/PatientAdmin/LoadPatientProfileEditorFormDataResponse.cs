@@ -10,10 +10,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     public class LoadPatientProfileEditorFormDataResponse : DataContractBase
     {
         [DataMember]
-        public List<EnumValueInfo> HealthcardAssigningAuthorityChoices;
+        public List<string> HealthcardAssigningAuthorityChoices;
 
         [DataMember]
-        public List<EnumValueInfo> MrnAssigningAuthorityChoices;
+        public List<string> MrnAssigningAuthorityChoices;
 
         [DataMember]
         public List<EnumValueInfo> SexChoices;

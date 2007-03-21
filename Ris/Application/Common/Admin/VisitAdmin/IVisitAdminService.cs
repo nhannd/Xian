@@ -40,5 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
         /// <returns></returns>
         [OperationContract]
         SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request);
+
+        /// <summary>
+        /// Add a visit via the <see cref="VisitEditorComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        AdminAddVisitResponse AdminAddVisit(AdminAddVisitRequest request);
     }
 }
