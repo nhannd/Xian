@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.PatientReconciliation
 {
     public class PatientReconciliationException : HealthcareWorkflowException
     {

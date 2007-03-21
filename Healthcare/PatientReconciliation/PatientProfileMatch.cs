@@ -2,10 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.PatientReconciliation
 {
     public class PatientProfileMatch
     {
+        public enum ScoreValue
+        {
+            High = 2,
+            Moderate = 1
+        }
+
         private PatientProfile _patientProfile;
         private ScoreValue _score;
 
@@ -18,20 +24,14 @@ namespace ClearCanvas.Healthcare
         public PatientProfile PatientProfile
         {
             get { return _patientProfile; }
-            set { _patientProfile = value; }
         }
 	
         public ScoreValue Score
         {
             get { return _score; }
-            set { _score = value; }
+            private set { _score = value; }
         }
 
-        public enum ScoreValue
-        {
-            High = 2,
-            Moderate = 1
-        }
 
         public static IList<PatientProfileMatch> CreateList(PatientProfile self, IList<PatientProfile> profileList, ScoreValue score)
         {
@@ -55,7 +55,7 @@ namespace ClearCanvas.Healthcare
             return matchList;
         }
 
-        public static IList<PatientProfileMatch> Join(IList<PatientProfileMatch> leftSet, IList<PatientProfileMatch> rightSet)
+        public static IList<PatientProfileMatch> Combine(IList<PatientProfileMatch> leftSet, IList<PatientProfileMatch> rightSet)
         {
             IList<PatientProfileMatch> result = new List<PatientProfileMatch>();
 

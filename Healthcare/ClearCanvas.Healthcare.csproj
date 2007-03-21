@@ -45,6 +45,13 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="CheckInProcedureStep.cs" />
     <Compile Include="CheckInProcedureStepSearchCriteria.cs" />
+    <Compile Include="PatientReconciliation\DefaultPatientReconciliationStrategy.cs" />
+    <Compile Include="PatientReconciliation\IPatientReconciliationStrategy.cs" />
+    <Compile Include="PatientReconciliation\PatientProfileDiscrepancy.cs" />
+    <Compile Include="PatientReconciliation\PatientProfileDiscrepancyTest.cs" />
+    <Compile Include="PatientReconciliation\PatientProfileMatch.cs" />
+    <Compile Include="PatientReconciliation\PatientReconciliationException.cs" />
+    <Compile Include="PatientReconciliation\PatientReconciliationStrategyExtensionPoint.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />
     <Compile Include="Workflow\Registration\WorklistQueryResult.cs" />
@@ -84,10 +91,6 @@
     <Compile Include="PatientClass.cs" />
     <Compile Include="PatientIdentifierType.cs" />
     <Compile Include="PatientProfile.cs" />
-    <Compile Include="PatientProfileDiscrepancyTest.cs" />
-    <Compile Include="PatientProfileDiscrepancy.cs" />
-    <Compile Include="PatientProfileMatch.cs" />
-    <Compile Include="PatientReconciliationException.cs" />
     <Compile Include="PatientType.cs" />
     <Compile Include="PerformedProcedureStep.cs" />
     <Compile Include="PerformedProcedureStepSearchCriteria.cs" />

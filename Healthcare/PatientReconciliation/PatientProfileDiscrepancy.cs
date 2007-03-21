@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.PatientReconciliation
 {
     [Flags]
     public enum PatientProfileDiscrepancy : uint
