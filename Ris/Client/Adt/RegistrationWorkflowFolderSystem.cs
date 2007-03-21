@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IRegistrationWorkflowFolderToolContext : IToolContext
     {
-        RegistrationWorklistSearchCriteria SearchCriteria { set; }
+        PatientProfileSearchData SearchCriteria { set; }
 
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
@@ -95,9 +95,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
             #region IRegistrationWorkflowItemToolContext Members
 
-            public RegistrationWorklistSearchCriteria SearchCriteria
+            public PatientProfileSearchData SearchCriteria
             {
-                set { _owner.SearchCriteria = value as RegistrationWorklistSearchCriteria; }
+                set { _owner.SearchCriteria = value as PatientProfileSearchData; }
             }
 
             public event EventHandler SelectedFolderChanged
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private IDictionary<string, bool> _workflowEnablment;
         private Folders.SearchFolder _searchFolder;
 
-        public RegistrationWorklistSearchCriteria SearchCriteria
+        public PatientProfileSearchData SearchCriteria
         {
             get { return (_searchFolder == null ? null : _searchFolder.SearchCriteria); }
             set 

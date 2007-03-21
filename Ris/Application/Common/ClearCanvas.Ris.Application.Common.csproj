@@ -203,9 +203,9 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\OrderSummary.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\RequestedProcedureTypeDetail.cs" />
+    <Compile Include="RegistrationWorkflow\PatientProfileSearchData.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorklistItem.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorklistPreview.cs" />
-    <Compile Include="RegistrationWorkflow\RegistrationWorklistSearchCriteria.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\IOrderEntryService.cs" />

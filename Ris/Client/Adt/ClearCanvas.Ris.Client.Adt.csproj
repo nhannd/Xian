@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />

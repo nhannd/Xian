@@ -28,5 +28,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 
         [DataMember]
         public List<PractitionerSummary> OrderingPhysicianChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> OrderPriorityChoices;
     }
 }

@@ -16,14 +16,14 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientSearchRequestedEventArgs : EventArgs
     {
-        private RegistrationWorklistSearchCriteria _criteria;
+        private PatientProfileSearchData _criteria;
 
-        public PatientSearchRequestedEventArgs(RegistrationWorklistSearchCriteria criteria)
+        public PatientSearchRequestedEventArgs(PatientProfileSearchData criteria)
 	    {
             _criteria = criteria;
 	    }
 
-        public RegistrationWorklistSearchCriteria SearchCriteria
+        public PatientProfileSearchData SearchCriteria
         {
             get { return _criteria; }
         }
@@ -214,9 +214,9 @@ namespace ClearCanvas.Ris.Client.Adt
             this.SearchEnabled = _mrn != null || _healthcard != null || _familyName != null || _givenName != null;
         }
 
-        private RegistrationWorklistSearchCriteria BuildCriteria()
+        private PatientProfileSearchData BuildCriteria()
         {
-            RegistrationWorklistSearchCriteria criteria = new RegistrationWorklistSearchCriteria();
+            PatientProfileSearchData criteria = new PatientProfileSearchData();
             if (_mrn != null)
                 criteria.MrnID = _mrn;
 

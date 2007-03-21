@@ -9,6 +9,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(OrderListComponentViewExtensionPoint))]
     public class OrderListComponent : ApplicationComponent
     {
-        private Table<WorklistQueryResult> _orderList;
+        private OrderSummaryTable _orderList;
 
 
         /// <summary>
@@ -55,32 +56,21 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            IOrderEntryService orderEntryService = ApplicationContext.GetService<IOrderEntryService>();
-            OrderPriorityEnumTable orderPriorities = orderEntryService.GetOrderPriorityEnumTable();
+            try
+            {
+                _orderList = new OrderSummaryTable();
 
-            IList<WorklistQueryResult> worklistItems = orderEntryService.GetOrdersWorklist(new ModalityProcedureStepSearchCriteria());
-
-            _orderList = new Table<WorklistQueryResult>();
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnMRN,
-                delegate(WorklistQueryResult item) { return Format.Custom(item.Mrn); }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnName,
-                delegate(WorklistQueryResult item) { return Format.Custom(item.PatientName); }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnVisitNumber,
-                delegate(WorklistQueryResult item) { return Format.Custom(item.VisitNumber); }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnAccessionNumber,
-                delegate(WorklistQueryResult item) { return item.AccessionNumber; }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnDiagnosticService,
-                delegate(WorklistQueryResult item) { return item.DiagnosticService; }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnProcedure,
-                delegate(WorklistQueryResult item) { return item.RequestedProcedureName; }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnScheduledStep,
-                delegate(WorklistQueryResult item) { return item.ModalityProcedureStepName; }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnModality,
-                delegate(WorklistQueryResult item) { return item.ModalityName; }));
-            _orderList.Columns.Add(new TableColumn<WorklistQueryResult, string>(SR.ColumnPriority,
-                delegate(WorklistQueryResult item) { return orderPriorities[item.Priority].Value; }));
-
-            _orderList.Items.AddRange(worklistItems);
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        GetOrdersWorkListResponse response = service.GetOrdersWorkList(new GetOrdersWorkListRequest("UHN"));
+                        _orderList.Items.AddRange(response.Orders);
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
             base.Start();
         }

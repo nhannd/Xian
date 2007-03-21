@@ -13,6 +13,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -69,6 +70,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     delegate(Practitioner p)
                     {
                         return practitionerAssembler.CreatePractitionerSummary(p);
+                    }),
+                CollectionUtils.Map<OrderPriorityEnum, EnumValueInfo, List<EnumValueInfo>>(
+                    PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load().Items,
+                    delegate(OrderPriorityEnum opEnum)
+                    {
+                        EnumValueInfo orderPriority = new EnumValueInfo();
+                        orderPriority.Code = opEnum.Code;
+                        orderPriority.Value = opEnum.Value;
+                        return orderPriority;
                     })
                 );
         }

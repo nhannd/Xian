@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
-    public class RegistrationWorklistSearchCriteria : DataContractBase
+    public class PatientProfileSearchData : DataContractBase
     {
         //TODO: expand the MPS search criteria here
         [DataMember]

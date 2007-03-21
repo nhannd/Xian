@@ -12,6 +12,9 @@ using ClearCanvas.Desktop.Tables;
 using System.Collections;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -120,28 +123,23 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(OrderEntryComponentViewExtensionPoint))]
     public class OrderEntryComponent : ApplicationComponent
     {
-        private EntityRef<PatientProfile> _patientProfile;
-        private IOrderEntryService _orderEntryService;
+        private EntityRef _patientProfileRef;
+        private EntityRef _patientRef;
 
-        private Patient _patient;
+        private VisitTable _visitTable;
+        private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
+        private List<FacilitySummary> _facilityChoices;
+        private List<PractitionerSummary> _orderingPhysicianChoices;
+        private List<EnumValueInfo> _priorityChoices;
 
-        private VisitTable _visitChoices;
-        private Visit _selectedVisit;
-
-        private IList<DiagnosticService> _diagnosticServiceChoices;
-        private DiagnosticService _selectedDiagnosticService;
-
-        private IList<Facility> _facilityChoices;
-        private Facility _selectedFacility;
-
-        private IList<Practitioner> _orderingPhysicianChoices;
-        private Practitioner _selectedOrderingPhysician;
-
-        private OrderPriorityEnumTable _priorityChoices;
-        private OrderPriority _selectedPriority;
+        private VisitSummary _selectedVisit;
+        private DiagnosticServiceSummary _selectedDiagnosticService;
+        private FacilitySummary _selectedFacility;
+        private PractitionerSummary _selectedOrderingPhysician;
+        private EnumValueInfo _selectedPriority;
 
         private event EventHandler _diagnosticServiceChanged;
-        private Tree<RequestedProcedureType> _diagnosticServiceBreakdown;
+        private Tree<RequestedProcedureTypeDetail> _diagnosticServiceBreakdown;
         private object _selectedDiagnosticServiceBreakdownItem;
 
         private DateTime _schedulingRequestDateTime;
@@ -149,28 +147,36 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public OrderEntryComponent(EntityRef<PatientProfile> patientProfile)
+        public OrderEntryComponent(EntityRef patientProfileRef)
         {
-            _patientProfile = patientProfile;
+            _patientProfileRef = patientProfileRef;
         }
 
         public override void Start()
         {
-            _orderEntryService = ApplicationContext.GetService<IOrderEntryService>();
-            PatientProfile profile = _orderEntryService.LoadPatientProfile(_patientProfile);
-            _patient = profile.Patient;
+            try
+            {
+                _visitTable = new VisitTable();
 
-            IList<Visit> visits = _orderEntryService.ListActiveVisits(new EntityRef<Patient>(_patient));
-            _visitChoices = new VisitTable();
-            _visitChoices.Items.AddRange(visits);
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        ListActiveVisitsForPatientResponse response = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientProfileRef));
+                        _visitTable.Items.AddRange(response.Visits);
 
-            _diagnosticServiceChoices = _orderEntryService.ListDiagnosticServiceChoices();
-            _facilityChoices = _orderEntryService.ListOrderingFacilityChoices();
-            _orderingPhysicianChoices = _orderEntryService.ListOrderingPhysicianChoices();
-            _priorityChoices = _orderEntryService.GetOrderPriorityEnumTable();
+                        GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
+                        _diagnosticServiceChoices = formChoicesResponse.DiagnosticServiceChoices;
+                        _facilityChoices = formChoicesResponse.OrderingFacilityChoices;
+                        _orderingPhysicianChoices = formChoicesResponse.OrderingPhysicianChoices;
+                        _priorityChoices = formChoicesResponse.OrderPriorityChoices;
+                    });
 
-            _schedulingRequestDateTime = Platform.Time;
-
+                _schedulingRequestDateTime = Platform.Time;            
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
             base.Start();
         }
@@ -184,18 +190,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        public ITable VisitChoices
+        public ITable VisitTable
         {
-            get { return _visitChoices; }
+            get { return _visitTable; }
         }
 
         public ISelection SelectedVisit
         {
             get { return _selectedVisit == null ? Selection.Empty : new Selection(_selectedVisit); }
-            set { _selectedVisit = (Visit)value.Item; }
+            set { _selectedVisit = (VisitSummary)value.Item; }
         }
 
-        public IList DiagnosticServiceChoices
+        public List<string> DiagnosticServiceChoices
         {
             get
             {
@@ -214,9 +220,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _selectedDiagnosticService == null ? "" : _selectedDiagnosticService.Name; }
             set
             {
-                DiagnosticService diagnosticService = (value == "") ? null :
-                    CollectionUtils.SelectFirst<DiagnosticService>(_diagnosticServiceChoices,
-                            delegate(DiagnosticService ds) { return ds.Name == value; });
+                DiagnosticServiceSummary diagnosticService = (value == "") ? null :
+                    CollectionUtils.SelectFirst<DiagnosticServiceSummary>(_diagnosticServiceChoices,
+                            delegate(DiagnosticServiceSummary ds) { return ds.Name == value; });
 
                 if (diagnosticService == null || !diagnosticService.Equals(_selectedDiagnosticService))
                 {
@@ -226,26 +232,31 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string[] PriorityChoices
+        public List<string> PriorityChoices
         {
-            get { return _priorityChoices.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_priorityChoices); }
         }
 
         public string SelectedPriority
         {
-            get { return _priorityChoices[_selectedPriority].Value; }
-            set { _selectedPriority = _priorityChoices[value].Code; }
+            get { return _selectedPriority == null ? "" : _selectedPriority.Value; }
+            set
+            {
+                _selectedPriority = (value == "") ? null : 
+                    CollectionUtils.SelectFirst<EnumValueInfo>(_priorityChoices,
+                        delegate(EnumValueInfo info) { return info.Value == value; });
+            }
         }
 
-        public IList FacilityChoices
+        public List<string> FacilityChoices
         {
             get
             {
                 List<string> facilityStrings = new List<string>();
                 facilityStrings.Add("");
                 facilityStrings.AddRange(
-                    CollectionUtils.Map<Facility, string>(_facilityChoices,
-                            delegate(Facility f) { return f.Name; }));
+                    CollectionUtils.Map<FacilitySummary, string>(_facilityChoices,
+                            delegate(FacilitySummary f) { return f.Name; }));
 
                 return facilityStrings;
             }
@@ -262,15 +273,15 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public IList OrderingPhysicianChoices
+        public List<string> OrderingPhysicianChoices
         {
             get
             {
                 List<string> physicianStrings = new List<string>();
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
-                    CollectionUtils.Map<Practitioner, string>(_orderingPhysicianChoices,
-                            delegate(Practitioner p) { return Format.Custom(p.Name); }));
+                    CollectionUtils.Map<PractitionerSummary, string>(_orderingPhysicianChoices,
+                            delegate(PractitionerSummary p) { return Format.Custom(p.Name); }));
 
                 return physicianStrings;
             }
@@ -278,12 +289,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string SelectedOrderingPhysician
         {
-            get { return _selectedOrderingPhysician == null ? "" : Format.Custom(_selectedOrderingPhysician.Name); }
+            get { return _selectedOrderingPhysician == null ? "" : Format.Custom(_selectedOrderingPhysician.PersonNameDetail); }
             set
             {
                 _selectedOrderingPhysician = (value == "") ? null :
-                   CollectionUtils.SelectFirst<Practitioner>(_orderingPhysicianChoices,
-                       delegate(Practitioner p) { return Format.Custom(p.Name) == value; });
+                   CollectionUtils.SelectFirst<PractitionerSummary>(_orderingPhysicianChoices,
+                       delegate(PractitionerSummary p) { return Format.Custom(p.PersonNameDetail) == value; });
             }
         }
 
@@ -324,23 +335,27 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                _orderEntryService.PlaceOrder(
-                        _patient,
-                        _selectedVisit,
-                        _selectedDiagnosticService,
-                        _selectedPriority,
-                        _selectedOrderingPhysician,
-                        _selectedFacility,
-                        _schedulingRequestDateTime);
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
+                            _patientRef,
+                            _selectedVisit,
+                            _selectedDiagnosticService,
+                            _selectedPriority,
+                            _selectedOrderingPhysician,
+                            _selectedFacility,
+                            _schedulingRequestDateTime));
+                    });
 
+                this.ExitCode = ApplicationComponentExitCode.Normal;
             }
             catch (Exception e)
             {
-                // TODO fix this up!!!
-                Platform.Log(e, LogLevel.Error);
-                this.Host.ShowMessageBox("Failed to place order", MessageBoxActions.Ok);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
                 this.ExitCode = ApplicationComponentExitCode.Error;
             }
+
             this.Host.Exit();
         }
 
@@ -360,18 +375,32 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else
             {
-                _selectedDiagnosticService = _orderEntryService.LoadDiagnosticServiceBreakdown(new EntityRef<DiagnosticService>(_selectedDiagnosticService));
+                try
+                {
+                    DiagnosticServiceDetail diagnosticServiceDetail;
 
-                _diagnosticServiceBreakdown = new Tree<RequestedProcedureType>(
-                    new TreeItemBinding<RequestedProcedureType>(
-                        delegate(RequestedProcedureType rpt) { return rpt.Name; },
-                        delegate(RequestedProcedureType rpt)
+                    Platform.GetService<IOrderEntryService>(
+                        delegate(IOrderEntryService service)
                         {
-                            return new Tree<ModalityProcedureStepType>(
-                                new TreeItemBinding<ModalityProcedureStepType>(
-                                    delegate(ModalityProcedureStepType spt) { return spt.Name; }),
-                                    rpt.ModalityProcedureStepTypes);
-                        }), _selectedDiagnosticService.RequestedProcedureTypes);
+                            LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticService.DiagnosticServiceRef));
+                            diagnosticServiceDetail = response.DiagnosticServiceDetail;
+                        });
+
+                    _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(
+                        new TreeItemBinding<RequestedProcedureTypeDetail>(
+                            delegate(RequestedProcedureTypeDetail rpt) { return rpt.Name; },
+                            delegate(RequestedProcedureTypeDetail rpt)
+                            {
+                                return new Tree<ModalityProcedureStepTypeDetail>(
+                                    new TreeItemBinding<ModalityProcedureStepTypeDetail>(
+                                        delegate(ModalityProcedureStepTypeDetail spt) { return spt.Name; }),
+                                        rpt.ModalityProcedureStepTypes);
+                            }), diagnosticServiceDetail.RequestedProcedureTypes);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
             }
 
             EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);

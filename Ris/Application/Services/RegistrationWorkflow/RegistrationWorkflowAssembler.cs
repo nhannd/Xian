@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return preview;
         }
 
-        public PatientProfileSearchCriteria CreateSearchCriteria(RegistrationWorklistSearchCriteria criteria)
+        public PatientProfileSearchCriteria CreateSearchCriteria(PatientProfileSearchData criteria)
         {
             if (criteria == null)
                 return null;

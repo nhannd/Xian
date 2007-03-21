@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetWorklistRequest : DataContractBase
     {
-        public GetWorklistRequest(string worklistClassName, RegistrationWorklistSearchCriteria searchCriteria)
+        public GetWorklistRequest(string worklistClassName, PatientProfileSearchData searchCriteria)
         {
             this.WorklistClassName = worklistClassName;
             this.SearchCriteria = searchCriteria;
@@ -19,6 +19,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public string WorklistClassName;
 
         [DataMember]
-        public RegistrationWorklistSearchCriteria SearchCriteria;
+        public PatientProfileSearchData SearchCriteria;
     }
 }

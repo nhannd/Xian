@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            _visitTable.Table = _component.VisitChoices;
+            _visitTable.Table = _component.VisitTable;
             _visitTable.DataBindings.Add("Selection", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
             this.ErrorProvider.SetIconAlignment(_visitTable, ErrorIconAlignment.TopRight);
 

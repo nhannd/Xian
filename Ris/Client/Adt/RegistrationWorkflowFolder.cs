@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private IconSet _openIconSet;
 
         private string _worklistClassName;
-        private RegistrationWorklistSearchCriteria _searchCriteria;
+        private PatientProfileSearchData _searchCriteria;
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
             : base(folderSystem, folderName, new RegistrationWorklistTable())
@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _worklistClassName = value; }
         }
 
-        public RegistrationWorklistSearchCriteria SearchCriteria
+        public PatientProfileSearchData SearchCriteria
         {
             get { return _searchCriteria; }
             set 
