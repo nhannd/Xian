@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _sopInstanceUid = value; }
 		}
 
-		[DataMember(IsRequired = false)]
+		[DataMember(IsRequired = true)]
 		public string SopInstanceFileName
 		{
 			get { return _sopInstanceFileName; }
@@ -50,37 +50,61 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	}
 
 	[DataContract]
-	public class StoreScpReceivedFilesInformation
+	public class StudyInformation
 	{
-		private string _aeTitle;
-		private string _file;
+		private string _studyInstanceUid;
+		private string _patientId;
+		private string _patientsName;
+		private string _studyDescription;
+		private DateTime _studyDate;
 
-		public StoreScpReceivedFilesInformation()
+		public StudyInformation()
 		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public string AETitle
+		public string StudyInstanceUid
 		{
-			get { return _aeTitle; }
-			set { _aeTitle = value; }
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
 		}
 
 		[DataMember(IsRequired = true)]
-		public string File
+		public string PatientId
 		{
-			get { return _file; }
-			set { _file = value; }
+			get { return _patientId; }
+			set { _patientId = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string PatientsName
+		{
+			get { return _patientsName; }
+			set { _patientsName = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StudyDescription
+		{
+			get { return _studyDescription; }
+			set { _studyDescription = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public DateTime StudyDate
+		{
+			get { return _studyDate; }
+			set { _studyDate = value; }
 		}
 	}
 
 	[DataContract]
-	public class StoreScuSentFilesInformation
+	public class StoreScpReceivedFileInformation
 	{
 		private string _aeTitle;
-		private IEnumerable<SopInstanceInformation> _sopInstanceInformation;
+		private string _fileName;
 
-		public StoreScuSentFilesInformation()
+		public StoreScpReceivedFileInformation()
 		{
 		}
 
@@ -92,7 +116,73 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		IEnumerable<SopInstanceInformation> SopInstanceInformation
+		public string FileName
+		{
+			get { return _fileName; }
+			set { _fileName = value; }
+		}
+	}
+
+	[DataContract]
+	public class StoreScuBeginSendInformation
+	{
+		private string _toAETitle;
+		private StudyInformation _studyInformation;
+		private int _totalFilesToSend;
+
+		public StoreScuBeginSendInformation()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public string ToAETitle
+		{
+			get { return _toAETitle; }
+			set { _toAETitle = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public int TotalFilesToSend
+		{
+			get { return _totalFilesToSend; }
+			set { _totalFilesToSend = value; }
+		}
+		
+		[DataMember(IsRequired = true)]
+		public StudyInformation StudyInformation
+		{
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
+		}
+	}
+		
+	[DataContract]
+	public class StoreScuSentFileInformation
+	{
+		private string _toAETitle;
+		private StudyInformation _studyInformation; 
+		private SopInstanceInformation _sopInstanceInformation;
+		
+		public StoreScuSentFileInformation()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public string ToAETitle
+		{
+			get { return _toAETitle; }
+			set { _toAETitle = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public StudyInformation StudyInformation
+		{
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public SopInstanceInformation SopInstanceInformation
 		{
 			get { return _sopInstanceInformation; }
 			set { _sopInstanceInformation = value; }
@@ -200,7 +290,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public int TotalFilesToImport
+		public int TotalFilesToExport
 		{
 			get { return _totalFilesToExport; }
 			set { _totalFilesToExport = value; }
@@ -218,12 +308,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	public class ReceiveProgressItem : ImportProgressItem
 	{
 		private string _fromAETitle;
-		private string _studyInstanceUid;
-
-		private string _patientId;
-		private string _patientsName;
-		private string _studyDescription;
-		private DateTime _studyDate;
+		private StudyInformation _studyInformation;
 		
 		public ReceiveProgressItem()
 		{ 
@@ -237,38 +322,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public string StudyInstanceUid
+		public StudyInformation StudyInformation
 		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string PatientsName
-		{
-			get { return _patientsName; }
-			set { _patientsName = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public DateTime StudyDate
-		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
 		}
 	}
 
@@ -276,6 +333,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	public class SendProgressItem : ExportProgressItem
 	{
 		private string _toAETitle;
+		private StudyInformation _studyInformation;
 
 		public SendProgressItem()
 		{ 
@@ -286,6 +344,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _toAETitle; }
 			set { _toAETitle = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public StudyInformation StudyInformation
+		{
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
 		}
 	}
 
@@ -327,7 +392,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _studyInstanceUid;
 		private string _seriesInstanceUid;
-		private IEnumerable<SopInstanceInformation> _sopInstanceInformation;
+		private SopInstanceInformation _sopInstanceInformation;
 
 		public ImportedSopInstanceInformation()
 		{
@@ -348,7 +413,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 		
 		[DataMember(IsRequired = true)]
-		public IEnumerable<SopInstanceInformation> SopInstanceInformation
+		public SopInstanceInformation SopInstanceInformation
 		{
 			get { return _sopInstanceInformation; }
 			set { _sopInstanceInformation = value; }

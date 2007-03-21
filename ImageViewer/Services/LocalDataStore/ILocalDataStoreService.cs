@@ -14,10 +14,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		// Dicom Server event publishing
 		[OperationContract]
-		void FilesReceived(StoreScpReceivedFilesInformation receivedFilesInformation);
+		void FileReceived(StoreScpReceivedFileInformation receivedFileInformation);
 		
 		[OperationContract]
-		void FilesSent(StoreScuSentFilesInformation sentFilesInformation);
+		void FileSent(StoreScuSentFileInformation sentFileInformation);
 
 		// Local DataStore requests.
 		[OperationContract]

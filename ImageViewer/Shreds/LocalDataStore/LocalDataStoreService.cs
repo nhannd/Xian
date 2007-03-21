@@ -150,16 +150,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		
 		#region ILocalDataStoreService Members
 
-		public void FilesReceived(StoreScpReceivedFilesInformation receivedFilesInformation)
+		public void FileReceived(StoreScpReceivedFileInformation receivedFileInformation)
 		{
 			CheckDisabled();
-			_receiveImportQueue.ProcessFilesReceived(receivedFilesInformation);
+			_receiveImportQueue.ProcessReceivedFileInformation(receivedFileInformation);
 		}
 
-		public void FilesSent(StoreScuSentFilesInformation sentFilesInformation)
+		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			CheckDisabled();
-			//!!
+			//_sendQueue.ProcessFilesSent(sentFileInformation);
 		}
 
 		public void Import(FileImportRequest request)

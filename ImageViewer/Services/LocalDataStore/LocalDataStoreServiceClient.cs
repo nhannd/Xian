@@ -12,14 +12,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 		}
 
-		public void FilesReceived(StoreScpReceivedFilesInformation receivedFilesInformation)
+		public void FileReceived(StoreScpReceivedFileInformation receivedFileInformation)
 		{
-			base.Channel.FilesReceived(receivedFilesInformation);
+			base.Channel.FileReceived(receivedFileInformation);
 		}
 
-		public void FilesSent(StoreScuSentFilesInformation sentFilesInformation)
+		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
-			base.Channel.FilesSent(sentFilesInformation);
+			base.Channel.FileSent(sentFileInformation);
 		}
 
 		public void Import(FileImportRequest request)

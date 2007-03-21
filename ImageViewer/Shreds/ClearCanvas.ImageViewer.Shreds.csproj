@@ -61,6 +61,7 @@
     <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
     <Compile Include="LocalDataStore\ReceiveImportQueue.cs" />
+    <Compile Include="LocalDataStore\SendQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -45,13 +45,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				throw new InvalidOperationException("the identifiers must match!");
 
 			this.FromAETitle = progressItem.FromAETitle;
-			this.PatientId = progressItem.PatientId;
-			this.PatientsName = progressItem.PatientsName;
-			this.StudyInstanceUid = progressItem.StudyInstanceUid;
-			this.StudyDescription = progressItem.StudyDescription;
-			this.StudyDate = progressItem.StudyDate;
 			this.NumberOfFilesImported = progressItem.NumberOfFilesImported;
 			this.LastActive = progressItem.LastActive;
+
+			this.PatientId = progressItem.StudyInformation.PatientId;
+			this.PatientsName = progressItem.StudyInformation.PatientsName;
+			this.StudyInstanceUid = progressItem.StudyInformation.StudyInstanceUid;
+			this.StudyDescription = progressItem.StudyInformation.StudyDescription;
+			this.StudyDate = progressItem.StudyInformation.StudyDate;
 
 			CalculateLastActiveDisplay();
 		}
@@ -150,11 +151,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			TimeSpan lastActiveSpan = DateTime.Now.Subtract(_lastActive);
 			if (lastActiveSpan.Minutes < 60)
-				_lastActiveDisplay = String.Format("{0} minute(s)", lastActiveSpan.Minutes);
+			{
+				if (lastActiveSpan.Minutes == 1)
+					_lastActiveDisplay = "1 minute ago";
+				else
+					_lastActiveDisplay = String.Format("{0} minutes ago", lastActiveSpan.Minutes);
+			}
 			else if (lastActiveSpan.Hours >= 1 && lastActiveSpan.Days == 0)
-				_lastActiveDisplay = String.Format("{0} hours, {1} minute(s)", lastActiveSpan.Hours, lastActiveSpan.Minutes);
+			{
+				if (lastActiveSpan.Hours == 1)
+					_lastActiveDisplay = "1 hour, ";
+				else
+					_lastActiveDisplay = String.Format("{0} hours, ", lastActiveSpan.Hours);
+
+				if (lastActiveSpan.Minutes == 1)
+					_lastActiveDisplay += "1 minute ago";
+				else
+					_lastActiveDisplay += String.Format("{0} minutes ago", lastActiveSpan.Minutes);
+			}
 			else
+			{
 				_lastActiveDisplay = String.Format("{0} day(s)", lastActiveSpan.Days);
+			}
 		}
 	}
 

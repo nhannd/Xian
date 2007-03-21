@@ -228,11 +228,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				client.Open();
 				
-				StoreScpReceivedFilesInformation storedInformation = new StoreScpReceivedFilesInformation();
+				StoreScpReceivedFileInformation storedInformation = new StoreScpReceivedFileInformation();
 				storedInformation.AETitle = "AETitle";
-				storedInformation.File = info.FileName;
+				storedInformation.FileName = info.FileName;
 
-				client.FilesReceived(storedInformation);
+				client.FileReceived(storedInformation);
 				client.Close();
 			}
 			catch (Exception ex)

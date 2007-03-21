@@ -19,24 +19,24 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		#region ILocalDataStoreService Members
 
-		public void FilesReceived(StoreScpReceivedFilesInformation filesReceivedInformation)
+		public void FileReceived(StoreScpReceivedFileInformation filesReceivedInformation)
 		{
 			try
 			{
-				LocalDataStoreService.Instance.FilesReceived(filesReceivedInformation);
+				LocalDataStoreService.Instance.FileReceived(filesReceivedInformation);
 			}
 			catch (Exception e)
 			{
-				string message = String.Format("An error has occurred while attempting to process a received file ({0})", filesReceivedInformation.File);
+				string message = String.Format("An error has occurred while attempting to process a received file ({0})", filesReceivedInformation.FileName);
 				throw new LocalDataStoreFaultException(message, e);
 			}
 		}
 
-		public void FilesSent(StoreScuSentFilesInformation filesSentInformation)
+		public void FileSent(StoreScuSentFileInformation filesSentInformation)
 		{
 			try
 			{
-				LocalDataStoreService.Instance.FilesSent(filesSentInformation);
+				LocalDataStoreService.Instance.FileSent(filesSentInformation);
 			}
 			catch (Exception e)
 			{
