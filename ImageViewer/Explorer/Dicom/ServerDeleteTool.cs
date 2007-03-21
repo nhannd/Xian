@@ -24,17 +24,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private void DeleteServerServerGroup()
         {
             ServerTree serverTree = this.Context.ServerTree;
-            string msg = "";
             if (serverTree.CurrentNode.IsServer)
-				msg = SR.MessageConfirmDeleteServer;
-            else
-				msg = SR.MessageConfirmDeleteServerGroup;
-            if (Platform.ShowMessageBox(msg, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
-                return;
+            {
+                if (Platform.ShowMessageBox(SR.MessageConfirmDeleteServer, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+                    return;
 
-            this.Context.UpdateType = (int)ServerUpdateType.Delete;
-            serverTree.DeleteDicomServer();
-            return;
+                this.Context.UpdateType = (int)ServerUpdateType.Delete;
+                serverTree.DeleteDicomServer();
+            }
+            else
+            {
+                if (Platform.ShowMessageBox(SR.MessageConfirmDeleteServerGroup, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+                    return;
+
+                this.Context.UpdateType = (int)ServerUpdateType.Delete;
+                serverTree.DeleteServerGroup();
+            }
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
