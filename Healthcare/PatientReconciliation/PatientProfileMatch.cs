@@ -9,7 +9,8 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
         public enum ScoreValue
         {
             High = 2,
-            Moderate = 1
+            Moderate = 1,
+            Low = 0
         }
 
         private PatientProfile _patientProfile;

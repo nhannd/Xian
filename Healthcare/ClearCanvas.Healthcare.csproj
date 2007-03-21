@@ -53,7 +53,6 @@
     <Compile Include="PatientReconciliation\PatientProfileDiscrepancy.cs" />
     <Compile Include="PatientReconciliation\PatientProfileDiscrepancyTest.cs" />
     <Compile Include="PatientReconciliation\PatientProfileMatch.cs" />
-    <Compile Include="PatientReconciliation\PatientReconciliationException.cs" />
     <Compile Include="PatientReconciliation\PatientReconciliationStrategyExtensionPoint.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />

@@ -7,39 +7,42 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Healthcare.PatientReconciliation
 {
     /// <summary>
+    /// Represents the result of evaluating a single discrepancy test on a pair of patient profiles
+    /// </summary>
+    public class DiscrepancyTestResult
+    {
+        private PatientProfileDiscrepancy _discrepancy;
+        private bool _discrepant;
+        private StringDiff _diff;
+
+        public DiscrepancyTestResult(PatientProfileDiscrepancy discrepancy, bool discrepant, StringDiff diff)
+        {
+            _discrepancy = discrepancy;
+            _discrepant = discrepant;
+            _diff = diff;
+        }
+
+        public PatientProfileDiscrepancy Discrepancy
+        {
+            get { return _discrepancy; }
+        }
+
+        public bool IsDiscrepant
+        {
+            get { return _discrepant; }
+        }
+
+        public StringDiff Diff
+        {
+            get { return _diff; }
+        }
+    }
+    
+    /// <summary>
     /// Utility class for comparing a set of <see cref="PatientProfile"/> objects for discrepancies.
     /// </summary>
     public class PatientProfileDiscrepancyTest
     {
-        public class DiscrepancyTestResult
-        {
-            private PatientProfileDiscrepancy _discrepancy;
-            private bool _discrepant;
-            private StringDiff _diff;
-
-            public DiscrepancyTestResult(PatientProfileDiscrepancy discrepancy, bool discrepant, StringDiff diff)
-            {
-                _discrepancy = discrepancy;
-                _discrepant = discrepant;
-                _diff = diff;
-            }
-
-            public PatientProfileDiscrepancy Discrepancy
-            {
-                get { return _discrepancy; }
-            }
-
-            public bool IsDiscrepant
-            {
-                get { return _discrepant; }
-            }
-
-            public StringDiff Diff
-            {
-                get { return _diff; }
-            }
-        }
-
         delegate bool DiscrepancyTestDelegate(PatientProfile x, PatientProfile y);
 
 
