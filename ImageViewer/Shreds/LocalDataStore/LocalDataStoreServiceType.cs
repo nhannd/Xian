@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
 	public class LocalDataStoreServiceType : ILocalDataStoreService
 	{
 		public LocalDataStoreServiceType()

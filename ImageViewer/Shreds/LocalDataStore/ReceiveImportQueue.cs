@@ -6,10 +6,11 @@ using System.Threading;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class SendReceiveImportQueue
+	internal class ReceiveImportQueue
 	{
 		private delegate void FileImportResultDelegate(FileImportInformation results);
 
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private List<ReceiveProgressItem> _receiveProgressItems;
 		private SimpleThreadPool<IJob> _importThreadPool;
 
-		public SendReceiveImportQueue()
+		public ReceiveImportQueue()
 		{
 			_receiveProgressItems = new List<ReceiveProgressItem>();
 			_importThreadPool = new SimpleThreadPool<IJob>(LocalDataStoreService.Instance.SendReceiveImportConcurrency);
@@ -89,14 +90,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				lock (_receiveProgressItemsLock)
 				{
-					int idleSeconds = LocalDataStoreServiceSettings.Instance.SendReceiveImportIdleTimeoutSeconds;
+					//int idleSeconds = LocalDataStoreServiceSettings.Instance.SendReceiveImportIdleTimeoutSeconds;
 
 					ReceiveProgressItem progressItem = _receiveProgressItems.Find(
 						delegate(ReceiveProgressItem testItem)
 						{
 							return testItem.FromAETitle == receivedFileImportInformation.SourceAETitle &&
-								testItem.StudyInstanceUid == receivedFileImportInformation.StudyInstanceUid &&
-								DateTime.Now.Subtract(testItem.LastActive) < TimeSpan.FromSeconds(idleSeconds);
+								testItem.StudyInstanceUid == receivedFileImportInformation.StudyInstanceUid; //&&	DateTime.Now.Subtract(testItem.LastActive) < TimeSpan.FromSeconds(idleSeconds);
 						});
 
 					if (progressItem == null)
@@ -107,7 +107,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem.StartTime = DateTime.Now;
 						progressItem.LastActive = progressItem.StartTime;
 						progressItem.State = FileOperationProgressItemState.InProgress;
-						progressItem.StatusMessage = "Importing Files ...";
 
 						progressItem.FromAETitle = receivedFileImportInformation.SourceAETitle;
 						progressItem.NumberOfFilesImported = 1;
@@ -116,8 +115,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 						progressItem.StudyInstanceUid = results.StudyInstanceUid;
 						progressItem.PatientId = results.PatientId;
+						progressItem.PatientsName = results.PatientsName;
 						progressItem.StudyDescription = results.StudyDescription;
-						progressItem.StudyId = results.StudyId;
+						DateTime studyDate;
+						DateParser.Parse(results.StudyDate, out studyDate);
+						progressItem.StudyDate = studyDate;
 
 						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem);
 						_receiveProgressItems.Add(progressItem);
@@ -145,35 +147,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			_importThreadPool.Stop();
 		}
 
-		//public void PauseImports()
-		//{
-		//    if (_importThreadPool.Active)
-		//    {
-		//        _importThreadPool.Stop();
-
-		//        //lock (_receiveProgressItemsLock)
-		//        //{
-		//        //    foreach (ReceiveProgressItem receiveProgressItem in _receiveProgressItems)
-		//        //    {
-		//        //        if (receiveProgressItem.State == FileOperationProgressItemState.InProgress)
-		//        //        {
-		//        //            receiveProgressItem.State = FileOperationProgressItemState.Paused;
-		//        //            receiveProgressItem.StatusMessage = "Import Paused ...";
-		//        //        }
-		//        //    }
-		//        //}
-		//    }
-		//}
-
-		//public void ResumeImports()
-		//{
-		//    if (!_importThreadPool.Active)
-		//        _importThreadPool.Start();
-		//}
-
 		public void ProcessFilesReceived(StoreScpReceivedFilesInformation receivedFileInformation)
 		{
 			_importThreadPool.Push(new FileImportJob(receivedFileInformation.File, receivedFileInformation.AETitle, this.ProcessFileImportResults));
+		}
+
+		public void RepublishAll()
+		{
+			lock (_receiveProgressItemsLock)
+			{
+				//remember to clone!
+				foreach (ReceiveProgressItem item in _receiveProgressItems)
+					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item);
+			}
 		}
 	}
 }

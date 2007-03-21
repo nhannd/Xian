@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		Completed,
 		Paused,
 		Cancelled,
+		Removed,
 		Error
 	}
 
@@ -140,12 +141,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _statusMessage = value; }
 		}
 
+		[DataMember(IsRequired = true)]
 		public DateTime StartTime
 		{
 			get { return _startTime; }
 			set { _startTime = value; }
 		}
 
+		[DataMember(IsRequired = true)]
 		public DateTime LastActive
 		{
 			get { return _lastActive; }
@@ -218,8 +221,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private string _studyInstanceUid;
 
 		private string _patientId;
+		private string _patientsName;
 		private string _studyDescription;
-		private string _studyId;
+		private DateTime _studyDate;
 		
 		public ReceiveProgressItem()
 		{ 
@@ -247,6 +251,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
+		public string PatientsName
+		{
+			get { return _patientsName; }
+			set { _patientsName = value; }
+		}
+
+		[DataMember(IsRequired = true)]
 		public string StudyDescription
 		{
 			get { return _studyDescription; }
@@ -254,10 +265,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public string StudyId
+		public DateTime StudyDate
 		{
-			get { return _studyId; }
-			set { _studyId = value; }
+			get { return _studyDate; }
+			set { _studyDate = value; }
 		}
 	}
 

@@ -48,7 +48,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{BB434EC3-A580-4744-A635-A2B4029C66DE} = {BB434EC3-A580-4744-A635-A2B4029C66DE}
 		{BA5FDA96-AFD6-4546-A294-24D6BC77E808} = {BA5FDA96-AFD6-4546-A294-24D6BC77E808}
 		{9312CE96-354D-4451-A060-924E652F1D89} = {9312CE96-354D-4451-A060-924E652F1D89}
-		{12DB8195-F96E-471E-B5FC-73C098CAF8C7} = {12DB8195-F96E-471E-B5FC-73C098CAF8C7}
 		{9DD80D93-472E-4B9B-B896-24CF36C3C956} = {9DD80D93-472E-4B9B-B896-24CF36C3C956}
 		{A7C78084-947E-4955-9473-9F186B760AEC} = {A7C78084-947E-4955-9473-9F186B760AEC}
 		{86463672-CB30-41E7-BF90-36AF6CDA6729} = {86463672-CB30-41E7-BF90-36AF6CDA6729}
@@ -207,18 +206,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataStore
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Utilities.RebuildDatabase", "..\Utilities\RebuildDatabase\ClearCanvas.Utilities.RebuildDatabase.csproj", "{12DB8195-F96E-471E-B5FC-73C098CAF8C7}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{CA91515F-D706-4D15-882B-811F3BDC4956} = {CA91515F-D706-4D15-882B-811F3BDC4956}
-		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
-		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
-		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8} = {3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Explorer.Local.View.WinForms", "Explorer\Local\View\WinForms\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.csproj", "{9DD80D93-472E-4B9B-B896-24CF36C3C956}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -319,6 +306,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Con
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Services.Tools", "Services\Tools\ClearCanvas.ImageViewer.Services.Tools.csproj", "{EF1E3BC4-21CA-467A-B84F-9B692846F459}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Services.Tools.View.WinForms", "Services\Tools\View\WinForms\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.csproj", "{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -413,10 +412,6 @@ Global
 		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12DB8195-F96E-471E-B5FC-73C098CAF8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12DB8195-F96E-471E-B5FC-73C098CAF8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12DB8195-F96E-471E-B5FC-73C098CAF8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12DB8195-F96E-471E-B5FC-73C098CAF8C7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DD80D93-472E-4B9B-B896-24CF36C3C956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9DD80D93-472E-4B9B-B896-24CF36C3C956}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DD80D93-472E-4B9B-B896-24CF36C3C956}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -481,6 +476,14 @@ Global
 		{9929C5B6-C13B-4436-9326-955EDE2CA102}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9929C5B6-C13B-4436-9326-955EDE2CA102}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9929C5B6-C13B-4436-9326-955EDE2CA102}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF1E3BC4-21CA-467A-B84F-9B692846F459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF1E3BC4-21CA-467A-B84F-9B692846F459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF1E3BC4-21CA-467A-B84F-9B692846F459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF1E3BC4-21CA-467A-B84F-9B692846F459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

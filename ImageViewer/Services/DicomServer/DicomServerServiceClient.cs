@@ -12,30 +12,6 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		{
 		}
 
-		public DicomServerServiceClient(string endpointConfigurationName)
-			:
-				base(endpointConfigurationName)
-		{
-		}
-
-		public DicomServerServiceClient(string endpointConfigurationName, string remoteAddress)
-			:
-				base(endpointConfigurationName, remoteAddress)
-		{
-		}
-
-		public DicomServerServiceClient(string endpointConfigurationName, EndpointAddress remoteAddress)
-			:
-				base(endpointConfigurationName, remoteAddress)
-		{
-		}
-
-		public DicomServerServiceClient(Binding binding, EndpointAddress remoteAddress)
-			:
-				base(binding, remoteAddress)
-		{
-		}
-
 		public void Send(DicomSendRequest request)
 		{
 			base.Channel.Send(request);

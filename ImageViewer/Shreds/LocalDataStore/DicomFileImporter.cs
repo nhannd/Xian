@@ -21,8 +21,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private string _sopInstanceUid;
 
 		private string _patientId;
+		private string _patientsName;
 		private string _studyDescription;
-		private string _studyId;
+		private string _studyDate;
 
 		public FileImportInformation(string sourceFile)
 			: this(sourceFile, BadFileBehaviour.Ignore)
@@ -72,6 +73,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			set { _patientId = value; }
 		}
 
+		public string PatientsName
+		{
+			get { return _patientsName; }
+			set { _patientsName = value; }
+		}
+
 		public string StudyInstanceUid
 		{
 			get { return _studyInstanceUid; }
@@ -96,10 +103,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			set { _studyDescription = value; }
 		}
 
-		public string StudyId
+		public string StudyDate
 		{
-			get { return _studyId; }
-			set { _studyId = value; }
+			get { return _studyDate; }
+			set { _studyDate = value; }
 		}
 	}
 	
@@ -164,12 +171,15 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				if (!System.IO.Directory.Exists(directoryName))
 					System.IO.Directory.CreateDirectory(directoryName);
 
-				//System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
-				System.IO.File.Copy(fileImportInformation.SourceFile, storedFile);
+				if (System.IO.File.Exists(storedFile))
+					System.IO.File.Delete(storedFile);
+
+				System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
+				//System.IO.File.Copy(fileImportInformation.SourceFile, storedFile);
 
 				lock (_syncLock)
 				{
-					ISopInstance newSop = GetSopInstance(metaInfo, dataset, fileImportInformation.StoredFile);
+					ISopInstance newSop = GetSopInstance(metaInfo, dataset, storedFile);
 					IStudy study = GetStudy(metaInfo, dataset);
 					ISeries series = GetSeries(metaInfo, dataset);
 
@@ -184,11 +194,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				StringBuilder tagRetrievalBuilder = new StringBuilder(1024);
 
-				dataset.findAndGetOFString(Dcm.StudyID, tagRetrievalBuilder);
-				fileImportInformation.StudyId = tagRetrievalBuilder.ToString();
+				dataset.findAndGetOFString(Dcm.StudyDate, tagRetrievalBuilder);
+				fileImportInformation.StudyDate = tagRetrievalBuilder.ToString();
 
 				dataset.findAndGetOFString(Dcm.PatientId, tagRetrievalBuilder);
 				fileImportInformation.PatientId = tagRetrievalBuilder.ToString();
+
+				dataset.findAndGetOFString(Dcm.PatientsName, tagRetrievalBuilder);
+				fileImportInformation.PatientsName = tagRetrievalBuilder.ToString();
 
 				dataset.findAndGetOFString(Dcm.StudyDescription, tagRetrievalBuilder);
 				fileImportInformation.StudyDescription = tagRetrievalBuilder.ToString();

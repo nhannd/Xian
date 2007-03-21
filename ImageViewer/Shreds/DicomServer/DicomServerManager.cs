@@ -526,15 +526,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			if (request.RetrieveLevel != RetrieveLevel.Study)
 				throw new Exception("The specified retrieve level is unsupported at this time.");
 
-			DicomClient client = new DicomClient(_myApplicationEntity);
-			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
-
-			//SendParcel parcel = new SendParcel(_myApplicationEntity, destinationAE, "");
 			foreach (string uid in request.Uids)
 			{
+				string studyUid = uid; //have to do this, otherwise the anonymous delegate(s) will all use the same value.
 				BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 				{
-					client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(uid), this.SaveDirectory);
+					DicomClient client = new DicomClient(_myApplicationEntity);
+					ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
+					client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(studyUid), this.SaveDirectory);
 				}, false);
 				
 				task.Run();

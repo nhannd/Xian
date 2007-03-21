@@ -178,8 +178,12 @@ namespace ClearCanvas.Common
                 {
                     lock (_syncRoot)
                     {
-                        if (_installDirectory == null)
-                            _installDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+						if (_installDirectory == null)
+						{
+							Assembly assembly = Assembly.GetExecutingAssembly();
+							string directory = Path.GetDirectoryName(assembly.Location);
+							_installDirectory = Path.GetFullPath(String.Format("{0}\\..", directory));
+						}
                     }
                 }
 

@@ -6,35 +6,11 @@ using System.ServiceModel.Channels;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
-	public class LocalDataStoreActivityMonitorServiceClient : ClientBase<ILocalDataStoreActivityMonitorService>, ILocalDataStoreActivityMonitorService
+	public class LocalDataStoreActivityMonitorServiceClient : DuplexClientBase<ILocalDataStoreActivityMonitorService>, ILocalDataStoreActivityMonitorService
 	{
-
-		public LocalDataStoreActivityMonitorServiceClient()
-		{
-		}
-
-		public LocalDataStoreActivityMonitorServiceClient(string endpointConfigurationName)
-			:
-				base(endpointConfigurationName)
-		{
-		}
-
-		public LocalDataStoreActivityMonitorServiceClient(string endpointConfigurationName, string remoteAddress)
-			:
-				base(endpointConfigurationName, remoteAddress)
-		{
-		}
-
-		public LocalDataStoreActivityMonitorServiceClient(string endpointConfigurationName, EndpointAddress remoteAddress)
-			:
-				base(endpointConfigurationName, remoteAddress)
-		{
-		}
-
-		public LocalDataStoreActivityMonitorServiceClient(Binding binding, EndpointAddress remoteAddress)
-			:
-				base(binding, remoteAddress)
-		{
+		public LocalDataStoreActivityMonitorServiceClient(InstanceContext callbackInstance)
+			: base(callbackInstance)
+		{ 
 		}
 
 		public void Subscribe(string eventOperation)

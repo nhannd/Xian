@@ -1,54 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShredHostExe", "ShredHostExe.csproj", "{3F3F28E1-29C9-4ADB-B684-3A3734460713}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06} = {E991CF00-A0E1-490C-A0D1-2BD77FAECF06}
-		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2} = {84E99D28-8C46-49C7-BBD9-41037EFCCBE2}
-		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
-		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE} = {9607D0DF-42D7-4FCA-82FF-962D5BC872DE}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleShred2", "..\SampleShred2\SampleShred2.csproj", "{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeClient", "..\PrimeClient\PrimeClient.csproj", "{EB5196C6-30D4-484D-954F-EF820DA815C2}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2} = {84E99D28-8C46-49C7-BBD9-41037EFCCBE2}
-		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
-		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE} = {9607D0DF-42D7-4FCA-82FF-962D5BC872DE}
-		{3F3F28E1-29C9-4ADB-B684-3A3734460713} = {3F3F28E1-29C9-4ADB-B684-3A3734460713}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleShredCrash", "..\SampleShredCrash\SampleShredCrash.csproj", "{9607D0DF-42D7-4FCA-82FF-962D5BC872DE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Shreds", "..\..\ImageViewer\Shreds\ClearCanvas.ImageViewer.Shreds.csproj", "{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -91,32 +43,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Codecs", "..\..
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShredHostExe", "ShredHostExe.csproj", "{3F3F28E1-29C9-4ADB-B684-3A3734460713}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06} = {E991CF00-A0E1-490C-A0D1-2BD77FAECF06}
+		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84E99D28-8C46-49C7-BBD9-41037EFCCBE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB5196C6-30D4-484D-954F-EF820DA815C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9607D0DF-42D7-4FCA-82FF-962D5BC872DE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -142,6 +90,14 @@ Global
 		{86463672-CB30-41E7-BF90-36AF6CDA6729}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86463672-CB30-41E7-BF90-36AF6CDA6729}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86463672-CB30-41E7-BF90-36AF6CDA6729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F3F28E1-29C9-4ADB-B684-3A3734460713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

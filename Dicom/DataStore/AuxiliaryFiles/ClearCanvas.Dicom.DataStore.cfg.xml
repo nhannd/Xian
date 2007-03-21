@@ -4,7 +4,7 @@
 		<property name="hibernate.dialect">ClearCanvas.Dicom.DataStore.NHibernateDriver.MsSqlCeDialect, ClearCanvas.Dicom.DataStore.NHibernateDriver</property>
 		<property name="hibernate.connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
 		<property name="hibernate.connection.driver_class">ClearCanvas.Dicom.DataStore.NHibernateDriver.SqlServerCeDriver, ClearCanvas.Dicom.DataStore.NHibernateDriver</property>
-		<property name="hibernate.connection.connection_string">Data Source=datastore\viewer.sdf</property>
+		<property name="hibernate.connection.connection_string">Data Source=C:\dicom_datastore\viewer.sdf</property>
 		<!--
 		<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>
 		<property name="hibernate.connection.provider">NHibernate.Connection.DriverConnectionProvider</property>

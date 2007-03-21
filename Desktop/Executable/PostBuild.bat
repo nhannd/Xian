@@ -15,7 +15,7 @@ del /Q ".\plugins\*.*"
 md ".\common"
 md ".\plugins"
 md ".\logs"
-md ".\datastore"
+md "c:\dicom_datastore"
 
 :: Copy shared config files
 copy "..\..\Logging.config" "."

@@ -7,35 +7,45 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	public interface ILocalDataStoreActivityMonitorServiceCallback
 	{
+		[OperationContract(IsOneWay = true)]
 		void ReceiveProgressChanged(ReceiveProgressItem progressItem);
 
+		[OperationContract(IsOneWay = true)]
 		void SendProgressChanged(SendProgressItem progressItem);
 
+		[OperationContract(IsOneWay = true)]
 		void ImportProgressChanged(ImportProgressItem progressItem);
 
+		[OperationContract(IsOneWay = true)]
 		void ReindexProgressChanged(ReindexProgressItem progressItem);
 
+		[OperationContract(IsOneWay = true)]
 		void SopInstancesImported(ImportedSopInstanceInformation information);
 
+		[OperationContract(IsOneWay = true)]
 		void ServiceStopped();
 	}
 
-	[ServiceContract(CallbackContract = typeof(ILocalDataStoreActivityMonitorServiceCallback), ConfigurationName="ILocalDataStoreActivityMonitorService")]
+	[ServiceContract(	//SessionMode = SessionMode.Required,
+						CallbackContract = typeof(ILocalDataStoreActivityMonitorServiceCallback), 
+						ConfigurationName="ILocalDataStoreActivityMonitorService")]
 	public interface ILocalDataStoreActivityMonitorService
 	{
-		[OperationContract(IsOneWay = true)]
+		[OperationContract]
 		void Cancel(CancelProgressItemInformation information);
 		
-		[OperationContract(IsOneWay = true)]
+		[OperationContract]
 		void ClearInactive();
 		
-		[OperationContract(IsOneWay = true)]
+		[OperationContract]
 		void Refresh();
 
-		[OperationContract(IsOneWay = true)]
+		//[OperationContract(IsInitiating = true)]
+		[OperationContract]
 		void Subscribe(string eventName);
 
-		[OperationContract(IsOneWay = true)]
+		//[OperationContract(IsTerminating = true)]
+		[OperationContract]
 		void Unsubscribe(string eventName);
 	}
 }

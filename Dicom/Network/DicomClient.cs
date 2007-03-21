@@ -115,10 +115,10 @@ namespace ClearCanvas.Dicom.Network
             //_storeCallbackHelper = new StoreCallbackHelper(this);
 
             // same goes for the store scu callback helper
-            _storeScuCallbackHelper = new StoreScuCallbackHelper(this);
+			//_storeScuCallbackHelper = new StoreScuCallbackHelper(this);
 
             // same goes for the retrieve callback helper
-            _retrieveCallbackHelper = new RetrieveCallbackHelper(this);
+			//_retrieveCallbackHelper = new RetrieveCallbackHelper(this);
 
             _queryResults = new QueryResultList();
 

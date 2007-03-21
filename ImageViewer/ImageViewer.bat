@@ -4,18 +4,14 @@ echo Executing ImageViewer post-build step
 
 :: Copy database file
 
-IF NOT EXIST ".\datastore\viewer.sdf" copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" ".\datastore\viewer.sdf"
-copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" ".\datastore\empty_viewer.sdf"
+IF NOT EXIST "C:\dicom_datastore\viewer.sdf" copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" "C:\dicom_datastore\viewer.sdf"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" "C:\dicom_datastore\empty_viewer.sdf"
 
 :: Copy Hibernate configuration file
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" "."
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" "ClearCanvas.Dicom.Services.cfg.xml"
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresets.xml" "."
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresetKeyAssignments.xml" "."
-
-:: Copy database rebuild utility
-copy "..\..\..\..\Utilities\RebuildDatabase\bin\%1\ClearCanvas.Utilities.RebuildDatabase.exe" "."
-copy "..\..\..\..\Utilities\RebuildDatabase\app.config" ".\ClearCanvas.Utilities.RebuildDatabase.exe.config"
 
 :: Copy Dicom assemblies	
 copy "..\..\..\..\Dicom\bin\%1\ClearCanvas.Dicom.dll" ".\Common"
@@ -27,6 +23,9 @@ copy "..\..\..\..\Dicom\DataStore\bin\%1\ClearCanvas.Dicom.DataStore.dll" ".\Com
 copy "..\..\..\..\Codecs\bin\%1\ClearCanvas.Codecs.dll" ".\plugins"
 copy "..\..\..\Explorer\bin\%1\ClearCanvas.Desktop.Explorer.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\bin\%1\ClearCanvas.ImageViewer.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Services\bin\%1\ClearCanvas.ImageViewer.Services.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Services\Tools\bin\%1\ClearCanvas.ImageViewer.Services.Tools.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Services\Tools\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Services\bin\%1\ClearCanvas.ImageViewer.Services.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\View\WinForms\bin\%1\ClearCanvas.ImageViewer.View.WinForms.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Tools\Measurement\bin\%1\ClearCanvas.ImageViewer.Tools.Measurement.dll" ".\plugins"

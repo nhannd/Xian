@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed class LocalDataStoreActivityMonitor : ILocalDataStoreActivityMonitorService
 	{
-		private class InternalSubscriptionManager : SubscriptionManager<ILocalDataStoreActivityMonitorServiceCallback>
+		private class InternalSubscriptionManager : TransientSubscriptionManager<ILocalDataStoreActivityMonitorServiceCallback>
 		{
 			public InternalSubscriptionManager()
 			{ 
@@ -59,6 +59,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void Subscribe(string eventOperation)
 		{
 			_subscriptionManager.Subscribe(eventOperation);
+
+			LocalDataStoreService.Instance.RepublishAll();
 		}
 
 		public void Unsubscribe(string eventOperation)

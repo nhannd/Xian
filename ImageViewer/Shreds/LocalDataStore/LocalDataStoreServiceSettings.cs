@@ -6,12 +6,11 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	public class LocalDataStoreServiceSettings : ShredConfigSection
+	internal class LocalDataStoreServiceSettings : ShredConfigSection
 	{
 		public const string DefaultStorageFolder = @"c:\dicom_datastore\filestore\";
 		public const string DefaultBadFileFolder = @"c:\dicom_datastore\badfiles\";
 		public const int DefaultSendReceiveImportConcurrency = 2;
-		public const int DefaultSendReceiveImportIdleTimeoutSeconds = 300;
 
 		private static LocalDataStoreServiceSettings _instance;
 
@@ -70,13 +69,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			set { this["SendReceiveImportConcurrency"] = value; }
 		}
 
-		[ConfigurationProperty("SendReceiveImportIdleTimeoutSeconds", DefaultValue = LocalDataStoreServiceSettings.DefaultSendReceiveImportIdleTimeoutSeconds)]
-		public int SendReceiveImportIdleTimeoutSeconds
-		{
-			get { return (int)this["SendReceiveImportIdleTimeoutSeconds"]; }
-			set { this["SendReceiveImportIdleTimeoutSeconds"] = value; }
-		}
-
 		#endregion
 
 		public override object Clone()
@@ -86,7 +78,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			clone.StorageFolder = _instance.StorageFolder;
 			clone.BadFileFolder = _instance.BadFileFolder;
 			clone.SendReceiveImportConcurrency = _instance.SendReceiveImportConcurrency;
-			clone.SendReceiveImportIdleTimeoutSeconds = _instance.SendReceiveImportIdleTimeoutSeconds;
 
 			return clone;
 		}

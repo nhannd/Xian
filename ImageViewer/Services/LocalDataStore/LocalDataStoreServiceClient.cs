@@ -8,32 +8,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	public class LocalDataStoreServiceClient : ClientBase<ILocalDataStoreService>, ILocalDataStoreService
 	{
-
 		public LocalDataStoreServiceClient()
-		{
-		}
-
-		public LocalDataStoreServiceClient(string endpointConfigurationName)
-			:
-				base(endpointConfigurationName)
-		{
-		}
-
-		public LocalDataStoreServiceClient(string endpointConfigurationName, string remoteAddress)
-			:
-				base(endpointConfigurationName, remoteAddress)
-		{
-		}
-
-		public LocalDataStoreServiceClient(string endpointConfigurationName, EndpointAddress remoteAddress)
-			:
-				base(endpointConfigurationName, remoteAddress)
-		{
-		}
-
-		public LocalDataStoreServiceClient(Binding binding, EndpointAddress remoteAddress)
-			:
-				base(binding, remoteAddress)
 		{
 		}
 

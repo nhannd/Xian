@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private bool _disabled;
 
-		private SendReceiveImportQueue _sendReceiveImportQueue;
+		private ReceiveImportQueue _receiveImportQueue;
 		private DicomFileImporter _dicomFileImporter;
 		
 		private string _storageFolder = null;
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				_dicomFileImporter = new DicomFileImporter();
 
-				_sendReceiveImportQueue = new SendReceiveImportQueue();
+				_receiveImportQueue = new ReceiveImportQueue();
 			}
 			catch (Exception e)
 			{
@@ -78,9 +78,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		public SendReceiveImportQueue SendReceiveImportQueue
+		public ReceiveImportQueue ReceiveImportQueue
 		{
-			get { return _sendReceiveImportQueue; }
+			get { return _receiveImportQueue; }
 		}
 
 		public DicomFileImporter DicomFileImporter
@@ -135,20 +135,25 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void Start()
 		{
-			_sendReceiveImportQueue.Start();
+			_receiveImportQueue.Start();
 		}
 
 		public void Stop()
 		{
-			_sendReceiveImportQueue.Stop();
+			_receiveImportQueue.Stop();
 		}
 
+		public void RepublishAll()
+		{
+			_receiveImportQueue.RepublishAll();
+		}
+		
 		#region ILocalDataStoreService Members
 
 		public void FilesReceived(StoreScpReceivedFilesInformation receivedFilesInformation)
 		{
 			CheckDisabled();
-			_sendReceiveImportQueue.ProcessFilesReceived(receivedFilesInformation);
+			_receiveImportQueue.ProcessFilesReceived(receivedFilesInformation);
 		}
 
 		public void FilesSent(StoreScuSentFilesInformation sentFilesInformation)
