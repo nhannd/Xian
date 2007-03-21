@@ -9,12 +9,27 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
+	/// An <see cref="InterpolationMode"/> enumeration specifies the
+	/// interpolation algorithm to use when rendering the image.
+	/// </summary>
+	public enum InterpolationMode 
+	{ 
+		/// <summary>
+		/// Specifies nearest neighbour interpolation.
+		/// </summary>
+		//NearestNeighbour,
+
+		/// <summary>
+		/// Specifies bilinear interpolation using fixed-point arithmetic.
+		/// </summary>
+		Bilinear 
+	};
+
+	/// <summary>
 	/// An image <see cref="Graphic"/>.
 	/// </summary>
 	public class ImageGraphic : Graphic
 	{
-		public enum InterpolationMethods { NearestNeighbour, FastBilinear, Bilinear };
-
 		#region Private fields
 
 		private int _rows;
@@ -34,10 +49,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _doubleWordAlignedColumns = -1;
 		private RectangleF _imageRectangle;
 
-		private InterpolationMethods _normalInterpolationMethod = InterpolationMethods.Bilinear;
-		//private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.NearestNeighbour;
-		private InterpolationMethods _fastInterpolationMethod = InterpolationMethods.FastBilinear;
-		private bool _fastRender = false;
+		private InterpolationMode _interpolationMode = InterpolationMode.Bilinear;
 
 		#endregion
 
@@ -352,52 +364,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the image should be rendered
-		/// using the <see cref="FastInterpolationMethod"/> or 
-		/// <see cref="NormalInterpolationMethod"/>.
-		/// </summary>
-		public bool FastRender
-		{
-			get 
-			{
-				return _fastRender; 
-			}
-			set
-			{
-				_fastRender = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the fast interpolation method.
-		/// </summary>
-		public InterpolationMethods FastInterpolationMethod
-		{
-			get { return _fastInterpolationMethod; }
-			set { _fastInterpolationMethod = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the normal interpolation method.
-		/// </summary>
-		public InterpolationMethods NormalInterpolationMethod
-		{
-			get { return _normalInterpolationMethod; }
-			set { _normalInterpolationMethod = value; }
-		}
-
-		/// <summary>
 		/// Gets the current interpolation method.
 		/// </summary>
-		public virtual InterpolationMethods InterpolationMethod
+		public virtual InterpolationMode InterpolationMode
 		{
-			get
-			{
-				if (_fastRender)
-					return _fastInterpolationMethod;
-
-				return _normalInterpolationMethod;
-			}
+			get { return _interpolationMode; }
 		}
 
 		/// <summary>

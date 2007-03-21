@@ -25,19 +25,19 @@ extern "C"
 			BOOL isRGB,
 			BOOL isPlanar,
 
-			int srcRegionRectLeft,
-            int srcRegionRectTop,
-            int srcRegionRectRight,
-            int srcRegionRectBottom,
+			float srcRegionRectLeft,
+            float srcRegionRectTop,
+            float srcRegionRectRight,
+            float srcRegionRectBottom,
 			
             BYTE* pDstPixelData,
             unsigned int dstWidth,
             unsigned int dstBytesPerPixel,
 
-			int dstRegionRectLeft,
-            int dstRegionRectTop,
-            int dstRegionRectRight,
-            int dstRegionRectBottom,
+			float dstRegionRectLeft,
+            float dstRegionRectTop,
+            float dstRegionRectRight,
+            float dstRegionRectBottom,
 
 			BOOL swapXY,
             int* pLutData

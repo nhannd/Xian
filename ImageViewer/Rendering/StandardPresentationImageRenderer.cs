@@ -165,8 +165,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			imageGraphic.FastRender = true;
-
 			BitmapData bitmapData = _surface.FinalBuffer.Bitmap.LockBits(
 				new Rectangle(0, 0, _surface.FinalBuffer.Bitmap.Width, _surface.FinalBuffer.Bitmap.Height),
 				ImageLockMode.ReadWrite,

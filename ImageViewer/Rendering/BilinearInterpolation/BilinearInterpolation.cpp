@@ -123,15 +123,15 @@ void InterpolateBilinearT(
 
 		BYTE* pDstPixelData,
 
-		unsigned int dstRegionWidth,
-		unsigned int dstRegionHeight,
+		float dstRegionWidth,
+		float dstRegionHeight,
 		int xDstIncrement,
 		int yDstIncrement,
 
 		T* pSrcPixelData,
 		unsigned int srcWidth,
 		unsigned int srcHeight,
-		int srcRegionOriginY,
+		float srcRegionOriginY,
 
 		float xRatio,
 		float yRatio,
@@ -149,14 +149,11 @@ void InterpolateBilinearT(
 	// by 4 (i.e. right shift 2 bits) to get the increment in ints.
 	xDstIncrement = xDstIncrement >> 2;
 
-	float floatDstRegionHeight = (float)dstRegionHeight;
-	float floatsrcRegionOriginY = (float)srcRegionOriginY;
-
     float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
 
-	for (float y = 0; y < floatDstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
+	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
-		float ySrcCoordinate = floatsrcRegionOriginY + (y + 0.5F) * yRatio;
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
 
 		//a necessary evil, I'm afraid.
 		if (ySrcCoordinate < 0)
@@ -202,15 +199,15 @@ void InterpolateBilinearRGB(
 
 		BYTE* pDstPixelData,
 
-		unsigned int dstRegionWidth,
-		unsigned int dstRegionHeight,
+		float dstRegionWidth,
+		float dstRegionHeight,
 		int xDstIncrement,
 		int yDstIncrement,
 
 		BYTE* pSrcPixelData,
 		unsigned int srcWidth,
 		unsigned int srcHeight,
-		int srcRegionOriginY,
+		float srcRegionOriginY,
 
 		int xSrcStride,
 		int ySrcStride,
@@ -223,13 +220,11 @@ void InterpolateBilinearRGB(
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
 {
 
-	float floatDstRegionHeight = (float)dstRegionHeight;
-	float floatsrcRegionOriginY = (float)srcRegionOriginY;
     float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
 
-	for (float y = 0; y < floatDstRegionHeight; ++y)
+	for (float y = 0; y < dstRegionHeight; ++y)
 	{
-		float ySrcCoordinate = floatsrcRegionOriginY + (y + 0.5F) * yRatio;
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
 
 		//a necessary evil, I'm afraid.
 		if (ySrcCoordinate < 0)
@@ -291,27 +286,26 @@ BOOL InterpolateBilinear
 	BOOL isRGB,
 	BOOL isPlanar,
 
-	int srcRegionRectLeft,
-	int srcRegionRectTop,
-	int srcRegionRectRight,
-	int srcRegionRectBottom,
+	float srcRegionRectLeft,
+	float srcRegionRectTop,
+	float srcRegionRectRight,
+	float srcRegionRectBottom,
 
 	BYTE* pDstPixelData,
 	unsigned int dstWidth,
 	unsigned int dstBytesPerPixel,
 
-	int dstRegionRectLeft,
-	int dstRegionRectTop,
-	int dstRegionRectRight,
-	int dstRegionRectBottom,
+	float dstRegionRectLeft,
+	float dstRegionRectTop,
+	float dstRegionRectRight,
+	float dstRegionRectBottom,
 
 	BOOL swapXY,
 	int* pLutData
 )
 {
-	unsigned int dstRegionHeight, dstRegionWidth,
-	xDstStride, yDstStride,
-	xDstIncrement, yDstIncrement;
+	float dstRegionHeight, dstRegionWidth;
+	unsigned int xDstStride, yDstStride, xDstIncrement, yDstIncrement;
 
     if (swapXY)
     {
@@ -354,18 +348,18 @@ BOOL InterpolateBilinear
 		pDstPixelData += (zeroBasedTop * yDstStride) + (zeroBasedLeft * xDstStride);
     }
 
-    int srcRegionWidth = srcRegionRectRight - srcRegionRectLeft;
-    int srcRegionHeight = srcRegionRectBottom - srcRegionRectTop;
+    float srcRegionWidth = srcRegionRectRight - srcRegionRectLeft;
+    float srcRegionHeight = srcRegionRectBottom - srcRegionRectTop;
 
     float srcSlightlyLessThanWidthMinusOne = (float)srcWidth - SLIGHTLYGREATERTHANONE;
 
     float xRatio = (float)srcRegionWidth / dstRegionWidth;
     float yRatio = (float)srcRegionHeight / dstRegionHeight;
 
-	std::auto_ptr<int> spxSrcPixels(new int[dstRegionWidth]);
+	std::auto_ptr<int> spxSrcPixels(new int[((int)dstRegionWidth)+1]);
 	int* pxPixel = spxSrcPixels.get();
 
-	std::auto_ptr<int> spdxFixedAtSrcPixelCoordinates(new int[dstRegionWidth]);
+	std::auto_ptr<int> spdxFixedAtSrcPixelCoordinates(new int[((int)dstRegionWidth)+1]);
 	int * pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
 
 	float floatDstRegionWidth = (float)dstRegionWidth;
@@ -388,29 +382,93 @@ BOOL InterpolateBilinear
 		++pdxFixed;
 	}
 
-	try
+	if (isRGB != FALSE)
 	{
-		if (isRGB != FALSE)
+		int xSrcStride, ySrcStride, srcNextChannelOffset;
+
+		if (!isPlanar)
 		{
-			int xSrcStride, ySrcStride, srcNextChannelOffset;
+			xSrcStride = 3;
+			ySrcStride = srcWidth * 3;
+		}
+		else
+		{
+			xSrcStride = 1;
+			ySrcStride = srcWidth;
+		}
 
-			if (!isPlanar)
+		if (!isPlanar)
+			srcNextChannelOffset = 1;
+		else
+			srcNextChannelOffset = srcWidth * srcHeight;
+
+		InterpolateBilinearRGB(
+				pDstPixelData,
+				dstRegionWidth,
+				dstRegionHeight,
+				xDstIncrement,
+				yDstIncrement,
+				pSrcPixelData,
+				srcWidth,
+				srcHeight,
+				srcRegionRectTop,
+				xSrcStride,
+				ySrcStride,
+				srcNextChannelOffset,
+				xRatio,
+				yRatio,
+				spxSrcPixels,
+				spdxFixedAtSrcPixelCoordinates);
+	}
+	else
+	{
+		if (srcBytesPerPixel == 2)
+		{
+			if (isSigned == FALSE)
 			{
-				xSrcStride = 3;
-				ySrcStride = srcWidth * 3;
+				InterpolateBilinearT<unsigned short, unsigned short>
+				(
+					pDstPixelData,
+					dstRegionWidth,
+					dstRegionHeight,
+					xDstIncrement,
+					yDstIncrement,
+					(unsigned short*)pSrcPixelData,
+					srcWidth,
+					srcHeight,
+					srcRegionRectTop,
+					xRatio,
+					yRatio,
+					pLutData,
+					spxSrcPixels,
+					spdxFixedAtSrcPixelCoordinates);
 			}
 			else
 			{
-				xSrcStride = 1;
-				ySrcStride = srcWidth;
+				InterpolateBilinearT<short, unsigned short>
+				(
+					pDstPixelData,
+					dstRegionWidth,
+					dstRegionHeight,
+					xDstIncrement,
+					yDstIncrement,
+					(short*)pSrcPixelData,
+					srcWidth,
+					srcHeight,
+					srcRegionRectTop,
+					xRatio,
+					yRatio,
+					pLutData,
+					spxSrcPixels,
+					spdxFixedAtSrcPixelCoordinates);
 			}
-
-			if (!isPlanar)
-				srcNextChannelOffset = 1;
-			else
-				srcNextChannelOffset = srcWidth * srcHeight;
-
-			InterpolateBilinearRGB(
+		}
+		else
+		{
+			if (isSigned == FALSE)
+			{
+				InterpolateBilinearT<BYTE, BYTE>
+				(
 					pDstPixelData,
 					dstRegionWidth,
 					dstRegionHeight,
@@ -420,105 +478,33 @@ BOOL InterpolateBilinear
 					srcWidth,
 					srcHeight,
 					srcRegionRectTop,
-					xSrcStride,
-					ySrcStride,
-					srcNextChannelOffset,
 					xRatio,
 					yRatio,
+					pLutData,
 					spxSrcPixels,
 					spdxFixedAtSrcPixelCoordinates);
-		}
-		else
-		{
-			if (srcBytesPerPixel == 2)
-			{
-				if (isSigned == FALSE)
-				{
-					InterpolateBilinearT<unsigned short, unsigned short>
-					(
-						pDstPixelData,
-						dstRegionWidth,
-						dstRegionHeight,
-						xDstIncrement,
-						yDstIncrement,
-						(unsigned short*)pSrcPixelData,
-						srcWidth,
-						srcHeight,
-						srcRegionRectTop,
-						xRatio,
-						yRatio,
-						pLutData,
-						spxSrcPixels,
-						spdxFixedAtSrcPixelCoordinates);
-				}
-				else
-				{
-					InterpolateBilinearT<short, unsigned short>
-					(
-						pDstPixelData,
-						dstRegionWidth,
-						dstRegionHeight,
-						xDstIncrement,
-						yDstIncrement,
-						(short*)pSrcPixelData,
-						srcWidth,
-						srcHeight,
-						srcRegionRectTop,
-						xRatio,
-						yRatio,
-						pLutData,
-						spxSrcPixels,
-						spdxFixedAtSrcPixelCoordinates);
-				}
 			}
 			else
 			{
-				if (isSigned == FALSE)
-				{
-					InterpolateBilinearT<BYTE, BYTE>
-					(
-						pDstPixelData,
-						dstRegionWidth,
-						dstRegionHeight,
-						xDstIncrement,
-						yDstIncrement,
-						pSrcPixelData,
-						srcWidth,
-						srcHeight,
-						srcRegionRectTop,
-						xRatio,
-						yRatio,
-						pLutData,
-						spxSrcPixels,
-						spdxFixedAtSrcPixelCoordinates);
-				}
-				else
-				{
-					InterpolateBilinearT<char, BYTE>
-					(
-						pDstPixelData,
-						dstRegionWidth,
-						dstRegionHeight,
-						xDstIncrement,
-						yDstIncrement,
-						(char*)pSrcPixelData,
-						srcWidth,
-						srcHeight,
-						srcRegionRectTop,
-						xRatio,
-						yRatio,
-						pLutData,
-						spxSrcPixels,
-						spdxFixedAtSrcPixelCoordinates);
-				}
+				InterpolateBilinearT<char, BYTE>
+				(
+					pDstPixelData,
+					dstRegionWidth,
+					dstRegionHeight,
+					xDstIncrement,
+					yDstIncrement,
+					(char*)pSrcPixelData,
+					srcWidth,
+					srcHeight,
+					srcRegionRectTop,
+					xRatio,
+					yRatio,
+					pLutData,
+					spxSrcPixels,
+					spdxFixedAtSrcPixelCoordinates);
 			}
 		}
-	
-		return TRUE;
-	}
-	catch (...)
-	{
 	}
 
-	return FALSE;
+	return TRUE;
 }

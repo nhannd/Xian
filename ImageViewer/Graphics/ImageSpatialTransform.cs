@@ -66,6 +66,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets or sets a value indicating whether images will be scaled to fit
 		/// in a <see cref="Tile"/>.
 		/// </summary>
+		/// <remarks>
+		/// If set to <b>true</b>, the <see cref="Scale"/> property will be ignored.
+		/// </remarks>
 		public bool ScaleToFit
 		{
 			get { return _scaleToFit; }

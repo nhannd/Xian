@@ -194,7 +194,6 @@
     <Compile Include="Graphics\IGraphic.cs" />
     <Compile Include="Graphics\SceneGraph.cs" />
     <Compile Include="LayoutCapableImageViewerComponent.cs" />
-    <Compile Include="Rendering\ImageInterpolator.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererMiscTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererMono16OrientationTests.cs" />
@@ -346,8 +345,6 @@
     <Compile Include="Rendering\ImageBuffer.cs" />
     <Compile Include="Rendering\ImageBufferWin32.cs" />
     <Compile Include="Rendering\ImageInterpolatorBilinear.cs" />
-    <Compile Include="Rendering\ImageInterpolatorBilinearFast.cs" />
-    <Compile Include="Rendering\ImageInterpolatorNearestNeighbour.cs" />
     <Compile Include="Rendering\ImageRenderer.cs" />
     <Compile Include="Mathematics\RectangleUtilities.cs" />
     <Compile Include="Rendering\Win32.cs" />
