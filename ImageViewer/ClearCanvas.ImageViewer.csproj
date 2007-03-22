@@ -366,7 +366,7 @@
     <Compile Include="StudyManagement\Study.cs" />
     <Compile Include="StudyManagement\StudyEventArgs.cs" />
     <Compile Include="StudyManagement\StudyCollection.cs" />
-    <Compile Include="StudyManagement\StudyFinder.cs" />
+    <Compile Include="StudyManagement\StudyItem.cs" />
     <Compile Include="StudyManagement\Patient.cs" />
     <Compile Include="StudyManagement\PatientCollection.cs" />
     <Compile Include="StudyManagement\PatientEventArgs.cs" />

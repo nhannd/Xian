@@ -8,16 +8,6 @@ using ClearCanvas.Dicom.Network;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// A list of <see cref="StudyItem"/> objects.
-	/// </summary>
-	public class StudyItemList : List<StudyItem>
-	{
-		public StudyItemList()
-		{
-		}
-	}
-
-	/// <summary>
 	/// A study item.
 	/// </summary>
 	public class StudyItem
@@ -154,6 +144,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	}
 
 	/// <summary>
+	/// A list of <see cref="StudyItem"/> objects.
+	/// </summary>
+	public class StudyItemList : List<StudyItem>
+	{
+		public StudyItemList()
+		{
+		}
+	}
+
+	/// <summary>
 	/// A map of query parameters.
 	/// </summary>
 	public class QueryParameters : Dictionary<string,string>
@@ -162,24 +162,4 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 		}
 	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public abstract class StudyFinder : IStudyFinder
-	{
-		public StudyFinder()
-		{
-
-		}
-
-        public abstract string Name
-		{
-			get;
-		}
-
-		public abstract StudyItemList Query(QueryParameters queryParams);
-        public abstract StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams);
-
-    }
 }

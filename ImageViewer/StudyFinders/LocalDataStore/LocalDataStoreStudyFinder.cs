@@ -9,14 +9,14 @@ using ClearCanvas.Dicom.DataStore;
 namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 {
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]
-    public class LocalDataStoreStudyFinder : StudyFinder
+    public class LocalDataStoreStudyFinder : IStudyFinder
     {
         public LocalDataStoreStudyFinder()
         {
 
         }
 
-        public override string Name
+        public string Name
         {
             get
             {
@@ -24,12 +24,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             }
         }
 
-        public override StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams)
+        public StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams)
         {
 			return Query(queryParams);
         }
 
-        public override StudyItemList Query(QueryParameters queryParams)
+        public StudyItemList Query(QueryParameters queryParams)
         {
             QueryKey queryKey = new QueryKey();
             queryKey.Add(DicomTag.PatientId, queryParams["PatientId"]);
