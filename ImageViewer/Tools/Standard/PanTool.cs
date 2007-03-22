@@ -121,11 +121,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				this.SelectedSpatialTransformProvider == null)
 				return;
 
-			float scale = this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			Platform.CheckPositive(scale, "standardImage.SpatialTransform.Scale");
+			SpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as SpatialTransform;
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX += xIncrement / scale;
-			this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY += yIncrement / scale;
+			// Because the pan increment is in destination coordinates, we have to convert
+			// them to source coordinates, since the transform translation is in source coordinates.
+			// This will allow the pan to work properly irrespective of the zoom, flip and rotation.
+			PointF[] pt = {new PointF(xIncrement, yIncrement)};
+			transform.ConvertVectorsToSource(pt);
+
+			transform.TranslationX += pt[0].X;
+			transform.TranslationY += pt[0].Y;
+
 			this.SelectedSpatialTransformProvider.Draw();
 		}
 
