@@ -8,6 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
 
@@ -63,6 +64,29 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             PractitionerAssembler assembler = new PractitionerAssembler();
 
             return new LoadPractitionerForEditResponse(p.GetRef(), assembler.CreatePractitionerDetail(p, this.PersistenceContext));
+        }
+
+        [ReadOperation]
+        public LoadPractitionerEditorFormDataResponse LoadPractitionerEditorFormData(LoadPractitionerEditorFormDataRequest request)
+        {
+            //TODO:  replace "dummy" lists
+            List<string> dummyCountries = new List<string>();
+            dummyCountries.Add("Canada");
+
+            List<string> dummyProvinces = new List<string>();
+            dummyProvinces.Add("Ontario");
+
+            return new LoadPractitionerEditorFormDataResponse(
+                CollectionUtils.Map<AddressTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
+                    PersistenceContext.GetBroker<IAddressTypeEnumBroker>().Load().Items,
+                    delegate(AddressTypeEnum e)
+                    {
+                        return new EnumValueInfo(e.Code.ToString(), e.Value);
+                    }),
+                dummyProvinces,
+                dummyCountries,
+                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false));
+
         }
 
         [UpdateOperation]

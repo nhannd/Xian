@@ -16,6 +16,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.Addresses = addressDetails;
         }
 
+        public StaffDetail()
+        {
+        }
+
         [DataMember]
         public PersonNameDetail PersonNameDetail;
 

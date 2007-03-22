@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private DateTime? _dateOfBirth;
         private bool _keepOpen;
 
-        private SexEnumTable _sexChoices;
+        private List<EnumValueInfo> _sexChoices;
 
         private bool _searchEnabled;
         private event EventHandler _searchEnabledChanged;
@@ -61,8 +61,19 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
 
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _sexChoices = _patientAdminService.GetSexEnumTable();
+            try
+            {
+                Platform.GetService<IRegistrationWorkflowService>(
+                    delegate(IRegistrationWorkflowService service)
+                    {
+                        LoadPatientSearchComponentFormDataResponse response = service.LoadPatientSearchComponentFormData(new LoadPatientSearchComponentFormDataRequest());
+                        _sexChoices = response.SexChoices;
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public override void Stop()
@@ -76,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return this.Host.DesktopWindow; }
         }
 
-        public PatientProfileSearchCriteria SearchCriteria
+        public PatientProfileSearchData SearchCriteria
         {
             get { return BuildCriteria(); }
         }
@@ -138,17 +149,21 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Sex
         {
-            get { return _sex == null ? "(Any)" : _sexChoices[(Sex)_sex].Value; }
-            set { _sex = value == "(Any)" ? null : (Sex?)_sexChoices[value].Code; }
+            get { return _sex.Value; }
+            set
+            {
+                _sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
+                this.Modified = true;
+            }
         }
 
-        public string[] SexChoices
+        public List<string> SexChoices
         {
-            get
+            get 
             {
-                List<string> values = new List<string>(_sexChoices.Values);
+                List<string> values = EnumValueUtils.GetDisplayValues(_sexChoices);
                 values.Add("(Any)");
-                return values.ToArray();
+                return values;
             }
         }
 

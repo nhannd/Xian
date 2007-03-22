@@ -15,6 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.Name = name;
         }
 
+        public ModalityDetail()
+        {
+        }
+
         [DataMember]
         public string Id;
 

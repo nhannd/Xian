@@ -28,6 +28,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.Bed = bed;
         }
 
+        public LocationDetail()
+        {
+        }
+
         [DataMember]
         public EntityRef Facility;
 

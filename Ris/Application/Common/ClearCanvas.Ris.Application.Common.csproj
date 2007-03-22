@@ -116,6 +116,8 @@
     <Compile Include="Admin\PractitionerAdmin\ListAllPractitionersResponse.cs" />
     <Compile Include="Admin\PractitionerAdmin\LoadPractitionerForEditRequest.cs" />
     <Compile Include="Admin\PractitionerAdmin\LoadPractitionerForEditResponse.cs" />
+    <Compile Include="Admin\PractitionerAdmin\LoadPractitionerEditorFormDataRequest.cs" />
+    <Compile Include="Admin\PractitionerAdmin\LoadPractitionerEditorFormDataResponse.cs" />
     <Compile Include="Admin\PractitionerDetail.cs" />
     <Compile Include="Admin\PractitionerSummary.cs" />
     <Compile Include="Admin\PractitionerAdmin\UpdatePractitionerRequest.cs" />

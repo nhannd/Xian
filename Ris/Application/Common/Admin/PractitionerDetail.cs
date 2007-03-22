@@ -15,6 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.LicenseNumber = licenseNumber;
         }
 
+        public PractitionerDetail()
+        {
+        }
+
         [DataMember]
         public string LicenseNumber;
     }

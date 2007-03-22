@@ -15,6 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.Name = name;
         }
 
+        public FacilityDetail()
+        {
+        }
+
         [DataMember]
         public string Code;
 

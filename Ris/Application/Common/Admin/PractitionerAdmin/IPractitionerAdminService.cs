@@ -44,5 +44,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         /// <returns></returns>
         [OperationContract]
         LoadPractitionerForEditResponse LoadPractitionerForEdit(LoadPractitionerForEditRequest request);
+
+        /// <summary>
+        /// Loads all form data for the <see cref=StaffEditorComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        LoadPractitionerEditorFormDataResponse LoadPractitionerEditorFormData(LoadPractitionerEditorFormDataRequest request);
     }
 }
