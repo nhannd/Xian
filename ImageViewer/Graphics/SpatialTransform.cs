@@ -207,9 +207,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_transform = new Matrix();
 
 				_transform.Reset();
-				_transform.Translate(this.TranslationX, this.TranslationY);
 				_transform.Rotate(this.RotationXY);
 				_transform.Scale(this.ScaleX, this.ScaleY);
+				_transform.Translate(this.TranslationX, this.TranslationY);
 				 
 				return _transform;
 			}
