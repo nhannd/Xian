@@ -292,6 +292,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
 			rect.CoordinateSystem = CoordinateSystem.Source;
 
+			float offsetX = 0;
+			float offsetY = 0;
+
+			if (rect.Width < 0)
+				offsetX = rect.Width;
+
+			if (rect.Height < 0)
+				offsetY = rect.Height;
+
 			// Draw drop shadow
 			_pen.Color = Color.Black;
 			_pen.Width = CalculateScaledPenWidth(rect, 1);
@@ -300,20 +309,20 @@ namespace ClearCanvas.ImageViewer.Rendering
 			
 			_surface.FinalBuffer.Graphics.DrawRectangle(
 				_pen,
-				rect.TopLeft.X + GetDropShadowOffset(rect).Width,
-				rect.TopLeft.Y + GetDropShadowOffset(rect).Height,
-				rect.Width,
-				rect.Height);
+				rect.TopLeft.X + offsetX + GetDropShadowOffset(rect).Width,
+				rect.TopLeft.Y + offsetY + GetDropShadowOffset(rect).Height,
+				Math.Abs(rect.Width),
+				Math.Abs(rect.Height));
 
 			// Draw rectangle
 			_pen.Color = rect.Color;
 
             _surface.FinalBuffer.Graphics.DrawRectangle(
 				_pen,
-				rect.TopLeft.X,
-				rect.TopLeft.Y,
-				rect.Width,
-				rect.Height);
+				rect.TopLeft.X + offsetX,
+				rect.TopLeft.Y + offsetY,
+				Math.Abs(rect.Width),
+				Math.Abs(rect.Height));
 
 			rect.ResetCoordinateSystem();
 			_surface.FinalBuffer.Graphics.ResetTransform();
