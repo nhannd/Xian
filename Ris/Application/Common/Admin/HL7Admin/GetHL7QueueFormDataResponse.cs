@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
@@ -9,24 +10,24 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
     public class GetHL7QueueFormDataResponse : DataContractBase
     {
         [DataMember]
-        public string[] DirectionChoices;
+        public List<EnumValueInfo> DirectionChoices;
 
         [DataMember]
-        public string[] StatusCodeChoices;
+        public List<EnumValueInfo> StatusCodeChoices;
 
         [DataMember]
-        public string[] PeerChoices;
+        public List<EnumValueInfo> PeerChoices;
 
         [DataMember]
-        public string[] MessageTypeChoices;
+        public List<string> MessageTypeChoices;
 
         [DataMember]
-        public string[] MessageEventChoices;
+        public List<string> MessageEventChoices;
 
         [DataMember]
-        public string[] MessageVersionChoices;
+        public List<EnumValueInfo> MessageVersionChoices;
 
         [DataMember]
-        public string[] MessageFormatChoices;
+        public List<EnumValueInfo> MessageFormatChoices;
     }
 }

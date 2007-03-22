@@ -37,26 +37,26 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             dummyProvinces.Add("Ontario");
             response.AddressProvinceChoices = dummyProvinces;
 
-            response.AddressTypeChoices = CollectionUtils.Map<AddressTypeEnum, EnumValueInfo>(
+            response.AddressTypeChoices = CollectionUtils.Map<AddressTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IAddressTypeEnumBroker>().Load().Items,
                 delegate(AddressTypeEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.ContactPersonRelationshipChoices = CollectionUtils.Map<ContactPersonRelationshipEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<IContactPersonRelationshipEnumBroker>().Load.Values,
+            response.ContactPersonRelationshipChoices = CollectionUtils.Map<ContactPersonRelationshipEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IContactPersonRelationshipEnumBroker>().Load().Items,
                 delegate(ContactPersonRelationshipEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
 
-            response.ContactPersonTypeChoices = CollectionUtils.Map<ContactPersonTypeEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<IContactPersonTypeEnumBroker>().Load.Values,
+            response.ContactPersonTypeChoices = CollectionUtils.Map<ContactPersonTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IContactPersonTypeEnumBroker>().Load().Items,
                 delegate(ContactPersonTypeEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
 
@@ -76,28 +76,28 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             //    PersistenceContext.GetBroker<INoteSeverityEnumBroker>().Load.Values,
             //    delegate(NoteSeverityEnum e)
             //    {
-            //        return new EnumValueInfo(e.Code, e.Value);
+            //        return new EnumValueInfo(e.Code.ToString(), e.Value);
             //    });
-            
-            response.PrimaryLanguageChoices = CollectionUtils.Map<SpokenLanguageEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<ISpokenLanguageEnumBroker>().Load().Values,
+
+            response.PrimaryLanguageChoices = CollectionUtils.Map<SpokenLanguageEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<ISpokenLanguageEnumBroker>().Load().Items,
                 delegate(SpokenLanguageEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.ReligionChoices = CollectionUtils.Map<ReligionEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<IReligionEnumBroker>().Load().Values,
+            response.ReligionChoices = CollectionUtils.Map<ReligionEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IReligionEnumBroker>().Load().Items,
                 delegate(ReligionEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.SexChoices = CollectionUtils.Map<SexEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<ISexEnumBroker>().Load().Values,
+            response.SexChoices = CollectionUtils.Map<SexEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<ISexEnumBroker>().Load().Items,
                 delegate(SexEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
             response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false);
@@ -129,8 +129,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
-            RegistrationWorkflow.RegistrationWorkflowAssembler registrationAssembler = new ClearCanvas.Ris.Application.Services.RegistrationWorkflow.RegistrationWorkflowAssembler();
-            return new SaveAdminEditsForPatientProfileResponse(registrationAssembler.CreateWorklistItem(profile, PersistenceContext));
+            return new SaveAdminEditsForPatientProfileResponse();
         }
 
         [UpdateOperation]
@@ -147,8 +146,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PersistenceContext.Lock(patient, DirtyState.New);
             PersistenceContext.SynchState();
 
-            RegistrationWorkflow.RegistrationWorkflowAssembler registrationAssembler = new ClearCanvas.Ris.Application.Services.RegistrationWorkflow.RegistrationWorkflowAssembler();
-            return new SaveAdminEditsForPatientProfileResponse(registrationAssembler.CreateWorklistItem(profile, PersistenceContext));
+            return new AdminAddPatientProfileResponse();
         }
 
         #endregion

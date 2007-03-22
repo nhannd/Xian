@@ -6,6 +6,7 @@ using ClearCanvas.HL7;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.HL7.Brokers;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -15,18 +16,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             HL7QueueItemSummary summary = new HL7QueueItemSummary();
 
-            summary.Direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction];
+            summary.Direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction].Value;
 
-            summary.StatusCode = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code];
+            summary.StatusCode = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code].Value;
             summary.StatusDescription = queueItem.Status.Description;
             summary.CreationDateTime = queueItem.Status.CreationDateTime;
             summary.UpdateDateTime = queueItem.Status.UpdateDateTime;
 
-            summary.Peer = context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[queueItem.Message.Peer];
+            summary.Peer = context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[queueItem.Message.Peer].Value;
             summary.MessageType = queueItem.Message.MessageType;
             summary.MessageEvent = queueItem.Message.Event;
-            summary.MessageVersion = context.GetBroker<IHL7MessageVersionEnumBroker>().Load()[queueItem.Message.Version];
-            summary.MessageFormat = context.GetBroker<IHL7MessageFormatEnumBroker>().Load()[queueItem.Message.Format];
+            summary.MessageVersion = context.GetBroker<IHL7MessageVersionEnumBroker>().Load()[queueItem.Message.Version].Value;
+            summary.MessageFormat = context.GetBroker<IHL7MessageFormatEnumBroker>().Load()[queueItem.Message.Format].Value;
 
             return summary;
         }
@@ -35,18 +36,38 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             HL7QueueItemDetail detail = new HL7QueueItemDetail();
 
-            detail.Direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction];
+            HL7MessageDirectionEnum direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction];
+            detail.Direction = new EnumValueInfo(
+                direction.Code.ToString(),
+                direction.Value);
 
-            detail.StatusCode = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code];
+            HL7MessageStatusCodeEnum status = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code];
+            detail.StatusCode = new EnumValueInfo(
+                status.Code.ToString(),
+                status.Value);
+
             detail.StatusDescription = queueItem.Status.Description;
             detail.CreationDateTime = queueItem.Status.CreationDateTime;
             detail.UpdateDateTime = queueItem.Status.UpdateDateTime;
 
-            detail.Peer = context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[queueItem.Message.Peer];
+            HL7MessagePeerEnum peer = context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[queueItem.Message.Peer];
+            detail.Peer = new EnumValueInfo(
+                peer.Code.ToString(),
+                peer.Value);
+
             detail.MessageType = queueItem.Message.MessageType;
             detail.MessageEvent = queueItem.Message.Event;
-            detail.MessageVersion = context.GetBroker<IHL7MessageVersionEnumBroker>().Load()[queueItem.Message.Version];
-            detail.MessageFormat = context.GetBroker<IHL7MessageFormatEnumBroker>().Load()[queueItem.Message.Format];
+
+            HL7MessageVersionEnum version = context.GetBroker<IHL7MessageVersionEnumBroker>().Load()[queueItem.Message.Version];
+            detail.MessageVersion = new EnumValueInfo(
+                version.Code.ToString(),
+                version.Value);
+
+            HL7MessageFormatEnum format = context.GetBroker<IHL7MessageFormatEnumBroker>().Load()[queueItem.Message.Format];
+            detail.MessageFormat = new EnumValueInfo(
+                format.Code.ToString(),
+                format.Value);
+            
             detail.MessageText = queueItem.Message.Text;
 
             return detail;
@@ -56,13 +77,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
 
-            criteria.Direction.EqualTo(context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[request.Direction]);
+            criteria.Direction.EqualTo(context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[request.Direction].Code);
 
-            criteria.Status = new HL7QueueItemStatusSearchCriteria();
-            criteria.Status.Code.EqualTo(context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[request.StatusCode]);
+            criteria.Status.Code.EqualTo(context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[request.StatusCode].Code);
 
             if(request.StartingCreationDateTime.HasValue && request.EndingCreationDateTime.HasValue)
-                criteria.Status.CreationDateTime.Between(request.StartingCreationDateTime.Value, request.EndingCreationDateTime);
+                criteria.Status.CreationDateTime.Between(request.StartingCreationDateTime.Value, request.EndingCreationDateTime.Value);
             else if (request.StartingCreationDateTime.HasValue)
                 criteria.Status.CreationDateTime.MoreThanOrEqualTo(request.StartingCreationDateTime.Value);
             else if (request.EndingCreationDateTime.HasValue)
@@ -75,10 +95,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             else if (request.EndingUpdateDateTime.HasValue)
                 criteria.Status.UpdateDateTime.LessThanOrEqualTo(request.StartingUpdateDateTime.Value);
 
-            criteria.Message = new HL7QueueItemMessageSearchCriteria();
-
             criteria.Message.MessageType.EqualTo(request.MessageType);
-            criteria.Message.Peer.EqualTo(context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[request.Peer]);
+            criteria.Message.Peer.EqualTo(context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[request.Peer].Code);
 
             return criteria;
         }

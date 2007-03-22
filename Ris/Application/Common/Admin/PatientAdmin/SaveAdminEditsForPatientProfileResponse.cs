@@ -9,12 +9,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class SaveAdminEditsForPatientProfileResponse : DataContractBase
     {
-        public SaveAdminEditsForPatientProfileResponse(RegistrationWorklistItem worklistItem)
-        {
-            this.WorklistItem = worklistItem;
-        }
-
-        [DataMember]
-        public RegistrationWorklistItem WorklistItem;
     }
 }

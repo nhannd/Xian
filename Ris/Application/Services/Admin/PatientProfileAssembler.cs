@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[profile.Sex];
             detail.Sex = new EnumValueInfo(
-                sex.Code,
+                sex.Code.ToString(),
                 sex.Value);
 
             detail.DateOfBirth = profile.DateOfBirth;
@@ -38,12 +38,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             SpokenLanguageEnum primaryLanguage = context.GetBroker<ISpokenLanguageEnumBroker>().Load()[profile.PrimaryLanguage];
             detail.PrimaryLanguage = new EnumValueInfo(
-                primaryLanguage.Code,
+                primaryLanguage.Code.ToString(),
                 primaryLanguage.Value);
 
             ReligionEnum religion = context.GetBroker<IReligionEnumBroker>().Load()[profile.Religion];
             detail.Religion = new EnumValueInfo(
-                religion.Code,
+                religion.Code.ToString(),
                 religion.Value);
 
             TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
@@ -90,13 +90,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             nameAssembler.UpdatePersonName(detail.Name, profile.Name);
 
-            profile.Sex = (Sex)Enum.Parse(typeof(Sex), detail.Sex.Code);
+            profile.Sex = (Sex)Enum.Parse(typeof(Sex), detail.Sex.Code.ToString());
             profile.DateOfBirth = detail.DateOfBirth;
             profile.DeathIndicator = detail.DeathIndicator;
             profile.TimeOfDeath = detail.TimeOfDeath;
 
-            profile.PrimaryLanguage = (SpokenLanguage)Enum.Parse(typeof(SpokenLanguage), detail.PrimaryLanguage);
-            profile.Religion = (Religion)Enum.Parse(typeof(Religion), detail.Religion);
+            profile.PrimaryLanguage = (SpokenLanguage)Enum.Parse(typeof(SpokenLanguage), detail.PrimaryLanguage.Code);
+            profile.Religion = (Religion)Enum.Parse(typeof(Religion), detail.Religion.Code);
 
             TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
             profile.TelephoneNumbers.Clear();

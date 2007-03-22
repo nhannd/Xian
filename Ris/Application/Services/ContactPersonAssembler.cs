@@ -21,12 +21,12 @@ namespace ClearCanvas.Ris.Application.Services
             
             ContactPersonRelationshipEnum relationship = context.GetBroker<IContactPersonRelationshipEnumBroker>().Load()[cp.Relationship];
             detail.Relationship = new EnumValueInfo(
-                relationship.Code,
+                relationship.Code.ToString(),
                 relationship.Value);
 
             ContactPersonTypeEnum type = context.GetBroker<IContactPersonTypeEnumBroker>().Load()[cp.Type];
             detail.Type = new EnumValueInfo(
-                type.Code,
+                type.Code.ToString(),
                 type.Value);
 
             return detail;

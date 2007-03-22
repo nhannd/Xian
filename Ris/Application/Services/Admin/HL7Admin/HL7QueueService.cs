@@ -14,6 +14,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 {
@@ -69,16 +70,53 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             GetHL7QueueFormDataResponse response = new GetHL7QueueFormDataResponse();
 
-            response.DirectionChoices = PersistenceContext.GetBroker<IHL7MessageDirectionEnumBroker>().Load().Values;
-            response.StatusCodeChoices = PersistenceContext.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load().Values;
-            response.MessageTypeChoices = new string[]
-                { "ADT_A01", "ADT_A02", "ADT_A03", "ADT_A04", "ADT_A05", "ADT_A06", "ADT_A07", "ADT_A08", "ADT_A09", "ADT_A10",
-                /*"ADT_A11", "ADT_A12", "ADT_A13", "ADT_A14", "ADT_A15", "ADT_A16", "ADT_A17", "ADT_A18", "ADT_A19", "ADT_A20",
-                  "ADT_A21", "ADT_A22", "ADT_A23", "ADT_A24", "ADT_A25", "ADT_A26", "ADT_A27", "ADT_A28", "ADT_A29", "ADT_A30",*/
-                  "ORM_O01"};
-            response.MessageFormatChoices = PersistenceContext.GetBroker<IHL7MessageFormatEnumBroker>().Load().Values;
-            response.MessageVersionChoices = PersistenceContext.GetBroker<IHL7MessageVersionEnumBroker>().Load().Values;
-            response.PeerChoices = PersistenceContext.GetBroker<IHL7MessagePeerEnumBroker>().Load().Values;
+            response.DirectionChoices = CollectionUtils.Map<HL7MessageDirectionEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IHL7MessageDirectionEnumBroker>().Load().Items,
+                delegate(HL7MessageDirectionEnum e)
+                {
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
+                });
+
+            response.StatusCodeChoices = CollectionUtils.Map<HL7MessageStatusCodeEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load().Items,
+                delegate(HL7MessageStatusCodeEnum e)
+                {
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
+                });
+
+
+            //TODO: fix message type
+            response.MessageTypeChoices = new List<string>();
+            response.MessageTypeChoices.Add("ADT_A01");
+            response.MessageTypeChoices.Add("ADT_A02");
+            response.MessageTypeChoices.Add("ADT_A03");
+            response.MessageTypeChoices.Add("ADT_A04");
+            response.MessageTypeChoices.Add("ADT_A05");
+            response.MessageTypeChoices.Add("ORM_O01");
+
+            response.MessageFormatChoices = CollectionUtils.Map<HL7MessageFormatEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IHL7MessageFormatEnumBroker>().Load().Items,
+                delegate(HL7MessageFormatEnum e)
+                {
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
+                });
+
+
+            response.MessageVersionChoices = CollectionUtils.Map<HL7MessageVersionEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IHL7MessageVersionEnumBroker>().Load().Items,
+                delegate(HL7MessageVersionEnum e)
+                {
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
+                });
+
+
+            response.PeerChoices = CollectionUtils.Map<HL7MessagePeerEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IHL7MessagePeerEnumBroker>().Load().Items,
+                delegate(HL7MessagePeerEnum e)
+                {
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
+                });
+
 
             return response;
         }
@@ -91,7 +129,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             return new ListHL7QueueItemsResponse(
                 CollectionUtils.Map<HL7QueueItem, HL7QueueItemSummary, List<HL7QueueItemSummary>>(
-                    PersistanceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria),
+                    PersistenceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria),
                     delegate(HL7QueueItem queueItem)
                     {
                         return assembler.CreateHL7QueueItemSummary(queueItem, PersistenceContext);
@@ -112,7 +150,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         [ReadOperation]
         public GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatientRequest request)
         {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistanceContext.Load(request.QueueItemRef);
+            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
 
             //TODO:  Refactor following region
             #region To Be Refactored
@@ -156,10 +194,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             //TODO:  Refactor following region
             #region To Be Refactored
 
-            IList<Patient> referencedPatients = null;
-
             IHL7PreProcessor preProcessor = new HL7PreProcessor();
-            HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(hl7QueueItem);
+            HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
 
             IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
 
@@ -178,15 +214,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             foreach (EntityAccess<Patient> patientAccess in processor.Patients)
             {
-                this.CurrentContext.Lock(patientAccess.Entity, patientAccess.State);
+                PersistenceContext.Lock(patientAccess.Entity, patientAccess.State);
             }
             foreach (EntityAccess<Visit> visitAccess in processor.Visits)
             {
-                this.CurrentContext.Lock(visitAccess.Entity, visitAccess.State);
+                PersistenceContext.Lock(visitAccess.Entity, visitAccess.State);
             }
             foreach (EntityAccess<Order> orderAccess in processor.Orders)
             {
-                this.CurrentContext.Lock(orderAccess.Entity, orderAccess.State);
+                PersistenceContext.Lock(orderAccess.Entity, orderAccess.State);
             }
 
             #endregion

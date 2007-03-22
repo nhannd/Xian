@@ -12,10 +12,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public EntityRef QueueItemRef;
 
         [DataMember]
-        public string Direction;
+        public EnumValueInfo Direction;
 
         [DataMember]
-        public string StatusCode;
+        public EnumValueInfo StatusCode;
 
         [DataMember]
         public string StatusDescription;
@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public DateTime? UpdateDateTime;
 
         [DataMember]
-        public string Peer;
+        public EnumValueInfo Peer;
 
         [DataMember]
         public string MessageType;
@@ -36,10 +36,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public string MessageEvent;
 
         [DataMember]
-        public string MessageVersion;
+        public EnumValueInfo MessageVersion;
 
         [DataMember]
-        public string MessageFormat;
+        public EnumValueInfo MessageFormat;
 
         [DataMember]
         public string MessageText;

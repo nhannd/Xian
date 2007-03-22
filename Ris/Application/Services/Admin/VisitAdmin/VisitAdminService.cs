@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
 
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 {
@@ -23,39 +24,39 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 
             LoadVisitEditorFormDataResponse response = new LoadVisitEditorFormDataResponse();
 
-            response.AdmissionTypeChoices = CollectionUtils.Map<AdmissionTypeEnum, EnumValueInfo>(
+            response.AdmissionTypeChoices = CollectionUtils.Map<AdmissionTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IAdmissionTypeEnumBroker>().Load().Items,
                 delegate(AdmissionTypeEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.AmbulatoryStatusChoices = CollectionUtils.Map<AmbulatoryStatusEnum, EnumValueInfo>(
+            response.AmbulatoryStatusChoices = CollectionUtils.Map<AmbulatoryStatusEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IAmbulatoryStatusEnumBroker>().Load().Items,
                 delegate(AmbulatoryStatusEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.PatientClassChoices = CollectionUtils.Map<PatientClassEnum, EnumValueInfo>(
+            response.PatientClassChoices = CollectionUtils.Map<PatientClassEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IPatientClassEnumBroker>().Load().Items,
                 delegate(PatientClassEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.PatientTypeChoices = CollectionUtils.Map<PatientTypeEnum, EnumValueInfo>(
+            response.PatientTypeChoices = CollectionUtils.Map<PatientTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IPatientTypeEnumBroker>().Load().Items,
                 delegate(PatientTypeEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
-            response.VisitLocationRoleChoices = CollectionUtils.Map<VisitLocationRoleEnum, EnumValueInfo>(
+            response.VisitLocationRoleChoices = CollectionUtils.Map<VisitLocationRoleEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IVisitLocationRoleEnumBroker>().Load().Items,
                 delegate(VisitLocationRoleEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
             //TODO:  replace dummy values
@@ -68,14 +69,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             //    PersistenceContext.GetBroker<XXXXXXXX>().Load().Items,
             //    delegate(XXXXXXXXXX e)
             //    {
-            //        return new EnumValueInfo(e.Code, e.Value);
+            //        return new EnumValueInfo(e.Code.ToString(), e.Value);
             //    });
 
-            response.VisitPractitionerRoleChoices = CollectionUtils.Map<VisitPractitionerRoleEnum, EnumValueInfo>(
+            response.VisitPractitionerRoleChoices = CollectionUtils.Map<VisitPractitionerRoleEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<IVisitPractitionerRoleEnumBroker>().Load().Items,
                 delegate(VisitPractitionerRoleEnum e)
                 {
-                    return new EnumValueInfo(e.Code, e.Value);
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
            
             return response;
@@ -127,7 +128,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             VisitAssembler assembler = new VisitAssembler();
             assembler.UpdateVisit(visit, request.VisitDetail, PersistenceContext);
 
-            return new SaveAdminEditsForVisitResponse(assembler.CreateVisitSummary(visit));
+            return new SaveAdminEditsForVisitResponse(assembler.CreateVisitSummary(visit, PersistenceContext));
         }
 
         [UpdateOperation]
@@ -141,7 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             PersistenceContext.Lock(visit, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new AdminAddVisitResponse(assembler.CreateVisitSummary(visit));
+            return new AdminAddVisitResponse(assembler.CreateVisitSummary(visit, PersistenceContext));
         }
 
         #endregion
