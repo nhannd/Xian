@@ -56,7 +56,7 @@
     <Compile Include="DicomServer\ServerTree\DicomServerGroup.cs" />
     <Compile Include="DicomServer\ServerTree\DicomServerSetting.cs" />
     <Compile Include="DicomServer\ServerTree\DicomServerTree.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerComponent.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerData.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerDBAccess.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
@@ -90,10 +90,6 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
-      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
-      <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>

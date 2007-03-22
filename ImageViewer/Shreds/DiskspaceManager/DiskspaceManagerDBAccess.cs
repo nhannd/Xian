@@ -23,47 +23,47 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
     public class DiskspaceManager : IDiskspaceManager
     {
-        protected DiskspaceManagerComponent _component;
+        protected DiskspaceManagerData _diskspaceManagerData;
 
         public DiskspaceManager() { }
 
-        public DiskspaceManager(DiskspaceManagerComponent component)
+        public DiskspaceManager(DiskspaceManagerData diskspaceManagerData)
         {
-            Platform.CheckForNullReference(component, "component");
-            _component = component;
+            Platform.CheckForNullReference(diskspaceManagerData, "diskspaceManagerData");
+            _diskspaceManagerData = diskspaceManagerData;
         }
 
         #region IDiskspaceManagerInterface Members
 
-        public void SetComponent(DiskspaceManagerComponent component)
+        public void SetComponent(DiskspaceManagerData diskspaceManagerData)
         {
-            _component = component;
+            _diskspaceManagerData = diskspaceManagerData;
             OrderedStudyListRequiredEvent += RetrieveStudyHandler;
             DeleteStudyInDBRequiredEvent += DeleteStudyInDBHandler;
         }
 
         public DMStudyItemList OrderedStudyList
         {
-            get { return _component.OrderedStudyList; }
-            set { _component.OrderedStudyList = value; }
+            get { return _diskspaceManagerData.OrderedStudyList; }
+            set { _diskspaceManagerData.OrderedStudyList = value; }
         }
 
         public bool IsProcessing
         {
-            get { return _component.IsProcessing; }
-            set { _component.IsProcessing = value; }
+            get { return _diskspaceManagerData.IsProcessing; }
+            set { _diskspaceManagerData.IsProcessing = value; }
         }
 
         public event EventHandler DeleteStudyInDBRequiredEvent
         {
-            add { _component.DeleteStudyInDBRequiredEvent += value; }
-            remove { _component.DeleteStudyInDBRequiredEvent -= value; }
+            add { _diskspaceManagerData.DeleteStudyInDBRequiredEvent += value; }
+            remove { _diskspaceManagerData.DeleteStudyInDBRequiredEvent -= value; }
         }
 
         public event EventHandler OrderedStudyListRequiredEvent
         {
-            add { _component.OrderedStudyListRequiredEvent += value; }
-            remove { _component.OrderedStudyListRequiredEvent -= value; }
+            add { _diskspaceManagerData.OrderedStudyListRequiredEvent += value; }
+            remove { _diskspaceManagerData.OrderedStudyListRequiredEvent -= value; }
         }
 
         public virtual void DeleteStudyInDBHandler(object sender, EventArgs args)
@@ -87,13 +87,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         public override void DeleteStudyInDBHandler(object sender, EventArgs args)
         {
             DeleteStudyInDB();
-            _component.FireDeleteStudyInDBCompleted();
+            _diskspaceManagerData.FireDeleteStudyInDBCompleted();
         }
 
         public void DeleteStudyInDB()
         {
             int deletedNumber = 0;
-            foreach (DMStudyItem studyItem in _component.OrderedStudyList)
+            foreach (DMStudyItem studyItem in _diskspaceManagerData.OrderedStudyList)
             {
                 if (!studyItem.Status.Equals(DiskspaceManagerStatus.ExistsOnDrive))
                     continue;
@@ -118,19 +118,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         public override void RetrieveStudyHandler(object sender, EventArgs args)
         {
             if(RetrieveOrderedStudy())
-                _component.FireOrderedStudyListReady();
+                _diskspaceManagerData.FireOrderedStudyListReady();
         }
 
         public bool RetrieveOrderedStudy()
         {
-            _component.OrderedStudyList = new DMStudyItemList();
+            _diskspaceManagerData.OrderedStudyList = new DMStudyItemList();
 
             IList<IStudy> studiesFound = DataAccessLayer.GetIDataStoreReader().GetStudies();
 
             if (studiesFound == null || studiesFound.Count <= 0)
             {
                 //Platform.Log("    There is not any study in DataStore.");
-                _component.IsProcessing = false;
+                _diskspaceManagerData.IsProcessing = false;
                 return false;
             }
 
@@ -150,9 +150,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                     studyItem.SopItemList.Add(sopItem);
                 }
                 studyItem.Status = DiskspaceManagerStatus.ExistsInDatabase;
-                _component.OrderedStudyList.Add(studyItem);
+                _diskspaceManagerData.OrderedStudyList.Add(studyItem);
             }
-            _component.OrderedStudyList.Sort(delegate(DMStudyItem s1, DMStudyItem s2)
+            _diskspaceManagerData.OrderedStudyList.Sort(delegate(DMStudyItem s1, DMStudyItem s2)
             { return s1.StoreTime.CompareTo(s2.StoreTime); });
             
             return true;
