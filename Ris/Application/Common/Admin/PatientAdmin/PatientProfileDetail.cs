@@ -9,6 +9,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class PatientProfileDetail : DataContractBase
     {
+        public PatientProfileDetail()
+        {
+            this.Addresses = new List<AddressDetail>();
+            this.ContactPersons = new List<ContactPersonDetail>();
+            this.EmailAddresses = new List<EmailAddressDetail>();
+            this.TelephoneNumbers = new List<TelephoneDetail>();
+            this.Name = new PersonNameDetail();
+        }
+
         [DataMember]
         public string Mrn;
 

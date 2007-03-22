@@ -12,6 +12,7 @@ using Iesi.Collections;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -23,122 +24,122 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PatientEditorComponentViewExtensionPoint))]
     public class PatientProfileDetailsEditorComponent : ApplicationComponent
     {
-        private PatientProfile _patient;
-        private IPatientAdminService _patientAdminService;
-        private SexEnumTable _sexChoices;
+        private PatientProfileDetail _profile;
+        private List<EnumValueInfo> _sexChoices;
 
         private string[] _dummyHealthcardAssigningAuthorityChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
         private string[] _dummyMrnAssigningAuthorityChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
 
         public PatientProfileDetailsEditorComponent()
         {
-            _patient = new PatientProfile();
+            _profile = new PatientProfile();
         }
 
         /// <summary>
-        /// Gets or sets the subject (e.g PatientProfile) that this editor operates on.  This property
+        /// Gets or sets the subject (e.g PatientProfileDetail) that this editor operates on.  This property
         /// should never be used by the view.
         /// </summary>
-        public PatientProfile Subject
+        public PatientProfileDetail Subject
         {
-            get { return _patient; }
-            set { _patient = value; }
+            get { return _profile; }
+            set { _profile = value; }
         }
 
         public override void Start()
         {
             base.Start();
-            _patientAdminService = ApplicationContext.GetService<IPatientAdminService>();
-            _sexChoices = _patientAdminService.GetSexEnumTable();
         }
 
         #region Presentation Model
 
         public string MrnID
         {
-            get { return _patient.Mrn.Id; }
+            get { return _profile.Mrn; }
             set
             {
-                _patient.Mrn.Id = value;
+                _profile.MrnId = value;
                 this.Modified = true;
             }
         }
 
         public string MrnSite
         {
-            get { return _patient.Mrn.AssigningAuthority; }
+            get { return _profile.MrnAssigningAuthority; }
             set
             {
-                _patient.Mrn.AssigningAuthority = value;
+                _profile.MrnAssigningAuthority = value;
                 this.Modified = true;
             }
         }
 
         public string FamilyName
         {
-            get { return _patient.Name.FamilyName; }
+            get { return _profile.Name.FamilyName; }
             set { 
-                _patient.Name.FamilyName = value;
+                _profile.Name.FamilyName = value;
                 this.Modified = true;
             }
         }
 
         public string GivenName
         {
-            get { return _patient.Name.GivenName; }
+            get { return _profile.Name.GivenName; }
             set { 
-                _patient.Name.GivenName = value;
+                _profile.Name.GivenName = value;
                 this.Modified = true;
             }
         }
 
         public string MiddleName
         {
-            get { return _patient.Name.MiddleName; }
+            get { return _profile.Name.MiddleName; }
             set { 
-                _patient.Name.MiddleName = value;
+                _profile.Name.MiddleName = value;
                 this.Modified = true;
             }
         }
 
         public string Sex
         {
-            get { return _sexChoices[_patient.Sex].Value; }
-            set {
-                _patient.Sex = _sexChoices[value].Code;
+            get { return _profile.Sex.Value; }
+            set
+            {
+                _profile.Sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
                 this.Modified = true;
             }
         }
 
-        public string[] SexChoices
+        public List<string> SexChoices
         {
-            get { return _sexChoices.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_sexChoices); }
         }
 
         public DateTime DateOfBirth
         {
-            get { return _patient.DateOfBirth; }
-            set { 
-                _patient.DateOfBirth = new DateTime(value.Year, value.Month, value.Day);
+            get { return _profile.DateOfBirth; }
+            set
+            { 
+                _profile.DateOfBirth = value.Date;
                 this.Modified = true;
             }
         }
 
         public bool DeathIndicator
         {
-            get { return _patient.DeathIndicator; }
-            set { 
-                _patient.DeathIndicator = value;
+            get { return _profile.DeathIndicator; }
+            set
+            { 
+                _profile.DeathIndicator = value;
                 this.Modified = true;
             }
         }
 
         public DateTime? TimeOfDeath
         {
-            get { return _patient.TimeOfDeath; }
+            get { return _profile.TimeOfDeath; }
             set
             {
-                _patient.TimeOfDeath = value;
+                _profile.TimeOfDeath = value;
                 this.Modified = true;
             }
         }
@@ -150,10 +151,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string HealthcardID
         {
-            get { return _patient.Healthcard.Id; }
+            get { return _profile.Healthcard; }
             set
             {
-                _patient.Healthcard.Id = value;
+                _profile.Healthcard = value;
                 this.Modified = true;
             }
         }
@@ -165,10 +166,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string HealthcardProvince
         {
-            get { return _patient.Healthcard.AssigningAuthority; }
+            get { return _profile.HealthcardAssigningAuthority; }
             set
             {
-                _patient.Healthcard.AssigningAuthority = value;
+                _profile.HealthcardAssigningAuthority = value;
                 this.Modified = true;
             }
         }
@@ -180,10 +181,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string HealthcardVersionCode
         {
-            get { return _patient.Healthcard.VersionCode; }
+            get { return _profile.HealthcardVersionCode; }
             set
             {
-                _patient.Healthcard.VersionCode= value;
+                _profile.Healthcard.VersionCode= value;
                 this.Modified = true;
             }
         }
@@ -195,10 +196,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public DateTime? HealthcardExpiryDate
         {
-            get { return _patient.Healthcard.ExpiryDate; }
+            get { return _profile.HealthcardExpiryDate; }
             set
             {
-                _patient.Healthcard.ExpiryDate = value;
+                _profile.HealthcardExpiryDate = value;
                 this.Modified = true;
             }
         }

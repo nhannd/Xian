@@ -24,16 +24,17 @@ namespace ClearCanvas.Ris.Client
     public class ContactPersonEditorComponent : ApplicationComponent
     {
         private ContactPersonDetail _contactPerson;
-        private List<EnumValueInfo> _contactTypeChoices;
-
-        private List<EnumValueInfo> _contactRelationshipChoices;
+        private IList<EnumValueInfo> _contactTypeChoices;
+        private IList<EnumValueInfo> _contactRelationshipChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ContactPersonEditorComponent(ContactPersonDetail contactPerson)
+        public ContactPersonEditorComponent(ContactPersonDetail contactPerson, IList<EnumValueInfo> contactTypeChoices, IList<EnumValueInfo> contactRelationshipChoices)
         {
             _contactPerson = contactPerson;
+            _contactTypeChoices = contactTypeChoices;
+            _contactRelationshipChoices = contactRelationshipChoices;
         }
 
         public override void Start()

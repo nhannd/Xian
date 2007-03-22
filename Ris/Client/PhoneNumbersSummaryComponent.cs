@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Tables;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -18,12 +19,13 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(PhoneNumbersSummaryComponentViewExtensionPoint))]
     public class PhoneNumbersSummaryComponent : ApplicationComponent
     {
-        private IList _phoneNumberList;
+        private IList<TelephoneDetail> _phoneNumberList;
         private TelephoneNumberTable _phoneNumbers;
         private TelephoneDetail _currentPhoneNumberSelection;
         private CrudActionModel _phoneNumberActionHandler;
+        private IList<EnumValueInfo> _phoneTypeChoices;
 
-        public PhoneNumbersSummaryComponent()
+        public PhoneNumbersSummaryComponent(IList<EnumValueInfo> phoneTypeChoices)
         {
             _phoneNumbers = new TelephoneNumberTable();
 
@@ -35,9 +37,11 @@ namespace ClearCanvas.Ris.Client
             _phoneNumberActionHandler.Add.Enabled = true;
             _phoneNumberActionHandler.Edit.Enabled = false;
             _phoneNumberActionHandler.Delete.Enabled = false;
+
+            _phoneTypeChoices = phoneTypeChoices;
         }
 
-        public IList Subject
+        public IList<TelephoneDetail> Subject
         {
             get { return _phoneNumberList; }
             set { _phoneNumberList = value; }
@@ -82,7 +86,7 @@ namespace ClearCanvas.Ris.Client
         {
             TelephoneDetail phoneNumber = new TelephoneDetail();
 
-            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
+            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
@@ -98,8 +102,8 @@ namespace ClearCanvas.Ris.Client
             if (_currentPhoneNumberSelection == null) return;
 
             TelephoneDetail phoneNumber = (TelephoneDetail)_currentPhoneNumberSelection.Clone();
-            
-            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber);
+
+            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdatePhoneNumber);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {

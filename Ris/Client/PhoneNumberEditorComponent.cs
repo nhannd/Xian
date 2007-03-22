@@ -18,11 +18,12 @@ namespace ClearCanvas.Ris.Client
     public class PhoneNumberEditorComponent : ApplicationComponent
     {
         private TelephoneDetail _phoneNumber;
-        private List<EnumValueInfo> _phoneTypeChoices;
+        private IList<EnumValueInfo> _phoneTypeChoices;
 
-        public PhoneNumberEditorComponent(TelephoneDetail phoneNumber)
+        public PhoneNumberEditorComponent(TelephoneDetail phoneNumber, IList<EnumValueInfo> phoneTypeChoices)
         {
             _phoneNumber = phoneNumber;
+            _phoneTypeChoices = phoneTypeChoices;
         }
 
         public override void Start()

@@ -25,8 +25,9 @@ namespace ClearCanvas.Ris.Client
         private AddressTable _addresses;
         private AddressDetail _currentAddressSelection;
         private CrudActionModel _addressActionHandler;
+        private IList<EnumValueInfo> _addressTypes;
 
-        public AddressesSummaryComponent()
+        public AddressesSummaryComponent(IList<EnumValueInfo> addressTypes)
         {
             _addresses = new AddressTable();
 
@@ -38,6 +39,8 @@ namespace ClearCanvas.Ris.Client
             _addressActionHandler.Add.Enabled = true;
             _addressActionHandler.Edit.Enabled = false;
             _addressActionHandler.Delete.Enabled = false;
+
+            _addressTypes = addressTypes;
         }
 
         public IList<AddressDetail> Subject
@@ -86,7 +89,7 @@ namespace ClearCanvas.Ris.Client
             address.Province = CollectionUtils.FirstElement<string>(AddressSettings.Default.ProvinceChoices);
             address.Country = CollectionUtils.FirstElement<string>(AddressSettings.Default.CountryChoices);
 
-            AddressEditorComponent editor = new AddressEditorComponent(address);
+            AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
@@ -103,7 +106,7 @@ namespace ClearCanvas.Ris.Client
 
             AddressDetail address = (AddressDetail) _currentAddressSelection.Clone();
 
-            AddressEditorComponent editor = new AddressEditorComponent(address);
+            AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {

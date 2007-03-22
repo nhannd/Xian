@@ -7,15 +7,15 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientProfileEditorComponent : NavigatorComponentContainer
     {
-        private EntityRef<PatientProfile> _profileRef;
-        private PatientProfile _profile;
+        private EntityRef _profileRef;
+        private PatientProfileDetail _profile;
         private bool _isNew;
-        private IAdtService _adtService;
 
         private PatientProfileDetailsEditorComponent _patientEditor;
         private AddressesSummaryComponent _addressesSummary;
@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// Constructs an editor to edit the specified profile
         /// </summary>
         /// <param name="profileRef"></param>
-        public PatientProfileEditorComponent(EntityRef<PatientProfile> profileRef)
+        public PatientProfileEditorComponent(EntityRef profileRef)
         {
             _profileRef = profileRef;
             _isNew = false;
@@ -43,39 +43,48 @@ namespace ClearCanvas.Ris.Client.Adt
             _isNew = true;
         }
 
-        public EntityRef<PatientProfile> PatientProfile
+        public EntityRef PatientProfile
         {
             get { return _profileRef; }
         }
 
         public override void Start()
         {
-            _adtService = ApplicationContext.GetService<IAdtService>();
 
-            if (_isNew)
-            {
-                _profile = new PatientProfile();
-                _profile.Mrn.AssigningAuthority = "UHN";    // TODO remove this hack
-                _profile.Healthcard.AssigningAuthority = "Ontario";    // TODO remove this hack
-            }
-            else
-            {
-                _profile = _adtService.LoadPatientProfile(_profileRef, true);
-                this.Host.SetTitle(
-                    string.Format(SR.TitlePatientComponent,
-                    Format.Custom(_profile.Name),
-                    Format.Custom(_profile.Mrn)));
-            }
+            Platform.GetService<IPatientAdminService>(
+                delegate(IPatientAdminService service)
+                {
+                    LoadPatientProfileEditorFormDataResponse response = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
+                    
+                    this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent()));
+                    this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(response.AddressTypeChoices)));
+                    this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(response.PhoneTypeChoices)));
+                    this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
+                    this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(response.ContactPersonTypeChoices, response.ContactPersonRelationshipChoices)));
+                    this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(response.ReligionChoices, response.PrimaryLanguageChoices)));
+
+                    this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+
+                    if (_isNew)
+                    {
+                        _profile = new PatientProfileDetail();
+                        _profile.MrnAssigningAuthority = "UHN";    // TODO remove this hack
+                        _profile.HealthcardAssigningAuthority = "Ontario";    // TODO remove this hack
+                    }
+                    else
+                    {
+                        LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(
+                            new LoadPatientProfileForAdminEditRequest(_profileRef));
+
+                        _profileRef = response.PatientProfileRef;
+                        _profile = response.PatientDetail;
+
+                        this.Host.SetTitle(
+                            string.Format(SR.TitlePatientComponent, Format.Custom(_profile.Name), _profile.Mrn));
+                    }
+                });
 
 
-            this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent()));
-            this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent()));
-
-            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
             _patientEditor.Subject = _profile;
             _addressesSummary.Subject = _profile.Addresses;
@@ -105,14 +114,9 @@ namespace ClearCanvas.Ris.Client.Adt
                     SaveChanges();
                     this.ExitCode = ApplicationComponentExitCode.Normal;
                 }
-                catch (ConcurrencyException e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionConcurrencyPatientNotSaved, this.Host.DesktopWindow);
-                    this.ExitCode = ApplicationComponentExitCode.Error;
-                }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
                     this.ExitCode = ApplicationComponentExitCode.Error;
                 }
                 this.Host.Exit();
@@ -126,15 +130,24 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SaveChanges()
         {
-            if (_isNew)
-            {
-                _adtService.CreatePatientForProfile(_profile);
-                _profileRef = new EntityRef<PatientProfile>(_profile);
-            }
-            else
-            {
-                _adtService.UpdatePatientProfile(_profile);
-            }
+            Platform.GetService<IPatientAdminService>(
+                delegate(IPatientAdminService service)
+                {
+                    if (_isNew)
+                    {
+                        AdminAddPatientProfileResponse response = service.AdminAddPatientProfile(
+                            new AdminAddPatientProfileRequest(_profile));
+
+                        // TODO this service should not be returning a worklist item
+                        _profile = response.WorklistItem.PatientProfileRef;
+                    }
+                    else
+                    {
+                        service.SaveAdminEditsForPatientProfile(
+                            new SaveAdminEditsForPatientProfileRequest(_profileRef, _profile));
+                    }
+                });
+
         }
 
     }

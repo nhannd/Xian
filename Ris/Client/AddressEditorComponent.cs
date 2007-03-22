@@ -20,12 +20,13 @@ namespace ClearCanvas.Ris.Client
     public class AddressEditorComponent : ApplicationComponent
     {
         private AddressDetail _address;
-        private List<EnumValueInfo> _addressTypes;
+        private IList<EnumValueInfo> _addressTypes;
         private AddressSettings _settings;
 
-        public AddressEditorComponent(AddressDetail address)
+        public AddressEditorComponent(AddressDetail address, IList<EnumValueInfo> addressTypes)
         {
             _address = address;
+            _addressTypes = addressTypes;
         }
 
         /// <summary>

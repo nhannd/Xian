@@ -28,10 +28,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         public List<string> AddressCountryChoices;
 
         [DataMember]
-        public List<EnumValueInfo> TelephoneEquipmentChoices;
-
-        [DataMember]
-        public List<EnumValueInfo> TelephoneUseChoices;
+        public List<EnumValueInfo> PhoneTypeChoices;
 
         [DataMember]
         public List<EnumValueInfo> ContactPersonTypeChoices;

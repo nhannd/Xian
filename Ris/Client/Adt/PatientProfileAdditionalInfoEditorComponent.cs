@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -23,26 +24,23 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PatientProfileAdditionalInfoEditorComponentViewExtensionPoint))]
     public class PatientProfileAdditionalInfoEditorComponent : ApplicationComponent
     {
-        private PatientProfile _patient;
+        private PatientProfileDetail _profile;
 
-        private IAdtService _adtService;
-        private ReligionEnumTable _religionTypes;
-        private SpokenLanguageEnumTable _languageTypes;
+        private List<EnumValueInfo> _religionChoices;
+        private List<EnumValueInfo> _languageChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientProfileAdditionalInfoEditorComponent()
+        public PatientProfileAdditionalInfoEditorComponent(IList<EnumValueInfo> religionChoices, IList<EnumValueInfo> languageChoices)
         {
+            _languageChoices = languageChoices;
+            _religionChoices = religionChoices;
         }
 
         public override void Start()
         {
             base.Start();
-
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _religionTypes = _adtService.GetReligionEnumTable();
-            _languageTypes = _adtService.GetSpokenLanguageEnumTable();
         }
 
         public override void Stop()
@@ -52,42 +50,42 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        public PatientProfile Subject
+        public PatientProfileDetail Subject
         {
-            get { return _patient; }
-            set { _patient = value; }
+            get { return _profile; }
+            set { _profile = value; }
         }
 
         #region Presentation Model
 
         public string Religion
         {
-            get { return _religionTypes[_patient.Religion].Value; }
+            get { return _profile.Religion.Value; }
             set
             {
-                _patient.Religion = _religionTypes[value].Code;
+                _profile.Religion = EnumValueUtils.MapDisplayValue(_religionChoices, value);
                 this.Modified = true;
             }
         }
 
-        public string[] ReligionChoices
+        public List<string> ReligionChoices
         {
-            get { return _religionTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_religionChoices); }
         }
 
         public string Language
         {
-            get { return _languageTypes[_patient.PrimaryLanguage].Value; }
+            get { return _profile.PrimaryLanguage.Value; }
             set
             {
-                _patient.PrimaryLanguage = _languageTypes[value].Code;
+                _profile.PrimaryLanguage = EnumValueUtils.MapDisplayValue(_languageChoices, value);
                 this.Modified = true;
             }
         }
 
-        public string[] LanguageChoices
+        public List<string> LanguageChoices
         {
-            get { return _languageTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_languageChoices); }
         }
 
         #endregion

@@ -6,6 +6,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -23,15 +24,18 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(ContactPersonsSummaryComponentViewExtensionPoint))]
     public class ContactPersonsSummaryComponent : ApplicationComponent
     {
-        private IList _contactPersonList;
+        private IList<ContactPersonDetail> _contactPersonList;
         private ContactPersonTable _contactPersons;
         private ContactPersonDetail _currentContactPersonSelection;
         private CrudActionModel _contactPersonActionHandler;
 
+        private IList<EnumValueInfo> _contactTypeChoices;
+        private IList<EnumValueInfo> _contactRelationshipChoices;
+        
         /// <summary>
         /// Constructor
         /// </summary>
-        public ContactPersonsSummaryComponent()
+        public ContactPersonsSummaryComponent(IList<EnumValueInfo> contactTypeChoices, IList<EnumValueInfo> contactRelationshipChoices)
         {
             _contactPersons = new ContactPersonTable();
 
@@ -43,9 +47,12 @@ namespace ClearCanvas.Ris.Client
             _contactPersonActionHandler.Add.Enabled = true;
             _contactPersonActionHandler.Edit.Enabled = false;
             _contactPersonActionHandler.Delete.Enabled = false;
+
+            _contactTypeChoices = contactTypeChoices;
+            _contactRelationshipChoices = contactRelationshipChoices;
         }
 
-        public IList Subject
+        public IList<ContactPersonDetail> Subject
         {
             get { return _contactPersonList; }
             set { _contactPersonList = value; }
@@ -99,7 +106,7 @@ namespace ClearCanvas.Ris.Client
         {
             ContactPersonDetail contactPerson = new ContactPersonDetail();
 
-            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson);
+            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddContactPerson);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
@@ -116,7 +123,7 @@ namespace ClearCanvas.Ris.Client
 
             ContactPersonDetail contactPerson = (ContactPersonDetail)_currentContactPersonSelection.Clone();
 
-            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson);
+            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateContactPerson);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
