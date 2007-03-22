@@ -100,21 +100,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                     return new EnumValueInfo(e.Code, e.Value);
                 });
 
-            //TODO: Map Telephone Equipment and Telephone Use to single list
-
-            response.TelephoneEquipmentChoices = CollectionUtils.Map<TelephoneEquipmentEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<ITelephoneEquipmentEnumBroker>().Load().Values,
-                delegate(TelephoneEquipmentEnum e)
-                {
-                    return new EnumValueInfo(e.Code, e.Value);
-                });
-            
-            response.TelephoneUseChoices = CollectionUtils.Map<TelephoneUseEnum, EnumValueInfo>(
-                PersistenceContext.GetBroker<ITelephoneUseEnumBroker>().Load().Values,
-                delegate(TelephoneUseEnum e)
-                {
-                    return new EnumValueInfo(e.Code, e.Value);
-                });
+            response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false);
 
             return response;
         }
