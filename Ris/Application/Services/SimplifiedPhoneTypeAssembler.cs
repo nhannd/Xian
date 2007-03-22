@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Application.Services
                 case SimplifiedPhoneType.Mobile:
                     number.Equipment = TelephoneEquipment.CP;
                     number.Use = TelephoneUse.PRN;
+                    break;
                 case SimplifiedPhoneType.Fax:
                     number.Equipment = TelephoneEquipment.FX;
                     number.Use = TelephoneUse.WPN;
@@ -88,6 +89,8 @@ namespace ClearCanvas.Ris.Application.Services
                 choices.Add(new EnumValueInfo(SimplifiedPhoneType.Fax.ToString(), SimplifiedPhoneType.Fax.ToString()));
                 choices.Add(new EnumValueInfo(SimplifiedPhoneType.Pager.ToString(), SimplifiedPhoneType.Pager.ToString()));
             }
+
+            return choices;
         }
 
     }

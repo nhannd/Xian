@@ -13,15 +13,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class TelephoneNumberAssembler
     {
-        private EnumValueInfo GetTelephoneDetailType(TelephoneNumber number)
-        {
-            SimplifiedPhoneType t = SimplifiedPhoneType.Unknown;
-            if (number.Use == TelephoneUse.PRN)
-            {
-            }
-        }
-
-
         public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber, IPersistenceContext context)
         {
             TelephoneDetail telephoneDetail = new TelephoneDetail();

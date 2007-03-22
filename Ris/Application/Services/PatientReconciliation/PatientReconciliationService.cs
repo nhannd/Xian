@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
                 });
 
             ReconciliationCandidateAssembler rcAssembler = new ReconciliationCandidateAssembler();
-            response.MatchCandidates = CollectionUtils.Map<PatientProfileMatch, PatientProfileSummary, List<PatientProfileSummary>>(
+            response.MatchCandidates = CollectionUtils.Map<PatientProfileMatch, ReconciliationCandidate, List<ReconciliationCandidate>>(
                 matches,
                 delegate(PatientProfileMatch match)
                 {
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
             foreach(EntityRef patientRef in request.PatientRefs)
             {
                 Patient patient = (Patient)PersistenceContext.Load(patientRef);
-                foreach (PatientProfile profile in patient)
+                foreach (PatientProfile profile in patient.Profiles)
                 {
                     summaries.Add(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
                 }

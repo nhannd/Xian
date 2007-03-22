@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 
         private PropertyDiff CreatePropertyDiff(PatientProfileDiscrepancy discrepancy, IList<DiscrepancyTestResult> results)
         {
-            DiscrepancyTestResult result = CollectionUtils.Select<DiscrepancyTestResult>(results,
+            DiscrepancyTestResult result = CollectionUtils.SelectFirst<DiscrepancyTestResult>(results,
                 delegate(DiscrepancyTestResult r) { return r.Discrepancy == discrepancy; });
 
             if (result != null)
