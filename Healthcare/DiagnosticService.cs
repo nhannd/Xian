@@ -15,6 +15,11 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class DiagnosticService : Entity
 	{
+
+        public DiagnosticService(string id, string name)
+            :this(id, name, new HybridSet())
+        {
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

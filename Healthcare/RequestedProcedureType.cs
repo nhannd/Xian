@@ -14,7 +14,11 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class RequestedProcedureType : Entity
 	{
-	
+        public RequestedProcedureType(string id, string name)
+            :this(id, name, new HybridSet())
+        {
+        }
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
