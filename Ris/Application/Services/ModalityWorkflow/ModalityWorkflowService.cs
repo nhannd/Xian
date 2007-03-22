@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            ModalityProcedureStepTypeSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
+            ModalityProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
 
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistQueryResult, ModalityWorklistItem, List<ModalityWorklistItem>>(
@@ -82,8 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
         private ModalityProcedureStep LoadStep(EntityRef stepRef)
         {
-            IModalityProcedureStepBroker broker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
-            return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
+            return PersistenceContext.GetBroker<IModalityProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
         }
     }
 }

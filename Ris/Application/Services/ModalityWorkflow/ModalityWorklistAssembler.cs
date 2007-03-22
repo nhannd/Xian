@@ -32,8 +32,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ModalityWorklistPreview preview = new ModalityWorklistPreview();
 
             //TODO: Technologist workflow hasn't been fully defined yet, only pass back the PatientProfile now
-            List<PatientProfile> profileList = mps.RequestedProcedure.Order.Patient.Profiles;
-            foreach (PatientProfile profile in profileList)
+            foreach (PatientProfile profile in mps.RequestedProcedure.Order.Patient.Profiles)
             {
                 if (profile.Mrn.AssigningAuthority.Equals(patientProfileAuthority))
                 {
@@ -45,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return preview;
         }
     
-        public ModalityProcedureStepSearchCriteria CreateSearchCriteria(ModalityWorklistSearchCriteria criteria)
+        public ModalityProcedureStepSearchCriteria CreateSearchCriteria(ModalityWorklistSearchData criteria)
         {
             ModalityProcedureStepSearchCriteria mpsSearchCriteria = new ModalityProcedureStepSearchCriteria();
             ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatusCode);

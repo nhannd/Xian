@@ -9,6 +9,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
@@ -22,7 +23,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
-                    GetWorklist(request.WorklistClassName, assembler.CreateSearchCriteria(request.SearchCriteria)),
+                    GetWorklist(request.WorklistClassName, assembler.CreatePatientProfileSearchCriteria(request.SearchCriteria)),
                     delegate(WorklistItem item)
                     {
                         return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
@@ -34,10 +35,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
 
-            List<WorklistQueryResult> listQueryResult = GetQueryResultForWorklistItem(request.WorklistItem.WorklistClassName, request.WorklistItem);
 
-            return new LoadWorklistPreviewResponse(
-                assembler.CreateWorklistPreview(request.WorklistItem.PatientProfileRef, listQueryResult, this.PersistenceContext));
+            return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
+                request.WorklistItem.PatientProfileRef, 
+                GetQueryResultForWorklistItem(request.WorklistItem.WorklistClassName, 
+                    new WorklistItem(request.WorklistItem.WorklistClassName, request.WorklistItem.PatientProfileRef)),
+                this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -89,14 +92,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {
-                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef, EntityLoadFlags.Proxy);
-                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
-
+                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
                 Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria(request.Staff));
+
+                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
                 cps.Start(staff);
                 cps.Complete(staff);
 
-                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
                 rp.CheckInProcedureSteps.Add(cps);
                 PersistenceContext.Lock(rp, DirtyState.Dirty);
             }
@@ -107,8 +109,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request)
         {
-            //TODO!!
-            return new LoadPatientSearchComponentFormDataResponse();
+            return new LoadPatientSearchComponentFormDataResponse(
+                CollectionUtils.Map<SexEnum, EnumValueInfo, List<EnumValueInfo>>(
+                    PersistenceContext.GetBroker<ISexEnumBroker>().Load().Items,
+                    delegate(SexEnum e)
+                    {
+                        return new EnumValueInfo(e.Code.ToString(), e.Value);
+                    }));           
         }
 
     }

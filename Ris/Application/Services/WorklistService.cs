@@ -41,8 +41,8 @@ namespace ClearCanvas.Ris.Application.Services
         [ReadOperation]
         public RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail)
         {
-            IRequestedProcedureBroker rpBroker = CurrentContext.GetBroker<IRequestedProcedureBroker>();
-            IOrderBroker orderBroker = CurrentContext.GetBroker<IOrderBroker>();
+            IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
+            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
 
             RequestedProcedure rp = rpBroker.Load(rpRef);
 
@@ -62,13 +62,13 @@ namespace ClearCanvas.Ris.Application.Services
         [UpdateOperation]
         public void UpdateRequestedProcedure(RequestedProcedure rp)
         {
-            this.CurrentContext.Lock(rp, DirtyState.Dirty);
+            this.PersistenceContext.Lock(rp, DirtyState.Dirty);
         }
 
         [UpdateOperation]
         public void AddCheckInProcedureStep(CheckInProcedureStep cps)
         {
-            this.CurrentContext.Lock(cps, DirtyState.New);
+            this.PersistenceContext.Lock(cps, DirtyState.New);
         }
 
         [ReadOperation]
@@ -113,8 +113,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         private ModalityProcedureStep LoadStep(EntityRef stepRef)
         {
-            IModalityProcedureStepBroker broker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
-            return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
+            return PersistenceContext.GetBroker<IModalityProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
         }
 
     }

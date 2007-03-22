@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -27,7 +28,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 "N/A");
         }
 
-        public RegistrationWorklistPreview CreateWorklistPreview(EntityRef profileRef, List<WorklistQueryResult> listQueryResult, IPersistenceContext context)
+        public RegistrationWorklistPreview CreateRegistrationWorklistPreview(EntityRef profileRef, IList listQueryResult, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
@@ -69,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 );       
         }
 
-        public PatientProfileSearchCriteria CreateSearchCriteria(PatientProfileSearchData criteria)
+        public PatientProfileSearchCriteria CreatePatientProfileSearchCriteria(PatientProfileSearchData criteria)
         {
             if (criteria == null)
                 return null;

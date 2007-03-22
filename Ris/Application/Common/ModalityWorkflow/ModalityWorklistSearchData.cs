@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class ModalityWorklistSearchCriteria : DataContractBase
+    public class ModalityWorklistSearchData : DataContractBase
     {
         //TODO: expand the MPS search criteria here
         [DataMember]

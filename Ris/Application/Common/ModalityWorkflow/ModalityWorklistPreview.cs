@@ -15,6 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             this.PatientProfile = patientProfileRef;
         }
 
+        public ModalityWorklistPreview()
+        {
+        }
+
         [DataMember(IsRequired = true)]
         public EntityRef ProcedureStepRef;
 

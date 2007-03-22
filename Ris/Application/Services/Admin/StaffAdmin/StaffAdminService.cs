@@ -9,6 +9,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -67,7 +68,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [ReadOperation]
         public LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request)
         {
+            //TODO:  replace "dummy" lists
+            List<string> dummyCountries = new List<string>();
+            dummyCountries.Add("Canada");
 
+            List<string> dummyProvinces = new List<string>();
+            dummyProvinces.Add("Ontario");
+
+            return new LoadStaffEditorFormDataResponse(
+                CollectionUtils.Map<AddressTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
+                    PersistenceContext.GetBroker<IAddressTypeEnumBroker>().Load().Items,
+                    delegate(AddressTypeEnum e)
+                    {
+                        return new EnumValueInfo(e.Code.ToString(), e.Value);
+                    }),
+                dummyProvinces,
+                dummyCountries,
+                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false));
 
         }
 
