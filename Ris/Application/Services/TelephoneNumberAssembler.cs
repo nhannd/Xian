@@ -13,6 +13,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public class TelephoneNumberAssembler
     {
+        private EnumValueInfo GetTelephoneDetailType(TelephoneNumber number)
+        {
+            SimplifiedPhoneType t = SimplifiedPhoneType.Unknown;
+            if (number.Use == TelephoneUse.PRN)
+            {
+            }
+        }
+
+
         public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber, IPersistenceContext context)
         {
             TelephoneDetail telephoneDetail = new TelephoneDetail();
@@ -22,13 +31,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             telephoneDetail.Number = telephoneNumber.Number;
             telephoneDetail.Extension = telephoneNumber.Extension;
 
-            TelephoneUseEnumTable useEnumTable = context.GetBroker<ITelephoneUseEnumBroker>().Load();
-            telephoneDetail.Use.Code = telephoneNumber.Use.ToString();
-            telephoneDetail.Use.Value = useEnumTable[telephoneNumber.Use].Values;
-
-            TelephoneEquipmentEnumTable equipmentEnumTable = context.GetBroker<ITelephoneEquipmentEnumBroker>().Load();
-            telephoneDetail.Equipment.Code = telephoneNumber.Equipment.ToString();
-            telephoneDetail.Equipment.Value = equipmentEnumTable[telephoneNumber.Equipment].Values;
+            SimplifiedPhoneTypeAssembler simplePhoneTypeAssembler = new SimplifiedPhoneTypeAssembler();
+            telephoneDetail.Type = simplePhoneTypeAssembler.GetSimplifiedPhoneType(telephoneNumber);
 
             telephoneDetail.ValidRangeFrom = telephoneNumber.ValidRange.From;
             telephoneDetail.ValidRangeUntil = telephoneNumber.ValidRange.Until;
@@ -44,10 +48,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             telephoneNumber.AreaCode = telephoneDetail.AreaCode;
             telephoneNumber.Number = telephoneDetail.Number;
             telephoneNumber.Extension = telephoneDetail.Extension;
-            telephoneNumber.Use = (TelephoneUse)Enum.Parse(typeof(TelephoneUse), telephoneDetail.Use.Code);
-            telephoneNumber.Equipment = (TelephoneEquipment)Enum.Parse(typeof(TelephoneEquipment), telephoneDetail.Equipment.Code);
             telephoneNumber.ValidRange.From = telephoneDetail.ValidRangeFrom;
             telephoneNumber.ValidRange.Until = elephoneDetail.ValidRangeUntil;
+
+            SimplifiedPhoneTypeAssembler simplePhoneTypeAssembler = new SimplifiedPhoneTypeAssembler();
+            simplePhoneTypeAssembler.UpdatePhoneNumber(telephoneDetail.Type, telephoneNumber);
 
             return telephoneNumber;
         }
