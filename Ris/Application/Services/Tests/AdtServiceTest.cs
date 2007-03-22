@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Application.Services.Tests
         private IPatientBroker _mockPatientBroker;
         private IPersistenceContext _mockPersistanceContext;
         private IExtensionPoint _mockReconciliationStrategyXP;
-        private IAdtService _adtService;
+        //private IAdtService _adtService;
 
         private IList<PatientProfile> _persistedProfiles;
         private IList<Patient> _persistedPatients;

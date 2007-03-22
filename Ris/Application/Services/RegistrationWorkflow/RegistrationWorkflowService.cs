@@ -16,14 +16,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     public class RegistrationWorkflowService : WorklistService, IRegistrationWorkflowService
     {
         [ReadOperation]
-        GetWorklistResponse GetWorklist(GetWorklistRequest request)
+        public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return assembler.CreateGetWorklistResponse(GetWorklist(request.WorklistClassName, assembler.CreateSearchCriteria(request.SearchCriteria)));
         }
 
         [ReadOperation]
-        LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
+        public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             RegistrationWorklistPreview preview = assembler.CreateWorklistPreview(request.WorklistItem.PatientProfileRef, this.PersistenceContext);
@@ -42,19 +42,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
+        public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
             return new GetOperationEnablementResponse(GetOperationEnablement(request.ProcedureStepRef));
         }
 
         [UpdateOperation]
-        void ExecuteOperation(ExecuteOperationRequest request)
+        public void ExecuteOperation(ExecuteOperationRequest request)
         {
             ExecuteOperation(request.ProcedureStepRef, request.OperationClassName);
         }
 
         [ReadOperation]
-        GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
+        public GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
         {
             IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
             IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
+        public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {

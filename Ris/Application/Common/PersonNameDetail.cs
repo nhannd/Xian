@@ -19,6 +19,10 @@ namespace ClearCanvas.Ris.Application.Common
             this.Degree = degree;
         }
 
+        public PersonNameDetail()
+        {
+        }
+
         [DataMember]
         public string FamilyName;
 
