@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
@@ -37,12 +38,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 */
         private ReportingProcedureStep LoadStep(EntityRef stepRef)
         {
-            IReportingProcedureStepBroker broker = CurrentContext.GetBroker<IReportingProcedureStepBroker>();
-
             // it is extremly important that we get the actual object and not a proxy here
             // if a proxy is returned, then it cannot be cast to a subclass
             // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
-            return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
+            return PersistenceContext.GetBroker<IReportingProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
         }
 
         #region IReportingWorkflowService Members
@@ -68,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             IRequestedProcedureBroker broker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
             RequestedProcedure rp = broker.Load(request.ProcedureRef, EntityLoadFlags.Proxy);
             InterpretationStep interpretation = new InterpretationStep(rp);
-            CurrentContext.Lock(interpretation, DirtyState.New);
+            PersistenceContext.Lock(interpretation, DirtyState.New);
         }
 
         [UpdateOperation]

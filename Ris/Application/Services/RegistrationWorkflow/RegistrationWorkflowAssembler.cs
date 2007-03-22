@@ -16,24 +16,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class RegistrationWorkflowAssembler
     {
-
-        //public RegistrationWorklistItem CreateWorklistItem(WorklistItem domainItem, IPersistenceContext context)
-        //{
-        //    PersonNameAssembler nameAssembler = new PersonNameAssembler();
-        //    HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-        //    SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-
-        //    return new RegistrationWorklistItem(
-        //        domainItem.PatientProfile,
-        //        domainItem.WorkClassName,
-        //        domainItem.Mrn.Id,
-        //        domainItem.Mrn.AssigningAuthority,
-        //        nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
-        //        healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
-        //        domainItem.DateOfBirth,
-        //        sexEnumTable[domainItem.Sex].Values);
-        //}
-
         public RICSummary CreateRICSummary(WorklistQueryResult result)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
@@ -125,18 +107,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return profileCriteria;
         }
 
-        public GetWorklistResponse CreateGetWorklistResponse(List<WorklistItem> worklist)
-        {
-            List<RegistrationWorklistItem> registrationWorklistItems = new List<RegistrationWorklistItem>();
-
-            foreach (WorklistItem item in worklist)
-            {
-                registrationWorklistItems.Add(CreateRegistrationWorklistItem(item));
-            }
-
-            return new GetWorklistResponse(registrationWorklist);
-        }
-
         private RegistrationWorklistItem CreateRegistrationWorklistItem(string worklistClassName, WorklistQueryResult result, IPersistenceContext context)
         {
             PersonNameAssembler personNameAssembler = new PersonNameAssembler();
@@ -151,8 +121,24 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 personNameAssembler.CreatePersonNameDetail(result.PatientName),
                 healthcardAssembler.CreateHealthcardDetail(result.HealthcardNumber),
                 result.DateOfBirth,
-                sexEnumTable[result.Sex].Values);
+                sexEnumTable[result.Sex].Value);
         }
 
+        public RegistrationWorklistItem CreateRegistrationWorklistItem(WorklistItem domainItem, IPersistenceContext context)
+        {
+            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+
+            return new RegistrationWorklistItem(
+                domainItem.PatientProfile,
+                domainItem.WorkClassName,
+                domainItem.Mrn.Id,
+                domainItem.Mrn.AssigningAuthority,
+                nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
+                healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
+                domainItem.DateOfBirth,
+                sexEnumTable[domainItem.Sex].Value);
+        }
     }
 }

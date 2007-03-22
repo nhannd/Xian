@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                     practitioner.Addresses,
                     delegate(Address address)
                     {
-                        return addressAssembler.CreateTelephoneDetail(address, context);
+                        return addressAssembler.CreateAddressDetail(address, context);
                     }),
                 practitioner.LicenseNumber);
         }

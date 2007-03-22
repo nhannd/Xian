@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -19,9 +20,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            return assembler.CreateGetWorklistResponse(
-                request.WorklistClassName,
-                GetWorklist(request.WorklistClassName, assembler.CreateSearchCriteria(request.SearchCriteria)));
+            return new GetWorklistResponse(
+                CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
+                    GetWorklist(request.WorklistClassName, assembler.CreateSearchCriteria(request.SearchCriteria)),
+                    delegate(WorklistItem item)
+                    {
+                        return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
+                    }));
         }
 
         [ReadOperation]
@@ -53,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
             IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
 
-            List<WorklistQueryResult> listQueryResult = GetQueryResultForWorklistItem(request.WorklistClassName, new WorklistItem(request.WorklistClassName, request.PatientProfileRef));
+            List<WorklistQueryResult> listQueryResult = (List<WorklistQueryResult>) GetQueryResultForWorklistItem(request.WorklistClassName, new WorklistItem(request.WorklistClassName, request.PatientProfileRef));
             List<EntityRef> rpRefList = new List<EntityRef>();
             List<CheckInTableItem> checkInItemList = new List<CheckInTableItem>();
             foreach (WorklistQueryResult queryResult in listQueryResult)
@@ -68,7 +73,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     orderBroker.LoadOrderingFacilityForOrder(rp.Order);
                     orderBroker.LoadOrderingPractitionerForOrder(rp.Order);
 
-                    checkInItemList.Add(new CheckInTableItem(rp.GetRef(), rp.Type.Name, rp.Order.SchedulingRequestDateTime, rp.Order.OrderingFacility));
+                    checkInItemList.Add(new CheckInTableItem(
+                            rp.GetRef(), 
+                            rp.Type.Name, 
+                            rp.Order.SchedulingRequestDateTime, 
+                            rp.Order.OrderingFacility.Name));
                 }
             }
 
@@ -80,9 +89,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {
-                CheckInProcedureStep cps = new CheckInProcedureStep(rpRef);
-                cps.Start(request.Staff);
-                cps.Complete(request.Staff);
+                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef, EntityLoadFlags.Proxy);
+                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+
+                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria(request.Staff));
+                cps.Start(staff);
+                cps.Complete(staff);
 
                 RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
                 rp.CheckInProcedureSteps.Add(cps);

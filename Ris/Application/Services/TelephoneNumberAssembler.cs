@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -48,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return telephoneNumber;
         }
 
-        public void AddTelephoneNumber(TelephoneDetail phoneDetail, List<TelephoneNumber> phoneNumbers)
+        public void AddTelephoneNumber(TelephoneDetail phoneDetail, IList phoneNumbers)
         {
             //TODO: Check automatic expiration of Telephone functionality
             TelephoneNumber newNumber = CreateTelephoneNumber(phoneDetail);

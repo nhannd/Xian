@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -26,7 +27,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             AddressTypeEnumTable typeEnumTable = context.GetBroker<IAddressTypeEnumBroker>().Load();
             addressDetail.Type.Code = address.Type.ToString();
-            addressDetail.Type.Value = typeEnumTable[address.Type].Values;
+            addressDetail.Type.Value = typeEnumTable[address.Type].Value;
 
             addressDetail.ValidRangeFrom = address.ValidRange.From;
             addressDetail.ValidRangeUntil = address.ValidRange.Until;
@@ -51,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return newAddress;
         }
 
-        public void AddAddress(AddressDetail addressDetail, IList<Address> addresses)
+        public void AddAddress(AddressDetail addressDetail, IList addresses)
         {
             //TODO: Check automatic expiration of Address functionality
             Address newAddress = CreateAddress(addressDetail);

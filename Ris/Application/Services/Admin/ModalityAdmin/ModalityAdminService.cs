@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         {
             Modality modality = new Modality();
             ModalityAssembler assembler = new ModalityAssembler();
-            assembler.UpdateModality(modality, request.ModalityDetail);
+            assembler.UpdateModality(request.ModalityDetail, modality);
 
             // TODO prior to accepting this add request, we should check that the same modality does not already exist
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             Modality modality = (Modality)PersistenceContext.Load(request.ModalityRef, EntityLoadFlags.CheckVersion);
 
             ModalityAssembler assembler = new ModalityAssembler();
-            assembler.UpdateModality(modality, request.ModalityDetail, PersistenceContext);
+            assembler.UpdateModality(request.ModalityDetail, modality);
 
             // TODO prior to accepting this update request, we should check that the same modality does not already exist
 

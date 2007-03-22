@@ -19,6 +19,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         public BatchImportResponse BatchImport(BatchImportRequest request)
         {
             DiagnosticServiceBatchImporter.Import((IUpdateContext)this.PersistenceContext, request.ImportData);
+            return new BatchImportResponse();
         }
     }
 }

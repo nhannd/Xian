@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.Admin;
@@ -38,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                     staff.Addresses,
                     delegate(Address address)
                     {
-                        return addressAssembler.CreateTelephoneDetail(address, context);
+                        return addressAssembler.CreateAddressDetail(address, context);
                     }));
         }
 

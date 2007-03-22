@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             IExtensionPoint worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
             IWorklist worklist = (IWorklist)worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
-            return worklist.GetWorklist(this.CurrentContext, additionalCriteria);
+            return worklist.GetWorklist(this.PersistenceContext, additionalCriteria);
         }
 
         [ReadOperation]
@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             IExtensionPoint worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
             IWorklist worklist = (IWorklist)worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
-            return worklist.GetQueryResultForWorklistItem(this.CurrentContext, item);
+            return worklist.GetQueryResultForWorklistItem(this.PersistenceContext, item);
         }
 
         [ReadOperation]

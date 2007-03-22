@@ -14,8 +14,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return new ModalitySummary(
                 modality.GetRef(),
                 modality.Id,
-                modality.Name,
-                modality.Active);
+                modality.Name);
         }
 
         public ModalityDetail CreateModalityDetail(Modality modality)

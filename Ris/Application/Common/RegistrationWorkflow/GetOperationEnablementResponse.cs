@@ -9,9 +9,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetOperationEnablementResponse : DataContractBase
     {
-        public GetOperationEnablementResponse(Dictionary<string, bool> dictionary)
+        public GetOperationEnablementResponse(IDictionary<string, bool> dictionary)
         {
-            this.OperationEnablementDictionary = dictionary;
+            this.OperationEnablementDictionary = dictionary as Dictionary<string, bool>;
         }
 
         [DataMember]

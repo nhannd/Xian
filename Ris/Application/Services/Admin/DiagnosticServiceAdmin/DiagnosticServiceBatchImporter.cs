@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 // if not, create a transient instance
                 if (ds == null)
                 {
-                    ds = new DiagnosticService(id, name);
+                    ds = new DiagnosticService(id, name, null);
                     _updateContext.Lock(ds, DirtyState.New);
                 }
 
@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 // if not, create a transient instance
                 if (rpType == null)
                 {
-                    rpType = new RequestedProcedureType(id, name);
+                    rpType = new RequestedProcedureType(id, name, null);
                     _updateContext.Lock(rpType, DirtyState.New);
                 }
 
