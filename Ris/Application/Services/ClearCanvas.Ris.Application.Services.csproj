@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\ModalityAssembler.cs" />
+    <Compile Include="Admin\PatientProfileAssembler.cs" />
     <Compile Include="Admin\PractitionerAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceBatchImporter.cs" />
@@ -64,12 +65,16 @@
     <Compile Include="Admin\LocationAssembler.cs" />
     <Compile Include="Admin\LocationAdmin\LocationAdminService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityAdminService.cs" />
-    <Compile Include="Admin\PatientAdminService.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
     <Compile Include="Admin\PractitionerAdmin\PractitionerAdminService.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
+    <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
+    <Compile Include="Admin\VisitAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
+    <Compile Include="ContactPersonAssembler.cs" />
+    <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="IWorklistService.cs" />

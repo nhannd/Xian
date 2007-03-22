@@ -9,6 +9,16 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class PersonNameDetail : DataContractBase
     {
+        public PersonNameDetail(string familyName, string givenName, string middleName, string prefix, string suffix, string degree)
+        {
+            this.FamilyName = familyName;
+            this.GivenName = givenName;
+            this.MiddleName = middleName;
+            this.Prefix = prefix;
+            this.Suffix = suffix;
+            this.Degree = degree;
+        }
+
         [DataMember]
         public string FamilyName;
 
