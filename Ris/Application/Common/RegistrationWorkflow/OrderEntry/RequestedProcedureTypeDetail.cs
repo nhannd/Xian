@@ -11,6 +11,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class RequestedProcedureTypeDetail : DataContractBase
     {
+        public RequestedProcedureTypeDetail(string id, string name, List<ModalityProcedureStepTypeDetail> mpsTypes)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.ModalityProcedureStepTypes = mpsTypes;
+        }
+
         [DataMember]
         public string Id;
 

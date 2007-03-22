@@ -9,6 +9,7 @@ using ClearCanvas.Healthcare.Brokers;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {

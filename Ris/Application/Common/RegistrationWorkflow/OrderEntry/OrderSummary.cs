@@ -37,6 +37,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             this.OrderPriority = orderPriority;
         }
 
+        public OrderSummary()
+        {
+        }
+
         [DataMember]
         public EntityRef OrderRef;
 

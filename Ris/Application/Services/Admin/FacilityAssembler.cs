@@ -11,22 +11,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public FacilitySummary CreateFacilitySummary(Facility facility)
         {
-            FacilitySummary summary = new FacilitySummary();
-            summary.FacilityRef = facility.GetRef();
-            summary.Code = facility.Code;
-            summary.Name = facility.Name;
-            return summary;
+            return new FacilitySummary(
+                facility.GetRef(),
+                facility.Code,
+                facility.Name);
         }
 
         public FacilityDetail CreateFacilityDetail(Facility facility)
         {
-            FacilityDetail detail = new FacilitySummary();
-            detail.Code = facility.Code;
-            detail.Name = facility.Name;
-            return detail;
+            return new FacilityDetail(
+                facility.Code,
+                facility.Name);
         }
 
-        public FacilityDetail UpdateFacility(Facility facility, FacilityDetail detail)
+        public void UpdateFacility(FacilityDetail detail, Facility facility)
         {
             facility.Code = detail.Code;
             facility.Name = detail.Name;

@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
@@ -36,72 +36,53 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             summary.PatientName = personNameAssembler.CreatePersonNameDetail(result.PatientName);
 
             OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            summary.OrderPriority = priorityEnumTable[result.Priority].Values;
+            summary.OrderPriority.Code = result.Priority.ToString();
+            summary.OrderPriority.Value = priorityEnumTable[result.Priority].Value;
 
             return summary;
         }
 
         public DiagnosticServiceSummary CreateDiagnosticServiceSummary(DiagnosticService diagnosticService)
         {
-            DiagnosticServiceSummary summary = new DiagnosticServiceSummary();
-
-            summary.DiagnosticServiceRef = diagnosticService.GetRef();
-            summary.Id = diagnosticService.Id;
-            summary.Name = diagnosticService.Name;
-
-            return summary;            
+            return new DiagnosticServiceSummary(
+                diagnosticService.GetRef(),
+                diagnosticService.Id,
+                diagnosticService.Name);
         }
 
         public DiagnosticServiceDetail CreateDiagnosticServiceDetail(DiagnosticService diagnosticService)
         {
-            DiagnosticServiceDetail detail = new DiagnosticServiceDetail();
-
-            detail.Id = diagnosticService.Id;
-            detail.Name = diagnosticService.Name;
-            detail.RequestedProcedureTypes =
+            return new DiagnosticServiceDetail(
+                diagnosticService.Id,
+                diagnosticService.Name,
                 CollectionUtils.Map<RequestedProcedureType, RequestedProcedureTypeDetail, List<RequestedProcedureTypeDetail>>(
                     diagnosticService.RequestedProcedureTypes,
                     delegate(RequestedProcedureType rpType)
                     {
                         return CreateRequestedProcedureTypeDetail(rpType);
-                    });
-
-            return detail;
+                    }));
         }
 
         public RequestedProcedureTypeDetail CreateRequestedProcedureTypeDetail(RequestedProcedureType requestedProcedureType)
         {
-            RequestedProcedureTypeDetail detail = new RequestedProcedureTypeDetail();
-
-            detail.Id = requestedProcedureType.Id;
-            detail.Name = requestedProcedureType.Name;
-            detail.ModalityProcedureStepTypes =
+            return new RequestedProcedureTypeDetail(
+                requestedProcedureType.Id,
+                requestedProcedureType.Name,
                 CollectionUtils.Map<ModalityProcedureStepType, ModalityProcedureStepTypeDetail, List<ModalityProcedureStepTypeDetail>>(
                     requestedProcedureType.ModalityProcedureStepTypes,
                     delegate(ModalityProcedureStepType mpsType)
                     {
                         return CreateModalityProcedureStepTypeDetail(mpsType);
-                    });
-
-            return detail;
+                    }));
         }
 
         public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
         {
-            ModalityProcedureStepTypeDetail detail = new ModalityProcedureStepTypeDetail();
             ModalityAssembler assembler = new ModalityAssembler();
-
-            detail.Id = modalityProcedureStepType.Id;
-            detail.Name = modalityProcedureStepType.Name;
-            detail.Modalities =
-                CollectionUtils.Map<Modality, ModalityDetail, List<ModalityDetail>>(
-                    modalityProcedureStepType.DefaultModality,
-                    delegate(Modality m)
-                    {
-                        return assembler.CreateModalityDetail(m);
-                    });
-
-            return detail;
+            return new ModalityProcedureStepTypeDetail(
+                modalityProcedureStepType.Id,
+                modalityProcedureStepType.Name,
+                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
         }
     }
 }

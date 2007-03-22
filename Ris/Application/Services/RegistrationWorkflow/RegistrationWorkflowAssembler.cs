@@ -2,96 +2,89 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class RegistrationWorkflowAssembler
     {
-        public RegistrationWorklistItem CreateWorklistItem(WorklistQueryResult result, IPersistenceContext context)
+
+        //public RegistrationWorklistItem CreateWorklistItem(WorklistItem domainItem, IPersistenceContext context)
+        //{
+        //    PersonNameAssembler nameAssembler = new PersonNameAssembler();
+        //    HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+        //    SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+
+        //    return new RegistrationWorklistItem(
+        //        domainItem.PatientProfile,
+        //        domainItem.WorkClassName,
+        //        domainItem.Mrn.Id,
+        //        domainItem.Mrn.AssigningAuthority,
+        //        nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
+        //        healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
+        //        domainItem.DateOfBirth,
+        //        sexEnumTable[domainItem.Sex].Values);
+        //}
+
+        public RICSummary CreateRICSummary(WorklistQueryResult result)
         {
-            RegistrationWorklistItem item = new RegistrationWorklistItem();
-
-            item.PatientProfileRef = result.PatientProfile;
-            item.MrnAssigningAuthority = result.Mrn.AssigningAuthority;
-            item.MrnID = result.Mrn.Id;
-            item.DateOfBirth = result.DateOfBirth;
-
-            PersonNameAssembler personNameAssembler = new PersonNameAssembler();
-            item.Name = personNameAssembler.CreatePersonNameDetail(result.PatientName);
-
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            item.Healthcard = healthcardAssembler.CreateHealthcardDetail(result.HealthcardNumber);
-
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            item.Sex = sexEnumTable[result.Sex].Values;
-
-            return item;
+            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            return new RICSummary(
+                result.RequestedProcedureName,
+                nameAssembler.CreatePersonNameDetail(result.OrderingPractitioner),
+                "N/A",
+                result.ProcedureStepScheduledStartTime,
+                "N/A");
         }
 
-        public RegistrationWorklistItem CreateWorklistItem(WorklistItem domainItem, IPersistenceContext context)
+        public RegistrationWorklistPreview CreateWorklistPreview(EntityRef profileRef, List<WorklistQueryResult> listQueryResult, IPersistenceContext context)
         {
-            RegistrationWorklistItem item = new RegistrationWorklistItem();
-
-            item.PatientProfileRef = domainItem.PatientProfile;
-            item.MrnAssigningAuthority = domainItem.Mrn.AssigningAuthority;
-            item.MrnID = domainItem.Mrn.Id;
-            item.DateOfBirth = domainItem.DateOfBirth;
-
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            item.Name = nameAssembler.CreatePersonNameDetail(domainItem.PatientName);
-
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            item.Healthcard = healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber);
-
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            item.Sex = sexEnumTable[domainItem.Sex].Values;
-
-            return registrationItem;
-        }
-
-        public RegistrationWorklistPreview CreateWorklistPreview(EntityRef profileRef, IPersistenceContext context)
-        {
-            RegistrationWorklistPreview preview = new RegistrationWorklistPreview();
-            PatientProfile profile = PersistenceContext.GetBroker<IPatientProfileBroker>().Load(profileRef);
-
-            preview.PatientProfileRef = profileRef;
-            preview.MrnID = profile.Mrn.Id;
-            preview.MrnAssigningAuthority = profile.Mrn.AssigningAuthority;
-            preview.DateOfBirth = profile.DateOfBirth;
-
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            preview.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            preview.Healthcard = healthcardAssembler.CreateHealthcardDetail(item.Healthcard);
-
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            preview.Sex = sexEnumTable[profile.Sex].Values;
-
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
-            preview.CurrentHomePhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone);
-            preview.CurrentWorkPhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone);
-            foreach (TelephoneNumber number in profile.TelephoneNumbers)
-            {
-                preview.TelephoneNumbers.Add(phoneAssembler.CreateTelephoneDetail(number));
-            }
-
             AddressAssembler addressAssembler = new AddressAssembler();
-            preview.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress);
-            preview.CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress);
-            foreach (Address address in profile.Addresses)
-            {
-                preview.Addresses.Add(addressAssembler.CreateAddressDetail(address));
-            }
+            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+            PatientProfile profile = context.GetBroker<IPatientProfileBroker>().Load(profileRef);
 
-            return preview;
+            return new RegistrationWorklistPreview(
+                profileRef,
+                profile.Mrn.Id,
+                profile.Mrn.AssigningAuthority,
+                nameAssembler.CreatePersonNameDetail(profile.Name),
+                healthcardAssembler.CreateHealthcardDetail(profile.Healthcard),
+                profile.DateOfBirth,
+                sexEnumTable[profile.Sex].Value,
+                addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context),
+                addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context),
+                phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context),
+                phoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context),
+                CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
+                    profile.TelephoneNumbers,
+                    delegate(TelephoneNumber phone)
+                    {
+                        return phoneAssembler.CreateTelephoneDetail(phone, context);
+                    }),
+                CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(
+                    profile.Addresses,
+                    delegate(Address address)
+                    {
+                        return addressAssembler.CreateAddressDetail(address, context);
+                    }),
+                CollectionUtils.Map<WorklistQueryResult, RICSummary, List<RICSummary>>(
+                    listQueryResult,
+                    delegate(WorklistQueryResult result)
+                    {
+                        return CreateRICSummary(result);
+                    })
+                );       
         }
 
         public PatientProfileSearchCriteria CreateSearchCriteria(PatientProfileSearchData criteria)
@@ -144,6 +137,22 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new GetWorklistResponse(registrationWorklist);
         }
 
+        private RegistrationWorklistItem CreateRegistrationWorklistItem(string worklistClassName, WorklistQueryResult result, IPersistenceContext context)
+        {
+            PersonNameAssembler personNameAssembler = new PersonNameAssembler();
+            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+
+            return new RegistrationWorklistItem(
+                result.PatientProfile,
+                worklistClassName,
+                result.Mrn.Id,
+                result.Mrn.AssigningAuthority,
+                personNameAssembler.CreatePersonNameDetail(result.PatientName),
+                healthcardAssembler.CreateHealthcardDetail(result.HealthcardNumber),
+                result.DateOfBirth,
+                sexEnumTable[result.Sex].Values);
+        }
 
     }
 }

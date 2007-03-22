@@ -11,26 +11,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public ModalitySummary CreateModalitySummary(Modality modality)
         {
-            ModalitySummary summary = new ModalitySummary();
-            summary.ModalityRef = modality.GetRef();
-            summary.Active = modality.Active;
-            summary.Id = modality.Id;
-            summary.Name = modality.Name;
-            return summary;
+            return new ModalitySummary(
+                modality.GetRef(),
+                modality.Id,
+                modality.Name,
+                modality.Active);
         }
 
         public ModalityDetail CreateModalityDetail(Modality modality)
         {
-            ModalityDetail detail = new ModalityDetail();
-            detail.Id = modality.Id;
-            detail.Name = modality.Name;
-            return detail;
+            return new ModalityDetail(
+                modality.Id,
+                modality.Name);
         }
 
-        public void UpdateModality(Modality modality, ModalityDetail detail)
+        public void UpdateModality(ModalityDetail detail, Modality modality)
         {
-            detail.Id = modality.Id;
-            detail.Name = modality.Name;
+            modality.Id = detail.Id;
+            modality.Name = detail.Name;
         }
 
     }

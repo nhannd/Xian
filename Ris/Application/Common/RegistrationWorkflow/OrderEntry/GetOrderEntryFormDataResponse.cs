@@ -13,11 +13,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public GetOrderEntryFormDataResponse(
             List<DiagnosticServiceSummary> diagnosticServiceChoices,
             List<FacilitySummary> orderingFacilityChoices,
-            List<PractitionerSummary> orderingPhysicianChoices)
+            List<PractitionerSummary> orderingPhysicianChoices,
+            List<EnumValueInfo> orderPriorityChoices)
         {
             this.DiagnosticServiceChoices = diagnosticServiceChoices;
             this.OrderingFacilityChoices = orderingFacilityChoices;
             this.OrderingPhysicianChoices = orderingPhysicianChoices;
+            this.OrderPriorityChoices = orderPriorityChoices;
         }
 
         [DataMember]

@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         {
             Facility facility = new Facility();
             FacilityAssembler assembler = new FacilityAssembler();
-            assembler.UpdateFacility(facility, request.FacilityDetail);
+            assembler.UpdateFacility(request.FacilityDetail, facility);
 
             // TODO prior to accepting this add request, we should check that the same facility does not already exist
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             Facility facility = (Facility)PersistenceContext.Load(request.FacilityRef, EntityLoadFlags.CheckVersion);
 
             FacilityAssembler assembler = new FacilityAssembler();
-            assembler.UpdateFacility(facility, request.FacilityDetail);
+            assembler.UpdateFacility(request.FacilityDetail, facility);
 
             // TODO prior to accepting this update request, we should check that the same facility does not already exist
 

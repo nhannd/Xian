@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare;
+
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
@@ -50,8 +52,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 string modId = row[6];
                 string modName = row[7];
 
-                ModalityAdmin modality = GetModality(modId, modName);
-                DiagnosticServiceAdmin ds = GetDiagnosticService(dsId, dsName);
+                Modality modality = GetModality(modId, modName);
+                DiagnosticService ds = GetDiagnosticService(dsId, dsName);
                 RequestedProcedureType rpt = GetRequestedProcedureType(rptId, rptName);
                 ModalityProcedureStepType spt = GetModalityProcedureStepType(sptId, sptName, modality);
 
@@ -79,12 +81,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 DiagnosticServiceSearchCriteria criteria = new DiagnosticServiceSearchCriteria();
                 criteria.Id.EqualTo(id);
 
-                ds = CollectionUtils.FirstElement<DiagnosticServiceAdmin>(_dsBroker.Find(criteria));
+                ds = CollectionUtils.FirstElement<DiagnosticService>(_dsBroker.Find(criteria));
 
                 // if not, create a transient instance
                 if (ds == null)
                 {
-                    ds = new DiagnosticServiceAdmin(id, name);
+                    ds = new DiagnosticService(id, name);
                     _updateContext.Lock(ds, DirtyState.New);
                 }
 
@@ -175,12 +177,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 ModalitySearchCriteria criteria = new ModalitySearchCriteria();
                 criteria.Id.EqualTo(id);
 
-                modality = CollectionUtils.FirstElement<ModalityAdmin>(_modalityBroker.Find(criteria));
+                modality = CollectionUtils.FirstElement<Modality>(_modalityBroker.Find(criteria));
 
                 // if not, create a transient instance
                 if (modality == null)
                 {
-                    modality = new ModalityAdmin(id, name);
+                    modality = new Modality(id, name);
                     _updateContext.Lock(modality, DirtyState.New);
                 }
 

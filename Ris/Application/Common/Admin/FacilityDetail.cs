@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class FacilityDetail : DataContractBase
     {
+        public FacilityDetail(string code, string name)
+        {
+            this.Code = code;
+            this.Name = name;
+        }
+
         [DataMember]
         public string Code;
 

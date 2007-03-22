@@ -5,6 +5,8 @@ using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -12,53 +14,50 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public PractitionerSummary CreatePractitionerSummary(Practitioner practitioner)
         {
-            PractitionerSummary summary = new PractitionerSummary();
-            summary.StaffRef = practitioner.GetRef();
-            summary.LicenseNumber = practitioner.LicenseNumber;
-
             PersonNameAssembler assembler = new PersonNameAssembler();
-            summary.PersonNameDetail = assembler.CreatePersonNameDetail(practitioner.Name);
-
-            return summary;
+            return new PractitionerSummary(
+                practitioner.GetRef(),
+                assembler.CreatePersonNameDetail(practitioner.Name),
+                practitioner.LicenseNumber);
         }
 
         public PractitionerDetail CreatePractitionerDetail(Practitioner practitioner, IPersistenceContext context)
         {
-            PractitionerDetail detail = new PractitionerDetail();
-            detail.LicenseNumber = practitioner.LicenseNumber;
-
             PersonNameAssembler assembler = new PersonNameAssembler();
-            detail.PersonNameDetail = assembler.CreatePersonNameDetail(practitioner.Name);
-
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            foreach (TelephoneNumber phoneNumber in practitioner.TelephoneNumbers)
-            {
-                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber, context));
-            }
-
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach (Address address in practitioner.Addresses)
-            {
-                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address, context));
-            }
 
-            return detail;
+            return new PractitionerDetail(
+                assembler.CreatePersonNameDetail(practitioner.Name),
+                CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
+                    practitioner.TelephoneNumbers,
+                    delegate(TelephoneNumber phone)
+                    {
+                        return telephoneNumberAssembler.CreateTelephoneDetail(phone, context);
+                    }),
+                CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(
+                    practitioner.Addresses,
+                    delegate(Address address)
+                    {
+                        return addressAssembler.CreateTelephoneDetail(address, context);
+                    }),
+                practitioner.LicenseNumber);
         }
 
         public void UpdatePractitioner(PractitionerDetail detail, Practitioner practitioner)
         {
+            PersonNameAssembler assembler = new PersonNameAssembler();
+            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
+            AddressAssembler addressAssembler = new AddressAssembler();
+
+            assembler.UpdatePersonName(detail.PersonNameDetail, practitioner.Name);
             practitioner.LicenseNumber = detail.LicenseNumber;
 
-            PersonNameAssembler assembler = new PersonNameAssembler();
-            assembler.UpdatePersonName(detail.PersonNameDetail, practitioner.Name);
-
-            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
             {
                 telephoneNumberAssembler.AddTelephoneNumber(phoneDetail, practitioner.TelephoneNumbers);
             }
 
-            AddressAssembler addressAssembler = new AddressAssembler();
             foreach (AddressDetail addressDetail in detail.Addresses)
             {
                 addressAssembler.AddAddress(addressDetail, practitioner.Addresses);

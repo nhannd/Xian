@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class RICSummary : DataContractBase
     {
-        public RICSummary(string rpName, string orderingPractitioner, string insurance, DateTime? mpsScheduledTime, string performingFacility)
+        public RICSummary(string rpName, PersonNameDetail orderingPractitioner, string insurance, DateTime? mpsScheduledTime, string performingFacility)
         {
             this.RequestedProcedureName = rpName;
             this.OrderingPractitioner = orderingPractitioner;
@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public string RequestedProcedureName;
 
         [DataMember]
-        public string OrderingPractitioner;
+        public PersonNameDetail OrderingPractitioner;
 
         [DataMember]
         public string Insurance;

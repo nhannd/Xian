@@ -10,6 +10,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class DiagnosticServiceSummary : DataContractBase
     {
+        public DiagnosticServiceSummary(EntityRef diagnosticServiceRef, string id, string name)
+        {
+            this.DiagnosticServiceRef = diagnosticServiceRef;
+            this.Id = id;
+            this.Name = name;
+        }
+
         [DataMember]
         public EntityRef DiagnosticServiceRef;
 

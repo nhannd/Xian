@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class ExecuteOperationRequest : DataContractBase
     {
+        public ExecuteOperationRequest(EntityRef procedureStepRef, string operationClassName)
+        {
+            this.ProcedureStepRef = procedureStepRef;
+            this.OperationClassName = operationClassName;
+        }
+
         [DataMember(IsRequired = true)]
         public EntityRef ProcedureStepRef;
 

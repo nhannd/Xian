@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             telephoneNumber.Number = telephoneDetail.Number;
             telephoneNumber.Extension = telephoneDetail.Extension;
             telephoneNumber.ValidRange.From = telephoneDetail.ValidRangeFrom;
-            telephoneNumber.ValidRange.Until = elephoneDetail.ValidRangeUntil;
+            telephoneNumber.ValidRange.Until = telephoneDetail.ValidRangeUntil;
 
             SimplifiedPhoneTypeAssembler simplePhoneTypeAssembler = new SimplifiedPhoneTypeAssembler();
             simplePhoneTypeAssembler.UpdatePhoneNumber(telephoneDetail.Type, telephoneNumber);

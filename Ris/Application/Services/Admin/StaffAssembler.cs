@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -12,53 +13,48 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public StaffSummary CreateStaffSummary(Staff staff)
         {
-            StaffSummary summary = new StaffSummary();
-            summary.StaffRef = staff.GetRef();
-
             PersonNameAssembler assembler = new PersonNameAssembler();
-            summary.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
-
-            Practitioner practitioner = staff as Practitioner;
-            if (practitioner != null)
-                summary.LicenseNumber = practitioner.LicenseNumber;
-
-            return summary;
+            return new StaffSummary(
+                staff.GetRef(),
+                assembler.CreatePersonNameDetail(staff.Name),
+                (staff is Practitioner ? (staff as Practitioner).LicenseNumber : ""));
         }
 
         public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
         {
-            StaffDetail detail = new StaffDetail();
-
             PersonNameAssembler assembler = new PersonNameAssembler();
-            detail.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
-
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            foreach (TelephoneNumber phoneNumber in staff.TelephoneNumbers)
-            {
-                detail.TelephoneNumbers.Add(telephoneNumberAssembler.CreateTelephoneDetail(phoneNumber, context));
-            }
-
             AddressAssembler addressAssembler = new AddressAssembler();
-            foreach (Address address in staff.Addresses)
-            {
-                detail.Addresses.Add(addressAssembler.CreateAddressDetail(address, context));
-            }
 
-            return detail;
+            return new StaffDetail(
+                assembler.CreatePersonNameDetail(staff.Name),
+                CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
+                    staff.TelephoneNumbers,
+                    delegate(TelephoneNumber phone)
+                    {
+                        return telephoneNumberAssembler.CreateTelephoneDetail(phone, context);
+                    }),
+                CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(
+                    staff.Addresses,
+                    delegate(Address address)
+                    {
+                        return addressAssembler.CreateTelephoneDetail(address, context);
+                    }));
         }
 
         public void UpdateStaff(StaffDetail detail, Staff staff)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
+            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
+            AddressAssembler addressAssembler = new AddressAssembler();
+
             assembler.UpdatePersonName(detail.PersonNameDetail, staff.Name);
 
-            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
             {
                 telephoneNumberAssembler.AddTelephoneNumber(phoneDetail, staff.TelephoneNumbers);
             }
 
-            AddressAssembler addressAssembler = new AddressAssembler();
             foreach (AddressDetail addressDetail in detail.Addresses)
             {
                 addressAssembler.AddAddress(addressDetail, staff.Addresses);

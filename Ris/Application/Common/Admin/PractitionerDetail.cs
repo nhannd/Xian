@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class PractitionerDetail : StaffDetail
     {
+        public PractitionerDetail(PersonNameDetail personNameDetail, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, string licenseNumber)
+            : base(personNameDetail, phoneDetails, addressDetails)
+        {
+            this.LicenseNumber = licenseNumber;
+        }
+
         [DataMember]
         public string LicenseNumber;
     }

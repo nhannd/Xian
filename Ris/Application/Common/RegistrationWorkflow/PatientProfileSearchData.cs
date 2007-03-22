@@ -9,7 +9,25 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class PatientProfileSearchData : DataContractBase
     {
-        //TODO: expand the MPS search criteria here
+        public PatientProfileSearchData(EntityRef patientProfileRef,
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName,
+            EnumValueInfo sex,
+            DateTime? dateOfBirth)
+        {
+            this.PatientProfile = patientProfileRef;
+            this.MrnID = mrnID;
+            this.MrnAssigningAuthority = mrnAssigningAuthority;
+            this.HealthcardID = healthcardID;
+            this.FamilyName = familyName;
+            this.GivenName = givenName;
+            this.Sex = sex;
+            this.DateOfBirth = dateOfBirth;
+        }
+
         [DataMember]
         public EntityRef PatientProfile;
 

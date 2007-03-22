@@ -9,6 +9,29 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class LocationSummary : DataContractBase
     {
+        public LocationSummary(EntityRef locationRef,
+            string facilityName,
+            string facilityCode,
+            string building,
+            string floor,
+            string pointOfCare,
+            string room,
+            string bed,
+            bool active,
+            DateTime? inactiveDate)
+        {
+            this.LocationRef = locationRef;
+            this.FacilityName = facilityName;
+            this.FacilityCode = facilityCode;
+            this.Building = building;
+            this.Floor = floor;
+            this.PointOfCare = pointOfCare;
+            this.Room = room;
+            this.Bed = bed;
+            this.Active = active;
+            this.InactiveDate = inactiveDate;
+        }
+
         [DataMember]
         public EntityRef LocationRef;
 

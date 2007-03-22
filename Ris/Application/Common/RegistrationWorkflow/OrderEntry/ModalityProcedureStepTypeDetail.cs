@@ -11,6 +11,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ModalityProcedureStepTypeDetail : DataContractBase
     {
+        public ModalityProcedureStepTypeDetail(string id, string name, ModalityDetail defaultModality)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.DefaultModality = defaultModality;
+        }
+
         [DataMember]
         public string Id;
 
@@ -18,6 +25,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public string Name;
 
         [DataMember]
-        public List<ModalityDetail> Modalities;
+        public ModalityDetail DefaultModality;
     }
 }

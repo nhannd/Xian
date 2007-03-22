@@ -9,6 +9,29 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class ModalityWorklistItem : DataContractBase
     {
+        public ModalityWorklistItem(EntityRef procedureStepRef,
+            string mrnAssigningAuthority,
+            string mrnID,
+            PersonNameDetail personNameDetail,
+            string accessionNumber,
+            string modalityProcedureStepName,
+            string modalityName,
+            string priority)
+        {
+            this.ProcedureStepRef = procedureStepRef;
+            this.MrnAssigningAuthority = mrnAssigningAuthority;
+            this.MrnID = mrnID;
+            this.PersonNameDetail = personNameDetail;
+            this.AccessionNumber = accessionNumber;
+            this.ModalityProcedureStepName = modalityProcedureStepName;
+            this.ModalityName = modalityName;
+            this.Priority = priority;
+        }
+
+        public ModalityWorklistItem()
+        {
+        }
+
         [DataMember(IsRequired = true)]
         public EntityRef ProcedureStepRef;
 

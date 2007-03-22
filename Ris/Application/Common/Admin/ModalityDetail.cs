@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class ModalityDetail : DataContractBase
     {
+        public ModalityDetail(string id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+
         [DataMember]
         public string Id;
 

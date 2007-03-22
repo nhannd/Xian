@@ -9,5 +9,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class PractitionerSummary : StaffSummary
     {
+        public PractitionerSummary(EntityRef staffRef, PersonNameDetail personNameDetail, string licenseNumber)
+            : base(staffRef, personNameDetail, licenseNumber)
+        {
+        }
     }
 }

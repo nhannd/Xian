@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             item.AccessionNumber = result.AccessionNumber;
             item.RequestedProcedureName = result.RequestedProcedureName;
             item.DiagnosticServiceName = result.DiagnosticServiceName;
-            item.Priority = result.Priority;
+            item.Priority = result.Priority.ToString();
             item.ActivityStatusCode = result.Status.ToString();
 
             return item;

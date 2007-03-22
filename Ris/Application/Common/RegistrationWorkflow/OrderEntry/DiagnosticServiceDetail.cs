@@ -10,6 +10,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class DiagnosticServiceDetail : DataContractBase
     {
+        public DiagnosticServiceDetail(string id, string name, List<RequestedProcedureTypeDetail> requestedProcedureTypes)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.RequestedProcedureTypes = requestedProcedureTypes;
+        }
+
         [DataMember]
         public string Id;
 

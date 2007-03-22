@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class ModalityWorklistPreview : DataContractBase
     {
+        public ModalityWorklistPreview(EntityRef procedureStepRef, EntityRef patientProfileRef)
+        {
+            this.ProcedureStepRef = procedureStepRef;
+            this.PatientProfile = patientProfileRef;
+        }
+
         [DataMember(IsRequired = true)]
         public EntityRef ProcedureStepRef;
 

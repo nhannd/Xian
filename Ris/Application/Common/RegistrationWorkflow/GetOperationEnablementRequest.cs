@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetOperationEnablementRequest : DataContractBase
     {
+        public GetOperationEnablementRequest(EntityRef procedureStepRef)
+        {
+            this.ProcedureStepRef = procedureStepRef;
+        }
+
         [DataMember(IsRequired=true)]
         public EntityRef ProcedureStepRef;
     }

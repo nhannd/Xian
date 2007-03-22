@@ -19,26 +19,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            return assembler.CreateGetWorklistResponse(GetWorklist(request.WorklistClassName, assembler.CreateSearchCriteria(request.SearchCriteria)));
+            return assembler.CreateGetWorklistResponse(
+                request.WorklistClassName,
+                GetWorklist(request.WorklistClassName, assembler.CreateSearchCriteria(request.SearchCriteria)));
         }
 
         [ReadOperation]
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            RegistrationWorklistPreview preview = assembler.CreateWorklistPreview(request.WorklistItem.PatientProfileRef, this.PersistenceContext);
 
             List<WorklistQueryResult> listQueryResult = GetQueryResultForWorklistItem(request.WorklistItem.WorklistClassName, request.WorklistItem);
-            foreach (WorklistQueryResult result in listQueryResult)
-            {
-                preview.RICs.Add(new RICSummary(result.RequestedProcedureName, 
-                                                result.OrderingPractitioner,
-                                                "N/A",
-                                                result.ProcedureStepScheduledStartTime,
-                                                "N/A"));
-            }
 
-            return new LoadWorklistPreviewResponse(preview);
+            return new LoadWorklistPreviewResponse(
+                assembler.CreateWorklistPreview(request.WorklistItem.PatientProfileRef, listQueryResult, this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -97,5 +91,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new CheckInProcedureResponse();
         }
+
+        [ReadOperation]
+        public LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request)
+        {
+            //TODO!!
+            return new LoadPatientSearchComponentFormDataResponse();
+        }
+
     }
 }

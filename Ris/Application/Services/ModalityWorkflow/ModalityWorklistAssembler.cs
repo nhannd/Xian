@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             item.AccessionNumber = result.AccessionNumber;
             item.ModalityProcedureStepName = result.ModalityProcedureStepName;
             item.ModalityName = result.ModalityName;
-            item.Priority = result.Priority;
+            item.Priority = result.Priority.ToString();
             return item;
         }
 

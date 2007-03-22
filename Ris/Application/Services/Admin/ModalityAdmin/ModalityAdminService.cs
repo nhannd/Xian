@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         {
             Modality modality = new Modality();
             ModalityAssembler assembler = new ModalityAssembler();
-            assembler.UpdateModality(modality, request.ModalityDetail, PersistenceContext);
+            assembler.UpdateModality(modality, request.ModalityDetail);
 
             // TODO prior to accepting this add request, we should check that the same modality does not already exist
 

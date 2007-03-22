@@ -11,42 +11,40 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public LocationSummary CreateLocationSummary(Location location)
         {
-            LocationSummary summary = new LocationSummary();
-            summary.LocationRef = location.GetRef();
-            summary.Active = location.Active;
-            summary.Bed = location.Bed;
-            summary.Building = location.Building;
-            summary.FacilityCode = location.Facility.Code;
-            summary.FacilityName = location.Facility.Name;
-            summary.Floor = location.Floor;
-            summary.InactiveDate = location.InactiveDate;
-            summary.PointOfCare = location.PointOfCare;
-            summary.Room = location.Room;
-            return summary;
+            return new LocationSummary(
+                location.GetRef(),
+                location.Facility.Name,
+                location.Facility.Code,
+                location.Building,
+                location.Floor,
+                location.PointOfCare,
+                location.Room,
+                location.Bed,
+                location.Active,
+                location.InactiveDate);
         }
 
         public LocationDetail CreateLocationDetail(Location location)
         {
-            LocationDetail detail = new LocationDetail();
-            detail.Bed = location.Bed;
-            detail.Building = location.Building;
-            detail.Facility = location.Facility.GetRef();
-            detail.FacilityName = location.Facility.Name;
-            detail.Floor = location.Floor;
-            detail.PointOfCare = location.PointOfCare;
-            detail.Room = location.Room;
-
-            return detail;
+            return new LocationDetail(
+                location.Facility.GetRef(),
+                location.Facility.Name,
+                location.Facility.Code,
+                location.Building,
+                location.Floor,
+                location.PointOfCare,
+                location.Room,
+                location.Bed);
         }
 
-        public void UpdateLocation(Location location, LocationDetail detail, IPersistenceContext context)
+        public void UpdateLocation(LocationDetail detail, Location location, IPersistenceContext context)
         {
-            location.Bed = detail.Bed;
-            location.Building = detail.Building;
             location.Facility = (Facility)context.Load(detail.Facility, EntityLoadFlags.Proxy);
+            location.Building = detail.Building;
             location.Floor = detail.Floor;
             location.PointOfCare = detail.PointOfCare;
             location.Room = detail.Room;
+            location.Bed = detail.Bed;
         }
 
     }

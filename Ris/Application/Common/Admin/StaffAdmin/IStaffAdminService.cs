@@ -45,5 +45,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         /// <returns></returns>
         [OperationContract]
         LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request);
+
+        /// <summary>
+        /// Loads all form data for the <see cref=StaffEditorComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request);
+    
     }
 }

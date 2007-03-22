@@ -9,6 +9,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class ModalitySummary : DataContractBase
     {
+        public ModalitySummary(EntityRef modalityRef, string id, string name, bool active)
+        {
+            this.ModalityRef = modalityRef;
+            this.Id = id;
+            this.Name = name;
+            this.Active = active;
+        }
+
         [DataMember]
         public EntityRef ModalityRef;
 

@@ -35,10 +35,10 @@ namespace ClearCanvas.Ris.Application.Services
         protected void ExecuteOperation(ProcedureStep step, ClearCanvas.Healthcare.Workflow.Operation operation)
         {
             // just hack in the user staff for the time-being
-            IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
+            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
             operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
 
-            operation.Execute(step, new PersistentWorkflow(CurrentContext));
+            operation.Execute(step, new PersistentWorkflow(PersistenceContext));
         }
 
         protected void ExecuteOperation(ProcedureStep step, IExtensionPoint operationExtPoint, string operationClassName)
@@ -46,16 +46,16 @@ namespace ClearCanvas.Ris.Application.Services
             IOperation operation = (IOperation)operationExtPoint.CreateExtension(new ClassNameExtensionFilter(operationClassName));
 
             // just hack in the user staff for the time-being
-            IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
+            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
             operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
 
-            operation.Execute(step, new PersistentWorkflow(CurrentContext));
+            operation.Execute(step, new PersistentWorkflow(PersistenceContext));
         }
 
         protected Dictionary<string, bool> GetOperationEnablement(ProcedureStep step, IExtensionPoint operationExtPoint)
         {
             // just hack in the user staff for the time-being
-            IStaffBroker staffBroker = CurrentContext.GetBroker<IStaffBroker>();
+            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
             Staff userStaff = staffBroker.FindOne(new StaffSearchCriteria());
 
             Dictionary<string, bool> results = new Dictionary<string, bool>();

@@ -64,6 +64,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s, this.PersistenceContext));
         }
 
+        [ReadOperation]
+        public LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request)
+        {
+
+
+        }
+
         [UpdateOperation]
         public AddStaffResponse AddStaff(AddStaffRequest request)
         {

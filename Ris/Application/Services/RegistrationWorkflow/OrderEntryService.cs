@@ -36,11 +36,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             VisitAssembler assembler = new VisitAssembler();
             return new ListActiveVisitsForPatientResponse(
-                CollectionUtils.Map<Visit, VisitDetail, List<VisitSummary>>(
+                CollectionUtils.Map<Visit, VisitSummary, List<VisitSummary>>(
                     PersistenceContext.GetBroker<IVisitBroker>().Find(criteria),
                     delegate(Visit v)
                     {
-                        return assembler.CreateVisitSummary(v);
+                        return assembler.CreateVisitSummary(v, this.PersistenceContext);
                     }));
         }
 
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     delegate(OrderPriorityEnum opEnum)
                     {
                         EnumValueInfo orderPriority = new EnumValueInfo();
-                        orderPriority.Code = opEnum.Code;
+                        orderPriority.Code = opEnum.Code.ToString();
                         orderPriority.Value = opEnum.Value;
                         return orderPriority;
                     })
@@ -145,17 +145,24 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 rptBroker.LoadModalityProcedureStepTypesForRequestedProcedureType(rpt);
             }
 
-            this.CurrentContext.Lock(patient);
-            this.CurrentContext.Lock(visit);
-            this.CurrentContext.Lock(diagnosticService);
-            this.CurrentContext.Lock(orderingPhysician);
-            this.CurrentContext.Lock(orderingFacility);
+            this.PersistenceContext.Lock(patient);
+            this.PersistenceContext.Lock(visit);
+            this.PersistenceContext.Lock(diagnosticService);
+            this.PersistenceContext.Lock(orderingPhysician);
+            this.PersistenceContext.Lock(orderingFacility);
 
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();
 
             Order order = Order.NewOrder(
-                accNum, patient, visit, diagnosticService, schedulingRequestTime, orderingPhysician, orderingFacility, priority);
+                    accNum, 
+                    patient, 
+                    visit, 
+                    diagnosticService, 
+                    request.SchedulingRequestTime, 
+                    orderingPhysician, 
+                    orderingFacility, 
+                    (OrderPriority) Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code));
 
             PersistenceContext.Lock(order, DirtyState.New);
 

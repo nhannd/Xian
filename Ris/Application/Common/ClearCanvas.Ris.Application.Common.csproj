@@ -127,6 +127,8 @@
     <Compile Include="Admin\StaffAdmin\ListAllStaffsRequest.cs" />
     <Compile Include="Admin\StaffAdmin\ListAllStaffsResponse.cs" />
     <Compile Include="Admin\StaffAdmin\IStaffAdminService.cs" />
+    <Compile Include="Admin\StaffAdmin\LoadStaffEditorFormDataRequest.cs" />
+    <Compile Include="Admin\StaffAdmin\LoadStaffEditorFormDataResponse.cs" />
     <Compile Include="Admin\StaffAdmin\LoadStaffForEditRequest.cs" />
     <Compile Include="Admin\StaffAdmin\LoadStaffForEditResponse.cs" />
     <Compile Include="Admin\StaffAdmin\UpdateStaffRequest.cs" />

@@ -12,12 +12,11 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public HealthcardDetail CreateHealthcardDetail(HealthcardNumber healthcard)
         {
-            HealthcardDetail detail = new HealthcardDetail();
-            detail.Id = healthcard.Id;
-            detail.AssigningAuthority = healthcard.AssigningAuthority;
-            detail.ExpiryDate = healthcard.ExpiryDate;
-            detail.VersionCode = healthcard.VersionCode;
-            return detail;
+            return new HealthcardDetail(
+                healthcard.Id,
+                healthcard.AssigningAuthority,
+                healthcard.VersionCode,
+                healthcard.ExpiryDate);
         }
 
         public void UpdatePersonName(HealthcardDetail detail, HealthcardNumber healthcard)
