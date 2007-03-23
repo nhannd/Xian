@@ -72,12 +72,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
                         this.Pages.Add(new NavigatorPage("Visit/Practitioners", 
                             _visitPractionersSummary = new VisitPractitionersSummaryComponent(
-                                resposne.VisitPractitionerRoleChoices
+                                response.VisitPractitionerRoleChoices
                             )));
 
                         this.Pages.Add(new NavigatorPage("Visit/Location", 
                             _visitLocationsSummary = new VisitLocationsSummaryComponent(
-                                resposne.VisitLocationRoleChoices
+                                response.VisitLocationRoleChoices
                             )));
 
                     });

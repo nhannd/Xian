@@ -16,6 +16,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.Name = name;
         }
 
+        public FacilitySummary()
+        {
+        }
+
         [DataMember]
         public EntityRef FacilityRef;
 

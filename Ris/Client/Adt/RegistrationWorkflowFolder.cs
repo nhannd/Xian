@@ -78,14 +78,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override IList<RegistrationWorklistItem> QueryItems()
         {
+            List<RegistrationWorklistItem> worklistItems = new List<RegistrationWorklistItem>();
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
                     GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName, this.SearchCriteria));
-                    return response.WorklistItems;
+                    worklistItems = response.WorklistItems;
                 });
 
-            return new List<RegistrationWorklistItem>();
+            return worklistItems;
         }
 
         protected override bool IsMember(RegistrationWorklistItem item)

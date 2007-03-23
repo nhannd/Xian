@@ -119,22 +119,22 @@ namespace ClearCanvas.Ris.Client.Adt
         private void SaveChanges()
         {
             // TODO: Need to get the real current staff that is using the system
-            EntityRef staffRef;
+            EntityRef staffRef = null;
             Platform.GetService<IStaffAdminService>(
                 delegate(IStaffAdminService service)
                 {
-                    FindStaffsResponse response = service.FindStaffs(new FindStaffsRequest("Clerk", "Registration"));
-                    if (response.Staffs.Count == 0)
+                    FindStaffsResponse findResponse = service.FindStaffs(new FindStaffsRequest("Clerk", "Registration"));
+                    if (findResponse.Staffs.Count == 0)
                     {
                         StaffDetail newStaff = new StaffDetail();
                         newStaff.PersonNameDetail.FamilyName = "Clerk";
                         newStaff.PersonNameDetail.GivenName = "Registration";
-                        AddStaffResponse response = service.AddStaff(new AddStaffRequest(newStaff));
-                        staffRef = response.Staff.StaffRef;
+                        AddStaffResponse addResponse = service.AddStaff(new AddStaffRequest(newStaff));
+                        staffRef = addResponse.Staff.StaffRef;
                     }
                     else
                     {
-                        StaffSummary staff = CollectionUtils.FirstElement(response.Staffs) as StaffSummary;
+                        StaffSummary staff = CollectionUtils.FirstElement(findResponse.Staffs) as StaffSummary;
                         staffRef = staff.StaffRef;
                     }
                 });

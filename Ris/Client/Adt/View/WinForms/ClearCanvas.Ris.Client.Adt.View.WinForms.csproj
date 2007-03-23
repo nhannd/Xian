@@ -76,13 +76,6 @@
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReconciliationConfirmComponentView.cs" />
-    <Compile Include="FoldersComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FoldersComponentControl.Designer.cs">
-      <DependentUpon>FoldersComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FoldersComponentView.cs" />
     <Compile Include="JscriptComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -97,7 +90,6 @@
     <Compile Include="PatientProfileDetailsEditorControl.Designer.cs">
       <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PatientProfilePreviewComponentView.cs" />
     <Compile Include="ReconciliationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -205,10 +197,6 @@
     <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FoldersComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FoldersComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JscriptComponentControl.resx">
       <SubType>Designer</SubType>

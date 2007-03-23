@@ -146,8 +146,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                FacilitySummary facility;
-                LocationSummary location;
+                FacilitySummary facility = new FacilitySummary();
+                LocationSummary location = new LocationSummary();
 
                 Platform.GetService<IFacilityAdminService>(
                     delegate(IFacilityAdminService service)
@@ -187,18 +187,17 @@ namespace ClearCanvas.Ris.Client.Adt
                         {
                             location = listResponse.Locations[0];
                         }
-
-                        VisitLocationDetail vl = new VisitLocationDetail();
-
-                        vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
-                                delegate(EnumValueInfo e) { return e.Code == "CR"; });
-                        vl.Location = location;
-                        vl.StartTime = Platform.Time;
-                        vl.EndTime = null;
-
-                        _visit.Locations.Add(vl);
                     });
 
+                VisitLocationDetail vl = new VisitLocationDetail();
+
+                vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
+                        delegate(EnumValueInfo e) { return e.Code == "CR"; });
+                vl.Location = location;
+                vl.StartTime = Platform.Time;
+                vl.EndTime = null;
+
+                _visit.Locations.Add(vl);
             }
             catch (Exception e)
             {

@@ -175,13 +175,15 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     try
                     {
+                        bool showAlert = false;
                         Platform.GetService<IPatientReconciliationService>(
                             delegate(IPatientReconciliationService service)
                             {
                                 ListPatientReconciliationMatchesResponse response = service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(_worklistItem.PatientProfileRef));
-                                return response.ReconciledProfiles.Count > 0;
-
+                                showAlert = response.ReconciledProfiles.Count > 0;
                             });
+
+                        return showAlert;
                     }
                     catch (Exception e)
                     {

@@ -32,6 +32,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             this.InactiveDate = inactiveDate;
         }
 
+        public LocationSummary()
+        {
+        }
+
         [DataMember]
         public EntityRef LocationRef;
 
