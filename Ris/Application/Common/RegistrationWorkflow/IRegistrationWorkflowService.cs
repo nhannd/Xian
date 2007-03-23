@@ -70,3 +70,4 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         //void UpdateRequestedProcedure(RequestedProcedure rp);
         //void AddCheckInProcedureStep(CheckInProcedureStep cps);
     }
+}
