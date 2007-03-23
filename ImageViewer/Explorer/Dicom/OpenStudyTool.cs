@@ -41,15 +41,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudies == null)
 				return;
 
-			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
-			string label = "";
-			int completelySuccessfulStudies = 0;
-			int successfulImagesInLoadFailure = 0;
-
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
+				DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+
 				string studyInstanceUid = item.StudyInstanceUID;
-				label = String.Format("{0}, {1}, {2}",
+
+				string label = String.Format("{0}, {1}, {2}",
 					item.PatientsName.LastName,
 					item.PatientsName.FirstName,
 					item.PatientId);
@@ -57,35 +55,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				try
 				{
 					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-					completelySuccessfulStudies++;
+
+					ApplicationComponent.LaunchAsWorkspace(
+						this.Context.DesktopWindow,
+						imageViewer,
+						label,
+						delegate
+						{
+							imageViewer.Dispose();
+						});
+
+					imageViewer.Layout();
+					imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
 				}
 				catch (OpenStudyException e)
 				{
-					// Study failed to load completely; keep track of how many
-					// images in the study actually did load
-					successfulImagesInLoadFailure += e.SuccessfulImages;
-
 					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
 						ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				}
 			}
-			
-			// If nothing at all was able to load, then don't bother trying to
-			// even open a workspace; just return
-			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
-				return;
-
-			ApplicationComponent.LaunchAsWorkspace(
-				this.Context.DesktopWindow,
-				imageViewer,
-				label,
-				delegate
-				{
-					imageViewer.Dispose();
-				});
-
-			imageViewer.Layout();
-			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
 		}
 
 		private void SetDoubleClickHandler()
