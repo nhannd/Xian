@@ -3,50 +3,53 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
 {
+    /// <summary>
+    /// Provides data loading/saving for the <see cref="StaffSummaryComponent"/> and <see cref="StaffEditorComponent"/>
+    /// </summary>
     public interface IPractitionerAdminService
     {
         /// <summary>
-        /// Search for a practitioner by name
+        /// Search for practitioners by name
         /// </summary>
-        /// <param name="surname">The practitioner surname to search for.  May not be null</param>
-        /// <param name="givenName">The practitioner givenname to search for.  May be null</param>
-        /// <returns>A list of matching practitioners</returns>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         FindPractitionersResponse FindPractitioners(FindPractitionersRequest request);
 
         /// <summary>
-        /// Return all practitioner
+        /// List all practitioners for the <see cref="StaffSummaryComponent"/>
         /// </summary>
-        /// <returns>A list of all practitioners</returns>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         ListAllPractitionersResponse ListAllPractitioners(ListAllPractitionersRequest request);
 
         /// <summary>
-        /// Add a practitioner
+        /// Add a new practitioner created via the <see cref="StaffEditorComponent"/>
         /// </summary>
-        /// <param name="practitioner"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         AddPractitionerResponse AddPractitioner(AddPractitionerRequest request);
 
         /// <summary>
-        /// Update a practitioner
+        /// Update changes to a practitioner made via the <see cref="StaffEditorComponent"/>
         /// </summary>
-        /// <param name="practitioner"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         UpdatePractitionerResponse UpdatePractitioner(UpdatePractitionerRequest request);
-        
+
         /// <summary>
-        /// Load a practitioner from an entity ref
+        /// Loads all practitioner data for the <see cref="StaffEditorComponent"/>
         /// </summary>
-        /// <param name="practitionerRef"></param>
-        /// <param name="withDetails">If true, will also load the related detail collections</param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         LoadPractitionerForEditResponse LoadPractitionerForEdit(LoadPractitionerForEditRequest request);
 
         /// <summary>
-        /// Loads all form data for the <see cref=StaffEditorComponent"/>
+        /// Loads all form data for the <see cref="StaffEditorComponent"/>
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>

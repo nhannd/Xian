@@ -3,13 +3,16 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
-    [ServiceContract]
+   /// <summary>
+    /// Importing a batch of services for the <see cref="ImportDiagnosticServicesComponent"/>
+    /// </summary>
+     [ServiceContract]
     public interface IDiagnosticServiceAdminService
     {
         /// <summary>
         /// Imports a batch of diagnostic services in CSV format.
         /// </summary>
-        /// <param name="data">
+        /// <param name="request">
         /// Each string[] in the list must contain 8 elements, as follows:
         ///     0 - Diagnostic Service ID
         ///     1 - Diagnostic Service Name

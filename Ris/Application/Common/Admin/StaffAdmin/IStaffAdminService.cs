@@ -3,56 +3,58 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 {
+    /// <summary>
+    /// Provides data loading/saving for the <see cref="StaffSummaryComponent"/> and <see cref="StaffEditorComponent"/>
+    /// </summary>
     [ServiceContract]
     public interface IStaffAdminService
     {
         /// <summary>
-        /// Search for a staff by name
+        /// Search for staffs by name
         /// </summary>
-        /// <param name="surname">The staff surname to search for.  May not be null</param>
-        /// <param name="givenName">The staff givenname to search for.  May be null</param>
-        /// <returns>A list of matching staffs</returns>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         FindStaffsResponse FindStaffs(FindStaffsRequest request);
 
         /// <summary>
-        /// Return all staff
+        /// List all staffs for the <see cref="StaffSummaryComponent"/>
         /// </summary>
-        /// <returns>A list of all staffs</returns>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request);
 
         /// <summary>
-        /// Add a staff
+        /// Update changes to a staff made via the <see cref="StaffEditorComponent"/>
         /// </summary>
-        /// <param name="staff"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         AddStaffResponse AddStaff(AddStaffRequest request);
 
         /// <summary>
-        /// Update a staff
+        /// Update changes to a staff made via the <see cref="StaffEditorComponent"/>
         /// </summary>
-        /// <param name="staff"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         UpdateStaffResponse UpdateStaff(UpdateStaffRequest request);
 
         /// <summary>
-        /// Load a staff from an entity ref, and optionally with details
+        /// Loads all staff data for the <see cref="StaffEditorComponent"/>
         /// </summary>
-        /// <param name="staffRef">A reference to the staff to load</param>
-        /// <param name="withDetails">If true, will also load the related detail collections</param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request);
 
         /// <summary>
-        /// Loads all form data for the <see cref=StaffEditorComponent"/>
+        /// Loads all form data for the <see cref="StaffEditorComponent"/>
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request);
-    
     }
 }

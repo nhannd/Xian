@@ -7,21 +7,49 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
+    /// <summary>
+    /// Provides data loading/saving for the <see cref="OrderListComponent"/> and <see cref="OrderEntryComponent"/>
+    /// </summary>
     [ServiceContract]
     public interface IOrderEntryService
     {
+        /// <summary>
+        /// Search for all active visits for a patient
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request);
 
+        /// <summary>
+        /// Loads all order entry form data for the <see cref="OrderEntryComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
 
+        /// <summary>
+        /// Loads data for the Diagnostic Service breakdown for the <see cref="OrderEntryComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
 
+        /// <summary>
+        /// Place a new order via the information provided by the <see cref="OrderEntryComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
 
+        /// <summary>
+        /// List all the orders based on the Assigning Authority for the <see cref="OrderListComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request);
     }

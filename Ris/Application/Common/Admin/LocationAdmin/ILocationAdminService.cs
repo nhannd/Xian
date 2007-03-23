@@ -3,34 +3,50 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
 {
+    /// <summary>
+    /// Provides data loading/saving for the <see cref="LocationSummaryComponent"/> and <see cref="LocationEditorComponent"/>
+    /// </summary>
     [ServiceContract]
     public interface ILocationAdminService
     {
         /// <summary>
-        /// Return all location options
+        /// List all locations for the <see cref="LocationSummaryComponent"/>
         /// </summary>
+        /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request);
 
         /// <summary>
-        /// Add the specified location
+        /// Add a new location created via the <see cref="LocationEditorComponent"/>
         /// </summary>
-        /// <param name="location"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         AddLocationResponse AddLocation(AddLocationRequest request);
 
         /// <summary>
-        /// Update the specified location
+        /// Update changes to a location made via the <see cref="LocationEditorComponent"/>
         /// </summary>
-        /// <param name="location"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         UpdateLocationResponse UpdateLocation(UpdateLocationRequest request);
 
+        /// <summary>
+        /// Loads all form data for the <see cref="LocationEditorComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         GetLocationEditFormDataResponse GetLocationEditFormData(GetLocationEditFormDataRequest request);
 
+        /// <summary>
+        /// Loads all location data for the <see cref="LocationEditorComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request);
     }
