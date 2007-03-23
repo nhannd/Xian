@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private IServerTreeNode FindParentGroup(IServerTreeNode node)
         {
             if (node.ParentPath.Equals("."))
-                return _rootNode;
+                return _rootNode.ServerGroupNode;
 
             // a node's ParentPath component is automatically the path that leads to the node's parent
             IServerTreeNode foundNode = FindNode(_rootNode.ServerGroupNode, node.ParentPath);
