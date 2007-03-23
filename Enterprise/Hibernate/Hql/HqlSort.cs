@@ -24,10 +24,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             if (criteria is SearchConditionBase)
             {
                 SearchConditionBase sc = (SearchConditionBase)criteria;
-                if (sc.Test != SearchConditionTest.None)
+                if (sc.SortPosition > -1)
                 {
-                    string hqlVariable = string.IsNullOrEmpty(sc.GetKey()) ? qualifier : string.Format("{0}.{1}", qualifier, sc.GetKey());
-                    hqlSorts.Add(new HqlSort(hqlVariable, sc.SortDirection, sc.SortPosition));
+                    hqlSorts.Add(new HqlSort(qualifier, sc.SortDirection, sc.SortPosition));
                 }
             }
             else

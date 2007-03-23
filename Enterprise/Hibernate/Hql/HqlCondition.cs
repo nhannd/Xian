@@ -26,8 +26,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 SearchConditionBase sc = (SearchConditionBase)criteria;
                 if (sc.Test != SearchConditionTest.None)
                 {
-                    string hqlVariable = string.IsNullOrEmpty(sc.GetKey()) ? qualifier : string.Format("{0}.{1}", qualifier, sc.GetKey());
-                    hqlConditions.Add(new HqlCondition(GetHqlText(hqlVariable, sc), sc.Values));
+                    hqlConditions.Add(new HqlCondition(GetHqlText(qualifier, sc), sc.Values));
                 }
             }
             else
