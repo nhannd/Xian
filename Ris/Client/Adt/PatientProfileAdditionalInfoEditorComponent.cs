@@ -26,8 +26,8 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private PatientProfileDetail _profile;
 
-        private List<EnumValueInfo> _religionChoices;
-        private List<EnumValueInfo> _languageChoices;
+        private IList<EnumValueInfo> _religionChoices;
+        private IList<EnumValueInfo> _languageChoices;
 
         /// <summary>
         /// Constructor
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public List<string> ReligionChoices
+        public IList<string> ReligionChoices
         {
             get { return EnumValueUtils.GetDisplayValues(_religionChoices); }
         }
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public List<string> LanguageChoices
+        public IList<string> LanguageChoices
         {
             get { return EnumValueUtils.GetDisplayValues(_languageChoices); }
         }

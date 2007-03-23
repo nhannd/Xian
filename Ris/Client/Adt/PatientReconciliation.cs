@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 try
                 {
-                    IList<PatientProfileMatch> matches = null;
+                    IList<ReconciliationCandidate> candidates = null;
                     IList<PatientProfileSummary> reconciledProfiles = null;
 
                     Platform.GetService<IPatientReconciliationService>(
@@ -27,13 +27,13 @@ namespace ClearCanvas.Ris.Client.Adt
                             ListPatientReconciliationMatchesResponse response =
                                 service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(targetProfile));
 
-                            matches = response.CandidateMatches;
+                            candidates = response.MatchCandidates;
                             reconciledProfiles = response.ReconciledProfiles;
                         });
 
-                    if (matches.Count > 0)
+                    if (candidates.Count > 0)
                     {
-                        ReconciliationComponent component = new ReconciliationComponent(targetProfile, reconciledProfiles, matches);
+                        ReconciliationComponent component = new ReconciliationComponent(targetProfile, reconciledProfiles, candidates);
                         ApplicationComponent.LaunchAsDialog(
                             window,
                             component,

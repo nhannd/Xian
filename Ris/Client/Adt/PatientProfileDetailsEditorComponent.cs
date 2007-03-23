@@ -32,7 +32,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public PatientProfileDetailsEditorComponent()
         {
-            _profile = new PatientProfile();
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _profile.Mrn; }
             set
             {
-                _profile.MrnId = value;
+                _profile.Mrn = value;
                 this.Modified = true;
             }
         }
@@ -181,10 +180,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string HealthcardVersionCode
         {
-            get { return _profile.HealthcardVersionCode; }
+            get { return _profile.HealthcardVC; }
             set
             {
-                _profile.Healthcard.VersionCode= value;
+                _profile.HealthcardVC = value;
                 this.Modified = true;
             }
         }
@@ -196,10 +195,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public DateTime? HealthcardExpiryDate
         {
-            get { return _profile.HealthcardExpiryDate; }
+            get { return _profile.HealthcardExpiry; }
             set
             {
-                _profile.HealthcardExpiryDate = value;
+                _profile.HealthcardExpiry = value;
                 this.Modified = true;
             }
         }

@@ -29,12 +29,12 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             private string _heading;
             private List<Value> _values;
-            private bool _discrepancy;
+            private bool _isDiscrepant;
 
-            public Field(string heading, bool discrepancy, string leftValue, string rightValue, string diffMask)
+            public Field(string heading, bool isDiscrepant, string leftValue, string rightValue, string diffMask)
             {
                 _heading = heading;
-                _discrepancy = discrepancy;
+                _isDiscrepant = isDiscrepant;
                 BuildValues(leftValue, rightValue, diffMask);
             }
 
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 List<String> ls1 = new List<String>();
                 List<String> ls2 = new List<String>();
 
-                if (!_discrepancy)
+                if (!_isDiscrepant)
                 {
                     ls1.Add(leftValue);
                     _values.Add(new Value(ls1));
@@ -72,11 +72,11 @@ namespace ClearCanvas.Ris.Client.Adt
                         sb2 = new StringBuilder();
                     }
                     if (al[i].Equals(' '))
-                        sb1.Append(str1.Substring(i - n1, 1));
+                        sb1.Append(leftValue.Substring(i - n1, 1));
                     else
                         n1 += 1;
                     if (ar[i].Equals(' '))
-                        sb2.Append(str2.Substring(i - n2, 1));
+                        sb2.Append(rightValue.Substring(i - n2, 1));
                     else
                         n2 += 1;
                 }
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public bool IsDiscrepancy
             {
-                get { return _discrepancy; }
+                get { return _isDiscrepant; }
             }
 
         }
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void AddField(string heading, PropertyDiff propertyDiff)
         {
-            _fields.Add(new Field(heading, propertyDiff.Discrepant, propertyDiff.AlignedLeftValue, propertyDiff.AlignedRightValue, propertyDiff.Discrepant));
+            _fields.Add(new Field(heading, propertyDiff.IsDiscrepant, propertyDiff.AlignedLeftValue, propertyDiff.AlignedRightValue, propertyDiff.DiffMask));
         }
 
     }

@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileTable _targetProfileTable;
         private ReconciliationCandidateTable _reconciliationProfileTable;
 
-        private IList<ReconciliationCandidate> _matches;
+        private IList<ReconciliationCandidate> _candidates;
         private IList<PatientProfileSummary> _targetProfiles;
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public ReconciliationComponent(EntityRef targetProfileRef, IList<PatientProfileSummary> reconciledProfiles, IList<ReconciliationCandidate> candidates)
         {
             _targetProfiles = reconciledProfiles;
-            _matches = matches;
+            _candidates = candidates;
 
             _selectedTargetProfile = CollectionUtils.SelectFirst <PatientProfileSummary>(reconciledProfiles,
                 delegate(PatientProfileSummary p) { return p.ProfileRef == targetProfileRef; });
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _reconciliationProfileTable = new ReconciliationCandidateTable();
-            foreach (PatientProfileMatch match in _matches)
+            foreach (ReconciliationCandidate match in _candidates)
             {
                 ReconciliationCandidateTableEntry entry = new ReconciliationCandidateTableEntry(match);
                 entry.CheckedChanged += new EventHandler(CandidateCheckedChangedEventHandler);
@@ -222,7 +222,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
-                if (entry != changedEntry && entry.ReconciliationCandidate.PatientProfile.Patient.Equals(changedEntry.ReconciliationCandidate.PatientProfile.Patient))
+                if (entry != changedEntry && entry.ReconciliationCandidate.PatientProfile.PatientRef.Equals(changedEntry.ReconciliationCandidate.PatientProfile.PatientRef))
                 {
                     entry.Checked = changedEntry.Checked;
                     _reconciliationProfileTable.Items.NotifyItemUpdated(entry);
