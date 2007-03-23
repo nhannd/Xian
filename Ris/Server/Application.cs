@@ -56,6 +56,7 @@ namespace ClearCanvas.Ris.Server
             WSHttpBinding binding = new WSHttpBinding();
             binding.Security.Mode = SecurityMode.Message;
             binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+            binding.MaxReceivedMessageSize = 1048576;
 
 
             IServiceFactory serviceManager = new ServiceFactory(serviceLayer);

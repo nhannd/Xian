@@ -26,6 +26,7 @@ namespace ClearCanvas.Ris.Client
                 WSHttpBinding binding = new WSHttpBinding();
                 binding.Security.Mode = SecurityMode.Message;
                 binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+                binding.MaxReceivedMessageSize = 1048576;
 
                 // create the channel factory
                 Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });
