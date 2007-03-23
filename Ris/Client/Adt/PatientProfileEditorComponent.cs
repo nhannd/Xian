@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             new AdminAddPatientProfileRequest(_profile));
 
                         // TODO this service should not be returning a worklist item
-                        _profile = response.WorklistItem.PatientProfileRef;
+                        //_profile = response.PatientProfileRef;
                     }
                     else
                     {
