@@ -148,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Adt
             //_pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue);
 
             GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
-            GetHL7QueueFormDataResponse formResponse;
+            GetHL7QueueFormDataResponse formResponse = null;
 
             Platform.GetService<IHL7QueueService>(
                 delegate(IHL7QueueService service)
@@ -159,14 +159,24 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Report(e, desktopwindow);
+                        ExceptionHandler.Report(e, Host.DesktopWindow);
                     }
                 });
 
-            _directionChoices = formResponse.DirectionChoices;
-            _peerChoices = formResponse.PeerChoices;
-            _statusChoices = formResponse.StatusCodeChoices;
-            _typeChoices = formResponse.MessageTypeChoices;
+            if (formResponse != null)
+            {
+                _directionChoices = formResponse.DirectionChoices;
+                _peerChoices = formResponse.PeerChoices;
+                _statusChoices = formResponse.StatusCodeChoices;
+                _typeChoices = formResponse.MessageTypeChoices;
+            }
+            else
+            {
+                _directionChoices = new List<EnumValueInfo>();
+                _peerChoices = new List<EnumValueInfo>();
+                _statusChoices = new List<EnumValueInfo>();
+                _typeChoices = new List<string>();
+            }
 
             _toolSet = new ToolSet(new HL7QueueToolExtensionPoint(), new HL7QueueToolContext(this));
         }
@@ -367,7 +377,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (selectedSummaryTableItem.QueueItemRef != _selectedHL7QueueItem.QueueItemRef)
             {
                 LoadHL7QueueItemRequest request = new LoadHL7QueueItemRequest(selectedSummaryTableItem.QueueItemRef);
-                LoadHL7QueueItemResponse response;
+                LoadHL7QueueItemResponse response = null;
 
                 Platform.GetService<IHL7QueueService>(
                      delegate(IHL7QueueService service)
@@ -378,14 +388,17 @@ namespace ClearCanvas.Ris.Client.Adt
                          }
                          catch (Exception e)
                          {
-                             ExceptionHandler.Report(e, desktopwindow);
+                             ExceptionHandler.Report(e, Host.DesktopWindow);
                          }
                      });
 
-                _selectedHL7QueueItem = response.QueueItemDetail;
+                if (response != null)
+                {
+                    _selectedHL7QueueItem = response.QueueItemDetail;
 
-                EventsHelper.Fire(_selectedHL7QueueItemChanged, this, EventArgs.Empty);
-                NotifyPropertyChanged("Message");
+                    EventsHelper.Fire(_selectedHL7QueueItemChanged, this, EventArgs.Empty);
+                    NotifyPropertyChanged("Message");
+                }
             }
         }
 
@@ -404,18 +417,18 @@ namespace ClearCanvas.Ris.Client.Adt
             request.MessageType = _typeChecked ? _type : null;
             request.StatusCode = _statusChecked ? _status : null;
 
-            request.StartingCreationDateTime = _createdOnStart.HasValue ? _createdOnStart.Value : null;
-            request.EndingCreationDateTime = _createdOnEnd.HasValue ? _createdOnEnd.Value : null;
+            request.StartingCreationDateTime = _createdOnStart;
+            request.EndingCreationDateTime = _createdOnEnd;
 
-            request.StartingUpdateDateTime = _updatedOnStart.HasValue ? _updatedOnStart.Value : null;
-            request.EndingUpdateDateTime = _updatedOnEnd.HasValue ? _updatedOnEnd.Value : null;
+            request.StartingUpdateDateTime = _updatedOnStart;
+            request.EndingUpdateDateTime = _updatedOnEnd;
 
             UpdateTableData(request);
         }
 
         private void UpdateTableData(ListHL7QueueItemsRequest request)
         {
-            ListHL7QueueItemsResponse response;
+            ListHL7QueueItemsResponse response = null;
 
             Platform.GetService<IHL7QueueService>(
                 delegate(IHL7QueueService service)
@@ -426,14 +439,17 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Report(e, desktopwindow);
+                        ExceptionHandler.Report(e, Host.DesktopWindow);
                     }
                 });
 
             _queue.Items.Clear();
-            //TODO: restore pagin functionality
-            //_queue.Items.AddRange(_pagingController.GetFirst(criteria));
-            _queue.Items.AddRange(response.QueueItems);
+            if (response != null)
+            {
+                //TODO: restore pagin functionality
+                //_queue.Items.AddRange(_pagingController.GetFirst(criteria));
+                _queue.Items.AddRange(response.QueueItems);
+            }
         }
     }
 }

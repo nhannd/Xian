@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     //            }
                     //            catch (Exception e)
                     //            {
-                    //                ExceptionHandler.Report(e, desktopwindow);
+                    //                ExceptionHandler.Report(e, Context.DesktopWindow);
                     //            }
                     //        });
 
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     //            }
                     //            catch (Exception e)
                     //            {
-                    //                ExceptionHandler.Report(e, desktopwindow);
+                    //                ExceptionHandler.Report(e, Context.DesktopWindow);
                     //            }
                     //        });
 
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     //        }
                     //        catch (Exception e)
                     //        {
-                    //            ExceptionHandler.Report(e, desktopwindow);
+                    //            ExceptionHandler.Report(e, Context.DesktopWindow);
                     //        }
                     //    });
                 }          

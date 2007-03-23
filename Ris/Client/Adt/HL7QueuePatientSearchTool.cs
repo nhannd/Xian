@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
         protected void OpenPatient(HL7QueueItemDetail selectedQueueItem, IDesktopWindow window)
         {
             GetReferencedPatientRequest request = new GetReferencedPatientRequest(selectedQueueItem.QueueItemRef);
-            GetReferencedPatientResponse response;
+            GetReferencedPatientResponse response = null;
 
             Platform.GetService<IHL7QueueService>(
                 delegate(IHL7QueueService service)      
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Report(e, desktopwindow);
+                        ExceptionHandler.Report(e, Context.DesktopWindow);
                     }
                 });
 
