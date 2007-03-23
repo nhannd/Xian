@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public PatientProfileSearchData SearchCriteria
         {
-            get { return BuildCriteria(); }
+            get { return BuildSearchData(); }
         }
 
         public event EventHandler<PatientSearchRequestedEventArgs> SearchRequested
@@ -203,7 +203,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             if (!this.HasValidationErrors)
             {
-                EventsHelper.Fire(_searchRequested, this, new PatientSearchRequestedEventArgs(BuildCriteria()));
+                EventsHelper.Fire(_searchRequested, this, new PatientSearchRequestedEventArgs(BuildSearchData()));
 
                 // always turn the validation errors off after a successful search
                 this.ShowValidation(false);
@@ -229,32 +229,28 @@ namespace ClearCanvas.Ris.Client.Adt
             this.SearchEnabled = _mrn != null || _healthcard != null || _familyName != null || _givenName != null;
         }
 
-        private PatientProfileSearchData BuildCriteria()
+        private PatientProfileSearchData BuildSearchData()
         {
-            PatientProfileSearchData criteria = new PatientProfileSearchData();
+            PatientProfileSearchData searchData = new PatientProfileSearchData();
             if (_mrn != null)
-                criteria.MrnID = _mrn;
+                searchData.MrnID = _mrn;
 
             if (_healthcard != null)
-                criteria.HealthcardID = _healthcard;
+                searchData.HealthcardID = _healthcard;
 
             if (_familyName != null)
-                criteria.FamilyName = _familyName;
+                searchData.FamilyName = _familyName;
 
             if (_givenName != null)
-                criteria.GivenName = _givenName;
+                searchData.GivenName = _givenName;
 
             if (_sex != null)
-                criteria.Sex.EqualTo((Sex)_sex);
+                searchData.Sex = _sex;
 
             if (_dateOfBirth != null)
-            {
-                DateTime start = ((DateTime)_dateOfBirth).Date;
-                DateTime end = start + new TimeSpan(23, 59, 59);
-                criteria.DateOfBirth.Between(start, end);
-            }
-            
-            return criteria;
+                searchData.DateOfBirth = _dateOfBirth;
+
+            return searchData;
         }
     }
 }

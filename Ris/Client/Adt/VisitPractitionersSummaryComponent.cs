@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public VisitPractitionersSummaryComponent(List<EnumValueInfo> visitPractitionerRoleChoices)
         {
-            _practitionersTable = new VisitPractitionerTable(visitPractitionerRoleChoices);
+            _practitionersTable = new VisitPractitionerTable();
             _visitPractitionerRoleChoices = visitPractitionerRoleChoices;
 
             _visitPractitionerActionHandler = new CrudActionModel();
@@ -150,8 +150,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(IPractitionerAdminService service)
                     {
                         FindPractitionersResponse findResponse = service.FindPractitioners(new FindPractitionersRequest("Who", ""));
-                        PractitionerDetail practitioner;
-                        if (response.Practitioners.Count == 0)
+                        PractitionerSummary practitioner;
+                        if (findResponse.Practitioners.Count == 0)
                         {
                             AddPractitionerResponse addResponse = service.AddPractitioner(new AddPractitionerRequest(new PractitionerDetail(
                                     new PersonNameDetail("Who", "Doctor", "", "", "", ""),

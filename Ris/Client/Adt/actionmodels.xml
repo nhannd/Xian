@@ -24,14 +24,4 @@
   <action-model id="ClearCanvas.Ris.Client.Adt.FoldersComponent:folders-toolbar">
     <action id="ClearCanvas.Ris.Client.Adt.PatientSearchTool:search" path="folders-toolbar/Search" />
   </action-model>
-  <action-model id="ClearCanvas.Ris.Client.Adt.WorklistComponent:worklist-contextmenu">
-    <action id="ClearCanvas.Ris.Client.Adt.PatientOpenFromWorklistTool:view2" path="worklist-contextmenu/View Details" />
-    <action id="ClearCanvas.Ris.Client.Adt.PatientEditFromWorklistTool:edit2" path="worklist-contextmenu/Edit Patient" />
-    <action id="ClearCanvas.Ris.Client.Adt.PatientReconcileFromWorklistTool:apply" path="worklist-contextmenu/Reconcile..." />
-  </action-model>
-  <action-model id="ClearCanvas.Ris.Client.Adt.WorklistComponent:worklist-toolbar">
-    <action id="ClearCanvas.Ris.Client.Adt.PatientOpenFromWorklistTool:view2" path="worklist-toolbar/Details" />
-    <action id="ClearCanvas.Ris.Client.Adt.PatientEditFromWorklistTool:edit2" path="worklist-toolbar/Edit" />
-    <action id="ClearCanvas.Ris.Client.Adt.PatientReconcileFromWorklistTool:apply" path="worklist-toolbar/Reconcile" />
-  </action-model>
 </action-models>

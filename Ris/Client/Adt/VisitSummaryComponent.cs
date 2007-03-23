@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void SetSelectedVisit(ISelection selection)
         {
-            this.CurrentVisitSelection = (Visit)selection.Item;
+            this.CurrentVisitSelection = (VisitSummary)selection.Item;
         }
 
         private void VisitSelectionChanged()

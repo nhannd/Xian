@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
@@ -10,24 +11,20 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class VisitPractitionerTable : Table<VisitPractitionerDetail>
     {
-        private List<EnumValueInfo> _visitPractitionerRoleChoices;
-
-        public VisitPractitionerTable(List<EnumValueInfo> visitPractitionerRoleChoices)
+        public VisitPractitionerTable()
         {
-            _visitPractitionerRoleChoices = visitPractitionerRoleChoices;
-
             this.Columns.Add(new TableColumn<VisitPractitionerDetail, string>(
                 SR.ColumnRole,
                 delegate(VisitPractitionerDetail vp)
                 {
-                    return EnumValueUtils.MapDisplayValue(_visitPractitionerRoleChoices, vp.Role.Value);
+                    return vp.Role.Value;
                 },
                 0.8f));
             this.Columns.Add(new TableColumn<VisitPractitionerDetail, string>(
                 SR.ColumnPractitioner,
                 delegate(VisitPractitionerDetail vp)
                 {
-                    return Format.Custom(vp.Practitioner.Name);
+                    return Format.Custom(vp.Practitioner.PersonNameDetail);
                 },
                 2.5f));
             this.Columns.Add(new TableColumn<VisitPractitionerDetail, string>(

@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -44,74 +45,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
             folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
             {
-                WorklistItem item = folderComponent.SelectedItems.Item as WorklistItem;
+                RegistrationWorklistItem item = folderComponent.SelectedItems.Item as RegistrationWorklistItem;
                 previewComponent.WorklistItem = item;
             };
 
             return new SplitComponentContainer(
                 new SplitPane("Folders", folderComponent, 1.0f),
                 new SplitPane("Preview", previewComponent, 1.0f),
-                SplitOrientation.Vertical);
-        }
-    }
-
-
-    [MenuAction("launch", "global-menus/MenuTools/Registration Home")]
-    //[ButtonAction("launch", "global-toolbars/MenuTools/Registration Home")]
-    [Tooltip("launch", "Registration Home")]
-    [IconSet("launch", IconScheme.Colour, "Icons.HomeToolSmall.png", "Icons.HomeToolMedium.png", "Icons.HomeToolLarge.png")]
-    [ClickHandler("launch", "Launch")]
-
-    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class OldHomeTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
-    {
-
-        private IWorkspace _workspace;
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public OldHomeTool()
-        {
-        }
-
-
-        public void Launch()
-        {
-            if (_workspace == null)
-            {
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    BuildComponent(),
-                    SR.TitleRegistrationHome,
-                    delegate(IApplicationComponent c) { _workspace = null; });
-            }
-            else
-            {
-                _workspace.Activate();
-            }
-        }
-
-        public IApplicationComponent BuildComponent()
-        {
-            WorklistComponent resultComponent = new WorklistComponent();
-            FoldersComponent foldersComponent = new FoldersComponent(resultComponent);
-            PatientProfilePreviewComponent previewComponent = new PatientProfilePreviewComponent();
-
-            resultComponent.SelectedPatientProfileChanged +=
-                delegate(object sender, EventArgs e)
-                {
-                    previewComponent.PatientProfileRef = resultComponent.SelectedPatientProfile;
-                };
-
-            SplitComponentContainer container = new SplitComponentContainer(
-                new SplitPane(SR.TitleResults, resultComponent, 0.45f),
-                new SplitPane(SR.TitlePreview, previewComponent, 0.55f),
-                SplitOrientation.Vertical);
-
-            return new SplitComponentContainer(
-                new SplitPane(SR.TitleSearch, foldersComponent, 0.15f),
-                new SplitPane(SR.TitleResults, container, 0.85f),
                 SplitOrientation.Vertical);
         }
     }

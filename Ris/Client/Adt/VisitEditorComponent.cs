@@ -53,10 +53,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         }
                         else
                         {
-                            LoadVisitForAdminEditResponse response = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
-                            _patientRef = response.Patient;
-                            _visitRef = response.VisitRef;
-                            _visit = response.VisitDetail;
+                            LoadVisitForAdminEditResponse loadVisitResponse = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
+                            _patientRef = loadVisitResponse.Patient;
+                            _visitRef = loadVisitResponse.VisitRef;
+                            _visit = loadVisitResponse.VisitDetail;
                         }
 
                         LoadVisitEditorFormDataResponse response = service.LoadVisitEditorFormData(new LoadVisitEditorFormDataRequest());
@@ -107,11 +107,6 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 SaveChanges();
                 this.ExitCode = ApplicationComponentExitCode.Normal;
-            }
-            catch (ConcurrencyException e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionConcurrencyVisitNotSaved, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
             }
             catch (Exception e)
             {

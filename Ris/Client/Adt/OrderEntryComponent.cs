@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                OrderEntryComponent component = new OrderEntryComponent(item.PatientProfile);
+                OrderEntryComponent component = new OrderEntryComponent(item.PatientProfileRef);
                 ApplicationComponent.LaunchAsWorkspace(
                     context.DesktopWindow,
                     component,

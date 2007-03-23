@@ -133,8 +133,9 @@ namespace ClearCanvas.Ris.Client.Adt
             :base(folderExplorer)
         {
             // important to initialize service before adding any folders, because folders may access service
-            _workflowService = ApplicationContext.GetService<IWorklistService>();
-            _workflowService.ModalityProcedureStepChanged += ModalityProcedureStepChangedEventHandler;
+
+            // TODO: WorkflowService.ModalityProcedureStepChanged
+            //_workflowService.ModalityProcedureStepChanged += ModalityProcedureStepChangedEventHandler;
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
@@ -154,9 +155,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            //TODO:
 
-            //// update workflow enablement
+            //// TODO: update workflow enablement
             //WorklistItem selectedItem = CollectionUtils.FirstElement<WorklistItem>(this.SelectedItems);
             //if (selectedItem != null)
             //{
@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void ModalityProcedureStepChangedEventHandler(object sender, EntityChangeEventArgs e)
         {
-            // TODO:
+            // TODO: ModalityProcedureStepChangedEventHandler
 
             //// this should never happen
             //if (e.ChangeType == EntityChangeType.Delete)
@@ -208,7 +208,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (disposing)
             {
-                _workflowService.ModalityProcedureStepChanged -= ModalityProcedureStepChangedEventHandler;
+                // TODO: ModalityProcedureStepChangedEventHandler
+                //_workflowService.ModalityProcedureStepChanged -= ModalityProcedureStepChangedEventHandler;
 
                 if(_itemToolSet != null) _itemToolSet.Dispose();
                 if (_folderToolSet != null) _folderToolSet.Dispose();

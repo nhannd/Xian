@@ -28,6 +28,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.DateOfBirth = dateOfBirth;
         }
 
+        public PatientProfileSearchData()
+        {
+        }
+
         [DataMember]
         public EntityRef PatientProfile;
 

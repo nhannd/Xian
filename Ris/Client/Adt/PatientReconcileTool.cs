@@ -15,8 +15,6 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "global-menus/Patient/Reconcile")]
     [ButtonAction("apply", "global-toolbars/Patient/Reconcile")]
-    [MenuAction("apply", "worklist-contextmenu/Reconcile")]
-    [ButtonAction("apply", "worklist-toolbar/Reconcile")]
     [MenuAction("apply", "folderexplorer-items-toolbar/Reconcile")]
     [Tooltip("apply", "Reconcile patient profiles")]
     [IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]

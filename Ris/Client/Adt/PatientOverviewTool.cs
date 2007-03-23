@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Desktop.Tools;
+
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -17,13 +19,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("view1", "Open patient details")]
     [IconSet("view1", IconScheme.Colour, "PatientOpenToolSmall.png", "PatientOpenToolMedium.png", "PatientOpenToolLarge.png")]
 
-    [MenuAction("view2", "worklist-contextmenu/View Details")]
-    [ButtonAction("view2", "worklist-toolbar/Details")]
-    [ClickHandler("view2", "View")]
-    [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
-    [Tooltip("view2", "Open patient details")]
-    [IconSet("view2", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
-
     [MenuAction("view3", "RegistrationPreview-menu/Details")]
     [ButtonAction("view3", "folderexplorer-items-toolbar/Details")]
     [ClickHandler("view3", "View")]
@@ -31,7 +26,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("view3", "Open patient details")]
     [IconSet("view3", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
 
-    [ExtensionOf(typeof(WorklistToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     public class PatientOverviewTool : Tool<IToolContext>
@@ -79,15 +73,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void View()
         {
-            if (this.ContextBase is IWorklistToolContext)
-            {
-                OpenPatient(this.Context.SelectedPatientProfile, this.Context.DesktopWindow);
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                WorklistItem item = CollectionUtils.FirstElement<WorklistItem>(context.SelectedItems);
-                OpenPatient(item.PatientProfile, context.DesktopWindow);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                OpenPatient(item.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {

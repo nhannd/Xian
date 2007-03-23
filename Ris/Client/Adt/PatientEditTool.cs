@@ -20,13 +20,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("edit1", "Edit Patient Information")]
     [IconSet("edit1", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
 
-    [MenuAction("edit2", "worklist-contextmenu/Edit Patient")]
-    [ButtonAction("edit2", "worklist-toolbar/Edit")]
-    [ClickHandler("edit2", "Apply")]
-    [EnabledStateObserver("edit2", "Enabled", "EnabledChanged")]
-    [Tooltip("edit2", "Edit Patient Information")]
-    [IconSet("edit2", IconScheme.Colour, "Icons.Edit.png", "Icons.Edit.png", "Icons.Edit.png")]
-
     [ButtonAction("edit3", "folderexplorer-items-toolbar/Edit")]
     [ClickHandler("edit3", "Apply")]
     [EnabledStateObserver("edit3", "Enabled", "EnabledChanged")]
@@ -83,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                Edit(item.PatientProfile, context.DesktopWindow);
+                Edit(item.PatientProfileRef, context.DesktopWindow);
             }
             else
             {

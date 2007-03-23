@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     return response.WorklistItems;
                 });
 
-            return List<RegistrationWorklistItem>();
+            return new List<RegistrationWorklistItem>();
         }
 
         protected override bool IsMember(RegistrationWorklistItem item)
