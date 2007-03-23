@@ -141,6 +141,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="RisClient.bat" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ContactPersonEditorComponent.cfg.xml" />
