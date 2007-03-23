@@ -95,6 +95,11 @@ namespace ClearCanvas.Ris.Client.Adt
             return List<RegistrationWorklistItem>();
         }
 
+        protected override bool IsMember(RegistrationWorklistItem item)
+        {
+            return (item.WorklistClassName == this.WorklistClassName);
+        }
+
         protected override bool CanAcceptDrop(RegistrationWorklistItem item)
         {
             return false;

@@ -4,20 +4,18 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class VisitEditorComponent : NavigatorComponentContainer
     {
-        private EntityRef<Patient> _patientRef;
-        //private Patient _patient;
-        private EntityRef<Visit> _visitRef;
-        private Visit _visit;
-
-        private IAdtService _adtService;
-        private IFacilityAdminService _facilityAdminService;
+        private EntityRef _patientRef;
+        private EntityRef _visitRef;
+        private VisitDetail _visit;
 
         private VisitDetailsEditorComponent _visitEditor;
         private VisitPractitionersSummaryComponent _visitPractionersSummary;
@@ -28,14 +26,14 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitEditorComponent(EntityRef<Patient> patientRef, EntityRef<Visit> visitRef)
+        public VisitEditorComponent(EntityRef patientRef, EntityRef visitRef)
         {
             _isNew = false;
             _patientRef = patientRef;
             _visitRef = visitRef;
         }
 
-        public VisitEditorComponent(EntityRef<Patient> patientRef)
+        public VisitEditorComponent(EntityRef patientRef)
         {
             _isNew = true;
             _patientRef = patientRef;
@@ -43,36 +41,55 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
-
-            if (_isNew)
+            try
             {
-                _visit = new Visit();
+                Platform.GetService<IVisitAdminService>(
+                    delegate(IVisitAdminService service)
+                    {
+                        if (_isNew)
+                        {
+                            _visit = new VisitDetail();
+                            _visit.Patient = _patientRef;
+                        }
+                        else
+                        {
+                            LoadVisitForAdminEditResponse response = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
+                            _patientRef = response.Patient;
+                            _visitRef = response.VisitRef;
+                            _visit = response.VisitDetail;
+                        }
 
-                ///TODO: expose facility in the UI
-                IList<Facility> facilities = _facilityAdminService.GetAllFacilities();
-                if (facilities.Count == 0)
-                {
-                    _facilityAdminService.AddFacility("Test Facility");
-                    facilities = _facilityAdminService.GetAllFacilities();
-                }
+                        LoadVisitEditorFormDataResponse response = service.LoadVisitEditorFormData(new LoadVisitEditorFormDataRequest());
 
-                _visit.Facility = facilities[0];
+                        this.Pages.Add(new NavigatorPage("Visit",
+                            _visitEditor = new VisitDetailsEditorComponent(
+                                response.VisitNumberAssigningAuthorityChoices,
+                                response.PatientClassChoices,
+                                response.PatientTypeChoices,
+                                response.AdmissionTypeChoices,
+                                response.AmbulatoryStatusChoices,
+                                response.VisitStatusChoices)));
+
+                        this.Pages.Add(new NavigatorPage("Visit/Practitioners", 
+                            _visitPractionersSummary = new VisitPractitionersSummaryComponent(
+                                resposne.VisitPractitionerRoleChoices
+                            )));
+
+                        this.Pages.Add(new NavigatorPage("Visit/Location", 
+                            _visitLocationsSummary = new VisitLocationsSummaryComponent(
+                                resposne.VisitLocationRoleChoices
+                            )));
+
+                    });
+
+                _visitEditor.Visit = _visit;
+                _visitPractionersSummary.Visit = _visit;
+                _visitLocationsSummary.Visit = _visit;
             }
-            else
+            catch (Exception e)
             {
-                _visit = _adtService.LoadVisit(_visitRef, true);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
-
-
-            this.Pages.Add(new NavigatorPage("Visit", _visitEditor = new VisitDetailsEditorComponent()));
-            this.Pages.Add(new NavigatorPage("Visit/Practitioners", _visitPractionersSummary = new VisitPractitionersSummaryComponent()));
-            this.Pages.Add(new NavigatorPage("Visit/Location", _visitLocationsSummary = new VisitLocationsSummaryComponent()));
-
-            _visitEditor.Visit = _visit;
-            _visitPractionersSummary.Visit = _visit;
-            _visitLocationsSummary.Visit = _visit;
 
             base.Start();
         }
@@ -112,14 +129,28 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SaveChanges()
         {
-            if (_isNew)
+            try
             {
-                _adtService.SaveNewVisit(_visit, _patientRef);
-                _visitRef = new EntityRef<Visit>(_visit);
+                Platform.GetService<IVisitAdminService>(
+                    delegate(IVisitAdminService service)
+                    {
+                        if (_isNew)
+                        {
+                            AdminAddVisitResponse response = service.AdminAddVisit(new AdminAddVisitRequest(_visit));
+                            _patientRef = response.AddedVisit.Patient;
+                            _visitRef = response.AddedVisit.entityRef;
+                        }
+                        else
+                        {
+                            SaveAdminEditsForVisitResponse response = service.SaveAdminEditsForVisit(new SaveAdminEditsForVisitRequest(_visitRef, _visit));
+                            _patientRef = response.AddedVisit.Patient;
+                            _visitRef = response.AddedVisit.entityRef;
+                        }
+                    });
             }
-            else
+            catch (Exception e)
             {
-                _adtService.UpdateVisit(_visit);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
     }

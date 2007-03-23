@@ -24,13 +24,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
         [DataMember]
         public List<EnumValueInfo> AmbulatoryStatusChoices;
 
-        //[DataMember]
-        //public List<FacilitySummary> FacilityChoices;
-
         [DataMember]
         public List<EnumValueInfo> VisitLocationRoleChoices;
 
         [DataMember]
         public List<EnumValueInfo> VisitPractitionerRoleChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> VisitStatusChoices;
     }
 }

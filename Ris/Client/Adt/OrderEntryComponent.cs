@@ -1,20 +1,21 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Desktop.Tables;
-using System.Collections;
-using ClearCanvas.Desktop.Trees;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -22,7 +23,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("neworder", "global-menus/Orders/New")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
     [ClickHandler("neworder", "NewOrder")]
-    [ExtensionOf(typeof(WorklistToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
 
@@ -74,20 +74,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void NewOrder()
         {
-            if (this.ContextBase is IWorklistToolContext)
-            {
-                IWorklistToolContext context = (IWorklistToolContext)this.ContextBase;
-                OrderEntryComponent component = new OrderEntryComponent(context.SelectedPatientProfile);
-                ApplicationComponent.LaunchAsWorkspace(
-                    context.DesktopWindow,
-                    component,
-                    SR.TitleNewOrder,
-                    null);
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                WorklistItem item = CollectionUtils.FirstElement<WorklistItem>(context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 OrderEntryComponent component = new OrderEntryComponent(item.PatientProfile);
                 ApplicationComponent.LaunchAsWorkspace(
                     context.DesktopWindow,
@@ -208,8 +198,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 List<string> dsStrings = new List<string>();
                 dsStrings.Add("");
                 dsStrings.AddRange(
-                    CollectionUtils.Map<DiagnosticService, string>(
-                        _diagnosticServiceChoices, delegate(DiagnosticService ds) { return ds.Name; }));
+                    CollectionUtils.Map<DiagnosticServiceSummary, string>(
+                        _diagnosticServiceChoices, delegate(DiagnosticServiceSummary ds) { return ds.Name; }));
 
                 return dsStrings;
             }
@@ -268,8 +258,8 @@ namespace ClearCanvas.Ris.Client.Adt
             set
             {
                 _selectedFacility = (value == "") ? null : 
-                    CollectionUtils.SelectFirst<Facility>(_facilityChoices,
-                        delegate(Facility f) { return f.Name == value; });
+                    CollectionUtils.SelectFirst<FacilitySummary>(_facilityChoices,
+                        delegate(FacilitySummary f) { return f.Name == value; });
             }
         }
 
@@ -280,8 +270,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 List<string> physicianStrings = new List<string>();
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
-                    CollectionUtils.Map<PractitionerSummary, string>(_orderingPhysicianChoices,
-                            delegate(PractitionerSummary p) { return Format.Custom(p.Name); }));
+                    CollectionUtils.Map<PractitionerSummary, string, List<string>>(_orderingPhysicianChoices,
+                            delegate(PractitionerSummary p) { return Format.Custom(p.PersonNameDetail); }));
 
                 return physicianStrings;
             }
@@ -340,11 +330,11 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
                             _patientRef,
-                            _selectedVisit,
-                            _selectedDiagnosticService,
+                            _selectedVisit.entityRef,
+                            _selectedDiagnosticService.DiagnosticServiceRef,
                             _selectedPriority,
-                            _selectedOrderingPhysician,
-                            _selectedFacility,
+                            _selectedOrderingPhysician.StaffRef,
+                            _selectedFacility.FacilityRef,
                             _schedulingRequestDateTime));
                     });
 
@@ -384,18 +374,18 @@ namespace ClearCanvas.Ris.Client.Adt
                         {
                             LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticService.DiagnosticServiceRef));
                             diagnosticServiceDetail = response.DiagnosticServiceDetail;
-                        });
 
-                    _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(
-                        new TreeItemBinding<RequestedProcedureTypeDetail>(
-                            delegate(RequestedProcedureTypeDetail rpt) { return rpt.Name; },
-                            delegate(RequestedProcedureTypeDetail rpt)
-                            {
-                                return new Tree<ModalityProcedureStepTypeDetail>(
-                                    new TreeItemBinding<ModalityProcedureStepTypeDetail>(
-                                        delegate(ModalityProcedureStepTypeDetail spt) { return spt.Name; }),
-                                        rpt.ModalityProcedureStepTypes);
-                            }), diagnosticServiceDetail.RequestedProcedureTypes);
+                            _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(
+                                new TreeItemBinding<RequestedProcedureTypeDetail>(
+                                    delegate(RequestedProcedureTypeDetail rpt) { return rpt.Name; },
+                                    delegate(RequestedProcedureTypeDetail rpt)
+                                    {
+                                        return new Tree<ModalityProcedureStepTypeDetail>(
+                                            new TreeItemBinding<ModalityProcedureStepTypeDetail>(
+                                                delegate(ModalityProcedureStepTypeDetail spt) { return spt.Name; }),
+                                                rpt.ModalityProcedureStepTypes);
+                                    }), diagnosticServiceDetail.RequestedProcedureTypes);
+                        });
                 }
                 catch (Exception e)
                 {

@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
     [DataContract]
     public class FindPractitionersRequest : DataContractBase
     {
+        public FindPractitionersRequest(string familiyName, string givenName)
+        {
+            this.FamilyName = familiyName;
+            this.GivenName = givenName;
+        }
+
         [DataMember(IsRequired=true)]
         public string FamilyName;
 

@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
             RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
             ApplicationComponent.LaunchAsDialog(
-                this.WorkflowFolderSystem.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.PatientName)));
+                this.WorkflowFolderSystem.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
                         
             return true;
         }

@@ -9,6 +9,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 {
@@ -79,7 +80,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
                 {
                     return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
-           
+
+            response.VisitStatusChoices = CollectionUtils.Map<VisitStatusEnum, EnumValueInfo, List<EnumValueInfo>>(
+                PersistenceContext.GetBroker<IVisitStatusEnumBroker>().Load().Items,
+                delegate(VisitStatusEnum e)
+                {
+                    return new EnumValueInfo(e.Code.ToString(), e.Value);
+                });
+
             return response;
         }
 

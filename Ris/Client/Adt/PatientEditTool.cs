@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Desktop.Actions;
+
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -32,7 +34,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("edit3", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
 
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
-    [ExtensionOf(typeof(WorklistToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     public class PatientEditTool : ToolBase
     {
@@ -78,15 +79,10 @@ namespace ClearCanvas.Ris.Client.Adt
         
         public void Apply()
         {
-            if (this.ContextBase is IWorklistToolContext)
-            {
-                IWorklistToolContext context = (IWorklistToolContext)this.ContextBase;
-                Edit(context.SelectedPatientProfile, context.DesktopWindow);
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                WorklistItem item = CollectionUtils.FirstElement<WorklistItem>(context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 Edit(item.PatientProfile, context.DesktopWindow);
             }
             else

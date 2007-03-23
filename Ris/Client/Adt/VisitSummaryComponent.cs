@@ -4,12 +4,13 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -28,41 +29,46 @@ namespace ClearCanvas.Ris.Client.Adt
     public class VisitSummaryComponent : ApplicationComponent
     {
         private EntityRef _patientRef;
-        //private EntityRef<Patient> _patientRef;
-        //private EntityRef<PatientProfile> _patientProfileRef;
-        //private Patient _patient;
-        //private PatientProfile _patientProfile;
+        private EntityRef _patientProfileRef;
 
-        //private IAdtService _adtService;
         private VisitSummaryTable _visitTable;
         private VisitSummary _currentVisitSelection;
 
         private CrudActionModel _visitActionHandler;
 
-        public VisitSummaryComponent(EntityRef<PatientProfile> patientProfileRef)
+        public VisitSummaryComponent(EntityRef patientProfileRef)
         {
             _patientProfileRef = patientProfileRef;
         }
 
         public override void Start()
         {
-            _adtService = ApplicationContext.GetService<IAdtService>();
+            try
+            {
+                Platform.GetService<IPatientAdminService>(
+                    delegate(IPatientAdminService service)
+                    {
+                        LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(new LoadPatientProfileForAdminEditRequest(_patientProfileRef));
+                        _patientRef = response.PatientRef;
+                        _patientProfileRef = response.PatientProfileRef;
 
-            _patientProfile = _adtService.LoadPatientProfile(_patientProfileRef, false);
-            _patient = _adtService.LoadPatientAndAllProfiles(_patientProfileRef);
-            _patientRef = new EntityRef<Patient>(_patient);
+                        this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
+                            Format.Custom(response.PatientDetail.Name), Format.Custom(response.PatientDetail.Mrn)));                    
+                    });
 
-            _visitTable = new VisitSummaryTable();
+                _visitTable = new VisitSummaryTable();
 
-            _visitActionHandler = new CrudActionModel();
-            _visitActionHandler.Add.SetClickHandler(AddVisit);
-            _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
-            _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
+                _visitActionHandler = new CrudActionModel();
+                _visitActionHandler.Add.SetClickHandler(AddVisit);
+                _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
+                _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
+                _visitActionHandler.Add.Enabled = true;
 
-            _visitActionHandler.Add.Enabled = true;
-
-            this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
-                Format.Custom(_patientProfile.Name), Format.Custom(_patientProfile.Mrn)));
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
             base.Start();
         }
@@ -79,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _visitTable; }
         }
 
-        public Visit CurrentVisitSelection
+        public VisitSummary CurrentVisitSelection
         {
             get { return _currentVisitSelection; }
             set
@@ -130,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // can occur if user double clicks while holding control
             if (_currentVisitSelection == null) return;
 
-            VisitEditorComponent editor = new VisitEditorComponent(_patientRef, new EntityRef<Visit>(_currentVisitSelection));
+            VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.entityRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
@@ -152,7 +158,20 @@ namespace ClearCanvas.Ris.Client.Adt
         public void LoadVisitsTable()
         {
             _visitTable.Items.Clear();
-            _visitTable.Items.AddRange(_adtService.ListPatientVisits(_patientRef));
+
+            try
+            {
+                Platform.GetService<IVisitAdminService>(
+                    delegate(IVisitAdminService service)
+                    {
+                        ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfileRef));
+                        _visitTable.Items.AddRange(response.Visits);
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public void Close()

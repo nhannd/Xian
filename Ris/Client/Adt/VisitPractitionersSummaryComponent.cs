@@ -4,11 +4,15 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -26,57 +30,19 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(VisitPractitionerSummaryComponentViewExtensionPoint))]
     public class VisitPractitionersSummaryComponent : ApplicationComponent
     {
-        private Visit _visit;
-        private VisitPractitioner _currentVisitPractitionerSelection;
-        private Table<VisitPractitioner> _practitionersTable;
-
-        private IAdtService _adtService;
-        private IPractitionerAdminService _practitionerService;
-
-        private VisitPractitionerRoleEnumTable _visitPractitionerRoleTable;
-
+        private VisitDetail _visit;
+        private VisitPractitionerDetail _currentVisitPractitionerSelection;
+        private VisitPractitionerTable _practitionersTable;
+        private List<EnumValueInfo> _visitPractitionerRoleChoices;
         private CrudActionModel _visitPractitionerActionHandler;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitPractitionersSummaryComponent()
+        public VisitPractitionersSummaryComponent(List<EnumValueInfo> visitPractitionerRoleChoices)
         {
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _practitionerService = ApplicationContext.GetService<IPractitionerAdminService>();
-
-            _visitPractitionerRoleTable = _adtService.GetVisitPractitionerRoleEnumTable();
-
-            _practitionersTable = new Table<VisitPractitioner>();
-
-            _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                SR.ColumnRole,
-                delegate(VisitPractitioner vp)
-                {
-                    return _visitPractitionerRoleTable[vp.Role].Value;
-                },
-                0.8f));
-            _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                SR.ColumnPractitioner,
-                delegate(VisitPractitioner vp)
-                {
-                    return Format.Custom(vp.Practitioner.Name);
-                },
-                2.5f));
-            _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                SR.ColumnStartTime,
-                delegate(VisitPractitioner vp)
-                {
-                    return Format.DateTime(vp.StartTime);
-                },
-                0.8f));
-            _practitionersTable.Columns.Add(new TableColumn<VisitPractitioner, string>(
-                SR.ColumnEndTime,
-                delegate(VisitPractitioner vp)
-                {
-                    return Format.DateTime(vp.EndTime);
-                },
-                0.8f));
+            _practitionersTable = new VisitPractitionerTable(visitPractitionerRoleChoices);
+            _visitPractitionerRoleChoices = visitPractitionerRoleChoices;
 
             _visitPractitionerActionHandler = new CrudActionModel();
             _visitPractitionerActionHandler.Add.SetClickHandler(AddVisitPractitioner);
@@ -99,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        public Visit Visit
+        public VisitDetail Visit
         {
             get { return _visit; }
             set { _visit = value; }
@@ -115,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _visitPractitionerActionHandler; }
         }
 
-        public VisitPractitioner CurrentVisitPractitionerSelection
+        public VisitPractitionerDetail CurrentVisitPractitionerSelection
         {
             get { return _currentVisitPractitionerSelection; }
             set
@@ -127,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void SetSelectedVisitPractitioner(ISelection selection)
         {
-            this.CurrentVisitPractitionerSelection = (VisitPractitioner)selection.Item;
+            this.CurrentVisitPractitionerSelection = (VisitPractitionerDetail)selection.Item;
         }
 
         private void VisitPractitionerSelectionChanged()
@@ -178,32 +144,47 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void DummyAddVisitPractitioner()
         {
-            IList<Practitioner> practitioners = _practitionerService.FindPractitioners("Who", null);
-            if (practitioners.Count == 0)
+            try
             {
-                Practitioner p = new Practitioner();
-                p.LicenseNumber = "123456";
-                p.Name.FamilyName = "Who";
-                p.Name.GivenName = "Doctor";
+                Platform.GetService<IPractitionerAdminService>(
+                    delegate(IPractitionerAdminService service)
+                    {
+                        FindPractitionersResponse findResponse = service.FindPractitioners(new FindPractitionersRequest("Who", ""));
+                        PractitionerDetail practitioner;
+                        if (response.Practitioners.Count == 0)
+                        {
+                            AddPractitionerResponse addResponse = service.AddPractitioner(new AddPractitionerRequest(new PractitionerDetail(
+                                    new PersonNameDetail("Who", "Doctor", "", "", "", ""),
+                                    null, null, "123456")));
+                            practitioner = addResponse.Practitioner;
+                        }
+                        else
+                        {
+                            practitioner = findResponse.Practitioners[0];
+                        }
 
-                _practitionerService.AddPractitioner(p);
+                        VisitPractitionerDetail vp = new VisitPractitionerDetail();
 
-                practitioners = _practitionerService.FindPractitioners("Who", null);
+                        vp.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitPractitionerRoleChoices,
+                                delegate(EnumValueInfo e) { return e.Code == "RF"; });
+                        vp.Practitioner = practitioner;
+                        vp.StartTime = Platform.Time;
+
+                        _visit.Practitioners.Add(vp);
+                    });
             }
-
-            VisitPractitioner vp = new VisitPractitioner();
-
-            vp.Role = VisitPractitionerRole.RF;
-            vp.Practitioner = practitioners[0];
-            vp.StartTime = Platform.Time;
-
-            _visit.Practitioners.Add(vp);
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         private void DummyUpdateVisitPractitioner()
         {
-            VisitPractitioner vp = _currentVisitPractitionerSelection;
-            vp.Role = VisitPractitionerRole.CN;
+            VisitPractitionerDetail vp = _currentVisitPractitionerSelection;
+
+            vp.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitPractitionerRoleChoices,
+                    delegate(EnumValueInfo e) { return e.Code == "CN"; });
             vp.EndTime = Platform.Time;
         }
     	#endregion    

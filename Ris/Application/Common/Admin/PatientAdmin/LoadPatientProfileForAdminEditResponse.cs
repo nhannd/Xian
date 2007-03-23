@@ -8,16 +8,20 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class LoadPatientProfileForAdminEditResponse : DataContractBase
     {
-        public LoadPatientProfileForAdminEditResponse(EntityRef patientProfileRef, PatientProfileDetail patientDetail)
+        public LoadPatientProfileForAdminEditResponse(EntityRef patientRef, EntityRef patientProfileRef, PatientProfileDetail patientDetail)
         {
+            this.PatientRef = patientRef;
             this.PatientProfileRef = patientProfileRef;
             this.PatientDetail = patientDetail;
         }
 
         [DataMember]
+        public EntityRef PatientRef;
+
+        [DataMember]
         public EntityRef PatientProfileRef;
 
         [DataMember]
-        public PatientProfileDetail PatientDetail;       
+        public PatientProfileDetail PatientDetail;
     }
 }

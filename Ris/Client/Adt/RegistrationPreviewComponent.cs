@@ -15,6 +15,7 @@ using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -131,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _RICTable.Items.Clear();
             
-            if (_worklistItem != null && _worklistItem.PatientProfile != null)
+            if (_worklistItem != null && _worklistItem.PatientProfileRef != null)
             {
                 try
                 {
@@ -205,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Mrn
         {
-            get { return Format.Custom(_worklistPreview.Mrn); }
+            get { return String.Format("{0} {1}", _worklistPreview.MrnAssigningAuthority, _worklistPreview.MrnAssigningAuthority); }
         }
 
         public string Healthcard
@@ -215,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Sex
         {
-            get { return Format.Custom(_worklistPreview.Sex.Value); }
+            get { return Format.Custom(_worklistPreview.Sex); }
         }
 
         public string CurrentHomeAddress

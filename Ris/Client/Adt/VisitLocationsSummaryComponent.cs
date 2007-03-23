@@ -1,13 +1,18 @@
 using System;
+using System.Collections.Generic;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Actions;
-using System.Collections.Generic;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -25,58 +30,19 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(VisitLocationsSummaryComponentViewExtensionPoint))]
     public class VisitLocationsSummaryComponent : ApplicationComponent
     {
-        private Visit _visit;
-        private Table<VisitLocation> _locationsTable;
-        private VisitLocation _currentVisitLocationSelection;
-
-        private IAdtService _adtService;
-        private IFacilityAdminService _facilityAdminService;
-        private ILocationAdminService _locationAdminService;
-        private VisitLocationRoleEnumTable _visitLocationRole;
-
+        private VisitDetail _visit;
+        private VisitLocationTable _locationsTable;
+        private VisitLocationDetail _currentVisitLocationSelection;
+        private List<EnumValueInfo> _visitLocationRoleChoices;
         private CrudActionModel _visitLocationActionHandler;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitLocationsSummaryComponent()
+        public VisitLocationsSummaryComponent(List<EnumValueInfo> visitLocationRoleChoices)
         {
-            _adtService = ApplicationContext.GetService<IAdtService>();
-            _facilityAdminService = ApplicationContext.GetService<IFacilityAdminService>();
-            _locationAdminService = ApplicationContext.GetService<ILocationAdminService>();
-
-            _visitLocationRole = _adtService.GetVisitLocationRoleEnumTable();
-
-            _locationsTable = new Table<VisitLocation>();
-
-            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                SR.ColumnRole,
-                delegate(VisitLocation vl)
-                {
-                    return _visitLocationRole[vl.Role].Value;
-                },
-                0.8f));
-            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                SR.ColumnLocation,
-                delegate(VisitLocation vl)
-                {
-                    return vl.Location.ToString();
-                },
-                2.5f));
-            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                SR.ColumnStartTime,
-                delegate(VisitLocation vl)
-                {
-                    return Format.DateTime(vl.StartTime);
-                },
-                0.8f));
-            _locationsTable.Columns.Add(new TableColumn<VisitLocation, string>(
-                SR.ColumnEndTime,
-                delegate(VisitLocation vl)
-                {
-                    return Format.DateTime(vl.EndTime);
-                },
-                0.8f));
+            _locationsTable = new VisitLocationTable();
+            _visitLocationRoleChoices = visitLocationRoleChoices;
 
             _visitLocationActionHandler = new CrudActionModel();
             _visitLocationActionHandler.Add.SetClickHandler(AddVisitLocation);
@@ -98,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        public Visit Visit
+        public VisitDetail Visit
         {
             get { return _visit; }
             set { _visit = value; }
@@ -109,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _locationsTable; }
         }
 
-        public VisitLocation CurrentVisitLocationSelection
+        public VisitLocationDetail CurrentVisitLocationSelection
         {
             get { return _currentVisitLocationSelection; }
             set
@@ -121,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void SetSelectedVisitLocation(ISelection selection)
         {
-            this.CurrentVisitLocationSelection = (VisitLocation)selection.Item;
+            this.CurrentVisitLocationSelection = (VisitLocationDetail)selection.Item;
         }
 
         private void VisitLocationSelectionChanged()
@@ -146,64 +112,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void AddVisitLocation()
         {
-            StubAddVisitLocation();
+            DummyAddVisitLocation();
             
             LoadLocations();
             this.Modified = true;
         }
 
-        private void StubAddVisitLocation()
-        {
-            IList<Facility> facilities = _facilityAdminService.GetAllFacilities();
-            if (facilities.Count == 0)
-            {
-                _facilityAdminService.AddFacility("Test Facility");
-                facilities = _facilityAdminService.GetAllFacilities();
-            }
-
-            IList<Location> locations = _locationAdminService.GetAllLocations();
-            if (locations.Count == 0)
-            {
-                Location location = new Location();
-
-                location.Active = true;
-                location.Bed = "Bed";
-                location.Building = "Building";
-                location.Facility = facilities[0];
-                location.Floor = "Floor";
-                location.InactiveDate = Platform.Time;
-                location.PointOfCare = "Point of Care";
-                location.Room = "Room";
-
-                _locationAdminService.AddLocation(location);
-
-                locations = _locationAdminService.GetAllLocations();
-            }
-
-            VisitLocation vl = new VisitLocation();
-
-            vl.Role = VisitLocationRole.CR;
-            vl.Location = locations[0];
-            vl.StartTime = Platform.Time;
-            vl.EndTime = null;
-
-            _visit.Locations.Add(vl);
-        }
-
         public void UpdateSelectedVisitLocation()
         {
-            StubUpdateSelectedVisitLocaiont();
+            DummyUpdateSelectedVisitLocation();
 
             LoadLocations();
             this.Modified = true;
-        }
-
-        private void StubUpdateSelectedVisitLocaiont()
-        {
-            VisitLocation vl = _currentVisitLocationSelection;
-
-            vl.Role = VisitLocationRole.PR;
-            vl.EndTime = Platform.Time;
         }
 
         public void DeleteSelectedVisitLocation()
@@ -219,5 +139,81 @@ namespace ClearCanvas.Ris.Client.Adt
             _locationsTable.Items.Clear();
             _locationsTable.Items.AddRange(_visit.Locations);
         }
+
+        #region Dummy Code
+
+        private void DummyAddVisitLocation()
+        {
+            try
+            {
+                FacilitySummary facility;
+                LocationSummary location;
+
+                Platform.GetService<IFacilityAdminService>(
+                    delegate(IFacilityAdminService service)
+                    {
+                        ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                        if (listResponse.Facilities.Count == 0)
+                        {
+                            AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility")));
+                            facility = addResponse.Facility;
+                        }
+                        else
+                        {
+                            facility = listResponse.Facilities[0];
+                        }
+                    });
+
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                        ListAllLocationsResponse listResponse= service.ListAllLocations(new ListAllLocationsRequest(true));
+                        if (listResponse.Locations.Count == 0)
+                        {
+                            LocationDetail locationDetail = new LocationDetail(
+                                    facility.FacilityRef,
+                                    facility.Name,
+                                    facility.Code,
+                                    "Building",
+                                    "Floor",
+                                    "Point of Care",
+                                    "Room",
+                                    "Bed");
+
+                            AddLocationResponse response = service.AddLocation(new AddLocationRequest(locationDetail));
+                            location = response.Location;
+                        }
+                        else
+                        {
+                            location = listResponse.Locations[0];
+                        }
+                    });
+
+                    VisitLocationDetail vl = new VisitLocationDetail();
+
+                    vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
+                            delegate(EnumValueInfo e) { return e.Code == "CR"; });
+                    vl.Location = location;
+                    vl.StartTime = Platform.Time;
+                    vl.EndTime = null;
+
+                    _visit.Locations.Add(vl);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
+        private void DummyUpdateSelectedVisitLocation()
+        {
+            VisitLocationDetail vl = _currentVisitLocationSelection;
+
+            vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
+                delegate(EnumValueInfo e) { return e.Code == "PR"; });
+            vl.EndTime = Platform.Time;
+        }
+
+        #endregion
     }
 }

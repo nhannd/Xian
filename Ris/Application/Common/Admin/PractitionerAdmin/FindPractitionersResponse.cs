@@ -15,6 +15,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         }
 
         [DataMember]
-        List<PractitionerSummary> Practitioners;
+        public List<PractitionerSummary> Practitioners;
     }
 }

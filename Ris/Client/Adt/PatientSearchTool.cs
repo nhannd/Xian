@@ -15,7 +15,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
     [ClickHandler("search", "Search")]
 
-    [ExtensionOf(typeof(FolderToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
     public class PatientSearchTool : ToolBase
     {

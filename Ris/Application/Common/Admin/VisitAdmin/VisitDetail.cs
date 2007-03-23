@@ -10,6 +10,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     public class VisitDetail : DataContractBase
     {
         [DataMember]
+        public EntityRef Patient;
+
+        [DataMember]
         public string VisitNumberId;
 
         [DataMember]

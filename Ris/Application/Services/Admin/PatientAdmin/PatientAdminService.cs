@@ -117,9 +117,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             broker.LoadTelephoneNumbersForPatientProfile(profile);
             broker.LoadEmailAddressesForPatientProfile(profile);
             broker.LoadContactPersonsForPatientProfile(profile);
+            broker.LoadPatientForPatientProfile(profile);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new LoadPatientProfileForAdminEditResponse(profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
+            return new LoadPatientProfileForAdminEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
         }
 
         [UpdateOperation]

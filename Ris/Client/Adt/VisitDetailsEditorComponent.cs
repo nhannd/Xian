@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -21,24 +26,36 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(VisitEditorDetailsComponentViewExtensionPoint))]
     public class VisitDetailsEditorComponent : ApplicationComponent
     {
-        private Visit _visit;
+        private VisitDetail _visit;
 
-        private PatientClassEnumTable _patientClasses;
-        private PatientTypeEnumTable _patientTypes;
-        private AdmissionTypeEnumTable _admissionTypes;
-        private AmbulatoryStatusEnumTable _ambulatoryStatuses;
-        private VisitStatusEnumTable _visitStatuses;
-
-        private string[] _dummySiteChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
+        private List<string> _visitNumberAssigningAuthorityChoices;
+        private List<EnumValueInfo> _patientClassChoices;
+        private List<EnumValueInfo> _patientTypeChoices;
+        private List<EnumValueInfo> _admissionTypeChoices;
+        private List<EnumValueInfo> _ambulatoryStatusChoices;
+        private List<EnumValueInfo> _visitStatusChoices;
+        private List<FacilitySummary> _facilityChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitDetailsEditorComponent()
+        public VisitDetailsEditorComponent(
+                List<string> visitNumberAssigningAuthorityChoices,
+                List<EnumValueInfo> patientClassChoices,
+                List<EnumValueInfo> patientTypeChoices,
+                List<EnumValueInfo> admissionTypeChoices,
+                List<EnumValueInfo> ambulatoryStatusChoices,
+                List<EnumValueInfo> visitStatusChoices)
         {
+            _visitNumberAssigningAuthorityChoices = visitNumberAssigningAuthorityChoices;
+            _patientClassChoices = patientClassChoices;
+            _patientTypeChoices = patientTypeChoices;
+            _admissionTypeChoices = admissionTypeChoices;
+            _ambulatoryStatusChoices = ambulatoryStatusChoices;
+            _visitStatusChoices = visitStatusChoices;
         }
 
-        public Visit Visit
+        public VisitDetail Visit
         {
             get { return _visit; }
             set { _visit = value; }
@@ -46,17 +63,32 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            IAdtService service = ApplicationContext.GetService<IAdtService>();
-
-            _patientClasses = service.GetPatientClassEnumTable();
-            _patientTypes = service.GetPatientTypeEnumTable();
-            _admissionTypes = service.GetAdmissionTypeEnumTable();
-            _ambulatoryStatuses = service.GetAmbulatoryStatusEnumTable();
-            _visitStatuses = service.GetVisitStatusEnumTable();
-
-            if (_visit.VisitNumber.AssigningAuthority == null)
+            try
             {
-                _visit.VisitNumber.AssigningAuthority = _dummySiteChoices[0];
+                Platform.GetService<IFacilityAdminService>(
+                    delegate(IFacilityAdminService service)
+                    {
+                        ///TODO: expose facility in the UI
+                        ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                        _facilityChoices = listResponse.Facilities;
+
+                        if (listResponse.Facilities.Count == 0)
+                        {
+                            AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility")));
+                            _visit.Facility = addResponse.Facility;
+                            _facilityChoices.Add(addResponse.Facility);
+                        }
+                    });
+
+                if (_visit.VisitNumberAssigningAuthority == null)
+                {
+                    _visit.VisitNumberAssigningAuthority = _visitNumberAssigningAuthorityChoices[0];
+                }
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             // TODO prepare the component for its live phase
@@ -74,10 +106,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string VisitNumber
         {
-            get { return _visit.VisitNumber.Id; }
+            get { return _visit.VisitNumberId; }
             set
             {
-                _visit.VisitNumber.Id = value;
+                _visit.VisitNumberId = value;
                 this.Modified = true;
             }
         }
@@ -85,18 +117,19 @@ namespace ClearCanvas.Ris.Client.Adt
         #region AssigningAuthority
         public string VisitNumberAssigningAuthority
         {
-            get { return _visit.VisitNumber.AssigningAuthority; }
+            get { return _visit.VisitNumberAssigningAuthority; }
             set
             {
-                _visit.VisitNumber.AssigningAuthority = value;
+                _visit.VisitNumberAssigningAuthority = value;
                 this.Modified = true;
             }
         }
 
-        public string[] VisitNumberAssigningAuthorityChoices
+        public List<string> VisitNumberAssigningAuthorityChoices
         {
-            get { return _dummySiteChoices; }
+            get { return this._visitNumberAssigningAuthorityChoices; }
         }
+
         #endregion
 
         public DateTime? AdmitDateTime
@@ -152,85 +185,95 @@ namespace ClearCanvas.Ris.Client.Adt
         #region PatientClass
         public string PatientClass
         {
-            get { return _patientClasses[_visit.PatientClass].Value; }
+            get { return _visit.PatientClass == null ? "" : _visit.PatientClass.Value; }
             set
             {
-                _visit.PatientClass = _patientClasses[value].Code;
+                _visit.PatientClass = (value == "") ? null :
+                    CollectionUtils.SelectFirst<EnumValueInfo>(_patientClassChoices,
+                    delegate(EnumValueInfo e) { return e.Value == value; });
                 this.Modified = true;
             }
         }
 
-        public string[] PatientClassChoices
+        public List<string> PatientClassChoices
         {
-            get { return _patientClasses.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_patientClassChoices); }
         }
         #endregion
 
         #region PatientType
         public string PatientType
         {
-            get { return _patientTypes[_visit.PatientType].Value; }
+            get { return _visit.PatientType == null ? "" : _visit.PatientType.Value; }
             set
             {
-                _visit.PatientType = _patientTypes[value].Code;
+                _visit.PatientType = (value == "") ? null :
+                    CollectionUtils.SelectFirst<EnumValueInfo>(_patientTypeChoices,
+                    delegate(EnumValueInfo e) { return e.Value == value; });
                 this.Modified = true;
             }
         }
 
-        public string[] PatientTypeChoices
+        public List<string> PatientTypeChoices
         {
-            get { return _patientTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_patientTypeChoices); }
         }
         #endregion
 
         #region AdmissionType
         public string AdmissionType
         {
-            get { return _admissionTypes[_visit.AdmissionType].Value; }
+            get { return _visit.AdmissionType == null ? "" : _visit.AdmissionType.Value; }
             set
             {
-                _visit.AdmissionType = _admissionTypes[value].Code;
+                _visit.AdmissionType = (value == "") ? null :
+                    CollectionUtils.SelectFirst<EnumValueInfo>(_admissionTypeChoices,
+                    delegate(EnumValueInfo e) { return e.Value == value; });
                 this.Modified = true;
             }
         }
 
-        public string[] AdmissionTypeChoices
+        public List<string> AdmissionTypeChoices
         {
-            get { return _admissionTypes.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_admissionTypeChoices); }
         }
         #endregion
 
-        //#region AmbulatoryStatus
+        #region AmbulatoryStatus
         //public string AmbulatoryStatus
         //{
-        //    get { return _ambulatoryStatuses[_visit.AmbulatoryStatus].Value; }
+        //    get { return _visit.AmbulatoryStatus == null ? "" : _visit.AmbulatoryStatus.Value; }
         //    set
         //    {
-        //        _visit.AmbulatoryStatus = _ambulatoryStatuses[value].Code;
+        //        _visit.AmbulatoryStatus = (value == "") ? null :
+        //            CollectionUtils.SelectFirst<EnumValueInfo>(_ambulatoryStatusChoices,
+        //            delegate(EnumValueInfo e) { return e.Value == Value; });
         //        this.Modified = true;
         //    }
         //}
 
-        //public string[] AmbulatoryStatusChoices
+        //public List<string> AmbulatoryStatusChoices
         //{
-        //    get { return _ambulatoryStatuses.Values; }
+        //    get { return this._ambulatoryStatusChoices; }
         //}
-        //#endregion
+        #endregion
 
         #region VisitStatus
         public String VisitStatus
         {
-            get { return _visitStatuses[_visit.VisitStatus].Value; }
+            get { return _visit.Status == null ? "" : _visit.Status.Value; }
             set
             {
-                _visit.VisitStatus = _visitStatuses[value].Code;
+                _visit.Status = (value == "") ? null :
+                    CollectionUtils.SelectFirst<EnumValueInfo>(_visitStatusChoices,
+                    delegate(EnumValueInfo e) { return e.Value == value; });
                 this.Modified = true;
             }
         }
 
-        public string[] VisitStatusChoices
+        public List<string> VisitStatusChoices
         {
-            get { return _visitStatuses.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_visitStatusChoices); }
         }
         #endregion
 

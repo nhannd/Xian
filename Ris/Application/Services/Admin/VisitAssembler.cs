@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             VisitDetail detail = new VisitDetail();
 
+            detail.Patient = visit.Patient.GetRef();
             detail.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
             detail.VisitNumberId = visit.VisitNumber.Id;
 
@@ -89,6 +90,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
         {
+            visit.Patient = (Patient)context.Load(detail.Patient, EntityLoadFlags.Proxy);
             visit.VisitNumber.Id = detail.VisitNumberId;
             visit.VisitNumber.AssigningAuthority = detail.VisitNumberAssigningAuthority;
 
