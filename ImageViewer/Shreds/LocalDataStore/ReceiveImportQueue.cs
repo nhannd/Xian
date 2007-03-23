@@ -12,36 +12,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal class ReceiveImportQueue
 	{
-		private delegate void FileImportResultDelegate(FileImportInformation results);
-
-		private class FileImportJob : IJob
-		{
-			private string _sourceAETitle;
-			private string _file;
-			private FileImportResultDelegate _resultsCallbackDelegate;
-
-			public FileImportJob(string file, string sourceAETitle, FileImportResultDelegate resultsCallbackDelegate)
-			{
-				_file = file;
-				_sourceAETitle = sourceAETitle;
-				_resultsCallbackDelegate = resultsCallbackDelegate;
-			}
-
-			#region IJob Members
-
-			public void Execute()
-			{
-				ReceivedFileImportInformation results = new ReceivedFileImportInformation(_file, _sourceAETitle);
-
-				LocalDataStoreService.Instance.DicomFileImporter.InsertSopInstance(results);
-
-				_resultsCallbackDelegate(results);
-			}
-
-			#endregion
-		}
-
-		private class ReceivedFileImportInformation : FileImportInformation
+		private class ReceivedFileImportInformation : DicomFileImporter.FileImportInformation
 		{
 			private string _sourceAETitle;
 
@@ -59,17 +30,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private object _receiveProgressItemsLock = new object();
 		private List<ReceiveProgressItem> _receiveProgressItems;
-		private SimpleThreadPool<IJob> _importThreadPool;
 
 		public ReceiveImportQueue()
 		{
 			_receiveProgressItems = new List<ReceiveProgressItem>();
-			_importThreadPool = new SimpleThreadPool<IJob>(LocalDataStoreService.Instance.SendReceiveImportConcurrency);
-		}
-
-		private SimpleThreadPool<IJob> ImportThreadPool
-		{
-			get { return _importThreadPool; }
 		}
 
 		private void OnImportThreadPoolStartStop(object sender, StartStopEventArgs e)
@@ -78,16 +42,20 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			//starting? Resume all the imports (status messages).
 		}
 
-		private void ProcessFileImportResults(FileImportInformation results)
+		private void ProcessFileImportResults(DicomFileImporter.FileImportInformation results)
 		{
 			ReceivedFileImportInformation receivedFileImportInformation = results as ReceivedFileImportInformation;
 
 			if (results.Failed)
 			{
+				//!!report back to subscribers!!
 				Platform.Log(results.Error);
 			}
 			else
 			{
+				if (results.CompletedStage == DicomFileImporter.ImportStage.NotStarted)
+					return;
+
 				lock (_receiveProgressItemsLock)
 				{
 					ReceiveProgressItem progressItem = _receiveProgressItems.Find(
@@ -97,7 +65,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								testItem.StudyInformation.StudyInstanceUid == receivedFileImportInformation.StudyInstanceUid;
 						});
 
-					if (progressItem == null)
+					bool exists = (progressItem != null);
+					if (!exists)
 					{
 						progressItem = new ReceiveProgressItem();
 						progressItem.Identifier = Guid.NewGuid();
@@ -107,7 +76,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem.State = FileOperationProgressItemState.InProgress;
 
 						progressItem.FromAETitle = receivedFileImportInformation.SourceAETitle;
-						progressItem.NumberOfFilesImported = 1;
+						progressItem.NumberOfFilesReceived = 0;
+						progressItem.NumberOfFilesImported = 0;
 						progressItem.TotalFilesToImport = 0;
 						progressItem.NumberOfFailedImports = 0; //not applicable, really, since we won't always know if it's not parseable.
 						progressItem.StudyInformation = new StudyInformation();
@@ -123,31 +93,28 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						_receiveProgressItems.Add(progressItem);
 
 					}
+
+					progressItem.LastActive = DateTime.Now;
+
+					if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
+					{
+						++progressItem.NumberOfFilesReceived;
+						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem);
+					}
+					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileMoved)
+					{
+						//do nothing.
+					}
 					else
 					{
-						progressItem.LastActive = DateTime.Now;
+						if (!exists)
+							++progressItem.NumberOfFilesReceived;
+
 						++progressItem.NumberOfFilesImported;
 						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem);
 					}
 				}
 			}
-		}
-
-		public void Start()
-		{
-			_importThreadPool.Start();
-			_importThreadPool.StartStopEvent += new EventHandler<StartStopEventArgs>(OnImportThreadPoolStartStop);
-		}
-
-		public void Stop()
-		{
-			_importThreadPool.StartStopEvent -= new EventHandler<StartStopEventArgs>(OnImportThreadPoolStartStop);
-			_importThreadPool.Stop();
-		}
-
-		public void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
-		{
-			_importThreadPool.Push(new FileImportJob(receivedFileInformation.FileName, receivedFileInformation.AETitle, this.ProcessFileImportResults));
 		}
 
 		public void RepublishAll()
@@ -158,6 +125,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				foreach (ReceiveProgressItem item in _receiveProgressItems)
 					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item);
 			}
+		}
+
+		internal void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
+		{
+			LocalDataStoreService.Instance.DicomFileImporter.Enqueue(new ReceivedFileImportInformation(receivedFileInformation.FileName, receivedFileInformation.AETitle), this.ProcessFileImportResults);
 		}
 	}
 }

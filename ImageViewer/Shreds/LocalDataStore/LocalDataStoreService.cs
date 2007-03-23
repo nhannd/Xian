@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private string _storageFolder = null;
 		private string _badFileFolder = null;
 		private int _sendReceiveImportConcurrency;
+		private int _databaseUpdateFrequencyMilliseconds;
 
 		private LocalDataStoreService()
 		{
@@ -67,6 +68,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				if (_sendReceiveImportConcurrency >= 10)
 					_sendReceiveImportConcurrency = 10;
 
+				_databaseUpdateFrequencyMilliseconds = LocalDataStoreServiceSettings.Instance.DatabaseUpdateFrequencyMilliseconds;
+				
 				_dicomFileImporter = new DicomFileImporter();
 
 				_receiveImportQueue = new ReceiveImportQueue();
@@ -103,6 +106,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			get { return _sendReceiveImportConcurrency; }
 		}
 
+		public int DatabaseUpdateFrequencyMilliseconds
+		{
+			get { return _databaseUpdateFrequencyMilliseconds; }
+		}
+
 		private void CheckDisabled()
 		{
 			if (_disabled)
@@ -135,12 +143,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void Start()
 		{
-			_receiveImportQueue.Start();
+			_dicomFileImporter.Start();
 		}
 
 		public void Stop()
 		{
-			_receiveImportQueue.Stop();
+			_dicomFileImporter.Stop();
 		}
 
 		public void RepublishAll()

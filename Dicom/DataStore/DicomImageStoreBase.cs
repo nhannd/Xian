@@ -152,12 +152,12 @@ namespace ClearCanvas.Dicom.DataStore
             cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
             if (cond.good())
             {
-                study.PatientsNameRaw = stringValue.ToString();
+				study.PatientsNameRaw = stringValue.ToString();
 
-                if (null == study.SpecificCharacterSet || study.SpecificCharacterSet == String.Empty)
-                    study.PatientsName = new PersonName(stringValue.ToString());
-                else
-                    study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, stringValue.ToString()));
+				if (null == study.SpecificCharacterSet || study.SpecificCharacterSet == String.Empty)
+					study.PatientsName = new PersonName(stringValue.ToString());
+				else
+					study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, stringValue.ToString()));
             }
 
             study.StoreTime = Platform.Time;
@@ -203,7 +203,25 @@ namespace ClearCanvas.Dicom.DataStore
             return CreateNewSopInstance(metaInfo, sopInstanceDataset, fileName);
         }
 
-        protected SopInstance CreateNewSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, string fileName)
+		protected void AssignSopInstanceUri(SopInstance sopInstance, string fileName)
+		{
+			if (!System.IO.Path.IsPathRooted(fileName))
+				fileName = System.IO.Path.GetFullPath(fileName);
+
+			UriBuilder uriBuilder = new UriBuilder();
+			uriBuilder.Scheme = "file";
+			uriBuilder.Path = fileName;
+			sopInstance.LocationUri = new DicomUri(uriBuilder.Uri);
+		}
+
+		protected SopInstance CreateNewSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, string fileName)
+		{
+			SopInstance newSop = CreateNewSopInstance(metaInfo, sopInstanceDataset);
+			AssignSopInstanceUri(newSop, fileName);
+			return newSop;
+		}
+
+		protected SopInstance CreateNewSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset)
         {
             ushort ushortValue;
             int integerValue;
@@ -322,14 +340,6 @@ namespace ClearCanvas.Dicom.DataStore
             cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
             if (cond.good())
                 image.SpecificCharacterSet = stringValue.ToString();
-
-            if (!System.IO.Path.IsPathRooted(fileName))
-                fileName = System.IO.Path.GetFullPath(fileName);
-
-            UriBuilder uriBuilder = new UriBuilder();
-            uriBuilder.Scheme = "file";
-            uriBuilder.Path = fileName;
-            image.LocationUri = new DicomUri(uriBuilder.Uri);
 
             return image;
         }

@@ -6,11 +6,12 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class LocalDataStoreServiceSettings : ShredConfigSection
+	internal sealed class LocalDataStoreServiceSettings : ShredConfigSection
 	{
 		public const string DefaultStorageFolder = @"c:\dicom_datastore\filestore\";
 		public const string DefaultBadFileFolder = @"c:\dicom_datastore\badfiles\";
 		public const int DefaultSendReceiveImportConcurrency = 2;
+		public const int DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
 
 		private static LocalDataStoreServiceSettings _instance;
 
@@ -67,6 +68,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			get { return (int)this["SendReceiveImportConcurrency"]; }
 			set { this["SendReceiveImportConcurrency"] = value; }
+		}
+
+		[ConfigurationProperty("DatabaseUpdateFrequencyMilliseconds", DefaultValue = LocalDataStoreServiceSettings.DefaultDatabaseUpdateFrequencyMilliseconds)]
+		public int DatabaseUpdateFrequencyMilliseconds
+		{
+			get { return (int)this["DatabaseUpdateFrequencyMilliseconds"]; }
+			set { this["DatabaseUpdateFrequencyMilliseconds"] = value; }
 		}
 
 		#endregion

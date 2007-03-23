@@ -309,7 +309,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _fromAETitle;
 		private StudyInformation _studyInformation;
-		
+		private int _numberOfFilesReceived;
+
 		public ReceiveProgressItem()
 		{ 
 		}
@@ -326,6 +327,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _studyInformation; }
 			set { _studyInformation = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public int NumberOfFilesReceived
+		{
+			get { return _numberOfFilesReceived; }
+			set { _numberOfFilesReceived = value; }
 		}
 	}
 

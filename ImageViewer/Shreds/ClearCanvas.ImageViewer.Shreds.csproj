@@ -57,12 +57,6 @@
     <Compile Include="DicomServer\ServerTree\DicomServerGroup.cs" />
     <Compile Include="DicomServer\ServerTree\DicomServerSetting.cs" />
     <Compile Include="DicomServer\ServerTree\DicomServerTree.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerData.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerDBAccess.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs" />
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />

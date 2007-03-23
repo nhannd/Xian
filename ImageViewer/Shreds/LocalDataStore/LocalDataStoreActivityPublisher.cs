@@ -6,7 +6,7 @@ using ServiceModelEx;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class LocalDataStoreActivityPublisher : TransientPublishService<ILocalDataStoreActivityMonitorServiceCallback>, ILocalDataStoreActivityMonitorServiceCallback
+	internal sealed class LocalDataStoreActivityPublisher : TransientPublishService<ILocalDataStoreActivityMonitorServiceCallback>, ILocalDataStoreActivityMonitorServiceCallback
 	{
 		private static LocalDataStoreActivityPublisher _instance;
 

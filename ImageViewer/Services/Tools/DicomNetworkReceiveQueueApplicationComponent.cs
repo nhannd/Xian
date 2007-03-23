@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string _studyInstanceUid;
 		private string _studyDescription;
 		private DateTime _studyDate;
+		private int _numberOfFilesReceived; 
 		private int _numberOfFilesImported;
 		private DateTime _lastActive;
 		private string _lastActiveDisplay;
@@ -45,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				throw new InvalidOperationException("the identifiers must match!");
 
 			this.FromAETitle = progressItem.FromAETitle;
+			this.NumberOfFilesReceived = progressItem.NumberOfFilesReceived;
 			this.NumberOfFilesImported = progressItem.NumberOfFilesImported;
 			this.LastActive = progressItem.LastActive;
 
@@ -119,6 +121,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				if (_studyDate != value)
 					_studyDate = value;
+			}
+		}
+
+		public int NumberOfFilesReceived
+		{
+			get { return _numberOfFilesReceived; }
+			protected set
+			{
+				if (_numberOfFilesReceived != value)
+					_numberOfFilesReceived = value;
 			}
 		}
 
@@ -253,14 +265,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"From",
 					delegate(ReceiveQueueItem item) { return FormatString(item.FromAETitle); },
-					1.5f);
+					0.75f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"Patient Id",
 					delegate(ReceiveQueueItem item) { return FormatString(item.PatientId); },
-					1.5f);
+					1f);
 
 			_receiveTable.Columns.Add(column);
 
@@ -280,21 +292,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 						return item.StudyDate.ToString(Format.DateFormat); 
 					},
-					1.5f);
+					0.5f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"Study Description",
 					delegate(ReceiveQueueItem item) { return FormatString(item.StudyDescription); },
-					1.5f);
+					2f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"Files Imported",
+					"Received",
+					delegate(ReceiveQueueItem item) { return item.NumberOfFilesReceived.ToString(); },
+					0.5f);
+
+			_receiveTable.Columns.Add(column);
+
+			column = new TableColumn<ReceiveQueueItem, string>(
+					"Available",
 					delegate(ReceiveQueueItem item) { return item.NumberOfFilesImported.ToString(); },
-					1.5f);
+					0.5f);
 
 			_receiveTable.Columns.Add(column);
 
