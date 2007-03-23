@@ -7,13 +7,14 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="DicomServerGroupEditComponent"/>
     /// </summary>
-    public partial class DicomServerGroupEditComponentControl : UserControl
+    public partial class DicomServerGroupEditComponentControl : CustomUserControl
     {
         private DicomServerGroupEditComponent _component;
         private BindingSource _bindingSource;
@@ -27,7 +28,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             _component = component;
 
-            AcceptClicked += new EventHandler(OnAcceptClicked);
+			this.AcceptButton = _btnAccept;
+			
+			AcceptClicked += new EventHandler(OnAcceptClicked);
             CancelClicked += new EventHandler(OnCancelClicked);
 
             _bindingSource = new BindingSource();
