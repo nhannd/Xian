@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IPatientAdminService))]
     public class PatientAdminService : ApplicationServiceBase, IPatientAdminService
     {
         #region IPatientAdminService Members

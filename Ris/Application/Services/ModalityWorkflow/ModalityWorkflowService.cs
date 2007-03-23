@@ -15,6 +15,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IModalityWorkflowService))]
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
         [ReadOperation]

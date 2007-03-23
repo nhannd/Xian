@@ -54,9 +54,11 @@
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="PostBuild.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -70,6 +72,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>PostBuild.bat "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>PostBuild.bat "$(SolutionDir)"  $(SolutionName) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

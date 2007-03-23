@@ -13,6 +13,7 @@ using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
 namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IModalityAdminService))]
     public class ModalityAdminService : ApplicationServiceBase, IModalityAdminService
     {
         [ReadOperation]

@@ -13,33 +13,28 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class WorklistService : WorkflowServiceBase, IWorklistService
+    public abstract class WorklistService : WorkflowServiceBase//, IWorklistService
     {
-        [ReadOperation]
-        public IList GetWorklist(string worklistClassName)
+        protected IList GetWorklist(string worklistClassName)
         {
             return GetWorklist(worklistClassName, null);
         }
 
-        [ReadOperation]
-        public IList GetWorklist(string worklistClassName, SearchCriteria additionalCriteria)
+        protected IList GetWorklist(string worklistClassName, SearchCriteria additionalCriteria)
         {
             IExtensionPoint worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
             IWorklist worklist = (IWorklist)worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
             return worklist.GetWorklist(this.PersistenceContext, additionalCriteria);
         }
 
-        [ReadOperation]
-        public IList GetQueryResultForWorklistItem(string worklistClassName, IWorklistItem item)
+        protected IList GetQueryResultForWorklistItem(string worklistClassName, IWorklistItem item)
         {
             IExtensionPoint worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
             IWorklist worklist = (IWorklist)worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
             return worklist.GetQueryResultForWorklistItem(this.PersistenceContext, item);
         }
 
-        [ReadOperation]
-        public RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail)
+        protected RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail)
         {
             IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
             IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
@@ -59,20 +54,17 @@ namespace ClearCanvas.Ris.Application.Services
             return rp;
         }
 
-        [UpdateOperation]
-        public void UpdateRequestedProcedure(RequestedProcedure rp)
+        protected void UpdateRequestedProcedure(RequestedProcedure rp)
         {
             this.PersistenceContext.Lock(rp, DirtyState.Dirty);
         }
 
-        [UpdateOperation]
-        public void AddCheckInProcedureStep(CheckInProcedureStep cps)
+        protected void AddCheckInProcedureStep(CheckInProcedureStep cps)
         {
             this.PersistenceContext.Lock(cps, DirtyState.New);
         }
 
-        [ReadOperation]
-        public IWorklistItem LoadWorklistItemPreview(IWorklistQueryResult result)
+        protected IWorklistItem LoadWorklistItemPreview(IWorklistQueryResult result)
         {
             //IModalityProcedureStepBroker spsBroker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
             //IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();
@@ -97,21 +89,19 @@ namespace ClearCanvas.Ris.Application.Services
             return null;
         }
 
-        [UpdateOperation]
-        public void ExecuteOperation(EntityRef stepRef, string operationClassName)
+        protected void ExecuteOperation(EntityRef stepRef, string operationClassName)
         {
             ExecuteOperation(LoadStep(stepRef),
                 new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint(), operationClassName);
         }
 
-        [ReadOperation]
-        public IDictionary<string, bool> GetOperationEnablement(EntityRef stepRef)
+        protected IDictionary<string, bool> GetOperationEnablement(EntityRef stepRef)
         {
             return GetOperationEnablement(LoadStep(stepRef),
                 new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint());
         }
 
-        private ModalityProcedureStep LoadStep(EntityRef stepRef)
+        protected ModalityProcedureStep LoadStep(EntityRef stepRef)
         {
             return PersistenceContext.GetBroker<IModalityProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
         }

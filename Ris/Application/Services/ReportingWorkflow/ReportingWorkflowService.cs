@@ -14,6 +14,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
+    [ServiceImplementsContract(typeof(IReportingWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService
     {

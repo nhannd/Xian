@@ -14,6 +14,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
+    [ServiceImplementsContract(typeof(IRegistrationWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class RegistrationWorkflowService : WorklistService, IRegistrationWorkflowService
     {

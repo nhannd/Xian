@@ -14,6 +14,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IStaffAdminService))]
     public class StaffAdminService : ApplicationServiceBase, IStaffAdminService
     {
         [ReadOperation]

@@ -6,6 +6,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
     /// <summary>
     /// Provides data loading/saving for the <see cref="StaffSummaryComponent"/> and <see cref="StaffEditorComponent"/>
     /// </summary>
+    [ServiceContract]
     public interface IPractitionerAdminService
     {
         /// <summary>

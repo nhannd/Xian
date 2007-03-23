@@ -19,6 +19,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IHL7QueueService))]
     public class HL7QueueService : ApplicationServiceBase, IHL7QueueService
     {
         //TODO:  The following three service methods need a new home

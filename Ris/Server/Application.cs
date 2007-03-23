@@ -8,7 +8,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Test.Services;
 using System.IdentityModel.Policy;
 using System.Security.Cryptography.X509Certificates;
 using ClearCanvas.Ris.Application.Services;
@@ -30,8 +29,8 @@ namespace ClearCanvas.Ris.Server
 
             _serviceHosts = new List<ServiceHost>();
 
-            _serviceHosts.AddRange(MountServices(new CoreServiceExtensionPoint(), baseAddress));
-            _serviceHosts.AddRange(MountServices(new ApplicationServiceExtensionPoint(), baseAddress));
+            MountServices(new CoreServiceExtensionPoint(), baseAddress);
+            MountServices(new ApplicationServiceExtensionPoint(), baseAddress);
 
             Console.WriteLine("Starting services...");
             foreach (ServiceHost host in _serviceHosts)
@@ -52,14 +51,12 @@ namespace ClearCanvas.Ris.Server
 
         #endregion
 
-        private List<ServiceHost> MountServices(IExtensionPoint serviceLayer, string baseAddress)
+        private void MountServices(IExtensionPoint serviceLayer, string baseAddress)
         {
             WSHttpBinding binding = new WSHttpBinding();
             binding.Security.Mode = SecurityMode.Message;
             binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
 
-
-            List<ServiceHost> hostedServices = new List<ServiceHost>();
 
             IServiceFactory serviceManager = new ServiceFactory(serviceLayer);
             ICollection<Type> serviceClasses = serviceManager.ListServices();
@@ -69,7 +66,7 @@ namespace ClearCanvas.Ris.Server
                     serviceClass.GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
                 if (a != null)
                 {
-                    Console.WriteLine("Mounting service " + serviceClass.FullName);
+                    Console.WriteLine("Mounting service " + serviceClass.Name);
 
                     // create service host
                     Uri uri = new Uri(string.Format("{0}/{1}", baseAddress, a.ServiceContract.FullName));
@@ -107,16 +104,13 @@ namespace ClearCanvas.Ris.Server
                     host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                     host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
 
-                        
-
-                    hostedServices.Add(host);
+                    _serviceHosts.Add(host);
                 }
                 else
                 {
-                    Console.WriteLine("Unknown contract for service " + serviceClass.FullName);
+                    Console.WriteLine("Unknown contract for service " + serviceClass.Name);
                 }
             }
-            return hostedServices;
         }
     }
 }

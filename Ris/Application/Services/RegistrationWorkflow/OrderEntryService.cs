@@ -18,6 +18,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IOrderEntryService))]
     public class OrderEntryService : ApplicationServiceBase, IOrderEntryService
     {
         [ReadOperation]

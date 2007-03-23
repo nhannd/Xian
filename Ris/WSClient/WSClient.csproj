@@ -92,9 +92,9 @@
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Test\Common\ClearCanvas.Ris.Test.Common.csproj">
-      <Project>{2DE2842A-D925-4D05-ADC7-A8675DBB19D2}</Project>
-      <Name>ClearCanvas.Ris.Test.Common</Name>
+    <ProjectReference Include="..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
+      <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
+      <Name>ClearCanvas.Ris.Application.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

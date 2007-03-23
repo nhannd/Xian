@@ -1,4 +1,4 @@
-:: RIS specific postbuild step
+:: RIS-Server specific postbuild step
 
 echo Executing RIS post-build step
 
@@ -34,10 +34,11 @@ copy "..\..\..\..\..\Workflow\Hibernate\bin\%1\ClearCanvas.Workflow.Hibernate.dl
 copy "..\..\..\..\..\Healthcare\bin\%1\ClearCanvas.Healthcare.dll" .\plugins
 copy "..\..\..\..\..\Healthcare\Hibernate\bin\%1\ClearCanvas.Healthcare.Hibernate.dll" .\plugins
 
+copy "..\..\..\..\..\HL7\bin\%1\ClearCanvas.HL7.dll" .\plugins
+
 :: Ris
-copy "..\..\..\..\..\Ris\Test\Common\bin\%1\ClearCanvas.Ris.Test.Common.dll" .\plugins
-copy "..\..\..\..\..\Ris\Test\Services\bin\%1\ClearCanvas.Ris.Test.Services.dll" .\plugins
+copy "..\..\..\..\..\Ris\Application\Common\bin\%1\ClearCanvas.Ris.Application.Common.dll" .\plugins
+copy "..\..\..\..\..\Ris\Application\Services\bin\%1\ClearCanvas.Ris.Application.Services.dll" .\plugins
 copy "..\..\..\..\..\Ris\Server\bin\%1\ClearCanvas.Ris.Server.dll" .\plugins
 
-copy "..\..\..\..\..\HL7\bin\%1\ClearCanvas.HL7.dll" .\plugins
 

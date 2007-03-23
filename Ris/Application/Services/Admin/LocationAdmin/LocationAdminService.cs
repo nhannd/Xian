@@ -13,6 +13,7 @@ using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(ILocationAdminService))]
     public class LocationAdminService : ApplicationServiceBase, ILocationAdminService
     {
         /// <summary>

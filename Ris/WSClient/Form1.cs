@@ -8,19 +8,18 @@ using System.Windows.Forms;
 
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Test.Common;
 using System.IO;
 
 namespace WSClient
 {
     public partial class Form1 : Form
     {
-        ChannelFactory<ITestService> _testServiceFactory;
+//        ChannelFactory<ITestService> _testServiceFactory;
 
         public Form1()
         {
             InitializeComponent();
-
+/*
             WSHttpBinding binding = new WSHttpBinding();
             binding.Security.Mode = SecurityMode.Message;
             binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
@@ -32,13 +31,15 @@ namespace WSClient
             _testServiceFactory.Credentials.UserName.UserName = "me";
             _testServiceFactory.Credentials.UserName.Password = "mmm";
             _testServiceFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
+
+ */     
         }
 
         private void _sendButton_Click(object sender, EventArgs e)
         {
             try
             {
-                ITestService testService = _testServiceFactory.CreateChannel();
+ /*               ITestService testService = _testServiceFactory.CreateChannel();
                 using (testService as IDisposable)
                 {
                     EntityRef profileRef = testService.FindOnePatientProfile(_number.Text);
@@ -58,18 +59,11 @@ namespace WSClient
 
                     _result.Text = text.ToString();
                 }
+  */
             }
             catch (TimeoutException timeProblem)
             {
                 Console.WriteLine("The service operation timed out. " + timeProblem.Message);
-            }
-            catch (ItsMondayException realMonday)
-            {
-                Console.WriteLine(realMonday.Message);
-            }
-            catch (FaultException<ItsMondayException> mondayException)
-            {
-                Console.WriteLine(mondayException.Detail.Message);
             }
             catch (FaultException unknownFault)
             {

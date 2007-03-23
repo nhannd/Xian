@@ -15,6 +15,7 @@ using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
 namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IPractitionerAdminService))]
     public class PractitionerAdminService : ApplicationServiceBase, IPractitionerAdminService
     {
         [ReadOperation]

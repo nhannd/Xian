@@ -4,6 +4,8 @@ using System.Text;
 using System.IdentityModel.Claims;
 using System.IdentityModel.Policy;
 using System.Security.Principal;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -30,8 +32,18 @@ namespace ClearCanvas.Ris.Server
             IList<IIdentity> identities = obj as IList<IIdentity>;
             if (obj == null || identities.Count <= 0)
                 return false;
+/*
+            Platform.GetService<IAuthenticationService>(
+                delegate(IAuthenticationService service)
+                {
+                    IIdentity clientIdentity = identities[0];
+                    string[] permissions = service.ListPermissionsForUser(clientIdentity.Name);
+                    context.Properties["Principal"] = new GenericPrincipal(clientIdentity, permissions);
+                });
+ */
+            IIdentity clientIdentity = identities[0];
+            context.Properties["Principal"] = new GenericPrincipal(clientIdentity, new string[0]);
 
-            context.Properties["Principal"] = new GenericPrincipal(identities[0], new string[] { "everyone" });
             return true;
         }
     }

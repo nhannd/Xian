@@ -29,4 +29,4 @@ copy "..\..\..\..\..\ReferencedAssemblies\Nhibernate.dll" ".\Common"
 copy "..\..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" ".\Common"
 
 :: Run the solution specific batch file
-call ""%1\PostBuild.bat"" %2
+call ""%1\%2.bat"" %3

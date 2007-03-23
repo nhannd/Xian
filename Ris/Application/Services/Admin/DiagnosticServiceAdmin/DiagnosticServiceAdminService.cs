@@ -13,6 +13,7 @@ using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IDiagnosticServiceAdminService))]
     public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
         [UpdateOperation]

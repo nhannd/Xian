@@ -13,6 +13,7 @@ using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IFacilityAdminService))]
     public class FacilityAdminService : ApplicationServiceBase, IFacilityAdminService
     {
         [ReadOperation]
