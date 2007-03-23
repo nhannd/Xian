@@ -9,10 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
     public class ListHL7QueueItemsRequest : DataContractBase
     {
         [DataMember]
-        public string Direction;
+        public EnumValueInfo Direction;
 
         [DataMember]
-        public string StatusCode;
+        public EnumValueInfo StatusCode;
 
         [DataMember]
         public DateTime? StartingCreationDateTime;
@@ -27,19 +27,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         public DateTime? EndingUpdateDateTime;
 
         [DataMember]
-        public string Peer;
+        public EnumValueInfo Peer;
 
         [DataMember]
         public string MessageType;
 
         [DataMember]
-        public string MessageEvent;
+        public EnumValueInfo MessageVersion;
 
         [DataMember]
-        public string MessageVersion;
-
-        [DataMember]
-        public string MessageFormat;
-
+        public EnumValueInfo MessageFormat;
     }
 }

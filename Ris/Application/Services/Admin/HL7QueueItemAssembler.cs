@@ -77,11 +77,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
 
-            criteria.Direction.EqualTo(context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[request.Direction].Code);
+            criteria.Direction.EqualTo(request.Direction.Code);
 
-            criteria.Status.Code.EqualTo(context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[request.StatusCode].Code);
+            criteria.Status.Code.EqualTo(request.StatusCode.Code);
 
-            if(request.StartingCreationDateTime.HasValue && request.EndingCreationDateTime.HasValue)
+            if (request.StartingCreationDateTime.HasValue && request.EndingCreationDateTime.HasValue)
                 criteria.Status.CreationDateTime.Between(request.StartingCreationDateTime.Value, request.EndingCreationDateTime.Value);
             else if (request.StartingCreationDateTime.HasValue)
                 criteria.Status.CreationDateTime.MoreThanOrEqualTo(request.StartingCreationDateTime.Value);
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 criteria.Status.UpdateDateTime.LessThanOrEqualTo(request.StartingUpdateDateTime.Value);
 
             criteria.Message.MessageType.EqualTo(request.MessageType);
-            criteria.Message.Peer.EqualTo(context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[request.Peer].Code);
+            criteria.Message.Peer.EqualTo(request.Peer.Code);
 
             return criteria;
         }

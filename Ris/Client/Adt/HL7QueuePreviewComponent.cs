@@ -2,16 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Iesi.Collections;
+
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-
-using Iesi.Collections;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -26,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
         ClickHandlerDelegate DefaultAction { get; set; }
 
-        EntityRef<HL7QueueItem> SelectedHL7QueueItem { get; }
+        HL7QueueItemDetail SelectedHL7QueueItem { get; }
         event EventHandler SelectedHL7QueueItemChanged;
 
         void Refresh();
@@ -68,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 set { _component._defaultAction = value; }
             }
 
-            public EntityRef<HL7QueueItem> SelectedHL7QueueItem
+            public HL7QueueItemDetail SelectedHL7QueueItem
             {
                 get { return _component.SelectedHL7QueueItem; }
             }
@@ -87,22 +89,21 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private HL7QueueItem _selectedHL7QueueItem;
+        private HL7QueueItemDetail _selectedHL7QueueItem;
         private event EventHandler _selectedHL7QueueItemChanged;
 
-        private HL7QueueItemTableData _queue;
-        private IHL7QueueService _hl7QueueService;
+        private HL7QueueItemSummaryTable _queue;
 
-        private IPagingController<HL7QueueItem> _pagingController;
-        private PagingActionModel<HL7QueueItem> _pagingActionHandler;
+        //private IPagingController<HL7QueueItemSummary> _pagingController;
+        //private PagingActionModel<HL7QueueItemSummary> _pagingActionHandler;
 
         private ToolSet _toolSet;
         private ClickHandlerDelegate _defaultAction;
 
-        private HL7MessageDirection _direction;
-        private HL7MessagePeer _peer;
-        private string _type;
-        private HL7MessageStatusCode _status;
+        private EnumValueInfo _direction;
+        private EnumValueInfo _peer;
+        private string _type;        
+        private EnumValueInfo _status;
         private DateTime? _createdOnStart;
         private DateTime? _createdOnEnd;
         private DateTime? _updatedOnStart;
@@ -113,35 +114,59 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _typeChecked;
         private bool _statusChecked;
 
-        private HL7MessageDirectionEnumTable _directionChoices;
-        private HL7MessagePeerEnumTable _peerChoices;
-        private string[] _dummyTypes = { "ADT_A01", "ADT_A02", "ADT_A03", "ADT_A04", "ADT_A05", "ADT_A06", "ADT_A07", "ADT_A08", "ADT_A09", "ADT_A10",
-                                         /*"ADT_A11", "ADT_A12", "ADT_A13", "ADT_A14", "ADT_A15", "ADT_A16", "ADT_A17", "ADT_A18", "ADT_A19", "ADT_A20",
-                                         "ADT_A21", "ADT_A22", "ADT_A23", "ADT_A24", "ADT_A25", "ADT_A26", "ADT_A27", "ADT_A28", "ADT_A29", "ADT_A30",*/
-                                         "ORM_O01"};
-        private HL7MessageStatusCodeEnumTable _statusChoices;
-
+        private List<EnumValueInfo> _directionChoices;
+        private List<EnumValueInfo> _peerChoices;
+        private List<string> _typeChoices;
+        private List<EnumValueInfo> _statusChoices;
 
         public override void Start()
         {
             base.Start();
 
-            _hl7QueueService = ApplicationContext.GetService<IHL7QueueService>();
-            _queue = new HL7QueueItemTableData(_hl7QueueService);
+            _queue = new HL7QueueItemSummaryTable();
 
-            _pagingController = new PagingController<HL7QueueItem>(
-                delegate (SearchCriteria criteria, SearchResultPage page)
+            //TODO: figure out how to replace use of SearchCriteria in PagingController
+
+            //_pagingController = new PagingController<HL7QueueItemSummary>(
+            //    delegate (SearchCriteria criteria, SearchResultPage page)
+            //    {
+            //        Platform.GetService<IHL7QueueService>(
+            //            delegate(IHL7QueueService service)
+            //            {
+            //                try
+            //                {
+            //                    formResponse = service.GetHL7QueueFormData(formRequest);
+            //                }
+            //                catch (Exception e)
+            //                {
+            //                    ExceptionHandler.Report(e, desktopwindow);
+            //                }
+            //            });
+            //        return _hl7QueueService.GetHL7QueueItems((HL7QueueItemSearchCriteria)criteria, page); 
+            //    }
+            //);
+            //_pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue);
+
+            GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
+            GetHL7QueueFormDataResponse formResponse;
+
+            Platform.GetService<IHL7QueueService>(
+                delegate(IHL7QueueService service)
                 {
-                    return _hl7QueueService.GetHL7QueueItems((HL7QueueItemSearchCriteria)criteria, page); 
-                }
-            );
-            _pagingActionHandler = new PagingActionModel<HL7QueueItem>(_pagingController, _queue);
+                    try
+                    {
+                        formResponse = service.GetHL7QueueFormData(formRequest);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopwindow);
+                    }
+                });
 
-            _directionChoices = _hl7QueueService.GetHL7MessageDirectionEnumTable();
-            _peerChoices = _hl7QueueService.GetHL7MessagePeerEnumTable();
-            _statusChoices = _hl7QueueService.GetHL7MessageStatusCodeEnumTable();
-
-            _type = _dummyTypes[0];
+            _directionChoices = formResponse.DirectionChoices;
+            _peerChoices = formResponse.PeerChoices;
+            _statusChoices = formResponse.StatusCodeChoices;
+            _typeChoices = formResponse.MessageTypeChoices;
 
             _toolSet = new ToolSet(new HL7QueueToolExtensionPoint(), new HL7QueueToolContext(this));
         }
@@ -151,8 +176,15 @@ namespace ClearCanvas.Ris.Client.Adt
         #region Direction
         public string Direction
         {
-            get { return _directionChoices[_direction].Value; }
-            set { _direction = _directionChoices[value].Code; }
+            get { return _direction == null ? "" : _direction.Value; }
+            set 
+            {
+                _direction = string.IsNullOrEmpty(value)
+                    ? null
+                    : CollectionUtils.SelectFirst<EnumValueInfo>(
+                        _directionChoices,
+                        delegate(EnumValueInfo info) { return info.Value == value; });
+            }
         }
 
         public bool DirectionChecked
@@ -161,17 +193,24 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _directionChecked = value; }
         }
 
-        public string[] DirectionChoices
+        public IList<string> DirectionChoices
         {
-            get { return _directionChoices.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_directionChoices); }
         }
         #endregion
 
         #region Peer
         public string Peer
         {
-            get { return _peerChoices[_peer].Value; }
-            set { _peer = _peerChoices[value].Code; }
+            get { return _peer == null ? "" : _peer.Value; }
+            set
+            {
+                _peer = string.IsNullOrEmpty(value)
+                    ? null
+                    : CollectionUtils.SelectFirst<EnumValueInfo>(
+                        _peerChoices,
+                        delegate(EnumValueInfo info) { return info.Value == value; });
+            }
         }
 
         public bool PeerChecked
@@ -180,9 +219,9 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _peerChecked = value; }
         }
 
-        public string[] PeerChoices
+        public IList<string> PeerChoices
         {
-            get { return _peerChoices.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_peerChoices); }
         }
         #endregion
 
@@ -199,17 +238,24 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _typeChecked = value; }
         }
 
-        public string[] TypeChoices
+        public IList<string> TypeChoices
         {
-            get { return _dummyTypes; }
+            get { return _typeChoices.ToArray(); }
         }
         #endregion
 
         #region Status
         public string Status
         {
-            get { return _statusChoices[_status].Value; }
-            set { _status = _statusChoices[value].Code; }
+            get { return _status == null ? "" : _status.Value; }
+            set
+            {
+                _status = string.IsNullOrEmpty(value)
+                    ? null
+                    : CollectionUtils.SelectFirst<EnumValueInfo>(
+                        _statusChoices,
+                        delegate(EnumValueInfo info) { return info.Value == value; });
+            }
         }
 
         public bool StatusChecked
@@ -218,9 +264,9 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _statusChecked = value; }
         }
 
-        public string[] StatusChoices
+        public IList<string> StatusChoices
         {
-            get { return _statusChoices.Values; }
+            get { return EnumValueUtils.GetDisplayValues(_statusChoices); }
         }
         #endregion
 
@@ -254,7 +300,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        public HL7QueueItemTableData Queue
+        public HL7QueueItemSummaryTable Queue
         {
             get { return _queue; }
         }
@@ -264,7 +310,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get 
             {
                 if (_selectedHL7QueueItem != null)
-                    return _selectedHL7QueueItem.Message.Format == HL7MessageFormat.Er7 ? _selectedHL7QueueItem.Message.Text.Replace("\r", "\r\n") : _selectedHL7QueueItem.Message.Text;
+                {
+                    return _selectedHL7QueueItem.MessageFormat.Code == "Er7" 
+                        ? _selectedHL7QueueItem.MessageText.Replace("\r", "\r\n") 
+                        : _selectedHL7QueueItem.MessageText;
+                }
                 else
                     return string.Empty;
             }
@@ -283,7 +333,8 @@ namespace ClearCanvas.Ris.Client.Adt
             get
             {
                 ActionModelNode node = ActionModelRoot.CreateModel(this.GetType().FullName, "hl7Queue-toolbar", _toolSet.Actions);
-                node.Merge(_pagingActionHandler);
+                //TODO: Restore paging
+                //node.Merge(_pagingActionHandler);
                 return node;
             }
         }
@@ -292,9 +343,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region HL7QueueToolContext Helpers
 
-        public EntityRef<HL7QueueItem> SelectedHL7QueueItem
+        public HL7QueueItemDetail SelectedHL7QueueItem
         {
-            get { return _selectedHL7QueueItem == null ? null : new EntityRef<HL7QueueItem>(_selectedHL7QueueItem); }
+            get { return _selectedHL7QueueItem; }
         }
 
         public event EventHandler SelectedHL7QueueItemChanged
@@ -312,10 +363,27 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void SetSelectedItem(ISelection selection)
         {
-            HL7QueueItem queueItem = selection.Item as HL7QueueItem;
-            if (queueItem != _selectedHL7QueueItem)
+            HL7QueueItemSummary selectedSummaryTableItem = selection.Item as HL7QueueItemSummary;
+            if (selectedSummaryTableItem.QueueItemRef != _selectedHL7QueueItem.QueueItemRef)
             {
-                _selectedHL7QueueItem = queueItem;
+                LoadHL7QueueItemRequest request = new LoadHL7QueueItemRequest(selectedSummaryTableItem.QueueItemRef);
+                LoadHL7QueueItemResponse response;
+
+                Platform.GetService<IHL7QueueService>(
+                     delegate(IHL7QueueService service)
+                     {
+                         try
+                         {
+                             response = service.LoadHL7QueueItem(request);
+                         }
+                         catch (Exception e)
+                         {
+                             ExceptionHandler.Report(e, desktopwindow);
+                         }
+                     });
+
+                _selectedHL7QueueItem = response.QueueItemDetail;
+
                 EventsHelper.Fire(_selectedHL7QueueItemChanged, this, EventArgs.Empty);
                 NotifyPropertyChanged("Message");
             }
@@ -323,48 +391,49 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void ShowAllItems()
         {
-            HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
-            criteria.Status.CreationDateTime.SortAsc(0);
-
-            UpdateTableData(criteria);
+            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
+            UpdateTableData(request);
         }
         
         public void ShowFilteredItems()
         {
-            HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
+            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
 
-            if (_directionChecked)
-                criteria.Direction.EqualTo(_direction);
-            if (_peerChecked)
-                criteria.Message.Peer.EqualTo(_peer);
-            if (_typeChecked)
-                criteria.Message.MessageType.EqualTo(_type);
-            if (_statusChecked)
-                criteria.Status.Code.EqualTo(_status);
+            request.Direction = _directionChecked ? _direction : null;
+            request.Peer = _peerChecked ? _peer : null;
+            request.MessageType = _typeChecked ? _type : null;
+            request.StatusCode = _statusChecked ? _status : null;
 
-            if (_createdOnStart.HasValue && _createdOnEnd.HasValue)
-                criteria.Status.CreationDateTime.Between(_createdOnStart.Value, _createdOnEnd.Value);
-            else if (_createdOnStart.HasValue)
-                criteria.Status.CreationDateTime.MoreThanOrEqualTo(_createdOnStart.Value);
-            else if (_createdOnEnd.HasValue)
-                criteria.Status.CreationDateTime.LessThanOrEqualTo(_createdOnEnd.Value);
+            request.StartingCreationDateTime = _createdOnStart.HasValue ? _createdOnStart.Value : null;
+            request.EndingCreationDateTime = _createdOnEnd.HasValue ? _createdOnEnd.Value : null;
 
-            if (_updatedOnStart.HasValue && _updatedOnEnd.HasValue)
-                criteria.Status.UpdateDateTime.Between(_updatedOnStart.Value, _updatedOnEnd.Value);
-            else if (_updatedOnStart.HasValue)
-                criteria.Status.UpdateDateTime.MoreThanOrEqualTo(_updatedOnStart.Value);
-            else if (_updatedOnEnd.HasValue)
-                criteria.Status.UpdateDateTime.LessThanOrEqualTo(_updatedOnEnd.Value);
+            request.StartingUpdateDateTime = _updatedOnStart.HasValue ? _updatedOnStart.Value : null;
+            request.EndingUpdateDateTime = _updatedOnEnd.HasValue ? _updatedOnEnd.Value : null;
 
-            criteria.Status.CreationDateTime.SortAsc(0);
-
-            UpdateTableData(criteria);
+            UpdateTableData(request);
         }
 
-        private void UpdateTableData(HL7QueueItemSearchCriteria criteria)
+        private void UpdateTableData(ListHL7QueueItemsRequest request)
         {
+            ListHL7QueueItemsResponse response;
+
+            Platform.GetService<IHL7QueueService>(
+                delegate(IHL7QueueService service)
+                {
+                    try
+                    {
+                        response = service.ListHL7QueueItems(request);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopwindow);
+                    }
+                });
+
             _queue.Items.Clear();
-            _queue.Items.AddRange(_pagingController.GetFirst(criteria));
+            //TODO: restore pagin functionality
+            //_queue.Items.AddRange(_pagingController.GetFirst(criteria));
+            _queue.Items.AddRange(response.QueueItems);
         }
     }
 }

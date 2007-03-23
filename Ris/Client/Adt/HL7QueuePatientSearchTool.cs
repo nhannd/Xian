@@ -7,6 +7,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -64,18 +66,30 @@ namespace ClearCanvas.Ris.Client.Adt
             OpenPatient(this.Context.SelectedHL7QueueItem, this.Context.DesktopWindow);
         }
 
-        protected void OpenPatient(EntityRef<HL7QueueItem> hl7QueueItemRef, IDesktopWindow window)
+        protected void OpenPatient(HL7QueueItemDetail selectedQueueItem, IDesktopWindow window)
         {
-            IHL7QueueService service = ApplicationContext.GetService<IHL7QueueService>();
-            PatientProfile profile = service.GetReferencedPatient(hl7QueueItemRef);
+            GetReferencedPatientRequest request = new GetReferencedPatientRequest(selectedQueueItem.QueueItemRef);
+            GetReferencedPatientResponse response;
 
-            if (profile != null)
+            Platform.GetService<IHL7QueueService>(
+                delegate(IHL7QueueService service)      
+                {
+                    try
+                    {
+                        response = service.GetReferencedPatient(request);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopwindow);
+                    }
+                });
+
+            if (response != null && response.PatientProfileRef != null)
             {
-                EntityRef<PatientProfile> profileRef = new EntityRef<PatientProfile>(profile);
-                Document doc = DocumentManager.Get(profileRef.ToString());
+                Document doc = DocumentManager.Get(response.PatientProfileRef.ToString());
                 if (doc == null)
                 {
-                    doc = new PatientOverviewDocument(profileRef, window);
+                    doc = new PatientOverviewDocument(response.PatientProfileRef, window);
                     doc.Open();
                 }
                 else

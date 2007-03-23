@@ -42,7 +42,7 @@
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="OrderEntryComponent.cs" />
-    <Compile Include="HL7QueueItemTableData.cs" />
+    <Compile Include="HL7QueueItemSummaryTable.cs" />
     <Compile Include="HL7QueuePatientSearchTool.cs" />
     <Compile Include="HL7QueuePreviewComponent.cs" />
     <Compile Include="HL7QueuePreviewTool.cs" />
