@@ -3,17 +3,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
   </PropertyGroup>
   <Target Name="BuildSolution" >
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\Enterprise\Authentication" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\Enterprise\Authentication" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\Enterprise\Configuration" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\Enterprise\Configuration" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\Workflow" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\Workflow" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\Healthcare" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\Healthcare" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\HL7" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\HL7" />
-    <MSBuild Projects=".\Ris.sln" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects="..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects=".\Client\RisClient.proj" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects=".\Server\RisServer.proj" Properties="Configuration=$(Configuration)" />
   </Target>
 </Project>
