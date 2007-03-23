@@ -82,7 +82,7 @@
     <Compile Include="VisitPractitionersSummaryComponent.cs" />
     <Compile Include="VisitSummaryComponent.cs" />
     <Compile Include="VisitSummaryTool.cs" />
-    <Compile Include="VisitTable.cs" />
+    <Compile Include="VisitSummaryTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTable.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />

@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _patientProfileRef;
         private EntityRef _patientRef;
 
-        private VisitTable _visitTable;
+        private VisitSummaryTable _visitTable;
         private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
         private List<FacilitySummary> _facilityChoices;
         private List<PractitionerSummary> _orderingPhysicianChoices;
@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                _visitTable = new VisitTable();
+                _visitTable = new VisitSummaryTable();
 
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)

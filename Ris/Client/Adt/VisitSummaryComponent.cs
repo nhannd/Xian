@@ -9,6 +9,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -26,14 +27,15 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(VisitSummaryComponentViewExtensionPoint))]
     public class VisitSummaryComponent : ApplicationComponent
     {
-        private EntityRef<Patient> _patientRef;
-        private EntityRef<PatientProfile> _patientProfileRef;
-        private Patient _patient;
-        private PatientProfile _patientProfile;
+        private EntityRef _patientRef;
+        //private EntityRef<Patient> _patientRef;
+        //private EntityRef<PatientProfile> _patientProfileRef;
+        //private Patient _patient;
+        //private PatientProfile _patientProfile;
 
-        private IAdtService _adtService;
-        private VisitTable _visitTable;
-        private Visit _currentVisitSelection;
+        //private IAdtService _adtService;
+        private VisitSummaryTable _visitTable;
+        private VisitSummary _currentVisitSelection;
 
         private CrudActionModel _visitActionHandler;
 
@@ -50,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _patient = _adtService.LoadPatientAndAllProfiles(_patientProfileRef);
             _patientRef = new EntityRef<Patient>(_patient);
 
-            _visitTable = new VisitTable();
+            _visitTable = new VisitSummaryTable();
 
             _visitActionHandler = new CrudActionModel();
             _visitActionHandler.Add.SetClickHandler(AddVisit);

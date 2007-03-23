@@ -5,12 +5,13 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using System.Text;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class VisitTable : Table<VisitSummary>
+    public class VisitSummaryTable : Table<VisitSummary>
     {
-        public VisitTable()
+        public VisitSummaryTable()
         {
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnVisitNumber,
                 delegate(VisitSummary v) { return string.Format("{0} {1}", v.VisitNumberAssigningAuthority, v.VisitNumberId); },
@@ -20,7 +21,19 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnVisitType,
                 delegate(VisitSummary v)
                 {
-                    return patientClasses[v.PatientClass].Value + (v.PatientType != PatientType.X ? " - " + patientTypes[v.PatientType].Value : v.AdmissionType != AdmissionType.X ? " - " + admissionTypes[v.AdmissionType].Value : "");
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(v.PatientClass);
+                    if (!string.IsNullOrEmpty(v.PatientType))
+                    {
+                        sb.Append(" - ");
+                        sb.Append(v.PatientType);
+                    }
+                    if (!string.IsNullOrEmpty(v.AdmissionType))
+                    {
+                        sb.Append(" - ");
+                        sb.Append(v.AdmissionType);
+                    }
+                    return sb.ToString();
                 },
                 1.0f));
             
@@ -35,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             //status
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnStatus,
-                delegate(VisitSummary v) { return v.VisitStatus.Value; },
+                delegate(VisitSummary v) { return v.Status; },
                 1.0f));
 
             //admit date/time
