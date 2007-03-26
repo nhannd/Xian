@@ -23,10 +23,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         public FolderExplorerComponentControl(FolderExplorerComponent component)
         {
             InitializeComponent();
-
             _component = component;
 
-            // TODO add .NET databindings to _component
             _folderTreeView.Tree = _component.FolderTree;
             _folderTreeView.DataBindings.Add("Selection", _component, "SelectedFolder", true, DataSourceUpdateMode.OnPropertyChanged);
             _folderTreeView.MenuModel = _component.FoldersContextMenuModel;

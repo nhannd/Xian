@@ -52,8 +52,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         _patientRef = response.PatientRef;
                         _patientProfileRef = response.PatientProfileRef;
 
+                        //TODO: PersonNameDetail formatting
                         this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
-                            Format.Custom(response.PatientDetail.Name), Format.Custom(response.PatientDetail.Mrn)));                    
+                            String.Format("{0}, {1}", response.PatientDetail.Name.FamilyName, response.PatientDetail.Name.GivenName), 
+                            String.Format("{0} {1}", response.PatientDetail.MrnAssigningAuthority, response.PatientDetail.Mrn)));                    
                     });
 
                 _visitTable = new VisitSummaryTable();
@@ -75,8 +77,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 

@@ -25,8 +25,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders.View.WinForms
         {
             InitializeComponent();
             _component = component;
-
-            // TODO add .NET databindings to _component
         }
 
         private void _okButton_Click(object sender, EventArgs e)

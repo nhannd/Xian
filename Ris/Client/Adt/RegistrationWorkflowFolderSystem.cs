@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void ExecuteOperation(string operationName)
         {
-            //TODO:
+            //TODO: Update ExecuteOperation
 
             //WorklistItem selectedItem = CollectionUtils.FirstElement<WorklistItem>(this.SelectedItems);
             //_workflowService.ExecuteOperation(selectedItem.ProcedureStep, operationName);

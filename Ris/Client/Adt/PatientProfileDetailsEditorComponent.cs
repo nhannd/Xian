@@ -30,8 +30,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private string[] _dummyHealthcardAssigningAuthorityChoices = new string[] { "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
         private string[] _dummyMrnAssigningAuthorityChoices = new string[] { "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
 
-        public PatientProfileDetailsEditorComponent()
+        public PatientProfileDetailsEditorComponent(List<EnumValueInfo> sexChoices)
         {
+            _sexChoices = sexChoices;
         }
 
         /// <summary>

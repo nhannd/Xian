@@ -24,13 +24,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnHealthcardNumber,
                 delegate(RegistrationWorklistItem item) { return Format.Custom(item.Healthcard.Id); }, 1.0f));
-
-            //TODO: Date formatting
-            //this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDateOfBirth,
-            //    delegate(RegistrationWorklistItem item) { return Format.Date(item.DateOfBirth); }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDateOfBirth,
-                delegate(RegistrationWorklistItem item) { return item.DateOfBirth.ToString(); }, 1.0f));
-
+                delegate(RegistrationWorklistItem item) { return Format.Date(item.DateOfBirth); }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSex,
                 delegate(RegistrationWorklistItem item) { return Format.Custom(item.Sex); }, 0.5f));
         }

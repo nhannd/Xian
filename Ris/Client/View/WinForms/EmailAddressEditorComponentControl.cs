@@ -24,14 +24,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             :base(component)
         {
             InitializeComponent();
-
             _component = component;
 
-            // TODO add .NET databindings to _component
             _address.DataBindings.Add("Value", _component, "Address", true, DataSourceUpdateMode.OnPropertyChanged);
             _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
             _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
-
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

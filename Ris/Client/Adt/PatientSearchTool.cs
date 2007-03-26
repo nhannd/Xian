@@ -33,8 +33,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Initialize()
         {
             base.Initialize();
-
-            // TODO: add any significant initialization code here rather than in the constructor
         }
 
         public void Search()

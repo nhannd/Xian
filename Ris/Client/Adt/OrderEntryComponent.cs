@@ -172,8 +172,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
@@ -266,11 +264,12 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
+                //TODO: PersonNameDetail formatting
                 List<string> physicianStrings = new List<string>();
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
                     CollectionUtils.Map<PractitionerSummary, string, List<string>>(_orderingPhysicianChoices,
-                            delegate(PractitionerSummary p) { return Format.Custom(p.PersonNameDetail); }));
+                            delegate(PractitionerSummary p) { return String.Format("{0}, {1}", p.PersonNameDetail.FamilyName, p.PersonNameDetail.GivenName); }));
 
                 return physicianStrings;
             }

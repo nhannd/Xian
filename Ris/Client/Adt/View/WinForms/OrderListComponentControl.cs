@@ -23,10 +23,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         public OrderListComponentControl(OrderListComponent component)
         {
             InitializeComponent();
-
             _component = component;
 
-            // TODO add .NET databindings to _component
             _orderList.Table = _component.Orders;
         }
     }

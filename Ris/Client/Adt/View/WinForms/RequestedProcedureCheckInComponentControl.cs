@@ -26,7 +26,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
             _component = component;
 
-            // TODO add .NET databindings to _component
             _requestedProcedureTableView.Table = _component.RequestedProcedureTable;
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
         }

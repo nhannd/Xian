@@ -24,7 +24,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 SR.ColumnLocation,
                 delegate(VisitLocationDetail vl)
                 {
-                    return vl.Location.ToString();
+                    //TODO: LocationSummary formatting
+                    //return vl.Location.ToString();
+                    return string.Format("{0}, {1}, {2}, {3}, {4}", vl.Location.Bed, vl.Location.Room, vl.Location.Floor, vl.Location.Building, vl.Location.FacilityName);
                 },
                 2.5f));
             this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
