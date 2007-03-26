@@ -17,15 +17,15 @@ namespace ClearCanvas.Ris.Application.Services.Tests
     [TestFixture]
     public class AdtServiceTest
     {
-        private Mockery _mocks;
-        private IPatientProfileBroker _mockPatientProfileBroker;
-        private IPatientBroker _mockPatientBroker;
-        private IPersistenceContext _mockPersistanceContext;
-        private IExtensionPoint _mockReconciliationStrategyXP;
-        //private IAdtService _adtService;
+        //private Mockery _mocks;
+        //private IPatientProfileBroker _mockPatientProfileBroker;
+        //private IPatientBroker _mockPatientBroker;
+        //private IPersistenceContext _mockPersistanceContext;
+        //private IExtensionPoint _mockReconciliationStrategyXP;
+        ////private IAdtService _adtService;
 
-        private IList<PatientProfile> _persistedProfiles;
-        private IList<Patient> _persistedPatients;
+        //private IList<PatientProfile> _persistedProfiles;
+        //private IList<Patient> _persistedPatients;
 
         public AdtServiceTest()
         {
