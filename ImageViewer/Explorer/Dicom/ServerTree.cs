@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     typeof(List<Server>)
                 });
 
-            Stream fStream = new FileStream("New_" + AENavigatorComponent.MyServersXmlFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            Stream fStream = new FileStream(AENavigatorComponent.MyServersXmlFile, FileMode.Create, FileAccess.Write, FileShare.None);
             xmlFormat.Serialize(fStream, _rootNode);
             fStream.Close();
             return;
@@ -155,9 +155,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             _rootNode = new ServerTreeRoot();
 
-            if (File.Exists("New_" + AENavigatorComponent.MyServersXmlFile))
+            if (File.Exists(AENavigatorComponent.MyServersXmlFile))
             {
-                Stream fStream = File.OpenRead("New_" + AENavigatorComponent.MyServersXmlFile);
+                Stream fStream = File.OpenRead(AENavigatorComponent.MyServersXmlFile);
 
                 using (fStream)
                 {
