@@ -14,6 +14,5 @@
     <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\HL7" ContinueOnError="true" />
     <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\HL7" />
     <MSBuild Projects=".\RisServer.sln" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects="..\..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
   </Target>
 </Project>

@@ -4,6 +4,5 @@
   </PropertyGroup>
   <Target Name="BuildSolution" >
     <MSBuild Projects=".\RisClient.sln" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects="..\..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
   </Target>
 </Project>
