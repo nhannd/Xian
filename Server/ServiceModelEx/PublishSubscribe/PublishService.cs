@@ -14,13 +14,13 @@ namespace ServiceModelEx
 {
    public abstract class PublishService<T> where T : class
    {
-      protected static void FireEvent(params object[] args)
+	   protected static void FireEvent(string eventName, params object[] args)
       {
-         StackFrame stackFrame = new StackFrame(1);
-         string methodName = stackFrame.GetMethod().Name;
-         
-         PublishPersistent(methodName,args);
-         PublishTransient(methodName,args);
+		 //StackFrame stackFrame = new StackFrame(1);
+		 //string methodName = stackFrame.GetMethod().Name;
+
+		  PublishPersistent(eventName, args);
+		  PublishTransient(eventName, args);
       }
       static void PublishPersistent(string methodName,params object[] args)
       {

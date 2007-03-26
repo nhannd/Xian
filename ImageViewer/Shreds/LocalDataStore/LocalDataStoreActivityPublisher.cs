@@ -31,32 +31,32 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void ReceiveProgressChanged(ReceiveProgressItem progressItem)
 		{
-			FireEvent(progressItem);
+			FireEvent("ReceiveProgressChanged", progressItem);
 		}
 
 		public void SendProgressChanged(SendProgressItem progressItem)
 		{
-			FireEvent(progressItem);
+			FireEvent("SendProgressChanged", progressItem);
 		}
 
 		public void ImportProgressChanged(ImportProgressItem progressItem)
 		{
-			FireEvent(progressItem);
+			FireEvent("ImportProgressChanged", progressItem);
 		}
 
 		public void ReindexProgressChanged(ReindexProgressItem progressItem)
 		{
-			FireEvent(progressItem);
+			FireEvent("ReindexProgressChanged", progressItem);
 		}
 
 		public void SopInstanceImported(ImportedSopInstanceInformation information)
 		{
-			FireEvent(information);
+			FireEvent("SopInstanceImported", information);
 		}
 
 		public void OnServiceStopped()
 		{
-			FireEvent(null);
+			FireEvent("OnServiceStopped", null);
 		}
 
 		#endregion

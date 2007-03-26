@@ -14,12 +14,14 @@ namespace ServiceModelEx
 {
    public abstract class TransientPublishService<T> where T : class
    {
-      protected static void FireEvent(params object[] args)
+      protected static void FireEvent(string eventName, params object[] args)
       {
-         StackFrame stackFrame = new StackFrame(1);
-         string methodName = stackFrame.GetMethod().Name;
-         
-         PublishTransient(methodName,args);
+		  //StackFrame method of doing things seems to return the wrong method name in Release Build.
+
+		 //StackFrame stackFrame = new StackFrame(1);
+		 //string methodName = stackFrame.GetMethod().Name;
+
+         PublishTransient(eventName,args);
       }
       static void PublishTransient(string methodName,params object[] args)
       {
