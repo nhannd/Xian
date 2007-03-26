@@ -326,5 +326,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             }
         }
 
+        private void _aeTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            _lastClickedNode = e.Node;
+            _aeTreeView.SelectedNode = _lastClickedNode;
+            IServerTreeNode dataNode = _lastClickedNode.Tag as IServerTreeNode;
+            _component.SelectChanged(dataNode);
+            _component.NodeDoubleClick();
+        }
+
     }
 }

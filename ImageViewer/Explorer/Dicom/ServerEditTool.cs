@@ -21,6 +21,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
         }
 
+        public override void Initialize()
+        {
+            SetDoubleClickHandler();
+
+            base.Initialize();
+        }
+
         private void EditServer()
         {
             ServerTree serverTree = this.Context.ServerTree;
@@ -36,6 +43,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServerGroup);
             }
             return;
+        }
+
+        private void SetDoubleClickHandler()
+        {
+            this.Context.DefaultActionHandler = EditServer;
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)

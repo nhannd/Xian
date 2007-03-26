@@ -33,6 +33,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         event EventHandler SelectedServerChanged;
         IDesktopWindow DesktopWindow { get; }
         int UpdateType { get; set; }
+        ClickHandlerDelegate DefaultActionHandler { get; set; }
     }
 
     [AssociateView(typeof(AENavigatorComponentViewExtensionPoint))]
@@ -73,6 +74,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 set { _component.UpdateType = value; }
             }
 
+            public ClickHandlerDelegate DefaultActionHandler
+            {
+                get { return _component._defaultActionHandler; }
+                set { _component._defaultActionHandler = value; }
+            }
+
             #endregion
         }
 
@@ -85,6 +92,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private ToolSet _toolSet;
         private ActionModelRoot _toolbarModel;
         private ActionModelRoot _contextMenuModel;
+        private ClickHandlerDelegate _defaultActionHandler;
 
 		private static String _myServersTitle = SR.TitleMyServers;
 		private static String _myDatastoreTitle = SR.TitleMyDataStore;
@@ -259,6 +267,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #endregion
 
+        public void NodeDoubleClick()
+        {
+            // according to the framework architecture, the default action handler
+            // for this component is set up by the ServerEditTool
+            // however, since the tool is used for both Server and ServerGroup
+            // and we want to retain the behaviour of expanding the tree node when
+            // a ServerGroup is d-clicked, we only want the edit tool invoked if
+            // the node is a Server
+            if (!_serverTree.CurrentNode.IsLocalDataStore && 
+                !_serverTree.CurrentNode.IsServerGroup && 
+                null != _defaultActionHandler)
+                _defaultActionHandler();
+        }
     }
 
     public enum ServerUpdateType
