@@ -27,14 +27,33 @@ namespace ClearCanvas.Enterprise.Hibernate
             return Find(criteria, null);
         }
 
+        public IList<TEntity> Find(TSearchCriteria[] criteria)
+        {
+            return Find(criteria, null);
+        }
+
         public virtual IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
         {
-            string baseHql = string.Format("from {0} x", typeof(TEntity).Name);
-            HqlQuery query = new HqlQuery(
-                baseHql,
-                HqlCondition.FromSearchCriteria("x", criteria),
-                HqlSort.FromSearchCriteria("x", criteria),
-                page);
+            return Find(new TSearchCriteria[] { criteria }, page);
+        }
+
+        public virtual IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page)
+        {
+            HqlQuery query = new HqlQuery(string.Format("from {0} x", typeof(TEntity).Name));
+            query.Page = page;
+
+            HqlOr or = new HqlOr();
+            foreach (TSearchCriteria c in criteria)
+            {
+                HqlAnd and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
+                if (and.Conditions.Count > 0)
+                    or.Conditions.Add(and);
+
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("x", c));
+            }
+
+            if (or.Conditions.Count > 0)
+                query.Conditions.Add(or);
 
             return MakeTypeSafe<TEntity>(ExecuteHql(query));
         }
@@ -46,6 +65,11 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public TEntity FindOne(TSearchCriteria criteria)
         {
+            return FindOne(new TSearchCriteria[] { criteria });
+        }
+
+        public TEntity FindOne(TSearchCriteria[] criteria)
+        {
             IList<TEntity> results = Find(criteria, new SearchResultPage(0, 1));
 
             if (results.Count == 0)
@@ -53,6 +77,35 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             return results[0];
         }
+
+        public long Count(TSearchCriteria criteria)
+        {
+            return Count(new TSearchCriteria[] { criteria });
+        }
+
+        public long Count(TSearchCriteria[] criteria)
+        {
+            HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", typeof(TEntity).Name));
+
+            // for a "count" query, sort conditions that may be present in the
+            // criteria object must be ignored- therefore, only the conditions are added to the query
+            HqlOr or = new HqlOr();
+            foreach (TSearchCriteria c in criteria)
+            {
+                HqlAnd and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
+                if (and.Conditions.Count > 0)
+                    or.Conditions.Add(and);
+            }
+
+            if (or.Conditions.Count > 0)
+                query.Conditions.Add(or);
+
+            IList results = ExecuteHql(query);
+
+            // expect exactly one integer result
+            return (long)results[0];
+        }
+
 
 
         public TEntity Load(EntityRef entityRef)
@@ -63,20 +116,6 @@ namespace ClearCanvas.Enterprise.Hibernate
         public TEntity Load(EntityRef entityRef, EntityLoadFlags flags)
         {
             return (TEntity)this.Context.Load(entityRef, flags);
-        }
-
-        public long Count(TSearchCriteria criteria)
-        {
-            string baseHql = string.Format("select count(*) from {0} x", typeof(TEntity).Name);
-
-            // for a "count" query, sort conditions that may be present in the
-            // criteria object must be ignored- therefore, only the conditions are added to the query
-            HqlQuery query = new HqlQuery(baseHql);
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("x", criteria));
-            IList results = ExecuteHql(query);
-
-            // expect exactly one integer result
-            return (long)results[0];
         }
 
         public virtual void Delete(TEntity entity)

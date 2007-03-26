@@ -57,6 +57,7 @@
     <Compile Include="EnumBroker.cs" />
     <Compile Include="DefaultInterceptor.cs" />
     <Compile Include="Hql\HqlAnd.cs" />
+    <Compile Include="Hql\HqlException.cs" />
     <Compile Include="Hql\HqlJunction.cs" />
     <Compile Include="Hql\HqlCondition.cs" />
     <Compile Include="Hql\HqlElement.cs" />

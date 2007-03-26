@@ -59,12 +59,20 @@ namespace ClearCanvas.Enterprise.Core
         TEntity Load(EntityRef entityRef, EntityLoadFlags flags);
 
         /// <summary>
-        /// Retrieves all entities matching the specified criteria.  Caution: this method may return an arbitrarily large
-        /// result set.
+        /// Retrieves all entities matching the specified criteria.
+        /// Caution: this method may return an arbitrarily large result set.
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria criteria);
+
+        /// <summary>
+        /// Retrieves all entities matching any of the specified criteria (the criteria are combined using OR).
+        /// Caution: this method may return an arbitrarily large result set.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        IList<TEntity> Find(TSearchCriteria[] criteria);
 
         /// <summary>
         /// Retrieves all entities matching the specified criteria,
@@ -73,6 +81,15 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page);
+
+        /// <summary>
+        /// Retrieves all entities matching any of the specified criteria (the criteria are combined using OR),
+        /// constrained by the specified page constraint.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page);
+
 
         /// <summary>
         /// Retrieves the entire set of entities of this class.  Caution: this method may return an arbitrarily large
@@ -89,6 +106,15 @@ namespace ClearCanvas.Enterprise.Core
         /// <returns></returns>
         TEntity FindOne(TSearchCriteria criteria);
 
+        /// <summary>
+        /// Retrieves the first entity matching any of the specified criteria (the criteria are combined using OR),
+        /// or throws a <see cref="EntityNotFoundException"/>
+        /// if no matching entity is found.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        TEntity FindOne(TSearchCriteria[] criteria);
+
 
         /// <summary>
         /// Returns the number of entities matching the specified criteria.
@@ -96,6 +122,14 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="criteria"></param>
         /// <returns></returns>
         long Count(TSearchCriteria criteria);
+
+        /// <summary>
+        /// Returns the number of entities matching any of the specified criteria (the criteria are combined using OR).
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        long Count(TSearchCriteria[] criteria);
+
 
         /// <summary>
         /// Makes the specified entity transient (removes it from the persistent store).

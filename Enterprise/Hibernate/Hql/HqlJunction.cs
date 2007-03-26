@@ -41,15 +41,23 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         {
             get
             {
+                if (_conditions.Count == 0)
+                    throw new HqlException("Invalid HQL junction - no sub-conditions");
+
                 // build the hql
                 StringBuilder hql = new StringBuilder();
-                foreach (HqlCondition c in _conditions)
-                {
-                    if (hql.Length != 0)
-                        hql.Append(" ").Append(this.Operator).Append(" ");
+                if (_conditions.Count > 1)
+                    hql.Append("(");
 
-                    hql.Append(c.Hql);
+                hql.Append(_conditions[0].Hql);
+                for (int i = 1; i < _conditions.Count; i++)
+                {
+                    hql.Append(" ").Append(this.Operator).Append(" ").Append(_conditions[i].Hql);
                 }
+
+                if (_conditions.Count > 1)
+                    hql.Append(")");
+
                 return hql.ToString();
             }
         }
