@@ -12,6 +12,9 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public HealthcardDetail CreateHealthcardDetail(HealthcardNumber healthcard)
         {
+            if (healthcard == null)
+                return new HealthcardDetail();
+
             return new HealthcardDetail(
                 healthcard.Id,
                 healthcard.AssigningAuthority,

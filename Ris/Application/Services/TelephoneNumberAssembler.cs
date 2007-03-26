@@ -16,6 +16,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber, IPersistenceContext context)
         {
+            if (telephoneNumber == null)
+                return new TelephoneDetail();
+
             TelephoneDetail telephoneDetail = new TelephoneDetail();
 
             telephoneDetail.CountryCode = telephoneNumber.CountryCode;
@@ -34,6 +37,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public TelephoneNumber CreateTelephoneNumber(TelephoneDetail telephoneDetail)
         {
+            if (telephoneDetail == null)
+                return null;
+
             TelephoneNumber telephoneNumber = new TelephoneNumber();
 
             telephoneNumber.CountryCode = telephoneDetail.CountryCode;
@@ -49,10 +55,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return telephoneNumber;
         }
 
-        public void AddTelephoneNumber(TelephoneDetail phoneDetail, IList phoneNumbers)
+        public void AddTelephoneNumber(TelephoneDetail telephoneDetail, IList phoneNumbers)
         {
             //TODO: Check automatic expiration of Telephone functionality
-            TelephoneNumber newNumber = CreateTelephoneNumber(phoneDetail);
+            TelephoneNumber newNumber = CreateTelephoneNumber(telephoneDetail);
             
             foreach (TelephoneNumber phone in phoneNumbers)
             {

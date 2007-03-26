@@ -17,6 +17,10 @@ namespace ClearCanvas.Ris.Application.Common
             this.ExpiryDate = expiryDate;
         }
 
+        public HealthcardDetail()
+        {
+        }
+
         [DataMember]
         public string Id;
 

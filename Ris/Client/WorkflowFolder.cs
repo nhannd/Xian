@@ -83,10 +83,13 @@ namespace ClearCanvas.Ris.Client
 
         public override void Refresh()
         {
-            IList<TItem> items = QueryItems();
-            _isPopulated = true;
-            _itemsTable.Items.Clear();
-            _itemsTable.Items.AddRange(items);
+            if (CanQuery())
+            {
+                IList<TItem> items = QueryItems();
+                _isPopulated = true;
+                _itemsTable.Items.Clear();
+                _itemsTable.Items.AddRange(items);
+            }
         }
 
         public override void DragComplete(object[] items, DragDropKind kind)
@@ -130,6 +133,7 @@ namespace ClearCanvas.Ris.Client
             return DragDropKind.Move;
         }
 
+        protected abstract bool CanQuery();
         protected abstract IList<TItem> QueryItems();
         protected abstract bool CanAcceptDrop(TItem item);
         protected abstract bool ConfirmAcceptDrop(ICollection<TItem> items);

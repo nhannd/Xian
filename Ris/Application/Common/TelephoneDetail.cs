@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class TelephoneDetail : DataContractBase, ICloneable
     {
+        public TelephoneDetail()
+        {
+            this.Type = new EnumValueInfo();
+        }
+
         [DataMember]
         public string CountryCode;
 

@@ -16,6 +16,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public AddressDetail CreateAddressDetail(Address address, IPersistenceContext context)
         {
+            if (address == null)
+                return null;
+
             AddressDetail addressDetail = new AddressDetail();
 
             addressDetail.Street = address.Street;
@@ -37,6 +40,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public Address CreateAddress(AddressDetail addressDetail)
         {
+            if (addressDetail == null)
+                return null;
+
             Address newAddress = new Address();
 
             newAddress.Street = addressDetail.Street;

@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.OpenIconSet = new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png");
             this.IconSet = this.OpenIconSet;
 
-            this.WorklistClassName = "Scheduled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -46,12 +46,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             ((SimpleActionModel) this.MenuModel).AddAction("CheckInOption", "Option", "Edit.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-            this.WorklistClassName = "CheckIn";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
         }
 
         protected override bool CanAcceptDrop(RegistrationWorklistItem item)
         {
-            return item.WorklistClassName == "Scheduled";
+            return item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
         }
 
         protected override bool ProcessDrop(RegistrationWorklistItem item)
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "In Progress")
         {
-            this.WorklistClassName = "InProgress";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
         }
     }
 
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Completed")
         {
-            this.WorklistClassName = "Completed";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed";
         }
     }
 
@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Cancelled")
         {
-            this.WorklistClassName = "Cancelled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
         }
     }
 
@@ -105,7 +105,15 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.ClosedIconSet = this.OpenIconSet;
             this.IconSet = this.OpenIconSet;
 
-            this.WorklistClassName = "Search";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";
+        }
+
+        protected override bool CanQuery()
+        {
+            if (this.SearchCriteria != null)
+                return true;
+
+            return false;
         }
     }
 }

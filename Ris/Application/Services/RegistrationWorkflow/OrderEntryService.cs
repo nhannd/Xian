@@ -28,11 +28,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
             patientProfileBroker.LoadPatientForPatientProfile(profile);
 
-            // ensure that the profiles collection is loaded
-            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-
             VisitSearchCriteria criteria = new VisitSearchCriteria();
-            criteria.Patient.EqualTo(patient);
+            criteria.Patient.EqualTo(profile.Patient);
             criteria.VisitStatus.NotEqualTo(VisitStatus.Discharged);
 
             VisitAssembler assembler = new VisitAssembler();

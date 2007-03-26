@@ -76,6 +76,11 @@ namespace ClearCanvas.Ris.Client.Adt
             base.CloseFolder();
         }
 
+        protected override bool CanQuery()
+        {
+            return true;
+        }
+
         protected override IList<RegistrationWorklistItem> QueryItems()
         {
             List<RegistrationWorklistItem> worklistItems = new List<RegistrationWorklistItem>();
@@ -101,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override bool ConfirmAcceptDrop(ICollection<RegistrationWorklistItem> items)
         {
-            return false;
+            return true;
         }
 
         protected override bool ProcessDrop(RegistrationWorklistItem item)

@@ -12,11 +12,16 @@ namespace ClearCanvas.Ris.Client.Adt
         public OrderSummaryTable()
         {
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnMRN,
-                delegate(OrderSummary summary) { return String.Format("{0} {1}", summary.MrnId, summary.MrnAssigningAuthority); }));
+                delegate(OrderSummary summary) { return String.Format("{0} {1}", summary.MrnAssigningAuthority, summary.MrnId); }));
+
+            //TODO: Formatting for PersonNameDetail
+            //this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnName,
+            //    delegate(OrderSummary summary) { return Format.Custom(summary.PatientName); }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnName,
-                delegate(OrderSummary summary) { return Format.Custom(summary.PatientName); }));
+                delegate(OrderSummary summary) { return String.Format("{0}, {1}", summary.PatientName.FamilyName, summary.PatientName.GivenName); }));
+
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnVisitNumber,
-                delegate(OrderSummary summary) { return String.Format("{0} {1}", summary.VisitId, summary.VisitAssigningAuthority); }));
+                delegate(OrderSummary summary) { return String.Format("{0} {1}", summary.VisitAssigningAuthority, summary.VisitId); }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnAccessionNumber,
                 delegate(OrderSummary summary) { return summary.AccessionNumber; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnDiagnosticService,

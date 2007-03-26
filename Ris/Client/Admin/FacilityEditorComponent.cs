@@ -92,6 +92,16 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        public string Code
+        {
+            get { return _facilityDetail.Code; }
+            set
+            {
+                _facilityDetail.Code = value;
+                this.Modified = true;
+            }
+        }
+
         public void Accept()
         {
             if (this.HasValidationErrors)

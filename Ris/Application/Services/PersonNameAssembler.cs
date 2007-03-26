@@ -12,6 +12,9 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public PersonNameDetail CreatePersonNameDetail(PersonName personName)
         {
+            if (personName == null)
+                return new PersonNameDetail();
+
             PersonNameDetail detail = new PersonNameDetail();
             detail.FamilyName = personName.FamilyName;
             detail.GivenName = personName.GivenName;

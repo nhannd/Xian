@@ -112,7 +112,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             PersonNameAssembler personNameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
 
             return new RegistrationWorklistItem(
                 result.PatientProfile,
@@ -122,14 +121,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 personNameAssembler.CreatePersonNameDetail(result.PatientName),
                 healthcardAssembler.CreateHealthcardDetail(result.HealthcardNumber),
                 result.DateOfBirth,
-                sexEnumTable[result.Sex].Value);
+                result.Sex.ToString());
         }
 
         public RegistrationWorklistItem CreateRegistrationWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
 
             return new RegistrationWorklistItem(
                 domainItem.PatientProfile,
@@ -139,7 +137,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
-                sexEnumTable[domainItem.Sex].Value);
+                domainItem.Sex.ToString());
         }
     }
 }
