@@ -161,6 +161,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
+        public RegistrationWorklistPreview WorklistPreview
+        {
+            get { return _worklistPreview; }
+        }
+
         public bool ShowHeader
         {
             get { return _showHeader; }
@@ -171,7 +176,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                if (_showReconciliationAlert)
+                if (_showReconciliationAlert && _worklistPreview != null)
                 {
                     try
                     {
@@ -179,7 +184,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IPatientReconciliationService>(
                             delegate(IPatientReconciliationService service)
                             {
-                                ListPatientReconciliationMatchesResponse response = service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(_worklistItem.PatientProfileRef));
+                                ListPatientReconciliationMatchesResponse response = service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(_worklistPreview.PatientProfileRef));
                                 showAlert = response.ReconciledProfiles.Count > 0;
                             });
 
@@ -198,7 +203,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Name
         {
-            get { return Format.Custom(_worklistPreview.Name); }
+            //TODO: PersonNameDetail formatting
+            get { return String.Format("{0}, {1}", _worklistPreview.Name.FamilyName, _worklistPreview.Name.GivenName); }
         }
 
         public string DateOfBirth
@@ -208,27 +214,73 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Mrn
         {
-            get { return String.Format("{0} {1}", _worklistPreview.MrnAssigningAuthority, _worklistPreview.MrnAssigningAuthority); }
+            get { return String.Format("{0} {1}", _worklistPreview.MrnAssigningAuthority, _worklistPreview.MrnID); }
         }
 
         public string Healthcard
         {
-            get { return Format.Custom(_worklistPreview.Healthcard); }
+            //TODO: HealthcardDetail formatting
+            get { return String.Format("{0} {1} {2}", _worklistPreview.Healthcard.AssigningAuthority, _worklistPreview.Healthcard.Id, _worklistPreview.Healthcard.VersionCode); }
         }
 
         public string Sex
         {
-            get { return Format.Custom(_worklistPreview.Sex); }
+            get { return _worklistPreview.Sex; }
         }
 
         public string CurrentHomeAddress
         {
-            get { return Format.Custom(_worklistPreview.CurrentHomeAddress); }
+            //TODO: AddressDetail formatting
+            //get { return Format.Custom(_worklistPreview.CurrentHomeAddress); }
+            get
+            {
+                if (_worklistPreview.CurrentHomeAddress == null)
+                    return "";
+
+                StringBuilder sb = new StringBuilder();
+                if (!String.IsNullOrEmpty(_worklistPreview.CurrentHomeAddress.Unit))
+                {
+                    sb.Append(_worklistPreview.CurrentHomeAddress.Unit);
+                    sb.Append("-");
+                }
+                sb.AppendFormat("{0}, {1} {2} {3}",
+                    _worklistPreview.CurrentHomeAddress.Street,
+                    _worklistPreview.CurrentHomeAddress.City,
+                    _worklistPreview.CurrentHomeAddress.Province,
+                    _worklistPreview.CurrentHomeAddress.PostalCode);
+
+                return sb.ToString();
+            }
         }
 
         public string CurrentHomePhone
         {
-            get { return Format.Custom(_worklistPreview.CurrentHomePhone); }
+            //TODO: TelephoneDetail formatting
+            //get { return Format.Custom(_worklistPreview.CurrentHomePhone); }
+            get {
+                if (_worklistPreview.CurrentHomePhone == null)
+                    return "";
+
+                StringBuilder sb = new StringBuilder();
+                if (!String.IsNullOrEmpty(_worklistPreview.CurrentHomePhone.CountryCode))
+                {
+                    sb.Append(_worklistPreview.CurrentHomePhone.CountryCode);
+                    sb.Append(" ");
+                }
+
+                sb.Append(string.Format("({0}) {1}-{2}",
+                    _worklistPreview.CurrentHomePhone.AreaCode,
+                    _worklistPreview.CurrentHomePhone.Number.Substring(0, 3),
+                    _worklistPreview.CurrentHomePhone.Number.Substring(3)));
+
+                if (!String.IsNullOrEmpty(_worklistPreview.CurrentHomePhone.Extension))
+                {
+                    sb.Append(" x");
+                    sb.Append(_worklistPreview.CurrentHomePhone.Extension);
+                }
+
+                return sb.ToString();
+            }
         }
 
         public bool HasMoreBasicInfo

@@ -13,9 +13,14 @@ namespace ClearCanvas.Ris.Client.Adt
         public RICTable()
         {
             this.Columns.Add(new TableColumn<RICSummary, string>("Requested Procedure",
-                delegate(RICSummary item) { return Format.Custom(item.RequestedProcedureName); }));
+                delegate(RICSummary item) { return item.RequestedProcedureName; }));
+
+            //TODO: PersonNameDetail formatting
+            //this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
+            //    delegate(RICSummary item) { return Format.Custom(item.OrderingPractitioner); }));
             this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
-                delegate(RICSummary item) { return Format.Custom(item.OrderingPractitioner); }));
+                delegate(RICSummary item) { return String.Format("{0}, {1}", item.OrderingPractitioner.FamilyName, item.OrderingPractitioner.GivenName); }));
+
             this.Columns.Add(new TableColumn<RICSummary, string>("Insurance",
                 delegate(RICSummary item) { return item.Insurance; }));
             this.Columns.Add(new TableColumn<RICSummary, string>("Scheduled For",

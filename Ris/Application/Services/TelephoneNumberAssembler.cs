@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         public TelephoneDetail CreateTelephoneDetail(TelephoneNumber telephoneNumber, IPersistenceContext context)
         {
             if (telephoneNumber == null)
-                return new TelephoneDetail();
+                return null;
 
             TelephoneDetail telephoneDetail = new TelephoneDetail();
 
