@@ -9,6 +9,11 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class AddressDetail : DataContractBase, ICloneable 
     {
+        public AddressDetail()
+        {
+            this.Type = new EnumValueInfo();
+        }
+
         [DataMember]
         public string Street;
 

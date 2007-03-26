@@ -114,7 +114,6 @@ namespace ClearCanvas.Ris.Client.Adt
     public class OrderEntryComponent : ApplicationComponent
     {
         private EntityRef _patientProfileRef;
-        private EntityRef _patientRef;
 
         private VisitSummaryTable _visitTable;
         private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
@@ -329,7 +328,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(IOrderEntryService service)
                     {
                         PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
-                            _patientRef,
+                            _selectedVisit.Patient,
                             _selectedVisit.entityRef,
                             _selectedDiagnosticService.DiagnosticServiceRef,
                             _selectedPriority,

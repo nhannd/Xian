@@ -127,16 +127,16 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private bool SaveChanges()
         {
-            if (DuplicateIDExist())
-            {
-                this.Host.ShowMessageBox(SR.MessageDuplicateModalityID, MessageBoxActions.Ok);
-                return false;
-            }
-
             try
             {
                 if (_isNew)
                 {
+                    if (DuplicateIDExist())
+                    {
+                        this.Host.ShowMessageBox(SR.MessageDuplicateModalityID, MessageBoxActions.Ok);
+                        return false;
+                    }
+
                     Platform.GetService<IModalityAdminService>(
                         delegate(IModalityAdminService service)
                         {
@@ -183,19 +183,12 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             List<ModalitySummary> listModality = new List<ModalitySummary>();
 
-            try
-            {
-                Platform.GetService<IModalityAdminService>(
-                    delegate(IModalityAdminService service)
-                    {
-                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest(false));
-                        listModality = response.Modalities;
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            Platform.GetService<IModalityAdminService>(
+                delegate(IModalityAdminService service)
+                {
+                    ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest(false));
+                    listModality = response.Modalities;
+                });
 
             foreach (ModalitySummary m in listModality)
             {

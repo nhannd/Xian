@@ -63,11 +63,6 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                List<EnumValueInfo> addressTypeChoices = new List<EnumValueInfo>();
-                List<string> addressProvinceChoices = new List<string>();
-                List<string> addressCountryChoices = new List<string>();
-                List<EnumValueInfo> phoneTypeChoices = new List<EnumValueInfo>();
-
                 if (_isStaffMode)
                 {
                     Platform.GetService<IStaffAdminService>(
@@ -114,7 +109,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
                             if (_isNew)
                             {
-                                _staffDetail = new PractitionerDetail();
+                                _practitionerDetail = new PractitionerDetail();
                             }
                             else
                             {
@@ -127,7 +122,8 @@ namespace ClearCanvas.Ris.Client.Admin
                             _addressesSummary.Subject = _practitionerDetail.Addresses;
                             _phoneNumbersSummary.Subject = _practitionerDetail.TelephoneNumbers;
                         });
-                }               
+                }
+
             }
             catch (Exception e)
             {

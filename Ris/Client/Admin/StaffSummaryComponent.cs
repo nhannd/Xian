@@ -235,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
             else
             {
-                editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
+                editor = new StaffEditorComponent(_selectedStaff.StaffRef, false);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
             }
