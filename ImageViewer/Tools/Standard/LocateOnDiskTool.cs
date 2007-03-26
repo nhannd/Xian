@@ -15,7 +15,7 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("apply", "global-menus/MenuTools/Standard/MenuStandardLocateOnDisk")]
+    [MenuAction("apply", "global-menus/Utilities/MenuStandardLocateOnDisk")]
     [Tooltip("apply", "Locates the selected image(s) on disk")]
     [IconSet("apply", IconScheme.Colour, "", "Icons.LocateOnDiskToolMedium.png", "Icons.LocateOnDiskToolLarge.png")]
     [ClickHandler("apply", "Apply")]
