@@ -32,11 +32,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		public void FileSent(StoreScuSentFileInformation filesSentInformation)
+		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			try
 			{
-				LocalDataStoreService.Instance.FileSent(filesSentInformation);
+				LocalDataStoreService.Instance.FileSent(sentFileInformation);
 			}
 			catch (Exception e)
 			{

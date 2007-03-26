@@ -33,6 +33,7 @@ namespace ClearCanvas.Dicom.Network
             _findScpCallbackHelper = new FindScpCallbackHelper(this);
             _storeScpCallbackHelper = new StoreScpCallbackHelper(this);
             _moveScpCallbackHelper = new MoveScpCallbackHelper(this);
+			_storeScuCallbackHelper = new StoreScuCallbackHelper(this);
         }
 
 
@@ -386,6 +387,7 @@ namespace ClearCanvas.Dicom.Network
         private FindScpCallbackHelper _findScpCallbackHelper;
         private StoreScpCallbackHelper _storeScpCallbackHelper;
         private MoveScpCallbackHelper _moveScpCallbackHelper;
+		private StoreScuCallbackHelper _storeScuCallbackHelper;
 
         #endregion
 
@@ -397,6 +399,7 @@ namespace ClearCanvas.Dicom.Network
             _findScpCallbackHelper.Dispose();
             _storeScpCallbackHelper.Dispose();
             _moveScpCallbackHelper.Dispose();
+			_storeScuCallbackHelper.Dispose();
         }
 
         #endregion

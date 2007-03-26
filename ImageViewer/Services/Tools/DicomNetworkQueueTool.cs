@@ -74,9 +74,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				}
 
 				try
-				{ 
-					DicomNetworkReceiveQueueApplicationComponent component = new DicomNetworkReceiveQueueApplicationComponent(_monitor);
-					_workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, component, "Dicom Network Queue",
+				{
+					ReceiveQueueApplicationComponent receiveComponent = new ReceiveQueueApplicationComponent(_monitor);
+					SendQueueApplicationComponent sendComponent = new SendQueueApplicationComponent(_monitor);
+
+					SplitPane topPane = new SplitPane("Send", sendComponent, 0.5F);
+					SplitPane bottomPane = new SplitPane("Receive", receiveComponent, 0.5F);
+
+					SplitComponentContainer container = new SplitComponentContainer(topPane, bottomPane, SplitOrientation.Horizontal);
+
+					_workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, container, "Dicom Network Queue",
 						delegate(IApplicationComponent c)
 						{ 
 							_workspace = null;

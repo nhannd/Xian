@@ -10,43 +10,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		None = 0,
 		Cancel = 1,
-		Remove = 2
-	}
-
-	public enum FileOperationProgressItemState
-	{
-		Pending = 0,
-		InProgress,
-		Completed,
-		Paused,
-		Cancelled,
-		Removed,
-		Error
-	}
-
-	[DataContract]
-	public class SopInstanceInformation
-	{
-		private string _sopInstanceUid;
-		private string _sopInstanceFileName;
-
-		public SopInstanceInformation()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string SopInstanceUid
-		{
-			get { return _sopInstanceUid; }
-			set { _sopInstanceUid = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string SopInstanceFileName
-		{
-			get { return _sopInstanceFileName; }
-			set { _sopInstanceFileName = value; }
-		}
+		Clear = 2
 	}
 
 	[DataContract]
@@ -124,45 +88,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	}
 
 	[DataContract]
-	public class StoreScuBeginSendInformation
-	{
-		private string _toAETitle;
-		private StudyInformation _studyInformation;
-		private int _totalFilesToSend;
-
-		public StoreScuBeginSendInformation()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string ToAETitle
-		{
-			get { return _toAETitle; }
-			set { _toAETitle = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public int TotalFilesToSend
-		{
-			get { return _totalFilesToSend; }
-			set { _totalFilesToSend = value; }
-		}
-		
-		[DataMember(IsRequired = true)]
-		public StudyInformation StudyInformation
-		{
-			get { return _studyInformation; }
-			set { _studyInformation = value; }
-		}
-	}
-		
-	[DataContract]
 	public class StoreScuSentFileInformation
 	{
 		private string _toAETitle;
-		private StudyInformation _studyInformation; 
-		private SopInstanceInformation _sopInstanceInformation;
-		
+		private string _fileName;
+
 		public StoreScuSentFileInformation()
 		{
 		}
@@ -175,17 +105,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public StudyInformation StudyInformation
+		public string FileName
 		{
-			get { return _studyInformation; }
-			set { _studyInformation = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public SopInstanceInformation SopInstanceInformation
-		{
-			get { return _sopInstanceInformation; }
-			set { _sopInstanceInformation = value; }
+			get { return _fileName; }
+			set { _fileName = value; }
 		}
 	}
 
@@ -193,11 +116,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	public abstract class FileOperationProgressItem
 	{
 		private Guid _identifier;
-		private FileOperationProgressItemState _state;
 		private CancellationFlags _allowedCancellationOperations;
-		private string _statusMessage;
 		private DateTime _startTime;
 		private DateTime _lastActive;
+		private string _statusMessage;
 
 		public FileOperationProgressItem()
 		{ 
@@ -218,20 +140,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public FileOperationProgressItemState State
-		{
-			get { return _state; }
-			set { _state = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string StatusMessage
-		{
-			get { return _statusMessage; }
-			set { _statusMessage = value; }
-		}
-
-		[DataMember(IsRequired = true)]
 		public DateTime StartTime
 		{
 			get { return _startTime; }
@@ -244,6 +152,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _lastActive; }
 			set { _lastActive = value; }
 		}
+
+		[DataMember(IsRequired = false)]
+		public string StatusMessage
+		{
+			get { return _statusMessage; }
+			set { _statusMessage = value; }
+		}
 	}
 
 	[DataContract]
@@ -255,6 +170,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		public ImportProgressItem()
 		{
+			_totalFilesToImport = 0;
+			_numberOfFailedImports = 0;
+			_numberOfFilesImported = 0;
 		}
 
 		[DataMember(IsRequired = true)]
@@ -287,6 +205,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		public ExportProgressItem()
 		{
+			_totalFilesToExport = 0;
+			_numberOfFilesExported = 0;
 		}
 
 		[DataMember(IsRequired = true)]
@@ -312,7 +232,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private int _numberOfFilesReceived;
 
 		public ReceiveProgressItem()
-		{ 
+		{
 		}
 
 		[DataMember(IsRequired = true)]
@@ -344,7 +264,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private StudyInformation _studyInformation;
 
 		public SendProgressItem()
-		{ 
+		{
 		}
 
 		[DataMember(IsRequired = true)]
@@ -400,20 +320,21 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _studyInstanceUid;
 		private string _seriesInstanceUid;
-		private SopInstanceInformation _sopInstanceInformation;
+		private string _sopInstanceUid;
+		private string _sopInstanceFileName;
 
 		public ImportedSopInstanceInformation()
 		{
 		}
 
-		[DataMember(IsRequired = false)]
+		[DataMember(IsRequired = true)]
 		public string StudyInstanceUid
 		{
 			get { return _studyInstanceUid; }
 			set { _studyInstanceUid = value; }
 		}
 
-		[DataMember(IsRequired = false)]
+		[DataMember(IsRequired = true)]
 		public string SeriesInstanceUid
 		{
 			get { return _seriesInstanceUid; }
@@ -421,10 +342,17 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 		
 		[DataMember(IsRequired = true)]
-		public SopInstanceInformation SopInstanceInformation
+		public string SopInstanceUid
 		{
-			get { return _sopInstanceInformation; }
-			set { _sopInstanceInformation = value; }
+			get { return _sopInstanceUid; }
+			set { _sopInstanceUid = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public string SopInstanceFileName
+		{
+			get { return _sopInstanceFileName; }
+			set { _sopInstanceFileName = value; }
 		}
 	}
 
@@ -438,9 +366,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	[DataContract]
 	public class FileImportRequest
 	{
+		private bool _recursive;
 		private BadFileBehaviour _badFileBehaviour;
 		private IEnumerable<string> _fileExtensions;
-		private bool _recursive;
 		private IEnumerable<string> _filePaths;
 
 		public FileImportRequest()

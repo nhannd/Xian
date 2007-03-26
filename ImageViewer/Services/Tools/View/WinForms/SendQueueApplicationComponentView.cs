@@ -8,18 +8,21 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-    [ExtensionOf(typeof(DicomNetworkReceiveQueueApplicationComponentViewExtensionPoint))]
-    public class DicomNetworkReceiveQueueApplicationComponentView : WinFormsView, IApplicationComponentView
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="SendQueueApplicationComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(SendQueueApplicationComponentViewExtensionPoint))]
+    public class SendQueueApplicationComponentView : WinFormsView, IApplicationComponentView
     {
-        private DicomNetworkReceiveQueueApplicationComponent _component;
-        private DicomNetworkReceiveQueueApplicationComponentControl _control;
+        private SendQueueApplicationComponent _component;
+        private SendQueueApplicationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (DicomNetworkReceiveQueueApplicationComponent)component;
+            _component = (SendQueueApplicationComponent)component;
         }
 
         #endregion
@@ -30,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new DicomNetworkReceiveQueueApplicationComponentControl(_component);
+                    _control = new SendQueueApplicationComponentControl(_component);
                 }
                 return _control;
             }

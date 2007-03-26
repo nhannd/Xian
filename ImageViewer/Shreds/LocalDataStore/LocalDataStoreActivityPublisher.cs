@@ -49,12 +49,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			FireEvent(progressItem);
 		}
 
-		public void SopInstancesImported(ImportedSopInstanceInformation information)
+		public void SopInstanceImported(ImportedSopInstanceInformation information)
 		{
 			FireEvent(information);
 		}
 
-		public void ServiceStopped()
+		public void OnServiceStopped()
 		{
 			FireEvent(null);
 		}

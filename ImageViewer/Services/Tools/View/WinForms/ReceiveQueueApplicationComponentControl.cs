@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-    public partial class DicomNetworkReceiveQueueApplicationComponentControl : UserControl
+    public partial class ReceiveQueueApplicationComponentControl : UserControl
     {
-        private DicomNetworkReceiveQueueApplicationComponent _component;
+        private ReceiveQueueApplicationComponent _component;
 
-        public DicomNetworkReceiveQueueApplicationComponentControl(DicomNetworkReceiveQueueApplicationComponent component)
+        public ReceiveQueueApplicationComponentControl(ReceiveQueueApplicationComponent component)
         {
             InitializeComponent();
 

@@ -199,6 +199,7 @@
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
+    <Compile Include="Utilities\ItemEventArgs.cs" />
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\SimpleThreadPool.cs" />

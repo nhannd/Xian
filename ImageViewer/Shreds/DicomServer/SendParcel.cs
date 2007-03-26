@@ -10,7 +10,7 @@ using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-	public enum ParcelTransferState
+	internal enum ParcelTransferState
 	{
 		Unknown = 0,
 		Pending,
@@ -23,18 +23,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		Error
 	}
 	
-	public interface ISendParcel
-    {
-        int Include(Uid referencedUid);
-        ParcelTransferState GetState();
-        int GetToSendObjectCount();
-        IEnumerable<string> GetReferencedSopInstanceFileNames();
-    }
-
     /// <summary>
     /// Allows access to the DataStore in a way that's not specific to Study, Series or SopInstance
     /// </summary>
-    public class SendParcel : Parcel, ISendParcel
+	internal class SendParcel : Parcel
     {
         private Dictionary<string, string> _setTransferSyntaxes;
 		private Dictionary<string, string> _setSopClasses;
@@ -148,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         public int Include(Uid referencedUid)
         {
             // store current count of objects
-            int currentObjectCount = (this.SopInstances as List<ISopInstance>).Count;
+			int currentObjectCount = _sopInstances.Count;
 
             // search for study that matches Uid
             if (!this.DataStoreReader.StudyExists(referencedUid))
@@ -189,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 }
             }
 
-            int afterIncludeObjectCount = (this.SopInstances as List<ISopInstance>).Count;
+            int afterIncludeObjectCount = _sopInstances.Count;
             return afterIncludeObjectCount - currentObjectCount;
         }
 
@@ -198,35 +190,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             return this.ParcelTransferState;
         }
 
-		//public void StartSend()
-		//{
-		//    try
-		//    {
-		//        DicomClient client = new DicomClient(this.SourceAE);
-		//        client.SendProgressUpdated += delegate(object source, SendProgressUpdatedEventArgs args)
-		//                {
-		//                    //WCF TODO: Update Move status to the ActivityService
+		public void Send()
+		{
+			try
+			{
+				DicomClient client = new DicomClient(base.SourceAE);
+				client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClasses, this.TransferSyntaxes);
+				this.ParcelTransferState = ParcelTransferState.Completed;
+			}
+			catch (Exception e)
+			{
+				this.ParcelTransferState = ParcelTransferState.Error;
+				Platform.Log(e, LogLevel.Error);
+			}
+		}
 
-		//                    this.TotalProgressSteps = args.TotalCount;
-		//                    this.CurrentProgressStep = args.CurrentCount;
-		//                };
-
-		//        client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClassesList, this.TransferSyntaxesList);
-
-		//        this.ParcelTransferState = ParcelTransferState.Completed;
-		//    }
-		//    catch (Exception e)
-		//    {
-		//        Platform.Log(e, LogLevel.Error);
-		//    }
-		//}
-
-		//public void StopSend()
-		//{
-		//    throw new Exception("TODO: The method or operation is not implemented.");
-		//}
-
-        public int GetToSendObjectCount()
+		public int GetToSendObjectCount()
         {
             return _sopInstances.Count;
         }

@@ -24,18 +24,13 @@ namespace ServiceModelEx
       static void PublishTransient(string methodName,params object[] args)
       {
          T[] subscribers = TransientSubscriptionManager<T>.GetTransientList(methodName);
-         Publish(subscribers,false,methodName,args);
+         Publish(subscribers,methodName,args);
       }
-      static void Publish(T[] subscribers,bool closeSubscribers,string methodName,params object[] args)
+      static void Publish(T[] subscribers, string methodName,params object[] args)
       {
          WaitCallback fire = delegate(object subscriber)
                              {
                                 Invoke(subscriber as T,methodName,args);
-                                if(closeSubscribers)
-                                {
-                                   using(subscriber as IDisposable)
-                                   {}
-                                }
                              };
          Action<T> queueUp = delegate(T subscriber)
                              {

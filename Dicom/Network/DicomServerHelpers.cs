@@ -38,8 +38,12 @@ namespace ClearCanvas.Dicom.Network
         /// Fires when a C-MOVE query has asked for an update
         /// </summary>
         private event EventHandler<DicomServerEventArgs> _moveScpProgressEvent;
+        /// <summary>
+        /// Fires when a C-STORE operation has sent a file
+        /// </summary>
+        private event EventHandler<DicomServerEventArgs> _storeScuProgressEvent;
 
-        public event EventHandler<DicomServerEventArgs> FindScpEvent
+		public event EventHandler<DicomServerEventArgs> FindScpEvent
         {
             add { _findScpEvent += value; }
             remove { _findScpEvent -= value; }
@@ -75,6 +79,12 @@ namespace ClearCanvas.Dicom.Network
             remove { _moveScpProgressEvent -= value; }
         }
 
+        public event EventHandler<DicomServerEventArgs> StoreScuProgressEvent
+        {
+            add { _storeScuProgressEvent += value; }
+            remove { _storeScuProgressEvent -= value; }
+        }
+
         protected void OnFindScpEvent(DicomServerEventArgs e)
         {
             EventsHelper.Fire(_findScpEvent, this, e);
@@ -104,7 +114,12 @@ namespace ClearCanvas.Dicom.Network
             EventsHelper.Fire(_moveScpProgressEvent, this, e);
         }
 
-        private class FindScpCallbackHelper : IDisposable
+        protected void OnStoreScuProgressEvent(DicomServerEventArgs e)
+        {
+            EventsHelper.Fire(_storeScuProgressEvent, this, e);
+        }
+
+		private class FindScpCallbackHelper : IDisposable
         {
             private FindScpCallbackHelper_QueryDBDelegate _findScpCallbackHelper_QueryDBDelegate;
             private FindScpCallbackHelper_GetNextResponseDelegate _findScpCallbackHelper_GetNextResponseDelegate;
@@ -274,6 +289,43 @@ namespace ClearCanvas.Dicom.Network
 
             #endregion
         }
+
+        private class StoreScuCallbackHelper : IDisposable
+        {
+            public StoreScuCallbackHelper(DicomServer parent)
+            {
+                _parent = parent;
+                _storeScuCallbackHelperDelegate = new StoreScuCallbackHelperDelegate(DefaultCallback);
+                RegisterStoreScuCallbackHelper_OffisDcm(_storeScuCallbackHelperDelegate);
+            }
+
+			~StoreScuCallbackHelper()
+			{
+				RegisterStoreScuCallbackHelper_OffisDcm(null);
+			}
+
+            public delegate void StoreScuCallbackHelperDelegate(IntPtr interopStoreScuCallbackInfo);
+
+            [DllImport("OffisDcm", EntryPoint = "RegisterStoreScuCallbackHelper_OffisDcm")]
+            public static extern void RegisterStoreScuCallbackHelper_OffisDcm(StoreScuCallbackHelperDelegate callbackDelegate);
+
+            public void DefaultCallback(IntPtr interopStoreScuCallbackInfo)
+            {
+                _parent.OnStoreScuProgressEvent(new DicomServerEventArgs(interopStoreScuCallbackInfo));
+            }
+
+            private StoreScuCallbackHelperDelegate _storeScuCallbackHelperDelegate;
+            private DicomServer _parent;
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                RegisterStoreScuCallbackHelper_OffisDcm(null);
+            }
+
+			#endregion
+		}
     }
 }
 

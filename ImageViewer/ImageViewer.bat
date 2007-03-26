@@ -4,12 +4,27 @@ echo Executing ImageViewer post-build step
 
 :: Copy database file
 
+md "c:\dicom_datastore"
+
 IF NOT EXIST "C:\dicom_datastore\viewer.sdf" copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" "C:\dicom_datastore\viewer.sdf"
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" "C:\dicom_datastore\empty_viewer.sdf"
+
+:: Copy Sql CE files
+copy "..\..\..\..\Dicom\DataStore\NHibernateDriver\bin\%3\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceer30EN.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceme30.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceoledb30.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceqp30.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlcese30.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll" ".\Common"
 
 :: Copy Hibernate configuration file
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" "."
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" "ClearCanvas.Dicom.Services.cfg.xml"
+
+:: Copy Lut Preset config files
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresets.xml" "."
 copy "..\..\..\..\ImageViewer\Tools\Standard\bin\%1\LutPresets\DefaultLutPresetKeyAssignments.xml" "."
 

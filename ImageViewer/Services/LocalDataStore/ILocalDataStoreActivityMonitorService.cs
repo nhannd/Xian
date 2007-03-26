@@ -20,10 +20,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		void ReindexProgressChanged(ReindexProgressItem progressItem);
 
 		[OperationContract(IsOneWay = true)]
-		void SopInstancesImported(ImportedSopInstanceInformation information);
+		void SopInstanceImported(ImportedSopInstanceInformation information);
 
 		[OperationContract(IsOneWay = true)]
-		void ServiceStopped();
+		void OnServiceStopped();
 	}
 
 	[ServiceContract(	//SessionMode = SessionMode.Required,

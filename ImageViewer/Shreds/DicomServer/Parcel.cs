@@ -9,7 +9,7 @@ using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-    abstract public class Parcel
+    internal abstract class Parcel
     {
         private ApplicationEntity _destinationAE;
         private ApplicationEntity _sourceAE;

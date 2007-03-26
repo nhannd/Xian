@@ -6,7 +6,7 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-    public class DicomServerSettings : ShredConfigSection
+    internal class DicomServerSettings : ShredConfigSection
     {
         private static DicomServerSettings _instance;
 

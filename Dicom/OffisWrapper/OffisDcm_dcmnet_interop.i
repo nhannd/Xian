@@ -7,6 +7,7 @@
 struct InteropStoreScpCallbackInfo
 {
 	char* FileName;
+	char* CallingAETitle;
 	DcmDataset* ImageDataset;
     T_DIMSE_StoreProgress *Progress;
     T_DIMSE_C_StoreRQ *Request;
@@ -14,14 +15,18 @@ struct InteropStoreScpCallbackInfo
     DIC_US DimseStatus;
 };
 
-struct InteropStoreScuFileCountProgressInfo
+struct InteropStoreScuProgressInfo
 {
+	T_ASC_Association* Association;
+	const char* CurrentFile;
 	int TotalCount;
 	int CurrentCount;
 };
 
 struct InteropStoreScuCallbackInfo
 {
+	char* CalledAETitle;
+	const char* CurrentFile;
     T_DIMSE_StoreProgress * Progress;
     T_DIMSE_C_StoreRQ * Request;
 	int CurrentCount;

@@ -287,7 +287,9 @@ StoreScu(T_ASC_Association * assoc, const char *fname, int currentCount, int tot
     req.DataSetType = DIMSE_DATASET_PRESENT;
     req.Priority = DIMSE_PRIORITY_LOW;
 
-	InteropStoreScuFileCountProgressInfo progressInfo;
+	InteropStoreScuProgressInfo progressInfo;
+	progressInfo.Association = assoc;
+	progressInfo.CurrentFile = fname;
 	progressInfo.TotalCount = totalCount;
 	progressInfo.CurrentCount = currentCount;
 	 

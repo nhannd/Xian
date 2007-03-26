@@ -6,43 +6,36 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using System.Timers;
+using ClearCanvas.Common.Utilities;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ExtensionPoint]
-	public class DicomNetworkReceiveQueueApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public class ReceiveQueueApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	public class ReceiveQueueItem
+	public class ReceiveQueueItem : ReceiveProgressItem
 	{
-		private Guid _progressIdentifier;
-		private string _fromAETitle;
-		private string _patientId;
-		private string _patientsName;
-		private string _studyInstanceUid;
-		private string _studyDescription;
-		private DateTime _studyDate;
-		private int _numberOfFilesReceived; 
-		private int _numberOfFilesImported;
-		private DateTime _lastActive;
 		private string _lastActiveDisplay;
 
 		private ReceiveQueueItem()
-		{ 
+		{
+			this.StudyInformation = new StudyInformation();
 		}
 
 		internal ReceiveQueueItem(ReceiveProgressItem progressItem)
+			: this()
 		{
-			_progressIdentifier = progressItem.Identifier;
+			this.Identifier = progressItem.Identifier;
 
 			UpdateFromProgressItem(progressItem);
 		}
 
 		internal void UpdateFromProgressItem(ReceiveProgressItem progressItem)
 		{
-			if (!_progressIdentifier.Equals(this.ProgressIdentifier))
+			if (!this.Identifier.Equals(this.Identifier))
 				throw new InvalidOperationException("the identifiers must match!");
 
 			this.FromAETitle = progressItem.FromAETitle;
@@ -50,108 +43,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.NumberOfFilesImported = progressItem.NumberOfFilesImported;
 			this.LastActive = progressItem.LastActive;
 
-			this.PatientId = progressItem.StudyInformation.PatientId;
-			this.PatientsName = progressItem.StudyInformation.PatientsName;
-			this.StudyInstanceUid = progressItem.StudyInformation.StudyInstanceUid;
-			this.StudyDescription = progressItem.StudyInformation.StudyDescription;
-			this.StudyDate = progressItem.StudyInformation.StudyDate;
+			this.StudyInformation.PatientId = progressItem.StudyInformation.PatientId;
+			this.StudyInformation.PatientsName = progressItem.StudyInformation.PatientsName;
+			this.StudyInformation.StudyInstanceUid = progressItem.StudyInformation.StudyInstanceUid;
+			this.StudyInformation.StudyDescription = progressItem.StudyInformation.StudyDescription;
+			this.StudyInformation.StudyDate = progressItem.StudyInformation.StudyDate;
 
 			CalculateLastActiveDisplay();
-		}
-
-		public Guid ProgressIdentifier
-		{
-			get { return _progressIdentifier; }
-		}
-
-		public string FromAETitle
-		{
-			get { return _fromAETitle; }
-			protected set
-			{
-				if (_fromAETitle != value)
-					_fromAETitle = value;
-			}
-		}
-
-		public string PatientId
-		{
-			get { return _patientId; }
-			protected set
-			{
-				if (_patientId != value)
-					_patientId = value;
-			}
-		}
-
-		public string PatientsName
-		{
-			get { return _patientsName; }
-			protected set
-			{
-				if (_patientsName != value)
-					_patientsName = value;
-			}
-		}
-
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			protected set
-			{
-				if (_studyInstanceUid != value)
-					_studyInstanceUid = value;
-			}
-		}
-
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			protected set
-			{
-				if (_studyDescription != value)
-					_studyDescription = value;
-			}
-		}
-
-		public DateTime StudyDate
-		{
-			get { return _studyDate; }
-			protected set
-			{
-				if (_studyDate != value)
-					_studyDate = value;
-			}
-		}
-
-		public int NumberOfFilesReceived
-		{
-			get { return _numberOfFilesReceived; }
-			protected set
-			{
-				if (_numberOfFilesReceived != value)
-					_numberOfFilesReceived = value;
-			}
-		}
-
-		public int NumberOfFilesImported
-		{
-			get { return _numberOfFilesImported; }
-			protected set
-			{
-				if (_numberOfFilesImported != value)
-					_numberOfFilesImported = value;
-			}
-		}
-
-		public DateTime LastActive
-		{
-			get { return _lastActive; }
-			protected set
-			{
-				if (!_lastActive.Equals(value))
-					_lastActive = value;
-			}
 		}
 
 		public string LastActiveDisplay
@@ -161,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		internal void CalculateLastActiveDisplay()
 		{
-			TimeSpan lastActiveSpan = DateTime.Now.Subtract(_lastActive);
+			TimeSpan lastActiveSpan = DateTime.Now.Subtract(this.LastActive);
 			if (lastActiveSpan.Minutes < 60)
 			{
 				if (lastActiveSpan.Minutes == 1)
@@ -188,56 +86,61 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		}
 	}
 
-	[AssociateView(typeof(DicomNetworkReceiveQueueApplicationComponentViewExtensionPoint))]
-	public class DicomNetworkReceiveQueueApplicationComponent : ApplicationComponent
+	[AssociateView(typeof(ReceiveQueueApplicationComponentViewExtensionPoint))]
+	public class ReceiveQueueApplicationComponent : ApplicationComponent
 	{
 		private Table<ReceiveQueueItem> _receiveTable;
 		private ISelection _selection;
 		private LocalDataStoreActivityMonitor _monitor;
+
 		private Timer _timer;
+		private InterthreadMarshaler _marshaler;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DicomNetworkReceiveQueueApplicationComponent(LocalDataStoreActivityMonitor monitor)
+		public ReceiveQueueApplicationComponent(LocalDataStoreActivityMonitor monitor)
 		{
 			_monitor = monitor;
+			_marshaler = new InterthreadMarshaler();
 		}
 
 		public override void Start()
 		{
 			InitializeTable();
 			base.Start();
-			_timer = new Timer(3000);
-			_timer.Start();
-			_timer.Elapsed += new ElapsedEventHandler(OnTimer);
 
-			_monitor.ReceiveProgressUpdate += new EventHandler<ReceiveProgressUpdateEventArgs>(OnReceiveProgressUpdate);
+			TimerCallback callback = delegate(object state)
+			{
+				_marshaler.QueueInvoke(
+					delegate
+					{
+						foreach (ReceiveQueueItem item in _receiveTable.Items)
+						{
+							item.CalculateLastActiveDisplay();
+							_receiveTable.Items.NotifyItemUpdated(item);
+						}
+					});
+			};
+
+			_timer = new Timer(callback, null, 30000, 30000);
+
+			_monitor.ReceiveProgressUpdate += new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
 		}
 
 		public override void Stop()
 		{
 			base.Stop();
-			_timer.Stop();
 			_timer.Dispose();
 			_timer = null;
-			_monitor.ReceiveProgressUpdate -= new EventHandler<ReceiveProgressUpdateEventArgs>(OnReceiveProgressUpdate);
+			_monitor.ReceiveProgressUpdate -= new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
 		}
 
-		private void OnTimer(object sender, ElapsedEventArgs e)
-		{
-			foreach (ReceiveQueueItem item in _receiveTable.Items)
-			{
-				item.CalculateLastActiveDisplay();
-				_receiveTable.Items.NotifyItemUpdated(item);
-			}
-		}
-
-		private void OnReceiveProgressUpdate(object sender, ReceiveProgressUpdateEventArgs e)
+		private void OnReceiveProgressUpdate(object sender, ItemEventArgs<ReceiveProgressItem> e)
 		{
 			int index = _receiveTable.Items.FindIndex(delegate(ReceiveQueueItem testItem)
 				{
-					return testItem.ProgressIdentifier.Equals(e.Item.Identifier);
+					return testItem.Identifier.Equals(e.Item.Identifier);
 				});
 
 			if (index >= 0)
@@ -260,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			_receiveTable = new Table<ReceiveQueueItem>();
 
-			TableColumn<ReceiveQueueItem, string> column;
+			TableColumnBase<ReceiveQueueItem> column;
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"From",
@@ -271,14 +174,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"Patient Id",
-					delegate(ReceiveQueueItem item) { return FormatString(item.PatientId); },
+					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.PatientId); },
 					1f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"Patient's Name",
-					delegate(ReceiveQueueItem item) { return FormatString(item.PatientsName); },
+					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.PatientsName); },
 					1.5f);
 
 			_receiveTable.Columns.Add(column);
@@ -287,10 +190,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					"Study Date",
 					delegate(ReceiveQueueItem item)
 					{
-						if (item.StudyDate == default(DateTime))
+						if (item.StudyInformation.StudyDate == default(DateTime))
 							return "";
 
-						return item.StudyDate.ToString(Format.DateFormat); 
+						return item.StudyInformation.StudyDate.ToString(Format.DateFormat); 
 					},
 					0.5f);
 
@@ -298,21 +201,21 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					"Study Description",
-					delegate(ReceiveQueueItem item) { return FormatString(item.StudyDescription); },
+					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.StudyDescription); },
 					2f);
 
 			_receiveTable.Columns.Add(column);
 
-			column = new TableColumn<ReceiveQueueItem, string>(
+			column = new TableColumn<ReceiveQueueItem, int>(
 					"Received",
-					delegate(ReceiveQueueItem item) { return item.NumberOfFilesReceived.ToString(); },
+					delegate(ReceiveQueueItem item) { return item.NumberOfFilesReceived; },
 					0.5f);
 
 			_receiveTable.Columns.Add(column);
 
-			column = new TableColumn<ReceiveQueueItem, string>(
+			column = new TableColumn<ReceiveQueueItem, int>(
 					"Available",
-					delegate(ReceiveQueueItem item) { return item.NumberOfFilesImported.ToString(); },
+					delegate(ReceiveQueueItem item) { return item.NumberOfFilesImported; },
 					0.5f);
 
 			_receiveTable.Columns.Add(column);

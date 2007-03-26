@@ -76,6 +76,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 _dicomServer.StoreScpEndEvent += OnStoreScpEndEvent;
                 _dicomServer.MoveScpBeginEvent += OnMoveScpBeginEvent;
                 _dicomServer.MoveScpProgressEvent += OnMoveScpProgressEvent;
+				_dicomServer.StoreScuProgressEvent += OnStoreScuProgressEvent;
 
                 _dicomServer.Start();
             }
@@ -96,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 _dicomServer.StoreScpEndEvent -= OnStoreScpEndEvent;
                 _dicomServer.MoveScpBeginEvent -= OnMoveScpBeginEvent;
                 _dicomServer.MoveScpProgressEvent -= OnMoveScpProgressEvent;
+				_dicomServer.StoreScuProgressEvent += OnStoreScuProgressEvent;
 
                 _dicomServer.Stop();
                 _dicomServer = null;
@@ -196,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             info.Response.DimseStatus = (ushort)UpdateMoveProgress(key, info.Response);
         }
 
-        #endregion
+		#endregion
 
         #region DicomServer StoreScp Event Handlers
 
@@ -222,16 +224,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             if (info == null)
                 return;
 
+			StoreScpReceivedFileInformation storedInformation = new StoreScpReceivedFileInformation();
+			storedInformation.AETitle = info.CallingAETitle;
+			storedInformation.FileName = info.FileName;
+
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 
 			try
 			{
 				client.Open();
-				
-				StoreScpReceivedFileInformation storedInformation = new StoreScpReceivedFileInformation();
-				storedInformation.AETitle = "AETitle";
-				storedInformation.FileName = info.FileName;
-
 				client.FileReceived(storedInformation);
 				client.Close();
 			}
@@ -246,9 +247,44 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         #endregion
 
-        #region FindScp helper functions
+		#region Store Scu Event Handlers
 
-        private QueryKey BuildQueryKey(DcmDataset requestIdentifiers)
+		private void OnStoreScuProgressEvent(object sender, DicomServerEventArgs e)
+		{
+			InteropStoreScuCallbackInfo info = new InteropStoreScuCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
+
+			T_DIMSE_C_StoreRQ request = info.Request;
+			T_DIMSE_StoreProgress progress = info.Progress;
+
+			if (progress.state != T_DIMSE_StoreProgressState.DIMSE_StoreEnd)
+				return;
+
+			StoreScuSentFileInformation sentFileInformation = new StoreScuSentFileInformation();
+			sentFileInformation.ToAETitle = info.CalledAETitle;
+			sentFileInformation.FileName = info.CurrentFile;
+
+			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
+
+			try
+			{
+				client.Open();
+				client.FileSent(sentFileInformation);
+				client.Close();
+			}
+			catch (Exception ex)
+			{
+				client.Abort();
+				Platform.Log(ex);
+			}
+		}
+
+		#endregion
+
+		#region FindScp helper functions
+
+		private QueryKey BuildQueryKey(DcmDataset requestIdentifiers)
         {
             OFCondition cond;
             QueryKey queryKey = new QueryKey();
@@ -407,7 +443,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 }
             }
 
-            //WCF TODO: Get ApplicationEntity info from service
             DicomServerTree serverTree = new DicomServerTree();
             ApplicationEntity destinationAE = FindDestinationAE(info.Request.MoveDestination, serverTree.MyServerGroup.ChildServers);
             if (destinationAE == null)
@@ -418,18 +453,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             if (studyInstanceUID == null || studyInstanceUID.Length == 0)
                 return OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 
-            //WCF TODO: notify ActivityService via WCF, and save the job number in the parcel's GUID
             SendParcel sendParcel = new SendParcel(_myApplicationEntity, destinationAE, studyDescription);
             sendParcel.Include(new Uid(studyInstanceUID));
 
-			//BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) { sendParcel.StartSend(); }, false);
-			//lock (_moveSessionLock)
-			//{
-			//    _moveSessionDictionary[key] = new DicomMoveSession(sendParcel, task);
-			//}
+			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) 
+			{
+				sendParcel.Send(); 
+
+			}, false);
+
+			lock (_moveSessionLock)
+			{
+				_moveSessionDictionary[key] = new DicomMoveSession(sendParcel, task);
+			}
 
             info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
-			//task.Run();
+			task.Run();
 
             return OffisDcm.STATUS_Pending;
         }
@@ -515,7 +554,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) 
 			{
-				client.Store(destinationAE, parcel.GetReferencedSopInstanceFileNames(), parcel.SopClasses, parcel.TransferSyntaxes); 
+				parcel.Send();
+
 			}, false);
 			
 			task.Run();

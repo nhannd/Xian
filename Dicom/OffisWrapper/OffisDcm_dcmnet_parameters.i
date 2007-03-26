@@ -21,6 +21,31 @@ struct T_ASC_Parameters
 
 };
 
+typedef struct {
+    char applicationContextName[DUL_LEN_NAME + 1];
+    char callingAPTitle[DUL_LEN_TITLE + 1];
+    char calledAPTitle[DUL_LEN_TITLE + 1];
+    char respondingAPTitle[DUL_LEN_TITLE + 1];
+    unsigned long maxPDU;
+    unsigned short result;
+    unsigned short resultSource;
+    unsigned short diagnostic;
+    char callingPresentationAddress[64];
+    char calledPresentationAddress[64];
+    LST_HEAD *requestedPresentationContext;
+    LST_HEAD *acceptedPresentationContext;
+    unsigned short maximumOperationsInvoked;
+    unsigned short maximumOperationsPerformed;
+    char callingImplementationClassUID[DICOM_UI_LENGTH + 1];
+    char callingImplementationVersionName[16 + 1];
+    char calledImplementationClassUID[DICOM_UI_LENGTH + 1];
+    char calledImplementationVersionName[16 + 1];
+    unsigned long peerMaxPDU;
+    SOPClassExtendedNegotiationSubItemList *requestedExtNegList;
+    SOPClassExtendedNegotiationSubItemList *acceptedExtNegList;
+    OFBool useSecureLayer;
+}   DUL_ASSOCIATESERVICEPARAMETERS;
+
 %extend(canthrow=1) T_ASC_Parameters {
 
 	T_ASC_Parameters(int maxReceivePduLength,

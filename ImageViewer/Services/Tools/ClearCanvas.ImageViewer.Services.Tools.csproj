@@ -35,9 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomNetworkQueueTool.cs" />
-    <Compile Include="DicomNetworkReceiveQueueApplicationComponent.cs" />
+    <Compile Include="ReceiveQueueApplicationComponent.cs" />
     <Compile Include="LocalDataStoreActivityMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SendQueueApplicationComponent.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

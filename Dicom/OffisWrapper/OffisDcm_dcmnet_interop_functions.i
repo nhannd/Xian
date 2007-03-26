@@ -154,11 +154,17 @@ StoreScuProgressCallback(void * progressInfo,
 	// should fire off image received event
 	if (NULL != CSharpStoreScuCallbackHelperCallback)
 	{
-		InteropStoreScuFileCountProgressInfo* pInfo = (InteropStoreScuFileCountProgressInfo*) progressInfo;
-		InteropStoreScuCallbackInfo info;
+		InteropStoreScuProgressInfo* pInfo = (InteropStoreScuProgressInfo*) progressInfo;
 
+		DIC_AE callingTitle;
+		DIC_AE calledTitle;
+		ASC_getAPTitles(pInfo->Association->params, callingTitle, calledTitle, NULL);
+
+		InteropStoreScuCallbackInfo info;
 		// prepare the transmission of data 
 		bzero((char*)&info, sizeof(info));
+		info.CurrentFile = pInfo->CurrentFile;
+		info.CalledAETitle = calledTitle;
 		info.Progress = progress;
 		info.Request = req;
 		info.TotalCount = pInfo->TotalCount;
@@ -202,13 +208,19 @@ static void StoreScpCallback(
 
 	StoreCallbackData *cbdata = (StoreCallbackData*) callbackData;
 	char* fileName = cbdata->imageFileName;
-
+	T_ASC_Association* assoc = cbdata->assoc;
+	
+	DIC_AE callingTitle;
+	DIC_AE calledTitle;
+	ASC_getAPTitles(assoc->params, callingTitle, calledTitle, NULL);
+	
 	if (*statusDetail == NULL)
 		*statusDetail = new DcmDataset();
 
 	// prepare the transmission of data 
 	InteropStoreScpCallbackInfo info;
 	bzero((char*)&info, sizeof(info));
+	info.CallingAETitle = callingTitle;
 	info.FileName = fileName;
 	info.ImageDataset = (*imageDataSet);
 	info.Progress = progress;

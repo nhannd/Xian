@@ -14,7 +14,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private bool _disabled;
 
-		private ReceiveImportQueue _receiveImportQueue;
+		private SendQueue _sendQueue;
+		private ReceiveQueue _receiveQueue;
 		private DicomFileImporter _dicomFileImporter;
 		
 		private string _storageFolder = null;
@@ -69,21 +70,17 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					_sendReceiveImportConcurrency = 10;
 
 				_databaseUpdateFrequencyMilliseconds = LocalDataStoreServiceSettings.Instance.DatabaseUpdateFrequencyMilliseconds;
-				
-				_dicomFileImporter = new DicomFileImporter();
 
-				_receiveImportQueue = new ReceiveImportQueue();
+				_sendQueue = new SendQueue();
+				_receiveQueue = new ReceiveQueue();
+
+				_dicomFileImporter = new DicomFileImporter();
 			}
 			catch (Exception e)
 			{
 				Platform.Log(e);
 				_disabled = true;
 			}
-		}
-
-		public ReceiveImportQueue ReceiveImportQueue
-		{
-			get { return _receiveImportQueue; }
 		}
 
 		public DicomFileImporter DicomFileImporter
@@ -144,16 +141,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void Start()
 		{
 			_dicomFileImporter.Start();
+
+			_sendQueue.Start();
+			_receiveQueue.Start();
 		}
 
 		public void Stop()
 		{
+			_receiveQueue.Stop();
+			_sendQueue.Stop();
+
 			_dicomFileImporter.Stop();
 		}
 
 		public void RepublishAll()
 		{
-			_receiveImportQueue.RepublishAll();
+			_receiveQueue.RepublishAll();
+			_sendQueue.RepublishAll();
 		}
 		
 		#region ILocalDataStoreService Members
@@ -161,13 +165,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void FileReceived(StoreScpReceivedFileInformation receivedFileInformation)
 		{
 			CheckDisabled();
-			_receiveImportQueue.ProcessReceivedFileInformation(receivedFileInformation);
+			_receiveQueue.ProcessReceivedFileInformation(receivedFileInformation);
 		}
 
 		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			CheckDisabled();
-			//_sendQueue.ProcessFilesSent(sentFileInformation);
+			_sendQueue.ProcessSentFileInformation(sentFileInformation);
 		}
 
 		public void Import(FileImportRequest request)

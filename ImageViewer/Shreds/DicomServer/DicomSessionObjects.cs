@@ -8,7 +8,7 @@ using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-    public class DicomSessionKey
+    internal class DicomSessionKey
     {
         private string _aeTitle;
         private string _hostName;
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         #endregion
     }
 
-    public class DicomQuerySession
+	internal class DicomQuerySession
     {
         ReadOnlyQueryResultCollection _queryResults;
         int _currentIndex;
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         #endregion
     }
 
-    public class DicomMoveSession
+    internal class DicomMoveSession
     {
         private SendParcel _parcel;
         private BackgroundTask _task;
