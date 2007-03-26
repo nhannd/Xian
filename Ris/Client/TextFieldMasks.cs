@@ -8,26 +8,22 @@ namespace ClearCanvas.Ris.Client
     {
         public static string TelephoneNumberLocalMask
         {
-            //get { return FormatSettings.Default.TelephoneNumberLocalMask; }
-            get { return ""; }
+            get { return FormatSettings.Default.TelephoneNumberLocalMask; }
         }
 
         public static string TelphoneNumberFullMask
         {
-            //get { return FormatSettings.Default.TelephoneNumberFullMask; }
-            get { return ""; }
+            get { return FormatSettings.Default.TelephoneNumberFullMask; }
         }
 
         public static string HealthcardNumberMask
         {
-            //get { return FormatSettings.Default.HealthcardNumberMask; }
-            get { return ""; }
+            get { return FormatSettings.Default.HealthcardNumberMask; }
         }
 
         public static string HealthcardVersionCodeMask
         {
-            //get { return FormatSettings.Default.HealthcardVersionCodeMask; }
-            get { return ""; }
+            get { return FormatSettings.Default.HealthcardVersionCodeMask; }
         }
     }
 }

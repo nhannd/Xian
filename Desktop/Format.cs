@@ -16,8 +16,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string DateFormat
         {
-            //get { return FormatSettings.Default.DateFormat; }
-            get { return "dd-MMM-yyyy"; }
+            get { return FormatSettings.Default.DateFormat; }
         }
 
         /// <summary>
@@ -25,8 +24,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string TimeFormat
         { 
-            //get { return FormatSettings.Default.TimeFormat; }
-            get { return "hh:mm tt"; }
+            get { return FormatSettings.Default.TimeFormat; }
         }
 
         /// <summary>
@@ -34,8 +32,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string DateTimeFormat
         {
-            //get { return FormatSettings.Default.DateTimeFormat; }
-            get { return "dd-MMM-yyyy hh:mm tt"; }
+            get { return FormatSettings.Default.DateTimeFormat; }
         }
 
         /// <summary>
