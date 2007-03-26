@@ -16,6 +16,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             HL7QueueItemSummary summary = new HL7QueueItemSummary();
 
+            summary.QueueItemRef = queueItem.GetRef();
+
             summary.Direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction].Value;
 
             summary.StatusCode = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code].Value;
@@ -35,6 +37,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         public HL7QueueItemDetail CreateHL7QueueItemDetail(HL7QueueItem queueItem, IPersistenceContext context)
         {
             HL7QueueItemDetail detail = new HL7QueueItemDetail();
+
+            detail.QueueItemRef = queueItem.GetRef();
 
             HL7MessageDirectionEnum direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction];
             detail.Direction = new EnumValueInfo(
@@ -77,9 +81,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
 
-            criteria.Direction.EqualTo((HL7MessageDirection)Enum.Parse(typeof(HL7MessageDirection), request.Direction.Code));
+            if (request.Direction != null)
+                criteria.Direction.EqualTo((HL7MessageDirection)Enum.Parse(typeof(HL7MessageDirection), request.Direction.Code));
 
-            criteria.Status.Code.EqualTo((HL7MessageStatusCode)Enum.Parse(typeof(HL7MessageStatusCode), request.StatusCode.Code));
+            if (request.StatusCode != null)
+                criteria.Status.Code.EqualTo((HL7MessageStatusCode)Enum.Parse(typeof(HL7MessageStatusCode), request.StatusCode.Code));
 
             if (request.StartingCreationDateTime.HasValue && request.EndingCreationDateTime.HasValue)
                 criteria.Status.CreationDateTime.Between(request.StartingCreationDateTime.Value, request.EndingCreationDateTime.Value);
@@ -95,8 +101,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             else if (request.EndingUpdateDateTime.HasValue)
                 criteria.Status.UpdateDateTime.LessThanOrEqualTo(request.StartingUpdateDateTime.Value);
 
-            criteria.Message.MessageType.EqualTo(request.MessageType);
-            criteria.Message.Peer.EqualTo((HL7MessagePeer)Enum.Parse(typeof(HL7MessagePeer), request.Peer.Code));
+            if (request.MessageType != null)
+                criteria.Message.MessageType.EqualTo(request.MessageType);
+    
+            if (request.Peer != null)
+                criteria.Message.Peer.EqualTo((HL7MessagePeer)Enum.Parse(typeof(HL7MessagePeer), request.Peer.Code));
 
             return criteria;
         }

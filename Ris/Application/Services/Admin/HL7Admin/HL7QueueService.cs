@@ -127,10 +127,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
             HL7QueueItemSearchCriteria criteria = assembler.CreateHL7QueueItemSearchCriteria(request, PersistenceContext);
+            SearchResultPage page = new SearchResultPage();
+            page.FirstRow = 1;
+            page.MaxRows = 1;
 
             return new ListHL7QueueItemsResponse(
                 CollectionUtils.Map<HL7QueueItem, HL7QueueItemSummary, List<HL7QueueItemSummary>>(
-                    PersistenceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria),
+                    PersistenceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, page),
                     delegate(HL7QueueItem queueItem)
                     {
                         return assembler.CreateHL7QueueItemSummary(queueItem, PersistenceContext);

@@ -36,6 +36,8 @@ copy "..\..\..\..\..\Healthcare\Hibernate\bin\%1\ClearCanvas.Healthcare.Hibernat
 
 copy "..\..\..\..\..\HL7\bin\%1\ClearCanvas.HL7.dll" .\plugins
 copy "..\..\..\..\..\HL7\Hibernate\bin\%1\ClearCanvas.HL7.Hibernate.dll" .\plugins
+copy "..\..\..\..\..\HL7\NHapi\bin\%1\ClearCanvas.HL7.Hapi.dll" .\plugins
+copy "..\..\..\..\..\ReferencedAssemblies\NHapi.*" .\plugins
 
 :: Ris
 copy "..\..\..\..\..\Ris\Application\Common\bin\%1\ClearCanvas.Ris.Application.Common.dll" .\plugins

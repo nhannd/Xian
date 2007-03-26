@@ -83,7 +83,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public void Refresh()
             {
-                _component.ShowAllItems();
+                if (_component.RefreshFiltered)
+                {
+                    _component.ShowFilteredItems();
+                }
+                else 
+                {
+                    _component.ShowAllItems();
+                }
             }
 
             #endregion
@@ -93,6 +100,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _selectedHL7QueueItemChanged;
 
         private HL7QueueItemSummaryTable _queue;
+        private bool _refreshFiltered = false;
 
         //private IPagingController<HL7QueueItemSummary> _pagingController;
         //private PagingActionModel<HL7QueueItemSummary> _pagingActionHandler;
@@ -358,6 +366,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _selectedHL7QueueItem; }
         }
 
+        public bool RefreshFiltered
+        {
+            get { return _refreshFiltered; }
+        }
+
         public event EventHandler SelectedHL7QueueItemChanged
         {
             add { _selectedHL7QueueItemChanged += value; }
@@ -374,7 +387,16 @@ namespace ClearCanvas.Ris.Client.Adt
         public void SetSelectedItem(ISelection selection)
         {
             HL7QueueItemSummary selectedSummaryTableItem = selection.Item as HL7QueueItemSummary;
-            if (selectedSummaryTableItem.QueueItemRef != _selectedHL7QueueItem.QueueItemRef)
+
+            if (selectedSummaryTableItem == null)
+            {
+                _selectedHL7QueueItem = null;
+
+                EventsHelper.Fire(_selectedHL7QueueItemChanged, this, EventArgs.Empty);
+                NotifyPropertyChanged("Message");
+            }
+            else if (_selectedHL7QueueItem == null 
+                || selectedSummaryTableItem.QueueItemRef != _selectedHL7QueueItem.QueueItemRef)
             {
                 LoadHL7QueueItemRequest request = new LoadHL7QueueItemRequest(selectedSummaryTableItem.QueueItemRef);
                 LoadHL7QueueItemResponse response = null;
@@ -406,6 +428,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
             UpdateTableData(request);
+
+            _refreshFiltered = false;
         }
         
         public void ShowFilteredItems()
@@ -424,6 +448,8 @@ namespace ClearCanvas.Ris.Client.Adt
             request.EndingUpdateDateTime = _updatedOnEnd;
 
             UpdateTableData(request);
+
+            _refreshFiltered = true;
         }
 
         private void UpdateTableData(ListHL7QueueItemsRequest request)
