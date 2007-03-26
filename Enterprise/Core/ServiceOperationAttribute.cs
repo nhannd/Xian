@@ -5,7 +5,7 @@ using System.Text;
 namespace ClearCanvas.Enterprise.Core
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class ServiceOperationAttribute : Attribute
+    public abstract class ServiceOperationAttribute : Attribute
     {
         private PersistenceScopeOption _scopeOption;
         private bool _auditable;
@@ -27,5 +27,7 @@ namespace ClearCanvas.Enterprise.Core
             get { return _scopeOption; }
             set { _scopeOption = value; }
         }
+
+        public abstract PersistenceScope CreatePersistenceScope();
    }
 }

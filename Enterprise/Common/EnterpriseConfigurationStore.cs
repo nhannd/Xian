@@ -5,6 +5,7 @@ using System.Text;
 using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -59,6 +60,10 @@ namespace ClearCanvas.Enterprise.Common
             {
                 // no saved settings
             }
+            catch (FaultException<ConfigurationDocumentNotFoundException>)
+            {
+                // no saved settings
+            }
         }
 
         public void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
@@ -76,15 +81,26 @@ namespace ClearCanvas.Enterprise.Common
 
         public void RemoveUserSettings(Type settingsClass, string user, string instanceKey)
         {
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
-                {
-                    service.RemoveDocument(
-                        SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                        SettingsClassMetaDataReader.GetVersion(settingsClass),
-                        user,
-                        instanceKey);
-                });
+            try
+            {
+                Platform.GetService<IConfigurationService>(
+                    delegate(IConfigurationService service)
+                    {
+                        service.RemoveDocument(
+                            SettingsClassMetaDataReader.GetGroupName(settingsClass),
+                            SettingsClassMetaDataReader.GetVersion(settingsClass),
+                            user,
+                            instanceKey);
+                    });
+            }
+            catch (ConfigurationDocumentNotFoundException)
+            {
+                // no saved settings
+            }
+            catch (FaultException<ConfigurationDocumentNotFoundException>)
+            {
+                // no saved settings
+            }
         }
 
         public void UpgradeUserSettings(Type settingsClass, string user, string instanceKey)

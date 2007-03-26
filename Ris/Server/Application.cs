@@ -59,8 +59,10 @@ namespace ClearCanvas.Ris.Server
             binding.MaxReceivedMessageSize = 1048576;
 
 
-            IServiceFactory serviceManager = new ServiceFactory(serviceLayer);
-            ICollection<Type> serviceClasses = serviceManager.ListServices();
+            IServiceFactory serviceFactory = new ServiceFactory(serviceLayer);
+            serviceFactory.ServiceCreation += ServiceCreationEventHandler;
+
+            ICollection<Type> serviceClasses = serviceFactory.ListServices();
             foreach (Type serviceClass in serviceClasses)
             {
                 ServiceImplementsContractAttribute a = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(
@@ -74,7 +76,7 @@ namespace ClearCanvas.Ris.Server
                     ServiceHost host = new ServiceHost(serviceClass, uri);
 
                     // add behaviour to grab AOP proxied service instance
-                    host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(a.ServiceContract, serviceManager));
+                    host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(a.ServiceContract, serviceFactory));
 
                     // establish endpoint
                     host.AddServiceEndpoint(a.ServiceContract, binding, "");
@@ -112,6 +114,12 @@ namespace ClearCanvas.Ris.Server
                     Console.WriteLine("Unknown contract for service " + serviceClass.Name);
                 }
             }
+        }
+
+        private void ServiceCreationEventHandler(object sender, ServiceCreationEventArgs e)
+        {
+            // insert the error handler advice at the beginning of the interception chain
+            e.ServiceOperationInterceptors.Insert(0, new ErrorHandlerAdvice());
         }
     }
 }

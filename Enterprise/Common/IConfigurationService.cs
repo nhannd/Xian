@@ -13,7 +13,7 @@ namespace ClearCanvas.Enterprise.Common
     {
         /// <summary>
         /// Loads the document specified by the name, version, user and instance key, returning the document text as a string.
-        /// The user and instance key may be null.  If the document does not exist, an <see cref="EntityNotFoundException"/>
+        /// The user and instance key may be null.  If the document does not exist, an <see cref="ConfigurationDocumentNotFoundException"/>
         /// will be thrown.
         /// </summary>
         /// <param name="name"></param>
@@ -22,6 +22,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="instanceKey"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConfigurationDocumentNotFoundException))]
         string LoadDocument(string name, Version version, string user, string instanceKey);
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
         [OperationContract]
+        [FaultContract(typeof(ConfigurationDocumentNotFoundException))]
         void RemoveDocument(string name, Version version, string user, string instanceKey);
 
     }

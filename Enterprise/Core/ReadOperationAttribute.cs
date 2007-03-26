@@ -10,5 +10,10 @@ namespace ClearCanvas.Enterprise.Core
         public ReadOperationAttribute()
         {
         }
+
+        public override PersistenceScope CreatePersistenceScope()
+        {
+            return new PersistenceScope(PersistenceContextType.Read, this.PersistenceScopeOption);
+        }
     }
 }

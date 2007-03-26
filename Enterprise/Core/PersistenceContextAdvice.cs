@@ -8,12 +8,32 @@ using AopAlliance.Intercept;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public abstract class PersistenceContextAdvice : ServiceOperationAdvice, IMethodInterceptor
+    public class PersistenceContextAdvice : ServiceOperationAdvice, IMethodInterceptor
     {
         internal PersistenceContextAdvice()
         {
         }
 
-        public abstract object Invoke(IMethodInvocation invocation);
+        public object Invoke(IMethodInvocation invocation)
+        {
+            object retval = null;
+
+            try
+            {
+                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
+                using (PersistenceScope scope = a.CreatePersistenceScope())
+                {
+                    retval = invocation.Proceed();
+
+                    // auto-commit transaction
+                    scope.Complete();
+                }
+
+                return retval;
+            }
+            finally
+            {
+            }
+        }
     }
 }

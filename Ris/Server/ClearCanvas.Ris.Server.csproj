@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Spring.Aop, Version=2.1.0.2, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\Spring.Aop.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -47,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="CustomAuthorizationPolicy.cs" />
+    <Compile Include="ErrorHandlerAdvice.cs" />
     <Compile Include="InProcessCoreServiceProvider.cs" />
     <Compile Include="InstanceManagementServiceBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

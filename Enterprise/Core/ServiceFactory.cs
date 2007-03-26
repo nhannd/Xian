@@ -7,6 +7,7 @@ using Spring.Aop;
 using Spring.Aop.Framework;
 using Spring.Aop.Support;
 using ClearCanvas.Common.Utilities;
+using AopAlliance.Intercept;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -18,11 +19,18 @@ namespace ClearCanvas.Enterprise.Core
         private Dictionary<Type, ProxyFactory> _proxyFactoryCache;
         private IExtensionPoint _serviceExtensionPoint;
         private object _syncLock = new object();
+        private event EventHandler<ServiceCreationEventArgs> _serviceCreation;
 
         public ServiceFactory(IExtensionPoint serviceExtensionPoint)
         {
             _serviceExtensionPoint = serviceExtensionPoint;
             _proxyFactoryCache = new Dictionary<Type, ProxyFactory>();
+        }
+
+        public event EventHandler<ServiceCreationEventArgs> ServiceCreation
+        {
+            add { _serviceCreation += value; }
+            remove { _serviceCreation -= value; }
         }
 
         public TServiceContract GetService<TServiceContract>()
@@ -62,22 +70,21 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="serviceContract"></param>
         private void CreateProxyFactory(Type serviceContract)
         {
-            object service = _serviceExtensionPoint.CreateExtension(new TypeExtensionFilter(serviceContract));
-
-            ProxyFactory factory = new ProxyFactory(service);
-
-            IAdvisor auditAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ServiceOperationAttribute), true), new AuditAdvice());
-            IAdvisor readContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ReadOperationAttribute), true), new ReadContextAdvice());
-            IAdvisor updateContextAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new UpdateContextAdvice());
-//            IAdvisor transactionMonitorAdvisor = new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(UpdateOperationAttribute), true), new TransactionMonitorAdvice());
-
-            // order of read/update context advice does not matter, because they are mutually exclusive
-            // (only one or the other will ever be invoked)
-            factory.AddAdvisor(readContextAdvisor);
-            factory.AddAdvisor(updateContextAdvisor);
-
+            List<IMethodInterceptor> interceptors = new List<IMethodInterceptor>();
+            interceptors.Add(new PersistenceContextAdvice());
             // must add audit advice inside of context advice, because it requires a persistence context to work
-            factory.AddAdvisor(auditAdvisor);
+            interceptors.Add(new AuditAdvice());
+
+            // allow addition of other interceptors by consumer
+            EventsHelper.Fire(_serviceCreation, this, new ServiceCreationEventArgs(interceptors));
+
+            // build proxy factory
+            object service = _serviceExtensionPoint.CreateExtension(new TypeExtensionFilter(serviceContract));
+            ProxyFactory factory = new ProxyFactory(service);
+            foreach (IMethodInterceptor intercept in interceptors)
+            {
+                factory.AddAdvisor(new DefaultPointcutAdvisor(new AttributeMatchMethodPointcut(typeof(ServiceOperationAttribute), true), intercept));
+            }
 
             _proxyFactoryCache.Add(serviceContract, factory);
         }
