@@ -15,7 +15,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipVertical", KeyStroke = XKeys.V)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipVertical")]
 	[ClickHandler("activate", "Activate")]
-    [Tooltip("activate", "ToolbarToolsStandardFlipVertical")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "ToolbarToolsStandardFlipVertical")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipVerticalMedium.png", "Icons.FlipVerticalLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Vertical")]
 

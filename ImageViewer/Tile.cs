@@ -366,29 +366,13 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckMemberIsSet(this.ParentImageBox, "Tile.ParentImageBox");
 				Platform.CheckMemberIsSet(this.ImageViewer, "Tile.ImageViewer");
 
-				if (_presentationImage != null)
-				{
-					this.Selected = true;
-					_parentImageBox.SelectedTile = this;
-					_presentationImage.Selected = true;
-					this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this as ITile));
-				}
-			}
-		}
+				this.Selected = true;
+				this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this as ITile));
+				_parentImageBox.SelectedTile = this;
 
-		/// <summary>
-		/// Activates the tile.  
-		/// </summary>
-		/// <remarks>
-		/// This is different from the concept of 'selected' in that activation
-		/// only indicates that the tile has been clicked.  In order to be selected, a tile must
-		/// already contain a presentation image.  No state is maintained regarding a tile's activation
-		/// because it is only meant to be used in conjunction with the <see cref="EventBroker"/> to notify tools
-		/// that a tile has been clicked.
-		/// </remarks>
-		public void Activate()
-		{
-			this.ImageViewer.EventBroker.OnTileActivated(new TileActivatedEventArgs(this as ITile));
+				if (_presentationImage != null)
+					_presentationImage.Selected = true;
+			}
 		}
 
 		/// <summary>

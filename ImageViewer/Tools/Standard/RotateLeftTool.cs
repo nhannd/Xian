@@ -15,7 +15,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardRotateLeft", KeyStroke = XKeys.L)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateLeft")]
     [ClickHandler("activate", "Activate")]
-    [Tooltip("activate", "ToolbarToolsStandardRotateLeft")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "ToolbarToolsStandardRotateLeft")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RotateLeftMedium.png", "Icons.RotateLeftLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Rotate.Left")]
 

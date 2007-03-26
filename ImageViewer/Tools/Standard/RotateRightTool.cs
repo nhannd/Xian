@@ -15,11 +15,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardRotateRight", KeyStroke = XKeys.R)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardRotateRight")]
     [ClickHandler("activate", "Activate")]
-    [Tooltip("activate", "ToolbarToolsStandardRotateRight")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "ToolbarToolsStandardRotateRight")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RotateRightMedium.png", "Icons.RotateRightLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Rotate.Right")]
 
-    [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RotateRightTool : ImageViewerTool
 	{
 		public RotateRightTool()

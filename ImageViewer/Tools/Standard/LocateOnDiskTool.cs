@@ -31,14 +31,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
         {
         }
 
-        /// <summary>
-        /// Called by the framework to initialize this tool.
-        /// </summary>
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
-
 
         /// <summary>
         /// Called by the framework when the user clicks the "apply" menu item or toolbar button.

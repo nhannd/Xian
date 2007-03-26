@@ -374,7 +374,6 @@
     <Compile Include="StudyManagement\StudyLoaderMap.cs" />
     <Compile Include="StudyManagement\StudyTree.cs" />
     <Compile Include="Tile.cs" />
-    <Compile Include="TileActivatedEventArgs.cs" />
     <Compile Include="TileCollection.cs" />
     <Compile Include="TileEventArgs.cs" />
     <Compile Include="TileMemento.cs" />

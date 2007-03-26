@@ -342,9 +342,10 @@ namespace ClearCanvas.ImageViewer
 			}
 			set
 			{
-				Platform.CheckForNullReference(value, "TopLeftPresentationImage");
+				if (this.DisplaySet == null)
+					return;
 
-				Platform.CheckMemberIsSet(this.DisplaySet, "DisplaySet");
+				Platform.CheckForNullReference(value, "TopLeftPresentationImage");
 
 				// If specified presentationImage cannot be found in DisplaySet, an
 				// exception will be thrown in DisplaySet.IndexOfPresentationImage
@@ -381,7 +382,9 @@ namespace ClearCanvas.ImageViewer
 			}
 			set
 			{
-				Platform.CheckMemberIsSet(this.DisplaySet, "DisplaySet");
+				if (this.DisplaySet == null)
+					return;
+
 				Platform.CheckPositive(this.DisplaySet.PresentationImages.Count, "ImageBox.DisplaySet.PresentationImages.Count");
 
 				int imageIndex;
@@ -586,14 +589,16 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (!this.Selected)
 			{
-				Platform.CheckMemberIsSet(this.DisplaySet, "ImageBox.DisplaySet");
+				//Platform.CheckMemberIsSet(this.DisplaySet, "ImageBox.DisplaySet");
 				Platform.CheckMemberIsSet(this.ParentPhysicalWorkspace, "ImageBox.ParentPhysicalWorkspace");
 				Platform.CheckMemberIsSet(this.ImageViewer, "ImageBox.ImageViewer");
 
 				this.Selected = true;
-				_parentPhysicalWorkspace.SelectedImageBox = this;
-				_displaySet.Selected = true;
 				this.ImageViewer.EventBroker.OnImageBoxSelected(new ImageBoxSelectedEventArgs(this));
+				_parentPhysicalWorkspace.SelectedImageBox = this;
+
+				if (_displaySet != null)
+					_displaySet.Selected = true;
 			}
 		}
 
@@ -670,10 +675,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (this.Selected)
 			{
-				Platform.CheckMemberIsSet(this.DisplaySet, "ImageBox.DisplaySet");
+				//Platform.CheckMemberIsSet(this.DisplaySet, "ImageBox.DisplaySet");
 
 				this.Selected = false;
-				_displaySet.Selected = false;
+
+				if (_displaySet != null)
+					_displaySet.Selected = false;
 
 				if (this.SelectedTile != null)
 				{
@@ -749,7 +756,6 @@ namespace ClearCanvas.ImageViewer
 			if (startImageIndex + tileIndex < _displaySet.PresentationImages.Count)
 			{
 				tile.PresentationImage = this.DisplaySet.PresentationImages[startImageIndex + tileIndex];
-
 			}
 			// If there are no images left (the case when there are fewer images than tiles)
 			// then just set the tile to blank

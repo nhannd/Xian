@@ -67,13 +67,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.Context.Viewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
 		}
 
-		void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
-		{
-			this.Enabled = 
-				(this.SelectedVOILUTLinearProvider != null &&
-				this.SelectedVOILUTLinearProvider.VoiLutLinear != null);
-		}
-		
 		private void AutoApplyLut()
 		{
 			if (!this.Enabled)
@@ -153,6 +146,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			keyStrokeSettings.Settings.AddRange(newKeyStrokes);
 			keyStrokeSettings.Save();
+		}
+
+		void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		{
+			this.Enabled =
+				(this.SelectedVOILUTLinearProvider != null &&
+				this.SelectedVOILUTLinearProvider.VoiLutLinear != null);
 		}
 	}
 }

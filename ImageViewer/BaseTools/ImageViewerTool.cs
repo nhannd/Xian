@@ -7,6 +7,7 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
@@ -17,6 +18,14 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	{
 		private bool _enabled = true;
 		private event EventHandler _enabledChanged;
+
+		public override void Initialize()
+		{
+			this.Context.Viewer.EventBroker.TileSelected += new EventHandler<TileSelectedEventArgs>(OnTileSelected);
+			this.Context.Viewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
+
+			base.Initialize();
+		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the tool is enabled.
@@ -163,6 +172,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				else
 					return null;
 			}
+		}
+
+		void OnTileSelected(object sender, TileSelectedEventArgs e)
+		{
+			if (e.SelectedTile.PresentationImage == null)
+				this.Enabled = false;
+			else
+				this.Enabled = true;
+		}
+
+		void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		{
+			if (e.SelectedPresentationImage == null)
+				this.Enabled = false;
+			else
+				this.Enabled = true;
 		}
 	}
 }

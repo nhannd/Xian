@@ -48,12 +48,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		protected IImageViewer GetSubjectImageViewer()
 		{
 			IWorkspace workspace = this.Context.DesktopWindow.ActiveWorkspace;
-			if (workspace is ApplicationComponentHostWorkspace
-				&& ((ApplicationComponentHostWorkspace)workspace).Component is IImageViewer)
-			{
-				return (IImageViewer)((ApplicationComponentHostWorkspace)workspace).Component;
-			}
-			return null;
+
+			if (workspace == null)
+				return null;
+
+			if (!(workspace is ApplicationComponentHostWorkspace))
+				return null;
+
+			IApplicationComponent component = ((ApplicationComponentHostWorkspace)workspace).Component;
+			
+			if (component == null) 
+				return null;
+
+			if (!(component is IImageViewer))
+				return null;
+
+			return component as IImageViewer;
 		}
 	}
 }

@@ -16,11 +16,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipHorizontal", KeyStroke = XKeys.H)]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipHorizontal")]
 	[ClickHandler("activate", "Activate")]
-    [Tooltip("activate", "ToolbarToolsStandardFlipHorizontal")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "ToolbarToolsStandardFlipHorizontal")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipHorizontalMedium.png", "Icons.FlipHorizontalLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Horizontal")]
 
-	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class FlipHorizontalTool : ImageViewerTool
 	{
 		public FlipHorizontalTool()

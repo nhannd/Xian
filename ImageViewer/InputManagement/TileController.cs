@@ -202,7 +202,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 			}
 
-			_tile.Activate();
 			_tile.Select();
 			_contextMenuEnabled = (buttonMessage.Shortcut.MouseButton == XMouseButtons.Right);
 			_startMousePoint = buttonMessage.Location;

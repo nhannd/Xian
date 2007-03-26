@@ -17,8 +17,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ContextMenuLayoutTool : ImageViewerTool
 	{
-		private IImageBox _lastActivatedImageBox;
-
 		/// <summary>
         /// Constructor
         /// </summary>
@@ -40,9 +38,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
-
-			this.Context.Viewer.EventBroker.TileActivated +=
-				delegate(object sender, TileActivatedEventArgs e) { _lastActivatedImageBox = e.ActivatedTile.ParentImageBox; };
         }
 
 		/// <summary>
@@ -95,23 +90,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)
 		{
-			if (_lastActivatedImageBox == null)
-				return;
-
-			UndoableCommand command = new UndoableCommand(_lastActivatedImageBox);
-			command.BeginState = _lastActivatedImageBox.CreateMemento();
+			UndoableCommand command = new UndoableCommand(this.ImageViewer.SelectedImageBox);
+			command.BeginState = this.ImageViewer.SelectedImageBox.CreateMemento();
 
 			// If the display set is already visible, then we make a copy;
 			// otherwise, we use the original
 			if (displaySet.Visible)
-				_lastActivatedImageBox.DisplaySet = displaySet.Clone();
+				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.Clone();
 			else
-				_lastActivatedImageBox.DisplaySet = displaySet;
+				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet;
 
-			_lastActivatedImageBox.Draw();
-			_lastActivatedImageBox[0, 0].Select();
+			this.ImageViewer.SelectedImageBox.Draw();
+			//this.ImageViewer.SelectedImageBox[0, 0].Select();
 
-			command.EndState = _lastActivatedImageBox.CreateMemento();
+			command.EndState = this.ImageViewer.SelectedImageBox.CreateMemento();
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
 		}

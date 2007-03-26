@@ -14,7 +14,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardReset")]
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardReset")]
     [ClickHandler("activate", "Activate")]
-    [Tooltip("activate", "ToolbarToolsStandardReset")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[Tooltip("activate", "ToolbarToolsStandardReset")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ResetSmall.png", "Icons.ResetMedium.png", "Icons.ResetLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Reset")]
 
