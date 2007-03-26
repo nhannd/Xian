@@ -406,7 +406,17 @@ namespace ClearCanvas.Common
             {
                 if (service is IDisposable)
                 {
-                    (service as IDisposable).Dispose();
+                    try
+                    {
+                        (service as IDisposable).Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        // do not allow exceptions thrown from Dispose() because it may have the effect of
+                        // hiding an exception that was thrown from the service itself
+                        // if the service fails to dispose properly, we don't care, just log it and move on
+                        Platform.Log(e);
+                    }
                 }
             }
         }
