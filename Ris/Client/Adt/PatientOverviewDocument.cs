@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _profileRef;
 
         public PatientOverviewDocument(EntityRef profileRef, IDesktopWindow window)
-            :base(profileRef.ToString(), window)
+            :base(profileRef, window)
         {
             _profileRef = profileRef;
         }

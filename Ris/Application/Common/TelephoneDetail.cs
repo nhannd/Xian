@@ -11,7 +11,6 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public TelephoneDetail()
         {
-            this.Type = new EnumValueInfo();
         }
 
         [DataMember]

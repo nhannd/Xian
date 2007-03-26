@@ -7,21 +7,21 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public static class DocumentManager
     {
-        private static Dictionary<string, Document> _documents = new Dictionary<string, Document>();
+        private static Dictionary<object, Document> _documents = new Dictionary<object, Document>();
 
-        public static void Set(string docID, Document doc)
+        public static void Set(object key, Document doc)
         {
-            _documents[docID] = doc;
+            _documents[key] = doc;
         }
 
-        public static Document Get(string docID)
+        public static Document Get(object key)
         {
-            return _documents.ContainsKey(docID) ? _documents[docID] : null;
+            return _documents.ContainsKey(key) ? _documents[key] : null;
         }
 
-        public static void Remove(string docID)
+        public static void Remove(object key)
         {
-            _documents.Remove(docID);
+            _documents.Remove(key);
         }
 
     }

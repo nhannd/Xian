@@ -144,11 +144,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
-            PersistenceContext.Lock(profile, DirtyState.New);
             PersistenceContext.Lock(patient, DirtyState.New);
+//            PersistenceContext.Lock(profile, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new AdminAddPatientProfileResponse();
+            return new AdminAddPatientProfileResponse(patient.GetRef(), profile.GetRef());
         }
 
         #endregion

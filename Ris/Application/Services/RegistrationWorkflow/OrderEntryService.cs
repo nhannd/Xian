@@ -73,9 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load().Items,
                     delegate(OrderPriorityEnum opEnum)
                     {
-                        EnumValueInfo orderPriority = new EnumValueInfo();
-                        orderPriority.Code = opEnum.Code.ToString();
-                        orderPriority.Value = opEnum.Value;
+                        EnumValueInfo orderPriority = new EnumValueInfo(opEnum.Code.ToString(), opEnum.Value);
                         return orderPriority;
                     })
                 );

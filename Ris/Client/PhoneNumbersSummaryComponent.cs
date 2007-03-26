@@ -85,6 +85,7 @@ namespace ClearCanvas.Ris.Client
         public void AddPhoneNumber()
         {
             TelephoneDetail phoneNumber = new TelephoneDetail();
+            phoneNumber.Type = _phoneTypeChoices[0];
 
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);

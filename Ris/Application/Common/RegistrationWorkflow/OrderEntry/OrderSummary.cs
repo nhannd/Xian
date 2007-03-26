@@ -40,7 +40,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public OrderSummary()
         {
             this.PatientName = new PersonNameDetail();
-            this.OrderPriority = new EnumValueInfo();
         }
 
         [DataMember]

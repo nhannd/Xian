@@ -70,6 +70,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profile = new PatientProfileDetail();
                         _profile.MrnAssigningAuthority = "UHN";    // TODO remove this hack
                         _profile.HealthcardAssigningAuthority = "Ontario";    // TODO remove this hack
+                        _profile.Sex = formData.SexChoices[0];
+                        _profile.Religion = formData.ReligionChoices[0];
+                        _profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
+                        _profile.DateOfBirth = Platform.Time.Date;
                     }
                     else
                     {
@@ -138,8 +142,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         AdminAddPatientProfileResponse response = service.AdminAddPatientProfile(
                             new AdminAddPatientProfileRequest(_profile));
 
-                        // TODO this service should not be returning a worklist item
-                        //_profile = response.PatientProfileRef;
+                        _profileRef = response.PatientProfileRef;
                     }
                     else
                     {

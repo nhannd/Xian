@@ -8,13 +8,13 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public abstract class Document
     {
-        private string _docID;
+        private object _docID;
         private IWorkspace _workspace;
         private IDesktopWindow _desktopWindow;
 
         private event EventHandler _closed;
 
-        public Document(string docID, IDesktopWindow desktopWindow)
+        public Document(object docID, IDesktopWindow desktopWindow)
         {
             _docID = docID;
             _desktopWindow = desktopWindow;

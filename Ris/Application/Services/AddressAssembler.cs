@@ -29,8 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             addressDetail.Country = address.Country;
 
             AddressTypeEnumTable typeEnumTable = context.GetBroker<IAddressTypeEnumBroker>().Load();
-            addressDetail.Type.Code = address.Type.ToString();
-            addressDetail.Type.Value = typeEnumTable[address.Type].Value;
+            addressDetail.Type = new EnumValueInfo(address.Type.ToString(), typeEnumTable[address.Type].Value);
 
             addressDetail.ValidRangeFrom = address.ValidRange.From;
             addressDetail.ValidRangeUntil = address.ValidRange.Until;

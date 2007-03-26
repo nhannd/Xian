@@ -14,11 +14,11 @@ namespace ClearCanvas.Ris.Application.Common
             this.Code = code;
             this.Value = value;
         }
-
+/*
         public EnumValueInfo()
         {
         }
-
+*/
         [DataMember]
         public string Code;
 
@@ -29,11 +29,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-            EnumValueInfo clone = new EnumValueInfo();
-            clone.Code = this.Code;
-            clone.Value = this.Value;
-
-            return clone;
+            return new EnumValueInfo(this.Code, this.Value);
         }
 
         #endregion
