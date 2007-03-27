@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
@@ -36,8 +37,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             summary.PatientName = personNameAssembler.CreatePersonNameDetail(result.PatientName);
 
             OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            summary.OrderPriority.Code = result.Priority.ToString();
-            summary.OrderPriority.Value = priorityEnumTable[result.Priority].Value;
+            summary.OrderPriority = new EnumValueInfo(result.Priority.ToString(), priorityEnumTable[result.Priority].Value);
 
             return summary;
         }

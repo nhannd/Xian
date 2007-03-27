@@ -20,6 +20,10 @@ namespace ClearCanvas.Healthcare {
             _order = order;
             _type = type;
             _index = index;
+
+            _modalityProcedureSteps = new HybridSet();
+
+            _checkInProcedureSteps = new HybridSet();
         }
 	
 		/// <summary>

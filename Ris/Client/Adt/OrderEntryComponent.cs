@@ -45,7 +45,8 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
-                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).WorklistItem.PatientProfileRef != null);
+                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
+                this.Enabled = (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
             }
             else
             {
@@ -158,6 +159,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         _facilityChoices = formChoicesResponse.OrderingFacilityChoices;
                         _orderingPhysicianChoices = formChoicesResponse.OrderingPhysicianChoices;
                         _priorityChoices = formChoicesResponse.OrderPriorityChoices;
+
+                        _selectedPriority = _priorityChoices[0];
                     });
 
                 _schedulingRequestDateTime = Platform.Time;            
@@ -282,7 +285,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _selectedOrderingPhysician = (value == "") ? null :
                    CollectionUtils.SelectFirst<PractitionerSummary>(_orderingPhysicianChoices,
-                       delegate(PractitionerSummary p) { return Format.Custom(p.PersonNameDetail) == value; });
+                       delegate(PractitionerSummary p) { return String.Format("{0}, {1}", p.PersonNameDetail.FamilyName, p.PersonNameDetail.GivenName) == value; });
             }
         }
 

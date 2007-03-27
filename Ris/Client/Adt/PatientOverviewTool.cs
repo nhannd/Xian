@@ -47,7 +47,8 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
-                this.Enabled = (((IRegistrationPreviewToolContext)this.ContextBase).WorklistItem.PatientProfileRef != null);
+                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
+                this.Enabled = (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
             }
 
         }
