@@ -56,81 +56,28 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Process()
         {
+            //TODO:  Wait cursor
             ProcessQueueItem(this.Context.SelectedHL7QueueItem);
             this.Context.Refresh();
         }
 
         private void ProcessQueueItem(HL7QueueItemDetail selectedQueueItem)
         {
-            try
-            {
-                try
+            ProcessHL7QueueItemRequest processRequest = new ProcessHL7QueueItemRequest(selectedQueueItem.QueueItemRef);
+            ProcessHL7QueueItemResponse processResponse;
+
+            Platform.GetService<IHL7QueueService>(
+                delegate(IHL7QueueService service)
                 {
-                    //TODO:  combine Process..(), Set...Complete(), and Set...Error()
-
-                    //using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-                    //{
-                    //    //service.ProcessHL7QueueItem(queueItem);
-                    //    ProcessHL7QueueItemRequest processRequest = new ProcessHL7QueueItemRequest(selectedQueueItem.QueueItemRef);
-                    //    ProcessHL7QueueItemResponse processResponse;
-                    //    Platform.GetService<IHL7QueueService>(
-                    //        delegate(IHL7QueueService service)
-                    //        {
-                    //            try
-                    //            {
-                    //                processResponse = service.ProcessHL7QueueItem(processRequest);
-                    //            }
-                    //            catch (Exception e)
-                    //            {
-                    //                ExceptionHandler.Report(e, Context.DesktopWindow);
-                    //            }
-                    //        });
-
-                    //    //service.SetHL7QueueItemComplete(queueItem);
-                    //    SetHL7QueueItemCompleteRequest completeRequest = new SetHL7QueueItemCompleteRequest(selectedQueueItem.QueueItemRef);
-                    //    SetHL7QueueItemCompleteResponse completeResponse;
-                    //    Platform.GetService<IHL7QueueService>(
-                    //        delegate(IHL7QueueService service)
-                    //        {
-                    //            try
-                    //            {
-                    //                completeResponse = service.SetHL7QueueItemComplete(completeRequest);
-                    //            }
-                    //            catch (Exception e)
-                    //            {
-                    //                ExceptionHandler.Report(e, Context.DesktopWindow);
-                    //            }
-                    //        });
-
-                    //    scope.Complete();
-                    //}
-                }
-                catch (Exception e)
-                {
-                    //Platform.Log("Unable to process HL7 queue item: " + queueItem.ToString());
-                    //Platform.Log("Exception thrown: " + e.Message);                    
-                    
-                    ////service.SetHL7QueueItemError(queueItem, e.Message);
-                    //SetHL7QueueItemErrorRequest errorRequest = new SetHL7QueueItemErrorRequest(selectedQueueItem.QueueItemRef, e.Message);
-                    //SetHL7QueueItemErrorResponse errorResponse;
-                    //Platform.GetService<IHL7QueueService>(
-                    //    delegate(IHL7QueueService service)
-                    //    {
-                    //        try
-                    //        {
-                    //            errorResponse = service.SetHL7QueueItemError(errorRequest);
-                    //        }
-                    //        catch (Exception e)
-                    //        {
-                    //            ExceptionHandler.Report(e, Context.DesktopWindow);
-                    //        }
-                    //    });
-                }          
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to process queue item:  " + e.Message);
-            }
+                    try
+                    {
+                        processResponse = service.ProcessHL7QueueItem(processRequest);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, Context.DesktopWindow);
+                    }
+                });
         }
     }
 }

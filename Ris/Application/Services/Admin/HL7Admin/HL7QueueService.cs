@@ -190,11 +190,36 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             }
         }
 
+
+
         [UpdateOperation]
         public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
         {
             HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
-            
+
+            try
+            {
+                DoProcessing(queueItem);
+
+                PersistenceContext.Lock(queueItem);
+                queueItem.SetComplete();
+            }
+            catch (Exception e)
+            {
+                using (new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+                {
+                    PersistenceContext.Lock(queueItem);
+                    queueItem.SetError(e.Message);                    
+                }
+
+                throw e;
+            }
+
+            return new ProcessHL7QueueItemResponse();
+        }
+
+        public void DoProcessing(HL7QueueItem queueItem)
+        {
             //TODO:  Refactor following region
             #region To Be Refactored
 
@@ -214,7 +239,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                     processor.ListReferencedPlacerOrderNumbers(),
                     processor.ReferencedPlacerOrderNumberAssigningAuthority());
 
-            processor.Process();
+            processor.Process(PersistenceContext);
 
             foreach (EntityAccess<Patient> patientAccess in processor.Patients)
             {
@@ -230,30 +255,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             }
 
             #endregion
-
-            return new ProcessHL7QueueItemResponse();
-        }
-
-        [UpdateOperation]
-        public SetHL7QueueItemCompleteResponse SetHL7QueueItemComplete(SetHL7QueueItemCompleteRequest request)
-        {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
-
-            PersistenceContext.Lock(queueItem);
-            queueItem.SetComplete();
-
-            return new SetHL7QueueItemCompleteResponse();
-        }
-
-        [UpdateOperation]
-        public SetHL7QueueItemErrorResponse SetHL7QueueItemError(SetHL7QueueItemErrorRequest request)
-        {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
-
-            PersistenceContext.Lock(queueItem);
-            queueItem.SetError(request.ErrorMessage);
-
-            return new SetHL7QueueItemErrorResponse();
         }
 
         #endregion

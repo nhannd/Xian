@@ -46,22 +46,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request);
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        SetHL7QueueItemCompleteResponse SetHL7QueueItemComplete(SetHL7QueueItemCompleteRequest request);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        SetHL7QueueItemErrorResponse SetHL7QueueItemError(SetHL7QueueItemErrorRequest request);
-
-        /// <summary>
         /// Determines the patient referenced by a particular HL7 message
         /// </summary>
         /// <param name="request"></param>

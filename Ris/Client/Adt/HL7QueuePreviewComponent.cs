@@ -177,6 +177,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 _peerChoices = formResponse.PeerChoices;
                 _statusChoices = formResponse.StatusCodeChoices;
                 _typeChoices = formResponse.MessageTypeChoices;
+
+                _direction = _directionChoices[0];
+                _peer = _peerChoices[0];
+                _status = _statusChoices[0];
+                _type = _typeChoices[0];
             }
             else
             {
@@ -194,7 +199,7 @@ namespace ClearCanvas.Ris.Client.Adt
         #region Direction
         public string Direction
         {
-            get { return _direction == null ? "" : _direction.Value; }
+            get { return _direction.Value; }
             set 
             {
                 _direction = string.IsNullOrEmpty(value)
@@ -220,7 +225,7 @@ namespace ClearCanvas.Ris.Client.Adt
         #region Peer
         public string Peer
         {
-            get { return _peer == null ? "" : _peer.Value; }
+            get { return _peer.Value; }
             set
             {
                 _peer = string.IsNullOrEmpty(value)
@@ -265,7 +270,7 @@ namespace ClearCanvas.Ris.Client.Adt
         #region Status
         public string Status
         {
-            get { return _status == null ? "" : _status.Value; }
+            get { return _status.Value; }
             set
             {
                 _status = string.IsNullOrEmpty(value)
@@ -472,7 +477,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _queue.Items.Clear();
             if (response != null)
             {
-                //TODO: restore pagin functionality
+                //TODO: restore paging functionality
                 //_queue.Items.AddRange(_pagingController.GetFirst(criteria));
                 _queue.Items.AddRange(response.QueueItems);
             }
