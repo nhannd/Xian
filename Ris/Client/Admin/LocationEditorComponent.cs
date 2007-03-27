@@ -27,6 +27,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(LocationEditorComponentViewExtensionPoint))]
     public class LocationEditorComponent : ApplicationComponent
     {
+        private List<FacilitySummary> _facilityChoices;
+
         private LocationDetail _locationDetail;
         private EntityRef _locationRef;
         private bool _isNew;
@@ -47,13 +49,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            if (_isNew)
+            try
             {
-                _locationDetail = new LocationDetail();
-            }
-            else
-            {
-                try
+                if (_isNew)
+                {
+                    _locationDetail = new LocationDetail();
+                }
+                else
                 {
                     Platform.GetService<ILocationAdminService>(
                         delegate(ILocationAdminService service)
@@ -63,10 +65,24 @@ namespace ClearCanvas.Ris.Client.Admin
                             _locationDetail = response.LocationDetail;
                         });
                 }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
+            
+                Platform.GetService<IFacilityAdminService>(
+                    delegate(IFacilityAdminService service)
+                    {
+                        ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                        _facilityChoices = response.Facilities;
+
+                        if (_isNew && _locationDetail.Facility == null && response.Facilities.Count > 0)
+                        {
+                            _locationDetail.Facility = response.Facilities[0];
+                        }
+                    
+                    });
+                
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             base.Start();
@@ -83,33 +99,15 @@ namespace ClearCanvas.Ris.Client.Admin
             set { _locationDetail = value; }
         }
 
-        public IList FacilityChoices
+        public List<string> FacilityChoices
         {
             get 
             {
                 List<string> facilityStrings = new List<string>();
-
-                try
-                {
-                    Platform.GetService<IFacilityAdminService>(
-                        delegate(IFacilityAdminService service)
-                        {
-                            ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                            facilityStrings.AddRange(
-                                CollectionUtils.Map<FacilitySummary, string>(response.Facilities,
-                                        delegate(FacilitySummary f) { return f.Name; }));
-
-                            if (_isNew && _locationDetail.Facility == null && response.Facilities.Count > 0)
-                            {
-                                _locationDetail.Facility = response.Facilities[0].FacilityRef;
-                            }
-                        
-                        });
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
+                facilityStrings.Add("");
+                facilityStrings.AddRange(
+                    CollectionUtils.Map<FacilitySummary, string>(
+                        _facilityChoices, delegate(FacilitySummary f) { return f.Name; }));
 
                 return facilityStrings;
             }
@@ -117,32 +115,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string Facility
         {
-            get { return (_locationDetail.Facility == null ? "" : _locationDetail.FacilityName); }
+            get { return _locationDetail.Facility == null ? "" : _locationDetail.Facility.Name; }
             set
             {
-                try
-                {
-                    Platform.GetService<IFacilityAdminService>(
-                        delegate(IFacilityAdminService service)
-                        {
-                            ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                            FacilitySummary summary = CollectionUtils.SelectFirst<FacilitySummary>(response.Facilities,
-                                    delegate(FacilitySummary f) { return f.Name == value; });
+                _locationDetail.Facility = (value == "") ? null : 
+                    CollectionUtils.SelectFirst<FacilitySummary>(_facilityChoices,
+                        delegate(FacilitySummary f) { return f.Name == value; });
 
-                            if (summary != null)
-                            {
-                                _locationDetail.Facility = summary.FacilityRef;
-                                _locationDetail.FacilityName = summary.Name;
-                            }
-                        });
-                    
-
-                    this.Modified = true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
+                this.Modified = true;
             }
         }
 
@@ -168,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string PointOfCare
         {
-            get { return _locationDetail.PointOfCare; }
+            get { return (_locationDetail.PointOfCare == null ? "" : _locationDetail.PointOfCare); }
             set 
             { 
                 _locationDetail.PointOfCare = value;

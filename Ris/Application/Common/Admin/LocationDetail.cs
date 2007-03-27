@@ -18,9 +18,23 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             string room,
             string bed)
         {
+            this.Facility = new FacilitySummary(facility, facilityCode, facilityName);
+            this.Building = building;
+            this.Floor = floor;
+            this.PointOfCare = pointOfCare;
+            this.Room = room;
+            this.Bed = bed;
+        }
+
+        public LocationDetail(
+            FacilitySummary facility,
+            string building,
+            string floor,
+            string pointOfCare,
+            string room,
+            string bed)
+        {
             this.Facility = facility;
-            this.FacilityName = facilityName;
-            this.FacilityCode = facilityCode;
             this.Building = building;
             this.Floor = floor;
             this.PointOfCare = pointOfCare;
@@ -33,13 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         }
 
         [DataMember]
-        public EntityRef Facility;
-
-        [DataMember]
-        public string FacilityName;
-
-        [DataMember]
-        public string FacilityCode;
+        public FacilitySummary Facility;
 
         [DataMember]
         public string Building;

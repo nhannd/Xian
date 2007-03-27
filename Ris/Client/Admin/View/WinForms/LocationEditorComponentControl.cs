@@ -34,9 +34,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _pointOfCare.DataBindings.Add("Value", _component, "PointOfCare", true, DataSourceUpdateMode.OnPropertyChanged);
             _room.DataBindings.Add("Value", _component, "Room", true, DataSourceUpdateMode.OnPropertyChanged);
             _bed.DataBindings.Add("Value", _component, "Bed", true, DataSourceUpdateMode.OnPropertyChanged);
-            _active.DataBindings.Add("Checked", _component, "Active", true, DataSourceUpdateMode.OnPropertyChanged);
-            _inactiveDate.DataBindings.Add("Enabled", _component, "Active", true, DataSourceUpdateMode.OnPropertyChanged);
-            _inactiveDate.DataBindings.Add("Value", _component, "InactiveDate", true, DataSourceUpdateMode.OnPropertyChanged);
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

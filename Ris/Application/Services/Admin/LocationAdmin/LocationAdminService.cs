@@ -64,11 +64,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         public AddLocationResponse AddLocation(AddLocationRequest request)
         {
             Location location = new Location();
+            location.Active = true;
+
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);
-
-            location.Active = true;
-            location.InactiveDate = Platform.Time;
 
             // TODO prior to accepting this add request, we should check that the same location does not already exist
 
