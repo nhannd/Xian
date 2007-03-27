@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// Extension point for views onto <see cref="PatientComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class PatientComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class PatientOverviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// <summary>
     /// PatientComponent class
     /// </summary>
-//    [AssociateView(typeof(PatientComponentViewExtensionPoint))]
+    [AssociateView(typeof(PatientOverviewComponentViewExtensionPoint))]
     public class PatientOverviewComponent : ApplicationComponent
     {
         class PatientOverviewToolContext : ToolContext, IPatientOverviewToolContext
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
 
         private EntityRef _patientProfileRef;
-
+        private PatientProfileDetail _patientProfile;
         private ToolSet _toolSet;
 
 
@@ -76,7 +76,23 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _toolSet = new ToolSet(new PatientOverviewToolExtensionPoint(), new PatientOverviewToolContext(this));
 
-            Refresh();
+            try
+            {
+                Platform.GetService<IPatientAdminService>(
+                    delegate(IPatientAdminService service)
+                    {
+                        //_patientProfile
+                        LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(new LoadPatientProfileForAdminEditRequest(_patientProfileRef));
+                        _patientProfileRef = response.PatientProfileRef;
+                        _patientProfile = response.PatientDetail;
+                    });
+
+                Refresh();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
             base.Start();
         }
@@ -103,11 +119,24 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _toolSet.Actions; }
         }
 
+        #region Presentation Model
+
+        public string Name
+        {
+            //TODO: PersonNameDetail formatting
+            get { return String.Format("{0}, {1}", _patientProfile.Name.FamilyName, _patientProfile.Name.GivenName); }
+        }
+
+        #endregion
+
         private void Refresh()
         {
             this.Host.SetTitle(string.Format(SR.TitlePatientComponent,
-                "Name",
-                "MRN"));
+                String.Format("{0}, {1}", _patientProfile.Name.FamilyName, _patientProfile.Name.GivenName),
+                String.Format("{0} {1}", _patientProfile.MrnAssigningAuthority, _patientProfile.Mrn)));
+
+
+            NotifyAllPropertiesChanged();
         }
     }
 }

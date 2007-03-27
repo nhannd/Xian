@@ -40,6 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PatientOverviewComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientOverviewComponentControl.Designer.cs">
+      <DependentUpon>PatientOverviewComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientOverviewComponentView.cs" />
     <Compile Include="OrderEntryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -189,6 +196,10 @@
     <EmbeddedResource Include="OrderListComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OrderListComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientOverviewComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PatientOverviewComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponentControl.resx">
       <SubType>Designer</SubType>
