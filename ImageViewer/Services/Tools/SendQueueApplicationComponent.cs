@@ -7,7 +7,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -99,7 +98,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private LocalDataStoreActivityMonitor _monitor;
 
 		private Timer _timer;
-		private InterthreadMarshaler _marshaler;
 
 		/// <summary>
 		/// Constructor
@@ -107,7 +105,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public SendQueueApplicationComponent(LocalDataStoreActivityMonitor monitor)
 		{
 			_monitor = monitor;
-			_marshaler = new InterthreadMarshaler();
 		}
 
 		public override void Start()
@@ -115,20 +112,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			InitializeTable();
 			base.Start();
 
-			TimerCallback callback = delegate(object state)
-			{
-				_marshaler.QueueInvoke(
-					delegate 
-					{
-						foreach (SendQueueItem item in _sendTable.Items)
-						{
-							item.CalculateLastActiveDisplay();
-							_sendTable.Items.NotifyItemUpdated(item);
-						}
-					});
-			};
-
-			_timer = new Timer(callback, null, 30000, 30000);
+			_timer = new Timer(this.OnTimer, 30000, 30000);
 			
 			_monitor.SendProgressUpdate += new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
 		}
@@ -138,7 +122,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			base.Stop();
 			_timer.Dispose();
 			_timer = null;
+
 			_monitor.SendProgressUpdate -= new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+		}
+
+		private void OnTimer()
+		{
+			foreach (SendQueueItem item in _sendTable.Items)
+			{
+				item.CalculateLastActiveDisplay();
+				_sendTable.Items.NotifyItemUpdated(item);
+			}
 		}
 
 		private void OnSendProgressUpdate(object sender, ItemEventArgs<SendProgressItem> e)

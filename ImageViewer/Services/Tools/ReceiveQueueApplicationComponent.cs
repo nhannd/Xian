@@ -7,7 +7,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common.Utilities;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -92,9 +91,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private Table<ReceiveQueueItem> _receiveTable;
 		private ISelection _selection;
 		private LocalDataStoreActivityMonitor _monitor;
-
 		private Timer _timer;
-		private InterthreadMarshaler _marshaler;
 
 		/// <summary>
 		/// Constructor
@@ -102,7 +99,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public ReceiveQueueApplicationComponent(LocalDataStoreActivityMonitor monitor)
 		{
 			_monitor = monitor;
-			_marshaler = new InterthreadMarshaler();
 		}
 
 		public override void Start()
@@ -110,20 +106,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			InitializeTable();
 			base.Start();
 
-			TimerCallback callback = delegate(object state)
-			{
-				_marshaler.QueueInvoke(
-					delegate
-					{
-						foreach (ReceiveQueueItem item in _receiveTable.Items)
-						{
-							item.CalculateLastActiveDisplay();
-							_receiveTable.Items.NotifyItemUpdated(item);
-						}
-					});
-			};
-
-			_timer = new Timer(callback, null, 30000, 30000);
+			_timer = new Timer(this.OnTimer, 30000, 30000);
 
 			_monitor.ReceiveProgressUpdate += new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
 		}
@@ -131,9 +114,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public override void Stop()
 		{
 			base.Stop();
+
 			_timer.Dispose();
 			_timer = null;
+			
 			_monitor.ReceiveProgressUpdate -= new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+		}
+
+		private void OnTimer()
+		{
+			foreach (ReceiveQueueItem item in _receiveTable.Items)
+			{
+				item.CalculateLastActiveDisplay();
+				_receiveTable.Items.NotifyItemUpdated(item);
+			}
 		}
 
 		private void OnReceiveProgressUpdate(object sender, ItemEventArgs<ReceiveProgressItem> e)

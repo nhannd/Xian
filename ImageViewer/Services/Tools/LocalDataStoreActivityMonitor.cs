@@ -8,6 +8,7 @@ using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
+	[CallbackBehavior(UseSynchronizationContext = false)]
 	public sealed class LocalDataStoreActivityMonitor : ILocalDataStoreActivityMonitorServiceCallback
 	{
 		private LocalDataStoreActivityMonitorServiceClient _serviceClient;
@@ -17,9 +18,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private event EventHandler<ItemEventArgs<ReindexProgressItem>> _reindexProgressUpdate;
 		private event EventHandler<ItemEventArgs<ImportedSopInstanceInformation>> _sopInstanceImported;
 		private event EventHandler _serviceStopped;
+		private InterthreadMarshaler _marshaler;
 
 		public LocalDataStoreActivityMonitor()
-		{ 
+		{
 		}
 
 		public void Start()
@@ -28,6 +30,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_serviceClient = new LocalDataStoreActivityMonitorServiceClient(context);
 			try
 			{
+				_marshaler = new InterthreadMarshaler();
+
 				_serviceClient.Open();
 				_serviceClient.Subscribe("");
 			}
@@ -44,6 +48,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				_serviceClient.Unsubscribe("");
 				_serviceClient.Close();
+
+				_marshaler.Dispose();
+				_marshaler = null;
 			}
 			catch
 			{
@@ -86,34 +93,58 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void ReceiveProgressChanged(ReceiveProgressItem progressItem)
 		{
-			EventsHelper.Fire(_receiveProgressUpdate,this, new ItemEventArgs<ReceiveProgressItem>(progressItem));
+			_marshaler.QueueInvoke
+			(delegate()
+				{
+					EventsHelper.Fire(_receiveProgressUpdate, this, new ItemEventArgs<ReceiveProgressItem>(progressItem));
+				});
 		}
 
 		public void SendProgressChanged(SendProgressItem progressItem)
 		{
-			EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
+			_marshaler.QueueInvoke
+			(delegate()
+				{
+					EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
+				});
 		}
 
 		public void ImportProgressChanged(ImportProgressItem progressItem)
 		{
-			EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
+			_marshaler.QueueInvoke
+			(delegate()
+				{
+					EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
+				});
 		}
 
 		public void ReindexProgressChanged(ReindexProgressItem progressItem)
 		{
-			EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
+			_marshaler.QueueInvoke
+			(delegate()
+				{
+					EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
+				});
 		}
 
 		public void SopInstanceImported(ImportedSopInstanceInformation information)
 		{
-			EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
+			_marshaler.QueueInvoke
+			(delegate()
+			{
+				EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
+			});
 		}
 
 		public void OnServiceStopped()
 		{
-			EventsHelper.Fire(_serviceStopped, this, EventArgs.Empty);
+			_marshaler.QueueInvoke
+			(delegate()
+			{
+				EventsHelper.Fire(_serviceStopped, this, EventArgs.Empty);
+			});
 		}
 
 		#endregion
-	}
+    }
 }

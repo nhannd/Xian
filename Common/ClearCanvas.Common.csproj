@@ -194,7 +194,6 @@
     <Compile Include="UnknownServiceException.cs" />
     <Compile Include="Utilities\BackgroundTask.cs" />
     <Compile Include="Utilities\BasicExtensionPointManager.cs" />
-    <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
@@ -203,6 +202,7 @@
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\SimpleThreadPool.cs" />
+    <Compile Include="Utilities\Timer.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
     <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />

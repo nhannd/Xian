@@ -214,8 +214,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
-
-            //WCF TODO: Notify ActivityService via WCF, update the SOP receiving status.  This will happen quite frequent
         }
 
         private void OnStoreScpEndEvent(object sender, DicomServerEventArgs e)
