@@ -76,4 +76,36 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>mkdir $(TargetDir)common
+mkdir $(TargetDir)plugins
+
+rem copy ShredHost assembly
+copy $(ProjectDir)..\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)plugins
+
+rem copy shred assemblies
+copy $(ProjectDir)..\..\ImageViewer\Shreds\$(Outdir)ClearCanvas.ImageViewer.Shreds.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageViewer\Services\$(Outdir)ClearCanvas.ImageViewer.Services.dll $(TargetDir)plugins
+
+rem copy common assemblies
+copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\DataStore\$(OutDir)ClearCanvas.Dicom.DataStore.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\DataStore\NHibernateDriver\$(OutDir)ClearCanvas.Dicom.DataStore.NHibernateDriver.dll $(TargetDir)common
+copy $(ProjectDir)..\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
+
+rem copy referenced assemblies
+copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate.Caches.SysCache.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\Castle.DynamicProxy.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
+
+rem copy Offis dlls
+copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)common
+
+rem copy config files
+copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
