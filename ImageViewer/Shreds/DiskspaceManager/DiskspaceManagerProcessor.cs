@@ -18,20 +18,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
     {
 		private static DiskspaceManagerProcessor _instance;
 
-        private string _driveName;
-        private string _status;
-        private float _lowWatermark;
-        private float _highWatermark;
-        private float _usedSpace;
-
         public DiskspaceManagerProcessor()
         {
-            _driveName = DiskspaceManagerSettings.Instance.DriveName;
-            _status = DiskspaceManagerSettings.Instance.Status;
-            _lowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
-            _highWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
-            _usedSpace = DiskspaceManagerSettings.Instance.UsedSpace;
-
         }
 
         public static DiskspaceManagerProcessor Instance
@@ -53,12 +41,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             try
             {
-                _driveName = "E";
-                _status = "Start ...";
-                _lowWatermark = 55.5F;
-                _highWatermark = 88.8F;
-                _usedSpace = 77.7F;
-
                 _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
                 _diskspaceManagerData = new DiskspaceManagerData();
                 if (!FindDiskspaceManagerDBAccessExtensionPoint())
@@ -104,11 +86,28 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             {
                 if (_diskspaceManagerData.IsProcessing)
                     continue;
+                CheckConfigurationSettings();
                 CheckDiskspace();
                 if (_diskspaceManagerData.ReachHighWaterMark)
                 {
                     _diskspaceManagerData.IsProcessing = true;
                     _diskspaceManagerData.FireOrderedStudyListRequired();
+                }
+            }
+        }
+
+        private void CheckConfigurationSettings()
+        {
+            if (_diskspaceManagerData.CheckingFrequency != DiskspaceManagerSettings.Instance.CheckFrequency * 60000)
+                _diskspaceManagerData.CheckingFrequency = DiskspaceManagerSettings.Instance.CheckFrequency * 60000;
+            foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
+            {
+                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
+                {
+                    if (dmDriveInfo.LowWatermark != DiskspaceManagerSettings.Instance.LowWatermark)
+                        dmDriveInfo.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
+                    if (dmDriveInfo.HighWatermark != DiskspaceManagerSettings.Instance.HighWatermark)
+                        dmDriveInfo.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
                 }
             }
         }
@@ -125,6 +124,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 drive.Get();
                 dmDriveInfo.DriveSize = long.Parse(drive["Size"].ToString());
                 dmDriveInfo.UsedSpace = dmDriveInfo.DriveSize - long.Parse(drive["FreeSpace"].ToString());
+                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
+                {
+                    if (dmDriveInfo.UsedSpace != DiskspaceManagerSettings.Instance.UsedSpace)
+                    {
+                        DiskspaceManagerSettings.Instance.UsedSpace = dmDriveInfo.UsedSpacePercentage;
+                        DiskspaceManagerSettings.Save();
+                    }
+                }
                 Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
                     + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
             }
@@ -193,8 +200,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 }
                 _diskspaceManagerData.DriveInfoList[i].UsedSpace -= deletedSpace;
                 if (deletedNumber > 0)
+                {
                     Platform.Log("    Total studies deleted on drive " + _diskspaceManagerData.DriveInfoList[i].DriveName + " -> Deleted Studies: " + deletedNumber + "; Deleted Space: " + deletedSpace
                         + " (Current Used Space: " + _diskspaceManagerData.DriveInfoList[i].UsedSpacePercentage + "%) (Watermark: " + _diskspaceManagerData.DriveInfoList[i].LowWatermark + " ~ " + _diskspaceManagerData.DriveInfoList[i].HighWatermark + ")");
+                    if (_diskspaceManagerData.DriveInfoList[i].DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
+                    {
+                        DateTime t = new DateTime();
+                        DiskspaceManagerSettings.Instance.Status = t.ToLongTimeString() + ") Deleted Studies: " + deletedNumber + "; Deleted Space: " + deletedSpace;
+                        DiskspaceManagerSettings.Save();
+                    }
+                }
             }
         }
 
@@ -274,40 +289,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         #endregion
 
-        #region Properties
-
-        public string DriveName
-        {
-            get { return _driveName; }
-            set { _driveName = value; }
-        }
-
-        public string Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
-
-        public float LowWatermark
-        {
-            get { return _lowWatermark; }
-            set { _lowWatermark = value; }
-        }
-
-        public float HighWatermark
-        {
-            get { return _highWatermark; }
-            set { _highWatermark = value; }
-        }
-
-        public float UsedSpace
-        {
-            get { return _usedSpace; }
-            set { _usedSpace = value; }
-        }
-
-        #endregion
-
         #region IDiskspaceManagerService Members
 
         public GetServerSettingResponse GetServerSetting()
@@ -316,7 +297,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                                                 DiskspaceManagerSettings.Instance.Status,
                                                 DiskspaceManagerSettings.Instance.LowWatermark,
                                                 DiskspaceManagerSettings.Instance.HighWatermark,
-                                                DiskspaceManagerSettings.Instance.UsedSpace);
+                                                DiskspaceManagerSettings.Instance.UsedSpace,
+                                                DiskspaceManagerSettings.Instance.CheckFrequency);
         }
 
         public void UpdateServerSetting(UpdateServerSettingRequest request)
@@ -326,6 +308,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             DiskspaceManagerSettings.Instance.LowWatermark = request.LowWatermark;
             DiskspaceManagerSettings.Instance.HighWatermark = request.HighWatermark;
             DiskspaceManagerSettings.Instance.UsedSpace = request.UsedSpace;
+            DiskspaceManagerSettings.Instance.CheckFrequency = request.CheckFrequency;
             DiskspaceManagerSettings.Save();
         }
 

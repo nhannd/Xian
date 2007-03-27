@@ -29,6 +29,8 @@ namespace ClearCanvas.ImageViewer.Configuration
         private float _lowWatermark;
         private float _highWatermark;
         private float _spaceUsed;
+        private float _watermarkMinDifference = 5.0F;
+        private int _checkFrequency;
 
         private DiskspaceManagerServiceClient _serviceClient;
 
@@ -70,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                 _lowWatermark = response.LowWatermark;
                 _highWatermark = response.HighWatermark;
                 _spaceUsed = response.UsedSpace;
+                _checkFrequency = response.CheckFrequency;
 
             }
             catch (Exception e)
@@ -80,7 +83,9 @@ namespace ClearCanvas.ImageViewer.Configuration
                 _highWatermark = 0.0F;
                 _spaceUsed = 0.0F;
                 _serviceClient = null;
+                _checkFrequency = 10;
 
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
         }
@@ -97,6 +102,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     request.LowWatermark = _lowWatermark;
                     request.HighWatermark = _highWatermark;
                     request.UsedSpace = _spaceUsed;
+                    request.CheckFrequency = _checkFrequency;
                     _serviceClient.UpdateServerSetting(request);
                 }
                 catch (Exception e)
@@ -139,12 +145,24 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
+        public float WatermarkMinDifference
+        {
+            get { return _watermarkMinDifference; }
+        }
+
         public float LowWatermark
         {
             get { return _lowWatermark; }
             set
             {
-                _lowWatermark = value;
+                if (value >= (100.0F - _watermarkMinDifference))
+                    _lowWatermark = 100.0F - _watermarkMinDifference;
+                else if (value <= 0.0F)
+                    _lowWatermark = 0.0F;
+                else
+                    _lowWatermark = value;
+                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                    _highWatermark = _lowWatermark + _watermarkMinDifference;
                 this.Modified = true;
             }
         }
@@ -154,8 +172,14 @@ namespace ClearCanvas.ImageViewer.Configuration
             get { return _highWatermark; }
             set
             {
-                _highWatermark = value;
-                //NotifyPropertyChanged("HighWatermarkString");
+                if (value >= 100.0F)
+                    _highWatermark = 100.0F;
+                else if (value <= _watermarkMinDifference)
+                    _highWatermark = _watermarkMinDifference;
+                else
+                    _highWatermark = value;
+                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                    _lowWatermark = _highWatermark - _watermarkMinDifference;
                 this.Modified = true;
             }
         }
@@ -166,6 +190,50 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 _spaceUsed = value;
+                this.Modified = true;
+            }
+        }
+
+        public float LowWatermarkDisplay
+        {
+            get { return (_lowWatermark * 100.0F); }
+            set
+            {
+                if (value >= (100.0F - _watermarkMinDifference) * 100.0F)
+                    _lowWatermark = (100.0F - _watermarkMinDifference) * 100.0F;
+                else if (value <= 0.0F)
+                    _lowWatermark = 0.0F;
+                else
+                    _lowWatermark = value / 100.0F;
+                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                    _highWatermark = _lowWatermark + _watermarkMinDifference;
+                this.Modified = true;
+            }
+        }
+
+        public float HighWatermarkDisplay
+        {
+            get { return (_highWatermark * 100.0F); }
+            set
+            {
+                if (value >= 10000.0F)
+                    _highWatermark = 10000.0F;
+                else if (value <= (_watermarkMinDifference * 100.0F))
+                    _highWatermark = _watermarkMinDifference * 100.0F;
+                else
+                    _highWatermark = value / 100.0F;
+                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                    _lowWatermark = _highWatermark - _watermarkMinDifference;
+                this.Modified = true;
+            }
+        }
+
+        public int CheckFrequency
+        {
+            get { return _checkFrequency; }
+            set
+            {
+                _checkFrequency = value;
                 this.Modified = true;
             }
         }

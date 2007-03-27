@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             _orderedStudyList = new DMStudyItemList();
             _isProcessing = false;
-            _checkingFrequency = 300000;
+            _checkingFrequency = 120000;
             _driveInfoList = new DMDriveInfoList();
             DriveInfo[] driveinfos = DriveInfo.GetDrives();
             foreach (DriveInfo driveInfo in driveinfos)
@@ -278,19 +278,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             set { _driveName = value; }
         }
 
-        public decimal HighWatermark
+        public float HighWatermark
         {
             get { return _highWatermark; }
             set { _highWatermark = value >= _lowWatermark + _watermarkMinDifference ? value : _lowWatermark + _watermarkMinDifference; }
         }
 
-        public decimal LowWatermark
+        public float LowWatermark
         {
             get { return _lowWatermark; }
             set { _lowWatermark = value <= _highWatermark - _watermarkMinDifference ? value : _highWatermark - _watermarkMinDifference; }
         }
 
-        public decimal WatermarkMinDifference
+        public float WatermarkMinDifference
         {
             get { return _watermarkMinDifference; }
             set { _watermarkMinDifference = value; }
@@ -325,9 +325,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             get { return (100 * (_usedSpace - _deletedFileSpace) / _driveSize) <= _lowWatermark ? true : false; }
         }
 
-        public decimal UsedSpacePercentage
+        public float UsedSpacePercentage
         {
-            get { return new decimal(100 * _usedSpace / _driveSize); }
+            get { return ((int)(10000.0F * _usedSpace / _driveSize))/100.0F; }
         }
 
         public bool ReachHighWaterMark
@@ -343,9 +343,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         #region Private Members
 
         private string _driveName;
-        private decimal _highWatermark;
-        private decimal _lowWatermark;
-        private decimal _watermarkMinDifference;
+        private float _highWatermark;
+        private float _lowWatermark;
+        private float _watermarkMinDifference;
         private long _usedSpace;
         private long _driveSize;
         private long _deletedFileSpace;

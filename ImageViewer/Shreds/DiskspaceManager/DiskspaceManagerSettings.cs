@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             set { this["DriveName"] = value; }
         }
 
-        [ConfigurationProperty("Status", DefaultValue = "Status")]
+        [ConfigurationProperty("Status", DefaultValue = "")]
         public string Status
         {
             get { return (string)this["Status"]; }
@@ -79,6 +79,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             set { this["UsedSpace"] = value; }
         }
 
+        [ConfigurationProperty("CheckFrequency", DefaultValue = "10")]
+        public int CheckFrequency
+        {
+            get { return (int)this["CheckFrequency"]; }
+            set { this["CheckFrequency"] = value; }
+        }
 
         #endregion
 
@@ -91,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             clone.LowWatermark = _instance.LowWatermark;
             clone.HighWatermark = _instance.HighWatermark;
             clone.UsedSpace = _instance.UsedSpace;
+            clone.CheckFrequency = _instance.CheckFrequency;
 
             return clone;
         }

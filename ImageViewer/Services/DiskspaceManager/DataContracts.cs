@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
         private float _lowWatermark;
         private float _highWatermark;
         private float _usedSpace;
+        private int _checkFrequency;
 
 		public UpdateServerSettingRequest()
 		{
@@ -54,6 +55,13 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
             set { _usedSpace = value; }
         }
 
+        [DataMember(IsRequired = true)]
+        public int CheckFrequency
+        {
+            get { return _checkFrequency; }
+            set { _checkFrequency = value; }
+        }
+
     }
 
 	[DataContract]
@@ -64,15 +72,17 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
         private float _lowWatermark;
         private float _highWatermark;
         private float _usedSpace;
+        private int _checkFrequency;
 
-        public GetServerSettingResponse(string driveName, string status, float lowWatermark, float highWatermark, float usedSpace)
+        public GetServerSettingResponse(string driveName, string status, float lowWatermark, float highWatermark, float usedSpace, int checkFrequency)
 		{
 		    _driveName = driveName;
             _status = status;
             _lowWatermark = lowWatermark;
             _highWatermark = highWatermark;
             _usedSpace = usedSpace;
-		}
+            _checkFrequency = checkFrequency;
+        }
 
         [DataMember(IsRequired = true)]
         public string DriveName
@@ -107,6 +117,13 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
         {
             get { return _usedSpace; }
             set { _usedSpace = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        public int CheckFrequency
+        {
+            get { return _checkFrequency; }
+            set { _checkFrequency = value; }
         }
 
     }

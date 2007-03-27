@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
     {
         public DiskspaceManagerServiceType()
         {
-			Platform.Log("[" + AppDomain.CurrentDomain.FriendlyName + "]: DiskspaceManagerServiceType Constructor");
+			//Platform.Log("[" + AppDomain.CurrentDomain.FriendlyName + "]: DiskspaceManagerServiceType Constructor");
 		}
 
 		#region IDiskspaceManagerService Members
