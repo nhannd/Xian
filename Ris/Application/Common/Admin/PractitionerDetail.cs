@@ -16,6 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         }
 
         public PractitionerDetail()
+            : base()
         {
         }
 

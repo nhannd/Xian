@@ -18,6 +18,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
 
         public StaffDetail()
         {
+            this.PersonNameDetail = new PersonNameDetail();
+            this.TelephoneNumbers = new List<TelephoneDetail>();
+            this.Addresses = new List<AddressDetail>();
         }
 
         [DataMember]

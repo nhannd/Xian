@@ -88,6 +88,7 @@ namespace ClearCanvas.Ris.Client
             AddressDetail address = new AddressDetail();
             address.Province = CollectionUtils.FirstElement<string>(AddressSettings.Default.ProvinceChoices);
             address.Country = CollectionUtils.FirstElement<string>(AddressSettings.Default.CountryChoices);
+            address.Type = _addressTypes[0];
 
             AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
